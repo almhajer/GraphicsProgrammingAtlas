@@ -3,6 +3,7 @@
   const searchFilterLabels = {
     all: 'كل الأقسام',
     vulkan: 'فولكان',
+    cpp: 'C++',
     sdl3: 'SDL3',
     cmake: 'CMake',
     imgui: 'Dear ImGui',
@@ -12,6 +13,7 @@
   };
 
   let searchSubFilterConfig = {
+    cpp: {},
     vulkan: {
       command: 'الدوال',
       macro: 'الماكرو',
@@ -42,6 +44,11 @@
       constants: {},
       macros: {}
     }),
+    getCppReferenceData: () => ({}),
+    getCppReferenceEnrichmentData: () => ({}),
+    getCppReferenceOfficialLinks: () => ({}),
+    getCppReferenceGuides: () => ({}),
+    getCppHomeConfig: () => ({}),
     getTutorialCatalog: () => [],
     getVulkanFileSections: () => ({}),
     getFileReferenceData: () => ({}),
@@ -100,6 +107,26 @@
 
   function getTutorialCatalog() {
     return appApi.getTutorialCatalog() || [];
+  }
+
+  function getCppReferenceData() {
+    return appApi.getCppReferenceData() || {};
+  }
+
+  function getCppReferenceEnrichmentData() {
+    return appApi.getCppReferenceEnrichmentData() || {};
+  }
+
+  function getCppReferenceOfficialLinks() {
+    return appApi.getCppReferenceOfficialLinks() || {};
+  }
+
+  function getCppReferenceGuides() {
+    return appApi.getCppReferenceGuides() || {};
+  }
+
+  function getCppHomeConfig() {
+    return appApi.getCppHomeConfig() || {};
   }
 
   function getVulkanFileSections() {
@@ -386,6 +413,142 @@
     return entries;
   }
 
+  function buildCppSearchSectionLookup() {
+    const lookup = {};
+    const sections = Array.isArray(getCppHomeConfig()?.sections) ? getCppHomeConfig().sections : [];
+    sections.forEach((section) => {
+      (section?.tokens || []).forEach((token) => {
+        const normalizedToken = String(token || '').trim();
+        if (!normalizedToken) {
+          return;
+        }
+        lookup[normalizedToken] = {
+          key: String(section.key || '').trim(),
+          title: String(section.title || '').trim(),
+          iconType: String(section.iconType || 'cpp').trim() || 'cpp'
+        };
+      });
+    });
+    return lookup;
+  }
+
+  function getCppSearchEntryDescription(token, item = {}) {
+    return item.description
+      || item.practicalMeaning
+      || item.actualBehavior
+      || item.usage
+      || item.fullProjectNoteArabic
+      || item.type
+      || token;
+  }
+
+  function buildCppSearchIndexSection() {
+    const entries = [];
+    const cppReferenceData = getCppReferenceData();
+    const cppReferenceEnrichment = getCppReferenceEnrichmentData();
+    const cppReferenceGuides = getCppReferenceGuides();
+    const cppReferenceOfficialLinks = getCppReferenceOfficialLinks();
+    const homeConfig = getCppHomeConfig();
+    const sectionLookup = buildCppSearchSectionLookup();
+    const tokens = Array.from(new Set([
+      ...Object.keys(cppReferenceData || {}),
+      ...Object.keys(cppReferenceEnrichment || {}),
+      ...Object.keys(cppReferenceGuides || {}),
+      ...Object.keys(cppReferenceOfficialLinks || {})
+    ]))
+      .map((token) => String(token || '').trim())
+      .filter(Boolean);
+
+    entries.push({
+      type: 'cpp-index',
+      section: 'cpp',
+      subsection: 'index',
+      name: 'مرجع C++',
+      description: homeConfig?.meta?.description || 'المدخل المحلي لعناصر C++ داخل المشروع.',
+      searchText: [
+        'C++',
+        'cpp',
+        'مرجع C++',
+        homeConfig?.meta?.description,
+        homeConfig?.meta?.summaryNote
+      ].filter(Boolean).join(' '),
+      item: {sectionKey: '', iconType: 'cpp', kindLabel: 'مرجع C++', sectionTitle: 'C++'}
+    });
+
+    (Array.isArray(homeConfig?.sections) ? homeConfig.sections : []).forEach((section) => {
+      entries.push({
+        type: 'cpp-index',
+        section: 'cpp',
+        subsection: String(section.key || 'index').trim() || 'index',
+        name: String(section.title || 'قسم C++').trim(),
+        description: String(section.description || '').trim(),
+        searchText: [
+          'C++',
+          'cpp',
+          section.key,
+          section.title,
+          section.description,
+          ...(section.tokens || [])
+        ].filter(Boolean).join(' '),
+        item: {
+          sectionKey: String(section.key || '').trim(),
+          iconType: String(section.iconType || 'cpp').trim() || 'cpp',
+          kindLabel: 'قسم C++',
+          sectionTitle: 'C++'
+        }
+      });
+    });
+
+    tokens.forEach((token) => {
+      const sectionMeta = sectionLookup[token] || null;
+      const guide = cppReferenceGuides?.[token] || {};
+      const base = cppReferenceData?.[token] || {};
+      const enrichment = cppReferenceEnrichment?.[token] || {};
+      const official = cppReferenceOfficialLinks?.[token] || {};
+      const merged = {
+        ...guide,
+        ...enrichment,
+        ...base
+      };
+      const iconType = sectionMeta?.iconType || (token.startsWith('std::') ? 'structure' : 'cpp');
+      entries.push({
+        type: 'cpp',
+        section: 'cpp',
+        subsection: sectionMeta?.key || 'reference',
+        name: String(merged.title || token).trim(),
+        description: getCppSearchEntryDescription(token, merged),
+        searchText: [
+          token,
+          merged.title,
+          merged.type,
+          merged.kind,
+          merged.description,
+          merged.usage,
+          merged.practicalMeaning,
+          merged.actualBehavior,
+          merged.benefit,
+          merged.misuse,
+          merged.projectContext,
+          merged.fullProjectNoteArabic,
+          ...(merged.related || []),
+          ...(guide.followUps || []),
+          ...(Array.isArray(guide.projectStepsArabic) ? guide.projectStepsArabic : []),
+          ...(Array.isArray(guide.standaloneExamplesArabic) ? guide.standaloneExamplesArabic.flatMap((entry) => [entry?.titleArabic, entry?.explanationArabic]) : []),
+          official.url,
+          sectionMeta?.title
+        ].filter(Boolean).join(' '),
+        item: {
+          name: token,
+          iconType,
+          kindLabel: String(merged.type || merged.kind || 'مرجع C++').trim(),
+          sectionTitle: sectionMeta?.title || 'C++'
+        }
+      });
+    });
+
+    return entries;
+  }
+
   function buildTutorialSearchIndexSection() {
     const entries = [];
     const tutorialCatalog = getTutorialCatalog();
@@ -488,6 +651,8 @@
           ...buildVulkanSearchIndexSection(),
           ...buildVulkanExampleSearchEntries()
         ];
+      case 'cpp':
+        return buildCppSearchIndexSection();
       case 'glsl':
         return buildGlslSearchIndexSection();
       case 'imgui':
@@ -546,6 +711,12 @@
 
     if (result.type === 'sdl3') {
       return result.item?.packageDisplayName || result.item?.packageName || getSearchSectionLabel(result.section);
+    }
+
+    if (result.type === 'cpp') {
+      return result.item?.sectionTitle
+        ? `${getSearchSectionLabel(result.section)} / ${result.item.sectionTitle}`
+        : getSearchSectionLabel(result.section);
     }
 
     return getSearchSectionLabel(result.section);
@@ -738,6 +909,7 @@
   async function ensureSegmentsForActiveFilter() {
     if (activeSearchFilter === 'all') {
       await Promise.all([
+        ensureUiSegment('cppHome'),
         ensureUiSegment('glsl'),
         ensureUiSegment('imgui'),
         ensureUiSegment('cmakeSearch'),
@@ -755,6 +927,11 @@
 
     if (activeSearchFilter === 'cmake') {
       await ensureUiSegment('cmakeSearch');
+      return;
+    }
+
+    if (activeSearchFilter === 'cpp') {
+      await ensureUiSegment('cppHome');
       return;
     }
 
@@ -815,6 +992,9 @@
       case 'vulkan-examples-index':
       case 'vulkan-example':
         return 'command';
+      case 'cpp':
+      case 'cpp-index':
+        return result.item?.iconType || 'cpp';
       case 'imgui':
         return getImguiKindMeta(result.item?.kind || 'type').icon;
       case 'cmake':
@@ -880,6 +1060,12 @@
         break;
       case 'macro':
         showMacro(result.item.name);
+        break;
+      case 'cpp':
+        showCppReference(result.item.name);
+        break;
+      case 'cpp-index':
+        showCppIndex(result.item?.sectionKey || '');
         break;
       case 'glsl':
         showGlslReference(result.item.name);
@@ -1102,6 +1288,8 @@
       constant: 'ثابت',
       'constant-ref': 'ثابت',
       macro: 'ماكرو',
+      cpp: 'مرجع C++',
+      'cpp-index': 'فهرس C++',
       imgui: 'مرجع Dear ImGui',
       glsl: 'GLSLang',
       sdl3: 'مرجع SDL3',
@@ -1122,6 +1310,8 @@
         constant: renderEntityIcon('constant', 'ui-codicon result-icon', 'ثابت'),
         'constant-ref': renderEntityIcon('constant', 'ui-codicon result-icon', 'ثابت'),
         macro: renderEntityIcon('macro', 'ui-codicon result-icon', 'ماكرو'),
+        cpp: renderEntityIcon(result.item?.iconType || 'cpp', 'ui-codicon result-icon', 'C++'),
+        'cpp-index': renderEntityIcon(result.item?.iconType || 'cpp', 'ui-codicon result-icon', 'C++'),
         imgui: renderEntityIcon(getImguiKindMeta(result.item?.kind || 'type').icon, 'ui-codicon result-icon', 'Dear ImGui'),
         cmake: renderEntityIcon(getCmakeKindMeta(result.item?.kind || 'commands').icon, 'ui-codicon result-icon', 'CMake'),
         glsl: renderEntityIcon('glsl', 'ui-codicon result-icon', 'GLSLang'),
@@ -1141,6 +1331,8 @@
         constant: `showConstant('${result.item.name}')`,
         'constant-ref': `openConstantReference(event, '${result.item.name}')`,
         macro: `showMacro('${result.item.name}')`,
+        cpp: `showCppReference('${escapeAttribute(result.item.name)}')`,
+        'cpp-index': `showCppIndex('${escapeAttribute(result.item?.sectionKey || '')}')`,
         imgui: `showImguiReference('${escapeAttribute(result.item.name)}')`,
         cmake: `showCmakeEntity('${escapeAttribute(result.item.kind)}', '${escapeAttribute(result.item.slug)}')`,
         glsl: `showGlslReference('${result.item.name}')`,
@@ -1178,6 +1370,10 @@
                 ? escapeHtml(result.description || '')
               : result.type === 'vulkan-example'
                 ? escapeHtml(result.item.goal || result.item.expectedResult || '')
+              : result.type === 'cpp'
+                ? escapeHtml(result.description || '')
+              : result.type === 'cpp-index'
+                ? escapeHtml(result.description || '')
               : result.type === 'file'
                 ? escapeHtml(result.description || '')
               : result.type === 'imgui'

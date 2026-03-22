@@ -289,6 +289,11 @@ window.__ARABIC_VULKAN_SIDEBAR_NAVIGATION__ = (() => {
       window.populateCmakeList();
     }
 
+    if (clusterId === 'cpp-cluster') {
+      await window.ensureUiSegment('cppHome');
+      window.populateCppList();
+    }
+
     if (clusterId === 'imgui-cluster') {
       await window.ensureUiSegment('imgui');
       window.populateImguiList();
@@ -536,6 +541,12 @@ window.__ARABIC_VULKAN_SIDEBAR_NAVIGATION__ = (() => {
         case 'cmake':
           await window.showCmakeEntity(item.getAttribute('data-nav-kind') || '', navName);
           return true;
+        case 'cpp-index':
+          await window.showCppIndex(navName === 'cpp' ? '' : navName);
+          return true;
+        case 'cpp':
+          await window.showCppReference(navName);
+          return true;
         case 'glsl-example':
           await window.showGlslExample(navName);
           return true;
@@ -658,6 +669,8 @@ window.__ARABIC_VULKAN_SIDEBAR_NAVIGATION__ = (() => {
       'cmake-index': 'cmake-list',
       'cmake-kind-index': 'cmake-list',
       cmake: 'cmake-list',
+      'cpp-index': 'cpp-list',
+      cpp: 'cpp-list',
       enum: 'enums-list',
       tutorial: 'tutorials-list',
       'tutorials-index': 'tutorials-list',

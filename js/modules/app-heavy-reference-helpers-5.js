@@ -58,10 +58,15 @@ function applyCppReferenceOfficialLinksData(data = {}) {
 
 function applyCppReferenceGuideData(data = {}) {
   CPP_REFERENCE_GUIDES = freezeDataSlice(data, 'referenceGuides');
+  CPP_DEEP_GUIDES = freezeDataSlice(data, 'deepGuides');
 }
 
 function applyCppReferenceTooltipOverrideData(data = {}) {
   CPP_REFERENCE_TOOLTIP_OVERRIDES = freezeDataSlice(data, 'tooltipOverrides');
+}
+
+function applyCppHomeData(data = {}) {
+  CPP_HOME_DATA = Object.freeze(data || {});
 }
 
 function applyVulkanSearchTables(data = {}) {
@@ -2121,6 +2126,159 @@ function populateCmakeList() {
       </div>
     `).join('')}
   `;
+}
+
+function getCppHomeConfig() {
+  return cppHomeRuntime?.getCppHomeConfig?.() || {};
+}
+
+function getCppHomeSections() {
+  return cppHomeRuntime?.getCppHomeSections?.() || [];
+}
+
+function buildCppSectionSidebarTooltip(section = {}) {
+  return cppHomeRuntime?.buildCppSectionSidebarTooltip?.(section) || section.description || 'قسم من مرجع C++ المحلي.';
+}
+
+function populateCppList() {
+  const container = document.getElementById('cpp-list');
+  if (!container) {
+    return;
+  }
+
+  const config = getCppHomeConfig();
+  const sections = getCppHomeSections();
+  const totalCount = sections.reduce((total, section) => total + (Number(section.count) || 0), 0);
+  const countEl = document.getElementById('cpp-cluster-count');
+  if (countEl) {
+    countEl.textContent = String(totalCount || 0);
+  }
+
+  container.innerHTML = `
+    <div class="nav-item" data-nav-type="cpp-index" data-nav-name="cpp" data-tooltip="${escapeAttribute(config?.meta?.description || 'يفتح مدخل C++ المحلي بنفس أسلوب بقية المكتبات.')}" tabindex="0" role="button">
+      <span>${renderEntityIcon('cpp', 'ui-codicon nav-icon', 'C++')}</span>
+      <span>مدخل C++</span>
+    </div>
+    <div class="nav-item" data-nav-type="cpp" data-nav-name="cpp-language-guide" data-tooltip="يفتح صفحة شرح تقنية شاملة تبني فهم C++ من داخل اللغة نفسها: المتغيرات، الدوال، النطاق، العمر الزمني، الثابتية، والأصناف." tabindex="0" role="button">
+      <span>${renderEntityIcon('tutorial', 'ui-codicon nav-icon', 'دليل')}</span>
+      <span>دليل فهم C++</span>
+    </div>
+    ${sections.map((section) => `
+      <div class="nav-section cpp-reference-kind-section collapsed">
+        <div class="nav-section-header" onclick="toggleSection('cpp-${escapeAttribute(section.key)}-list')">
+          <h3>${renderEntityIcon(section.iconType || 'cpp', 'ui-codicon nav-icon', section.title)} ${escapeHtml(section.title)} <span class="nav-section-inline-count">${Number(section.count) || 0}</span></h3>
+          <span class="icon">▼</span>
+        </div>
+        <div id="cpp-${escapeAttribute(section.key)}-list" class="nav-items">
+          <div class="nav-item" data-nav-type="cpp-index" data-nav-name="${escapeAttribute(section.key)}" data-tooltip="${escapeAttribute(buildCppSectionSidebarTooltip(section))}" tabindex="0" role="button">
+            <span>${renderEntityIcon(section.iconType || 'cpp', 'ui-codicon nav-icon', section.title)}</span>
+            <span>فهرس ${escapeHtml(section.title)}</span>
+          </div>
+          ${(section.tokens || []).map((token) => {
+            const item = buildCppReferenceItem(token);
+            const tooltip = buildCppReferenceTooltip(item) || token;
+            return `
+              <div class="nav-item" data-nav-type="cpp" data-nav-name="${escapeAttribute(token)}" data-tooltip="${escapeAttribute(tooltip)}" aria-label="${escapeAttribute(`${token}: ${tooltip.replace(/\n/g, ' - ')}`)}" tabindex="0" role="button">
+                <span>${renderEntityIcon(token.startsWith('std::') ? 'structure' : (section.iconType || 'cpp'), 'ui-codicon nav-icon', token)}</span>
+                <span>${escapeHtml(token)}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+async function showCppIndex(sectionKey = '', options = {}) {
+  const content = document.getElementById('mainContent');
+  if (!content) {
+    return;
+  }
+
+  if (typeof ensureUiSegment === 'function') {
+    await ensureUiSegment('cppHome');
+  }
+
+  populateCppList();
+
+  const config = getCppHomeConfig();
+  const allSections = getCppHomeSections();
+  const activeSectionKey = String(sectionKey || '').trim();
+  const sections = activeSectionKey
+    ? allSections.filter((section) => section.key === activeSectionKey)
+    : allSections;
+  const totalCount = allSections.reduce((total, section) => total + (Number(section.count) || 0), 0);
+
+  content.innerHTML = `
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="#" onclick="showHomePage(); return false;">الرئيسية</a> /
+        <span>مرجع C++</span>
+      </nav>
+      <h1>${renderEntityIcon('cpp', 'ui-codicon page-icon', 'C++')} ${escapeHtml(config?.meta?.title || 'C++')}</h1>
+      <p>${escapeHtml(config?.meta?.description || 'مدخل عربي عملي إلى عناصر C++ الأساسية داخل المشروع.')}</p>
+    </div>
+
+    <section class="info-section">
+      ${renderTutorialInfoGrid([
+        {
+          label: 'فلسفة القسم',
+          value: '<strong>شرح دلالي + روابط داخلية</strong>',
+          note: escapeHtml(config?.meta?.summaryNote || 'يبني هذا المسار نواة C++ بنفس أسلوب بقية المكتبات المحلية.')
+        },
+        {
+          label: 'العناصر الأولية',
+          value: `<strong>${escapeHtml(String(totalCount || 0))}</strong>`,
+          note: 'هذه دفعة أولى خفيفة لتثبيت القوائم والروابط والشرح قبل التوسع الكبير.'
+        },
+        {
+          label: 'حالة المرحلة',
+          value: '<strong>تأسيس C++ Home</strong>',
+          note: escapeHtml(config?.meta?.statusNote || 'هذه بداية المسار، وسيُبنى فوقها لاحقًا مرجع ودروس وأمثلة أوسع.')
+        }
+      ])}
+    </section>
+
+    ${sections.map((section) => `
+      <section class="category-section">
+        <h2>${renderEntityIcon(section.iconType || 'cpp', 'ui-codicon section-icon', section.title)} ${escapeHtml(section.title)}</h2>
+        <p class="page-description">${escapeHtml(section.description || '')}</p>
+        <div class="items-grid">
+          ${(section.tokens || []).map((token) => {
+            const item = buildCppReferenceItem(token);
+            return `
+              <div class="item-card" onclick="showCppReference('${escapeAttribute(token)}')">
+                <span class="item-icon">${renderEntityIcon(token.startsWith('std::') ? 'structure' : (section.iconType || 'cpp'), 'ui-codicon card-icon', token)}</span>
+                <span class="item-name">${escapeHtml(token)}</span>
+                <span class="item-category">${escapeHtml(item.type || 'مرجع C++')}</span>
+                <p>${escapeHtml(item.description || '')}</p>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </section>
+    `).join('')}
+
+    <section class="home-section">
+      <h2>🔗 أهم المراجع</h2>
+      <ul class="useful-links">
+        ${(config?.meta?.references || []).map((reference) => `
+          <li><a href="${escapeAttribute(reference.href)}" target="_blank" rel="noopener noreferrer">${renderEntityIcon('file', 'ui-codicon list-icon', reference.label)} ${escapeHtml(reference.label)}</a></li>
+        `).join('')}
+      </ul>
+    </section>
+  `;
+
+  document.title = `مرجع C++ - ${APP_BRAND_TITLE}`;
+  syncRouteHistory(activeSectionKey ? `cpp-index/${encodeURIComponent(activeSectionKey)}` : 'cpp-index', options);
+  scrollMainContentToTop();
+  setActiveSidebarItemBySelector(
+    'cpp-list',
+    activeSectionKey
+      ? `.nav-item[data-nav-type="cpp-index"][data-nav-name="${escapeSelectorValue(activeSectionKey)}"]`
+      : `.nav-item[data-nav-type="cpp-index"][data-nav-name="cpp"]`
+  );
 }
 
 async function showCmakeIndex(options = {}) {

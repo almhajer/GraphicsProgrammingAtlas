@@ -4,6 +4,7 @@
   function createHomeShellRuntime(api = {}) {
     const {
       buildCmakeHomeLibraryModel,
+      buildCppHomeLibraryModel,
       buildGlslHomeLibraryModel,
       buildImguiHomeLibraryModel,
       buildSdl3HomeLibraryModel,
@@ -15,6 +16,7 @@
     function buildHomeLibraryModels() {
       return [
         buildCmakeHomeLibraryModel(),
+        buildCppHomeLibraryModel(),
         buildVulkanHomeLibraryModel(),
         ...getHomeSdl3PackageKeys().map((packageKey) => buildSdl3HomeLibraryModel(packageKey)),
         buildImguiHomeLibraryModel(),

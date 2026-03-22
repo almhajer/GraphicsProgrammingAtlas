@@ -6567,6 +6567,17 @@ function setMobileSidebarOpenState(open) {
   const shouldOpen = isMobileViewport && Boolean(open);
   sidebar.classList.toggle('open', shouldOpen);
   document.body.classList.toggle('sidebar-mobile-open', shouldOpen);
+  if (isMobileViewport) {
+    sidebar.style.transform = shouldOpen ? 'translateX(0)' : 'translateX(100%)';
+    sidebar.style.zIndex = '430';
+    sidebar.style.visibility = shouldOpen ? 'visible' : 'hidden';
+    sidebar.style.pointerEvents = shouldOpen ? 'auto' : 'none';
+  } else {
+    sidebar.style.removeProperty('transform');
+    sidebar.style.removeProperty('z-index');
+    sidebar.style.removeProperty('visibility');
+    sidebar.style.removeProperty('pointer-events');
+  }
   toggle.setAttribute('aria-expanded', String(shouldOpen));
   toggle.setAttribute('aria-label', shouldOpen ? 'إغلاق القائمة' : 'فتح القائمة');
 }

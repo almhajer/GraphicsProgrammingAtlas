@@ -1,0 +1,26 @@
+{
+  "phase": "phase503-cpp-missing-pages-and-array-examples",
+  "done": true,
+  "changed": [
+    ".codex/checkpoints/2026-03-23-cpp-missing-pages-and-array-examples-phase503.json",
+    ".codex/work-progress.json",
+    "data/ui/cpp-reference-enrichment.json",
+    "data/ui/cpp-reference-guides.json",
+    "data/ui/cpp-reference-official-links.json",
+    "index.html",
+    "js/modules/app-heavy-reference-helpers-7.js"
+  ],
+  "tested": [
+    "node --check js/modules/app-heavy-reference-helpers-7.js",
+    "jq -r '.referenceGuides[\"std::array\"].standaloneExamplesArabic | length' data/ui/cpp-reference-guides.json",
+    "jq -r '[\"std::sort\",\"std::move\",\"std::span\",\"std::string_view\"][] as $k | \"\\($k): enrichment=\\(.referenceEnrichment[$k] != null)\"' data/ui/cpp-reference-enrichment.json",
+    "jq -r '[\"std::sort\",\"std::move\",\"std::span\",\"std::string_view\"][] as $k | \"\\($k): guide=\\(.referenceGuides[$k] != null)\"' data/ui/cpp-reference-guides.json",
+    "git diff --check -- data/ui/cpp-reference-enrichment.json data/ui/cpp-reference-guides.json data/ui/cpp-reference-official-links.json js/modules/app-heavy-reference-helpers-7.js index.html"
+  ],
+  "next": "المرحلة التالية: مواصلة توسيع رموز C++ الأساسية بنفس القالب، مع تغطية عناصر إضافية من المكتبة المعيارية قبل فتح أقسام أكبر.",
+  "issues": [
+    "التحقق هنا يثبت وجود البيانات محليًا للعناصر الجديدة، لكن ما زال يلزم فحص بصري مباشر بعد Hard Reload للتأكد من ظهور الصفحات كما هو متوقع في المتصفح."
+  ],
+  "context_updated": true,
+  "last_stable_checkpoint": ".codex/checkpoints/2026-03-23-cpp-missing-pages-and-array-examples-phase503.json"
+}

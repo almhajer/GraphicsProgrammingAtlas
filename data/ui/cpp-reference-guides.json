@@ -1,22 +1,349 @@
 {
   "referenceGuides": {
+    "auto": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، auto ليست اختصارًا شكليًا فقط، بل أداة تقلل التكرار عندما يكون النوع واضحًا من قيمة التهيئة أو من ناتج دالة أو مؤشر مرور على العناصر.",
+      "projectStepsArabic": [
+        "استخدم auto عندما تكون الجهة اليمنى واضحة النوع، مثل ناتج دالة أو مؤشر مرور على العناصر أو دالة مجهولة محفوظة في متغير.",
+        "إذا كان وجود المرجع أو const مهمًا لفهم السطر، فاكتبه صراحة مثل const auto& بدل auto المجرد.",
+        "لا تستخدم auto إذا كان إخفاء النوع سيجعل القارئ يضيع بين قيمة منسوخة ومرجع أو بين نوعين متقاربين."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "استنتاج نوع ناتج دالة",
+          "code": "#include <string>\n\nstd::string get_name() {\n    return \"Atlas\";\n}\n\nint main() {\n    auto name = get_name();\n    return name.empty();\n}",
+          "explanationArabic": "المترجم يستنتج هنا أن name من النوع std::string لأن الدالة تعيد std::string."
+        },
+        {
+          "titleArabic": "استخدامه مع مؤشر مرور على العناصر",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values{1, 2, 3};\n    auto it = values.begin();\n    return *it;\n}",
+          "explanationArabic": "هذا مفيد لأن نوع مؤشر المرور على العناصر غالبًا طويل وغير مريح كتابيًا، بينما المقصود واضح من begin().",
+          "relatedTokens": ["std::vector", "auto"]
+        },
+        {
+          "titleArabic": "عدد بسيط من غير تكرار",
+          "code": "int main() {\n    auto count = 5;\n    auto ready = true;\n    return ready ? count : 0;\n}",
+          "explanationArabic": "عندما تكون القيمة واضحة جدًا، يختصر auto الكتابة ويبقي السطر سهل القراءة.",
+          "relatedTokens": ["auto", "bool"]
+        }
+      ],
+      "followUps": ["const", "std::vector", "std::string"]
+    },
+    "const": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، const تبني حدود قراءة واضحة بين أجزاء الكود: من يقرأ فقط، ومن يملك حق التعديل، ومن يستقبل بيانات لا يجب العبث بها.",
+      "projectStepsArabic": [
+        "استخدم const في المعاملات والقيم المرجعية التي لا يفترض أن تتغير أثناء التنفيذ.",
+        "اجعل const جزءًا من التعاقد بين الدوال بدل ترك القارئ يكتشف يدويًا أن القيمة لا تتغير.",
+        "انتبه إلى موضع const مع المؤشرات والمراجع لأن المعنى يتغير حسب مكانها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قراءة سلسلة نصية فقط",
+          "code": "#include <string>\n\nvoid print_length(const std::string& text) {\n    (void)text.size();\n}\n\nint main() {\n    std::string value = \"hello\";\n    print_length(value);\n}",
+          "explanationArabic": "المعامل هنا مرجع ثابت، لذلك الدالة تقرأ النص بلا نسخه وبلا السماح بتعديله."
+        },
+        {
+          "titleArabic": "ثابت محلي لا يجب تغييره",
+          "code": "int main() {\n    const int max_retries = 3;\n    return max_retries;\n}",
+          "explanationArabic": "هذا يعلن نية واضحة: القيمة اسمية ثابتة داخل هذا النطاق وليست متغيرًا تشغيليًا."
+        },
+        {
+          "titleArabic": "قراءة قيمة من دون تعديلها",
+          "code": "bool is_positive(const int value) {\n    return value > 0;\n}",
+          "explanationArabic": "حتى مع الأنواع البسيطة، const يوضح منذ البداية أن الدالة هنا تقرأ ولا تعدل.",
+          "relatedTokens": ["const", "bool"]
+        }
+      ],
+      "followUps": ["auto", "std::string", "nullptr"]
+    },
+    "nullptr": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، nullptr تعبّر عن غياب كائن يشير إليه المؤشر، بصياغة لغوية صريحة لا تختلط بالقيم العددية.",
+      "projectStepsArabic": [
+        "مرر nullptr عندما يكون غياب المؤشر جزءًا طبيعيًا من تصميم الدالة.",
+        "استخدمها بدل 0 أو NULL حتى يبقى المقصود واضحًا أنه مؤشر فارغ لا عددًا عاديًا.",
+        "فرّق بين nullptr للمؤشرات وبين القيم الدلالية الخاصة في الأنواع العددية أو المعرفات الخاصة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فحص مؤشر اختياري",
+          "code": "#include <string>\n\nstd::size_t length_or_zero(const std::string* text) {\n    if (text == nullptr) {\n        return 0;\n    }\n    return text->size();\n}",
+          "explanationArabic": "nullptr هنا تعبّر بوضوح أن المعامل قد يكون غائبًا، والدالة تعالج هذا السيناريو صراحة.",
+          "relatedTokens": ["nullptr", "std::string"]
+        },
+        {
+          "titleArabic": "تهيئة مؤشر قبل الربط",
+          "code": "int main() {\n    int* value = nullptr;\n    int number = 42;\n    value = &number;\n    return *value;\n}",
+          "explanationArabic": "تبدأ القيمة بلا هدف صالح، ثم تُربط بعنوان صحيح لاحقًا.",
+          "relatedTokens": ["nullptr"]
+        },
+        {
+          "titleArabic": "إرجاع عدم وجود نتيجة",
+          "code": "int* first_even(int* value) {\n    if (value == nullptr) {\n        return nullptr;\n    }\n    return (*value % 2 == 0) ? value : nullptr;\n}",
+          "explanationArabic": "يمكن أن تكون nullptr أيضًا إشارة واضحة إلى أن الدالة لم تجد نتيجة صالحة.",
+          "relatedTokens": ["nullptr"]
+        }
+      ],
+      "followUps": ["const", "void", "std::unique_ptr"]
+    },
     "std::vector": {
-      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي هنا أن std::vector ليس مجرد قائمة مريحة، بل حاوية تملك البيانات وتحدد من يحتفظ بها ومتى تكبر ومتى يعاد تخصيصها. هذا مهم جدًا في أمثلة vertices وqueues وأسماء الامتدادات.",
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي هنا أن std::vector ليس مجرد قائمة مريحة، بل حاوية تملك البيانات وتحدد من يحتفظ بها ومتى تكبر ومتى يعاد تخصيصها. هذا مهم في أي برنامج يجمع بيانات ديناميكيًا مثل عناصر واجهة أو نتائج قراءة أو مدخلات مستخدم.",
       "projectStepsArabic": [
         "حدد من يملك الحاوية ومن يسمح له فقط بالقراءة منها حتى لا تتحول إعادة التخصيص إلى سلوك خفي يصعب على المبتدئ ملاحظته.",
         "إذا كانت الحاوية تنمو كثيرًا، أضف reserve في المسارات المعروفة لأن السلوك الفعلي لـ vector يشمل إعادة تخصيص قد تبطل المؤشرات السابقة.",
-        "افصل بين vector المؤقتة لبناء البيانات وبين الحاويات الطويلة العمر داخل السياق أو الـ subsystem."
+        "افصل بين vector المؤقتة لبناء البيانات وبين الحاويات الطويلة العمر داخل الوحدة البرمجية المستقلة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تجميع قيم ديناميكية",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values;\n    values.push_back(10);\n    values.push_back(20);\n    values.push_back(30);\n    return values.size();\n}",
+          "explanationArabic": "vector مناسبة هنا لأن عدد العناصر ينمو أثناء التنفيذ ولا نعرفه مسبقًا.",
+          "relatedTokens": ["std::vector", "size_t"]
+        },
+        {
+          "titleArabic": "تهيئة مباشرة ثم المرور على العناصر",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values{1, 2, 3, 4};\n    int sum = 0;\n    for (int value : values) {\n        sum += value;\n    }\n    return sum;\n}",
+          "explanationArabic": "هذا يوضح أن vector ليست فقط للحفظ، بل أيضًا للعمل الطبيعي مع الحلقات والمدى.",
+          "relatedTokens": ["std::vector"]
+        },
+        {
+          "titleArabic": "حجز مساحة قبل الإضافة",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values;\n    values.reserve(4);\n    values.push_back(1);\n    values.push_back(2);\n    values.push_back(3);\n    values.push_back(4);\n    return values[3];\n}",
+          "explanationArabic": "هذا مثال ذكي بسيط: عندما تعرف تقريبًا عدد العناصر، يمكنك حجز المساحة قبل الإضافة.",
+          "relatedTokens": ["std::vector", "size_t"]
+        }
       ],
       "followUps": ["size_t", "std::array", "auto"]
+    },
+    "std::array": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::array مناسبة عندما يكون عدد العناصر جزءًا من معنى النوع نفسه. هي أوضح من المصفوفة الخام عندما تريد حجمًا ثابتًا مع واجهة معيارية تقرأ بسهولة.",
+      "projectStepsArabic": [
+        "اخترها عندما يكون عدد العناصر معروفًا من البداية ولا يتغير أثناء التنفيذ.",
+        "مررها عندما تريد الحفاظ على ثبات العدد بدل استعمال حاوية قابلة للنمو.",
+        "إذا صار الحجم متغيرًا بطبيعته فانتقل إلى std::vector بدل الالتفاف حول هذا الثبات."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قيم ثابتة بعدد معروف",
+          "code": "#include <array>\n\nint main() {\n    std::array<int, 4> values{1, 2, 3, 4};\n    return values[2];\n}",
+          "explanationArabic": "هذا أبسط استخدام: عدد العناصر معروف من البداية ولا يحتاج نموًا لاحقًا.",
+          "relatedTokens": ["std::array"]
+        },
+        {
+          "titleArabic": "المرور على العناصر مع size",
+          "code": "#include <array>\n\nint main() {\n    std::array<int, 3> values{4, 5, 6};\n    int sum = 0;\n    for (int value : values) {\n        sum += value;\n    }\n    return sum == static_cast<int>(values.size()) * 5;\n}",
+          "explanationArabic": "هذا يوضح أنها ليست مجرد مصفوفة خامة؛ بل حاوية تملك دوالًا واضحة مثل size مع دعم الحلقات مباشرة.",
+          "relatedTokens": ["std::array", "size_t"]
+        },
+        {
+          "titleArabic": "إرجاع مجموعة ثابتة من دالة",
+          "code": "#include <array>\n\nstd::array<int, 3> build_values() {\n    return {7, 8, 9};\n}\n\nint main() {\n    auto values = build_values();\n    return values.front() + values.back();\n}",
+          "explanationArabic": "هذا مثال أذكى قليلًا: العدد الثابت جزء من نوع الناتج نفسه، لذلك يقرأ القارئ العقدة مباشرة من توقيع الدالة.",
+          "relatedTokens": ["std::array", "auto"]
+        }
+      ],
+      "followUps": ["std::vector", "size_t", "auto"]
+    },
+    "std::optional": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::optional مناسبة عندما يكون وجود القيمة نفسه أمرًا غير مضمون. فائدتها أنها تجعل هذا الاحتمال جزءًا من النوع بدل الاعتماد على رقم خاص أو سلسلة فارغة أو قيمة متفق عليها سرًا بين الدوال.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون غياب النتيجة احتمالًا حقيقيًا ومقصودًا في تصميم الدالة أو البنية.",
+        "افحص وجود القيمة عبر has_value أو if (opt) قبل الوصول إلى المحتوى إذا لم تكن متأكدًا من حضوره.",
+        "لا تستخدمها عندما تكون القيمة يجب أن تكون موجودة دائمًا، لأن وجود optional حينها يضعف العقدة بدل توضيحها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دالة قد تعيد قيمة وقد لا تعيدها",
+          "code": "#include <optional>\n\nstd::optional<int> find_even(int value) {\n    if (value % 2 == 0) {\n        return value;\n    }\n    return std::nullopt;\n}\n\nint main() {\n    auto result = find_even(8);\n    return result.has_value() ? result.value() : 0;\n}",
+          "explanationArabic": "هذا أبسط وجه للاستعمال: النتيجة ليست مضمونة، لذلك نوع الإرجاع نفسه يصرح بإمكانية الغياب بدل إخفائها.",
+          "relatedTokens": ["std::optional", "auto", "bool"]
+        },
+        {
+          "titleArabic": "قيمة بديلة عبر value_or",
+          "code": "#include <optional>\n\nint main() {\n    std::optional<int> retries;\n    int value = retries.value_or(3);\n    return value;\n}",
+          "explanationArabic": "عندما يكون لديك بديل معقول، value_or تختصر سؤال: هل توجد قيمة؟ وإذا لم توجد فاستعمل هذا البديل.",
+          "relatedTokens": ["std::optional"]
+        },
+        {
+          "titleArabic": "إنشاء المحتوى ثم حذفه",
+          "code": "#include <optional>\n#include <string>\n\nint main() {\n    std::optional<std::string> name;\n    name.emplace(\"Atlas\");\n    bool before_reset = name.has_value();\n    name.reset();\n    return before_reset && !name.has_value() ? 0 : 1;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح أن optional ليست فحصًا فقط؛ بل كائن يمكنه اكتساب المحتوى ثم فقده بوضوح عبر emplace وreset.",
+          "relatedTokens": ["std::optional", "std::string", "bool"]
+        }
+      ],
+      "followUps": ["bool", "std::string", "nullptr"]
     },
     "std::string": {
       "fullProjectNoteArabic": "عندما يكبر المشروع، يجب أن تتحول النصوص من متغيرات متناثرة إلى عقود واضحة: رسائل أخطاء، أسماء موارد، مسارات ملفات، أو مفاتيح إعدادات.",
       "projectStepsArabic": [
         "افصل النصوص الموجهة للمستخدم عن النصوص التقنية مثل مسارات الملفات أو أسماء الامتدادات.",
         "تجنب تمرير c_str مؤقتة إلى مسارات تحتفظ بالمؤشر بعد نهاية التعبير الحالي.",
-        "إذا صار النص جزءًا من إعدادات أو حالة واجهة، اربطه بطبقة serialization أو config واضحة."
+        "إذا صار النص جزءًا من إعدادات أو حالة واجهة، اربطه بطبقة حفظ أو إعدادات واضحة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تجميع نص بسيط",
+          "code": "#include <string>\n\nint main() {\n    std::string first = \"Hello\";\n    std::string second = \"World\";\n    std::string full = first + \", \" + second;\n    return full.size();\n}",
+          "explanationArabic": "std::string تعطيك سلسلة تملك محتواها ويمكن جمعها وتمريرها بين الدوال بأمان نسبيًا.",
+          "relatedTokens": ["std::string"]
+        },
+        {
+          "titleArabic": "التحقق من الفراغ",
+          "code": "#include <string>\n\nbool has_name(const std::string& name) {\n    return !name.empty();\n}\n\nint main() {\n    return has_name(\"Atlas\");\n}",
+          "explanationArabic": "هذا يوضح أن string ليست مجرد مصفوفة حروف، بل كائن يقدم عمليات جاهزة مثل التحقق من الفراغ وقراءة الحجم.",
+          "relatedTokens": ["std::string", "const", "bool"]
+        },
+        {
+          "titleArabic": "أخذ جزء من النص",
+          "code": "#include <string>\n\nint main() {\n    std::string value = \"Graphics\";\n    std::string part = value.substr(0, 5);\n    return part == \"Graph\";\n}",
+          "explanationArabic": "هذا يوضح أن std::string لا تقتصر على التخزين، بل تقدم عمليات جاهزة لمعالجة النص نفسه.",
+          "relatedTokens": ["std::string"]
+        }
       ],
       "followUps": ["const", "std::runtime_error"]
+    },
+    "std::string_view": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::string_view مفيدة عندما يكون النص موجودًا أصلًا في مكان آخر وأنت تريد قراءته فقط من دون نسخه أو امتلاكه.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المطلوب قراءة النص فقط لا تعديله ولا امتلاكه.",
+        "انتبه دائمًا إلى عمر المصدر الأصلي لأن string_view لا تحتفظ بالنص داخلها.",
+        "إذا احتجت تخزين النص طويلًا أو تعديله، فاستخدم std::string بدلها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "استقبال نص للقراءة فقط",
+          "code": "#include <string_view>\n\nbool is_empty(std::string_view text) {\n    return text.empty();\n}\n\nint main() {\n    return is_empty(\"Atlas\") ? 1 : 0;\n}",
+          "explanationArabic": "الدالة هنا تقرأ النص فقط ولا تحتاج امتلاكه، لذلك string_view تكفي.",
+          "relatedTokens": ["std::string_view", "bool"]
+        },
+        {
+          "titleArabic": "قراءة جزء من نص أكبر",
+          "code": "#include <string_view>\n\nint main() {\n    std::string_view text = \"GraphicsAtlas\";\n    std::string_view part = text.substr(0, 8);\n    return part.size();\n}",
+          "explanationArabic": "يمكنها تمثيل مقطع من النص من دون إنشاء نسخة جديدة من الأحرف.",
+          "relatedTokens": ["std::string_view"]
+        },
+        {
+          "titleArabic": "القراءة من std::string الموجودة أصلًا",
+          "code": "#include <string>\n#include <string_view>\n\nint main() {\n    std::string owner = \"Hello\";\n    std::string_view view = owner;\n    return view.front();\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن string_view تشاهد نصًا يملكه كائن آخر، لذلك يبقى owner هو المالك الحقيقي.",
+          "relatedTokens": ["std::string_view", "std::string"]
+        }
+      ],
+      "followUps": ["std::string", "const", "std::span"]
+    },
+    "std::unique_ptr": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::unique_ptr تمثل ملكية وحيدة لكائن على الذاكرة الديناميكية. فائدتها أنها تجعل العمر الزمني واضحًا وتغلق باب النسيان الشائع لـ delete اليدوي.",
+      "projectStepsArabic": [
+        "استخدمها عندما تكون هناك جهة واحدة فقط تملك الكائن.",
+        "مرر المرجع أو المؤشر الخام غير المالك عند الحاجة للقراءة أو الاستعمال المؤقت، ولا تنقل الملكية بلا سبب واضح.",
+        "استعمل make_unique عند الإنشاء حتى تبقى الصياغة أوضح وأكثر أمانًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ملكية وحيدة لكائن",
+          "code": "#include <memory>\n\nstruct FileHandle {\n    int id = 7;\n};\n\nint main() {\n    auto handle = std::make_unique<FileHandle>();\n    return handle->id;\n}",
+          "explanationArabic": "الكائن هنا يملك صاحبًا واحدًا فقط، وسيُحذف تلقائيًا عند نهاية النطاق.",
+          "relatedTokens": ["std::unique_ptr", "auto"]
+        },
+        {
+          "titleArabic": "نقل الملكية",
+          "code": "#include <memory>\n\nstd::unique_ptr<int> create_value() {\n    return std::make_unique<int>(42);\n}\n\nint main() {\n    std::unique_ptr<int> value = create_value();\n    return *value;\n}",
+          "explanationArabic": "الملكية تنتقل من ناتج الدالة إلى المتغير المحلي بدل نسخ المؤشر أو إدارة delete يدويًا.",
+          "relatedTokens": ["std::unique_ptr", "nullptr"]
+        },
+        {
+          "titleArabic": "بدء فارغ ثم إنشاء الكائن",
+          "code": "#include <memory>\n\nint main() {\n    std::unique_ptr<int> value;\n    if (!value) {\n        value = std::make_unique<int>(9);\n    }\n    return *value;\n}",
+          "explanationArabic": "هذا يوضح وجهًا آخر شائعًا: قد يبدأ المؤشر الذكي فارغًا ثم يتلقى الملكية لاحقًا.",
+          "relatedTokens": ["std::unique_ptr", "nullptr"]
+        }
+      ],
+      "followUps": ["std::move", "nullptr", "auto"]
+    },
+    "std::move": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::move لا تنقل الموارد بنفسها، بل تقول للمترجم: من الآن يمكن اعتبار هذا الكائن مصدرًا يجوز نقل محتواه منه إذا كان النوع يدعم ذلك.",
+      "projectStepsArabic": [
+        "استخدمها عندما تكون قد انتهيت من المعنى السابق للكائن وتريد تمرير موارده إلى مكان جديد.",
+        "لا تعد قراءة الكائن بعد std::move كما لو كان محتواه مضمونًا كما كان.",
+        "تجنب إضافتها بلا سبب؛ إذا لم يكن هناك نقل فعلي للملكية أو المحتوى فهي تزيد اللبس بدل التوضيح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نقل سلسلة إلى متغير جديد",
+          "code": "#include <string>\n#include <utility>\n\nint main() {\n    std::string source = \"Atlas\";\n    std::string target = std::move(source);\n    return target.size();\n}",
+          "explanationArabic": "هنا نسمح بنقل محتوى السلسلة إلى target بدل نسخه.",
+          "relatedTokens": ["std::move", "std::string"]
+        },
+        {
+          "titleArabic": "تمرير ملكية إلى دالة",
+          "code": "#include <memory>\n#include <utility>\n\nvoid consume(std::unique_ptr<int> value) {\n    (void)value;\n}\n\nint main() {\n    auto ptr = std::make_unique<int>(7);\n    consume(std::move(ptr));\n    return 0;\n}",
+          "explanationArabic": "هذا يوضح الوجه العملي الأهم: نقل الملكية إلى جهة أخرى بوضوح.",
+          "relatedTokens": ["std::move", "std::unique_ptr", "auto"]
+        },
+        {
+          "titleArabic": "إرجاع عنصر مالك من دالة مساعدة",
+          "code": "#include <string>\n#include <utility>\n\nstd::string take_name(std::string value) {\n    return std::move(value);\n}\n\nint main() {\n    std::string name = \"Atlas\";\n    std::string result = take_name(std::move(name));\n    return result.size();\n}",
+          "explanationArabic": "هذا مثال أذكى قليلًا لأنه يوضح سطر النقل عند الاستدعاء وسطر الإرجاع مع نوع يملك ذاكرة فعلًا.",
+          "relatedTokens": ["std::move", "std::string"]
+        }
+      ],
+      "followUps": ["std::unique_ptr", "std::string", "auto"]
+    },
+    "std::sort": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::sort هي الأداة المعيارية لإعادة ترتيب العناصر الموجودة داخل مجال قابل للترتيب بدل كتابة خوارزمية خاصة في كل مرة.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المطلوب إعادة ترتيب البيانات نفسها داخل الحاوية الحالية.",
+        "إذا كان الترتيب غير الافتراضي هو المقصود، مرر مقارنة توضح الفكرة بدل الاعتماد على ترتيب غير مناسب.",
+        "تذكر أنها تغيّر الترتيب الأصلي للحاوية، لذلك لا تستخدمها إذا كنت تحتاج الإبقاء على التسلسل الأول."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ترتيب أعداد تصاعديًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> values{4, 1, 3, 2};\n    std::sort(values.begin(), values.end());\n    return values.front();\n}",
+          "explanationArabic": "هذا أبسط وجه: إعادة ترتيب القيم داخل الحاوية نفسها تصاعديًا.",
+          "relatedTokens": ["std::sort", "std::vector"]
+        },
+        {
+          "titleArabic": "ترتيب تنازلي بمقارنة واضحة",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> values{4, 1, 3, 2};\n    std::sort(values.begin(), values.end(), [](int a, int b) {\n        return a > b;\n    });\n    return values.front();\n}",
+          "explanationArabic": "هنا نغير معنى الترتيب نفسه عبر مقارنة صريحة بدل الاعتماد على السلوك الافتراضي.",
+          "relatedTokens": ["std::sort", "std::vector", "bool"]
+        },
+        {
+          "titleArabic": "ترتيب أسماء حسب الطول",
+          "code": "#include <algorithm>\n#include <string>\n#include <vector>\n\nint main() {\n    std::vector<std::string> names{\"Ali\", \"Nora\", \"Atlas\"};\n    std::sort(names.begin(), names.end(), [](const std::string& a, const std::string& b) {\n        return a.size() < b.size();\n    });\n    return names.front().size();\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح أن sort لا ترتب الأرقام فقط؛ بل أي عناصر تملك قاعدة مقارنة واضحة.",
+          "relatedTokens": ["std::sort", "std::vector", "std::string", "const"]
+        }
+      ],
+      "followUps": ["std::vector", "auto", "bool"]
+    },
+    "std::span": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::span تفيد عندما تريد تمرير تسلسل متجاور للقراءة أو المعالجة من دون نقل الملكية أو ربط الدالة بنوع حاوية واحد بعينه.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المطلوب مجالًا من العناصر لا حاوية مالكة جديدة.",
+        "انتبه إلى أن المصدر الأصلي يجب أن يبقى حيًا طوال مدة استعمال span.",
+        "إذا احتجت تملك البيانات أو تغيير عددها فانتقل إلى حاوية مثل std::vector بدلها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قراءة مجال من std::array",
+          "code": "#include <array>\n#include <span>\n\nint sum(std::span<const int> values) {\n    int total = 0;\n    for (int value : values) {\n        total += value;\n    }\n    return total;\n}\n\nint main() {\n    std::array<int, 3> values{1, 2, 3};\n    return sum(values);\n}",
+          "explanationArabic": "الدالة هنا لا تحتاج امتلاك البيانات، بل فقط القراءة من مجال متجاور.",
+          "relatedTokens": ["std::span", "std::array", "const"]
+        },
+        {
+          "titleArabic": "مشاهدة جزء من vector",
+          "code": "#include <span>\n#include <vector>\n\nint main() {\n    std::vector<int> values{4, 5, 6, 7};\n    std::span<int> tail(values.data() + 1, 2);\n    return tail[0] + tail[1];\n}",
+          "explanationArabic": "يمكن أن تمثل جزءًا من التسلسل نفسه بدل كل الحاوية دفعة واحدة.",
+          "relatedTokens": ["std::span", "std::vector"]
+        },
+        {
+          "titleArabic": "واجهة دالة لا تنحاز لحاوية واحدة",
+          "code": "#include <array>\n#include <span>\n\nint first_value(std::span<const int> values) {\n    return values.empty() ? 0 : values.front();\n}\n\nint main() {\n    std::array<int, 2> values{9, 8};\n    return first_value(values);\n}",
+          "explanationArabic": "هذا مثال أذكى لأن الدالة تتعامل مع المجال نفسه، لا مع نوع الحاوية المالكة له.",
+          "relatedTokens": ["std::span", "std::array", "const"]
+        }
+      ],
+      "followUps": ["std::array", "std::vector", "const"]
     },
     "VkBool32": {
       "fullProjectNoteArabic": "داخل مشروع Vulkan فعلي، من الأفضل أن يبقى VkBool32 على حدود API أو داخل البنى الرسمية، بينما تتحول القرارات الداخلية إلى bool محلي واضح المعنى.",
@@ -34,16 +361,85 @@
         "إذا بدأت تضيف سلوكًا معقدًا وتحققًا داخليًا، راجع إن كان type أنسب كـ class أو builder منفصل.",
         "وثق الحقول الحساسة التي يجب أن تبقى متسقة مع واجهات خارجية مثل Vulkan structs أو تنسيقات الملفات."
       ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "بنية بيانات بسيطة",
+          "code": "struct Point {\n    int x;\n    int y;\n};\n\nint main() {\n    Point p{2, 3};\n    return p.x + p.y;\n}",
+          "explanationArabic": "struct هنا تجمع بيانات مترابطة تحت اسم واحد واضح بدل نشر المتغيرات منفصلة.",
+          "relatedTokens": ["struct"]
+        },
+        {
+          "titleArabic": "تمرير البنية إلى دالة",
+          "code": "struct Size {\n    int width;\n    int height;\n};\n\nint area(const Size& size) {\n    return size.width * size.height;\n}",
+          "explanationArabic": "هذا يوضح كيف تصبح البنية عقدة بيانات حقيقية يمكن تمريرها بين الدوال بدل التعامل مع قيم منفصلة.",
+          "relatedTokens": ["struct", "const"]
+        },
+        {
+          "titleArabic": "تهيئة مباشرة مع أكثر من معنى",
+          "code": "struct User {\n    int id;\n    bool active;\n};\n\nint main() {\n    User user{7, true};\n    return user.active ? user.id : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن struct تجعل العلاقة بين الحقول ظاهرة: المعرّف والحالة ينتميان إلى كيان واحد لا إلى متغيرين منفصلين.",
+          "relatedTokens": ["struct", "bool"]
+        }
+      ],
       "followUps": ["namespace", "std::array", "std::vector"]
     },
     "std::ifstream": {
-      "fullProjectNoteArabic": "الغرض الحقيقي من std::ifstream في هذا المشروع هو قراءة files كجزء من workflow واضح مثل shader loader أو file reader. هو ليس مجرد بديل أنيق عن fopen، بل عقدة دخول للبيانات القادمة من القرص.",
+      "fullProjectNoteArabic": "الغرض الحقيقي من std::ifstream في هذا المشروع هو قراءة الملفات كجزء من مسار عمل واضح مثل محمّل الشيفرات أو قارئ الملفات. هو ليس مجرد بديل أنيق عن fopen، بل عقدة دخول للبيانات القادمة من القرص.",
       "projectStepsArabic": [
         "افصل فتح الملف والتحقق من نجاحه عن منطق قراءة bytes أو النص نفسه حتى يبقى سبب الفشل واضحًا.",
-        "وحّد أوضاع الفتح الثنائية أو النصية داخل helpers واضحة لأن المبتدئ يخلط بسهولة بين القراءة النصية والثنائية في shader workflows.",
+        "وحّد أوضاع الفتح الثنائية أو النصية داخل دوال مساعدة واضحة لأن المبتدئ يخلط بسهولة بين القراءة النصية والثنائية في مسارات تحميل الشيفرات.",
         "أعد رسالة خطأ أو استثناء يحمل اسم الملف والمسار بدل فشل صامت يصعب تتبعه."
       ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فتح ملف نصي",
+          "code": "#include <fstream>\n\nint main() {\n    std::ifstream file(\"notes.txt\");\n    return file.is_open() ? 0 : 1;\n}",
+          "explanationArabic": "أبسط وجه للاستخدام: فتح الملف ثم التحقق أن الفتح نجح قبل أي قراءة فعلية.",
+          "relatedTokens": ["std::ifstream"]
+        },
+        {
+          "titleArabic": "قراءة أول سطر",
+          "code": "#include <fstream>\n#include <string>\n\nint main() {\n    std::ifstream file(\"notes.txt\");\n    std::string line;\n    if (std::getline(file, line)) {\n        return line.size();\n    }\n    return 0;\n}",
+          "explanationArabic": "هذا يوضح الاستخدام العملي الشائع: فتح الملف ثم قراءة سطر نصي إلى std::string.",
+          "relatedTokens": ["std::ifstream", "std::string"]
+        },
+        {
+          "titleArabic": "قراءة الملف كاملًا إلى نص",
+          "code": "#include <fstream>\n#include <sstream>\n#include <string>\n\nint main() {\n    std::ifstream file(\"notes.txt\");\n    std::stringstream buffer;\n    buffer << file.rdbuf();\n    std::string content = buffer.str();\n    return content.empty() ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي أكثر قليلًا عندما تحتاج تحميل النص كله دفعة واحدة ثم تحليله لاحقًا.",
+          "relatedTokens": ["std::ifstream", "std::stringstream", "std::string"]
+        }
+      ],
       "followUps": ["std::stringstream", "std::string", "std::runtime_error"]
+    },
+    "std::exception": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::exception ليست استثناءً محددًا بحد ذاته بقدر ما هي القاعدة المشتركة التي تسمح لك بالتقاط الأخطاء المعيارية وقراءة رسالتها بواجهة موحدة.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المطلوب التقاط الاستثناءات المعيارية العامة بدل نوع فرعي واحد فقط.",
+        "إذا كنت تعرف نوع الفشل الأدق فالتقط النوع الأخص أولًا ثم ارجع إلى std::exception كشبكة أوسع عند الحاجة.",
+        "اعرض what() أو سجله كرسالة تفسيرية، لكن لا تكتفِ بالتقاط عام إذا كانت المعالجة الدقيقة مطلوبة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "التقاط استثناء معياري عام",
+          "code": "#include <exception>\n\nint main() {\n    try {\n        throw std::exception();\n    } catch (const std::exception& error) {\n        return error.what() != nullptr ? 0 : 1;\n    }\n}",
+          "explanationArabic": "هذا أبسط شكل يوضح أن std::exception يمكن التقاطها عبر مرجع ثابت وقراءة رسالتها الموحدة.",
+          "relatedTokens": ["std::exception", "const", "nullptr"]
+        },
+        {
+          "titleArabic": "التقاط نوع فرعي عبر الواجهة العامة",
+          "code": "#include <exception>\n#include <stdexcept>\n\nint main() {\n    try {\n        throw std::runtime_error(\"failure\");\n    } catch (const std::exception& error) {\n        return error.what()[0] == 'f' ? 0 : 1;\n    }\n}",
+          "explanationArabic": "هنا الاستثناء الفعلي أخص، لكننا نقطفه عبر std::exception لأن المطلوب واجهة موحدة لقراءة الرسالة.",
+          "relatedTokens": ["std::exception", "std::runtime_error", "const"]
+        },
+        {
+          "titleArabic": "تمرير رسالة الخطأ إلى دالة موحدة",
+          "code": "#include <exception>\n#include <stdexcept>\n\nint consume_error(const std::exception& error) {\n    return error.what()[0] == 'b' ? 0 : 1;\n}\n\nint main() {\n    try {\n        throw std::runtime_error(\"broken\");\n    } catch (const std::exception& error) {\n        return consume_error(error);\n    }\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح كيف تعمل std::exception كواجهة موحدة يمكن تمريرها بين الدوال بدل نشر أنواع فرعية متعددة في كل مكان.",
+          "relatedTokens": ["std::exception", "std::runtime_error", "const"]
+        }
+      ],
+      "followUps": ["std::runtime_error", "std::string", "const"]
     },
     "std::set": {
       "fullProjectNoteArabic": "في المشروع الكامل، std::set مفيدة فقط عندما تكون uniqueness جزءًا من العقدة نفسها مثل queue family indices الفريدة، لا كخيار افتراضي لكل تجميع بيانات.",
@@ -51,6 +447,26 @@
         "وثق لماذا تحتاج uniqueness أصلًا قبل اختيار std::set بدل vector أو array.",
         "إذا كان الناتج سيُمرر لاحقًا إلى API تتوقع تسلسلًا متجاورًا، حضّر تحويلًا واضحًا إلى vector في الحدود المناسبة.",
         "احتفظ بالحاوية داخل خطوة التجميع لا داخل كل طبقات النظام إذا كانت الحاجة مؤقتة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إزالة التكرار تلقائيًا",
+          "code": "#include <set>\n\nint main() {\n    std::set<int> values{3, 1, 3, 2};\n    return values.size();\n}",
+          "explanationArabic": "set تحتفظ بالقيم الفريدة فقط، لذلك القيمة المكررة لا تضيف عنصرًا جديدًا.",
+          "relatedTokens": ["std::set"]
+        },
+        {
+          "titleArabic": "التحقق من وجود قيمة",
+          "code": "#include <set>\n\nint main() {\n    std::set<int> values{1, 2, 4};\n    return values.count(2) ? 0 : 1;\n}",
+          "explanationArabic": "هذا يوضح استخدامها عندما يكون سؤالك الأساسي: هل هذه القيمة موجودة أم لا؟",
+          "relatedTokens": ["std::set", "bool"]
+        },
+        {
+          "titleArabic": "ترتيب منطقي مع إدراجات متعددة",
+          "code": "#include <set>\n\nint main() {\n    std::set<int> values;\n    values.insert(9);\n    values.insert(2);\n    values.insert(5);\n    return *values.begin();\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن set لا تمنع التكرار فقط، بل تحفظ العناصر بترتيب منطقي داخلي.",
+          "relatedTokens": ["std::set"]
+        }
       ],
       "followUps": ["std::vector", "uint32_t", "size_t"]
     },
@@ -61,6 +477,26 @@
         "افصل النص الناتج النهائي إلى std::string واضحة إذا كان سيغادر طبقة التجميع الحالية.",
         "تجنب استعماله في المسارات الساخنة إذا كان المطلوب مجرد سلسلة بسيطة أو buffer معروف البنية."
       ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تجميع نص على مراحل",
+          "code": "#include <sstream>\n#include <string>\n\nint main() {\n    std::stringstream builder;\n    builder << \"Width: \" << 128 << \", Height: \" << 64;\n    std::string text = builder.str();\n    return text.size();\n}",
+          "explanationArabic": "هذا مناسب عندما تبني نصًا خطوة خطوة بدل جمع أجزاء كثيرة يدويًا.",
+          "relatedTokens": ["std::stringstream", "std::string"]
+        },
+        {
+          "titleArabic": "قراءة أعداد من نص",
+          "code": "#include <sstream>\n\nint main() {\n    std::stringstream stream(\"10 20\");\n    int a = 0;\n    int b = 0;\n    stream >> a >> b;\n    return a + b;\n}",
+          "explanationArabic": "ليس دوره التجميع فقط؛ يمكن استخدامه أيضًا لتحليل النص واستخراج القيم منه.",
+          "relatedTokens": ["std::stringstream"]
+        },
+        {
+          "titleArabic": "إعادة تكوين رسالة من بيانات متعددة",
+          "code": "#include <sstream>\n#include <string>\n\nint main() {\n    std::string name = \"Atlas\";\n    int version = 3;\n    std::stringstream stream;\n    stream << name << \" v\" << version;\n    return stream.str().size();\n}",
+          "explanationArabic": "هذا مثال ذكي يبين أن stringstream مفيد حين تريد بناء رسالة مركبة من أنواع مختلفة من دون تحويلات يدوية كثيرة.",
+          "relatedTokens": ["std::stringstream", "std::string"]
+        }
+      ],
       "followUps": ["std::ifstream", "std::string", "std::cout"]
     },
     "std::cout": {
@@ -68,16 +504,56 @@
       "projectStepsArabic": [
         "افصل رسائل الحالة السريعة عن رسائل الأخطاء التي يجب أن ترفع استثناءً أو نتيجة فشل صريحة حتى لا يختلط الغرض من كل رسالة.",
         "قلل الكتابة إلى الطرفية داخل حلقات الإطار أو المسارات المتكررة لأن السلوك الفعلي هنا قد يؤثر في الأداء ويشوش المخرجات.",
-        "اربط الرسائل التشخيصية لاحقًا بمستوى logging أو flag debug إذا اتسع المشروع."
+        "اربط الرسائل التشخيصية لاحقًا بمستوى تسجيل أو علامة تصحيح إذا اتسع المشروع."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "طباعة نص بسيط",
+          "code": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello\";\n}",
+          "explanationArabic": "هذا أبسط استخدام: إرسال نص مباشر إلى خرج الطرفية.",
+          "relatedTokens": ["std::cout"]
+        },
+        {
+          "titleArabic": "طباعة قيمة مع شرح",
+          "code": "#include <iostream>\n\nint main() {\n    int score = 42;\n    std::cout << \"Score: \" << score;\n}",
+          "explanationArabic": "يمكن تمرير النصوص والقيم في نفس السطر لبناء مخرجات تشخيصية واضحة.",
+          "relatedTokens": ["std::cout"]
+        },
+        {
+          "titleArabic": "طباعة حالة مع إنهاء سطر",
+          "code": "#include <iostream>\n\nint main() {\n    bool ready = true;\n    std::cout << \"Ready: \" << ready << std::endl;\n}",
+          "explanationArabic": "هذا مثال ذكي يجمع بين طباعة قيمة منطقية وإنهاء السطر فورًا لقراءة أوضح في الطرفية.",
+          "relatedTokens": ["std::cout", "std::endl", "bool"]
+        }
       ],
       "followUps": ["std::endl", "std::stringstream", "std::runtime_error"]
     },
     "std::memcpy": {
-      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي لـ std::memcpy هنا أنه نسخ bytes خامة لا أكثر. فائدته في المشروع تظهر عند upload helpers وstaging paths، لا في طبقات منطق الأعمال أو الكائنات العالية المستوى.",
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي لـ std::memcpy هنا أنه نسخ بايتات خامة لا أكثر. فائدته في المشروع تظهر عند دوال الرفع المساعدة ومسارات التجهيز المرحلي، لا في طبقات منطق الأعمال أو الكائنات العالية المستوى.",
       "projectStepsArabic": [
         "تأكد أن المصدر والوجهة يمثلان bytes خامة متوافقة قبل النسخ، لأن أكثر سوء فهم شائع هنا هو استخدامها على كائنات تحتاج semantics أعلى.",
-        "اجمع مسارات النسخ المتكررة داخل helpers واضحة تحمل الحجم والمعنى بدل استدعاءات memcpy متناثرة.",
+        "اجمع مسارات النسخ المتكررة داخل دوال مساعدة واضحة تحمل الحجم والمعنى بدل استدعاءات memcpy متناثرة.",
         "اربط كل memcpy بسياقها مثل mapped memory أو buffer upload حتى لا يصبح النسخ الخام خطوة مبهمة في الكود."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نسخ مصفوفة أعداد",
+          "code": "#include <cstring>\n\nint main() {\n    int source[3] = {1, 2, 3};\n    int target[3] = {};\n    std::memcpy(target, source, sizeof(source));\n    return target[2];\n}",
+          "explanationArabic": "هذا يوضح الاستخدام المباشر عندما تكون الذاكرة في المصدر والوجهة متوافقة تمامًا.",
+          "relatedTokens": ["std::memcpy"]
+        },
+        {
+          "titleArabic": "نسخ نص خام",
+          "code": "#include <cstring>\n\nint main() {\n    char source[6] = \"Atlas\";\n    char target[6] = {};\n    std::memcpy(target, source, sizeof(source));\n    return target[0];\n}",
+          "explanationArabic": "المقصود هنا نسخ المحتوى الخام كما هو، لا تحليل النص أو إعادة تفسيره.",
+          "relatedTokens": ["std::memcpy"]
+        },
+        {
+          "titleArabic": "نسخ bytes إلى buffer جاهز",
+          "code": "#include <cstring>\n\nint main() {\n    unsigned char source[4] = {1, 2, 3, 4};\n    unsigned char target[4] = {};\n    std::memcpy(target, source, sizeof(source));\n    return target[3];\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن memcpy تتعامل مع الذاكرة كبايتات خامة، سواء كانت الأرقام تمثل نصًا أو بيانات ثنائية.",
+          "relatedTokens": ["std::memcpy"]
+        }
       ],
       "followUps": ["std::vector", "size_t", "uint32_t"]
     },
@@ -86,18 +562,714 @@
       "projectStepsArabic": [
         "استخدم الحدود العددية فقط عندما يكون معناها واضحًا مثل \"لم يحدد بعد\" أو \"الحد الأقصى الممكن\".",
         "أضف تعليقًا قصيرًا أو اسم متغير دالًا إذا كانت القيمة القصوى جزءًا من عقدة منطقية حساسة.",
-        "تجنب نشر numeric_limits في كل مكان إذا كان من الأفضل تعريف ثابت دلالي أو config أوضح."
+        "تجنب نشر numeric_limits في كل مكان إذا كان من الأفضل تعريف ثابت دلالي أو إعداد أوضح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "أكبر قيمة ممكنة",
+          "code": "#include <limits>\n\nint main() {\n    int max_value = std::numeric_limits<int>::max();\n    return max_value > 0;\n}",
+          "explanationArabic": "هذا يوضح كيف تقرأ الحد الأعلى الحقيقي للنوع بدل كتابة رقم تقريبي يدويًا.",
+          "relatedTokens": ["std::numeric_limits"]
+        },
+        {
+          "titleArabic": "أصغر قيمة ممكنة",
+          "code": "#include <limits>\n\nint main() {\n    int min_value = std::numeric_limits<int>::min();\n    return min_value < 0;\n}",
+          "explanationArabic": "هذا مفيد عندما تحتاج حدًا معروفًا للنوع نفسه بدل رقم سحري مبهم.",
+          "relatedTokens": ["std::numeric_limits"]
+        },
+        {
+          "titleArabic": "حد أعلى لنوع محدد العرض",
+          "code": "#include <limits>\n#include <cstdint>\n\nint main() {\n    auto max_value = std::numeric_limits<uint32_t>::max();\n    return max_value > 0 ? 0 : 1;\n}",
+          "explanationArabic": "هذا مثال ذكي لأنه يربط حدود النوع باسم نوع محدد العرض، لا بنوع عام فقط.",
+          "relatedTokens": ["std::numeric_limits", "uint32_t", "auto"]
+        }
       ],
       "followUps": ["uint32_t", "uint64_t", "size_t"]
     },
     "std::endl": {
-      "fullProjectNoteArabic": "عندما يكبر المشروع، std::endl ينبغي أن تبقى مقصودة في نقاط تريد فيها flush فعليًا، لا كبديل افتراضي لكل سطر جديد.",
+      "fullProjectNoteArabic": "عندما يكبر المشروع، std::endl ينبغي أن تبقى مقصودة في نقاط تريد فيها تفريغًا فوريًا للتدفق، لا كبديل افتراضي لكل سطر جديد.",
       "projectStepsArabic": [
         "استخدمها عندما تحتاج رؤية الرسالة فورًا أثناء التصحيح أو عند نقاط الإقلاع الحساسة.",
-        "استبدلها بـ \\n في المسارات الكثيفة إذا لم تكن بحاجة إلى flush مباشر.",
-        "اربط اختيارك بين endl و\\n بسياسة logging مفهومة بدل التبديل العشوائي."
+        "استبدلها بـ \\n في المسارات الكثيفة إذا لم تكن بحاجة إلى تفريغ مباشر.",
+        "اربط اختيارك بين endl و\\n بسياسة تسجيل مفهومة بدل التبديل العشوائي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "سطر جديد واضح",
+          "code": "#include <iostream>\n\nint main() {\n    std::cout << \"First line\" << std::endl;\n    std::cout << \"Second line\";\n}",
+          "explanationArabic": "هذا يضيف سطرًا جديدًا ويجبر التدفق على إرسال ما فيه مباشرة.",
+          "relatedTokens": ["std::cout", "std::endl"]
+        },
+        {
+          "titleArabic": "طباعة حالة ثم الانتقال لسطر جديد",
+          "code": "#include <iostream>\n\nint main() {\n    bool ok = true;\n    std::cout << \"Ready: \" << ok << std::endl;\n}",
+          "explanationArabic": "هذا مناسب عند رسائل الحالة القصيرة التي تريد رؤيتها مباشرة في الطرفية.",
+          "relatedTokens": ["std::cout", "std::endl", "bool"]
+        },
+        {
+          "titleArabic": "مقارنة ذهنية مع \\n",
+          "code": "#include <iostream>\n\nint main() {\n    std::cout << \"Line 1\\n\";\n    std::cout << \"Line 2\" << std::endl;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن endl ليست فقط سطرًا جديدًا، بل سطر جديد مع تفريغ للتدفق.",
+          "relatedTokens": ["std::cout", "std::endl"]
+        }
       ],
       "followUps": ["std::cout", "std::stringstream"]
+    },
+    "constexpr": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، constexpr ليست زينة لغوية، بل عقدة تقول للمترجم: إذا كان هذا التعبير مستوفيًا للشروط، فثبّت نتيجته وقت الترجمة بدل تركها لوقت التشغيل.",
+      "projectStepsArabic": [
+        "استخدم constexpr عندما يكون الهدف قيمة أو دالة يفترض أن تصمد في سياقات تتطلب قيمة ثابتة وقت الترجمة.",
+        "إذا كانت القراءة أهم من الاختصار، اشرح في الاسم أن القيمة ثابتة ترجميًا لا مجرد const عادي.",
+        "افصل بين الحالات التي تحتاج قيمة ثابتة فعلاً وبين القيم التي لا بأس أن تُحسب وقت التشغيل."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ثابت يحسب قبل التشغيل",
+          "code": "constexpr int page_size() {\n    return 4 * 1024;\n}\n\nint main() {\n    constexpr int bytes = page_size();\n    return bytes;\n}",
+          "explanationArabic": "الدالة هنا صالحة للتقييم وقت الترجمة، لذلك bytes تصبح قيمة ثابتة حقيقية قبل بدء البرنامج.",
+          "relatedTokens": ["constexpr", "return"]
+        },
+        {
+          "titleArabic": "فشل لأن القيمة ليست ثابتة ترجميًا",
+          "code": "int read_from_user() {\n    return 7;\n}\n\nint main() {\n    // constexpr int value = read_from_user();\n    return 0;\n}",
+          "explanationArabic": "هذا المثال يوضح الحد الحقيقي: ليست كل دالة أو قيمة قابلة لأن تصبح constexpr. إذا كان المصدر لا يملك قيمة معروفة وقت الترجمة فلن ينجح السياق الثابت.",
+          "relatedTokens": ["constexpr"]
+        },
+        {
+          "titleArabic": "دالة ثابتة مع تتبع بسيط",
+          "code": "constexpr int square(int value) {\n    return value * value;\n}\n\nint main() {\n    constexpr int result = square(5);\n    return result;\n}",
+          "explanationArabic": "المترجم يثبت result = 25 أثناء الترجمة لأن الوسيط معروف والدالة نفسها صالحة للتقييم الثابت.",
+          "relatedTokens": ["constexpr", "return"]
+        }
+      ],
+      "followUps": ["const", "auto", "return"]
+    },
+    "class": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، class تعني أن النوع لا يكتفي بتجميع بيانات، بل يحاول حماية حالة داخلية يجب أن تبقى صحيحة بعد البناء وطوال عمر الكائن.",
+      "projectStepsArabic": [
+        "استخدم class عندما تحتاج حالة داخلية أو عقدة يجب أن تبقى صحيحة ولا تريد كشف التمثيل الداخلي بلا قيد.",
+        "إذا كانت البيانات يمكن أن تتغير مستقلّة عن بعضها ولا تحتاج invariant واضحًا، فقد تكون struct أوضح.",
+        "اجعل البناء يثبت الحالة الصحيحة منذ البداية بدل ترك الكائن ناقص المعنى بعد إنشائه."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "كائن يثبت حالة أولية صحيحة",
+          "code": "class Counter {\npublic:\n    explicit Counter(int start) : value(start) {}\n\n    int current() const {\n        return value;\n    }\n\nprivate:\n    int value;\n};\n\nint main() {\n    Counter counter(3);\n    return counter.current();\n}",
+          "explanationArabic": "الفكرة هنا ليست إخفاء البيانات فقط، بل جعل الكائن يولد ومعه حالة مفهومة منذ السطر الأول.",
+          "relatedTokens": ["class", "const"]
+        },
+        {
+          "titleArabic": "منع كسر الحالة من الخارج",
+          "code": "class Temperature {\npublic:\n    explicit Temperature(int degree) : value(degree) {}\n\n    bool is_freezing() const {\n        return value <= 0;\n    }\n\nprivate:\n    int value;\n};",
+          "explanationArabic": "القارئ يتعامل مع سلوك واضح عبر الدوال العامة، لا مع حقل خام يمكن العبث به من أي مكان.",
+          "relatedTokens": ["class", "bool", "const"]
+        },
+        {
+          "titleArabic": "ملكية واضحة داخل class",
+          "code": "#include <memory>\n\nclass Holder {\npublic:\n    Holder() : value(std::make_unique<int>(7)) {}\n\n    int current() const {\n        return *value;\n    }\n\nprivate:\n    std::unique_ptr<int> value;\n};",
+          "explanationArabic": "هذا مثال ذكي يربط class بفكرة الملكية والعمر الزمني، لا بمجرد إخفاء الحقول عن الخارج.",
+          "relatedTokens": ["class", "std::unique_ptr", "const"]
+        }
+      ],
+      "followUps": ["struct", "const", "std::unique_ptr"]
+    }
+  },
+  "deepGuides": {
+    "cpp-language-guide": {
+      "title": "دليل فهم C++ من داخل اللغة نفسها",
+      "description": "صفحة شرح تقنية عميقة تبني الفهم من المعنى الحقيقي للعناصر داخل C++ نفسها: الاسم، الدور، الحدود، وطريقة التفكير الصحيحة عند القراءة والكتابة.",
+      "kindLabel": "دليل تقني احترافي",
+      "kindNote": "ليس فهرس كلمات فقط، بل مسار يربط الاسم بالمعنى والدور وسيناريو الاستخدام والخطأ الشائع.",
+      "approach": "المحتوى هنا يبنى من معنى العنصر داخل اللغة أولًا، ثم يبسّط بالعربية التقنية من دون تفريغ المعنى أو ربطه بمكتبات خارجية.",
+      "readingHint": "اقرأ كل قسم بهذا الترتيب: المعنى الحقيقي، الفكرة الذهنية، المثال، ثم أخطاء المبتدئين. الهدف ليس حفظ الكلمات، بل رؤية كيف تغيّر العنصر نفسه في الكود.",
+      "summaryCards": [
+        {
+          "title": "ما الذي تشرحه هذه الصفحة؟",
+          "body": "تشرح العناصر كما يفهمها المترجم وكما يجب أن يراها المبتدئ ذهنيًا: ما الاسم؟ ماذا يعني داخل اللغة؟ وما الذي يتغير في الكود بسببه؟"
+        },
+        {
+          "title": "كيف بُني الشرح؟",
+          "body": "الشرح منطلق من صفحات اللغة في cppreference ومن مبادئ Core Guidelines حول العمر الزمني والملكية والبنى والأصناف، ثم أعيدت صياغته عربيًا بشكل مباشر ومهني."
+        },
+        {
+          "title": "ما الفكرة العامة؟",
+          "body": "في C++ يوجد فرق حقيقي بين الاسم والقيمة والنوع والكائن والعمر الزمني والملكية. أكثر أخطاء المبتدئ تأتي من خلط هذه الطبقات معًا."
+        }
+      ],
+      "topicGroups": [
+        {
+          "title": "مسارات فهم سريعة",
+          "links": [
+            {"id": "cpp-guide-vars-types", "label": "المتغيرات وأنواع البيانات"},
+            {"id": "cpp-guide-functions", "label": "الدوال والمعاملات والقيم المرجعة"},
+            {"id": "cpp-guide-struct-scope-lifetime", "label": "البنى والنطاق والعمر الزمني"}
+          ]
+        },
+        {
+          "title": "مسارات مترابطة",
+          "links": [
+            {"id": "cpp-guide-keywords-control", "label": "الكلمات المحجوزة وتعابير التحكم"},
+            {"id": "cpp-guide-references-pointers-const", "label": "المراجع والمؤشرات والثابتية"},
+            {"id": "cpp-guide-classes-objects", "label": "الأصناف والكائنات والبناء والهدم"}
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "cpp-guide-vars-types",
+          "title": "المتغيرات وأنواع البيانات",
+          "summary": "المتغير في C++ ليس صندوقًا سحريًا فقط، بل اسم يرتبط بكائن أو قيمة ضمن نوع محدد. النوع هنا ليس تعليقًا شكليًا، بل القواعد التي تسمح بها اللغة على ذلك الاسم: حجمًا، وتمثيلًا، وعمليات، وتحويلات.",
+          "termHints": [
+            {"label": "الكائن", "tooltip": "القيمة الموجودة فعلًا في الذاكرة أو في السجل أثناء التنفيذ، لا مجرد الاسم المكتوب في السطر."},
+            {"label": "النوع", "tooltip": "مجموعة القواعد التي تحدد شكل القيمة وما العمليات الصحيحة عليها."}
+          ],
+          "concepts": [
+            {
+              "name": "المتغير",
+              "kind": "اسم داخل الكود",
+              "whyNamed": "سُمّي متغيرًا لأن قيمته قد تتغير أثناء التنفيذ، لكن الاسم نفسه ليس هو القيمة ولا النوع.",
+              "realMeaning": "هو اسم تشير به إلى كائن أو قيمة في موضع معين من البرنامج.",
+              "languageMeaning": "المترجم يربط الاسم بنوع ونطاق وعمر زمني؛ ومن هنا تتحدد صلاحية القراءة والكتابة والتحويل.",
+              "whyUse": "نستخدمه عندما نحتاج الإمساك بحالة أو نتيجة أو قيمة وسيطة بدل إعادة كتابة التعبير في كل مرة.",
+              "mentalModel": "فكر فيه كوسم فوق شيء حقيقي: الوسم هو الاسم، والشيء تحته هو الكائن أو القيمة.",
+              "relatedTokens": ["auto", "const", "bool", "std::string"],
+              "relatedSections": [
+                {"id": "cpp-guide-references-pointers-const", "label": "المراجع والمؤشرات والثابتية"},
+                {"id": "cpp-guide-struct-scope-lifetime", "label": "النطاق والعمر الزمني"}
+              ]
+            },
+            {
+              "name": "النوع",
+              "kind": "عقدة لغوية",
+              "whyNamed": "سُمّي نوعًا لأنه يصنف القيم والكائنات بحسب شكلها وقواعد التعامل معها.",
+              "realMeaning": "هو العقد الذي يحدد ما الذي تمثله القيمة وكيف يجوز للغة أن تتعامل معها.",
+              "languageMeaning": "من النوع تأتي المقارنات الممكنة، والتحويلات، وحجم التخزين، والمعاملات المسموح بها، وطريقة بناء القيم.",
+              "whyUse": "بدون نوع لا توجد لغة تستطيع أن تميّز بين عدد ونص ومؤشر وكائن.",
+              "mentalModel": "النوع ليس اسمًا تجميليًا؛ هو قانون التشغيل الخاص بالقيمة.",
+              "relatedTokens": ["bool", "std::string", "std::vector", "auto"],
+              "relatedSections": [
+                {"id": "cpp-guide-functions", "label": "الدوال والقيم المرجعة"},
+                {"id": "cpp-guide-classes-objects", "label": "الأصناف والكائنات"}
+              ]
+            }
+          ],
+          "examples": [
+            {
+              "title": "اسم، نوع، وقيمة في سطر صغير",
+              "level": "تمهيدي",
+              "explanation": "هذا المثال يفرق بين الطبقات الثلاث التي يخلطها المبتدئ غالبًا: الاسم، والنوع، والقيمة.",
+              "whyThisExample": "لأن كثيرًا من الالتباس يبدأ من الظن أن المتغير هو القيمة نفسها، بينما القيمة شيء والاسم شيء آخر.",
+              "code": "int count = 3;\ncount = count + 1;\n\nbool ready = (count == 4);\nreturn ready ? count : 0;",
+              "walkthrough": [
+                {"label": "السطر 1", "explanation": "الاسم هو count، والنوع هو int، والقيمة الابتدائية هي 3. هذه ثلاثة أشياء مختلفة اجتمعت في تصريح واحد."},
+                {"label": "السطر 2", "explanation": "الاسم نفسه بقي كما هو، لكن القيمة تغيرت. هذا هو معنى التغير هنا، لا تغير النوع ولا تغير هوية الاسم."},
+                {"label": "السطر 4", "explanation": "اللغة تنتج قيمة منطقية من المقارنة count == 4 ثم تضعها في متغير نوعه bool."},
+                {"label": "السطر 5", "explanation": "قيمة ready لا تخزن عددًا، بل قرارًا منطقيًا يختار أي قيمة سترجعها الدالة."}
+              ],
+              "relatedTokens": ["bool", "return"],
+              "termHints": [
+                {"label": "المقارنة", "tooltip": "تعبير ينتج قيمة منطقية لا يغير العدد نفسه إلا إذا أسندت نتيجته إلى اسم."}
+              ]
+            },
+            {
+              "title": "متى يفيد auto فعلًا؟",
+              "level": "أوضح",
+              "explanation": "auto لا يجعل النوع غامضًا وقت التشغيل، بل يطلب من المترجم أن يثبته من الجهة اليمنى أثناء الترجمة.",
+              "whyThisExample": "لأن المبتدئ قد يظن أن auto تجعل المتغير بلا نوع محدد أو تجعل النوع يتغير لاحقًا، وهذا غير صحيح.",
+              "code": "#include <string>\n\nint main() {\n    auto name = std::string{\"Atlas\"};\n    auto size = name.size();\n    return static_cast<int>(size);\n}",
+              "walkthrough": [
+                {"label": "السطر 4", "explanation": "المترجم يرى أن الجهة اليمنى تنشئ std::string، فيثبت name من هذا النوع فورًا."},
+                {"label": "السطر 5", "explanation": "size ليس نوعًا حرًا أيضًا؛ بل نوع حقيقي استنتجه المترجم من ناتج size()."},
+                {"label": "الفكرة", "explanation": "auto تقلل التكرار، لكنها لا تلغي وجود النوع ولا تؤخر حسمه إلى وقت التشغيل."}
+              ],
+              "relatedTokens": ["auto", "std::string"]
+            },
+            {
+              "title": "ثبات الاسم يغيّر العقد لا القيمة فقط",
+              "level": "توضيحي إضافي",
+              "explanation": "هذا المثال يبين أن const على الاسم يعلن أن هذا المسار ليس مكانًا للتعديل، حتى لو كانت القيمة نفسها من نوع عددي بسيط.",
+              "whyThisExample": "لأن المبتدئ يربط const غالبًا بالكائنات الكبيرة أو النصوص فقط، بينما معناها اللغوي أوسع من ذلك.",
+              "code": "int main() {\n    const int max_count = 8;\n    int current = max_count;\n    current = current + 1;\n    return current;\n}",
+              "walkthrough": [
+                {"label": "max_count", "explanation": "الاسم هنا مخصص للقراءة فقط بعد التهيئة. هذا لا يجعل current ثابتًا، بل يخص هذا الاسم بعينه."},
+                {"label": "current", "explanation": "القيمة نفسها يمكن نسخها إلى اسم آخر قابل للتعديل. إذن الثبات يخص المسار اللغوي، لا الفكرة المجردة للقيمة فقط."},
+                {"label": "الفكرة", "explanation": "اللغة تميز بين قيمة ثابتة عبر اسم معين وبين قيمة أخرى أخذت نسخة منها ويمكن تعديلها بحرية."}
+              ],
+              "relatedTokens": ["const", "auto"]
+            }
+          ],
+          "commonMistakes": [
+            "الخلط بين الاسم نفسه وبين الكائن أو القيمة التي يشير إليها.",
+            "اختيار نوع عددي عام لأن السطر قصير، مع أن المعنى الحقيقي يحتاج نوعًا أوضح أو أكثر صراحة.",
+            "استخدام auto في مواضع يخفي فيها الفرق بين نسخة مستقلة ومرجع أو قيمة منطقية وعدد."
+          ],
+          "useWhen": [
+            "عندما تريد أن يكون الاسم معبرًا عن معنى قيمة حقيقية في البرنامج لا مجرد placeholder مؤقت.",
+            "عندما يكون النوع جزءًا من الفكرة نفسها ويؤثر في ما يجوز أو لا يجوز على القيمة."
+          ],
+          "avoidWhen": [
+            "لا تجعل الاسم يحمل معنى عامًّا جدًا مثل data أو item إذا كان النوع والمعنى يحتاجان تمييزًا أدق.",
+            "لا تستخدم auto إذا كان القارئ سيخسر فهمًا مهمًا عن طبيعة القيمة من دون رؤية النوع مباشرة."
+          ],
+          "relatedTokens": ["auto", "const", "bool", "std::string", "std::vector"],
+          "relatedSections": [
+            {"id": "cpp-guide-functions", "label": "انتقل إلى الدوال والقيم المرجعة"},
+            {"id": "cpp-guide-references-pointers-const", "label": "انتقل إلى المراجع والثابتية"}
+          ]
+        },
+        {
+          "id": "cpp-guide-functions",
+          "title": "الدوال والمعاملات والقيم المرجعة",
+          "summary": "الدالة في C++ ليست اسمًا لتنفيذ أمر فقط؛ بل عقد بين المستدعي والمنفذ. اسمها يعلن العمل، والمعاملات تحدد ما الذي تحتاجه، والقيمة المرجعة تحدد ما الذي تعيده بعد اكتمال العمل.",
+          "termHints": [
+            {"label": "المعامل", "tooltip": "اسم محلي داخل الدالة يحمل القيمة التي وصلت من المستدعي."},
+            {"label": "القيمة المرجعة", "tooltip": "النتيجة التي تخرج بها الدالة إلى من استدعاها."}
+          ],
+          "concepts": [
+            {
+              "name": "الدالة",
+              "kind": "وحدة سلوك",
+              "whyNamed": "سميت دالة لأنها تربط مدخلات بناتج أو أثر تنفيذي محدد.",
+              "realMeaning": "هي وحدة منطقية تجمع عملاً ذا بداية ونهاية وتعاقدًا واضحًا مع من يستدعيها.",
+              "languageMeaning": "الدالة تملك نوعًا مرجعًا وتوقيعًا، ومنه تعرف اللغة كيف تُستدعى وما الذي يُمرر إليها وما الذي يعاد منها.",
+              "whyUse": "نستخدمها لفصل الخطوات المتكررة أو لتغليف منطق له معنى مستقل.",
+              "mentalModel": "فكر فيها كباب له عقد مكتوب عليه: ماذا يدخل؟ وما الذي يخرج؟ وهل يعدل شيئًا خارجيًا أم لا؟",
+              "relatedTokens": ["return", "const", "bool"],
+              "relatedSections": [
+                {"id": "cpp-guide-vars-types", "label": "المتغيرات وأنواع البيانات"},
+                {"id": "cpp-guide-references-pointers-const", "label": "المراجع والمؤشرات"}
+              ]
+            }
+          ],
+          "examples": [
+            {
+              "title": "دالة تقرأ وتعيد نتيجة واضحة",
+              "level": "تمهيدي",
+              "explanation": "هذا المثال يوضح أن القيمة المرجعة جزء من معنى الدالة، لا مجرد طريقة للخروج منها.",
+              "whyThisExample": "لأن المبتدئ قد يكتب دوالًا تغيّر كل شيء عبر متغيرات خارجية، فيضيع معنى التعاقد.",
+              "code": "bool is_even(int value) {\n    return value % 2 == 0;\n}\n\nint main() {\n    return is_even(6) ? 0 : 1;\n}",
+              "walkthrough": [
+                {"label": "السطر 1", "explanation": "اسم الدالة is_even يعلن سؤالًا منطقيًا، لذلك النوع المرجع bool متسق مع طبيعتها."},
+                {"label": "السطر 2", "explanation": "return هنا لا تعني الخروج فقط؛ بل تعني أن ناتج الدالة هو نتيجة هذا التعبير المنطقي."},
+                {"label": "السطر 6", "explanation": "المستدعي لا يعرف التفاصيل الداخلية؛ ما يهمه هو العقد: مرر int وخذ bool."}
+              ],
+              "relatedTokens": ["bool", "return"]
+            },
+            {
+              "title": "معامل يقرأ فقط عبر const reference",
+              "level": "أوضح",
+              "explanation": "هذا المثال يبين أن اختيار نوع المعامل يعبّر عن النية: قراءة فقط، من دون نسخ ومن دون تعديل.",
+              "whyThisExample": "لأن كثيرًا من فهم الدالة في C++ يتحدد من شكل معاملاتها لا من جسمها فقط.",
+              "code": "#include <string>\n\nbool has_text(const std::string& text) {\n    return !text.empty();\n}",
+              "walkthrough": [
+                {"label": "const", "explanation": "تعني أن هذا المسار للقراءة فقط، فلا يجوز لجسم الدالة تعديل النص عبر هذا المرجع."},
+                {"label": "&", "explanation": "المرجع يعني أن الدالة لا تنشئ نسخة مستقلة من النص، بل تتعامل مع الكائن الأصلي عبر اسم محلي."},
+                {"label": "الفكرة", "explanation": "اختيار نوع المعامل جزء من معنى الدالة نفسه: ما الذي تريده من المستدعي، وما الذي تتعهد بعدم فعله؟"}
+              ],
+              "relatedTokens": ["const", "std::string", "bool"]
+            },
+            {
+              "title": "قيمة مرجعة تحمل معنى حقيقيًا",
+              "level": "توضيحي إضافي",
+              "explanation": "هذا المثال يوضح أن اختيار النوع المرجع جزء من تصميم الدالة، لا مجرد قرار نحوي.",
+              "whyThisExample": "لأن المبتدئ قد يكتب دوالًا تعيد int أو void فقط بالعادة، بينما النوع المرجع يجب أن يتسق مع السؤال الذي تجيب عنه الدالة.",
+              "code": "#include <string>\n\nstd::string choose_name(bool short_name) {\n    if (short_name) {\n        return \"Ada\";\n    }\n    return \"Arabian Atlas\";\n}",
+              "walkthrough": [
+                {"label": "اسم الدالة", "explanation": "choose_name يوحي بأنها ستعيد قيمة نصية، لا أنها ستعدل متغيرًا خارجيًا."},
+                {"label": "std::string", "explanation": "النوع المرجع يحدد مباشرة شكل النتيجة التي يتوقعها المستدعي من هذه الدالة."},
+                {"label": "الفرعان", "explanation": "كلا المسارين يعيدان نصًا من نفس النوع، فيبقى عقد الدالة ثابتًا مهما اختلف القرار الداخلي."}
+              ],
+              "relatedTokens": ["bool", "if", "return", "std::string"]
+            }
+          ],
+          "commonMistakes": [
+            "كتابة دالة باسم عام جدًا لا يكشف إن كانت تعيد نتيجة أو تحدث أثرًا جانبيًا.",
+            "إرجاع قيمة منطقية مع اسم لا يوحي بسؤال أو تحقق، فيصبح استعمال الدالة مربكًا.",
+            "تمرير كائنات كبيرة بالقيمة بينما الدالة لا تحتاج إلا إلى القراءة."
+          ],
+          "useWhen": [
+            "عندما يكون للعمل اسم واضح وعقد مستقر يمكن قراءته من التوقيع قبل قراءة الجسم.",
+            "عندما تريد عزل منطق مستقل بدل تمديده كسطور متناثرة في أكثر من موضع."
+          ],
+          "avoidWhen": [
+            "لا تحشر منطقين مختلفين في دالة واحدة فقط لتقليل عدد الأسطر.",
+            "لا تستخدم القيمة المرجعة لتمرير معانٍ كثيرة متداخلة إذا كان المعنى يحتاج نوعًا أوضح أو تقسيمًا أدق."
+          ],
+          "relatedTokens": ["return", "bool", "const", "std::string"],
+          "relatedSections": [
+            {"id": "cpp-guide-vars-types", "label": "ارجع إلى المتغيرات والأنواع"},
+            {"id": "cpp-guide-keywords-control", "label": "انتقل إلى تعابير التحكم"}
+          ]
+        },
+        {
+          "id": "cpp-guide-struct-scope-lifetime",
+          "title": "البنى والنطاق والعمر الزمني",
+          "summary": "البنية struct تجمع بيانات تنتمي إلى فكرة واحدة. لكن فهمها لا يكتمل من دون النطاق والعمر الزمني: أين يبدأ الاسم؟ ومتى يوجد الكائن فعلاً؟ ومتى يصبح المؤشر أو المرجع إليه غير صالح؟",
+          "termHints": [
+            {"label": "النطاق", "tooltip": "الجزء من الكود الذي يكون فيه الاسم مرئيًا وصالحًا للاستعمال."},
+            {"label": "العمر الزمني", "tooltip": "الفترة التي يوجد فيها الكائن نفسه وجودًا فعليًا، وهي غير مجرد رؤية الاسم."}
+          ],
+          "concepts": [
+            {
+              "name": "struct",
+              "kind": "نوع بيانات مجمّع",
+              "whyNamed": "سميت بنية لأنها تنظم عدة حقول في شكل واحد يمثل فكرة واحدة.",
+              "realMeaning": "هي طريقة لصنع نوع يضم أجزاء مترابطة بدل نشرها كأسماء منفصلة.",
+              "languageMeaning": "من منظور اللغة هي user-defined type مثل class تقريبًا، لكن الدلالة الشائعة أنها تعرض البيانات مباشرة عندما لا تحتاج invariant معقدًا.",
+              "whyUse": "نستخدمها عندما يكون اجتماع الحقول نفسه معلومة مهمة يجب أن تظهر في الكود.",
+              "mentalModel": "إذا كانت القيم تمثل فكرة واحدة، فاجعلها تعيش داخل اسم نوع واحد بدل أن تترك العلاقة بينها ضمنية.",
+              "relatedTokens": ["struct", "class", "const"],
+              "relatedSections": [
+                {"id": "cpp-guide-classes-objects", "label": "الأصناف والكائنات"},
+                {"id": "cpp-guide-vars-types", "label": "الأنواع والمتغيرات"}
+              ]
+            }
+          ],
+          "examples": [
+            {
+              "title": "بنية تجمع علاقة منطقية واحدة",
+              "level": "تمهيدي",
+              "explanation": "بدل تمرير قيمتين منفصلتين من دون رابط صريح، نجمعهما في نوع يعبر عن الفكرة نفسها.",
+              "whyThisExample": "لأن struct المفيدة ليست مجرد تجميع شكلي، بل إعلان أن هذه الحقول تنتمي إلى معنى واحد.",
+              "code": "struct Point {\n    int x;\n    int y;\n};\n\nint manhattan(const Point& p) {\n    return p.x + p.y;\n}",
+              "walkthrough": [
+                {"label": "التصريح", "explanation": "Point اسم نوع جديد. لم نعد نتعامل مع x و y كعددين عابرين، بل كجزأين من نقطة."},
+                {"label": "الدالة", "explanation": "استقبال Point أوضح من استقبال عددين منفصلين لأن العلاقة بينهما أصبحت جزءًا من التوقيع نفسه."}
+              ],
+              "relatedTokens": ["struct", "const", "return"]
+            },
+            {
+              "title": "أين يكمن الخطأ في العمر الزمني؟",
+              "level": "تحذيري",
+              "explanation": "المشكلة ليست في رؤية الاسم فقط، بل في أن الكائن المحلي ينتهي عمره عند الخروج من الدالة.",
+              "whyThisExample": "لأن كثيرًا من أخطاء C++ المؤلمة تأتي من مؤشر أو مرجع يشير إلى كائن انتهى عمره بالفعل.",
+              "code": "struct Node {\n    int value;\n};\n\nconst Node* bad_node() {\n    Node local{7};\n    return &local; // خطأ: عنوان كائن محلي سينتهي عمره\n}",
+              "walkthrough": [
+                {"label": "local", "explanation": "الاسم local مرئي فقط داخل الدالة، والكائن نفسه يعيش فقط حتى نهاية هذا النطاق."},
+                {"label": "return &local", "explanation": "المؤشر العائد لا يحفظ الكائن حيًا. هو فقط يحمل عنوانًا صار يشير إلى شيء انتهى عمره."},
+                {"label": "الفكرة", "explanation": "صلاحية الاسم ليست هي صلاحية الكائن. قد يختفي الاسم وينتهي الكائن، بينما يبقى لديك عنوان غير صالح."}
+              ],
+              "relatedTokens": ["struct", "const", "return"]
+            },
+            {
+              "title": "النطاق يخص الاسم لا الفكرة كلها",
+              "level": "توضيحي إضافي",
+              "explanation": "هذا المثال يفصل بين اسم محلي ينتهي داخل الكتلة وبين كائن آخر يحمل نسخة من معناه خارجها.",
+              "whyThisExample": "لأن المبتدئ يخلط كثيرًا بين اختفاء الاسم واختفاء كل أثر للفكرة التي كان يمثلها.",
+              "code": "int main() {\n    int result = 0;\n    {\n        int local = 5;\n        result = local;\n    }\n    return result;\n}",
+              "walkthrough": [
+                {"label": "local", "explanation": "هذا الاسم محلي داخل الكتلة فقط. بعد نهايتها يختفي الاسم والكائن المرتبط به."},
+                {"label": "result = local", "explanation": "هنا لا نحتفظ بعنوان local ولا مرجعًا إليه؛ بل ننسخ قيمته فقط إلى كائن آخر عمره أطول."},
+                {"label": "الفكرة", "explanation": "اختفاء الاسم المحلي لا يمنع بقاء أثر قيمته إذا نُقل بطريقة صحيحة إلى كائن آخر مستقل."}
+              ],
+              "relatedTokens": ["return"]
+            }
+          ],
+          "commonMistakes": [
+            "جمع حقول لا تنتمي إلى فكرة واحدة داخل struct واحدة لأن هذا يبدو سريعًا الآن.",
+            "إرجاع مؤشر أو مرجع إلى كائن محلي انتهى عمره بخروج الدالة.",
+            "الخلط بين رؤية الاسم داخل النطاق وبين حياة الكائن نفسه."
+          ],
+          "useWhen": [
+            "عندما تكون العلاقة بين الحقول نفسها جزءًا من الفكرة التي تريد إيصالها في الكود.",
+            "عندما تريد نقل مجموعة بيانات واحدة بين الدوال من دون تفكيكها إلى معاملات متناثرة."
+          ],
+          "avoidWhen": [
+            "لا تستخدم struct لتخبئة سلوك معقد وحالة داخلية تحتاج invariant محمي؛ عندها class أوضح.",
+            "لا تحتفظ بعناوين أو مراجع إلى كائنات محلية إذا كان عمرها سينتهي قبل الاستعمال التالي."
+          ],
+          "relatedTokens": ["struct", "class", "const"],
+          "relatedSections": [
+            {"id": "cpp-guide-references-pointers-const", "label": "المراجع والمؤشرات والثابتية"},
+            {"id": "cpp-guide-classes-objects", "label": "الأصناف والبناء والهدم"}
+          ]
+        },
+        {
+          "id": "cpp-guide-keywords-control",
+          "title": "الكلمات المحجوزة وتعابير التحكم",
+          "summary": "الكلمات المحجوزة في C++ لا تضيف زخرفة لغوية؛ بل تغيّر تفسير السطر نفسه. if تغيّر مسار التنفيذ، return تنهي الدالة مع نتيجة، وconstexpr تغيّر زمن حسم القيمة إذا استوفت الشروط.",
+          "termHints": [
+            {"label": "تعبير ثابت", "tooltip": "تعبير تستطيع اللغة حسمه وقت الترجمة إذا استوفى القيود المطلوبة لذلك."}
+          ],
+          "concepts": [
+            {
+              "name": "if",
+              "kind": "تعليمة تحكم",
+              "whyNamed": "اسمها يعبّر مباشرة عن الشرط: إذا تحقق هذا فافعل ذاك.",
+              "realMeaning": "هي نقطة تفرع في التنفيذ مبنية على قيمة منطقية.",
+              "languageMeaning": "اللغة تقرأ شرطًا ينتج bool ثم تختار فرعًا واحدًا من الفروع الممكنة.",
+              "whyUse": "عندما يكون المطلوب قرارًا منطقيًا حقيقيًا بين مسارين مختلفين.",
+              "mentalModel": "فكر فيها كبوابة قرار، لا كوسيلة لرص السطور بلا سبب.",
+              "relatedTokens": ["if", "bool", "return"],
+              "relatedSections": [
+                {"id": "cpp-guide-functions", "label": "الدوال والقيم المرجعة"}
+              ]
+            },
+            {
+              "name": "constexpr",
+              "kind": "محدد وقت الترجمة",
+              "whyNamed": "الاسم مركب من constant expression لأنه يعلن محاولة إنتاج تعبير ثابت وقت الترجمة.",
+              "realMeaning": "هو تصريح بأن القيمة أو الدالة مصممة لتعمل في سياقات تتطلب ثباتًا ترجميًا عندما تكون الشروط مستوفاة.",
+              "languageMeaning": "المترجم يحاول تقييم التعبير أثناء الترجمة بدل تأجيله لوقت التشغيل إذا كان السياق والقواعد يسمحان بذلك.",
+              "whyUse": "لتثبيت قيم أو دوال تحتاجها اللغة في سياقات ثابتة، ولتقليل العمل الذي لا داعي لتأجيله إلى وقت التشغيل.",
+              "mentalModel": "لا تفكر فيه كـ const أقوى فقط، بل كإعلان عن زمن الحساب وشروطه.",
+              "relatedTokens": ["constexpr", "const", "return"],
+              "relatedSections": [
+                {"id": "cpp-guide-vars-types", "label": "المتغيرات والأنواع"}
+              ]
+            }
+          ],
+          "examples": [
+            {
+              "title": "if ليست مجرد تنسيق جمالي",
+              "level": "تمهيدي",
+              "explanation": "هذا المثال يوضح أن if تبني قرارًا برمجيًا حقيقيًا على أساس قيمة منطقية.",
+              "whyThisExample": "لأن المبتدئ قد يقرأ if ككتلة تنسيق فقط، بينما جوهرها أنها تتطلب شرطًا ينتج معنى منطقيًا.",
+              "code": "int clamp_to_zero(int value) {\n    if (value < 0) {\n        return 0;\n    }\n    return value;\n}",
+              "walkthrough": [
+                {"label": "الشرط", "explanation": "value < 0 تعبير ينتج bool. من هذه النتيجة فقط تقرر if أي فرع سيعمل."},
+                {"label": "return الأولى", "explanation": "تعني أن الدالة انتهت هنا لأن الشرط تحقق، وليس مجرد القفز إلى السطر التالي."},
+                {"label": "الفكرة", "explanation": "if تربط قرار التنفيذ بقيمة منطقية صريحة. إذا غاب هذا المعنى فالكتلة نفسها بلا سبب."}
+              ],
+              "relatedTokens": ["if", "return", "bool"]
+            },
+            {
+              "title": "constexpr وتثبيت النتيجة قبل التشغيل",
+              "level": "أوضح",
+              "explanation": "هذا المثال يوضح الوجه الناجح البسيط لـ constexpr: دالة يمكن للمترجم أن يحسم ناتجها مباشرة.",
+              "whyThisExample": "لأن فهم constexpr يحتاج رؤية ما الذي يحسم قبل التشغيل وما الذي يبقى لوقت التنفيذ.",
+              "code": "constexpr int square(int value) {\n    return value * value;\n}\n\nint main() {\n    constexpr int result = square(5);\n    return result;\n}",
+              "walkthrough": [
+                {"label": "الدالة", "explanation": "جسم الدالة بسيط ويعتمد فقط على وسيط معروف، لذلك يمكن للمترجم تفسيره وقت الترجمة."},
+                {"label": "result", "explanation": "السياق يطلب قيمة ثابتة ترجميًا، لذلك square(5) تُحسب قبل التشغيل وتثبت إلى 25."},
+                {"label": "الفكرة", "explanation": "constexpr تتعلق بزمن الحسم وشروطه، لا بزخرفة الاسم أو تحسين الأداء فقط."}
+              ],
+              "relatedTokens": ["constexpr", "return"]
+            },
+            {
+              "title": "فشل السياق الثابت عند كسر الشرط",
+              "level": "تحذيري",
+              "explanation": "هذا المثال يبين أن constexpr ليست وعدًا سحريًا، بل تعمل فقط إذا كانت القيم نفسها قابلة للحسم وقت الترجمة.",
+              "whyThisExample": "لأن طلبك شدد على المعنى الفعلي لا العام، وهذا القسم يحتاج رؤية الحد الفاصل بين النجاح والفشل.",
+              "code": "int read_runtime() {\n    return 9;\n}\n\nint main() {\n    // constexpr int value = read_runtime();\n    return 0;\n}",
+              "walkthrough": [
+                {"label": "read_runtime", "explanation": "هذه الدالة ليست من مسار التقييم الثابت هنا، لذلك لا تملك قيمة معروفة وقت الترجمة في هذا السياق."},
+                {"label": "السطر المعلّق", "explanation": "لو فُعّل هذا السطر فسيفشل لأن الجهة اليمنى لا تحقق شرط القيمة الثابتة وقت الترجمة."},
+                {"label": "الفكرة", "explanation": "التسمية constexpr لا تعفيك من قواعد constant expression؛ يجب أن تكون المدخلات والسياق صالحين فعلًا."}
+              ],
+              "relatedTokens": ["constexpr", "return"]
+            }
+          ],
+          "commonMistakes": [
+            "كتابة if فوق شرط مبهم لا يمثل سؤالًا منطقيًا واضحًا في عقل القارئ.",
+            "الظن أن constexpr تعني أن أي قيمة ستصبح ثابتة تلقائيًا حتى لو لم تكن معروفة وقت الترجمة.",
+            "قراءة return كأمر خروج فقط، مع تجاهل أنها تحدد أيضًا ناتج الدالة."
+          ],
+          "useWhen": [
+            "استخدم if عندما يكون هناك قرار منطقي حقيقي بين مسارين.",
+            "استخدم constexpr عندما تحتاج قيمة أو دالة يمكن للغة حسمها في سياق ثابت وقت الترجمة."
+          ],
+          "avoidWhen": [
+            "لا تستخدم if فقط لأنك لا تريد تقسيم المنطق إلى دالة أو تعبير أوضح.",
+            "لا تستخدم constexpr في مواضع لا تملك فيها المعطيات شروط الثبات الترجمي."
+          ],
+          "relatedTokens": ["if", "return", "constexpr", "const"],
+          "relatedSections": [
+            {"id": "cpp-guide-functions", "label": "ارجع إلى الدوال"},
+            {"id": "cpp-guide-vars-types", "label": "ارجع إلى المتغيرات والأنواع"}
+          ]
+        },
+        {
+          "id": "cpp-guide-references-pointers-const",
+          "title": "المراجع والمؤشرات والثابتية",
+          "summary": "هذه من أكثر مناطق C++ التي تُساء قراءتها. المرجع ليس مؤشرًا متنكرًا، والمؤشر ليس ملكية دائمًا، وconst لا تعني أن كل شيء صار ثابتًا مطلقًا. كل عنصر من هذه العناصر يغيّر نوع العلاقة مع الكائن المستهدف.",
+          "termHints": [
+            {"label": "الإحالة", "tooltip": "اسم آخر للكائن نفسه عبر مرجع، لا كائن مستقل جديد."},
+            {"label": "الملكية", "tooltip": "المسؤولية عن بقاء الكائن حيًا وعن تحرير المورد عند انتهاء الحاجة إليه."}
+          ],
+          "concepts": [
+            {
+              "name": "المرجع",
+              "kind": "ربط باسم موجود",
+              "whyNamed": "سمي مرجعًا لأنه يحيلك إلى كائن موجود أصلًا بدل أن يحمل عنوانًا منفصلًا تتعامل معه مباشرة.",
+              "realMeaning": "هو اسم بديل لكائن موجود، يُستعمل غالبًا لتمريره إلى دالة من دون نسخه.",
+              "languageMeaning": "المرجع يجب أن يرتبط بكائن صالح عند إنشائه، وبعدها تتعامل معه كما لو كنت تتعامل مع الكائن الأصلي عبر اسم آخر.",
+              "whyUse": "لتجنب النسخ مع الإبقاء على صياغة استعمال مباشرة أوضح من المؤشرات في كثير من التواقيع.",
+              "mentalModel": "ليس صندوقًا يحمل عنوانًا؛ بل هو نافذة أخرى على الشيء نفسه.",
+              "relatedTokens": ["const", "std::string"],
+              "relatedSections": [
+                {"id": "cpp-guide-functions", "label": "الدوال والمعاملات"},
+                {"id": "cpp-guide-struct-scope-lifetime", "label": "العمر الزمني"}
+              ]
+            },
+            {
+              "name": "المؤشر",
+              "kind": "قيمة عنوان",
+              "whyNamed": "سمي مؤشرًا لأنه يشير إلى عنوان كائن أو إلى غيابه، لا لأنه يملك الكائن دائمًا.",
+              "realMeaning": "هو قيمة تمثل مكانًا يمكن أن يوجد فيه كائن ما، وقد يكون هذا المكان غائبًا عبر nullptr.",
+              "languageMeaning": "يمكن للمؤشر أن يتغير ليشير إلى هدف آخر أو إلى لا شيء، ويمكن فحصه قبل فك الإشارة.",
+              "whyUse": "عندما تكون قابلية الغياب أو إعادة الإسناد جزءًا من المعنى.",
+              "mentalModel": "فكر فيه كعنوان قابل للحمل، لا كالكائن نفسه ولا كدليل على الملكية وحده.",
+              "relatedTokens": ["nullptr", "const", "std::unique_ptr"],
+              "relatedSections": [
+                {"id": "cpp-guide-struct-scope-lifetime", "label": "النطاق والعمر الزمني"},
+                {"id": "cpp-guide-classes-objects", "label": "الأصناف والملكية"}
+              ]
+            }
+          ],
+          "examples": [
+            {
+              "title": "مرجع ثابت للقراءة فقط",
+              "level": "تمهيدي",
+              "explanation": "هذا الشكل شائع لأنه يجمع بين الوضوح والكفاءة: لا نسخة جديدة، ولا تعديل مسموح عبر هذا المسار.",
+              "whyThisExample": "لأن const reference من أول العقود التي يجب أن يقرأها المبتدئ بثقة داخل تواقيع الدوال.",
+              "code": "#include <string>\n\nbool is_empty(const std::string& text) {\n    return text.empty();\n}",
+              "walkthrough": [
+                {"label": "const", "explanation": "يعني أن هذا المسار لا يسمح بالتعديل على النص عبر هذا الاسم."},
+                {"label": "&", "explanation": "يعني أن text ليس نسخة من السلسلة، بل اسم محلي يشير إلى الكائن الأصلي نفسه."},
+                {"label": "النتيجة", "explanation": "الدالة تستفيد من عدم النسخ ومن وضوح نية القراءة فقط في آن واحد."}
+              ],
+              "relatedTokens": ["const", "std::string", "bool"]
+            },
+            {
+              "title": "nullptr ومعنى الغياب الحقيقي",
+              "level": "أوضح",
+              "explanation": "هذا المثال يوضح أن nullptr ليست رقمًا خاصًا، بل صياغة لغوية تعني أن المؤشر لا يشير إلى كائن صالح الآن.",
+              "whyThisExample": "لأن الخلط بين المؤشرات والأعداد الخاصة من أكثر مصادر الالتباس المبكر في C++.",
+              "code": "int read_value(const int* value) {\n    if (value == nullptr) {\n        return 0;\n    }\n    return *value;\n}",
+              "walkthrough": [
+                {"label": "const int*", "explanation": "المؤشر هنا يشير إلى int للقراءة فقط. التغيير ممنوع عبر هذا المسار، لكن المؤشر نفسه يمكن أن يكون غائبًا."},
+                {"label": "value == nullptr", "explanation": "هذا فحص عن غياب الهدف، لا عن قيمة int تساوي صفرًا."},
+                {"label": "*value", "explanation": "فك الإشارة صحيح فقط بعد التأكد أن المؤشر لا يساوي nullptr."}
+              ],
+              "relatedTokens": ["const", "nullptr", "if", "return"]
+            },
+            {
+              "title": "مرجع يجب أن يكون موجودًا من البداية",
+              "level": "توضيحي إضافي",
+              "explanation": "هذا المثال يبرز الفارق الذهني بين المرجع والمؤشر: المرجع لا يعبّر عن غياب، بل عن ارتباط مباشر بكائن موجود.",
+              "whyThisExample": "لأن فهم هذا الفرق يحدد متى تختار reference ومتى تختار pointer.",
+              "code": "int increment(int& value) {\n    value = value + 1;\n    return value;\n}\n\nint main() {\n    int number = 4;\n    return increment(number);\n}",
+              "walkthrough": [
+                {"label": "int& value", "explanation": "المرجع هنا لا يحتاج فحص nullptr لأنه لا يمثل غيابًا؛ بل اسمًا آخر لكائن موجود."},
+                {"label": "التعديل", "explanation": "التغيير يقع على number نفسه لأن المرجع ليس نسخة مستقلة."},
+                {"label": "الفكرة", "explanation": "إذا كان الغياب احتمالًا حقيقيًا فالمؤشر أوضح؛ وإذا كان المطلوب تعاملًا مباشرًا مع كائن موجود فالمرجع أوضح."}
+              ],
+              "relatedTokens": ["return"]
+            }
+          ],
+          "commonMistakes": [
+            "اعتبار المؤشر دليل ملكية تلقائيًا، مع أن المؤشر الخام غالبًا مجرد وصول لا أكثر.",
+            "الخلط بين const على المؤشر وconst على البيانات المشار إليها.",
+            "فك إشارة مؤشر قبل التحقق من أنه لا يساوي nullptr."
+          ],
+          "useWhen": [
+            "استخدم المرجع عندما تحتاج اسمًا آخر لكائن موجود يجب ألا يكون غائبًا.",
+            "استخدم المؤشر عندما تكون قابلية الغياب أو إعادة الإسناد جزءًا من المعنى، أو عندما تريد تمثيل عنوان صريح."
+          ],
+          "avoidWhen": [
+            "لا تستخدم المؤشر إذا لم تكن تحتاج غيابًا ولا إعادة ربط وكان المرجع أو القيمة أوضح.",
+            "لا تفترض أن const تعني أن الكائن مستحيل تغييره من كل المسارات؛ فهي تقيد هذا المسار فقط."
+          ],
+          "relatedTokens": ["const", "nullptr", "std::unique_ptr", "std::string"],
+          "relatedSections": [
+            {"id": "cpp-guide-functions", "label": "ارجع إلى تواقيع الدوال"},
+            {"id": "cpp-guide-struct-scope-lifetime", "label": "ارجع إلى العمر الزمني"}
+          ]
+        },
+        {
+          "id": "cpp-guide-classes-objects",
+          "title": "الأصناف والكائنات والبناء والهدم",
+          "summary": "class في C++ ليست كلمة مساوية لـ struct مع private فقط. دلالتها الذهنية الأهم أنها نوع يملك حالة داخلية يجب أن تبقى صحيحة. من هنا تأتي أهمية البناء constructor والهدم destructor والعمر الزمني والملكية.",
+          "termHints": [
+            {"label": "invariant", "tooltip": "شرط منطقي يجب أن يبقى صحيحًا داخل الكائن بعد البناء وخلال الاستعمال الطبيعي."},
+            {"label": "البناء", "tooltip": "المرحلة التي يولد فيها الكائن بحالة أولية صحيحة."},
+            {"label": "الهدم", "tooltip": "المرحلة التي ينتهي فيها عمر الكائن وتتحرر معها موارده المملوكة."}
+          ],
+          "concepts": [
+            {
+              "name": "class",
+              "kind": "نوع سلوكي/بياني",
+              "whyNamed": "الاسم يشير إلى تصنيف أعلى يجمع التمثيل الداخلي والعمليات والعقد في نوع واحد.",
+              "realMeaning": "هي طريقة لبناء نوع يملك تمثيلًا داخليًا وسلوكًا وحدودًا واضحة لا يجب كسرها من الخارج.",
+              "languageMeaning": "من منظور اللغة هي user-defined type مثل struct تقريبًا، لكن convention القراءة هنا أقوى: هناك حالة داخلية ينبغي حمايتها.",
+              "whyUse": "عندما لا يكفي تجميع البيانات، بل تحتاج نوعًا يضمن حالة صحيحة ويحدد كيف يتعامل الخارج معه.",
+              "mentalModel": "الكائن الجيد ليس صندوق بيانات عامًّا؛ بل وحدة صغيرة تحمل معنى وحالة وقواعد استعمال.",
+              "relatedTokens": ["class", "const", "std::unique_ptr"],
+              "relatedSections": [
+                {"id": "cpp-guide-struct-scope-lifetime", "label": "struct والعمر الزمني"},
+                {"id": "cpp-guide-references-pointers-const", "label": "المراجع والملكية"}
+              ]
+            }
+          ],
+          "examples": [
+            {
+              "title": "الباني يثبت حالة صحيحة منذ البداية",
+              "level": "تمهيدي",
+              "explanation": "الفائدة الحقيقية من الباني ليست التجميل، بل جعل الكائن يخرج من أول لحظة بحالة مفهومة يمكن لبقية الدوال الاعتماد عليها.",
+              "whyThisExample": "لأن Core Guidelines تشدد على أن الباني هو النقطة الطبيعية لتثبيت invariant.",
+              "code": "class Counter {\npublic:\n    explicit Counter(int start) : value(start) {}\n\n    int current() const {\n        return value;\n    }\n\nprivate:\n    int value;\n};",
+              "walkthrough": [
+                {"label": "Counter(int start)", "explanation": "هذا هو موضع تثبيت الحالة الأولية للكائن. من هنا يبدأ عمره بمعنى واضح."},
+                {"label": "current() const", "explanation": "هذه الدالة تعلن أنها تقرأ الحالة من دون تعديلها، فيصبح عقد الاستعمال أوضح."},
+                {"label": "private", "explanation": "إخفاء الحقل ليس هدفًا جماليًا فقط، بل حماية للحالة حتى لا يكسرها الخارج مباشرة."}
+              ],
+              "relatedTokens": ["class", "const"]
+            },
+            {
+              "title": "الهدم والملكية التلقائية",
+              "level": "أوضح",
+              "explanation": "هذا المثال يوضح الفكرة الذهنية الحديثة: إذا كان الكائن يملك موردًا، فالأفضل أن يعبَّر عن هذه الملكية بنوع يدير العمر الزمني تلقائيًا.",
+              "whyThisExample": "لأن كثيرًا من فهم class الحديث في C++ يرتبط بالملكية والعمر الزمني لا بكتابة destructor يدوي دائمًا.",
+              "code": "#include <memory>\n\nclass Owner {\npublic:\n    Owner() : value(std::make_unique<int>(7)) {}\n\n    int current() const {\n        return *value;\n    }\n\nprivate:\n    std::unique_ptr<int> value;\n};",
+              "walkthrough": [
+                {"label": "std::unique_ptr<int>", "explanation": "هذا يعلن ملكية واضحة: المورد له صاحب واحد، وسيُحرر تلقائيًا عند انتهاء عمر Owner."},
+                {"label": "غياب delete اليدوي", "explanation": "الهدم هنا ما زال موجودًا، لكن التعبير عنه أصبح ضمن النوع المالك نفسه بدل شيفرة تفكيك يدوية معرضة للنسيان."},
+                {"label": "الفكرة", "explanation": "الهدم الجيد ليس استعراضًا لشيفرة تحرير الموارد، بل تصميمًا يجعل التحرير جزءًا طبيعيًا من العمر الزمني."}
+              ],
+              "relatedTokens": ["class", "std::unique_ptr", "const"]
+            },
+            {
+              "title": "متى تكون struct أوضح من class؟",
+              "level": "مقارنة ذهنية",
+              "explanation": "هذا المثال لا يغيّر القاعدة اللغوية، لكنه يحسن الفكرة الذهنية: إذا كانت الحقول مستقلة ولا توجد حالة داخلية محمية، فالبنية الأبسط أوضح.",
+              "whyThisExample": "لأن المبتدئ يحتاج مقارنة مباشرة لاكتساب الحس التصميمي الصحيح، لا مجرد حفظ الفرق النحوي.",
+              "code": "struct Size {\n    int width;\n    int height;\n};\n\nint area(const Size& size) {\n    return size.width * size.height;\n}",
+              "walkthrough": [
+                {"label": "Size", "explanation": "هذه البيانات تمثل فكرة واحدة، لكنها لا تفرض حالة داخلية مخفية أو invariant معقدًا."},
+                {"label": "الوصول المباشر", "explanation": "قراءة الحقول مباشرة هنا لا تكسر معنى النوع، لذلك struct كافية وواضحة."},
+                {"label": "المقارنة", "explanation": "إذا احتجت لاحقًا حماية التمثيل الداخلي أو فرض شروط على البناء، فحينها يصبح class أنسب."}
+              ],
+              "relatedTokens": ["struct", "class", "const", "return"]
+            }
+          ],
+          "commonMistakes": [
+            "استخدام class فقط لأن الكود يبدو أكثر احترافية، من دون وجود حالة داخلية أو عقدة تستحق ذلك.",
+            "ترك الكائن يولد ناقص المعنى ثم الاعتماد على استدعاءات لاحقة لإصلاحه.",
+            "ربط الملكية بمؤشرات خامة مبهمة تجعل العمر الزمني غير واضح."
+          ],
+          "useWhen": [
+            "استخدم class عندما يكون الحفاظ على حالة صحيحة جزءًا من معنى النوع نفسه.",
+            "استخدم الباني لتثبيت الحالة الأولية، واستخدم الأنواع المالكة لتوضيح من يتحمل مسؤولية المورد."
+          ],
+          "avoidWhen": [
+            "لا تحول كل تجميع حقول بسيط إلى class إذا لم توجد حالة داخلية أو سلوك يحتاج حماية.",
+            "لا تترك الكائن بحاجة إلى تهيئة يدوية مشتتة بعد إنشائه حتى يصبح صالحًا."
+          ],
+          "relatedTokens": ["class", "struct", "const", "std::unique_ptr"],
+          "relatedSections": [
+            {"id": "cpp-guide-struct-scope-lifetime", "label": "ارجع إلى struct والعمر الزمني"},
+            {"id": "cpp-guide-references-pointers-const", "label": "ارجع إلى الملكية والمؤشرات"}
+          ]
+        }
+      ],
+      "officialReferences": [
+        {"label": "cppreference: C++", "href": "https://en.cppreference.com/"},
+        {"label": "cppreference: C", "href": "https://cppreference.com/w/c/index.html"},
+        {"label": "CppCoreGuidelines", "href": "https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines"},
+        {"label": "cppreference: language", "href": "https://en.cppreference.com/w/cpp/language"}
+      ],
+      "referencesNote": "هذه الروابط هي المراجع الأساسية التي بُني عليها هذا الشرح: صفحات اللغة والعقود المعيارية من cppreference، مع التوجيهات المفاهيمية الخاصة بالبنى والحالة والعمر الزمني والملكية من CppCoreGuidelines."
     }
   }
 }

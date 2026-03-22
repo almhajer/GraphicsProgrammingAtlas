@@ -13,6 +13,7 @@
     syncRouteHistory: () => {},
     scrollMainContentToTop: () => {},
     clearActiveSidebarItems: () => {},
+    collapseAllSidebarClusters: () => {},
     collapseAllSidebarSections: () => {},
     renderEntityIcon: () => '',
     escapeHtml: (v) => String(v || ''),
@@ -370,6 +371,7 @@
     api.syncRouteHistory('site-usage', options);
     api.scrollMainContentToTop();
     api.clearActiveSidebarItems();
+    api.collapseAllSidebarClusters();
     api.collapseAllSidebarSections();
   }
 
@@ -426,6 +428,7 @@
       + '<div class="home-hero-actions">'
       + '<button onclick="showSiteUsageGuide()" class="quick-btn">' + icon('file', 'ui-codicon list-icon', 'استخدام الموقع') + ' استخدام الموقع</button>'
       + '<button onclick="showTutorial(\'introduction\')" class="quick-btn primary">' + icon('tutorial', 'ui-codicon list-icon', 'درس') + ' ابدأ من المقدمة</button>'
+      + '<button onclick="showCppIndex()" class="quick-btn">' + icon('cpp', 'ui-codicon list-icon', 'C++') + ' افتح C++</button>'
       + '<button onclick="showCommandsIndex()" class="quick-btn">' + icon('command', 'ui-codicon list-icon', 'دالة') + ' تصفح Vulkan</button>'
       + '<button onclick="showSdl3Index()" class="quick-btn">' + icon('sdl3', 'ui-codicon list-icon', 'SDL3') + ' افتح SDL3</button>'
       + '<button onclick="showImguiIndex()" class="quick-btn">' + icon('imgui', 'ui-codicon list-icon', 'Dear ImGui') + ' افتح Dear ImGui</button>'
@@ -478,6 +481,7 @@
     api.syncRouteHistory('', options);
     api.scrollMainContentToTop();
     api.clearActiveSidebarItems();
+    api.collapseAllSidebarClusters();
     api.collapseAllSidebarSections();
   }
 

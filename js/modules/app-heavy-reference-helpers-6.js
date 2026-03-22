@@ -10,7 +10,9 @@ let GLSL_EXAMPLE_TOOLTIP_OVERRIDES = Object.freeze({});
 let CPP_REFERENCE_ENRICHMENT = Object.freeze({});
 let CPP_REFERENCE_OFFICIAL_LINKS = Object.freeze({});
 let CPP_REFERENCE_GUIDES = Object.freeze({});
+let CPP_DEEP_GUIDES = Object.freeze({});
 let CPP_REFERENCE_TOOLTIP_OVERRIDES = Object.freeze({});
+let CPP_HOME_DATA = Object.freeze({});
 let appDataRuntime = null;
 let sdl3PackageDataRuntime = null;
 let appLoadRuntime = null;
@@ -128,6 +130,9 @@ appDataRuntime = createAppDataRuntime
       invalidateSearchIndex: () => window.__ARABIC_VULKAN_SEARCH__?.invalidateSearchIndex?.(),
       resetClickNavigationDerivedCaches: () => resetClickNavigationDerivedCaches(),
       getDynamicSearchSubfilters: () => ({
+        cpp: Object.fromEntries(
+          (CPP_HOME_DATA?.sections || []).map((section) => [section.key, section.title])
+        ),
         glsl: Object.fromEntries(
           Object.entries(glslReferenceSections || {}).map(([key, section]) => [key, section.title])
         ),
@@ -159,6 +164,7 @@ appDataRuntime = createAppDataRuntime
       applyCppReferenceOfficialLinksData: (data = {}) => applyCppReferenceOfficialLinksData(data),
       applyCppReferenceGuideData: (data = {}) => applyCppReferenceGuideData(data),
       applyCppReferenceTooltipOverrideData: (data = {}) => applyCppReferenceTooltipOverrideData(data),
+      applyCppHomeData: (data = {}) => applyCppHomeData(data),
       applyVulkanSearchTables: (data = {}) => applyVulkanSearchTables(data),
       buildFileReferenceData: () => buildFileReferenceData(),
       applyImguiStaticData: (staticData = {}) => applyImguiStaticData(staticData),
@@ -1127,6 +1133,16 @@ const glslHomeRuntime = createGlslHomeRuntime
       glslReferenceSections
     })
   : null;
+const cppHomeRuntime = createCppHomeRuntime
+  ? createCppHomeRuntime({
+      buildCppReferenceItem: (...args) => buildCppReferenceItem(...args),
+      buildCppReferenceTooltip: (...args) => buildCppReferenceTooltip(...args),
+      cppHomeConfig: () => CPP_HOME_DATA,
+      escapeAttribute,
+      renderCodicon,
+      uiSegmentLoaded
+    })
+  : null;
 const sdl3HomeRuntime = createSdl3HomeRuntime
   ? createSdl3HomeRuntime({
       SDL3_HOME_FALLBACK_PACKAGE_META,
@@ -1148,6 +1164,7 @@ const sdl3HomeRuntime = createSdl3HomeRuntime
 const homeShellRuntime = createHomeShellRuntime
   ? createHomeShellRuntime({
       buildCmakeHomeLibraryModel: (...args) => buildCmakeHomeLibraryModel(...args),
+      buildCppHomeLibraryModel: (...args) => buildCppHomeLibraryModel(...args),
       buildGlslHomeLibraryModel: (...args) => buildGlslHomeLibraryModel(...args),
       buildImguiHomeLibraryModel: (...args) => buildImguiHomeLibraryModel(...args),
       buildSdl3HomeLibraryModel: (...args) => buildSdl3HomeLibraryModel(...args),
@@ -1619,6 +1636,7 @@ const renderExternalReferenceBridge = (...args) => callGlobalOrFallback(
   },
   ...args
 );
+const renderProjectReferenceLinkBridge = createNamedBridge('renderProjectReferenceLink', () => '');
 const buildEnumValueMeaningFallbackBridge = (...args) => callGlobalOrFallback('buildEnumValueMeaningFallback', () => '', ...args);
 const buildEnumValueUsageFallbackBridge = (...args) => callGlobalOrFallback('buildEnumValueUsageFallback', () => '', ...args);
 const buildEnumValueBenefitFallbackBridge = (...args) => callGlobalOrFallback('buildEnumValueBenefitFallback', () => '', ...args);
@@ -1731,6 +1749,7 @@ const helper6BootstrapReferenceBridges = Object.freeze({
   getCppReferenceIconType: getCppReferenceIconTypeBridge,
   renderTutorialInfoGrid,
   renderPracticalText: createNamedBridge('renderPracticalText', (value = '') => String(value || '')),
+  renderProjectReferenceLink: renderProjectReferenceLinkBridge,
   renderCppReferenceRelatedLinks: renderCppReferenceRelatedLinksBridge,
   renderCppReferenceOfficialSection: renderCppReferenceOfficialSectionBridge,
   getExternalReferenceUrl: getExternalReferenceUrlBridge
@@ -1919,8 +1938,10 @@ async function bootApplication() {
         currentView = view;
       },
       syncRouteHistory,
+      scheduleRecentVisitCapture,
       scrollMainContentToTop,
       clearActiveSidebarItems,
+      collapseAllSidebarClusters,
       collapseAllSidebarSections,
       renderEntityIcon,
       renderDocCodeContainer,
@@ -1951,10 +1972,12 @@ async function bootApplication() {
       isImguiLoaded: () => Boolean(uiSegmentLoaded.imgui),
       getTutorialContent: () => tutorialContent,
       renderCppReferenceProjectGuidance: (item) => getCppReferenceUtilsRuntime()?.renderCppReferenceProjectGuidance?.(item) || '',
+      getCppHomeConfig: () => CPP_HOME_DATA,
       getCppReferenceData: () => getAppTextValue('cppReferenceData'),
       getCppReferenceEnrichmentData: () => CPP_REFERENCE_ENRICHMENT,
       getCppReferenceOfficialLinks: () => CPP_REFERENCE_OFFICIAL_LINKS,
       getCppReferenceGuides: () => CPP_REFERENCE_GUIDES,
+      getCppDeepGuides: () => CPP_DEEP_GUIDES,
       getCppReferenceTooltipOverrides: () => CPP_REFERENCE_TOOLTIP_OVERRIDES,
       getCppKeywordTokens: () => cppKeywordTokens,
       getSdl3ArabicWordMap: () => SDL3_ARABIC_WORD_MAP,
@@ -1965,6 +1988,8 @@ async function bootApplication() {
       ensureAllSdl3PackageData
     });
     await ensureHeavyHelper4RuntimeLoaded();
+    await ensureUiSegment('cppHome');
+    populateCppList();
     refreshDynamicSearchSubFilterConfig();
     initTooltipSystem();
     initSidebarNavigation();
@@ -2236,6 +2261,9 @@ function handleHashChange() {
     case 'cpp':
       showCppReference(decodeURIComponent(name), options);
       break;
+    case 'cpp-index':
+      showCppIndex(decodeURIComponent(name), options);
+      break;
     case 'home':
       showHomePage(options);
       break;
@@ -2284,6 +2312,8 @@ window.populateCmakeList = populateCmakeList;
 window.showCmakeIndex = showCmakeIndex;
 window.showCmakeKindIndex = showCmakeKindIndex;
 window.showCmakeEntity = showCmakeEntity;
+window.populateCppList = populateCppList;
+window.showCppIndex = showCppIndex;
 window.showVulkanIndex = showVulkanIndex;
 window.toggleSdl3PackageKindSection = toggleSdl3PackageKindSection;
 window.isSdl3PackageDataLoaded = isSdl3PackageDataLoaded;

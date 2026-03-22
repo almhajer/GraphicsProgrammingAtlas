@@ -5546,6 +5546,7 @@ const renderVulkanReadyExampleCard = (...args) => vulkanReadyExamplePageRuntime?
 const renderVulkanReadyExamplesSection = (...args) => vulkanReadyExamplePageRuntime?.renderVulkanReadyExamplesSection(...args) || '';
 const getVulkanHomeRecentItems = (...args) => vulkanHomeRuntime?.getVulkanHomeRecentItems(...args) || [];
 const buildVulkanHomeLibraryModel = (...args) => vulkanHomeRuntime?.buildVulkanHomeLibraryModel(...args) || null;
+const buildCppHomeLibraryModel = (...args) => cppHomeRuntime?.buildCppHomeLibraryModel(...args) || null;
 const getCmakeHomeRecentItems = (...args) => cmakeHomeRuntime?.getCmakeHomeRecentItems(...args) || [];
 const buildCmakeHomeLibraryModel = (...args) => cmakeHomeRuntime?.buildCmakeHomeLibraryModel(...args) || null;
 const getHomeSdl3PackageKeys = (...args) => sdl3HomeRuntime?.getHomeSdl3PackageKeys(...args) || [];

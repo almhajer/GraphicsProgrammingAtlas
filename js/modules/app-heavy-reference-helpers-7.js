@@ -2,7 +2,7 @@
 
 // ArabicVulkan - موقع توثيق وتعليم Vulkan باللغة العربية
 
-const APP_ASSET_VERSION = '20260323phase483a';
+const APP_ASSET_VERSION = '20260323phase514a';
 const APP_BRAND_TITLE = 'ا. المرجع العربي للبرمجة';
 const APP_TEXT_SOURCE = 'data/ui/app-text.json';
 const PASSIVE_SCROLL_CAPTURE_OPTIONS = {capture: true, passive: true};
@@ -238,6 +238,9 @@ const {
 const {
   createVulkanHomeRuntime
 } = window.__ARABIC_VULKAN_VULKAN_HOME_RUNTIME__ || {};
+const {
+  createCppHomeRuntime
+} = window.__ARABIC_VULKAN_CPP_HOME_RUNTIME__ || {};
 const {
   createCmakeHomeRuntime
 } = window.__ARABIC_VULKAN_CMAKE_HOME_RUNTIME__ || {};

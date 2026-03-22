@@ -90,6 +90,9 @@
     const applyCppReferenceTooltipOverrideData = typeof options.applyCppReferenceTooltipOverrideData === 'function'
       ? options.applyCppReferenceTooltipOverrideData
       : () => {};
+    const applyCppHomeData = typeof options.applyCppHomeData === 'function'
+      ? options.applyCppHomeData
+      : () => {};
     const applyVulkanSearchTables = typeof options.applyVulkanSearchTables === 'function'
       ? options.applyVulkanSearchTables
       : () => {};
@@ -679,6 +682,11 @@
         return;
       }
 
+      if (segment === 'cppHome') {
+        applyCppHomeData(payload || {});
+        return;
+      }
+
       if (segment === 'imgui') {
         await loadImguiJsonManifest(payload);
         return;
@@ -790,6 +798,7 @@
         || segment === 'cppReferenceOfficialLinks'
         || segment === 'cppReferenceGuides'
         || segment === 'cppReferenceTooltips'
+        || segment === 'cppHome'
         || segment === 'vulkanSearch'
         || segment === 'sdl3Tooltip') {
         return !!payload && typeof payload === 'object';

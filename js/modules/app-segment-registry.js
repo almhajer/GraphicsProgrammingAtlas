@@ -41,6 +41,7 @@
     cppReferenceOfficialLinks: {path: 'data/ui/cpp-reference-official-links.json', format: 'json'},
     cppReferenceGuides: {path: 'data/ui/cpp-reference-guides.json', format: 'json'},
     cppReferenceTooltips: {path: 'data/ui/cpp-reference-tooltip-overrides.json', format: 'json'},
+    cppHome: {path: 'data/ui/cpp-home.json', format: 'json'},
     imgui: {path: 'data/ui/imgui/index.json', format: 'json'},
     gameui: {path: 'data/ui/game-ui/index.json', format: 'json'},
     vulkanSearch: {path: 'data/ui/vulkan-search-tables.json', format: 'json'}
