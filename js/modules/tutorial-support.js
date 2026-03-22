@@ -596,6 +596,221 @@
     `;
   }
 
+  const UNIFIED_TUTORIAL_SECTION_TITLES = new Set([
+    'المكوّنات الأساسية',
+    'تدفق التنفيذ في إطار واحد',
+    'هيكل تطبيقي مبسّط',
+    'ما يجب تثبيته قبل الانتقال',
+    'الانتقال إلى الدرس التالي'
+  ]);
+
+  function slugifyTutorialSectionTitle(title = '') {
+    return String(title || '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\u0600-\u06FFa-zA-Z0-9_-]+/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      || 'section';
+  }
+
+  function createTutorialFieldValue(html = '') {
+    const value = global.document.createElement('div');
+    value.className = 'tutorial-table-field-value';
+    value.innerHTML = html;
+    return value;
+  }
+
+  function convertTutorialTableToCards(table) {
+    if (!table || table.dataset.tutorialCardified === 'true') {
+      return;
+    }
+
+    const headerCells = Array.from(table.querySelectorAll('thead th'));
+    const bodyRows = Array.from(table.querySelectorAll('tbody tr'));
+    const fallbackRows = Array.from(table.querySelectorAll(':scope > tr'));
+    const headers = headerCells.length
+      ? headerCells.map((header) => header.textContent.trim())
+      : Array.from((bodyRows[0] || fallbackRows[0])?.querySelectorAll('th') || []).map((header) => header.textContent.trim());
+    const rows = bodyRows.length
+      ? bodyRows.slice(headers.length ? 1 : 0)
+      : fallbackRows.slice(headers.length ? 1 : 0);
+    if (!rows.length || headers.length < 2) {
+      return;
+    }
+
+    const grid = global.document.createElement('div');
+    grid.className = 'tutorial-table-card-grid';
+
+    rows.forEach((row) => {
+      const cells = Array.from(row.querySelectorAll('td'));
+      if (!cells.length) {
+        return;
+      }
+
+      const card = global.document.createElement('article');
+      card.className = 'tutorial-table-item-card parameter-detail-card';
+
+      const header = global.document.createElement('div');
+      header.className = 'tutorial-table-item-header';
+
+      const title = global.document.createElement('h4');
+      title.className = 'tutorial-table-item-title';
+      title.innerHTML = cells[0]?.innerHTML || '';
+
+      header.appendChild(title);
+      card.appendChild(header);
+
+      const fields = global.document.createElement('div');
+      fields.className = 'tutorial-table-item-fields';
+
+      cells.slice(1).forEach((cell, index) => {
+        const field = global.document.createElement('div');
+        field.className = 'tutorial-table-field';
+
+        const label = global.document.createElement('div');
+        label.className = 'tutorial-table-field-label';
+        label.textContent = headers[index + 1] || `تفصيل ${index + 1}`;
+
+        field.appendChild(label);
+        field.appendChild(createTutorialFieldValue(cell.innerHTML || ''));
+        fields.appendChild(field);
+      });
+
+      card.appendChild(fields);
+      grid.appendChild(card);
+    });
+
+    table.dataset.tutorialCardified = 'true';
+    table.replaceWith(grid);
+  }
+
+  function convertTutorialListToCards(list, title = '') {
+    if (!list || list.dataset.tutorialCardified === 'true') {
+      return;
+    }
+
+    const items = Array.from(list.querySelectorAll(':scope > li'));
+    if (!items.length) {
+      return;
+    }
+
+    const grid = global.document.createElement('div');
+    const isFlowSection = title === 'تدفق التنفيذ في إطار واحد';
+    grid.className = isFlowSection
+      ? 'tutorial-list-card-grid tutorial-list-card-grid-flow'
+      : 'tutorial-list-card-grid';
+
+    items.forEach((item, index) => {
+      const card = global.document.createElement('article');
+      card.className = 'tutorial-list-card';
+
+      const badge = global.document.createElement('div');
+      badge.className = 'tutorial-list-card-badge';
+      badge.textContent = isFlowSection ? `الخطوة ${index + 1}` : `${index + 1}`;
+
+      const body = global.document.createElement('div');
+      body.className = 'tutorial-list-card-body';
+      body.innerHTML = item.innerHTML || '';
+
+      card.appendChild(badge);
+      card.appendChild(body);
+      grid.appendChild(card);
+    });
+
+    list.dataset.tutorialCardified = 'true';
+    list.replaceWith(grid);
+  }
+
+  function normalizeTutorialSectionContent(section, title = '') {
+    const body = section?.querySelector('.tutorial-section-card-body');
+    if (!body) {
+      return;
+    }
+
+    Array.from(body.children).forEach((child) => {
+      if (child.matches?.('table.params-table')) {
+        convertTutorialTableToCards(child);
+      }
+
+      if (child.matches?.('ul.best-practices-list, ol.best-practices-list')) {
+        convertTutorialListToCards(child, title);
+      }
+    });
+
+    if (title === 'هيكل تطبيقي مبسّط') {
+      body.classList.add('tutorial-section-card-body-code');
+    }
+
+    if (title === 'الانتقال إلى الدرس التالي') {
+      section.classList.add('tutorial-section-card-next-step');
+      const firstParagraph = body.querySelector(':scope > p');
+      if (firstParagraph) {
+        firstParagraph.classList.add('tutorial-next-step-text');
+      }
+    }
+  }
+
+  function normalizeTutorialLessonSections(root = global.document) {
+    if (!root?.querySelector) {
+      return;
+    }
+
+    const tutorialBody = root.querySelector('.tutorial-content .tutorial-body');
+    if (!tutorialBody || tutorialBody.dataset.sectionCardsApplied === 'true') {
+      return;
+    }
+
+    const children = Array.from(tutorialBody.children);
+    children.forEach((child) => {
+      if (child.tagName !== 'H3') {
+        return;
+      }
+
+      const title = child.textContent.trim();
+      if (!UNIFIED_TUTORIAL_SECTION_TITLES.has(title)) {
+        return;
+      }
+
+      const section = global.document.createElement('section');
+      section.className = `tutorial-section-card parameter-detail-card tutorial-section-${slugifyTutorialSectionTitle(title)}`;
+      section.dataset.sectionTitle = title;
+
+      const header = global.document.createElement('div');
+      header.className = 'tutorial-section-card-header';
+
+      const heading = global.document.createElement('h3');
+      heading.textContent = title;
+      header.appendChild(heading);
+
+      const body = global.document.createElement('div');
+      body.className = 'tutorial-section-card-body';
+
+      const nodesToMove = [];
+      let cursor = child.nextSibling;
+      while (cursor) {
+        const next = cursor.nextSibling;
+        if (cursor.nodeType === global.Node.ELEMENT_NODE && /^H[1-3]$/.test(cursor.tagName)) {
+          break;
+        }
+        nodesToMove.push(cursor);
+        cursor = next;
+      }
+
+      section.appendChild(header);
+      section.appendChild(body);
+      child.replaceWith(section);
+
+      nodesToMove.forEach((node) => {
+        body.appendChild(node);
+      });
+
+      normalizeTutorialSectionContent(section, title);
+    });
+
+    tutorialBody.dataset.sectionCardsApplied = 'true';
+  }
+
   function enhanceTutorialExamples(root = global.document) {
     if (!root?.querySelectorAll) {
       return;
@@ -652,6 +867,7 @@
 
   global.__ARABIC_VULKAN_TUTORIAL_SUPPORT__ = {
     configure,
+    normalizeTutorialLessonSections,
     prepareTutorialCodeContainers,
     activateTutorialLazyCodeBlocks,
     refreshTutorialCodePresentation,

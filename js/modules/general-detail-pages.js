@@ -6,6 +6,7 @@
     getTutorialContent: () => ({}),
     renderEntityIcon: () => '',
     renderTutorialLeadMedia: () => '',
+    normalizeTutorialLessonSections: () => {},
     prepareTutorialCodeContainers: () => {},
     highlightCode: () => {},
     activateTutorialLazyCodeBlocks: () => {},
@@ -182,6 +183,7 @@
       </div>
     `;
 
+    api.normalizeTutorialLessonSections(content);
     api.prepareTutorialCodeContainers(content);
     api.highlightCode(content);
     api.activateTutorialLazyCodeBlocks(content);

@@ -254,6 +254,20 @@ function findVariableTypeItemByName(rawName) {
   return lookup.get(String(rawName || '').trim()) || lookup.get(lookupName) || null;
 }
 
+function resolveVulkanOpaqueTypeReferenceName(rawType) {
+  const typeName = normalizeLookupName(rawType);
+  if (!/^Vk[A-Za-z0-9_]+_T$/.test(typeName)) {
+    return typeName;
+  }
+
+  const publicTypeName = typeName.replace(/_T$/, '');
+  if (!/^Vk[A-Za-z0-9_]+$/.test(publicTypeName)) {
+    return typeName;
+  }
+
+  return publicTypeName;
+}
+
 function getReturnValuesArray(item) {
   if (!item || !item.returnValues) return [];
   if (Array.isArray(item.returnValues)) return item.returnValues;
@@ -261,7 +275,7 @@ function getReturnValuesArray(item) {
 }
 
 function getTypeNavigation(rawType) {
-  const typeName = normalizeLookupName(rawType);
+  const typeName = resolveVulkanOpaqueTypeReferenceName(rawType);
   if (!typeName.startsWith('Vk')) return null;
 
   if (findItemInCategories(vulkanData.structures, typeName)) {
@@ -280,7 +294,7 @@ function getTypeNavigation(rawType) {
 }
 
 function renderTypeReference(rawType) {
-  const typeName = normalizeLookupName(rawType);
+  const typeName = resolveVulkanOpaqueTypeReferenceName(rawType);
   const navigation = getTypeNavigation(rawType);
 
   if (!navigation) {
@@ -2324,6 +2338,7 @@ function buildAnalysisVariableEntityTooltip(variable, currentItem = null) {
 function buildRawTypeTooltip(rawType, item) {
   const raw = String(rawType || '').trim();
   const typeName = normalizeLookupName(raw);
+  const resolvedTypeName = resolveVulkanOpaqueTypeReferenceName(typeName);
   const primitiveType = describePrimitiveTooltipType(raw);
 
   if (/^\s*const\s+Vk[A-Za-z0-9_]+\s*\*$/.test(raw)) {
@@ -2338,10 +2353,19 @@ function buildRawTypeTooltip(rawType, item) {
   if (primitiveType) {
     return finalizeShortVulkanTooltip(`نوع يمثل ${primitiveType}`, `نوع يمثل ${primitiveType}.`);
   }
-  if (findItemInCategories(vulkanData.enums, typeName)) {
-    return buildEnumItemTooltip(findItemInCategories(vulkanData.enums, typeName));
+  if (findItemInCategories(vulkanData.enums, resolvedTypeName)) {
+    return buildEnumItemTooltip(findItemInCategories(vulkanData.enums, resolvedTypeName));
   }
-  const typeItem = typeName ? findTypeItemByName(typeName) : null;
+  const typeItem = resolvedTypeName ? findTypeItemByName(resolvedTypeName) : null;
+  if (typeItem && resolvedTypeName !== typeName) {
+    const publicTooltip = typeItem.isSynthetic
+      ? finalizeShortVulkanTooltip(
+        `${typeName} هو الاسم البنيوي الداخلي للمقبض ${resolvedTypeName}`,
+        `${typeName} هو اسم البنية الداخلية المعتمة التي تُعرّف الترويسة عبرها المقبض ${resolvedTypeName}.`
+      )
+      : buildTypeEntityTooltip(typeItem);
+    return `${typeName} هو اسم البنية الداخلية المعتمة التي تُعرّف الترويسة عبرها المقبض ${resolvedTypeName}.\n${publicTooltip}`;
+  }
   if (typeItem && !typeItem.isSynthetic) {
     return buildTypeEntityTooltip(typeItem);
   }
@@ -4397,26 +4421,40 @@ function renderMembersMeaningSection(item) {
   return `
     <section class="members-section">
       <h2>🧠 معنى الأعضاء وكيف تُقرأ</h2>
-      <table class="params-table">
-        <thead>
-          <tr>
-            <th>العضو</th>
-            <th>النوع</th>
-            <th>وظيفته</th>
-            <th>كيف يظهر في الأمثلة</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${item.members.map((member) => `
-            <tr>
-              <td><code>${member.name}</code></td>
-              <td>${renderTypeReference(member.type)}</td>
-              <td>${member.description || `يمثل الحقل ${member.name} جزءاً من بيانات ${item.name}.`}</td>
-              <td>${/^p[A-Z]/.test(member.name) ? 'غالباً يظهر كمؤشر إلى بيانات أو مصفوفة، ويجب أن يتوافق مع نوع البيانات وعدد العناصر المرتبط به.' : /Count$/.test(member.name) ? 'يظهر عادة مع مصفوفة أو حقل مؤشر آخر ويجب أن يطابق عدد العناصر الحقيقي.' : 'يظهر كحقل يحدد سلوك البنية أو يحمل قيمة مباشرة تحتاجها الدالة.'}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
+      <div class="members-meaning-card-grid">
+        ${item.members.map((member, index) => {
+          const roleText = member.description || `يمثل الحقل ${member.name} جزءاً من بيانات ${item.name} التي ستقرأها Vulkan أو الدوال المرتبطة بهذه البنية.`;
+          const exampleText = /^p[A-Z]/.test(member.name)
+            ? 'غالباً يظهر كمؤشر إلى بيانات أو مصفوفة، لذلك يجب أن يتوافق مع نوع البيانات الحقيقي ومع عدد العناصر أو الـ stride المرتبط به.'
+            : /Count$/.test(member.name)
+              ? 'يظهر عادة مع مصفوفة أو حقل مؤشر آخر، ويجب أن يطابق عدد العناصر الفعلي حتى لا تُقرأ الذاكرة بشكل خاطئ.'
+              : 'يظهر كحقل يحدد سلوك البنية أو يحمل قيمة مباشرة تعتمد عليها الدالة أو البنية التالية في السلسلة.';
+          return `
+            <article class="content-card prose-card parameter-detail-card members-meaning-card">
+              <div class="parameter-card-head">
+                <div class="parameter-card-order">العضو ${index + 1}</div>
+                <div class="parameter-card-title-wrap">
+                  <h3 class="parameter-card-name parameter-card-code"><code>${member.name}</code></h3>
+                  <div class="parameter-card-type-row">
+                    <span class="parameter-card-type-label">النوع</span>
+                    <div class="parameter-card-type">${renderTypeReference(member.type)}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="parameter-card-fields">
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">وظيفته</div>
+                  <div class="parameter-card-field-value">${roleText}</div>
+                </div>
+                <div class="parameter-card-field parameter-card-field-wide">
+                  <div class="parameter-card-field-label">كيف يظهر في الأمثلة</div>
+                  <div class="parameter-card-field-value">${exampleText}</div>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('')}
+      </div>
     </section>
   `;
 }

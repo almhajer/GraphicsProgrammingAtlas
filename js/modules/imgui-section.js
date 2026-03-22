@@ -201,7 +201,7 @@ window.__ARABIC_VULKAN_IMGUI_SECTION__ = (() => {
         </div>`;
 
     content.innerHTML = `
-      <div class="reference-unified-detail-page">
+      <div class="reference-unified-detail-page imgui-reference-detail-page">
       ${pageHeaderLayout}
 
       <section class="info-section">

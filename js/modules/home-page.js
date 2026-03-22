@@ -245,8 +245,11 @@
     return decPat.test(src) ? src : String(value || '');
   }
 
-  const _allowedTags = new Set(['A', 'B', 'BR', 'CODE', 'EM', 'KBD', 'MARK', 'SMALL', 'SPAN', 'STRONG']);
-  const _allowedAttrs = { A: new Set(['href', 'rel', 'target']) };
+  const _allowedTags = new Set(['A', 'B', 'BR', 'CODE', 'EM', 'IMG', 'KBD', 'MARK', 'SMALL', 'SPAN', 'STRONG']);
+  const _allowedAttrs = {
+    A: new Set(['href', 'rel', 'target']),
+    IMG: new Set(['src', 'alt', 'class', 'loading', 'decoding'])
+  };
 
   function renderSiteUsageInlineHtml(value) {
     const src = String(value || '').trim();
@@ -283,6 +286,14 @@
           node.setAttribute('target', '_blank');
           node.setAttribute('rel', 'noopener noreferrer');
         }
+      } else if (tag === 'IMG') {
+        const src = (node.getAttribute('src') || '').trim();
+        if (!/^assets\/material-icon-theme\/[a-z0-9_-]+\.svg$/i.test(src)) {
+          node.replaceWith(document.createTextNode(node.getAttribute('alt') || ''));
+        } else {
+          node.setAttribute('loading', 'lazy');
+          node.setAttribute('decoding', 'async');
+        }
       }
     }
 
@@ -292,15 +303,26 @@
   function renderTutorialListFallback(items, ordered) {
     if (!items || !items.length) return '';
     const tag = ordered ? 'ol' : 'ul';
-    let h = '<' + tag + '>';
+    const className = ordered ? 'site-usage-guide-list site-usage-guide-list-ordered' : 'site-usage-guide-list';
+    let h = '<' + tag + ' class="' + className + '">';
     for (let i = 0; i < items.length; i++) {
       h += '<li>' + renderSiteUsageInlineHtml(items[i]) + '</li>';
     }
     return h + '</' + tag + '>';
   }
 
+  function getSiteUsageSectionClass(title) {
+    const key = String(title || '').trim();
+    if (key === 'لماذا نستخدم زر نسخ الكود؟') return 'site-usage-section-copy';
+    if (key === 'عند طلب فكرة أو تعديل') return 'site-usage-section-request';
+    if (key === 'روابط الدعم في المستودع') return 'site-usage-section-support';
+    if (key === 'إضافات من حساب Arabic-language') return 'site-usage-section-extensions';
+    return '';
+  }
+
   function renderSiteUsageGuideSection(section) {
-    return '<section class="home-section">'
+    const extraClass = getSiteUsageSectionClass(section.title);
+    return '<section class="home-section' + (extraClass ? ' ' + extraClass : '') + '">'
       + '<h2>' + renderSiteUsageInlineHtml(section.title) + '</h2>'
       + '<div class="content-card prose-card">'
       + renderTutorialListFallback(section.bullets, !!section.ordered)

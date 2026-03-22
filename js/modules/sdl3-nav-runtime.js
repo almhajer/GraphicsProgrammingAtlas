@@ -370,7 +370,9 @@ function getSdl3PackageItems(packageKey, dataKey) {
     return sdl3PackageItemsCache.get(cacheKey);
   }
 
-  const items = getSdl3EntityItems(dataKey).filter((item) => item.packageKey === packageKey);
+  const items = typeof externalGetSdl3PackageItems === 'function'
+    ? externalGetSdl3PackageItems(packageKey, dataKey)
+    : getSdl3EntityItems(dataKey).filter((item) => item.packageKey === packageKey);
   sdl3PackageItemsCache.set(cacheKey, items);
   return items;
 }

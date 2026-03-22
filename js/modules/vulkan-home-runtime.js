@@ -98,8 +98,22 @@
       return items;
     }
 
+    function buildHomeSidebarSectionAction(sectionId = '') {
+      const normalizedId = String(sectionId || '').trim();
+      if (!normalizedId) {
+        return 'showHomePage()';
+      }
+
+      return `showHomePage(); setTimeout(() => expandSidebarSectionById('${escapeAttribute(normalizedId)}'), 30);`;
+    }
+
     function buildVulkanHomeLibraryModel() {
       const metrics = getVulkanHomeMetrics();
+      const functionsSectionAction = buildHomeSidebarSectionAction('functions-list');
+      const macrosSectionAction = buildHomeSidebarSectionAction('macros-list');
+      const constantsSectionAction = buildHomeSidebarSectionAction('constants-list');
+      const enumsSectionAction = buildHomeSidebarSectionAction('enums-list');
+      const variablesSectionAction = buildHomeSidebarSectionAction('variables-list');
 
       return {
         key: 'vulkan',
@@ -111,8 +125,8 @@
         statusNote: 'هذا المرجع متاح مباشرة منذ التحميل الأول، وبقية البيانات الثقيلة في المشروع تبقى عند الطلب.',
         totalCount: metrics.totalCommands + metrics.totalStructures + metrics.totalEnums + metrics.totalConstants + metrics.totalVariables + metrics.exampleCount + metrics.tutorialCount + metrics.fileCount,
         headerActions: [
-          {label: 'الدوال', iconType: 'command', action: 'showCommandsIndex()', primary: true},
-          {label: 'الثوابت', iconType: 'constant', action: 'showConstantsIndex()'},
+          {label: 'الدوال', iconType: 'command', action: functionsSectionAction, primary: true},
+          {label: 'الثوابت', iconType: 'constant', action: constantsSectionAction},
           {label: 'أمثلة فولكان', iconType: 'command', action: 'showVulkanExamplesIndex()'},
           {label: 'الدروس', iconType: 'tutorial', action: 'showTutorialsIndex()'},
           {label: 'الملفات', iconType: 'file', action: 'showFilesIndex()'}
@@ -122,22 +136,22 @@
             count: metrics.totalCommands,
             iconType: 'command',
             title: 'الدوال',
-            note: 'استدعاءات واجهة Vulkan الأساسية مع مدخل مباشر إلى شرح كل دالة.',
-            action: 'showCommandsIndex()'
+            note: 'يبقي هذا القسم الدوال داخل واجهة Vulkan الحالية ويفتح فرعها الجانبي بدل القفز إلى فهرس منفصل.',
+            action: functionsSectionAction
           },
           {
             count: metrics.totalMacros,
             iconType: 'macro',
             title: 'الماكرو',
             note: 'يبقي هذا القسم الماكرو داخل واجهة Vulkan الحالية ويفتح فرعها الجانبي بدل إنشاء صفحة فهرس مستقلة.',
-            action: "showHomePage(); setTimeout(() => expandSidebarSectionById('macros-list'), 30);"
+            action: macrosSectionAction
           },
           {
             count: metrics.totalConstants,
             iconType: 'constant',
             title: 'الثوابت',
-            note: 'يفتح الثوابت والقيم المرجعية التي تغيّر السلوك التنفيذي أو تصف حالات التشغيل.',
-            action: 'showConstantsIndex()'
+            note: 'يبقي هذا القسم الثوابت والقيم المرجعية داخل واجهة Vulkan الحالية ويفتح فرعها الجانبي مباشرة.',
+            action: constantsSectionAction
           },
           {
             count: metrics.totalStructures,
@@ -150,15 +164,15 @@
             count: metrics.totalEnums,
             iconType: 'enum',
             title: 'التعدادات',
-            note: 'قيم التشغيل والحالات الرسمية التي تحدد المسار التنفيذي في واجهة Vulkan.',
-            action: 'showEnumsIndex()'
+            note: 'يبقي هذا القسم التعدادات داخل واجهة Vulkan الحالية ويفتح فرعها الجانبي بدل فتح فهرس منفصل.',
+            action: enumsSectionAction
           },
           {
             count: metrics.totalVariables,
             iconType: 'variable',
             title: 'المتغيرات',
-            note: 'مقابض وأنواع أساسية ومؤشرات دوال متكررة في الأمثلة والعقود الرسمية.',
-            action: 'showVariablesIndex()'
+            note: 'يبقي هذا القسم المقابض والأنواع الخاصة داخل واجهة Vulkan الحالية ويفتح فرعها الجانبي مباشرة.',
+            action: variablesSectionAction
           },
           {
             count: metrics.tutorialCount,
@@ -185,11 +199,11 @@
         quickLinks: [
           {label: 'المفاهيم الأساسية', iconType: 'tutorial', action: `showTutorial('introduction')`, primary: true},
           {label: 'GLFW3 + Vulkan', iconType: 'tutorial', action: `showTutorial('glfw3')`},
-          {label: 'الدوال', iconType: 'command', action: 'showCommandsIndex()'},
-          {label: 'الماكرو', iconType: 'macro', action: "showHomePage(); setTimeout(() => expandSidebarSectionById('macros-list'), 30);"},
+          {label: 'الدوال', iconType: 'command', action: functionsSectionAction},
+          {label: 'الماكرو', iconType: 'macro', action: macrosSectionAction},
           {label: 'أول مثلث', iconType: 'tutorial', action: `showTutorial('triangle')`},
           {label: 'أمثلة فولكان', iconType: 'command', action: 'showVulkanExamplesIndex()'},
-          {label: 'الثوابت الشائعة', iconType: 'constant', action: 'showConstantsIndex()'},
+          {label: 'الثوابت الشائعة', iconType: 'constant', action: constantsSectionAction},
           {label: 'كل الدروس', iconType: 'tutorial', action: 'showTutorialsIndex()'},
           {label: 'ملفات SDK', iconType: 'file', action: 'showFilesIndex()'}
         ],

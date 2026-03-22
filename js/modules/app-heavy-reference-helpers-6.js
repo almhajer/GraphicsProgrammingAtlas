@@ -1717,6 +1717,7 @@ const helper6BootstrapReferenceBridges = Object.freeze({
   highlightSingleCodeBlock: createNamedBridge('highlightSingleCodeBlock', () => {}),
   closeActiveSectionVideoModal: createNamedBridge('closeActiveSectionVideoModal', () => {}),
   renderTutorialLeadMedia: createNamedBridge('renderTutorialLeadMedia', () => ''),
+  normalizeTutorialLessonSections: createNamedBridge('normalizeTutorialLessonSections', () => {}),
   prepareTutorialCodeContainers: createNamedBridge('prepareTutorialCodeContainers', () => {}),
   activateTutorialLazyCodeBlocks: createNamedBridge('activateTutorialLazyCodeBlocks', () => {}),
   enhanceTutorialExamples: createNamedBridge('enhanceTutorialExamples', () => {}),

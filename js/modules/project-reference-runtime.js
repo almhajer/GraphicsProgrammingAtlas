@@ -163,26 +163,45 @@
       return appendTooltipContext(baseTooltip, buildReferenceTooltipContextLine(name, options));
     }
 
+    function formatCallableReferenceLabel(text = '', navigation = null) {
+      const raw = String(text || '').trim();
+      if (!raw || raw.includes('(')) {
+        return raw;
+      }
+      if (!navigation) {
+        return raw;
+      }
+      if (navigation.type === 'command') {
+        return `${raw}()`;
+      }
+      if (navigation.type === 'cmake' && /^(command|commands)$/i.test(String(navigation.kind || '').trim())) {
+        return `${raw}(...)`;
+      }
+      return raw;
+    }
+
     function renderContextualTokenLink(token = '', {
       href = '#',
       onclick = '',
       tooltip = '',
       iconType = '',
+      navigation = null,
       className = 'related-link code-token',
       title = '',
       staticElement = false
     } = {}) {
       const text = String(token || '').trim();
       if (!text) return '';
+      const displayText = formatCallableReferenceLabel(text, navigation);
 
       const content = iconType
-        ? safeRenderEntityLabel(text, iconType, {code: true})
-        : escapeHtml(text);
+        ? safeRenderEntityLabel(displayText, iconType, {code: true})
+        : escapeHtml(displayText);
       const decoratedClassName = iconType && !className.includes('entity-link-with-icon')
         ? `${className} entity-link-with-icon`
         : className;
       const escapedTooltip = escapeAttribute(tooltip);
-      const escapedAria = escapeAttribute(`${text}: ${String(tooltip || text).replace(/\n/g, ' - ')}`);
+      const escapedAria = escapeAttribute(`${displayText}: ${String(tooltip || text).replace(/\n/g, ' - ')}`);
       const titleAttr = title ? ` title="${escapeAttribute(title)}"` : '';
 
       if (staticElement) {
@@ -242,7 +261,8 @@
           onclick: options.onclick || `scrollToAnchor('${options.anchorId}')`,
           tooltip,
           iconType: options.iconType || '',
-          className
+          className,
+          navigation
         });
       }
 
@@ -254,6 +274,7 @@
           tooltip,
           iconType: options.iconType || '',
           className: staticClassName,
+          navigation,
           staticElement: true
         });
       }
@@ -262,6 +283,7 @@
         tooltip,
         iconType: options.iconType || '',
         className,
+        navigation,
         onclick: options.onclick || navigation.command
       });
     }
@@ -323,6 +345,7 @@
         return renderContextualTokenLink(name, {
           tooltip: fallbackTooltip,
           className: 'related-link related-link-static',
+          navigation,
           staticElement: true
         });
       }
@@ -333,6 +356,7 @@
         tooltip,
         iconType,
         className: 'related-link',
+        navigation,
         onclick: navigation.command
       });
     }

@@ -251,36 +251,40 @@ function renderSdl3EnumValues(item) {
   return `
     <section class="info-section">
       <h2>قيم التعداد</h2>
-      <table class="params-table">
-        <thead>
-          <tr>
-            <th>الاسم</th>
-            <th>القيمة</th>
-            <th>الشرح بالعربي</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${item.values.map((entry) => {
-            const resolvedDescription = resolveSdl3EnumValueDescriptionText(entry, item);
-            const tooltipItem = findSdl3ItemByKind('constant', entry.name) || {
-              name: entry.name,
-              kind: 'constant',
-              packageDisplayName: item.packageDisplayName,
-              categoryTitle: item.categoryTitle,
-              description: resolvedDescription,
-              parentEnum: item.name,
-              value: entry.value
-            };
-            return `
-            <tr id="${escapeAttribute(getSdl3ConstantAnchorId(entry.name))}">
-              <td><a href="#" class="related-link code-token" data-tooltip="${escapeAttribute(buildSdl3ReferenceTooltip(tooltipItem))}" onclick="showSdl3Constant('${escapeAttribute(entry.name)}'); return false;"><code dir="ltr">${escapeHtml(entry.name)}</code></a></td>
-              <td><code dir="ltr">${escapeHtml(entry.value || '—')}</code></td>
-              <td>${linkSdl3DocText(resolvedDescription)}</td>
-            </tr>
+      <div class="sdl3-enum-values-card-grid">
+        ${item.values.map((entry, index) => {
+          const resolvedDescription = resolveSdl3EnumValueDescriptionText(entry, item);
+          const tooltipItem = findSdl3ItemByKind('constant', entry.name) || {
+            name: entry.name,
+            kind: 'constant',
+            packageDisplayName: item.packageDisplayName,
+            categoryTitle: item.categoryTitle,
+            description: resolvedDescription,
+            parentEnum: item.name,
+            value: entry.value
+          };
+          return `
+            <article class="content-card prose-card parameter-detail-card sdl3-enum-value-card" id="${escapeAttribute(getSdl3ConstantAnchorId(entry.name))}">
+              <div class="parameter-card-head">
+                <div class="parameter-card-order">القيمة ${index + 1}</div>
+                <div class="parameter-card-title-wrap">
+                  <h3 class="parameter-card-name parameter-card-code"><a href="#" class="related-link code-token" data-tooltip="${escapeAttribute(buildSdl3ReferenceTooltip(tooltipItem))}" onclick="showSdl3Constant('${escapeAttribute(entry.name)}'); return false;"><code dir="ltr">${escapeHtml(entry.name)}</code></a></h3>
+                  <div class="parameter-card-type-row">
+                    <span class="parameter-card-type-label">القيمة</span>
+                    <div class="parameter-card-type"><code dir="ltr">${escapeHtml(entry.value || '—')}</code></div>
+                  </div>
+                </div>
+              </div>
+              <div class="parameter-card-fields">
+                <div class="parameter-card-field parameter-card-field-wide">
+                  <div class="parameter-card-field-label">الشرح بالعربي</div>
+                  <div class="parameter-card-field-value">${linkSdl3DocText(resolvedDescription)}</div>
+                </div>
+              </div>
+            </article>
           `;
-          }).join('')}
-        </tbody>
-      </table>
+        }).join('')}
+      </div>
     </section>
   `;
 }

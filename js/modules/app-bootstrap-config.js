@@ -199,6 +199,7 @@
       getTutorialContent: () => context.getTutorialContent(),
       renderEntityIcon: context.renderEntityIcon,
       renderTutorialLeadMedia: context.renderTutorialLeadMedia,
+      normalizeTutorialLessonSections: context.normalizeTutorialLessonSections,
       prepareTutorialCodeContainers: context.prepareTutorialCodeContainers,
       highlightCode: context.highlightCode,
       activateTutorialLazyCodeBlocks: context.activateTutorialLazyCodeBlocks,

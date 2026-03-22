@@ -179,36 +179,49 @@ function renderStructureFieldsSection(item) {
   return `
     <section class="members-section">
       <h2>${renderEntityIcon('structure', 'ui-codicon list-icon', 'هيكل')} عناصر البنية</h2>
-      <table class="params-table">
-        <thead>
-          <tr>
-            <th>العنصر</th>
-            <th>النوع</th>
-            <th>نوع القيمة والسياق</th>
-            <th>معناه الحقيقي</th>
-            <th>فائدته</th>
-            <th>ماذا يغيّر؟</th>
-            <th>كيف يُستخدم؟</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${fields.map((field) => {
-            const metadata = getFieldMetadata(field.name, item.name, field.description, field.type || '');
-            const shapeSummary = renderValueShapeSummary(field.name, field.type || '', {ownerType: item.name});
-            return `
-              <tr>
-                <td>${renderFieldReference(field.name, item.name, field.type || '', field.description || '')}</td>
-                <td>${field.type ? renderTypeReference(field.type) : '<code>غير موثق محلياً</code>'}</td>
-                <td>${shapeSummary}</td>
-                <td>${renderPracticalText(metadata.meaning, `هذا الحقل جزء من ${item.name} ويحدد المعنى الأساسي الذي ستقرأه Vulkan من هذه البنية.`)}</td>
-                <td>${renderPracticalText(metadata.benefit, `فائدة هذا الحقل أنه يوضح نية الاستخدام داخل ${item.name} بدل ترك السلوك ضمنياً.`)}</td>
-                <td>${renderPracticalText(metadata.effect, `تغيير هذا الحقل يغيّر الطريقة التي تفسر بها Vulkan بيانات ${item.name} أو تنفذ العملية المرتبطة بها.`)}</td>
-                <td>${renderPracticalText(metadata.usage, `يُستخدم هذا الحقل عندما تحتاج البنية ${item.name} إلى هذه القيمة أو المؤشر أثناء التنفيذ.`)}</td>
-              </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
+      <div class="structure-fields-card-grid">
+        ${fields.map((field, index) => {
+          const metadata = getFieldMetadata(field.name, item.name, field.description, field.type || '');
+          const shapeSummary = renderValueShapeSummary(field.name, field.type || '', {ownerType: item.name});
+          const anchorId = makeAnchorId('structure-field', `${item.name}-${field.name}`);
+          return `
+            <article class="content-card prose-card parameter-detail-card structure-field-card" id="${escapeAttribute(anchorId)}">
+              <div class="parameter-card-head">
+                <div class="parameter-card-order">الحقل ${index + 1}</div>
+                <div class="parameter-card-title-wrap">
+                  <h3 class="parameter-card-name parameter-card-code">${renderFieldReference(field.name, item.name, field.type || '', field.description || '')}</h3>
+                  <div class="parameter-card-type-row">
+                    <span class="parameter-card-type-label">النوع</span>
+                    <div class="parameter-card-type">${field.type ? renderTypeReference(field.type) : '<code>غير موثق محلياً</code>'}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="parameter-card-fields">
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">نوع القيمة والسياق</div>
+                  <div class="parameter-card-field-value">${shapeSummary}</div>
+                </div>
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">معناه الحقيقي</div>
+                  <div class="parameter-card-field-value">${renderPracticalText(metadata.meaning, `هذا الحقل جزء من ${item.name} ويحدد المعنى الأساسي الذي ستقرأه Vulkan من هذه البنية.`)}</div>
+                </div>
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">فائدته</div>
+                  <div class="parameter-card-field-value">${renderPracticalText(metadata.benefit, `فائدة هذا الحقل أنه يوضح نية الاستخدام داخل ${item.name} بدل ترك السلوك ضمنياً.`)}</div>
+                </div>
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">ماذا يغيّر؟</div>
+                  <div class="parameter-card-field-value">${renderPracticalText(metadata.effect, `تغيير هذا الحقل يغيّر الطريقة التي تفسر بها Vulkan بيانات ${item.name} أو تنفذ العملية المرتبطة بها.`)}</div>
+                </div>
+                <div class="parameter-card-field parameter-card-field-wide">
+                  <div class="parameter-card-field-label">كيف يُستخدم؟</div>
+                  <div class="parameter-card-field-value">${renderPracticalText(metadata.usage, `يُستخدم هذا الحقل عندما تحتاج البنية ${item.name} إلى هذه القيمة أو المؤشر أثناء التنفيذ.`)}</div>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('')}
+      </div>
     </section>
   `;
 }
@@ -4421,6 +4434,19 @@ function getDisplayedExample(item) {
 function renderFunctionExplanation(item, exampleOverride = '') {
   const override = getFunctionExampleOverride(item) || {};
   return renderDetailedExampleExplanation(item, {
+    sectionedCards: true,
+    headerKicker: 'قالب موحّد',
+    headerDescription: `هذا القسم يوحّد قراءة مثال ${item.name} في بطاقات من نفس عائلة الماكرو والثوابت والبنى، ثم يربط الدوال والثوابت والأنواع والخطوات بالاستخدام الحقيقي داخل Vulkan.`,
+    sectionTitles: {
+      header: '🧩 شرح تفصيلي للمثال',
+      usageBridge: 'كيف يربط المثال بالاستخدام الحقيقي',
+      flow: 'مخطط التنفيذ المبسط',
+      concepts: 'مفاهيم مرتبطة',
+      notes: 'ملاحظات مهمة',
+      references: 'القسم 8: قائمة روابط مرجعية مجمعة لكل العناصر المذكورة'
+    },
+    independentCardKeys: ['goal', 'usage-bridge', 'flow', 'concepts', 'notes', 'references'],
+    summaryCardKeys: ['goal', 'usage-bridge', 'flow', 'concepts', 'notes'],
     kindLabel: 'دالة Vulkan',
     example: exampleOverride || override.example || item.example,
     purpose: override.purpose || item.description || `يوضح المثال كيفية استدعاء ${item.name} داخل تطبيق Vulkan.`,
@@ -4444,6 +4470,10 @@ function renderGenericExampleExplanation(item, options = {}) {
 
 function enhanceTutorialExamples(root = document) {
   getTutorialSupportRuntime()?.enhanceTutorialExamples?.(root);
+}
+
+function normalizeTutorialLessonSections(root = document) {
+  getTutorialSupportRuntime()?.normalizeTutorialLessonSections?.(root);
 }
 
 function toggleTree(element) {
@@ -4680,7 +4710,9 @@ function renderEntityIcon(type, className = 'ui-codicon', label = '') {
 }
 
 function getTypeEntityIconType(rawType) {
-  const typeName = normalizeLookupName(rawType);
+  const typeName = typeof resolveVulkanOpaqueTypeReferenceName === 'function'
+    ? resolveVulkanOpaqueTypeReferenceName(rawType)
+    : normalizeLookupName(rawType);
   if (!typeName.startsWith('Vk')) {
     return '';
   }
@@ -4859,11 +4891,14 @@ function findMacroItemByName(name) {
 }
 
 function findTypeItemByName(name) {
+  const resolvedName = typeof resolveVulkanOpaqueTypeReferenceName === 'function'
+    ? resolveVulkanOpaqueTypeReferenceName(name)
+    : normalizeLookupName(name);
   return (
-    findItemInCategories(vulkanData.structures, name) ||
-    findVariableTypeItemByName(name) ||
-    findItemInCategories(vulkanData.enums, name) ||
-    buildSyntheticTypeItem(name)
+    findItemInCategories(vulkanData.structures, resolvedName) ||
+    findVariableTypeItemByName(resolvedName) ||
+    findItemInCategories(vulkanData.enums, resolvedName) ||
+    buildSyntheticTypeItem(resolvedName)
   );
 }
 

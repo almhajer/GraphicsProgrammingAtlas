@@ -110,6 +110,66 @@
     `;
   }
 
+  function getReturnCodeVisualState(code) {
+    const normalizedCode = String(code || '').trim();
+    if (normalizedCode === 'VK_SUCCESS') {
+      return {
+        tone: 'success',
+        label: 'نجاح'
+      };
+    }
+
+    if (/^VK_(?:NOT_READY|TIMEOUT|EVENT_SET|EVENT_RESET|INCOMPLETE|SUBOPTIMAL_KHR|THREAD_IDLE_KHR|THREAD_DONE_KHR|OPERATION_DEFERRED_KHR|OPERATION_NOT_DEFERRED_KHR|PIPELINE_COMPILE_REQUIRED(?:_EXT)?)$/.test(normalizedCode)) {
+      return {
+        tone: 'warning',
+        label: 'نتيجة غير نهائية'
+      };
+    }
+
+    return {
+      tone: 'error',
+      label: 'خطأ أو فشل'
+    };
+  }
+
+  function renderFunctionReturnCodeCards(item, returnValues) {
+    const rows = Array.isArray(returnValues) ? returnValues : [];
+    if (!rows.length) {
+      return '';
+    }
+
+    return `
+      <section class="params-section function-return-codes-section">
+        <div class="content-card prose-card params-section-intro function-return-codes-head">
+          <div class="params-section-intro-kicker">نتائج الاستدعاء</div>
+          <h2>↩️ Return Codes</h2>
+          <p>كل بطاقة هنا تشرح قيمة يمكن أن تعيدها ${item.name}، وما الذي تعنيه عمليًا قبل متابعة التنفيذ أو إعادة المحاولة أو معالجة الخطأ.</p>
+        </div>
+        <div class="function-return-codes-grid">
+          ${rows.map(({value: code, description: desc}) => {
+            const visual = getReturnCodeVisualState(code);
+            return `
+              <article class="content-card prose-card parameter-detail-card function-return-code-card function-return-code-${visual.tone}">
+                <div class="parameter-card-head">
+                  <div class="parameter-card-order function-return-code-badge">${visual.label}</div>
+                  <div class="parameter-card-title-wrap">
+                    <h3 class="parameter-card-name parameter-card-code"><code>${api.escapeHtml(code)}</code></h3>
+                  </div>
+                </div>
+                <div class="parameter-card-fields">
+                  <div class="parameter-card-field parameter-card-field-wide">
+                    <div class="parameter-card-field-label">المعنى العملي</div>
+                    <div class="parameter-card-field-value">${api.linkUsageBridgeText(desc || 'راجع التوثيق التفصيلي لهذه القيمة المرجعة.', {currentItem: item})}</div>
+                  </div>
+                </div>
+              </article>
+            `;
+          }).join('')}
+        </div>
+      </section>
+    `;
+  }
+
   function getFallbackStructureExample(item = {}) {
     const name = String(item?.name || '').trim();
     if (!name) {
@@ -359,23 +419,7 @@
 
     const returnValues = api.getReturnValuesArray(item);
     if (returnValues.length > 0) {
-      html += `
-        <section class="return-section">
-          <h2>↩️ Return Codes</h2>
-          <div class="return-values">
-      `;
-
-      returnValues.forEach(({value: code, description: desc}) => {
-        const isSuccess = code === 'VK_SUCCESS';
-        html += `
-          <div class="return-value ${isSuccess ? 'success' : 'error'}">
-            <code>${code}</code>
-            <span>${desc}</span>
-          </div>
-        `;
-      });
-
-      html += '</div></section>';
+      html += renderFunctionReturnCodeCards(item, returnValues);
     }
 
     html += api.renderSystemContextSection(item);

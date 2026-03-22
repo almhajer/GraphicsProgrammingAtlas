@@ -2158,3 +2158,11 @@ function showHomePage(options = {}) {
   };
   return run();
 }
+
+function showSiteUsageGuide(options = {}) {
+  const run = async () => {
+    await ensureUiSegment('homePageRuntime');
+    return getHomePageRuntime()?.showSiteUsageGuide?.(options);
+  };
+  return run();
+}

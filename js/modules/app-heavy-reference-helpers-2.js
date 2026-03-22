@@ -1060,39 +1060,36 @@ function renderImguiParametersSection(item) {
     <section class="info-section">
       <div class="content-card prose-card">
         <h2>المعاملات</h2>
-        <div class="table-wrapper">
-          <table class="analysis-table parameter-table imgui-parameter-table">
-            <colgroup>
-              <col class="imgui-param-col-name">
-              <col class="imgui-param-col-type">
-              <col class="imgui-param-col-details">
-              <col class="imgui-param-col-details">
-              <col class="imgui-param-col-details">
-              <col class="imgui-param-col-details">
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="imgui-param-col-name">الاسم</th>
-                <th class="imgui-param-col-type">النوع</th>
-                <th>الوصف الرسمي بالعربية</th>
-                <th>المعنى الحقيقي</th>
-                <th>لماذا يُمرر</th>
-                <th>كيف يظهر في الاستخدام الفعلي</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${item.parameters.map((param) => `
-                <tr id="${escapeAttribute(buildImguiParameterAnchorId(item.name, param.name))}">
-                  <td class="imgui-param-col-name">${renderImguiParameterName(param, item)}</td>
-                  <td class="imgui-param-col-type">${renderImguiTypeToken(param.type)}</td>
-                  <td>${renderImguiDocText(param.officialArabicDescription)}</td>
-                  <td>${renderImguiDocText(param.realRole)}</td>
-                  <td>${renderImguiDocText(param.whyPassed)}</td>
-                  <td>${renderImguiDocText(param.actualUsage)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+        <div class="params-card-grid imgui-parameters-card-grid">
+          ${item.parameters.map((param) => `
+            <article class="parameter-detail-card" id="${escapeAttribute(buildImguiParameterAnchorId(item.name, param.name))}">
+              <div class="parameter-card-head">
+                <div class="parameter-card-copy">
+                  <div class="parameter-card-kicker">معامل ImGui</div>
+                  <h3 class="parameter-card-name parameter-card-code">${renderImguiParameterName(param, item)}</h3>
+                </div>
+                <div class="parameter-card-type">${renderImguiTypeToken(param.type)}</div>
+              </div>
+              <div class="parameter-card-fields">
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">الوصف الرسمي بالعربية</div>
+                  <div class="parameter-card-field-value">${renderImguiDocText(param.officialArabicDescription)}</div>
+                </div>
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">المعنى الحقيقي</div>
+                  <div class="parameter-card-field-value">${renderImguiDocText(param.realRole)}</div>
+                </div>
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">لماذا يُمرر</div>
+                  <div class="parameter-card-field-value">${renderImguiDocText(param.whyPassed)}</div>
+                </div>
+                <div class="parameter-card-field">
+                  <div class="parameter-card-field-label">كيف يظهر في الاستخدام الفعلي</div>
+                  <div class="parameter-card-field-value">${renderImguiDocText(param.actualUsage)}</div>
+                </div>
+              </div>
+            </article>
+          `).join('')}
         </div>
       </div>
     </section>
@@ -5273,45 +5270,59 @@ function renderSdl3ExampleRelatedElements(item, example) {
 
   if (typeof renderUnifiedExampleSupportCard === 'function') {
     const referencedItemsCard = referencedItems.length
-      ? renderUnifiedExampleSupportCard(
-        'العناصر البرمجية المرتبطة',
-        `
-          <ul class="best-practices-list">
+      ? `
+        <article class="content-card prose-card parameter-detail-card sdl3-example-detail-card">
+          <div class="parameter-card-head">
+            <div class="parameter-card-order">العناصر المرتبطة</div>
+            <div class="parameter-card-title-wrap">
+              <h3 class="parameter-card-name">العناصر البرمجية المرتبطة</h3>
+            </div>
+          </div>
+          <div class="parameter-card-fields">
             ${referencedItems.map((refItem) => `
-              <li>
-                <p>${renderSdl3EntityLink(refItem.name)}</p>
-                <p><strong>المعنى الحقيقي:</strong> ${renderSdl3PracticalText(buildSdl3PrimaryMeaning(refItem), buildSdl3PrimaryMeaning(refItem))}</p>
-                <p><strong>لماذا يستخدم هنا؟</strong> ${renderSdl3PracticalText(buildSdl3ExampleReferencePurpose(refItem, item, code), buildSdl3ExampleReferencePurpose(refItem, item, code))}</p>
-                <p><strong>فائدته العملية:</strong> ${renderSdl3PracticalText(buildSdl3ExampleReferenceBenefit(refItem), buildSdl3ExampleReferenceBenefit(refItem))}</p>
-              </li>
+              <div class="parameter-card-field parameter-card-field-wide">
+                <div class="parameter-card-field-label">${renderSdl3EntityLink(refItem.name)}</div>
+                <div class="parameter-card-field-value">
+                  <p><strong>المعنى الحقيقي:</strong> ${renderSdl3PracticalText(buildSdl3PrimaryMeaning(refItem), buildSdl3PrimaryMeaning(refItem))}</p>
+                  <p><strong>لماذا يستخدم هنا؟</strong> ${renderSdl3PracticalText(buildSdl3ExampleReferencePurpose(refItem, item, code), buildSdl3ExampleReferencePurpose(refItem, item, code))}</p>
+                  <p><strong>فائدته العملية:</strong> ${renderSdl3PracticalText(buildSdl3ExampleReferenceBenefit(refItem), buildSdl3ExampleReferenceBenefit(refItem))}</p>
+                </div>
+              </div>
             `).join('')}
-          </ul>
-        `
-      )
+          </div>
+        </article>
+      `
       : '';
 
     const localVariablesCard = localVariables.length
-      ? renderUnifiedExampleSupportCard(
-        'المتغيرات المحلية في المثال',
-        `
-          <ul class="best-practices-list">
+      ? `
+        <article class="content-card prose-card parameter-detail-card sdl3-example-detail-card">
+          <div class="parameter-card-head">
+            <div class="parameter-card-order">المتغيرات</div>
+            <div class="parameter-card-title-wrap">
+              <h3 class="parameter-card-name">المتغيرات المحلية في المثال</h3>
+            </div>
+          </div>
+          <div class="parameter-card-fields">
             ${localVariables.map((entry) => `
-              <li>
-                <p><code dir="ltr">${escapeHtml(entry.name)}</code> من النوع ${renderSdl3TypeReference(entry.type || '')}</p>
-                <p><strong>المعنى الحقيقي:</strong> ${renderSdl3PracticalText(buildSdl3ExampleVariableMeaning(entry, item), buildSdl3ExampleVariableMeaning(entry, item))}</p>
-                <p><strong>لماذا يستخدم هنا؟</strong> ${renderSdl3PracticalText(buildSdl3ExampleVariablePurpose(entry, item), buildSdl3ExampleVariablePurpose(entry, item))}</p>
-                <p><strong>فائدته العملية:</strong> ${renderSdl3PracticalText(buildSdl3ExampleVariableBenefit(entry, item), buildSdl3ExampleVariableBenefit(entry, item))}</p>
-              </li>
+              <div class="parameter-card-field parameter-card-field-wide">
+                <div class="parameter-card-field-label"><code dir="ltr">${escapeHtml(entry.name)}</code> من النوع ${renderSdl3TypeReference(entry.type || '')}</div>
+                <div class="parameter-card-field-value">
+                  <p><strong>المعنى الحقيقي:</strong> ${renderSdl3PracticalText(buildSdl3ExampleVariableMeaning(entry, item), buildSdl3ExampleVariableMeaning(entry, item))}</p>
+                  <p><strong>لماذا يستخدم هنا؟</strong> ${renderSdl3PracticalText(buildSdl3ExampleVariablePurpose(entry, item), buildSdl3ExampleVariablePurpose(entry, item))}</p>
+                  <p><strong>فائدته العملية:</strong> ${renderSdl3PracticalText(buildSdl3ExampleVariableBenefit(entry, item), buildSdl3ExampleVariableBenefit(entry, item))}</p>
+                </div>
+              </div>
             `).join('')}
-          </ul>
-        `
-      )
+          </div>
+        </article>
+      `
       : '';
 
     return `
       <section class="info-section">
         <h2>شرح العناصر الظاهرة في المثال</h2>
-        <div class="vulkan-ready-example-support-grid">
+        <div class="sdl3-example-detail-grid">
           ${referencedItemsCard}
           ${localVariablesCard}
         </div>
@@ -5396,19 +5407,41 @@ function renderSdl3PracticalExampleSection(item) {
   const summaryCards = typeof renderUnifiedExampleSupportCard === 'function'
     ? `
       <section class="info-section">
-        <div class="vulkan-ready-example-support-grid">
-          ${renderUnifiedExampleSupportCard(
-            'هدف المثال',
-            `<p>${renderSdl3PracticalText(example.purpose, example.purpose)}</p>`
-          )}
-          ${example.notes?.length ? renderUnifiedExampleSupportCard(
-            'ملاحظات التنفيذ',
-            `
-              <ul class="best-practices-list">
-                ${example.notes.map((note) => `<li><p>${renderSdl3PracticalText(note, note)}</p></li>`).join('')}
-              </ul>
-            `
-          ) : ''}
+        <div class="sdl3-example-detail-grid">
+          <article class="content-card prose-card parameter-detail-card sdl3-example-detail-card">
+            <div class="parameter-card-head">
+              <div class="parameter-card-order">الهدف</div>
+              <div class="parameter-card-title-wrap">
+                <h3 class="parameter-card-name">هدف المثال</h3>
+              </div>
+            </div>
+            <div class="parameter-card-fields">
+              <div class="parameter-card-field parameter-card-field-wide">
+                <div class="parameter-card-field-label">المعنى العملي</div>
+                <div class="parameter-card-field-value"><p>${renderSdl3PracticalText(example.purpose, example.purpose)}</p></div>
+              </div>
+            </div>
+          </article>
+          ${example.notes?.length ? `
+            <article class="content-card prose-card parameter-detail-card sdl3-example-detail-card">
+              <div class="parameter-card-head">
+                <div class="parameter-card-order">ملاحظات</div>
+                <div class="parameter-card-title-wrap">
+                  <h3 class="parameter-card-name">ملاحظات التنفيذ</h3>
+                </div>
+              </div>
+              <div class="parameter-card-fields">
+                <div class="parameter-card-field parameter-card-field-wide">
+                  <div class="parameter-card-field-label">ما الذي يجب الانتباه له</div>
+                  <div class="parameter-card-field-value">
+                    <ul class="best-practices-list">
+                      ${example.notes.map((note) => `<li><p>${renderSdl3PracticalText(note, note)}</p></li>`).join('')}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ` : ''}
         </div>
       </section>
     `

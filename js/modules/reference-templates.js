@@ -177,6 +177,7 @@ window.__ARABIC_VULKAN_REFERENCE_TEMPLATES__ = (() => {
     }
 
     const isCmake = String(options.libraryId || '').trim() === 'cmake';
+    const useCmakeParameterCards = isCmake && String(options.detailSection || '').trim() === 'parameters';
     const renderNameCell = (row) => {
       const raw = String(row?.name || '').trim();
       if (!raw) {
@@ -197,6 +198,38 @@ window.__ARABIC_VULKAN_REFERENCE_TEMPLATES__ = (() => {
       }
       return renderRichText(api, raw, options);
     };
+
+    if (useCmakeParameterCards) {
+      return `
+        <section class="info-section reference-table-card">
+          <h2>${renderEntityIconWith(api, iconType, 'ui-codicon list-icon', title)} ${escapeHtmlWith(api, title)}</h2>
+          <div class="reference-detail-card-grid reference-detail-card-grid-cmake-parameters">
+            ${normalized.map((row, index) => `
+              <article class="content-card prose-card parameter-detail-card reference-detail-card reference-detail-card-cmake-parameter"${typeof api.getCanonicalReferenceDetailAnchorId === 'function' && options.detailSection && row.name ? ` id="${escapeAttributeWith(api, api.getCanonicalReferenceDetailAnchorId(options.detailSection, row.name))}"` : ''}>
+                <div class="parameter-card-head">
+                  <div class="parameter-card-order">المعامل ${index + 1}</div>
+                  <div class="parameter-card-title-wrap">
+                    <h3 class="parameter-card-name parameter-card-code">${renderNameCell(row)}</h3>
+                    ${String(row?.type || row?.value || '').trim() ? `
+                      <div class="parameter-card-type-row">
+                        <span class="parameter-card-type-label">النوع / القيمة</span>
+                        <div class="parameter-card-type">${renderTypeCell(row)}</div>
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+                <div class="parameter-card-fields">
+                  <div class="parameter-card-field parameter-card-field-wide">
+                    <div class="parameter-card-field-label">المعنى الحقيقي</div>
+                    <div class="parameter-card-field-value">${renderRichText(api, row.descriptionArabic || row.description || '', options)}</div>
+                  </div>
+                </div>
+              </article>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
 
     return `
       <section class="info-section reference-table-card">
@@ -308,11 +341,21 @@ window.__ARABIC_VULKAN_REFERENCE_TEMPLATES__ = (() => {
     return `
       <section class="info-section">
         <h2>${renderEntityIconWith(api, 'tutorial', 'ui-codicon list-icon', 'الخلاصة')} الخلاصة الدلالية</h2>
-        <div class="reference-summary-grid">
-          ${cards.map(([label, value]) => `
-            <article class="reference-summary-card">
-              <h3>${escapeHtmlWith(api, label)}</h3>
-              <p>${renderRichText(api, value, {libraryId: entity.library?.id || ''})}</p>
+        <div class="reference-summary-grid reference-semantic-summary-grid">
+          ${cards.map(([label, value], index) => `
+            <article class="content-card prose-card parameter-detail-card reference-summary-card reference-semantic-summary-card">
+              <div class="parameter-card-head">
+                <div class="parameter-card-order">الخلاصة ${index + 1}</div>
+                <div class="parameter-card-title-wrap">
+                  <h3 class="parameter-card-name">${escapeHtmlWith(api, label)}</h3>
+                </div>
+              </div>
+              <div class="parameter-card-fields">
+                <div class="parameter-card-field parameter-card-field-wide">
+                  <div class="parameter-card-field-label">الشرح</div>
+                  <div class="parameter-card-field-value">${renderRichText(api, value, {libraryId: entity.library?.id || ''})}</div>
+                </div>
+              </div>
             </article>
           `).join('')}
         </div>

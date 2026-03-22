@@ -570,8 +570,16 @@ window.__ARABIC_VULKAN_SDL3_SECTION__ = (() => {
     }
 
     const kind = getSdl3CollectionMeta(dataKey);
-    const groups = getSdl3GroupedItems(dataKey, {packageKey});
-    const total = getSdl3PackageItems(packageKey, dataKey).length;
+    const packageItems = getSdl3PackageItems(packageKey, dataKey);
+    const fallbackGroups = packageItems.length ? [{
+      key: `${packageKey}:${dataKey}:fallback`,
+      title: packageInfo.displayName,
+      items: packageItems
+    }] : [];
+    const groups = getSdl3GroupedItems(dataKey, {packageKey}).length
+      ? getSdl3GroupedItems(dataKey, {packageKey})
+      : fallbackGroups;
+    const total = packageItems.length;
     const content = document.getElementById('mainContent');
     const sectionId = getSdl3PackageSectionId(packageKey, dataKey);
     const compositeName = getSdl3PackageSectionCompositeName(packageKey, dataKey);

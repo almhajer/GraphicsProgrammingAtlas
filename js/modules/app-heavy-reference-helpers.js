@@ -3474,6 +3474,65 @@ function renderDetailedExampleExplanation(item, options = {}) {
     || 'example'
   ).trim();
   const buildSectionAnchor = (key) => makeAnchorId('example-section', `${anchorBase}-${key}`);
+  const headerKicker = String(options.headerKicker || 'شرح منظم').trim();
+  const wrapExampleInsightTable = (tableHtml = '', shellClass = '') => {
+    const raw = String(tableHtml || '').trim();
+    if (!raw) {
+      return '';
+    }
+
+    const shellClasses = ['params-table-shell', 'example-explanation-table-shell', shellClass]
+      .filter(Boolean)
+      .join(' ');
+    return `<div class="${escapeAttribute(shellClasses)}">${raw}</div>`;
+  };
+  const buildExampleInsightRichField = (label = '', value = '') => {
+    const raw = String(value || '').trim();
+    if (!raw) {
+      return '';
+    }
+
+    const cleanLabel = String(label || '').trim();
+    return `
+      <div class="example-explanation-rich-field">
+        ${cleanLabel ? `<div class="example-explanation-rich-field-label">${escapeHtml(cleanLabel)}</div>` : ''}
+        <div class="example-explanation-rich-field-value">${raw}</div>
+      </div>
+    `;
+  };
+  const buildExampleInsightRichCard = ({title = '', titleHtml = '', body = '', fields = [], className = '', id = ''} = {}) => {
+    const resolvedBody = String(body || '').trim() || fields
+      .map((entry) => String(entry || '').trim())
+      .filter(Boolean)
+      .join('');
+    if (!resolvedBody) {
+      return '';
+    }
+
+    const cardClasses = ['reference-summary-group', 'example-explanation-rich-card', className]
+      .filter(Boolean)
+      .join(' ');
+    const cleanId = String(id || '').trim();
+    return `
+      <section class="${escapeAttribute(cardClasses)}"${cleanId ? ` id="${escapeAttribute(cleanId)}"` : ''}>
+        <h4>${titleHtml || escapeHtml(title)}</h4>
+        <div class="example-explanation-rich-body">${resolvedBody}</div>
+      </section>
+    `;
+  };
+  const wrapExampleInsightRichCards = (cards = [], className = '') => {
+    const resolvedCards = cards
+      .map((entry) => String(entry || '').trim())
+      .filter(Boolean);
+    if (!resolvedCards.length) {
+      return '';
+    }
+
+    const classes = ['reference-summary-groups', 'example-explanation-rich-groups', className]
+      .filter(Boolean)
+      .join(' ');
+    return `<div class="${escapeAttribute(classes)}">${resolvedCards.join('')}</div>`;
+  };
 
   const generalGoalHtml = purposeParagraphs.map((entry) => `<p>${renderPracticalText(entry, purpose, {currentItem: item})}</p>`).join('');
   const requirementsHtml = visibleSections.requirements ? `
@@ -3512,13 +3571,16 @@ function renderDetailedExampleExplanation(item, options = {}) {
         return true;
       });
   })();
-  const renderAnalysisRelatedList = (entries, emptyText = 'لا توجد عناصر مرتبطة موثقة لهذا الجزء بعد.') => {
+  const renderAnalysisRelatedList = (entries, emptyText = 'لا توجد عناصر مرتبطة موثقة لهذا الجزء بعد.', options = {}) => {
     const uniqueEntries = [...new Set((entries || []).filter(Boolean))];
     if (!uniqueEntries.length) {
-      return `<span class="related-link related-link-static analysis-related-empty">${escapeHtml(emptyText)}</span>`;
+      return `<span class="inline-code-reference-static analysis-related-empty">${escapeHtml(emptyText)}</span>`;
     }
+    const layoutClassName = options?.layout === 'inline'
+      ? 'analysis-related-list analysis-related-list-inline'
+      : 'analysis-related-list';
     return `
-      <ul class="analysis-related-list">
+      <ul class="${layoutClassName}">
         ${uniqueEntries.map((entry) => `<li>${entry}</li>`).join('')}
       </ul>
     `;
@@ -3526,11 +3588,14 @@ function renderDetailedExampleExplanation(item, options = {}) {
   const renderFunctionParameterSummaryHtml = (functionItem) => {
     const parameters = functionItem?.parameters || [];
     if (!parameters.length) {
-      return '<span class="related-link related-link-static analysis-related-empty">لا تحتوي هذه الدالة على بارامترات موثقة محليًا.</span>';
+      return '<span class="inline-code-reference-static analysis-related-empty">لا تحتوي هذه الدالة على بارامترات موثقة محليًا.</span>';
     }
 
     return renderAnalysisRelatedList(parameters.map((param) => {
-      const typeHtml = param.type ? renderTypeReference(param.type) : '<code>غير موثق</code>';
+      const typeName = normalizeLookupName(param.type || '');
+      const typeHtml = typeName
+        ? renderAnalysisReference(typeName, item)
+        : (param.type ? renderTypeReference(param.type) : '<code>غير موثق</code>');
       const expectedValues = renderValueShapeSummary(param.name || '', param.type || '', {functionName: functionItem?.name || item.name || ''});
       return `
         <div class="analysis-related-rich-line">
@@ -3559,7 +3624,7 @@ function renderDetailedExampleExplanation(item, options = {}) {
       );
     }
 
-    const returnTypeHtml = renderTypeReference(returnType);
+    const returnTypeHtml = renderAnalysisReference(returnType, item);
     const meaning = returnType === 'VkResult'
       ? `تعيد ${returnTypeHtml} لتحديد نجاح الاستدعاء أو نوع الخطأ الذي يجب التعامل معه قبل متابعة التنفيذ.`
       : `تعيد قيمة من النوع ${returnTypeHtml} تمثل ناتج العملية التي نفذتها الدالة في هذا الموضع.`;
@@ -3573,7 +3638,7 @@ function renderDetailedExampleExplanation(item, options = {}) {
         <p>${renderPracticalText(meaning, 'يوضح هذا الحقل معنى القيمة المرجعة ونوعها.', {currentItem: item})}</p>
         ${renderAnalysisRelatedList(returnValues.map((entry) => `
           <div class="analysis-related-rich-line">
-            <strong>${renderRelatedReferenceLink(entry.value)}</strong>
+            <strong>${renderAnalysisReference(entry.value, item)}</strong>
             <br>
             <small>${renderPracticalText(entry.description || 'راجع التوثيق التفصيلي لهذه القيمة المرجعة.', 'يوضح هذا السطر معنى إحدى القيم المرجعة المحتملة.', {currentItem: item})}</small>
           </div>
@@ -3606,7 +3671,7 @@ function renderDetailedExampleExplanation(item, options = {}) {
     }
 
     getRelatedFunctionNames(functionItem, 4).forEach((name) => pushRelated(renderAnalysisReference(name, item)));
-    return renderAnalysisRelatedList(relatedEntries, 'لا توجد عناصر مرتبطة إضافية موثقة لهذه الدالة.');
+    return renderAnalysisRelatedList(relatedEntries, 'لا توجد عناصر مرتبطة إضافية موثقة لهذه الدالة.', {layout: 'inline'});
   };
   const variableSectionRows = (() => {
     const rows = [];
@@ -3726,184 +3791,127 @@ function renderDetailedExampleExplanation(item, options = {}) {
   })();
   const commentIssuesHtml = visibleSections.commentIssues ? (
     analysis.commentIssues.length > 0 ? `
-      <table class="params-table">
-        <thead>
-          <tr>
-            <th data-tooltip="رقم السطر أو موضع السطر داخل المثال الجاري تحليله." tabindex="0" aria-label="السطر">السطر</th>
-            <th data-tooltip="يعرض صياغة التعليق السابقة بعد تطبيع الوصف العربي وإبقاء أسماء الدوال والأنواع والثوابت الرسمية كما هي." tabindex="0" aria-label="التعليق الأصلي">التعليق الأصلي</th>
-            <th data-tooltip="يوضح لماذا كان التعليق السابق قاصراً عن شرح السطر برمجياً، وما العناصر أو العلاقات التي لم يبرزها بوضوح." tabindex="0" aria-label="سبب القصور">سبب القصور</th>
-            <th data-tooltip="يحدد ما الذي فات الشرح الخام أو السطر نفسه توضيحه من عناصر أو علاقات مهمة." tabindex="0" aria-label="ما الذي أهمله">ما الذي أهمله</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${analysis.commentIssues.map((issue) => `
-            <tr>
-              <td class="analysis-table-code">${renderCommentIssueLine(issue.line)}</td>
-              <td>${renderCommentIssueNarrative(issue.previous, 'هذا هو التعليق السابق قبل إعادة صياغته بشكل أوضح.')}</td>
-              <td>${renderCommentIssueNarrative(issue.reason, 'هذا الحقل يوضح سبب قصور التعليق السابق عن شرح السطر برمجياً.')}</td>
-              <td>${renderCommentIssueNarrative(issue.missing, 'هذا الحقل يوضح العناصر أو العلاقات التي كان يجب أن يذكرها التعليق المصحح.')}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      ${commentIssueRelatedRows.length > 0 ? `
-      <table class="params-table">
-        <thead>
-          <tr>
-            <th data-tooltip="العنصر البرمجي الذي ظهر داخل السطر ويحتاج إلى توثيق مستقل حتى لا يبقى التعليق ناقصاً." tabindex="0" aria-label="العنصر">العنصر</th>
-            <th data-tooltip="هل هذا العنصر دالة أم بنية أم نوعاً مرجعياً آخر في Vulkan." tabindex="0" aria-label="النوع">النوع</th>
-            <th data-tooltip="المعنى العملي الحقيقي للعنصر داخل السطر والمرحلة الحالية من التنفيذ." tabindex="0" aria-label="المعنى الحقيقي">المعنى الحقيقي</th>
-            <th data-tooltip="لماذا ظهر هذا العنصر في السطر الحالي، وما الدور الذي يؤديه داخل المثال." tabindex="0" aria-label="سبب الاستخدام">سبب الاستخدام</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${commentIssueRelatedRows.map((entry) => `
-            <tr>
-              <td>${renderAnalysisReference(entry.name, item)}</td>
-              <td>${escapeHtml(entry.kindLabel)}</td>
-              <td>${renderPracticalText(entry.meaning, 'يوضح هذا الحقل المعنى الحقيقي للعنصر البرمجي داخل السطر الحالي.', {currentItem: item})}</td>
-              <td>${renderPracticalText(entry.usage, 'يوضح هذا الحقل سبب ظهور العنصر في هذا السطر تحديداً.', {currentItem: item})}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      ` : ''}
+      ${wrapExampleInsightRichCards(
+        analysis.commentIssues.map((issue, index) => buildExampleInsightRichCard({
+          title: `السطر ${index + 1}`,
+          className: 'example-explanation-comment-issue-card',
+          body: `
+            <div class="analysis-line-code">${renderCommentIssueLine(issue.line)}</div>
+            ${buildExampleInsightRichField('التعليق الأصلي', renderCommentIssueNarrative(issue.previous, 'هذا هو التعليق السابق قبل إعادة صياغته بشكل أوضح.'))}
+            ${buildExampleInsightRichField('سبب القصور', renderCommentIssueNarrative(issue.reason, 'هذا الحقل يوضح سبب قصور التعليق السابق عن شرح السطر برمجياً.'))}
+            ${buildExampleInsightRichField('ما الذي أهمله', renderCommentIssueNarrative(issue.missing, 'هذا الحقل يوضح العناصر أو العلاقات التي كان يجب أن يذكرها التعليق المصحح.'))}
+          `
+        })).concat(
+          commentIssueRelatedRows.map((entry) => buildExampleInsightRichCard({
+            titleHtml: renderAnalysisReference(entry.name, item),
+            className: 'example-explanation-comment-related-card',
+            fields: [
+              buildExampleInsightRichField('النوع', escapeHtml(entry.kindLabel)),
+              buildExampleInsightRichField('المعنى الحقيقي', renderPracticalText(entry.meaning, 'يوضح هذا الحقل المعنى الحقيقي للعنصر البرمجي داخل السطر الحالي.', {currentItem: item})),
+              buildExampleInsightRichField('سبب الاستخدام', renderPracticalText(entry.usage, 'يوضح هذا الحقل سبب ظهور العنصر في هذا السطر تحديداً.', {currentItem: item}))
+            ]
+          }))
+        ),
+        'example-explanation-comment-groups'
+      )}
     ` : '<p>لا توجد في هذا المثال تعليقات مولدة عامة من النمط الذي كان يسبب الالتباس سابقاً.</p>'
   ) : '';
   const lineByLineHtml = visibleSections.lineByLine ? (
-    lineExplanationRows.length > 0 ? `
-      <table class="params-table">
-        <thead>
-          <tr>
-            <th>السطر</th>
-            <th>ماذا يفعل</th>
-            <th>لماذا استُخدم</th>
-            <th>ما الذي سيحدث إذا لم يُستخدم</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${lineExplanationRows.map((row) => `
-            <tr>
-              <td class="analysis-table-code"><code class="language-${inferredLanguage}">${renderHighlightedCode(row.line || '', {
-                language: inferredLanguage,
-                annotate: true,
-                glslTooltipMode: inferredLanguage === 'glsl' ? 'corrected' : '',
-                localSymbolMap
-              })}</code></td>
-              <td>${renderPracticalText(row.what, 'هذا السطر ينفذ خطوة مباشرة من خطوات المثال الحالية.', {currentItem: item})}</td>
-              <td>${renderPracticalText(row.why, 'وضع هذا السطر هنا لأن المرحلة التالية تعتمد على أثره أو على الحالة التي يجهزها.', {currentItem: item})}</td>
-              <td>${renderPracticalText(row.without, 'غياب هذا السطر سيترك فجوة عملية في المسار الجاري تنفيذه.', {currentItem: item})}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    ` : compactLineRows.length > 0 ? compactLineRows.map((row, index) => `
-      <div class="analysis-line-card">
-        <div class="analysis-line-header">السطر ${index + 1}</div>
-        <div class="analysis-line-code">
-          <code class="language-${inferredLanguage}" data-raw-code="${escapeAttribute(row.line)}">${escapeHtml(row.line)}</code>
-        </div>
-        <div class="analysis-function-list">
-          ${row.functions.map((entry) => `
-            <div class="analysis-function-card">
-              <div class="analysis-function-name">${renderRelatedReferenceLink(entry.name)}</div>
-              <p><strong>المعنى:</strong> ${renderPracticalText(entry.meaning, 'هذه الدالة تمثل العملية التنفيذية الأساسية في هذا السطر.')}</p>
-              <p><strong>الفائدة:</strong> ${renderPracticalText(entry.benefit, 'فائدة هذه الدالة هنا أنها تنقل التنفيذ إلى الخطوة التالية المطلوبة في المسار الحالي.')}</p>
-              <p><strong>التأثير:</strong> ${renderPracticalText(entry.effect, 'استدعاء هذه الدالة يغيّر حالة التنفيذ أو الموارد وفق ما يتطلبه هذا السطر.')}</p>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `).join('') : '<p>لا توجد في المثال الحالي أسطر استدعاء دوال تحتاج إلى شرح مستقل.</p>'
+    lineExplanationRows.length > 0 ? wrapExampleInsightRichCards(
+      lineExplanationRows.map((row, index) => buildExampleInsightRichCard({
+        title: `السطر ${index + 1}`,
+        className: 'example-explanation-line-card',
+        body: `
+          <div class="analysis-line-code"><code class="language-${inferredLanguage}">${renderHighlightedCode(row.line || '', {
+            language: inferredLanguage,
+            annotate: true,
+            glslTooltipMode: inferredLanguage === 'glsl' ? 'corrected' : '',
+            localSymbolMap
+          })}</code></div>
+          ${buildExampleInsightRichField('ماذا يفعل', renderPracticalText(row.what, 'هذا السطر ينفذ خطوة مباشرة من خطوات المثال الحالية.', {currentItem: item}))}
+          ${buildExampleInsightRichField('لماذا استُخدم', renderPracticalText(row.why, 'وضع هذا السطر هنا لأن المرحلة التالية تعتمد على أثره أو على الحالة التي يجهزها.', {currentItem: item}))}
+          ${buildExampleInsightRichField('ما الذي سيحدث إذا لم يُستخدم', renderPracticalText(row.without, 'غياب هذا السطر سيترك فجوة عملية في المسار الجاري تنفيذه.', {currentItem: item}))}
+        `
+      })),
+      'example-explanation-line-groups'
+    ) : compactLineRows.length > 0 ? wrapExampleInsightRichCards(
+      compactLineRows.map((row, index) => buildExampleInsightRichCard({
+        title: `السطر ${index + 1}`,
+        className: 'example-explanation-line-card',
+        body: `
+          <div class="analysis-line-code">
+            <code class="language-${inferredLanguage}" data-raw-code="${escapeAttribute(row.line)}">${escapeHtml(row.line)}</code>
+          </div>
+          <div class="analysis-function-list">
+            ${row.functions.map((entry) => `
+              <div class="analysis-function-card">
+                <div class="analysis-function-name">${renderRelatedReferenceLink(entry.name)}</div>
+                ${buildExampleInsightRichField('المعنى', renderPracticalText(entry.meaning, 'هذه الدالة تمثل العملية التنفيذية الأساسية في هذا السطر.'))}
+                ${buildExampleInsightRichField('الفائدة', renderPracticalText(entry.benefit, 'فائدة هذه الدالة هنا أنها تنقل التنفيذ إلى الخطوة التالية المطلوبة في المسار الحالي.'))}
+                ${buildExampleInsightRichField('التأثير', renderPracticalText(entry.effect, 'استدعاء هذه الدالة يغيّر حالة التنفيذ أو الموارد وفق ما يتطلبه هذا السطر.'))}
+              </div>
+            `).join('')}
+          </div>
+        `
+      })),
+      'example-explanation-line-groups'
+    ) : '<p>لا توجد في المثال الحالي أسطر استدعاء دوال تحتاج إلى شرح مستقل.</p>'
   ) : '';
   const functionsHtml = visibleSections.functions ? (
-    analysis.tokenGroups.functions.length > 0 ? `
-      <table class="params-table example-functions-table">
-        <colgroup>
-          <col class="example-functions-col-name">
-          <col class="example-functions-col-signature">
-          <col class="example-functions-col-purpose">
-          <col class="example-functions-col-return">
-          <col class="example-functions-col-usage">
-        </colgroup>
-        <thead>
-          <tr>
-            <th>الدالة</th>
-            <th>المعنى الحقيقي</th>
-            <th>البارامترات</th>
-            <th>القيمة المرجعة</th>
-            <th>العناصر المرتبطة</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${analysis.tokenGroups.functions.map(({name, item: functionItem}) => `
-            <tr>
-              <td>${renderAnalysisReference(name, item)}</td>
-              <td>${renderPracticalText(inferFunctionIntentSummary(functionItem || {name, description: functionItem?.description || ''}), `يوضح هذا الحقل العملية الحقيقية التي تنفذها الدالة ${name} داخل مسار Vulkan.`, {currentItem: item})}</td>
-              <td>${renderFunctionParameterSummaryHtml(functionItem || {name, parameters: []})}</td>
-              <td>${renderFunctionReturnSummaryHtml(functionItem || {name, returnType: ''})}</td>
-              <td>${renderFunctionRelatedElementsHtml(functionItem || {name, parameters: []})}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    ` : '<p>لا توجد دوال ظاهرة في هذا المثال أو لم يتم التعرف عليها من البيانات الحالية.</p>'
+    analysis.tokenGroups.functions.length > 0 ? wrapExampleInsightRichCards(
+      analysis.tokenGroups.functions.map(({name, item: functionItem}) => buildExampleInsightRichCard({
+        titleHtml: renderAnalysisReference(name, item),
+        className: 'example-explanation-function-card',
+        fields: [
+          buildExampleInsightRichField('المعنى الحقيقي', renderPracticalText(
+            inferFunctionIntentSummary(functionItem || {name, description: functionItem?.description || ''}),
+            `يوضح هذا الحقل العملية الحقيقية التي تنفذها الدالة ${name} داخل مسار Vulkan.`,
+            {currentItem: item}
+          )),
+          buildExampleInsightRichField('البارامترات', renderFunctionParameterSummaryHtml(functionItem || {name, parameters: []})),
+          buildExampleInsightRichField('القيمة المرجعة', renderFunctionReturnSummaryHtml(functionItem || {name, returnType: ''})),
+          buildExampleInsightRichField('العناصر المرتبطة', renderFunctionRelatedElementsHtml(functionItem || {name, parameters: []}))
+        ]
+      })),
+      'example-explanation-function-groups'
+    ) : '<p>لا توجد دوال ظاهرة في هذا المثال أو لم يتم التعرف عليها من البيانات الحالية.</p>'
   ) : '';
   const constantsHtml = visibleSections.constants ? (
-    analysis.tokenGroups.constants.length > 0 ? `
-      <table class="params-table">
-        <thead>
-          <tr>
-            <th data-tooltip="اسم الثابت الرسمي كما يظهر في كود Vulkan داخل هذا الدرس." tabindex="0" aria-label="الثابت">الثابت</th>
-            <th data-tooltip="نوع العنصر: ثابت تعداد أو علم بتّي أو ثابت ماكرو." tabindex="0" aria-label="النوع">النوع</th>
-            <th data-tooltip="القيمة الرقمية أو ناتج التوسيع النصي عندما يكون معروفاً محلياً." tabindex="0" aria-label="القيمة العددية أو الناتج">القيمة العددية أو الناتج</th>
-            <th data-tooltip="الدور العملي الذي يؤديه هذا الثابت داخل النظام الرسومي أو داخل البنية أو الاستدعاء الذي يستخدمه." tabindex="0" aria-label="المعنى الحقيقي">المعنى الحقيقي</th>
-            <th data-tooltip="لماذا استُخدم هذا الثابت أو الماكرو في هذا السطر أو المثال تحديداً." tabindex="0" aria-label="سبب استخدامه هنا">سبب استخدامه هنا</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${analysis.tokenGroups.constants.map(({name, item: constantItem, kind}) => {
-            const enumMeta = getEnumValueMetadata(name, {functionName: item.name || ''});
-            const kindLabel = inferLessonConstantKindLabel(name, constantItem, enumMeta);
-            const tooltip = buildLessonConstantTooltip(name, constantItem, enumMeta, item);
-            return `
-              <tr>
-                <td>${renderAnalysisReference(name, item, {tooltip})}</td>
-                <td>${renderPracticalText(kindLabel, 'يوضح هذا الحقل نوع الثابت الرسمي داخل Vulkan.', {currentItem: item})}</td>
-                <td><code>${escapeHtml(enumMeta?.numericValue || constantItem?.value || constantItem?.syntax || 'راجع الصفحة المرجعية')}</code></td>
-                <td>${renderPracticalText(enumMeta?.valueMeaning || constantItem?.description || describeValueMeaning(name), 'يوضح هذا الحقل المعنى الحقيقي للثابت داخل السياق الرسومي الحالي.', {currentItem: item})}</td>
-                <td>${renderPracticalText(enumMeta?.chosenBecause || 'استُخدم لأن السطر يحتاج القيمة الرسمية نفسها بدل رقم أو نص حرفي.', 'اختير هنا لأن الكود يحتاج الرمز الرسمي نفسه لضبط السلوك أو المقارنة أو التهيئة.')}</td>
-              </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
-    ` : '<p>لا توجد ماكروز أو ثوابت ظاهرة بوضوح في هذا المثال.</p>'
+    analysis.tokenGroups.constants.length > 0 ? wrapExampleInsightRichCards(
+      analysis.tokenGroups.constants.map(({name, item: constantItem}) => {
+        const enumMeta = getEnumValueMetadata(name, {functionName: item.name || ''});
+        const kindLabel = inferLessonConstantKindLabel(name, constantItem, enumMeta);
+        const tooltip = buildLessonConstantTooltip(name, constantItem, enumMeta, item);
+        return buildExampleInsightRichCard({
+          titleHtml: renderAnalysisReference(name, item, {tooltip}),
+          className: 'example-explanation-constant-card',
+          fields: [
+            buildExampleInsightRichField('النوع', renderPracticalText(kindLabel, 'يوضح هذا الحقل نوع الثابت الرسمي داخل Vulkan.', {currentItem: item})),
+            buildExampleInsightRichField('القيمة العددية أو الناتج', `<code>${escapeHtml(enumMeta?.numericValue || constantItem?.value || constantItem?.syntax || 'راجع الصفحة المرجعية')}</code>`),
+            buildExampleInsightRichField('المعنى الحقيقي', renderPracticalText(enumMeta?.valueMeaning || constantItem?.description || describeValueMeaning(name), 'يوضح هذا الحقل المعنى الحقيقي للثابت داخل السياق الرسومي الحالي.', {currentItem: item})),
+            buildExampleInsightRichField('سبب استخدامه هنا', renderPracticalText(enumMeta?.chosenBecause || 'استُخدم لأن السطر يحتاج القيمة الرسمية نفسها بدل رقم أو نص حرفي.', 'اختير هنا لأن الكود يحتاج الرمز الرسمي نفسه لضبط السلوك أو المقارنة أو التهيئة.'))
+          ]
+        });
+      }),
+      'example-explanation-constant-groups'
+    ) : '<p>لا توجد ماكروز أو ثوابت ظاهرة بوضوح في هذا المثال.</p>'
   ) : '';
   const variablesHtml = visibleSections.variables ? `
     ${variableSectionRows.length > 0 ? `
-    <table class="params-table">
-      <thead>
-        <tr>
-          <th data-tooltip="اسم المتغير أو الحقل أو النوع كما يظهر في المثال." tabindex="0" aria-label="العنصر">العنصر</th>
-          <th data-tooltip="نوع البيانات أو الفئة البرمجية التي ينتمي إليها هذا العنصر." tabindex="0" aria-label="النوع">النوع</th>
-          <th data-tooltip="النص أو القيمة المستخدمة فعلياً داخل المثال في موضع التعريف أو التهيئة." tabindex="0" aria-label="القيمة في المثال">القيمة في المثال</th>
-          <th data-tooltip="المعنى الحقيقي أو الدور العملي لهذا العنصر داخل النظام الرسومي الجاري شرحه." tabindex="0" aria-label="المعنى الحقيقي">المعنى الحقيقي</th>
-          <th data-tooltip="الدوال أو البنى أو الأنواع المرتبطة بهذا العنصر داخل المثال." tabindex="0" aria-label="العناصر المرتبطة">العناصر المرتبطة</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${variableSectionRows.map((row) => `
-          <tr id="${escapeAttribute(row.id)}">
-            <td>${row.element}</td>
-            <td>${row.type}</td>
-            <td>${row.value}</td>
-            <td>${row.meaning}</td>
-            <td>${row.related}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
+    ${wrapExampleInsightRichCards(
+      variableSectionRows.map((row) => buildExampleInsightRichCard({
+        titleHtml: row.element,
+        className: 'example-explanation-variable-card',
+        id: row.id,
+        fields: [
+          buildExampleInsightRichField('النوع', row.type),
+          buildExampleInsightRichField('القيمة في المثال', row.value),
+          buildExampleInsightRichField('المعنى الحقيقي', row.meaning),
+          buildExampleInsightRichField('العناصر المرتبطة', row.related)
+        ]
+      })),
+      'example-explanation-variable-groups'
+    )}
     ` : '<p>لا توجد متغيرات أو حقول أو أنواع موثقة محليًا داخل هذا المثال بعد.</p>'}
   ` : '';
   const rewrittenCodeHtml = visibleSections.rewrittenCode ? renderDocCodeContainer({
@@ -3940,6 +3948,7 @@ function renderDetailedExampleExplanation(item, options = {}) {
     </ul>
   ` : '';
   const undocumentedHtml = visibleSections.undocumented ? `
+    ${wrapExampleInsightTable(`
     <table class="params-table example-local-symbols-table">
       <colgroup>
         <col class="example-local-symbols-col-name">
@@ -3966,6 +3975,7 @@ function renderDetailedExampleExplanation(item, options = {}) {
         `).join('')}
       </tbody>
     </table>
+    `, 'example-explanation-local-shell')}
   ` : '';
   const renderExampleSectionAnchorLink = (label = '', anchorId = '', tooltip = '') => {
     const cleanLabel = String(label || '').trim();
@@ -3979,7 +3989,9 @@ function renderDetailedExampleExplanation(item, options = {}) {
     return `<a href="#${escapeAttribute(cleanAnchorId)}" class="related-link code-token entity-link-with-icon" data-tooltip="${escapeAttribute(resolvedTooltip)}" tabindex="0" aria-label="${escapeAttribute(aria)}" onclick="scrollToAnchor('${escapeAttribute(cleanAnchorId)}'); return false;">${safeRenderEntityLabel(cleanLabel, 'structure', {code: false})}</a>`;
   };
 
-  if (options.sectionedCards) {
+  const useSectionedCards = options.sectionedCards !== false;
+
+  if (useSectionedCards) {
     const sectionCards = [
       {
         key: 'goal',
@@ -4084,6 +4096,7 @@ function renderDetailedExampleExplanation(item, options = {}) {
       return [
         'content-card',
         'prose-card',
+        'parameter-detail-card',
         'example-explanation-block',
         isSummary ? 'example-explanation-summary-card' : '',
         entry?.wide ? 'example-explanation-block-wide' : '',
@@ -4103,8 +4116,9 @@ function renderDetailedExampleExplanation(item, options = {}) {
     const headerDescription = String(options.headerDescription || '').trim();
 
     return `
-      <section class="explanation-section example-explanation-sectioned">
-        <div class="content-card prose-card example-explanation-head">
+      <section class="explanation-section params-section example-explanation-sectioned">
+        <div class="content-card prose-card params-section-intro example-explanation-head">
+          ${headerKicker ? `<div class="params-section-intro-kicker">${escapeHtml(headerKicker)}</div>` : ''}
           <h2>${sectionTitles.header}</h2>
           ${headerDescription ? `<p class="example-explanation-head-description">${renderPracticalText(headerDescription, headerDescription, {currentItem: item})}</p>` : ''}
           <div class="see-also-links example-explanation-anchor-nav">${sectionNav}</div>
@@ -4113,9 +4127,8 @@ function renderDetailedExampleExplanation(item, options = {}) {
         <div class="example-explanation-independent-cards">
           ${independentCards.map((entry) => `
             <section class="${buildExampleCardClassName(entry, true)} example-explanation-standalone-card" data-example-section="${escapeAttribute(entry.key)}" id="${escapeAttribute(buildSectionAnchor(entry.key))}">
-              <div class="example-explanation-card-kicker">بطاقة مستقلة</div>
               <h3>${entry.title}</h3>
-              ${entry.body}
+              <div class="example-explanation-card-body">${entry.body}</div>
             </section>
           `).join('')}
         </div>
@@ -4125,7 +4138,7 @@ function renderDetailedExampleExplanation(item, options = {}) {
           ${summaryCards.map((entry) => `
             <section class="${buildExampleCardClassName(entry, true)}" data-example-section="${escapeAttribute(entry.key)}" id="${escapeAttribute(buildSectionAnchor(entry.key))}">
               <h3>${entry.title}</h3>
-              ${entry.body}
+              <div class="example-explanation-card-body">${entry.body}</div>
             </section>
           `).join('')}
         </div>
@@ -4134,7 +4147,7 @@ function renderDetailedExampleExplanation(item, options = {}) {
           ${detailCards.map((entry) => `
             <section class="${buildExampleCardClassName(entry, false)}" data-example-section="${escapeAttribute(entry.key)}" id="${escapeAttribute(buildSectionAnchor(entry.key))}">
               <h3>${entry.title}</h3>
-              ${entry.body}
+              <div class="example-explanation-card-body">${entry.body}</div>
             </section>
           `).join('')}
         </div>

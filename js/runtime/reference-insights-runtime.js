@@ -187,28 +187,36 @@ function renderTutorialConstantsSection(lessonData) {
   return `
     <section class="info-section">
       <h3>الثوابت المستخدمة في هذا الدرس</h3>
-      <table class="params-table">
-        <thead>
-          <tr>
-            <th>الثابت</th>
-            <th>النوع</th>
-            <th>المعنى الحقيقي</th>
-            <th>أين استُخدم</th>
-            <th>سبب استخدامه في هذا الدرس</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${entries.map((entry) => `
-            <tr>
-              <td>${renderProjectReferenceChip(entry.name)}</td>
-              <td>${inferTutorialConstantKind(entry.name, entry.resolved)}</td>
-              <td>${inferTutorialConstantMeaning(entry.name, entry.resolved)}</td>
-              <td>${entry.contexts.map((context) => `<div>${escapeHtml(context)}</div>`).join('')}</td>
-              <td>${inferTutorialConstantReason(entry.name, entry.resolved, entry.contexts)}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
+      <div class="tutorial-constants-card-grid">
+        ${entries.map((entry, index) => `
+          <article class="content-card prose-card parameter-detail-card tutorial-constant-card">
+            <div class="parameter-card-head">
+              <div class="parameter-card-order">الثابت ${index + 1}</div>
+              <div class="parameter-card-title-wrap">
+                <h4 class="parameter-card-name parameter-card-code">${renderProjectReferenceChip(entry.name)}</h4>
+                <div class="parameter-card-type-row">
+                  <span class="parameter-card-type-label">النوع</span>
+                  <div class="parameter-card-type">${inferTutorialConstantKind(entry.name, entry.resolved)}</div>
+                </div>
+              </div>
+            </div>
+            <div class="parameter-card-fields">
+              <div class="parameter-card-field">
+                <div class="parameter-card-field-label">المعنى الحقيقي</div>
+                <div class="parameter-card-field-value">${inferTutorialConstantMeaning(entry.name, entry.resolved)}</div>
+              </div>
+              <div class="parameter-card-field">
+                <div class="parameter-card-field-label">أين استُخدم</div>
+                <div class="parameter-card-field-value">${entry.contexts.map((context) => `<div>${escapeHtml(context)}</div>`).join('')}</div>
+              </div>
+              <div class="parameter-card-field parameter-card-field-wide">
+                <div class="parameter-card-field-label">سبب استخدامه في هذا الدرس</div>
+                <div class="parameter-card-field-value">${inferTutorialConstantReason(entry.name, entry.resolved, entry.contexts)}</div>
+              </div>
+            </div>
+          </article>
+        `).join('')}
+      </div>
     </section>
   `;
 }
@@ -441,6 +449,25 @@ function describeEntityRelatedConstantContext(context, entry, item, kind = 'enti
   return `يرتبط هذا ${elementLabel} بالسياق ${escapeHtml(context)} ضمن ${currentLink}.`;
 }
 
+function getEntityRelatedConstantsSubjectLabel(item, kind = 'entity') {
+  if (kind === 'function') {
+    return 'الدالة';
+  }
+  if (kind === 'enum') {
+    return 'التعداد';
+  }
+  if (kind === 'constant') {
+    return 'الثابت';
+  }
+  if (kind === 'macro') {
+    return 'الماكرو';
+  }
+  if (item?.syntheticGroup === 'variable') {
+    return 'النوع أو المتغير';
+  }
+  return 'الكيان';
+}
+
 function renderEntityRelatedConstantsSection(item, kind = 'entity') {
   const entries = extractEntityRelatedConstantContexts(item, kind)
     .map((entry) => {
@@ -467,33 +494,46 @@ function renderEntityRelatedConstantsSection(item, kind = 'entity') {
   const maxEntries = kind === 'enum' ? 24 : 16;
   const visibleEntries = entries.slice(0, maxEntries);
   const hiddenCount = Math.max(0, entries.length - visibleEntries.length);
+  const itemName = String(item?.name || '').trim();
+  const preferredEnumName = kind === 'enum' ? itemName : '';
+  const subjectLabel = getEntityRelatedConstantsSubjectLabel(item, kind);
 
   return `
-    <section class="info-section entity-related-constants-section">
+    <section class="info-section params-section entity-related-constants-section">
       <h2 data-tooltip="${escapeAttribute(`يجمع هذا القسم الثوابت وقيم التعداد والماكرو التي ظهرت مع ${item?.name || 'هذا الكيان'}، ويشرح سبب ارتباطها به.`)}" tabindex="0" aria-label="${escapeAttribute('الثوابت المرتبطة بهذا الكيان')}">🧷 الثوابت المرتبطة بهذا الكيان</h2>
-      <div class="params-table-shell entity-related-constants-shell">
-        <table class="params-table entity-related-constants-table">
-          <thead>
-            <tr>
-              <th data-tooltip="الاسم الرسمي للثابت أو قيمة التعداد أو الماكرو المرتبط بهذا الكيان." tabindex="0" aria-label="الثابت">الثابت</th>
-              <th data-tooltip="يوضح هل العنصر ثابت أم قيمة تعداد أم ماكرو أو Result/Bit Flag." tabindex="0" aria-label="النوع">النوع</th>
-              <th data-tooltip="المعنى العملي الحقيقي الذي تمثله هذه القيمة داخل Vulkan." tabindex="0" aria-label="المعنى الحقيقي">المعنى الحقيقي</th>
-              <th data-tooltip="السياق أو الحقول أو الاستدعاءات التي ظهر فيها هذا العنصر مع الكيان الحالي." tabindex="0" aria-label="أين يرتبط بهذا الكيان">أين يرتبط بهذا الكيان</th>
-              <th data-tooltip="سبب أهمية هذا العنصر في هذا السياق تحديداً وما الذي يغيّره في التنفيذ." tabindex="0" aria-label="لماذا هو مهم هنا">لماذا هو مهم هنا</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${visibleEntries.map((entry) => `
-              <tr>
-                <td class="entity-related-constants-name-cell">${renderProjectReferenceChip(entry.name, {currentItem: item, preferredEnumName: entry.preferredEnumName || (kind === 'enum' ? item.name : '')})}</td>
-                <td class="entity-related-constants-kind-cell">${renderPracticalText(inferTutorialConstantKind(entry.name, entry.resolved), 'يوضح هذا الحقل نوع العنصر المرجعي الحالي.')}</td>
-                <td>${renderPracticalText(inferTutorialConstantMeaning(entry.name, entry.resolved), `يوضح هذا الحقل المعنى العملي للعنصر ${entry.name}.`)}</td>
-                <td class="entity-related-constants-context-cell">${entry.contexts.length ? entry.contexts.map((context) => `<div class="entity-related-constant-context">${describeEntityRelatedConstantContext(context, entry, item, kind)}</div>`).join('') : '<span>يرتبط هذا العنصر بسياق الكيان الحالي مباشرة.</span>'}</td>
-                <td>${renderPracticalText(inferEntityConstantReason(entry.name, entry.resolved, item, kind, entry.contexts), `يبين هذا الحقل لماذا يعد ${entry.name} مهماً في سياق ${item?.name || 'الكيان الحالي'}.`)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+      <div class="content-card prose-card params-section-intro">
+        <div class="params-section-intro-kicker">قراءة سريعة</div>
+        <p>هذه البطاقات تجمع ${visibleEntries.length} من الثوابت وقيم التعداد والماكرو التي ظهرت مع ${itemName ? renderProjectReferenceChip(itemName, {currentItem: item, preferredEnumName}) : `هذا ${subjectLabel}`}، وتشرح معناها العملي ولماذا ارتبطت بهذا الموضع تحديدًا.</p>
+      </div>
+      <div class="params-card-grid entity-related-constants-card-grid">
+        ${visibleEntries.map((entry, index) => `
+          <article class="content-card prose-card parameter-detail-card">
+            <div class="parameter-card-head">
+              <div class="parameter-card-order">الارتباط ${index + 1}</div>
+              <div class="parameter-card-title-wrap">
+                <h3 class="parameter-card-name parameter-card-code">${renderProjectReferenceChip(entry.name, {currentItem: item, preferredEnumName: entry.preferredEnumName || preferredEnumName})}</h3>
+                <div class="parameter-card-type-row">
+                  <span class="parameter-card-type-label">النوع</span>
+                  <div class="parameter-card-type">${renderPracticalText(inferTutorialConstantKind(entry.name, entry.resolved), 'يوضح هذا الحقل نوع العنصر المرجعي الحالي.')}</div>
+                </div>
+              </div>
+            </div>
+            <div class="parameter-card-fields">
+              <div class="parameter-card-field">
+                <div class="parameter-card-field-label">المعنى الحقيقي</div>
+                <div class="parameter-card-field-value">${renderPracticalText(inferTutorialConstantMeaning(entry.name, entry.resolved), `يوضح هذا الحقل المعنى العملي للعنصر ${entry.name}.`)}</div>
+              </div>
+              <div class="parameter-card-field">
+                <div class="parameter-card-field-label">أين يرتبط بهذا الكيان</div>
+                <div class="parameter-card-field-value">${entry.contexts.length ? entry.contexts.map((context) => `<div class="entity-related-constant-context">${describeEntityRelatedConstantContext(context, entry, item, kind)}</div>`).join('') : '<span>يرتبط هذا العنصر بسياق الكيان الحالي مباشرة.</span>'}</div>
+              </div>
+              <div class="parameter-card-field">
+                <div class="parameter-card-field-label">لماذا هو مهم هنا</div>
+                <div class="parameter-card-field-value">${renderPracticalText(inferEntityConstantReason(entry.name, entry.resolved, item, kind, entry.contexts), `يبين هذا الحقل لماذا يعد ${entry.name} مهماً في سياق ${item?.name || 'الكيان الحالي'}.`)}</div>
+              </div>
+            </div>
+          </article>
+        `).join('')}
       </div>
       ${hiddenCount > 0 ? `<div class="content-card prose-card"><p>عُرض أول ${visibleEntries.length} ثابتاً فقط هنا حتى تبقى الصفحة خفيفة، وما تبقى وعدده ${hiddenCount} ثابتات يمكن الوصول إليه من صفحاتها أو من قسم الثوابت العام.</p></div>` : ''}
     </section>
