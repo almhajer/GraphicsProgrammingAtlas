@@ -272,6 +272,47 @@ function initSidebarNavigation() {
   return invokeHeavyHelper4Runtime('initSidebarNavigation');
 }
 
+function initMobileSidebarToggle() {
+  return invokeHeavyHelper4Runtime('initMobileSidebarToggle');
+}
+
+function applyMobileSidebarFallbackState(open) {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.querySelector('.menu-toggle');
+  if (!sidebar || !toggle) {
+    return false;
+  }
+
+  const isMobileViewport = window.innerWidth <= 900;
+  const shouldOpen = isMobileViewport && Boolean(open);
+  sidebar.classList.toggle('open', shouldOpen);
+  document.body.classList.toggle('sidebar-mobile-open', shouldOpen);
+  toggle.setAttribute('aria-expanded', String(shouldOpen));
+  toggle.setAttribute('aria-label', shouldOpen ? 'إغلاق القائمة' : 'فتح القائمة');
+  toggle.setAttribute('aria-controls', 'sidebar');
+  return shouldOpen;
+}
+
+function toggleMobileSidebarMenu(event) {
+  if (event) {
+    event.__mobileSidebarHandled = true;
+    event.preventDefault?.();
+    event.stopPropagation?.();
+  }
+
+  if (window.innerWidth > 900) {
+    return false;
+  }
+
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar) {
+    return false;
+  }
+
+  applyMobileSidebarFallbackState(!sidebar.classList.contains('open'));
+  return false;
+}
+
 function getKnownFunctionNames() {
   return invokeHeavyHelper4Runtime('getKnownFunctionNames', [], () => []);
 }

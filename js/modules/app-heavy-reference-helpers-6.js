@@ -1969,6 +1969,7 @@ async function bootApplication() {
     initTooltipSystem();
     initSidebarNavigation();
     initSidebarResizer();
+    initMobileSidebarToggle();
     initTutorialCodeLazyHighlighting();
     initProseCardReferenceLinking();
     loadData();

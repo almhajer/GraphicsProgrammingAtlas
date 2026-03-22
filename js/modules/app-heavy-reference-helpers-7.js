@@ -2,7 +2,7 @@
 
 // ArabicVulkan - موقع توثيق وتعليم Vulkan باللغة العربية
 
-const APP_ASSET_VERSION = '20260322phase477a';
+const APP_ASSET_VERSION = '20260323phase483a';
 const APP_BRAND_TITLE = 'ا. المرجع العربي للبرمجة';
 const APP_TEXT_SOURCE = 'data/ui/app-text.json';
 const PASSIVE_SCROLL_CAPTURE_OPTIONS = {capture: true, passive: true};

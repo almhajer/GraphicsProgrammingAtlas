@@ -317,6 +317,7 @@
     if (key === 'عند طلب فكرة أو تعديل') return 'site-usage-section-request';
     if (key === 'روابط الدعم في المستودع') return 'site-usage-section-support';
     if (key === 'إضافات من حساب Arabic-language') return 'site-usage-section-extensions';
+    if (key === 'كلمة أخيرة') return 'site-usage-section-final';
     return '';
   }
 
@@ -353,14 +354,16 @@
       sectionsHtml += renderSiteUsageGuideSection(sections[i]);
     }
 
-    content.innerHTML = '<div class="page-header">'
+    content.innerHTML = '<div class="site-usage-guide-page">'
+      + '<div class="page-header">'
       + '<nav class="breadcrumb"><a href="#" onclick="showHomePage(); return false;">الرئيسية</a> / '
       + '<span>' + _esc(guide.title) + '</span></nav>'
       + '<h1>' + _icon('file', 'ui-codicon page-icon', guide.title) + ' ' + _esc(guide.title) + '</h1>'
       + '<p>' + renderSiteUsageInlineHtml(guide.excerpt) + '</p></div>'
-      + '<section class="home-section"><h2>ملخص سريع</h2><div class="info-grid">'
+      + '<section class="home-section site-usage-section-summary"><h2>ملخص سريع</h2><div class="info-grid">'
       + cardsHtml + '</div></section>'
-      + sectionsHtml;
+      + sectionsHtml
+      + '</div>';
 
     api.setCurrentView('site-usage');
     document.title = guide.title + ' - ' + api.getAppBrandTitle();
