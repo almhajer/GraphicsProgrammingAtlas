@@ -1,0 +1,97 @@
+[
+  {
+    "name": "CTest",
+    "titleArabic": "وحدة جاهزة تفعّل مسار الاختبارات وتضيف أدوات CTest القياسية",
+    "actualMeaningArabic": "هذه الوحدة تضيف دعم الاختبارات على مستوى CMake/CTest، وتستدعي enable_testing() تلقائياً عادةً ما لم يكن BUILD_TESTING معطلاً.",
+    "purposeArabic": "تستخدم عندما تريد دمج الاختبارات مع ctest دون كتابة تهيئة الاختبارات من الصفر.",
+    "whyUseArabic": "توحد سلوك الاختبارات في المشروع وتجعل BUILD_TESTING ومعايير CTest متاحة مباشرة.",
+    "carriedValueArabic": "أثرها يظهر في configure لأنها توسع بيئة المشروع بمتغيرات ومنطق اختبار وقد تستدعي enable_testing().",
+    "usage": [
+      "تستعمل غالباً عبر include(CTest) قرب أعلى الملف الجذري.",
+      "بعدها يصبح من الطبيعي إضافة add_test() أو add_subdirectory(tests) بشرط BUILD_TESTING."
+    ],
+    "notes": [
+      "الوحدة لا تبني اختبارات وحدها؛ هي تهيئ المسار الذي تعمل ضمنه add_test().",
+      "ترتبط مباشرة بالمتغير BUILD_TESTING."
+    ],
+    "example": "include(CTest)\nif(BUILD_TESTING)\n  add_subdirectory(tests)\nendif()",
+    "officialUrl": "https://cmake.org/cmake/help/latest/module/CTest.html",
+    "related": [
+      "enable_testing",
+      "add_test",
+      "BUILD_TESTING"
+    ]
+  },
+  {
+    "name": "GNUInstallDirs",
+    "titleArabic": "وحدة تعطي أسماء وجهات تثبيت معيارية مثل bindir وlibdir وincludedir",
+    "actualMeaningArabic": "هذه الوحدة تعرف متغيرات مثل CMAKE_INSTALL_BINDIR وCMAKE_INSTALL_LIBDIR وCMAKE_INSTALL_INCLUDEDIR لتكوين install layout محمول بين الأنظمة.",
+    "purposeArabic": "تستخدم لتجنب كتابة مجلدات تثبيت صلبة مثل lib وinclude مباشرة داخل أوامر install().",
+    "whyUseArabic": "تحسن قابلية النقل لأن أماكن التثبيت الصحيحة قد تختلف بين الأنظمة والتوزيعات والبيئات.",
+    "carriedValueArabic": "تضيف مجموعة متغيرات تضبط وجهات install الفعلية التي ستستخدمها أوامر install والتصدير.",
+    "usage": [
+      "ابدأ بـ include(GNUInstallDirs) ثم استخدم المتغيرات الناتجة داخل DESTINATION.",
+      "مفيد جداً عندما تنوي تثبيت مكتبة قابلة لإعادة الاستخدام لا مجرد تطبيق محلي."
+    ],
+    "notes": [
+      "هي وحدة مساعدة للتثبيت وليست بديلاً عن الأمر install().",
+      "تعمل بشكل ممتاز مع CMAKE_INSTALL_PREFIX."
+    ],
+    "example": "include(GNUInstallDirs)\ninstall(TARGETS calculator RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})",
+    "officialUrl": "https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html",
+    "related": [
+      "install",
+      "CMAKE_INSTALL_PREFIX"
+    ]
+  },
+  {
+    "name": "CMakePackageConfigHelpers",
+    "aliases": [
+      "write_basic_package_version_file",
+      "configure_package_config_file"
+    ],
+    "titleArabic": "وحدة تساعد على توليد ملفات package config القابلة للاستهلاك عبر find_package",
+    "actualMeaningArabic": "هذه الوحدة توفر helpers مثل configure_package_config_file() وwrite_basic_package_version_file() لبناء ملفات package config والإصدار مثل MyLibConfig.cmake وMyLibConfigVersion.cmake التي يحتاجها المشروع المستهلك لاحقاً.",
+    "purposeArabic": "تستخدم عندما تريد أن يثبت مشروعك نفسه كحزمة رسمية يمكن للغير استيرادها عبر find_package(MyLib CONFIG) بدل الاعتماد على مسارات يدوية أو Find module خارجي.",
+    "whyUseArabic": "توفر الطريق القياسي لكتابة package config بدلاً من قوالب يدوية سهلة الكسر أو غير محمولة، وتربط configure/install/package step ببعضها بصورة مفهومة.",
+    "carriedValueArabic": "أثرها يظهر في configure والتثبيت لأنها تولد ملفات package metadata التي سيقرأها مشروع آخر لاحقاً أثناء configure عند find_package، كما تحدد كيف سيجري version matching عمليًا.",
+    "usage": [
+      "تظهر عادة مع install(EXPORT ...) وملفات config template الخاصة بالمكتبة.",
+      "من أهم الأدوات عندما تنقل المشروع من بناء محلي إلى مكتبة قابلة للتوزيع ثم الاستهلاك عبر Config mode."
+    ],
+    "notes": [
+      "ترتبط مباشرة بمفهوم export والحزم config mode.",
+      "هي حلقة وصل بين install() وfind_package() للمستهلك downstream.",
+      "اسم الملف MyLibConfigVersion.cmake ليس اسمًا تجميليًا فقط، بل artefact يقرأه find_package لفحص توافق الإصدار."
+    ],
+    "example": "include(CMakePackageConfigHelpers)\nwrite_basic_package_version_file(\n  MyLibConfigVersion.cmake\n  VERSION ${PROJECT_VERSION}\n  COMPATIBILITY SameMajorVersion\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html",
+    "related": [
+      "install",
+      "find_package",
+      "Installing and Exporting",
+      "package config files and Config mode"
+    ]
+  },
+  {
+    "name": "FindPackageHandleStandardArgs",
+    "titleArabic": "وحدة تساعد وحدات Find*.cmake على إعلان النجاح والفشل ورسائل الاكتشاف القياسية",
+    "actualMeaningArabic": "هذه الوحدة توفر helper يبسط كتابة وحدات البحث المخصصة، بحيث تتعامل مع الإلزام (REQUIRED) والوضع الهادئ (QUIET) وحالة الاكتشاف FOUND ورسائل التشخيص بطريقة قياسية.",
+    "purposeArabic": "تستخدم عند كتابة FindFoo.cmake خاص بك أو عند فهم كيف تعمل وحدات البحث التقليدية في module mode.",
+    "whyUseArabic": "تمنع تكرار منطق فحص النجاح/الفشل ورسائل الخطأ في كل وحدة بحث محلية.",
+    "carriedValueArabic": "تؤثر في مرحلة configure عبر منطق اكتشاف الحزم وإعلان النتيجة بطريقة متوافقة مع find_package().",
+    "usage": [
+      "غالباً تستعمل داخل ملفات Modules المخصصة لا داخل CMakeLists.txt العادي.",
+      "مهمة إذا كان المشروع يقدم وحدات بحث محلية لاعتماديات غير مجهزة بملفات Config."
+    ],
+    "notes": [
+      "ترتبط بمسار module mode أكثر من config mode.",
+      "هي أداة دعم للمنفذ الذي يكتب Find module، لا للمستهلك النهائي فقط."
+    ],
+    "example": "include(FindPackageHandleStandardArgs)\nfind_package_handle_standard_args(Foo REQUIRED_VARS FOO_LIBRARY FOO_INCLUDE_DIR)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/module/FindPackageHandleStandardArgs.html",
+    "related": [
+      "find_package"
+    ]
+  }
+]

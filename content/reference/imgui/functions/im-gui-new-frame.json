@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "ImGui::NewFrame",
+    "slug": "im-gui-new-frame",
+    "titleArabic": "تبدأ إطار Dear ImGui جديد وتجهز السياق لبناء الواجهة",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/functions/im-gui-new-frame",
+    "contentPath": "content/reference/imgui/functions/im-gui-new-frame.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تبدأ إطار Dear ImGui جديد وتجهز السياق لبناء الواجهة",
+    "actualMeaningArabic": "هذه الدالة تصفر بعض الحالات المؤقتة وتثبت إدخال الإطار الحالي وتجهز المكدسات والبنى الداخلية حتى تصبح استدعاءات Begin وButton وText وغيرها جزءاً من إطار جديد صالح.",
+    "purposeArabic": "استخدمها مرة واحدة في بداية كل إطار بعد أن تنهي الـ backends تحديث الإدخال وقبل بناء أي عنصر Dear ImGui.",
+    "whyUseArabic": "تضمن أن كل عناصر الواجهة التي ستبنيها لاحقاً تنتمي إلى إطار واحد متسق وتقرأ نفس حالة الإدخال والزمن والحجم.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء ليست نصاً أو تعريفاً فقط، بل الأثر الذي يحدثه على الحالة أو المورد المستهدف.",
+    "sourceDescription": "تعلن بداية دورة بناء واجهة جديدة داخل Dear ImGui."
+  },
+  "signature": {
+    "raw": "void ImGui::NewFrame()",
+    "returnType": "void",
+    "parameters": [],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [
+      "الـ backends عادة تملك دوال NewFrame خاصة بها يجب أن تُستدعى قبل ImGui::NewFrame.",
+      "ترتيب NewFrame ثم بناء العناصر ثم Render هو أساس دورة Dear ImGui."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استدعها مرة واحدة لكل إطار بعد تحديث المنصة والـ renderer backend لحالتهما.",
+      "لا تبن أي widget قبل NewFrame في الإطار نفسه.",
+      "اتبعها لاحقاً بـ ImGui::Render عندما تنتهي من بناء الواجهة."
+    ],
+    "lifecycle": [
+      "تحدّث الـ backends إدخال الإطار الحالي أولاً.",
+      "تبدأ NewFrame دورة Dear ImGui الجديدة.",
+      "تبني بعدها عناصر الواجهة ثم تُنهي الدورة بـ Render."
+    ],
+    "returns": "",
+    "threadSafety": "استخدمها من الخيط الذي يملك سياق Dear ImGui الحالي، لأنها تبدأ دورة الإطار لذلك السياق نفسه.",
+    "example": "ImGui_ImplOpenGL3_NewFrame();\nImGui_ImplSDL3_NewFrame();\nImGui::NewFrame();\nImGui::Begin(\"Tools\");\nImGui::Text(\"Ready\");\nImGui::End();"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::Render",
+        "route": "#ref/imgui/functions/im-gui-render",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::GetIO",
+        "route": "#ref/imgui/functions/im-gui-get-io",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "Platform Backend و Renderer Backend",
+        "route": "#ref/imgui/misc/platform-backend-renderer-backend",
+        "libraryId": "imgui",
+        "kindId": "misc"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/functions.json",
+    "category": "الدوال",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

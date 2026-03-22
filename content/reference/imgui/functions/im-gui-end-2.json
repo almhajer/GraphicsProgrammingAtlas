@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "ImGui::End",
+    "slug": "im-gui-end-2",
+    "titleArabic": "تنهي النافذة الحالية في Dear ImGui وتغلق نطاق التخطيط والرسم الذي بدأته ImGui",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/functions/im-gui-end-2",
+    "contentPath": "content/reference/imgui/functions/im-gui-end-2.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تنهي النافذة الحالية في Dear ImGui وتغلق نطاق التخطيط والرسم الذي بدأته ImGui",
+    "actualMeaningArabic": "تمثل عملية إغلاق مكدس النافذة الحالي؛ فهي تعيد السياق الداخلي إلى النافذة الأب أو إلى المستوى العام بعد اكتمال تسجيل العناصر الداخلية.",
+    "purposeArabic": "تستخدم مباشرة بعد الانتهاء من كل المحتوى الواقع تحت ImGui::Begin أو BeginChild أو BeginPopup في النطاق نفسه.",
+    "whyUseArabic": "تحافظ على توازن البنية الداخلية للسياق، وتضمن أن العناصر التالية لا تُسجّل بالخطأ داخل النافذة السابقة.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء ليست نصاً أو تعريفاً فقط، بل الأثر الذي يحدثه على الحالة أو المورد المستهدف.",
+    "sourceDescription": "تنهي النافذة أو النطاق الذي بدأته ImGui::Begin في الإطار الحالي."
+  },
+  "signature": {
+    "raw": "void ImGui::End()",
+    "returnType": "void",
+    "parameters": [],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [
+      "الخطأ الشائع هو ربط ImGui::End بشرط القيمة المعادة من ImGui::Begin؛ هذا غير صحيح ويكسر التوازن."
+    ],
+    "remarks": [],
+    "instructions": [
+      "ضعها دائماً بعد كتلة محتوى النافذة حتى لو خرجت مبكراً من بعض الشروط.",
+      "لا تستدعها من دون وجود ImGui::Begin مماثلة في المكدس."
+    ],
+    "lifecycle": [
+      "تستدعى بعد ImGui::Begin المقابل لها وفي الإطار نفسه.",
+      "ينتهي بها نطاق النافذة الحالي ويصبح السياق جاهزاً لنافذة أخرى أو لعناصر خارج هذا النطاق.",
+      "لا تحتاج إلى حالة خارجية، لكنها تعتمد كلياً على صحة ترتيب الاستدعاءات قبلها."
+    ],
+    "returns": "",
+    "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+    "example": "if (ImGui::Begin(\"التفاصيل\")) {\n ImGui::Text(\"المستخدم الحالي: Admin\");\n}\nImGui::End();"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::Begin",
+        "route": "#ref/imgui/functions/im-gui-begin",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::BeginChild",
+        "route": "#ref/imgui/functions/im-gui-begin-child",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::BeginPopup",
+        "route": "#ref/imgui/functions/im-gui-begin-popup",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::EndPopup",
+        "route": "#ref/imgui/functions/im-gui-end-popup",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/windows.json",
+    "category": "النوافذ والنطاقات",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

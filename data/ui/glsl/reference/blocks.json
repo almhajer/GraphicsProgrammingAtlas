@@ -1,0 +1,58 @@
+{
+  "key": "blocks",
+  "title": "البنى والكتل",
+  "icon": "symbol-class",
+  "description": "",
+  "items": [
+    {
+      "name": "struct",
+      "kind": "User-defined Structure",
+      "description": "تعريف نوع مركب يجمع عدة حقول في نوع واحد داخل الشيدر.",
+      "usage": "يستخدم لتجميع بيانات منطقية مترابطة مثل مواد أو مصادر ضوء.",
+      "execution": "المترجم يفك هذا النوع إلى أعضاء يمكن الوصول إليها ويحدد تخطيطها بحسب السياق.",
+      "effect": "يبسط تنظيم البيانات داخل الشيدر لكنه لا يغير المسار التنفيذي وحده ما لم يُستخدم في واجهات أو blocks.",
+      "vulkanBridge": "عند استخدامه داخل Uniform/Storage blocks يجب أن ينسجم تخطيطه مع الذاكرة التي يملأها التطبيق.",
+      "example": "struct Light { vec3 position; vec3 color; };",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "uniform block",
+      "aliases": [
+        "UniformBufferObject"
+      ],
+      "kind": "Interface Block",
+      "description": "كتلة معلنة بوسيط uniform تجمع حقولاً تقرأ من Buffer يربطه التطبيق.",
+      "usage": "شائعة لتمرير مصفوفات التحويل أو ثوابت الإطار أو بيانات الكاميرا.",
+      "execution": "يربطها الشيدر بمورد Descriptor، ثم يقرأ الحقول من الذاكرة أثناء كل invocation.",
+      "effect": "تغيير محتوى البافر يغير سلوك الشيدر بدون إعادة ترجمة الكود.",
+      "vulkanBridge": "ترتبط مباشرة بـ VkDescriptorBufferInfo وVkWriteDescriptorSet وVkDescriptorSetLayoutBinding.",
+      "example": "layout(set = 0, binding = 0) uniform UniformBufferObject { mat4 mvp; } ubo;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "buffer block",
+      "aliases": [
+        "storage block"
+      ],
+      "kind": "Interface Block",
+      "description": "كتلة معلنة بوسيط buffer تتيح قراءة/كتابة بيانات عامة عبر SSBO.",
+      "usage": "تستخدم عندما تحتاج Arrays كبيرة أو كتابة نتائج من Compute Shader أو Fragment/Vertex في المسارات المدعومة.",
+      "execution": "تصل إلى ذاكرة عامة عبر descriptor storage buffer أثناء التنفيذ.",
+      "effect": "تنقل العمل من قراءة ثوابت فقط إلى تحديث بيانات مشتركة أو كبيرة الحجم.",
+      "vulkanBridge": "تحتاج إلى Storage Buffer descriptor واستخدامات Buffer مناسبة في Vulkan.",
+      "example": "layout(set = 0, binding = 2) buffer Particles { vec4 data[]; } particles;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_PerVertex",
+      "kind": "Built-in Interface Block",
+      "description": "واجهة مضمّنة تحتوي حقولاً قياسية مرتبطة بمرحلة Vertex مثل gl_Position.",
+      "usage": "يستخدمه النظام اللغوي لوصف مجموعة الخرج القياسية للمرحلة، ويمكن إعادة تعريفه في بعض السياقات المعيارية.",
+      "execution": "يمثل القناة الرسمية التي تنتقل عبرها متغيرات built-in الخاصة بالمرحلة.",
+      "effect": "يحدد كيف تتدفق بعض المتغيرات القياسية عبر الـ pipeline الثابت.",
+      "vulkanBridge": "أهم عضو فيه للمسار الرسومي الأساسي هو gl_Position، لأنه يحمل الموضع النهائي الذي ستعتمده المراحل الثابتة التالية.",
+      "example": "gl_Position = vec4(inPosition, 0.0, 1.0);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    }
+  ]
+}

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 4 من 64 • الأسطر 1351-1800 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 4 من 64 • الأسطر 1351-1800</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 4 من 64 • الأسطر 1351-1800</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-3.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-5.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 4/64</span>
+        <span class="source-stat">الأسطر: 1351-1800</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>            PFN_vkAcquirePerformanceConfigurationINTEL( vkGetDeviceProcAddr( device, &quot;vkAcquirePerformanceConfigurationINTEL&quot; ) );
+          vkReleasePerformanceConfigurationINTEL =
+            PFN_vkReleasePerformanceConfigurationINTEL( vkGetDeviceProcAddr( device, &quot;vkReleasePerformanceConfigurationINTEL&quot; ) );
+          vkQueueSetPerformanceConfigurationINTEL =
+            PFN_vkQueueSetPerformanceConfigurationINTEL( vkGetDeviceProcAddr( device, &quot;vkQueueSetPerformanceConfigurationINTEL&quot; ) );
+          vkGetPerformanceParameterINTEL = PFN_vkGetPerformanceParameterINTEL( vkGetDeviceProcAddr( device, &quot;vkGetPerformanceParameterINTEL&quot; ) );
+
+          //=== VK_AMD_display_native_hdr ===
+          vkSetLocalDimmingAMD = PFN_vkSetLocalDimmingAMD( vkGetDeviceProcAddr( device, &quot;vkSetLocalDimmingAMD&quot; ) );
+
+          //=== VK_KHR_fragment_shading_rate ===
+          vkCmdSetFragmentShadingRateKHR = PFN_vkCmdSetFragmentShadingRateKHR( vkGetDeviceProcAddr( device, &quot;vkCmdSetFragmentShadingRateKHR&quot; ) );
+
+          //=== VK_KHR_dynamic_rendering_local_read ===
+          vkCmdSetRenderingAttachmentLocationsKHR =
+            PFN_vkCmdSetRenderingAttachmentLocationsKHR( vkGetDeviceProcAddr( device, &quot;vkCmdSetRenderingAttachmentLocationsKHR&quot; ) );
+          if ( !vkCmdSetRenderingAttachmentLocations )
+            vkCmdSetRenderingAttachmentLocations = vkCmdSetRenderingAttachmentLocationsKHR;
+          vkCmdSetRenderingInputAttachmentIndicesKHR =
+            PFN_vkCmdSetRenderingInputAttachmentIndicesKHR( vkGetDeviceProcAddr( device, &quot;vkCmdSetRenderingInputAttachmentIndicesKHR&quot; ) );
+          if ( !vkCmdSetRenderingInputAttachmentIndices )
+            vkCmdSetRenderingInputAttachmentIndices = vkCmdSetRenderingInputAttachmentIndicesKHR;
+
+          //=== VK_EXT_buffer_device_address ===
+          vkGetBufferDeviceAddressEXT = PFN_vkGetBufferDeviceAddressEXT( vkGetDeviceProcAddr( device, &quot;vkGetBufferDeviceAddressEXT&quot; ) );
+          if ( !vkGetBufferDeviceAddress )
+            vkGetBufferDeviceAddress = vkGetBufferDeviceAddressEXT;
+
+          //=== VK_KHR_present_wait ===
+          vkWaitForPresentKHR = PFN_vkWaitForPresentKHR( vkGetDeviceProcAddr( device, &quot;vkWaitForPresentKHR&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_WIN32_KHR )
+          //=== VK_EXT_full_screen_exclusive ===
+          vkAcquireFullScreenExclusiveModeEXT = PFN_vkAcquireFullScreenExclusiveModeEXT( vkGetDeviceProcAddr( device, &quot;vkAcquireFullScreenExclusiveModeEXT&quot; ) );
+          vkReleaseFullScreenExclusiveModeEXT = PFN_vkReleaseFullScreenExclusiveModeEXT( vkGetDeviceProcAddr( device, &quot;vkReleaseFullScreenExclusiveModeEXT&quot; ) );
+          vkGetDeviceGroupSurfacePresentModes2EXT =
+            PFN_vkGetDeviceGroupSurfacePresentModes2EXT( vkGetDeviceProcAddr( device, &quot;vkGetDeviceGroupSurfacePresentModes2EXT&quot; ) );
+#  endif /*VK_USE_PLATFORM_WIN32_KHR*/
+
+          //=== VK_KHR_buffer_device_address ===
+          vkGetBufferDeviceAddressKHR = PFN_vkGetBufferDeviceAddressKHR( vkGetDeviceProcAddr( device, &quot;vkGetBufferDeviceAddressKHR&quot; ) );
+          if ( !vkGetBufferDeviceAddress )
+            vkGetBufferDeviceAddress = vkGetBufferDeviceAddressKHR;
+          vkGetBufferOpaqueCaptureAddressKHR = PFN_vkGetBufferOpaqueCaptureAddressKHR( vkGetDeviceProcAddr( device, &quot;vkGetBufferOpaqueCaptureAddressKHR&quot; ) );
+          if ( !vkGetBufferOpaqueCaptureAddress )
+            vkGetBufferOpaqueCaptureAddress = vkGetBufferOpaqueCaptureAddressKHR;
+          vkGetDeviceMemoryOpaqueCaptureAddressKHR =
+            PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR( vkGetDeviceProcAddr( device, &quot;vkGetDeviceMemoryOpaqueCaptureAddressKHR&quot; ) );
+          if ( !vkGetDeviceMemoryOpaqueCaptureAddress )
+            vkGetDeviceMemoryOpaqueCaptureAddress = vkGetDeviceMemoryOpaqueCaptureAddressKHR;
+
+          //=== VK_EXT_line_rasterization ===
+          vkCmdSetLineStippleEXT = PFN_vkCmdSetLineStippleEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetLineStippleEXT&quot; ) );
+          if ( !vkCmdSetLineStipple )
+            vkCmdSetLineStipple = vkCmdSetLineStippleEXT;
+
+          //=== VK_EXT_host_query_reset ===
+          vkResetQueryPoolEXT = PFN_vkResetQueryPoolEXT( vkGetDeviceProcAddr( device, &quot;vkResetQueryPoolEXT&quot; ) );
+          if ( !vkResetQueryPool )
+            vkResetQueryPool = vkResetQueryPoolEXT;
+
+          //=== VK_EXT_extended_dynamic_state ===
+          vkCmdSetCullModeEXT = PFN_vkCmdSetCullModeEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetCullModeEXT&quot; ) );
+          if ( !vkCmdSetCullMode )
+            vkCmdSetCullMode = vkCmdSetCullModeEXT;
+          vkCmdSetFrontFaceEXT = PFN_vkCmdSetFrontFaceEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetFrontFaceEXT&quot; ) );
+          if ( !vkCmdSetFrontFace )
+            vkCmdSetFrontFace = vkCmdSetFrontFaceEXT;
+          vkCmdSetPrimitiveTopologyEXT = PFN_vkCmdSetPrimitiveTopologyEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetPrimitiveTopologyEXT&quot; ) );
+          if ( !vkCmdSetPrimitiveTopology )
+            vkCmdSetPrimitiveTopology = vkCmdSetPrimitiveTopologyEXT;
+          vkCmdSetViewportWithCountEXT = PFN_vkCmdSetViewportWithCountEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetViewportWithCountEXT&quot; ) );
+          if ( !vkCmdSetViewportWithCount )
+            vkCmdSetViewportWithCount = vkCmdSetViewportWithCountEXT;
+          vkCmdSetScissorWithCountEXT = PFN_vkCmdSetScissorWithCountEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetScissorWithCountEXT&quot; ) );
+          if ( !vkCmdSetScissorWithCount )
+            vkCmdSetScissorWithCount = vkCmdSetScissorWithCountEXT;
+          vkCmdBindVertexBuffers2EXT = PFN_vkCmdBindVertexBuffers2EXT( vkGetDeviceProcAddr( device, &quot;vkCmdBindVertexBuffers2EXT&quot; ) );
+          if ( !vkCmdBindVertexBuffers2 )
+            vkCmdBindVertexBuffers2 = vkCmdBindVertexBuffers2EXT;
+          vkCmdSetDepthTestEnableEXT = PFN_vkCmdSetDepthTestEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthTestEnableEXT&quot; ) );
+          if ( !vkCmdSetDepthTestEnable )
+            vkCmdSetDepthTestEnable = vkCmdSetDepthTestEnableEXT;
+          vkCmdSetDepthWriteEnableEXT = PFN_vkCmdSetDepthWriteEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthWriteEnableEXT&quot; ) );
+          if ( !vkCmdSetDepthWriteEnable )
+            vkCmdSetDepthWriteEnable = vkCmdSetDepthWriteEnableEXT;
+          vkCmdSetDepthCompareOpEXT = PFN_vkCmdSetDepthCompareOpEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthCompareOpEXT&quot; ) );
+          if ( !vkCmdSetDepthCompareOp )
+            vkCmdSetDepthCompareOp = vkCmdSetDepthCompareOpEXT;
+          vkCmdSetDepthBoundsTestEnableEXT = PFN_vkCmdSetDepthBoundsTestEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthBoundsTestEnableEXT&quot; ) );
+          if ( !vkCmdSetDepthBoundsTestEnable )
+            vkCmdSetDepthBoundsTestEnable = vkCmdSetDepthBoundsTestEnableEXT;
+          vkCmdSetStencilTestEnableEXT = PFN_vkCmdSetStencilTestEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetStencilTestEnableEXT&quot; ) );
+          if ( !vkCmdSetStencilTestEnable )
+            vkCmdSetStencilTestEnable = vkCmdSetStencilTestEnableEXT;
+          vkCmdSetStencilOpEXT = PFN_vkCmdSetStencilOpEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetStencilOpEXT&quot; ) );
+          if ( !vkCmdSetStencilOp )
+            vkCmdSetStencilOp = vkCmdSetStencilOpEXT;
+
+          //=== VK_KHR_deferred_host_operations ===
+          vkCreateDeferredOperationKHR  = PFN_vkCreateDeferredOperationKHR( vkGetDeviceProcAddr( device, &quot;vkCreateDeferredOperationKHR&quot; ) );
+          vkDestroyDeferredOperationKHR = PFN_vkDestroyDeferredOperationKHR( vkGetDeviceProcAddr( device, &quot;vkDestroyDeferredOperationKHR&quot; ) );
+          vkGetDeferredOperationMaxConcurrencyKHR =
+            PFN_vkGetDeferredOperationMaxConcurrencyKHR( vkGetDeviceProcAddr( device, &quot;vkGetDeferredOperationMaxConcurrencyKHR&quot; ) );
+          vkGetDeferredOperationResultKHR = PFN_vkGetDeferredOperationResultKHR( vkGetDeviceProcAddr( device, &quot;vkGetDeferredOperationResultKHR&quot; ) );
+          vkDeferredOperationJoinKHR      = PFN_vkDeferredOperationJoinKHR( vkGetDeviceProcAddr( device, &quot;vkDeferredOperationJoinKHR&quot; ) );
+
+          //=== VK_KHR_pipeline_executable_properties ===
+          vkGetPipelineExecutablePropertiesKHR =
+            PFN_vkGetPipelineExecutablePropertiesKHR( vkGetDeviceProcAddr( device, &quot;vkGetPipelineExecutablePropertiesKHR&quot; ) );
+          vkGetPipelineExecutableStatisticsKHR =
+            PFN_vkGetPipelineExecutableStatisticsKHR( vkGetDeviceProcAddr( device, &quot;vkGetPipelineExecutableStatisticsKHR&quot; ) );
+          vkGetPipelineExecutableInternalRepresentationsKHR =
+            PFN_vkGetPipelineExecutableInternalRepresentationsKHR( vkGetDeviceProcAddr( device, &quot;vkGetPipelineExecutableInternalRepresentationsKHR&quot; ) );
+
+          //=== VK_EXT_host_image_copy ===
+          vkCopyMemoryToImageEXT = PFN_vkCopyMemoryToImageEXT( vkGetDeviceProcAddr( device, &quot;vkCopyMemoryToImageEXT&quot; ) );
+          if ( !vkCopyMemoryToImage )
+            vkCopyMemoryToImage = vkCopyMemoryToImageEXT;
+          vkCopyImageToMemoryEXT = PFN_vkCopyImageToMemoryEXT( vkGetDeviceProcAddr( device, &quot;vkCopyImageToMemoryEXT&quot; ) );
+          if ( !vkCopyImageToMemory )
+            vkCopyImageToMemory = vkCopyImageToMemoryEXT;
+          vkCopyImageToImageEXT = PFN_vkCopyImageToImageEXT( vkGetDeviceProcAddr( device, &quot;vkCopyImageToImageEXT&quot; ) );
+          if ( !vkCopyImageToImage )
+            vkCopyImageToImage = vkCopyImageToImageEXT;
+          vkTransitionImageLayoutEXT = PFN_vkTransitionImageLayoutEXT( vkGetDeviceProcAddr( device, &quot;vkTransitionImageLayoutEXT&quot; ) );
+          if ( !vkTransitionImageLayout )
+            vkTransitionImageLayout = vkTransitionImageLayoutEXT;
+          vkGetImageSubresourceLayout2EXT = PFN_vkGetImageSubresourceLayout2EXT( vkGetDeviceProcAddr( device, &quot;vkGetImageSubresourceLayout2EXT&quot; ) );
+          if ( !vkGetImageSubresourceLayout2 )
+            vkGetImageSubresourceLayout2 = vkGetImageSubresourceLayout2EXT;
+
+          //=== VK_KHR_map_memory2 ===
+          vkMapMemory2KHR = PFN_vkMapMemory2KHR( vkGetDeviceProcAddr( device, &quot;vkMapMemory2KHR&quot; ) );
+          if ( !vkMapMemory2 )
+            vkMapMemory2 = vkMapMemory2KHR;
+          vkUnmapMemory2KHR = PFN_vkUnmapMemory2KHR( vkGetDeviceProcAddr( device, &quot;vkUnmapMemory2KHR&quot; ) );
+          if ( !vkUnmapMemory2 )
+            vkUnmapMemory2 = vkUnmapMemory2KHR;
+
+          //=== VK_EXT_swapchain_maintenance1 ===
+          vkReleaseSwapchainImagesEXT = PFN_vkReleaseSwapchainImagesEXT( vkGetDeviceProcAddr( device, &quot;vkReleaseSwapchainImagesEXT&quot; ) );
+          if ( !vkReleaseSwapchainImagesKHR )
+            vkReleaseSwapchainImagesKHR = vkReleaseSwapchainImagesEXT;
+
+          //=== VK_NV_device_generated_commands ===
+          vkGetGeneratedCommandsMemoryRequirementsNV =
+            PFN_vkGetGeneratedCommandsMemoryRequirementsNV( vkGetDeviceProcAddr( device, &quot;vkGetGeneratedCommandsMemoryRequirementsNV&quot; ) );
+          vkCmdPreprocessGeneratedCommandsNV = PFN_vkCmdPreprocessGeneratedCommandsNV( vkGetDeviceProcAddr( device, &quot;vkCmdPreprocessGeneratedCommandsNV&quot; ) );
+          vkCmdExecuteGeneratedCommandsNV    = PFN_vkCmdExecuteGeneratedCommandsNV( vkGetDeviceProcAddr( device, &quot;vkCmdExecuteGeneratedCommandsNV&quot; ) );
+          vkCmdBindPipelineShaderGroupNV     = PFN_vkCmdBindPipelineShaderGroupNV( vkGetDeviceProcAddr( device, &quot;vkCmdBindPipelineShaderGroupNV&quot; ) );
+          vkCreateIndirectCommandsLayoutNV   = PFN_vkCreateIndirectCommandsLayoutNV( vkGetDeviceProcAddr( device, &quot;vkCreateIndirectCommandsLayoutNV&quot; ) );
+          vkDestroyIndirectCommandsLayoutNV  = PFN_vkDestroyIndirectCommandsLayoutNV( vkGetDeviceProcAddr( device, &quot;vkDestroyIndirectCommandsLayoutNV&quot; ) );
+
+          //=== VK_EXT_depth_bias_control ===
+          vkCmdSetDepthBias2EXT = PFN_vkCmdSetDepthBias2EXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthBias2EXT&quot; ) );
+
+          //=== VK_EXT_private_data ===
+          vkCreatePrivateDataSlotEXT = PFN_vkCreatePrivateDataSlotEXT( vkGetDeviceProcAddr( device, &quot;vkCreatePrivateDataSlotEXT&quot; ) );
+          if ( !vkCreatePrivateDataSlot )
+            vkCreatePrivateDataSlot = vkCreatePrivateDataSlotEXT;
+          vkDestroyPrivateDataSlotEXT = PFN_vkDestroyPrivateDataSlotEXT( vkGetDeviceProcAddr( device, &quot;vkDestroyPrivateDataSlotEXT&quot; ) );
+          if ( !vkDestroyPrivateDataSlot )
+            vkDestroyPrivateDataSlot = vkDestroyPrivateDataSlotEXT;
+          vkSetPrivateDataEXT = PFN_vkSetPrivateDataEXT( vkGetDeviceProcAddr( device, &quot;vkSetPrivateDataEXT&quot; ) );
+          if ( !vkSetPrivateData )
+            vkSetPrivateData = vkSetPrivateDataEXT;
+          vkGetPrivateDataEXT = PFN_vkGetPrivateDataEXT( vkGetDeviceProcAddr( device, &quot;vkGetPrivateDataEXT&quot; ) );
+          if ( !vkGetPrivateData )
+            vkGetPrivateData = vkGetPrivateDataEXT;
+
+          //=== VK_KHR_video_encode_queue ===
+          vkGetEncodedVideoSessionParametersKHR =
+            PFN_vkGetEncodedVideoSessionParametersKHR( vkGetDeviceProcAddr( device, &quot;vkGetEncodedVideoSessionParametersKHR&quot; ) );
+          vkCmdEncodeVideoKHR = PFN_vkCmdEncodeVideoKHR( vkGetDeviceProcAddr( device, &quot;vkCmdEncodeVideoKHR&quot; ) );
+
+#  if defined( VK_ENABLE_BETA_EXTENSIONS )
+          //=== VK_NV_cuda_kernel_launch ===
+          vkCreateCudaModuleNV    = PFN_vkCreateCudaModuleNV( vkGetDeviceProcAddr( device, &quot;vkCreateCudaModuleNV&quot; ) );
+          vkGetCudaModuleCacheNV  = PFN_vkGetCudaModuleCacheNV( vkGetDeviceProcAddr( device, &quot;vkGetCudaModuleCacheNV&quot; ) );
+          vkCreateCudaFunctionNV  = PFN_vkCreateCudaFunctionNV( vkGetDeviceProcAddr( device, &quot;vkCreateCudaFunctionNV&quot; ) );
+          vkDestroyCudaModuleNV   = PFN_vkDestroyCudaModuleNV( vkGetDeviceProcAddr( device, &quot;vkDestroyCudaModuleNV&quot; ) );
+          vkDestroyCudaFunctionNV = PFN_vkDestroyCudaFunctionNV( vkGetDeviceProcAddr( device, &quot;vkDestroyCudaFunctionNV&quot; ) );
+          vkCmdCudaLaunchKernelNV = PFN_vkCmdCudaLaunchKernelNV( vkGetDeviceProcAddr( device, &quot;vkCmdCudaLaunchKernelNV&quot; ) );
+#  endif /*VK_ENABLE_BETA_EXTENSIONS*/
+
+          //=== VK_QCOM_tile_shading ===
+          vkCmdDispatchTileQCOM          = PFN_vkCmdDispatchTileQCOM( vkGetDeviceProcAddr( device, &quot;vkCmdDispatchTileQCOM&quot; ) );
+          vkCmdBeginPerTileExecutionQCOM = PFN_vkCmdBeginPerTileExecutionQCOM( vkGetDeviceProcAddr( device, &quot;vkCmdBeginPerTileExecutionQCOM&quot; ) );
+          vkCmdEndPerTileExecutionQCOM   = PFN_vkCmdEndPerTileExecutionQCOM( vkGetDeviceProcAddr( device, &quot;vkCmdEndPerTileExecutionQCOM&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_METAL_EXT )
+          //=== VK_EXT_metal_objects ===
+          vkExportMetalObjectsEXT = PFN_vkExportMetalObjectsEXT( vkGetDeviceProcAddr( device, &quot;vkExportMetalObjectsEXT&quot; ) );
+#  endif /*VK_USE_PLATFORM_METAL_EXT*/
+
+          //=== VK_KHR_synchronization2 ===
+          vkCmdSetEvent2KHR = PFN_vkCmdSetEvent2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdSetEvent2KHR&quot; ) );
+          if ( !vkCmdSetEvent2 )
+            vkCmdSetEvent2 = vkCmdSetEvent2KHR;
+          vkCmdResetEvent2KHR = PFN_vkCmdResetEvent2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdResetEvent2KHR&quot; ) );
+          if ( !vkCmdResetEvent2 )
+            vkCmdResetEvent2 = vkCmdResetEvent2KHR;
+          vkCmdWaitEvents2KHR = PFN_vkCmdWaitEvents2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdWaitEvents2KHR&quot; ) );
+          if ( !vkCmdWaitEvents2 )
+            vkCmdWaitEvents2 = vkCmdWaitEvents2KHR;
+          vkCmdPipelineBarrier2KHR = PFN_vkCmdPipelineBarrier2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdPipelineBarrier2KHR&quot; ) );
+          if ( !vkCmdPipelineBarrier2 )
+            vkCmdPipelineBarrier2 = vkCmdPipelineBarrier2KHR;
+          vkCmdWriteTimestamp2KHR = PFN_vkCmdWriteTimestamp2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdWriteTimestamp2KHR&quot; ) );
+          if ( !vkCmdWriteTimestamp2 )
+            vkCmdWriteTimestamp2 = vkCmdWriteTimestamp2KHR;
+          vkQueueSubmit2KHR = PFN_vkQueueSubmit2KHR( vkGetDeviceProcAddr( device, &quot;vkQueueSubmit2KHR&quot; ) );
+          if ( !vkQueueSubmit2 )
+            vkQueueSubmit2 = vkQueueSubmit2KHR;
+
+          //=== VK_EXT_descriptor_buffer ===
+          vkGetDescriptorSetLayoutSizeEXT = PFN_vkGetDescriptorSetLayoutSizeEXT( vkGetDeviceProcAddr( device, &quot;vkGetDescriptorSetLayoutSizeEXT&quot; ) );
+          vkGetDescriptorSetLayoutBindingOffsetEXT =
+            PFN_vkGetDescriptorSetLayoutBindingOffsetEXT( vkGetDeviceProcAddr( device, &quot;vkGetDescriptorSetLayoutBindingOffsetEXT&quot; ) );
+          vkGetDescriptorEXT                 = PFN_vkGetDescriptorEXT( vkGetDeviceProcAddr( device, &quot;vkGetDescriptorEXT&quot; ) );
+          vkCmdBindDescriptorBuffersEXT      = PFN_vkCmdBindDescriptorBuffersEXT( vkGetDeviceProcAddr( device, &quot;vkCmdBindDescriptorBuffersEXT&quot; ) );
+          vkCmdSetDescriptorBufferOffsetsEXT = PFN_vkCmdSetDescriptorBufferOffsetsEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDescriptorBufferOffsetsEXT&quot; ) );
+          vkCmdBindDescriptorBufferEmbeddedSamplersEXT =
+            PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT( vkGetDeviceProcAddr( device, &quot;vkCmdBindDescriptorBufferEmbeddedSamplersEXT&quot; ) );
+          vkGetBufferOpaqueCaptureDescriptorDataEXT =
+            PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT( vkGetDeviceProcAddr( device, &quot;vkGetBufferOpaqueCaptureDescriptorDataEXT&quot; ) );
+          vkGetImageOpaqueCaptureDescriptorDataEXT =
+            PFN_vkGetImageOpaqueCaptureDescriptorDataEXT( vkGetDeviceProcAddr( device, &quot;vkGetImageOpaqueCaptureDescriptorDataEXT&quot; ) );
+          vkGetImageViewOpaqueCaptureDescriptorDataEXT =
+            PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT( vkGetDeviceProcAddr( device, &quot;vkGetImageViewOpaqueCaptureDescriptorDataEXT&quot; ) );
+          vkGetSamplerOpaqueCaptureDescriptorDataEXT =
+            PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT( vkGetDeviceProcAddr( device, &quot;vkGetSamplerOpaqueCaptureDescriptorDataEXT&quot; ) );
+          vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT = PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT(
+            vkGetDeviceProcAddr( device, &quot;vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT&quot; ) );
+
+          //=== VK_NV_fragment_shading_rate_enums ===
+          vkCmdSetFragmentShadingRateEnumNV = PFN_vkCmdSetFragmentShadingRateEnumNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetFragmentShadingRateEnumNV&quot; ) );
+
+          //=== VK_EXT_mesh_shader ===
+          vkCmdDrawMeshTasksEXT              = PFN_vkCmdDrawMeshTasksEXT( vkGetDeviceProcAddr( device, &quot;vkCmdDrawMeshTasksEXT&quot; ) );
+          vkCmdDrawMeshTasksIndirectEXT      = PFN_vkCmdDrawMeshTasksIndirectEXT( vkGetDeviceProcAddr( device, &quot;vkCmdDrawMeshTasksIndirectEXT&quot; ) );
+          vkCmdDrawMeshTasksIndirectCountEXT = PFN_vkCmdDrawMeshTasksIndirectCountEXT( vkGetDeviceProcAddr( device, &quot;vkCmdDrawMeshTasksIndirectCountEXT&quot; ) );
+
+          //=== VK_KHR_copy_commands2 ===
+          vkCmdCopyBuffer2KHR = PFN_vkCmdCopyBuffer2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdCopyBuffer2KHR&quot; ) );
+          if ( !vkCmdCopyBuffer2 )
+            vkCmdCopyBuffer2 = vkCmdCopyBuffer2KHR;
+          vkCmdCopyImage2KHR = PFN_vkCmdCopyImage2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdCopyImage2KHR&quot; ) );
+          if ( !vkCmdCopyImage2 )
+            vkCmdCopyImage2 = vkCmdCopyImage2KHR;
+          vkCmdCopyBufferToImage2KHR = PFN_vkCmdCopyBufferToImage2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdCopyBufferToImage2KHR&quot; ) );
+          if ( !vkCmdCopyBufferToImage2 )
+            vkCmdCopyBufferToImage2 = vkCmdCopyBufferToImage2KHR;
+          vkCmdCopyImageToBuffer2KHR = PFN_vkCmdCopyImageToBuffer2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdCopyImageToBuffer2KHR&quot; ) );
+          if ( !vkCmdCopyImageToBuffer2 )
+            vkCmdCopyImageToBuffer2 = vkCmdCopyImageToBuffer2KHR;
+          vkCmdBlitImage2KHR = PFN_vkCmdBlitImage2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdBlitImage2KHR&quot; ) );
+          if ( !vkCmdBlitImage2 )
+            vkCmdBlitImage2 = vkCmdBlitImage2KHR;
+          vkCmdResolveImage2KHR = PFN_vkCmdResolveImage2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdResolveImage2KHR&quot; ) );
+          if ( !vkCmdResolveImage2 )
+            vkCmdResolveImage2 = vkCmdResolveImage2KHR;
+
+          //=== VK_EXT_device_fault ===
+          vkGetDeviceFaultInfoEXT = PFN_vkGetDeviceFaultInfoEXT( vkGetDeviceProcAddr( device, &quot;vkGetDeviceFaultInfoEXT&quot; ) );
+
+          //=== VK_EXT_vertex_input_dynamic_state ===
+          vkCmdSetVertexInputEXT = PFN_vkCmdSetVertexInputEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetVertexInputEXT&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_FUCHSIA )
+          //=== VK_FUCHSIA_external_memory ===
+          vkGetMemoryZirconHandleFUCHSIA = PFN_vkGetMemoryZirconHandleFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkGetMemoryZirconHandleFUCHSIA&quot; ) );
+          vkGetMemoryZirconHandlePropertiesFUCHSIA =
+            PFN_vkGetMemoryZirconHandlePropertiesFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkGetMemoryZirconHandlePropertiesFUCHSIA&quot; ) );
+#  endif /*VK_USE_PLATFORM_FUCHSIA*/
+
+#  if defined( VK_USE_PLATFORM_FUCHSIA )
+          //=== VK_FUCHSIA_external_semaphore ===
+          vkImportSemaphoreZirconHandleFUCHSIA =
+            PFN_vkImportSemaphoreZirconHandleFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkImportSemaphoreZirconHandleFUCHSIA&quot; ) );
+          vkGetSemaphoreZirconHandleFUCHSIA = PFN_vkGetSemaphoreZirconHandleFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkGetSemaphoreZirconHandleFUCHSIA&quot; ) );
+#  endif /*VK_USE_PLATFORM_FUCHSIA*/
+
+#  if defined( VK_USE_PLATFORM_FUCHSIA )
+          //=== VK_FUCHSIA_buffer_collection ===
+          vkCreateBufferCollectionFUCHSIA = PFN_vkCreateBufferCollectionFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkCreateBufferCollectionFUCHSIA&quot; ) );
+          vkSetBufferCollectionImageConstraintsFUCHSIA =
+            PFN_vkSetBufferCollectionImageConstraintsFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkSetBufferCollectionImageConstraintsFUCHSIA&quot; ) );
+          vkSetBufferCollectionBufferConstraintsFUCHSIA =
+            PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkSetBufferCollectionBufferConstraintsFUCHSIA&quot; ) );
+          vkDestroyBufferCollectionFUCHSIA = PFN_vkDestroyBufferCollectionFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkDestroyBufferCollectionFUCHSIA&quot; ) );
+          vkGetBufferCollectionPropertiesFUCHSIA =
+            PFN_vkGetBufferCollectionPropertiesFUCHSIA( vkGetDeviceProcAddr( device, &quot;vkGetBufferCollectionPropertiesFUCHSIA&quot; ) );
+#  endif /*VK_USE_PLATFORM_FUCHSIA*/
+
+          //=== VK_HUAWEI_subpass_shading ===
+          vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI =
+            PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI( vkGetDeviceProcAddr( device, &quot;vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI&quot; ) );
+          vkCmdSubpassShadingHUAWEI = PFN_vkCmdSubpassShadingHUAWEI( vkGetDeviceProcAddr( device, &quot;vkCmdSubpassShadingHUAWEI&quot; ) );
+
+          //=== VK_HUAWEI_invocation_mask ===
+          vkCmdBindInvocationMaskHUAWEI = PFN_vkCmdBindInvocationMaskHUAWEI( vkGetDeviceProcAddr( device, &quot;vkCmdBindInvocationMaskHUAWEI&quot; ) );
+
+          //=== VK_NV_external_memory_rdma ===
+          vkGetMemoryRemoteAddressNV = PFN_vkGetMemoryRemoteAddressNV( vkGetDeviceProcAddr( device, &quot;vkGetMemoryRemoteAddressNV&quot; ) );
+
+          //=== VK_EXT_pipeline_properties ===
+          vkGetPipelinePropertiesEXT = PFN_vkGetPipelinePropertiesEXT( vkGetDeviceProcAddr( device, &quot;vkGetPipelinePropertiesEXT&quot; ) );
+
+          //=== VK_EXT_extended_dynamic_state2 ===
+          vkCmdSetPatchControlPointsEXT      = PFN_vkCmdSetPatchControlPointsEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetPatchControlPointsEXT&quot; ) );
+          vkCmdSetRasterizerDiscardEnableEXT = PFN_vkCmdSetRasterizerDiscardEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetRasterizerDiscardEnableEXT&quot; ) );
+          if ( !vkCmdSetRasterizerDiscardEnable )
+            vkCmdSetRasterizerDiscardEnable = vkCmdSetRasterizerDiscardEnableEXT;
+          vkCmdSetDepthBiasEnableEXT = PFN_vkCmdSetDepthBiasEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthBiasEnableEXT&quot; ) );
+          if ( !vkCmdSetDepthBiasEnable )
+            vkCmdSetDepthBiasEnable = vkCmdSetDepthBiasEnableEXT;
+          vkCmdSetLogicOpEXT                = PFN_vkCmdSetLogicOpEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetLogicOpEXT&quot; ) );
+          vkCmdSetPrimitiveRestartEnableEXT = PFN_vkCmdSetPrimitiveRestartEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetPrimitiveRestartEnableEXT&quot; ) );
+          if ( !vkCmdSetPrimitiveRestartEnable )
+            vkCmdSetPrimitiveRestartEnable = vkCmdSetPrimitiveRestartEnableEXT;
+
+          //=== VK_EXT_color_write_enable ===
+          vkCmdSetColorWriteEnableEXT = PFN_vkCmdSetColorWriteEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetColorWriteEnableEXT&quot; ) );
+
+          //=== VK_KHR_ray_tracing_maintenance1 ===
+          vkCmdTraceRaysIndirect2KHR = PFN_vkCmdTraceRaysIndirect2KHR( vkGetDeviceProcAddr( device, &quot;vkCmdTraceRaysIndirect2KHR&quot; ) );
+
+          //=== VK_EXT_multi_draw ===
+          vkCmdDrawMultiEXT        = PFN_vkCmdDrawMultiEXT( vkGetDeviceProcAddr( device, &quot;vkCmdDrawMultiEXT&quot; ) );
+          vkCmdDrawMultiIndexedEXT = PFN_vkCmdDrawMultiIndexedEXT( vkGetDeviceProcAddr( device, &quot;vkCmdDrawMultiIndexedEXT&quot; ) );
+
+          //=== VK_EXT_opacity_micromap ===
+          vkCreateMicromapEXT                 = PFN_vkCreateMicromapEXT( vkGetDeviceProcAddr( device, &quot;vkCreateMicromapEXT&quot; ) );
+          vkDestroyMicromapEXT                = PFN_vkDestroyMicromapEXT( vkGetDeviceProcAddr( device, &quot;vkDestroyMicromapEXT&quot; ) );
+          vkCmdBuildMicromapsEXT              = PFN_vkCmdBuildMicromapsEXT( vkGetDeviceProcAddr( device, &quot;vkCmdBuildMicromapsEXT&quot; ) );
+          vkBuildMicromapsEXT                 = PFN_vkBuildMicromapsEXT( vkGetDeviceProcAddr( device, &quot;vkBuildMicromapsEXT&quot; ) );
+          vkCopyMicromapEXT                   = PFN_vkCopyMicromapEXT( vkGetDeviceProcAddr( device, &quot;vkCopyMicromapEXT&quot; ) );
+          vkCopyMicromapToMemoryEXT           = PFN_vkCopyMicromapToMemoryEXT( vkGetDeviceProcAddr( device, &quot;vkCopyMicromapToMemoryEXT&quot; ) );
+          vkCopyMemoryToMicromapEXT           = PFN_vkCopyMemoryToMicromapEXT( vkGetDeviceProcAddr( device, &quot;vkCopyMemoryToMicromapEXT&quot; ) );
+          vkWriteMicromapsPropertiesEXT       = PFN_vkWriteMicromapsPropertiesEXT( vkGetDeviceProcAddr( device, &quot;vkWriteMicromapsPropertiesEXT&quot; ) );
+          vkCmdCopyMicromapEXT                = PFN_vkCmdCopyMicromapEXT( vkGetDeviceProcAddr( device, &quot;vkCmdCopyMicromapEXT&quot; ) );
+          vkCmdCopyMicromapToMemoryEXT        = PFN_vkCmdCopyMicromapToMemoryEXT( vkGetDeviceProcAddr( device, &quot;vkCmdCopyMicromapToMemoryEXT&quot; ) );
+          vkCmdCopyMemoryToMicromapEXT        = PFN_vkCmdCopyMemoryToMicromapEXT( vkGetDeviceProcAddr( device, &quot;vkCmdCopyMemoryToMicromapEXT&quot; ) );
+          vkCmdWriteMicromapsPropertiesEXT    = PFN_vkCmdWriteMicromapsPropertiesEXT( vkGetDeviceProcAddr( device, &quot;vkCmdWriteMicromapsPropertiesEXT&quot; ) );
+          vkGetDeviceMicromapCompatibilityEXT = PFN_vkGetDeviceMicromapCompatibilityEXT( vkGetDeviceProcAddr( device, &quot;vkGetDeviceMicromapCompatibilityEXT&quot; ) );
+          vkGetMicromapBuildSizesEXT          = PFN_vkGetMicromapBuildSizesEXT( vkGetDeviceProcAddr( device, &quot;vkGetMicromapBuildSizesEXT&quot; ) );
+
+          //=== VK_HUAWEI_cluster_culling_shader ===
+          vkCmdDrawClusterHUAWEI         = PFN_vkCmdDrawClusterHUAWEI( vkGetDeviceProcAddr( device, &quot;vkCmdDrawClusterHUAWEI&quot; ) );
+          vkCmdDrawClusterIndirectHUAWEI = PFN_vkCmdDrawClusterIndirectHUAWEI( vkGetDeviceProcAddr( device, &quot;vkCmdDrawClusterIndirectHUAWEI&quot; ) );
+
+          //=== VK_EXT_pageable_device_local_memory ===
+          vkSetDeviceMemoryPriorityEXT = PFN_vkSetDeviceMemoryPriorityEXT( vkGetDeviceProcAddr( device, &quot;vkSetDeviceMemoryPriorityEXT&quot; ) );
+
+          //=== VK_KHR_maintenance4 ===
+          vkGetDeviceBufferMemoryRequirementsKHR =
+            PFN_vkGetDeviceBufferMemoryRequirementsKHR( vkGetDeviceProcAddr( device, &quot;vkGetDeviceBufferMemoryRequirementsKHR&quot; ) );
+          if ( !vkGetDeviceBufferMemoryRequirements )
+            vkGetDeviceBufferMemoryRequirements = vkGetDeviceBufferMemoryRequirementsKHR;
+          vkGetDeviceImageMemoryRequirementsKHR =
+            PFN_vkGetDeviceImageMemoryRequirementsKHR( vkGetDeviceProcAddr( device, &quot;vkGetDeviceImageMemoryRequirementsKHR&quot; ) );
+          if ( !vkGetDeviceImageMemoryRequirements )
+            vkGetDeviceImageMemoryRequirements = vkGetDeviceImageMemoryRequirementsKHR;
+          vkGetDeviceImageSparseMemoryRequirementsKHR =
+            PFN_vkGetDeviceImageSparseMemoryRequirementsKHR( vkGetDeviceProcAddr( device, &quot;vkGetDeviceImageSparseMemoryRequirementsKHR&quot; ) );
+          if ( !vkGetDeviceImageSparseMemoryRequirements )
+            vkGetDeviceImageSparseMemoryRequirements = vkGetDeviceImageSparseMemoryRequirementsKHR;
+
+          //=== VK_VALVE_descriptor_set_host_mapping ===
+          vkGetDescriptorSetLayoutHostMappingInfoVALVE =
+            PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE( vkGetDeviceProcAddr( device, &quot;vkGetDescriptorSetLayoutHostMappingInfoVALVE&quot; ) );
+          vkGetDescriptorSetHostMappingVALVE = PFN_vkGetDescriptorSetHostMappingVALVE( vkGetDeviceProcAddr( device, &quot;vkGetDescriptorSetHostMappingVALVE&quot; ) );
+
+          //=== VK_NV_copy_memory_indirect ===
+          vkCmdCopyMemoryIndirectNV        = PFN_vkCmdCopyMemoryIndirectNV( vkGetDeviceProcAddr( device, &quot;vkCmdCopyMemoryIndirectNV&quot; ) );
+          vkCmdCopyMemoryToImageIndirectNV = PFN_vkCmdCopyMemoryToImageIndirectNV( vkGetDeviceProcAddr( device, &quot;vkCmdCopyMemoryToImageIndirectNV&quot; ) );
+
+          //=== VK_NV_memory_decompression ===
+          vkCmdDecompressMemoryNV = PFN_vkCmdDecompressMemoryNV( vkGetDeviceProcAddr( device, &quot;vkCmdDecompressMemoryNV&quot; ) );
+          vkCmdDecompressMemoryIndirectCountNV =
+            PFN_vkCmdDecompressMemoryIndirectCountNV( vkGetDeviceProcAddr( device, &quot;vkCmdDecompressMemoryIndirectCountNV&quot; ) );
+
+          //=== VK_NV_device_generated_commands_compute ===
+          vkGetPipelineIndirectMemoryRequirementsNV =
+            PFN_vkGetPipelineIndirectMemoryRequirementsNV( vkGetDeviceProcAddr( device, &quot;vkGetPipelineIndirectMemoryRequirementsNV&quot; ) );
+          vkCmdUpdatePipelineIndirectBufferNV = PFN_vkCmdUpdatePipelineIndirectBufferNV( vkGetDeviceProcAddr( device, &quot;vkCmdUpdatePipelineIndirectBufferNV&quot; ) );
+          vkGetPipelineIndirectDeviceAddressNV =
+            PFN_vkGetPipelineIndirectDeviceAddressNV( vkGetDeviceProcAddr( device, &quot;vkGetPipelineIndirectDeviceAddressNV&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_OHOS )
+          //=== VK_OHOS_external_memory ===
+          vkGetNativeBufferPropertiesOHOS = PFN_vkGetNativeBufferPropertiesOHOS( vkGetDeviceProcAddr( device, &quot;vkGetNativeBufferPropertiesOHOS&quot; ) );
+          vkGetMemoryNativeBufferOHOS     = PFN_vkGetMemoryNativeBufferOHOS( vkGetDeviceProcAddr( device, &quot;vkGetMemoryNativeBufferOHOS&quot; ) );
+#  endif /*VK_USE_PLATFORM_OHOS*/
+
+          //=== VK_EXT_extended_dynamic_state3 ===
+          vkCmdSetDepthClampEnableEXT         = PFN_vkCmdSetDepthClampEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthClampEnableEXT&quot; ) );
+          vkCmdSetPolygonModeEXT              = PFN_vkCmdSetPolygonModeEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetPolygonModeEXT&quot; ) );
+          vkCmdSetRasterizationSamplesEXT     = PFN_vkCmdSetRasterizationSamplesEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetRasterizationSamplesEXT&quot; ) );
+          vkCmdSetSampleMaskEXT               = PFN_vkCmdSetSampleMaskEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetSampleMaskEXT&quot; ) );
+          vkCmdSetAlphaToCoverageEnableEXT    = PFN_vkCmdSetAlphaToCoverageEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetAlphaToCoverageEnableEXT&quot; ) );
+          vkCmdSetAlphaToOneEnableEXT         = PFN_vkCmdSetAlphaToOneEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetAlphaToOneEnableEXT&quot; ) );
+          vkCmdSetLogicOpEnableEXT            = PFN_vkCmdSetLogicOpEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetLogicOpEnableEXT&quot; ) );
+          vkCmdSetColorBlendEnableEXT         = PFN_vkCmdSetColorBlendEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetColorBlendEnableEXT&quot; ) );
+          vkCmdSetColorBlendEquationEXT       = PFN_vkCmdSetColorBlendEquationEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetColorBlendEquationEXT&quot; ) );
+          vkCmdSetColorWriteMaskEXT           = PFN_vkCmdSetColorWriteMaskEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetColorWriteMaskEXT&quot; ) );
+          vkCmdSetTessellationDomainOriginEXT = PFN_vkCmdSetTessellationDomainOriginEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetTessellationDomainOriginEXT&quot; ) );
+          vkCmdSetRasterizationStreamEXT      = PFN_vkCmdSetRasterizationStreamEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetRasterizationStreamEXT&quot; ) );
+          vkCmdSetConservativeRasterizationModeEXT =
+            PFN_vkCmdSetConservativeRasterizationModeEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetConservativeRasterizationModeEXT&quot; ) );
+          vkCmdSetExtraPrimitiveOverestimationSizeEXT =
+            PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetExtraPrimitiveOverestimationSizeEXT&quot; ) );
+          vkCmdSetDepthClipEnableEXT       = PFN_vkCmdSetDepthClipEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthClipEnableEXT&quot; ) );
+          vkCmdSetSampleLocationsEnableEXT = PFN_vkCmdSetSampleLocationsEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetSampleLocationsEnableEXT&quot; ) );
+          vkCmdSetColorBlendAdvancedEXT    = PFN_vkCmdSetColorBlendAdvancedEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetColorBlendAdvancedEXT&quot; ) );
+          vkCmdSetProvokingVertexModeEXT   = PFN_vkCmdSetProvokingVertexModeEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetProvokingVertexModeEXT&quot; ) );
+          vkCmdSetLineRasterizationModeEXT = PFN_vkCmdSetLineRasterizationModeEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetLineRasterizationModeEXT&quot; ) );
+          vkCmdSetLineStippleEnableEXT     = PFN_vkCmdSetLineStippleEnableEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetLineStippleEnableEXT&quot; ) );
+          vkCmdSetDepthClipNegativeOneToOneEXT =
+            PFN_vkCmdSetDepthClipNegativeOneToOneEXT( vkGetDeviceProcAddr( device, &quot;vkCmdSetDepthClipNegativeOneToOneEXT&quot; ) );
+          vkCmdSetViewportWScalingEnableNV  = PFN_vkCmdSetViewportWScalingEnableNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetViewportWScalingEnableNV&quot; ) );
+          vkCmdSetViewportSwizzleNV         = PFN_vkCmdSetViewportSwizzleNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetViewportSwizzleNV&quot; ) );
+          vkCmdSetCoverageToColorEnableNV   = PFN_vkCmdSetCoverageToColorEnableNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetCoverageToColorEnableNV&quot; ) );
+          vkCmdSetCoverageToColorLocationNV = PFN_vkCmdSetCoverageToColorLocationNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetCoverageToColorLocationNV&quot; ) );
+          vkCmdSetCoverageModulationModeNV  = PFN_vkCmdSetCoverageModulationModeNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetCoverageModulationModeNV&quot; ) );
+          vkCmdSetCoverageModulationTableEnableNV =
+            PFN_vkCmdSetCoverageModulationTableEnableNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetCoverageModulationTableEnableNV&quot; ) );
+          vkCmdSetCoverageModulationTableNV = PFN_vkCmdSetCoverageModulationTableNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetCoverageModulationTableNV&quot; ) );
+          vkCmdSetShadingRateImageEnableNV  = PFN_vkCmdSetShadingRateImageEnableNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetShadingRateImageEnableNV&quot; ) );
+          vkCmdSetRepresentativeFragmentTestEnableNV =
+            PFN_vkCmdSetRepresentativeFragmentTestEnableNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetRepresentativeFragmentTestEnableNV&quot; ) );
+          vkCmdSetCoverageReductionModeNV = PFN_vkCmdSetCoverageReductionModeNV( vkGetDeviceProcAddr( device, &quot;vkCmdSetCoverageReductionModeNV&quot; ) );
+
+          //=== VK_ARM_tensors ===
+          vkCreateTensorARM                = PFN_vkCreateTensorARM( vkGetDeviceProcAddr( device, &quot;vkCreateTensorARM&quot; ) );
+          vkDestroyTensorARM               = PFN_vkDestroyTensorARM( vkGetDeviceProcAddr( device, &quot;vkDestroyTensorARM&quot; ) );
+          vkCreateTensorViewARM            = PFN_vkCreateTensorViewARM( vkGetDeviceProcAddr( device, &quot;vkCreateTensorViewARM&quot; ) );
+          vkDestroyTensorViewARM           = PFN_vkDestroyTensorViewARM( vkGetDeviceProcAddr( device, &quot;vkDestroyTensorViewARM&quot; ) );
+          vkGetTensorMemoryRequirementsARM = PFN_vkGetTensorMemoryRequirementsARM( vkGetDeviceProcAddr( device, &quot;vkGetTensorMemoryRequirementsARM&quot; ) );
+          vkBindTensorMemoryARM            = PFN_vkBindTensorMemoryARM( vkGetDeviceProcAddr( device, &quot;vkBindTensorMemoryARM&quot; ) );
+          vkGetDeviceTensorMemoryRequirementsARM =
+            PFN_vkGetDeviceTensorMemoryRequirementsARM( vkGetDeviceProcAddr( device, &quot;vkGetDeviceTensorMemoryRequirementsARM&quot; ) );
+          vkCmdCopyTensorARM = PFN_vkCmdCopyTensorARM( vkGetDeviceProcAddr( device, &quot;vkCmdCopyTensorARM&quot; ) );
+          vkGetTensorOpaqueCaptureDescriptorDataARM =
+            PFN_vkGetTensorOpaqueCaptureDescriptorDataARM( vkGetDeviceProcAddr( device, &quot;vkGetTensorOpaqueCaptureDescriptorDataARM&quot; ) );
+          vkGetTensorViewOpaqueCaptureDescriptorDataARM =
+            PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM( vkGetDeviceProcAddr( device, &quot;vkGetTensorViewOpaqueCaptureDescriptorDataARM&quot; ) );
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-3.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-5.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

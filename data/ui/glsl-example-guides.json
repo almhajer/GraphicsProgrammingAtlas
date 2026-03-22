@@ -1,0 +1,167 @@
+{
+  "exampleGuides": {
+    "glsl-basic-vertex": {
+      "officialSummaryArabic": "هذه المراجع مهمة لأن هذا المثال يشرح المعنى الحقيقي لأول shader مرئي: كيف يتحول موضع vertex الخام إلى قيمة `gl_Position` تدخل خط الرسم بدل أن تبقى مجرد رقم داخل الملف.",
+      "officialReferences": [
+        {"type": "entity", "name": "gl_Position"},
+        {"type": "entity", "name": "vec3"},
+        {"type": "external", "label": "GLSL 4.60 Spec", "href": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"}
+      ],
+      "fullProjectNoteArabic": "الغرض من هذا المثال ليس كتابة سطر `gl_Position` فقط، بل فهم أول عقدة ربط بين بيانات التطبيق وبين الـ pipeline الرسومية. ما يفعله فعليًا هو تحديد أين ستظهر الرؤوس بعد التحويلات.",
+      "projectStepsArabic": [
+        "أضف Vertex Input Layout واضحًا يطابق نوع البيانات القادمة من التطبيق حتى لا يسيء المبتدئ فهم الشيدر على أنه يملك البيانات من تلقاء نفسه.",
+        "حوّل الإخراج من موضع مباشر إلى مسار يعتمد على model-view-projection عندما يبدأ المشهد في التحرك، لأن هذا هو التطور الطبيعي لسلوك الشيدر الفعلي.",
+        "اربط الشيدر بوحدة shader module أو build pipeline step واضحة بدل تركه ملفًا معزولًا بلا سياق تشغيل."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-transform-motion", "label": "الانتقال إلى مثال التحويل والحركة"}
+      ]
+    },
+    "glsl-uniform-color": {
+      "officialSummaryArabic": "هذه المراجع توضح المعنى البرمجي الحقيقي لـ uniform: القيمة لا تولد داخل الشيدر، بل تصل من التطبيق عبر واجهة ربط واضحة، وهذا هو الجزء الذي يلتبس عادة أكثر من اللون نفسه.",
+      "officialReferences": [
+        {"type": "entity", "name": "uniform"},
+        {"type": "entity", "name": "vec4"},
+        {"type": "external", "label": "Vulkan Guide: Mapping Data to Shaders", "href": "https://docs.vulkan.org/guide/latest/mapping_data_to_shaders.html"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يشرح هدف uniform بوضوح: إعطاء الشيدر بيانات من خارج الملف نفسه. ما يفعله فعليًا هو ربط التطبيق بالشيدر، لا مجرد تعريف متغير عالمي جميل الشكل.",
+      "projectStepsArabic": [
+        "افصل لون المادة عن منطق الرسم داخل MaterialParams أو UBO صغير حتى يبقى الهدف من القيمة واضحًا: وصف المادة لا وصف الـ pass كلها.",
+        "حدّد متى تتغير القيمة ومن المسؤول عن رفعها من جهة CPU حتى لا يختلط على المبتدئ الفرق بين تعريف uniform وتحديثها الفعلي.",
+        "إذا توسع المثال، انقل القيم الثابتة أو المرتبطة ببعضها إلى uniform block بدل متغيرات مفردة كثيرة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-gradient-color", "label": "الانتقال إلى مثال التدرج اللوني"}
+      ]
+    },
+    "glsl-vulkan-layout-bindings": {
+      "officialSummaryArabic": "هذا المثال يمثل أوضح نقطة يلتقي فيها GLSL مع Vulkan: هنا لا تصف syntax فقط، بل تعلن عقد الربط الفعلي بين الشيدر والموارد التي سيربطها التطبيق.",
+      "officialReferences": [
+        {"type": "entity", "name": "layout"},
+        {"type": "entity", "name": "binding"},
+        {"type": "entity", "name": "push_constant"},
+        {"type": "external", "label": "Vulkan Guide: Mapping Data to Shaders", "href": "https://docs.vulkan.org/guide/latest/mapping_data_to_shaders.html"}
+      ],
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي هنا أنه contract بين طرفين: الشيدر يعلن ما يحتاجه، والتطبيق يلتزم بتوفيره. هذا هو السبب في أن `layout` و`set` و`binding` و`push_constant` ليست كلمات شكلية فقط.",
+      "projectStepsArabic": [
+        "وحّد أسماء descriptor sets والـ bindings في ملف أو طبقة مشتركة بين الشيدر والتطبيق حتى يبقى معنى العقدة نفسها واضحًا على الطرفين.",
+        "افصل push constants عن UBOs بحسب طبيعة البيانات وتواتر تغيرها حتى لا يسيء القارئ فهمهما على أنهما مساران متطابقان.",
+        "أضف validation أو reflection step أثناء البناء للتأكد من تطابق layout بين الملفات والتطبيق قبل أن يتحول الخطأ إلى مشكلة runtime مربكة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-spirv-file-workflow", "label": "الانتقال إلى مسار SPIR-V"},
+        {"type": "example", "id": "glsl-pbr-material-inspector", "label": "الانتقال إلى مثال PBR مع Dear ImGui"}
+      ]
+    },
+    "glsl-pbr-material-inspector": {
+      "officialSummaryArabic": "هذا المثال هجين بين GLSL وDear ImGui وCPU-side material state، لذلك تحتاج هذه المراجع الرسمية عندما تريد فصل الطبقات بدل إبقاء كل شيء داخل شاشة تعليمية واحدة.",
+      "officialReferences": [
+        {"type": "entity", "name": "mix"},
+        {"type": "imgui", "name": "ImGui::SliderFloat"},
+        {"type": "external", "label": "Vulkan Guide: Push Constants", "href": "https://docs.vulkan.org/guide/latest/push_constants.html"}
+      ],
+      "fullProjectNoteArabic": "لكي يكبر هذا المثال إلى material editor فعلي، يجب فصل UI state وmaterial parameters ومسار تحديث الـ GPU resources في طبقات مستقلة.",
+      "projectStepsArabic": [
+        "اجمع قيم المادة داخل بنية MaterialState واحدة تربط الواجهة بالشيدر بدل متغيرات متناثرة.",
+        "أضف dirty flags أو change tracking حتى لا تُرفع القيم إلى GPU بلا داعٍ في كل frame.",
+        "افصل widget composition الخاص بالمحرر عن منطق التظليل نفسه حتى يسهل إعادة استخدام كل جزء."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-normal-mapping-debug-view", "label": "الانتقال إلى مثال normal mapping"},
+        {"type": "example", "id": "glsl-bloom-threshold-panel", "label": "الانتقال إلى مثال bloom"}
+      ]
+    },
+    "glsl-bloom-threshold-panel": {
+      "officialSummaryArabic": "المراجع الرسمية هنا تساعدك عندما تتحول الفكرة من threshold واحد في الواجهة إلى passات متعددة وعتبات ومعالجة post-processing متدرجة.",
+      "officialReferences": [
+        {"type": "entity", "name": "smoothstep"},
+        {"type": "imgui", "name": "ImGui::SliderFloat"},
+        {"type": "external", "label": "GLSL 4.60 Spec", "href": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي يجب أن يصبح bloom مسار post-processing متعدد المراحل مع ping-pong resources وإعدادات قابلة للحفظ، لا مجرد panel تجريبية.",
+      "projectStepsArabic": [
+        "افصل extract pass وblur pass وcombine pass بدل جمع كل شيء في fragment shader واحد طويل.",
+        "عرّف إعدادات bloom ضمن بنية EffectSettings قابلة للحفظ والاستعادة.",
+        "أضف مقارنة before/after أو debug targets متعددة لتسهيل التشخيص عند التوسع."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-fog-density-editor", "label": "الانتقال إلى مثال fog density"},
+        {"type": "example", "id": "glsl-stylized-toon-shading-lab", "label": "الانتقال إلى مثال toon shading"}
+      ]
+    },
+    "glsl-procedural-noise-workbench": {
+      "officialSummaryArabic": "هذا المسار الرسمي مهم لأن أمثلة noise تتشعب بسرعة، والمرجع يساعدك على تمييز ما هو دالة رياضية وما هو قرار تصميمي داخل المؤثر نفسه.",
+      "officialReferences": [
+        {"type": "entity", "name": "fract"},
+        {"type": "entity", "name": "sin"},
+        {"type": "entity", "name": "vec2"},
+        {"type": "imgui", "name": "ImGui::InputFloat"}
+      ],
+      "fullProjectNoteArabic": "عندما يكبر المثال، يجب أن يصبح noise graph أو effect module يمكن تركيبه ضمن مواد أو مؤثرات أخرى بدل لوحة تجريبية منفصلة فقط.",
+      "projectStepsArabic": [
+        "افصل معلمات noise مثل scale وoctaves وcontrast في بنية قابلة للمشاركة مع أكثر من مؤثر.",
+        "أضف preview modes متعددة أو debug channels لفهم كل طبقة من الطبقات الإجرائية على حدة.",
+        "إذا صار المؤثر مكلفًا، أضف path بديلًا أو baking strategy لبعض الاستخدامات غير التفاعلية."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-water-shader-controls", "label": "الانتقال إلى مثال water shader"},
+        {"type": "example", "id": "glsl-ray-marching-debug-inspector", "label": "الانتقال إلى مثال ray marching"}
+      ]
+    },
+    "glsl-file-reading": {
+      "officialSummaryArabic": "هذا المثال صغير، لكنه يشرح أول خطوة واقعية في shader workflow: الشيدر يبدأ كملف نصي قابل للقراءة والمراجعة قبل أن يتحول إلى SPIR-V أو يدخل في نظام البناء.",
+      "officialReferences": [
+        {"type": "entity", "name": "version"},
+        {"type": "entity", "name": "define"},
+        {"type": "external", "label": "GLSL 4.60 Spec", "href": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"}
+      ],
+      "fullProjectNoteArabic": "الغرض الحقيقي هنا ليس فتح الملف فقط، بل توضيح أن الشيدر أصل asset نصي يمر بمراحل لاحقة. ما يفعله المثال فعليًا هو فصل قراءة المصدر عن بقية منطق Vulkan.",
+      "projectStepsArabic": [
+        "افصل مسار قراءة النص عن منطق Vulkan حتى يظهر أن الهدف هو إدارة assets لا تنفيذ الشيدر نفسه.",
+        "أضف رسائل خطأ توضّح الملف المفقود أو الفارغ أو الذي لا يحمل `#version` المتوقع لأن سوء الفهم الشائع هنا هو تفسير كل فشل لاحق على أنه مشكلة Vulkan.",
+        "هيئ المسار كي يقرأ أكثر من ملف مرتبط إذا بدأت تستخدم includes أو variants أو وحدات shader مشتركة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-to-spirv", "label": "الانتقال إلى مرحلة التحويل إلى SPIR-V"},
+        {"type": "example", "id": "glsl-file-pipeline", "label": "الانتقال إلى ربط الملفات مع Pipeline"}
+      ]
+    },
+    "glsl-to-spirv": {
+      "officialSummaryArabic": "المراجع هنا مهمة لأن التحويل إلى SPIR-V ليس خطوة طرفية هامشية؛ بل هو الجسر الذي ينقل GLSL من صيغة تحرير بشرية إلى صيغة يفهمها مسار Vulkan فعليًا.",
+      "officialReferences": [
+        {"type": "entity", "name": "version"},
+        {"type": "entity", "name": "layout"},
+        {"type": "external", "label": "glslangValidator", "href": "https://github.com/KhronosGroup/glslang"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يشرح الهدف الفعلي من glslangValidator: ليس مجرد نجاح أمر shell، بل إنتاج artifact ثنائي يدخل لاحقًا في build أو runtime منظم.",
+      "projectStepsArabic": [
+        "انقل أوامر glslangValidator إلى CMake أو script بناء موحد حتى يفهم القارئ أن التحويل خطوة build مقصودة لا مهمة يدوية عابرة.",
+        "افصل مخرجات vertex وfragment وأي stages أخرى داخل naming convention ثابتة حتى يبقى معنى كل ملف ثنائي واضحًا.",
+        "أضف فشلًا صريحًا في البناء عندما يفشل تحويل ملف واحد لأن أكثر سوء فهم شائع هنا هو متابعة المسار بملفات `.spv` قديمة أو ناقصة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-file-pipeline", "label": "الانتقال إلى استخدام ملفات SPIR-V داخل Pipeline"},
+        {"type": "example", "id": "multi-shader-stage", "label": "الانتقال إلى أكثر من Shader Stage"}
+      ]
+    },
+    "glsl-file-pipeline": {
+      "officialSummaryArabic": "هذا هو المثال الذي يجمع مسار GLSL العملي كله: syntax صحيح، تحويل إلى SPIR-V، ثم تحميل ثنائي وربطه مع Shader Modules وGraphics Pipeline.",
+      "officialReferences": [
+        {"type": "entity", "name": "layout"},
+        {"type": "entity", "name": "uniform"},
+        {"type": "entity", "name": "sampler2D"},
+        {"type": "external", "label": "Vulkan Guide: Mapping Data to Shaders", "href": "https://docs.vulkan.org/guide/latest/mapping_data_to_shaders.html"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يمثل اللبنة الصحيحة لمشروع shader assets حقيقي: ملفات منفصلة، نواتج SPIR-V واضحة، وتحميل ثنائي منظم قبل إنشاء الـ pipeline.",
+      "projectStepsArabic": [
+        "اجعل pipeline build step تعتمد على ملفات `.spv` الناتجة لا على النصوص الأصلية وقت التشغيل حتى يبقى مسار الإنتاج أوضح.",
+        "اربط naming conventions بين الملفات النصية والملفات الثنائية ونقاط الدخول stages حتى لا يحدث drift بين المصدر والبناء.",
+        "أضف خطوة تحقق من توافق layout داخل الشيدر مع descriptor sets وpipeline layout قبل أن يصل الخطأ إلى وقت التشغيل."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "multi-shader-stage", "label": "الانتقال إلى أكثر من Shader Stage"},
+        {"type": "example", "id": "uniform-buffer", "label": "الانتقال إلى ربط UBO فعلي مع الشيدر"}
+      ]
+    }
+  }
+}

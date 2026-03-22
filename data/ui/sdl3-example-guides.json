@@ -1,0 +1,920 @@
+{
+  "exampleGuides": {
+    "core::window-main-loop": {
+      "officialSummaryArabic": "هذه المراجع مهمة لأن هذا المثال لا يشرح نافذة فقط؛ بل يشرح معنى نقطة الدخول الحقيقية لتطبيق SDL3: إنشاء نافذة، تدوير الأحداث، ثم إغلاق منظم.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_CreateWindow"},
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "CategoryVideo", "href": "https://wiki.libsdl.org/SDL3/CategoryVideo"}
+      ],
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي هنا أنه العقدة التي تملك عمر التطبيق كله. هو ليس مجرد مثال نافذة، بل الهيكل الذي ستبنى فوقه طبقات الإدخال والرسم والموارد والإغلاق لاحقًا.",
+      "projectStepsArabic": [
+        "أضف طبقة تهيئة مركزية تجمع إنشاء النافذة والـ renderer أو سطح الرسم حتى لا يتحول main إلى مكان يملك كل شيء مباشرة.",
+        "حوّل الحلقة الرئيسية إلى مسارين واضحين: معالجة إدخال ثم update/render حتى يظهر السلوك الفعلي لكل إطار بوضوح.",
+        "اربط كل فشل بـ SDL_GetError ورسالة موحدة حتى لا يسيء المبتدئ فهم سبب التعطل أو يتابع العمل بعد فشل التهيئة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "events-input", "label": "الانتقال إلى مثال الأحداث والإدخال"},
+        {"packageKey": "core", "exampleId": "frame-rendering-colors", "label": "الانتقال إلى مثال الرسم داخل الإطار"}
+      ]
+    },
+    "core::events-input": {
+      "officialSummaryArabic": "هذه المراجع توضح المعنى البرمجي الحقيقي للإدخال في SDL3: أنت لا تقرأ المفاتيح مباشرة من العدم، بل تسحب أحداثًا من طابور منظم يصف ما حدث ومتى حدث.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "CategoryEvents", "href": "https://wiki.libsdl.org/SDL3/CategoryEvents"}
+      ],
+      "fullProjectNoteArabic": "الغرض الحقيقي من هذا المثال ليس التقاط زر واحد، بل تعليمك كيف تفصل بين الحدث الخام وبين الفعل المنطقي داخل اللعبة أو التطبيق. هذا الفصل هو الذي يمنع الحلقة الرئيسية من أن تصبح خليطًا من الشروط المتناثرة.",
+      "projectStepsArabic": [
+        "عرّف جدول أوامر يربط كل حدث باسم فعل منطقي مثل move_left أو open_menu بدل ربط الحدث نفسه بسلوك نهائي مباشر.",
+        "ميّز بوضوح بين حدث لحظي مثل الضغط الأول وبين حالة مستمرة مثل الاستمرار في الضغط حتى لا يختلط السلوك على المبتدئ.",
+        "أضف app state حتى يصبح واضحًا أن الزر نفسه قد يعني أشياء مختلفة بحسب كونك في اللعب أو القائمة أو التوقف المؤقت."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "interactive-button", "label": "الانتقال إلى مثال التفاعل المرئي"}
+      ]
+    },
+    "core::frame-rendering-colors": {
+      "officialSummaryArabic": "هذا المسار يشرح أن SDL_Renderer ليس أداة تلوين عشوائي فقط؛ بل طبقة رسم فعلية لها بداية إطار، حالة رسم، ونهاية إطار تظهر النتيجة على الشاشة.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_CreateRenderer"},
+        {"type": "entity", "name": "SDL_SetRenderDrawColor"},
+        {"type": "entity", "name": "SDL_RenderClear"},
+        {"type": "entity", "name": "SDL_RenderPresent"},
+        {"type": "external", "label": "CategoryRender", "href": "https://wiki.libsdl.org/SDL3/CategoryRender"}
+      ],
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي هنا أنه أبسط شكل من render loop منظم. الهدف ليس تغيير اللون نفسه، بل فهم ما الذي يحدث فعليًا داخل الإطار: تجهيز الحالة، تنظيف الهدف، تنفيذ الرسم، ثم العرض النهائي.",
+      "projectStepsArabic": [
+        "أنشئ قائمة أوامر رسم بسيطة تجمع ما سيُرسم خلال الإطار حتى لا يختلط تجهيز البيانات مع استدعاءات الرسم نفسها.",
+        "أضف كاميرا أو offset عالمي حتى يفهم المبتدئ أن الشاشة ليست المصدر الوحيد للإحداثيات.",
+        "ابدأ نقل الموارد الرسومية إلى cache للـ textures والألوان والإعدادات حتى لا يسيء القارئ فهم الحلقة على أنها مكان إنشاء الموارد كل مرة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-loading", "label": "الانتقال إلى مثال تحميل textures"}
+      ]
+    },
+    "core::interactive-button": {
+      "officialSummaryArabic": "هذه المراجع توضح المعنى الحقيقي للزر داخل SDL الخام: هو سلوك ناتج من hit testing وحالة hover ونقر ورسم، لا عنصر واجهة جاهز كما في مكتبات GUI الكاملة.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_RenderFillRect"},
+        {"type": "entity", "name": "SDL_RenderPresent"},
+        {"type": "external", "label": "CategoryEvents", "href": "https://wiki.libsdl.org/SDL3/CategoryEvents"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال مهم للمبتدئ لأنه يكشف ما يفعله الزر فعليًا خلف الكواليس. الزر هنا ليس كائنًا سحريًا؛ بل منطقة تتلقى الإدخال ثم تغيّر حالتها البصرية وتعيد فعلًا منطقيًا للتطبيق.",
+      "projectStepsArabic": [
+        "حوّل hovered وclick_count إلى بنية ButtonState حتى يظهر أن حالة الزر نفسها جزء مستقل عن الرسم.",
+        "افصل hit testing عن الرسم حتى لا يخلط القارئ بين معنى الزر كسلوك وبين مظهره البصري فقط.",
+        "أعد الأفعال الناتجة من الزر كأوامر منطقية مثل open_settings أو confirm بدل تنفيذ التأثير مباشرة، لأن هذا هو الحد الذي يقلل أكثر سوء الفهم شيوعًا عند المبتدئ."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-button-hover", "label": "الانتقال إلى زر صوري مع hover"},
+        {"packageKey": "ttf", "exampleId": "text-button-toggle", "label": "الانتقال إلى زر نصي يغير الرسالة"}
+      ]
+    },
+    "core::drag-card-inside-window": {
+      "officialSummaryArabic": "هذه المراجع توضح كيف تربط SDL بين إحداثيات الفأرة وحالة الضغط وبين تحديث موضع عنصر مرسوم داخل نفس النافذة.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_GetMouseState"},
+        {"type": "entity", "name": "SDL_RenderFillRect"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، بطاقة السحب يجب أن تصبح widget أو draggable item مستقل يحفظ حالته ويعيد أفعالًا منطقية بدل تعديل الإحداثيات مباشرة داخل الحلقة.",
+      "projectStepsArabic": [
+        "افصل حالة السحب مثل grabbed وoffset عن بيانات البطاقة نفسها حتى يمكن إعادة استخدام المنطق مع أكثر من عنصر.",
+        "وحّد hit testing وبداية السحب ونهايته داخل helper أو DragController صغير.",
+        "اربط حركة العنصر بحدود النافذة أو مساحة عمل واضحة حتى لا يهرب خارج المشهد بلا ضوابط."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "drag-multiple-elements-layout", "label": "الانتقال إلى سحب أكثر من عنصر"},
+        {"packageKey": "core", "exampleId": "resize-square-handles", "label": "الانتقال إلى التحكم بالمقابض لا بالموضع فقط"}
+      ]
+    },
+    "core::hover-enter-exit-region": {
+      "officialSummaryArabic": "هذا المثال يشرح كيف تكتشف SDL دخول المؤشر إلى منطقة وخروجه منها بدل الاكتفاء بحالة نقر لحظية فقط.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_GetMouseState"},
+        {"type": "entity", "name": "SDL_RenderFillRect"}
+      ],
+      "fullProjectNoteArabic": "في مشروع فعلي، حالات hover وenter وexit يجب أن تصبح جزءًا من نظام widgets أو hit regions قابل لإعادة الاستخدام.",
+      "projectStepsArabic": [
+        "افصل المنطقة التفاعلية إلى بنية Region أو HitBox بدل فحص الإحداثيات الخام في كل مرة.",
+        "ميّز بين الدخول لأول مرة والبقاء داخل المنطقة حتى لا تختلط الرسائل أو المؤثرات المرئية.",
+        "أعد الحدث الناتج كفعل منطقي مثل focus_begin أو focus_end بدل تنفيذ التأثير مباشرة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "interactive-button", "label": "الانتقال إلى زر كامل يعتمد على hover"},
+        {"packageKey": "core", "exampleId": "rect-overlap-drop-target", "label": "الانتقال إلى مناطق إسقاط وتداخل"}
+      ]
+    },
+    "core::rect-overlap-drop-target": {
+      "officialSummaryArabic": "هذه المراجع تشرح فكرة التداخل البسيط بين مستطيلات SDL وكيف تستخدمها لبناء drop targets أو مناطق قبول داخل الواجهة.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_HasRectIntersection"},
+        {"type": "entity", "name": "SDL_FRect"},
+        {"type": "entity", "name": "SDL_RenderRect"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، مناطق الإسقاط والتصادم الخفيف يجب أن تُدار ضمن Layout أو Interaction layer بدل شروط scattered داخل المثال.",
+      "projectStepsArabic": [
+        "عرّف بنية DropTarget أو InteractionZone تحفظ حدود المنطقة ونوع الفعل الذي تقبله.",
+        "افصل حساب التداخل عن التأثيرات البصرية حتى تستطيع تبديل المظهر بسهولة.",
+        "استخدم هذا المثال كبداية قبل collision أو drag-and-drop متعدد العناصر."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "drag-card-inside-window", "label": "العودة إلى سحب عنصر واحد"},
+        {"packageKey": "core", "exampleId": "aabb-collision-playfield", "label": "الانتقال إلى تصادم أوسع داخل مشهد"}
+      ]
+    },
+    "core::sprite-movement-over-time": {
+      "officialSummaryArabic": "هذا المسار يربط الزمن أو delta-time بتحديث الموضع، بدل ربط الحركة بعدد الإطارات أو تكرار الحلقة فقط.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_GetTicks"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "entity", "name": "SDL_FRect"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، الحركة يجب أن تنتقل إلى update system صغيرة تفصل الزمن والسرعة والاتجاه عن طبقة الرسم.",
+      "projectStepsArabic": [
+        "احفظ speed وdirection وposition داخل بنية حركة بدل حسابها من متغيرات متفرقة.",
+        "وحّد حساب delta-time في مكان واحد ثم مرره إلى update بدل سحبه داخل كل عنصر.",
+        "استخدم المثال كبوابة قبل الكاميرا والأنيميشن والتصادم."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "frame-animation-strip", "label": "الانتقال إلى أنيميشن الإطارات"},
+        {"packageKey": "core", "exampleId": "camera-follow-world", "label": "الانتقال إلى عالم أكبر مع كاميرا"}
+      ]
+    },
+    "core::frame-animation-strip": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تتحول فكرة الزمن إلى اختيار frame أو src rect مختلف داخل strip أو atlas بسيط.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_GetTicks"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "entity", "name": "SDL_FRect"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، animation frames يجب أن تصبح جزءًا من Animator أو Clip State بدل مؤشرات frame مبعثرة داخل الحلقة.",
+      "projectStepsArabic": [
+        "افصل animation clip عن sprite state حتى يمكن تبديل idle وwalk وattack بسهولة.",
+        "احفظ مدة كل frame أو سرعة التشغيل داخل بنية بيانات واضحة بدل أرقام صلبة داخل الكود.",
+        "اربط تقدم الأنيميشن بحالة الحركة أو الإدخال بدل تقدم زمني أعمى فقط."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sprite-movement-over-time", "label": "العودة إلى حركة العنصر نفسها"},
+        {"packageKey": "core", "exampleId": "parallax-scrolling-layers", "label": "الانتقال إلى مشهد يتحرك بطبقات"}
+      ]
+    },
+    "core::renderer-color-controls": {
+      "officialSummaryArabic": "هذا المسار الرسمي يوضح أن تغيير ألوان SDL_Renderer ليس مجرد تجميل، بل جزء من pipeline الرسم البسيط داخل SDL.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_SetRenderDrawColor"},
+        {"type": "entity", "name": "SDL_RenderClear"},
+        {"type": "entity", "name": "SDL_RenderPresent"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، الألوان والإعدادات البصرية البسيطة يجب أن تتحول إلى Theme أو RenderState صغيرة بدل بعثرة القيم داخل الحلقة.",
+      "projectStepsArabic": [
+        "اجمع ألوان الخلفية والعناصر في بنية Theme أو Palette قابلة للتبديل.",
+        "افصل منطق اختيار اللون عن استدعاءات الرسم نفسها حتى يسهل الربط بحالات التطبيق.",
+        "استخدم المثال كمدخل قبل الرسم المتعدد أو canvas helpers."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "frame-rendering-colors", "label": "العودة إلى مسار الرسم الأساسي"},
+        {"packageKey": "core", "exampleId": "draw-lines-curves-arrows", "label": "الانتقال إلى primitives أكثر تنوعًا"}
+      ]
+    },
+    "core::camera-follow-world": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تنتقل من تحريك كائن داخل نافذة فقط إلى كاميرا 2D تتابع اللاعب داخل عالم أوسع.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_FRect"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "external", "label": "CategoryRender", "href": "https://wiki.libsdl.org/SDL3/CategoryRender"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي، الكاميرا يجب أن تصبح CameraState أو Viewport System مستقلة تحفظ حدود العالم والمتابعة والتكبير إن لزم.",
+      "projectStepsArabic": [
+        "افصل world coordinates عن screen coordinates داخل helper أو Camera2D واضح.",
+        "اربط موقع الكاميرا بهدف متابعة وقواعد clamp إلى حدود العالم بدل تحديث حر عشوائي.",
+        "استخدم المثال أساسًا قبل parallax أو التصادم داخل playfield أكبر."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "parallax-scrolling-layers", "label": "الانتقال إلى طبقات تتبع الكاميرا"},
+        {"packageKey": "core", "exampleId": "aabb-collision-playfield", "label": "الانتقال إلى عالم وعوائق وتصادم"}
+      ]
+    },
+    "core::mouse-drag-sprite": {
+      "officialSummaryArabic": "هذه المراجع تشرح الانتقال من سحب مستطيل بسيط إلى التقاط sprite مرسومة وتحريكها تفاعليًا داخل النافذة.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "entity", "name": "SDL_FRect"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، سحب sprites يجب أن يندمج مع selection وحالة العالم أو الواجهة، لا أن يبقى متغير x/y واحد داخل المثال.",
+      "projectStepsArabic": [
+        "احفظ sprite bounds وgrab offset داخل بنية حالة واضحة لكل عنصر قابل للسحب.",
+        "افصل الرسم عن منطق الإمساك والتحرير حتى يمكن دعم عناصر متعددة.",
+        "استخدم المثال كبوابة قبل drag layouts أو drop targets."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "drag-card-inside-window", "label": "العودة إلى سحب عنصر واحد بسيط"},
+        {"packageKey": "core", "exampleId": "drag-multiple-elements-layout", "label": "الانتقال إلى تخطيط عناصر متعددة"}
+      ]
+    },
+    "core::aabb-collision-playfield": {
+      "officialSummaryArabic": "هذا المثال يثبت كيف يتحول تداخل المستطيلات من واجهة بسيطة إلى collision logic داخل playfield ثنائي الأبعاد.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_HasRectIntersection"},
+        {"type": "entity", "name": "SDL_FRect"},
+        {"type": "entity", "name": "SDL_RenderFillRect"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، التصادم يجب أن ينتقل إلى Physics أو Collision layer صغيرة بدل شروط if داخل نفس دالة الرسم.",
+      "projectStepsArabic": [
+        "افصل collider bounds عن الشكل المرسوم حتى يمكن تبديل الفن أو الحجم المرئي من دون كسر التصادم.",
+        "عرّف استجابة التصادم بوضوح: إيقاف، ارتداد، منع دخول، أو trigger فقط.",
+        "اربط المثال بمسار world update قبل إدخال أعداء أو عوائق أكثر تعقيدًا."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "camera-follow-world", "label": "العودة إلى عالم أكبر مع كاميرا"},
+        {"packageKey": "core", "exampleId": "parallax-scrolling-layers", "label": "الانتقال إلى مشهد أكثر غنى بصريًا"}
+      ]
+    },
+    "core::parallax-scrolling-layers": {
+      "officialSummaryArabic": "هذا المسار يشرح كيف تجعل الخلفية والطبقات تتحرك بسرعات مختلفة بالنسبة للكاميرا حتى تعطي عمقًا بصريًا في 2D.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "entity", "name": "SDL_FRect"},
+        {"type": "external", "label": "CategoryRender", "href": "https://wiki.libsdl.org/SDL3/CategoryRender"}
+      ],
+      "fullProjectNoteArabic": "في مشروع كامل، parallax يجب أن يعيش داخل Layered Scene أو Background System بدل حساب offset لكل طبقة مباشرة في الحلقة.",
+      "projectStepsArabic": [
+        "عرّف لكل طبقة سرعة parallax وموردها البصري بدل تكرار الحسابات داخل draw.",
+        "اربط الكاميرا بالطبقات من خلال helper تحول world offset إلى layer offset.",
+        "استخدم المثال قاعدة قبل إضافة أنيميشن أو collision أو HUD فوق المشهد."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "camera-follow-world", "label": "العودة إلى الكاميرا 2D"},
+        {"packageKey": "core", "exampleId": "frame-animation-strip", "label": "الانتقال إلى حركة العناصر نفسها"}
+      ]
+    },
+    "core::resize-square-handles": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تنتقل من سحب عنصر كامل إلى التعامل مع مقابض تحكم تغير الحجم وتكشف حدود العنصر بدقة أكبر.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_FRect"},
+        {"type": "entity", "name": "SDL_RenderRect"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي، مقابض التحجيم يجب أن تصبح جزءًا من Widget أو Selection Gizmo يعيد نية المستخدم لا التعديل الخام فقط.",
+      "projectStepsArabic": [
+        "عرّف مقابض مستقلة مثل top-left وright-edge بدل منطق resize واحد مبهم.",
+        "افصل min/max size validation عن الرسم حتى تبقى القواعد قابلة لإعادة الاستخدام.",
+        "اجعل المثال أساسًا قبل محرر تخطيطات أو canvas editor أبسط."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "drag-card-inside-window", "label": "العودة إلى سحب العنصر نفسه"},
+        {"packageKey": "core", "exampleId": "drag-multiple-elements-layout", "label": "الانتقال إلى تخطيط أكثر تعقيدًا"}
+      ]
+    },
+    "core::drag-multiple-elements-layout": {
+      "officialSummaryArabic": "هذا المثال يرفع منطق السحب من عنصر واحد إلى عدة عناصر، لذلك هو أقرب إلى layout editor أو dashboard بسيط داخل SDL3.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_FRect"},
+        {"type": "entity", "name": "SDL_RenderFillRect"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، تخطيط العناصر يجب أن يُبنى حول قائمة عناصر أو model للوحة، لا متغيرات منفصلة لكل عنصر مرسوم.",
+      "projectStepsArabic": [
+        "اجمع العناصر داخل array أو vector من LayoutItem بدل متغيرات متفرقة.",
+        "افصل selection وdragging وz-order داخل controller واضح.",
+        "أضف حفظًا أو استرجاعًا لترتيب العناصر إذا كان المشروع يتجه إلى محرر فعلي."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "resize-square-handles", "label": "الانتقال إلى التحكم بالحجم أيضًا"},
+        {"packageKey": "core", "exampleId": "system-device-info", "label": "الانتقال إلى لوحة معلومات حقيقية"}
+      ]
+    },
+    "core::draw-lines-curves-arrows": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تستخدم primitives البسيطة داخل SDL3 لبناء canvas أو overlay توضيحي بدل الاقتصار على مستطيلات وصور.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_RenderLine"},
+        {"type": "entity", "name": "SDL_RenderPoint"},
+        {"type": "entity", "name": "SDL_SetRenderDrawColor"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، أدوات الرسم هذه يجب أن تتحول إلى Drawing Helpers أو Debug Overlay قابلة لإعادة الاستخدام في أكثر من شاشة.",
+      "projectStepsArabic": [
+        "افصل بناء الخطوط والمنحنيات والسهام عن loop الإدخال حتى يصبح الرسم نفسه composable.",
+        "عرّف بنية DrawCommand أو PrimitiveSpec لوصف ما سيُرسم بدل استدعاءات فورية مبعثرة.",
+        "استخدم المثال كأساس قبل overlays أو أدوات تحرير خفيفة داخل SDL3."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "renderer-color-controls", "label": "العودة إلى حالات اللون والرسم الأساسية"},
+        {"packageKey": "core", "exampleId": "hover-enter-exit-region", "label": "الانتقال إلى مناطق تفاعل فوق canvas"}
+      ]
+    },
+    "core::system-device-info": {
+      "officialSummaryArabic": "هذه المراجع توضّح كيف تستخدم SDL لاكتشاف السائق والمنصة ومعلومات العرض والمدخلات بدل افتراض بيئة تشغيل ثابتة.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_GetPlatform"},
+        {"type": "entity", "name": "SDL_GetCurrentVideoDriver"},
+        {"type": "external", "label": "CategorySystem", "href": "https://wiki.libsdl.org/SDL3/CategorySystem"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي، معلومات الجهاز يجب أن تُجمع في تقرير startup أو debug panel واضح يساعد على التشخيص والدعم لا أن تبقى printf داخل main فقط.",
+      "projectStepsArabic": [
+        "اجمع معلومات المنصة والسائق والدقة والمدخلات داخل بنية تقرير موحدة بدل طباعتها متفرقة.",
+        "افصل جمع المعلومات عن عرضها حتى يمكن إرسالها إلى logs أو لوحة واجهة أو ملف تشخيص.",
+        "اربط هذا المثال بمسار startup diagnostics مبكر قبل دعم منصات أو أجهزة أكثر تنوعًا."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "window-main-loop", "label": "العودة إلى bootstrap التطبيق"},
+        {"packageKey": "core", "exampleId": "drag-multiple-elements-layout", "label": "الانتقال إلى لوحة معلومات تفاعلية"}
+      ]
+    },
+    "core::sdl3-imgui-menu-color-tools": {
+      "officialSummaryArabic": "هذا المثال يوضح الحد الفاصل بين SDL3 التي تدير النافذة والأحداث والسياق الرسومي، وبين Dear ImGui التي تبني قوائم الأدوات وواجهة الخصائص فوق ذلك.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "ImGui Demo", "href": "https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp"},
+        {"type": "external", "label": "SDL3 + Dear ImGui", "href": "https://github.com/ocornut/imgui/tree/master/backends"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، شريط القوائم وأدوات الألوان يجب أن تصبح طبقة ToolsUi منفصلة عن منطق التطبيق وطبقة SDL الأساسية.",
+      "projectStepsArabic": [
+        "افصل بناء الـ MenuBar عن منطق الأفعال الناتجة حتى تبقى أوامر الواجهة مستقلة عن التنفيذ الفعلي.",
+        "اجمع قيم الألوان والإعدادات داخل بنية ThemeState أو ToolState بدل متغيرات مبعثرة داخل الحلقة.",
+        "حافظ على حدود واضحة: SDL3 للإدخال والنافذة، وImGui لبناء عناصر التحكم المعروضة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sdl3-imgui-docking-studio", "label": "الانتقال إلى مساحة أدوات أكبر"},
+        {"packageKey": "core", "exampleId": "sdl3-imgui-tree-combo-gallery", "label": "الانتقال إلى عناصر اختيار وتنقل أغنى"}
+      ]
+    },
+    "core::sdl3-imgui-docking-studio": {
+      "officialSummaryArabic": "هذا المثال يشرح كيف تتحول نافذة SDL3 الواحدة إلى مساحة عمل Editor حقيقية عندما تضيف فوقها DockSpace ونوافذ ImGui متعددة قابلة للإخفاء والترتيب.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "ImGui Docking", "href": "https://github.com/ocornut/imgui/wiki/Docking"},
+        {"type": "external", "label": "ImGui Demo", "href": "https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، اللوحات مثل Scene وHierarchy وInspector يجب أن تُدار كوحدات مستقلة ترتبط بحالة محرر مركزية لا بنوافذ تُبنى عشوائيًا داخل main.",
+      "projectStepsArabic": [
+        "افصل تعريف كل لوحة إلى دالة أو module صغيرة بدل تجميع كل النوافذ في كتلة UI واحدة ضخمة.",
+        "خزّن حالات الإظهار والإخفاء داخل EditorLayoutState واضحة حتى يمكن حفظها واستعادتها لاحقًا.",
+        "اربط نوافذ الأدوات ببيانات منطقية مثل selection وasset state بدل عرض معلومات تجريبية ثابتة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sdl3-imgui-menu-color-tools", "label": "العودة إلى طبقة الأدوات الأبسط"},
+        {"packageKey": "core", "exampleId": "sdl3-imgui-nested-media-menus", "label": "الانتقال إلى قوائم متداخلة أكثر غنى"}
+      ]
+    },
+    "core::sdl3-imgui-tree-combo-gallery": {
+      "officialSummaryArabic": "هذا المثال يربط بين تنظيم العناصر هرميًا داخل Tree وبين اختيار موارد أو صور مصغرة عبر Combo مخصص داخل نفس واجهة ImGui فوق SDL3.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "ImGui Demo", "href": "https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp"},
+        {"type": "external", "label": "Dear ImGui Wiki", "href": "https://github.com/ocornut/imgui/wiki"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، شجرة العناصر وصندوق الاختيار يجب أن يتصلا بنموذج بيانات موحد مثل Asset Browser أو Scene Tree بدل قوائم محلية ثابتة.",
+      "projectStepsArabic": [
+        "افصل بنية الشجرة عن الرسم نفسه حتى يمكن تغذية الواجهة ببيانات حقيقية من مشروع أو مجلد أصول.",
+        "حوّل العنصر المختار في الـ combo إلى SelectionState واضح بدل استعمال فهارس مؤقتة داخل الواجهة فقط.",
+        "استخدم الصور المصغرة كمصدر بصري مساعد لا كمصدر الحقيقة الوحيد للحالة أو النوع."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sdl3-imgui-nested-media-menus", "label": "الانتقال إلى قوائم ووسائط متداخلة"},
+        {"packageKey": "core", "exampleId": "sdl3-imgui-docking-studio", "label": "العودة إلى مساحة أدوات أوسع"}
+      ]
+    },
+    "core::sdl3-imgui-text-editor-keyboard": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف توائم بين إدخال SDL3 الخام وبين عناصر ImGui النصية عندما تبني محررًا بسيطًا مع لوحة مفاتيح افتراضية داخل النافذة نفسها.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_StartTextInput"},
+        {"type": "external", "label": "ImGui InputText", "href": "https://github.com/ocornut/imgui/blob/master/imgui_widgets.cpp"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، المحرر النصي ولوحة المفاتيح يجب أن يعيشا داخل TextTool أو OnScreenKeyboard subsystem بدل منطق UI متداخل مع loop الإدخال مباشرة.",
+      "projectStepsArabic": [
+        "افصل حالة النص الحالية عن بناء widget نفسها حتى يسهل الحفظ أو الربط مع ملفات أو محررات أكبر.",
+        "اجمع مفاتيح اللوحة الافتراضية داخل وصف بياناتي واضح بدل بناء كل زر يدويًا في كل frame.",
+        "ميّز بين إدخال SDL النصي وبين نقرات أزرار ImGui حتى لا تختلط مسارات التعديل."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sdl3-imgui-tree-combo-gallery", "label": "الانتقال إلى أدوات اختيار مختلفة"},
+        {"packageKey": "core", "exampleId": "sdl3-imgui-docking-studio", "label": "الانتقال إلى بيئة تحرير كاملة"}
+      ]
+    },
+    "core::sdl3-imgui-effects-lab": {
+      "officialSummaryArabic": "هذا المثال يبيّن كيف تستخدم SDL3 للرسم والتحديث، ثم تضيف فوقه ImGui لتعديل خصائص الانفجار والوهج والجسيمات مباشرة أثناء المعاينة.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "ImGui Demo", "href": "https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، مختبر المؤثرات يجب أن يفصل بين Simulation state وTool controls وPreview renderer بدل جمعها في كتلة واحدة.",
+      "projectStepsArabic": [
+        "اعزل كل مؤثر مثل الانفجار أو الوهج أو الجسيمات داخل بنية state مستقلة حتى يمكن تبديلها أو دمجها بسهولة.",
+        "اجعل عناصر ImGui تعدل بيانات المؤثر لا الرسم مباشرة، ثم دع طبقة update/render تقرأ هذه البيانات.",
+        "استخدم Presets أو Profiles بسيطة بدل إعادة ضبط عشرات القيم يدويًا كل مرة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sdl3-imgui-menu-color-tools", "label": "العودة إلى أدوات تحكم أبسط"},
+        {"packageKey": "core", "exampleId": "sdl3-imgui-circular-car", "label": "الانتقال إلى معاينة حركة مع أدوات مباشرة"}
+      ]
+    },
+    "core::sdl3-imgui-clock-dashboard": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تستخدم SDL3 لتحديث الإطار باستمرار بينما تبني فوقها ImGui لوحة معلومات تعرض ساعة تناظرية ورقمية داخل نفس المساحة.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_GetTicks"},
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "ImGui Demo", "href": "https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، لوحات المعلومات الزمنية أو الإحصائية يجب أن ترتبط بمصدر بيانات واضح وتُعرض عبر Dashboard widgets قابلة لإعادة الاستخدام.",
+      "projectStepsArabic": [
+        "افصل time source عن منطق الرسم التناظري والرقمي حتى يسهل استبداله بزمن فعلي أو simulated time.",
+        "حوّل عناصر الساعة إلى widgets أو draw helpers مستقلة بدل رسمها داخل نافذة واحدة ثابتة.",
+        "استخدم هذا المثال كبداية قبل dashboards أعقد لقياسات الأداء أو أدوات المراقبة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sdl3-imgui-docking-studio", "label": "الانتقال إلى لوحة أدوات أكبر"},
+        {"packageKey": "core", "exampleId": "sdl3-imgui-menu-color-tools", "label": "العودة إلى أدوات التحكم المرئية"}
+      ]
+    },
+    "core::sdl3-imgui-circular-car": {
+      "officialSummaryArabic": "هذا المثال يجمع بين محاكاة حركة بسيطة داخل SDL3 وبين أدوات ImGui لضبط السرعة أو نصف القطر أو الحالة مباشرة أثناء العرض.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_GetTicks"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "external", "label": "ImGui Demo", "href": "https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي، عناصر الضبط الحية مثل السرعة والمسار يجب أن تعيش داخل ToolState أو SimulationSettings واضحة منفصلة عن renderer.",
+      "projectStepsArabic": [
+        "افصل بيانات المسار الدائري عن صورة السيارة أو شكلها المرئي حتى يبقى السلوك قابلاً لإعادة الاستخدام.",
+        "اجعل ImGui تعدل قيم الحركة داخل بنية settings واضحة ثم دع update يطبقها بمرور الزمن.",
+        "استخدم المثال كبداية لأدوات debug motion أو معاينات gameplay بسيطة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sdl3-imgui-effects-lab", "label": "الانتقال إلى معاينات مؤثرات أكثر تنوعًا"},
+        {"packageKey": "core", "exampleId": "sdl3-imgui-clock-dashboard", "label": "العودة إلى dashboard حية"}
+      ]
+    },
+    "core::sdl3-imgui-nested-media-menus": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تبني شريط قوائم متعدد المستويات داخل ImGui فوق SDL3 مع صور مصغرة وعناصر نهائية تمثل وسائط أو أصولًا أو ثيمات.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "ImGui Demo", "href": "https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp"},
+        {"type": "external", "label": "Dear ImGui Wiki", "href": "https://github.com/ocornut/imgui/wiki"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، القوائم المتداخلة يجب أن تُبنى من بيانات menu model واضحة بدل تفرعات if أو begin menu متكررة يدويًا.",
+      "projectStepsArabic": [
+        "حوّل القوائم والمستويات والعناصر النهائية إلى بنية MenuNode أو MenuItem قابلة للتكرار.",
+        "افصل صورة المعاينة أو thumbnail عن تعريف العنصر نفسه حتى يبقى model نظيفًا.",
+        "أعد الأوامر الناتجة من القوائم كأفعال منطقية مثل open_asset أو apply_theme بدل تنفيذها مباشرة داخل الواجهة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "sdl3-imgui-tree-combo-gallery", "label": "العودة إلى عرض هرمي أبسط"},
+        {"packageKey": "core", "exampleId": "sdl3-imgui-docking-studio", "label": "الانتقال إلى مساحة أدوات متكاملة"}
+      ]
+    },
+    "core::wireframe-cube-sdl3": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف يمكن استخدام SDL3 نفسها لرسم معاينة 3D سلكية عبر إسقاط نقاط المجسم إلى الشاشة ثم وصلها بخطوط، من دون اللجوء إلى OpenGL أو Vulkan.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_RenderLine"},
+        {"type": "entity", "name": "SDL_SetRenderDrawColor"},
+        {"type": "external", "label": "CategoryRender", "href": "https://wiki.libsdl.org/SDL3/CategoryRender"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، هذا النوع من العرض السلكي يجب أن يعيش داخل Debug Geometry أو Math Sandbox منفصل، لا داخل واجهة 2D الأساسية.",
+      "projectStepsArabic": [
+        "افصل بيانات الرؤوس والأضلاع عن كود الدوران والإسقاط حتى يصبح تبديل المجسمات أو إعادة استخدامها أسهل.",
+        "وحّد مصفوفات أو helpers التحويل والإسقاط داخل طبقة رياضية صغيرة بدل معادلات متناثرة داخل loop الرسم.",
+        "استخدم المثال كبوابة لفهم projection والـ camera basics قبل الانتقال إلى مسارات 3D رسومية أثقل."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "perspective-quad-sdl3", "label": "الانتقال إلى لوح منظور أبسط"},
+        {"packageKey": "core", "exampleId": "draw-lines-curves-arrows", "label": "العودة إلى primitives الخطية الأساسية"}
+      ]
+    },
+    "core::perspective-quad-sdl3": {
+      "officialSummaryArabic": "هذا المثال يعزل فكرة المنظور نفسها: كيف يتحول لوح رباعي في فضاء 3D مبسط إلى شكل مائل على الشاشة يختلف عن مستطيل 2D مباشر.",
+      "officialReferences": [
+        {"type": "entity", "name": "SDL_RenderLine"},
+        {"type": "entity", "name": "SDL_FRect"},
+        {"type": "external", "label": "CategoryRender", "href": "https://wiki.libsdl.org/SDL3/CategoryRender"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، هذا النوع من التجارب يجب أن يبقى داخل مختبر projection أو أدوات تعليمية منفصلة، لأن قيمته الأساسية تفسيرية وليست واجهة إنتاجية كاملة.",
+      "projectStepsArabic": [
+        "افصل نقاط الـ quad في فضاء العالم عن منطق الإسقاط إلى الشاشة حتى يمكن تبديل المعادلات أو زاوية الرؤية بسهولة.",
+        "أضف بنية Camera أو ProjectionState صغيرة بدل القيم الصلبة إذا أردت تطوير المثال إلى more than one quad.",
+        "استخدمه كمحطة وسطى بين 2D الصرف وبين مجسم سلكي كامل أو مسار 3D أعمق."
+      ],
+      "followUpExamples": [
+        {"packageKey": "core", "exampleId": "wireframe-cube-sdl3", "label": "الانتقال إلى مجسم سلكي كامل"},
+        {"packageKey": "core", "exampleId": "renderer-color-controls", "label": "العودة إلى أساسيات الرسم في SDL3"}
+      ]
+    },
+    "image::image-loading": {
+      "officialSummaryArabic": "المراجع التالية تساعدك عندما تنتقل من تحميل صورة واحدة إلى إدارة مكتبة textures داخل مشروع فعلي.",
+      "officialReferences": [
+        {"type": "entity", "name": "IMG_LoadTexture"},
+        {"type": "entity", "name": "SDL_RenderPresent"},
+        {"type": "external", "label": "SDL3_image API", "href": "https://wiki.libsdl.org/SDL3_image/CategoryAPI"}
+      ],
+      "fullProjectNoteArabic": "لا تجعل المشروع الحقيقي يعيد تحميل الصورة كل مرة؛ هذا المثال يجب أن يصبح بذرة لمدير موارد texture cache.",
+      "projectStepsArabic": [
+        "أضف خريطة cache تربط المسار بالـ SDL_Texture* حتى لا تُحمَّل الملفات نفسها أكثر من مرة.",
+        "اجمع عمليات التحميل والتحرير داخل مدير موارد واحد يضمن SDL_DestroyTexture عند الإغلاق.",
+        "أدخل مفهوم atlas أو لائحة sprites إذا كنت ستعرض أكثر من عنصر من نفس الصورة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-gallery-layout", "label": "الانتقال إلى مثال معرض الصور"}
+      ]
+    },
+    "image::image-position-scale": {
+      "officialSummaryArabic": "هذه المراجع الرسمية توضح أين تنتهي مسؤولية SDL3_image وأين يبدأ التحكم الفعلي بالموضع والحجم داخل SDL_Renderer نفسه.",
+      "officialReferences": [
+        {"type": "entity", "name": "IMG_LoadTexture"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "external", "label": "CategoryRender", "href": "https://wiki.libsdl.org/SDL3/CategoryRender"}
+      ],
+      "fullProjectNoteArabic": "عندما يكبر المشروع، لا ينبغي أن تبقى حسابات الموضع والحجم داخل المثال نفسه؛ انقلها إلى طبقة scene أو UI layout.",
+      "projectStepsArabic": [
+        "افصل بين بيانات المورد الرسومي وبين Transform الخاص به حتى يمكن إعادة استخدام texture نفسها مع أكثر من موضع وحجم.",
+        "عرّف وحدات قياس أو helpers بسيطة للمحاذاة والـ scaling بدل كتابة الأرقام داخل كل شاشة.",
+        "أضف نظام camera أو viewport إذا بدأت العناصر تتحرك خارج حدود نافذة واحدة ثابتة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-drag-mouse", "label": "الانتقال إلى مثال السحب والتحريك"}
+      ]
+    },
+    "image::image-button-hover": {
+      "officialSummaryArabic": "هذا المسار الرسمي يربط بين texture المحملة من SDL3_image وبين التفاعل المرئي الذي يبنيه SDL3 نفسه عبر الأحداث والرندر.",
+      "officialReferences": [
+        {"type": "entity", "name": "IMG_LoadTexture"},
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_RenderTexture"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، الزر الصوري يجب أن يصبح widget له حالة داخلية وأحداث callback بدل أن يبقى منطق hover والنقر مبعثرًا داخل الحلقة الرئيسية.",
+      "projectStepsArabic": [
+        "حوّل منطق hover والنقر إلى بنية ButtonState أو WidgetState قابلة لإعادة الاستخدام.",
+        "افصل texture العادية وtexture الـ hover وtexture الـ pressed داخل مدير موارد مرئي بدل تتبعها يدويًا.",
+        "أضف طبقة events UI تعيد أفعالًا منطقية مثل submit أو cancel بدل فحص الإحداثيات في كل مرة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-background-alpha", "label": "الانتقال إلى مثال الخلفيات والطبقات"}
+      ]
+    },
+    "image::image-gallery-layout": {
+      "officialSummaryArabic": "هذه المراجع الرسمية مفيدة عندما تتحول من صورة واحدة إلى لائحة صور أو شاشة معرض تحتاج ترتيبًا ثابتًا وإدارة موارد متعددة.",
+      "officialReferences": [
+        {"type": "entity", "name": "IMG_Load"},
+        {"type": "entity", "name": "SDL_CreateTextureFromSurface"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "external", "label": "SDL3_image API", "href": "https://wiki.libsdl.org/SDL3_image/CategoryAPI"}
+      ],
+      "fullProjectNoteArabic": "المعرض الحقيقي يحتاج غالبًا data model منفصلًا للصور المصغرة والعناصر المحددة ومصدر البيانات، لا مجرد مصفوفة textures ثابتة داخل main.",
+      "projectStepsArabic": [
+        "افصل بيانات الصورة مثل المسار والعنوان والحالة المحددة عن SDL_Texture نفسها داخل بنية GalleryItem.",
+        "أضف طبقة layout صغيرة تحسب الصفوف والأعمدة والمسافات بدل كتابة القيم داخل حلقة الرسم مباشرة.",
+        "جهّز مسار اختيار current item حتى يمكن فتح تفاصيل الصورة أو تكبيرها من نفس المعرض."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-drag-mouse", "label": "الانتقال إلى سحب العناصر داخل المشهد"},
+        {"packageKey": "image", "exampleId": "image-background-alpha", "label": "الانتقال إلى الطبقات والشفافية"}
+      ]
+    },
+    "image::image-drag-mouse": {
+      "officialSummaryArabic": "هذا المسار الرسمي مهم عندما تبدأ بربط الصورة بحالة تفاعل مباشرة مثل السحب، وليس مجرد عرضها في موضع ثابت.",
+      "officialReferences": [
+        {"type": "entity", "name": "IMG_LoadTexture"},
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "external", "label": "CategoryEvents", "href": "https://wiki.libsdl.org/SDL3/CategoryEvents"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، السحب يجب أن يعمل فوق transform/state منفصلين، لا فوق متغيرات موضع مرتبطة بمثال وحيد.",
+      "projectStepsArabic": [
+        "عرّف DragState مستقلًا يحفظ هل السحب نشط وما هو offset الأولي بين المؤشر والعنصر.",
+        "افصل إدخال الفأرة عن تحديث transform حتى يصبح من السهل دعم أكثر من عنصر قابل للسحب.",
+        "أضف حدود world أو viewport إذا كان المشروع سيحتوي على canvas أكبر من النافذة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-gallery-layout", "label": "العودة إلى تنظيم عدة صور"},
+        {"packageKey": "image", "exampleId": "image-button-hover", "label": "الانتقال إلى التفاعل الصوري مع الأزرار"}
+      ]
+    },
+    "image::image-crop-source-rect": {
+      "officialSummaryArabic": "هذه المراجع الرسمية توضح أين تنتهي مسؤولية التحميل وأين يبدأ دور src rect في اختيار الجزء المعروض من texture واحدة.",
+      "officialReferences": [
+        {"type": "entity", "name": "IMG_Load"},
+        {"type": "entity", "name": "SDL_CreateTextureFromSurface"},
+        {"type": "entity", "name": "SDL_RenderTexture"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، هذا المثال يجب أن يصبح نواة sprite atlas system أو animation sheet helper بدل تغيير src.x يدويًا داخل الحلقة.",
+      "projectStepsArabic": [
+        "عرّف بنية SpriteFrame أو AtlasRegion تحفظ src rect لكل عنصر بدل حسابها من الأرقام الخام داخل الحدث.",
+        "افصل atlas data عن مسار الرسم حتى يمكن إعادة استخدام نفس texture مع عشرات الرموز والإطارات.",
+        "أضف جدول أسماء للإطارات أو القصاصات إذا كان المشروع سيستخدم أيقونات أو sprite sheets فعلية."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-switch-keyboard", "label": "الانتقال إلى تبديل الصور الكاملة"},
+        {"packageKey": "image", "exampleId": "image-gallery-layout", "label": "الانتقال إلى عرض عدة صور"}
+      ]
+    },
+    "image::image-switch-keyboard": {
+      "officialSummaryArabic": "هذا المسار الرسمي مفيد عندما تحمّل أكثر من صورة ثم تغيّر المعروضة لحظيًا من الذاكرة بدل إعادة التحميل من الملف أثناء التفاعل.",
+      "officialReferences": [
+        {"type": "entity", "name": "IMG_Load"},
+        {"type": "entity", "name": "SDL_CreateTextureFromSurface"},
+        {"type": "entity", "name": "SDL_PollEvent"},
+        {"type": "external", "label": "SDL3_image API", "href": "https://wiki.libsdl.org/SDL3_image/CategoryAPI"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال هو نواة character state viewer أو product selector صغير، ويجب أن يتطور إلى model واضح للحالات والصور بدل الاعتماد على index فقط.",
+      "projectStepsArabic": [
+        "اربط كل صورة باسم حالة أو enum واضح مثل idle و selected و warning بدل فهرس عددي مباشر.",
+        "افصل مدير الموارد عن الحالة النشطة حتى يمكن تبديل الصور من منطق التطبيق أو الواجهة بسهولة.",
+        "أضف preload واضح للصور وخطة fallback إذا فشلت صورة واحدة بدل إسقاط الشاشة كلها."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-crop-source-rect", "label": "الانتقال إلى atlas وsrc rect"},
+        {"packageKey": "image", "exampleId": "image-button-hover", "label": "الانتقال إلى تبديل مرئي تفاعلي"}
+      ]
+    },
+    "image::image-background-alpha": {
+      "officialSummaryArabic": "هذه المراجع توضح كيف تتعامل SDL مع الـ texture الشفافة والطبقات المتراكبة داخل نفس الإطار.",
+      "officialReferences": [
+        {"type": "entity", "name": "IMG_LoadTexture"},
+        {"type": "entity", "name": "SDL_RenderTexture"},
+        {"type": "external", "label": "CategoryRender", "href": "https://wiki.libsdl.org/SDL3/CategoryRender"}
+      ],
+      "fullProjectNoteArabic": "عندما يكبر المشروع، إدارة الخلفيات الشفافة يجب أن تنتقل إلى طبقة compositing أو scene layers، لا أن تبقى ترتيب استدعاءات داخل المثال فقط.",
+      "projectStepsArabic": [
+        "قسّم المشهد إلى طبقات واضحة مثل background و midground و ui بدل الاعتماد على ترتيب الرسم العفوي.",
+        "اجمع إعدادات الشفافية والمزج في مسار واحد حتى لا تتكرر لكل texture على حدة.",
+        "أضف مدير موارد بصريًا للخلفيات والطبقات إذا بدأت الشاشة تستهلك أكثر من صورة كبيرة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "image", "exampleId": "image-gallery-layout", "label": "الانتقال إلى معرض صور منظم"},
+        {"packageKey": "ttf", "exampleId": "font-text", "label": "الانتقال إلى طبقة نص فوق الخلفية"}
+      ]
+    },
+    "mixer::mixer-short-sfx": {
+      "officialSummaryArabic": "في المشاريع الحقيقية ستحتاج الرجوع إلى فتح النظام الصوتي، تحميل المؤثرات، ثم تشغيلها من مسار موحد بدل نداءات مبعثرة.",
+      "officialReferences": [
+        {"type": "external", "label": "Mix_OpenAudio", "href": "https://wiki.libsdl.org/SDL3_mixer/Mix_OpenAudio"},
+        {"type": "external", "label": "Mix_LoadWAV", "href": "https://wiki.libsdl.org/SDL3_mixer/Mix_LoadWAV"},
+        {"type": "external", "label": "Mix_PlayChannel", "href": "https://wiki.libsdl.org/SDL3_mixer/Mix_PlayChannel"},
+        {"type": "external", "label": "CategorySDLMixer", "href": "https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يجب أن يتطور إلى Audio Manager لا إلى دالة تشغيل مؤثرات فقط، خصوصًا عندما يكثر عدد الأصوات والحالات.",
+      "projectStepsArabic": [
+        "افصل بين تهيئة النظام الصوتي وتحميل الملفات وتشغيل المؤثرات حتى يصبح لكل مرحلة مسؤولية واضحة.",
+        "عرّف أسماء منطقية للمؤثرات مثل ui_click و damage_hit بدل تمرير المسارات النصية في كل استدعاء.",
+        "أضف طبقة تحكم عامة للصوت تسمح بالكتم والمستوى والقنوات من مكان واحد."
+      ],
+      "followUpExamples": [
+        {"packageKey": "mixer", "exampleId": "mixer-sfx-system", "label": "الانتقال إلى مثال نظام المؤثرات"}
+      ]
+    },
+    "mixer::mixer-background-loop": {
+      "officialSummaryArabic": "هذه المراجع توضح دورة الحياة الرسمية للموسيقى الخلفية وكيف تُدار على المدى الطويل بدل تشغيل مؤثر لحظي قصير.",
+      "officialReferences": [
+        {"type": "external", "label": "Mix_LoadAudio", "href": "https://wiki.libsdl.org/SDL3_mixer/Mix_LoadAudio"},
+        {"type": "external", "label": "Mix_PlayAudio", "href": "https://wiki.libsdl.org/SDL3_mixer/Mix_PlayAudio"},
+        {"type": "external", "label": "Mix_SetTrackLoops", "href": "https://wiki.libsdl.org/SDL3_mixer/Mix_SetTrackLoops"}
+      ],
+      "fullProjectNoteArabic": "الموسيقى الخلفية في المشروع الحقيقي تحتاج مدير حالات، وانتقالات هادئة، وسياسة واضحة للتبديل بين المشاهد.",
+      "projectStepsArabic": [
+        "أضف مفهوم music state أو scene music بدل تشغيل ملف وحيد من داخل شاشة واحدة.",
+        "جهّز انتقالات fade in وfade out عند تبديل المقاطع بدل التوقف والبدء الفوري.",
+        "اربط المسار الموسيقي بحالة اللعبة أو الشاشة الحالية من طبقة أعلى من المثال نفسه."
+      ],
+      "followUpExamples": [
+        {"packageKey": "mixer", "exampleId": "mixer-music-states", "label": "الانتقال إلى مثال حالات الموسيقى"}
+      ]
+    },
+    "mixer::mixer-volume-settings": {
+      "officialSummaryArabic": "الرجوع الرسمي هنا مفيد عندما تبني طبقة إعدادات صوت عامة تتحكم بمستويات متعددة بدل منزلق واحد داخل المثال.",
+      "officialReferences": [
+        {"type": "external", "label": "Mix_SetMixerGain", "href": "https://wiki.libsdl.org/SDL3_mixer/Mix_SetMixerGain"},
+        {"type": "external", "label": "Mix_SetTrackGain", "href": "https://wiki.libsdl.org/SDL3_mixer/Mix_SetTrackGain"},
+        {"type": "external", "label": "CategorySDLMixer", "href": "https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer"}
+      ],
+      "fullProjectNoteArabic": "التحكم بالمستوى الصوتي في المشروع الكامل يحتاج فصلًا بين volume عام وvolume للموسيقى وvolume للمؤثرات وk mute states.",
+      "projectStepsArabic": [
+        "احتفظ بإعدادات volume داخل config أو save data بدل أن تبقى متغيرات مؤقتة في الواجهة.",
+        "طبّق gain على طبقات مختلفة: master وmusic وsfx بدل منزلق موحد.",
+        "أضف مزامنة بين الواجهة الحالية والنظام الصوتي حتى تعكس التغييرات فورًا دون إعادة التهيئة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "mixer", "exampleId": "mixer-audio-dashboard-imgui", "label": "الانتقال إلى لوحة التحكم الصوتية"}
+      ]
+    },
+    "mixer::mixer-transport-controls": {
+      "officialSummaryArabic": "هذه المراجع الرسمية توضح أوامر pause وresume وstop على مستوى المسار نفسه، وهو ما تحتاجه حالات الإيقاف المؤقت والرجوع للتشغيل.",
+      "officialReferences": [
+        {"type": "external", "label": "MIX_PlayTrack", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_PlayTrack"},
+        {"type": "external", "label": "MIX_PauseTrack", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_PauseTrack"},
+        {"type": "external", "label": "MIX_ResumeTrack", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_ResumeTrack"},
+        {"type": "external", "label": "MIX_StopTrack", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_StopTrack"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، transport controls يجب أن تعيش داخل AudioController أو MusicController واضح بدل التوزع داخل منطق الواجهة نفسها.",
+      "projectStepsArabic": [
+        "عرّف واجهة أوامر واضحة مثل pauseMusic و resumeMusic و stopMusic بدل ربط المفاتيح مباشرة بدوال SDL3_mixer.",
+        "احتفظ بحالة النقل الصوتي داخل state مستقل حتى يسهل مزامنة الواجهة معه.",
+        "أضف تمييزًا بين stop الكامل وpause المؤقت إذا كان المشروع يملك مشاهد أو قوائم متداخلة."
+      ],
+      "followUpExamples": [
+        {"packageKey": "mixer", "exampleId": "mixer-music-states", "label": "الانتقال إلى تبديل الموسيقى بالحالات"},
+        {"packageKey": "mixer", "exampleId": "mixer-volume-settings", "label": "الانتقال إلى التحكم بالمستوى"}
+      ]
+    },
+    "mixer::mixer-gui-feedback": {
+      "officialSummaryArabic": "هذا المسار الرسمي يربط واجهة SDL بالأصوات القصيرة التي تعمل لحظيًا فوق التفاعل مثل hover وclick بدل الخلفية المستمرة.",
+      "officialReferences": [
+        {"type": "external", "label": "MIX_LoadAudio", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_LoadAudio"},
+        {"type": "external", "label": "MIX_PlayAudio", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_PlayAudio"},
+        {"type": "external", "label": "CategorySDLMixer", "href": "https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، الأصوات التفاعلية يجب أن تأتي من UI event layer أو command bus واضح، لا من شرط hover داخل كل widget على حدة.",
+      "projectStepsArabic": [
+        "اجمع مؤثرات الواجهة داخل مجموعة أو tag منفصل مثل ui_sfx حتى يسهل خفضها أو كتمها منفصلة عن الموسيقى.",
+        "حوّل أحداث hover وclick إلى actions منطقية ثم اربطها بطبقة تشغيل صوت UI مركزية.",
+        "أضف حماية تمنع تكرار صوت hover باستمرار عند الحركة الصغيرة داخل العنصر نفسه."
+      ],
+      "followUpExamples": [
+        {"packageKey": "mixer", "exampleId": "mixer-sfx-system", "label": "الانتقال إلى نظام مؤثرات أوسع"},
+        {"packageKey": "mixer", "exampleId": "mixer-audio-dashboard-imgui", "label": "الانتقال إلى لوحة مراقبة الصوت"}
+      ]
+    },
+    "mixer::mixer-sfx-system": {
+      "officialSummaryArabic": "هذه المراجع الرسمية توضح كيف تنتقل من تشغيل مؤثر منفرد إلى نظام tracks وtags يسمح بالتشغيل والتحكم الجماعي.",
+      "officialReferences": [
+        {"type": "external", "label": "MIX_CreateTrack", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_CreateTrack"},
+        {"type": "external", "label": "MIX_PlayTrack", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_PlayTrack"},
+        {"type": "external", "label": "MIX_PlayTag", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_PlayTag"},
+        {"type": "external", "label": "CategorySDLMixer", "href": "https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال هو البذرة الحقيقية لـ Audio SFX Bus داخل المشروع، ويجب أن يتطور إلى طبقة تسميات ومسارات وتحكمات مركزية.",
+      "projectStepsArabic": [
+        "اجمع أسماء المؤثرات وملفاتها ووسومها داخل manifest صوتي بدل كتابة المسارات داخل كود المثال.",
+        "أضف طبقة أحداث صوتية مثل play_ui_click أو play_damage_hit بدل استدعاء MIX_PlayTrack مباشرة من كل شاشة.",
+        "افصل التحكم في gain العام عن gain المجموعات وعن mute state حتى يسهل ربطه مع شاشة إعدادات لاحقًا."
+      ],
+      "followUpExamples": [
+        {"packageKey": "mixer", "exampleId": "mixer-audio-dashboard-imgui", "label": "الانتقال إلى لوحة مراقبة الصوت"},
+        {"packageKey": "mixer", "exampleId": "mixer-music-states", "label": "الانتقال إلى إدارة الموسيقى بالحالات"}
+      ]
+    },
+    "mixer::mixer-music-states": {
+      "officialSummaryArabic": "هذا المسار الرسمي يوضح إدارة tracks طويلة العمر والتبديل بينها بحسب state بدل تشغيل ملف موسيقي واحد طوال الوقت.",
+      "officialReferences": [
+        {"type": "external", "label": "MIX_LoadAudio", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_LoadAudio"},
+        {"type": "external", "label": "MIX_PlayTrack", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_PlayTrack"},
+        {"type": "external", "label": "MIX_SetTrackLoops", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_SetTrackLoops"},
+        {"type": "external", "label": "MIX_StopTrack", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_StopTrack"}
+      ],
+      "fullProjectNoteArabic": "في مشروع فعلي، Music State Machine يجب أن تعيش فوق الشاشات والمشاهد، بحيث تغير الموسيقى عند تبدل state العام للتطبيق لا عند ضغط زر محلي فقط.",
+      "projectStepsArabic": [
+        "عرّف حالات موسيقية مثل menu و gameplay و pause داخل enum أو جدول منظم بدل أرقام مباشرة.",
+        "أضف طبقة transition صغيرة للتلاشي التدريجي قبل إيقاف track وبدء أخرى.",
+        "اربط قرار الموسيقى بحالة اللعبة أو الواجهة من طبقة مركزية لا من المثال الرسومي نفسه."
+      ],
+      "followUpExamples": [
+        {"packageKey": "mixer", "exampleId": "mixer-volume-settings", "label": "الانتقال إلى التحكم بالمستويات"},
+        {"packageKey": "mixer", "exampleId": "mixer-audio-dashboard-imgui", "label": "الانتقال إلى لوحة تحكم صوتية"}
+      ]
+    },
+    "mixer::mixer-audio-dashboard-imgui": {
+      "officialSummaryArabic": "هذه المراجع تفيد عندما تبني لوحة مراقبة أو إعدادات صوت حية فوق SDL3_mixer بدل الاكتفاء بمفاتيح تجريبية داخل المثال.",
+      "officialReferences": [
+        {"type": "external", "label": "MIX_SetTagGain", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_SetTagGain"},
+        {"type": "external", "label": "MIX_TrackPlaying", "href": "https://wiki.libsdl.org/SDL3_mixer/MIX_TrackPlaying"},
+        {"type": "external", "label": "CategorySDLMixer", "href": "https://wiki.libsdl.org/SDL3_mixer/CategorySDLMixer"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يجب أن يتحول إلى لوحة أدوات للمراقبة السريعة والتشخيص أثناء التطوير، مع ربط واضح بين الواجهة ومسارات الصوت الداخلية.",
+      "projectStepsArabic": [
+        "افصل البيانات المعروضة في اللوحة عن استدعاءات ImGui نفسها حتى يمكن إعادة استخدام الحالة مع واجهات أخرى.",
+        "أضف إحصاءات حية للمسارات النشطة والـ tags ومستويات الصوت لتسهيل التشخيص أثناء التطوير.",
+        "اربِط اللوحة بطبقة Audio Manager مركزية بدل قراءة كل شيء مباشرة من المثال."
+      ],
+      "followUpExamples": [
+        {"packageKey": "mixer", "exampleId": "mixer-sfx-system", "label": "العودة إلى نواة نظام المؤثرات"},
+        {"packageKey": "mixer", "exampleId": "mixer-volume-settings", "label": "الانتقال إلى إعدادات الصوت"}
+      ]
+    },
+    "ttf::font-text": {
+      "officialSummaryArabic": "هذه المراجع الرسمية مهمة عندما تنتقل من سطر نص واحد إلى نظام نصوص يدعم العناوين والرسائل والتغيّر أثناء التشغيل.",
+      "officialReferences": [
+        {"type": "entity", "name": "TTF_OpenFont"},
+        {"type": "entity", "name": "TTF_RenderText_Blended"},
+        {"type": "external", "label": "SDL3_ttf API", "href": "https://wiki.libsdl.org/SDL3_ttf/CategoryAPI"}
+      ],
+      "fullProjectNoteArabic": "المشروع الكامل يحتاج عادةً إلى مخزن خطوط ونظام قياس ومحاذاة وتحديث textures النصية عند تغير المحتوى فقط.",
+      "projectStepsArabic": [
+        "احتفظ بالخطوط المفتوحة داخل cache بحسب الحجم والوزن بدل إعادة فتحها عند كل نص.",
+        "ابنِ دالة موحدة لإنشاء texture نصية مع اللون والمحاذاة حتى لا يتكرر نفس المسار في كل شاشة.",
+        "حدّث texture النص فقط عندما تتغير القيمة أو اللغة بدل إعادة التوليد كل إطار."
+      ],
+      "followUpExamples": [
+        {"packageKey": "ttf", "exampleId": "text-multi-line-panel", "label": "الانتقال إلى مثال اللوحات النصية"}
+      ]
+    },
+    "ttf::text-title-subtitle": {
+      "officialSummaryArabic": "هذه المراجع الرسمية مهمة عندما تبني hierarchy نصية داخل الواجهة وتحتاج أحجامًا مختلفة ومحاذاة واضحة بين العنوان والوصف.",
+      "officialReferences": [
+        {"type": "entity", "name": "TTF_OpenFont"},
+        {"type": "entity", "name": "TTF_RenderText_Blended"},
+        {"type": "entity", "name": "TTF_CloseFont"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي، هذا المثال يجب أن يصبح جزءًا من typography system بسيط يحدد title/subtitle/body styles بدل اختيار الأحجام يدويًا في كل شاشة.",
+      "projectStepsArabic": [
+        "عرّف أنماطًا نصية ثابتة مثل TitleStyle و SubtitleStyle بدل تكرار أحجام الخطوط والألوان يدويًا.",
+        "افصل محتوى العنوان عن منطق إنشاء textures حتى يسهل تحديث اللغة أو النصوص لاحقًا.",
+        "أضف helper للمحاذاة داخل البطاقات أو اللوحات حتى لا يعاد حساب التموضع في كل مثال منفرد."
+      ],
+      "followUpExamples": [
+        {"packageKey": "ttf", "exampleId": "text-multi-line-panel", "label": "الانتقال إلى لوحات النصوص"},
+        {"packageKey": "ttf", "exampleId": "text-status-messages", "label": "الانتقال إلى رسائل الحالة"}
+      ]
+    },
+    "ttf::text-live-counter": {
+      "officialSummaryArabic": "هذه المراجع توضح كيف يتغير النص رسميًا عندما تتبدل القيمة، وأين يجب أن تُعاد توليد الـ surface أو texture النصية.",
+      "officialReferences": [
+        {"type": "entity", "name": "TTF_RenderText_Blended"},
+        {"type": "entity", "name": "SDL_CreateTextureFromSurface"},
+        {"type": "external", "label": "SDL3_ttf API", "href": "https://wiki.libsdl.org/SDL3_ttf/CategoryAPI"}
+      ],
+      "fullProjectNoteArabic": "أي HUD أو عداد داخل مشروع فعلي يحتاج تمييزًا واضحًا بين تحديث القيمة المنطقية وبين إعادة بناء texture النصية نفسها.",
+      "projectStepsArabic": [
+        "اكتشف لحظة تغيّر القيمة فقط ثم أعد توليد texture النصية عند الحاجة بدل إعادة ذلك كل إطار.",
+        "احتفظ بعرض النص وارتفاعه بعد القياس حتى لا تعيد حساب التخطيط من الصفر في كل تحديث.",
+        "افصل طبقة تنسيق النص عن طبقة منطق اللعبة حتى يبقى التغيير في القيمة منفصلًا عن الرندر."
+      ],
+      "followUpExamples": [
+        {"packageKey": "ttf", "exampleId": "text-status-messages", "label": "الانتقال إلى مثال رسائل الحالة"}
+      ]
+    },
+    "ttf::text-input-preview": {
+      "officialSummaryArabic": "هذه المراجع الرسمية مهمة عندما تريد بناء مسار إدخال نص فعلي يدمج SDL events مع SDL3_ttf في واجهة واحدة.",
+      "officialReferences": [
+        {"type": "entity", "name": "TTF_RenderText_Blended"},
+        {"type": "entity", "name": "SDL_StartTextInput"},
+        {"type": "entity", "name": "SDL_PollEvent"}
+      ],
+      "fullProjectNoteArabic": "المشروع الكامل يحتاج حقل إدخال reusable يدير المؤشر والنص والاختيار والأحداث بدل مثال وحيد داخل شاشة مفردة.",
+      "projectStepsArabic": [
+        "ابنِ TextInputState يحفظ السلسلة الحالية وحالة التركيز ومؤشر الكتابة بدل الاعتماد على متغيرات متناثرة.",
+        "أضف دعم المسح والتحريك داخل السطر واختيار النص إذا كان المشروع سيحتوي على أكثر من حقل.",
+        "وحّد إعادة توليد texture النصية ورسالة placeholder ومسار الإرسال النهائي داخل widget مستقل."
+      ],
+      "followUpExamples": [
+        {"packageKey": "ttf", "exampleId": "text-button-toggle", "label": "الانتقال إلى مثال التفاعل النصي مع الأزرار"}
+      ]
+    },
+    "ttf::text-multi-line-panel": {
+      "officialSummaryArabic": "هذا المسار الرسمي مهم عندما تنتقل من سطر قصير إلى لوحة نصية تحتاج التفافًا ومحاذاة وعرضًا ثابتًا داخل واجهة فعلية.",
+      "officialReferences": [
+        {"type": "entity", "name": "TTF_OpenFont"},
+        {"type": "external", "label": "SDL3_ttf API", "href": "https://wiki.libsdl.org/SDL3_ttf/CategoryAPI"},
+        {"type": "entity", "name": "SDL_CreateTextureFromSurface"}
+      ],
+      "fullProjectNoteArabic": "لوحات النص المتعددة الأسطر تصبح عادة جزءًا من UI system أوسع، لذلك يجب فصل المحتوى والتخطيط وإعادة التوليد عن الرسم النهائي.",
+      "projectStepsArabic": [
+        "عرّف TextPanelData يحتوي النص والعنوان والعرض الأقصى بدل تمرير هذه القيم منفصلة في كل استدعاء.",
+        "اجمع سياسات الالتفاف والمحاذاة والهوامش في helper واحد حتى تستخدمها كل اللوحات النصية.",
+        "أعد توليد texture اللوحة فقط عند تغير النص أو العرض أو الخط لا عند كل إطار."
+      ],
+      "followUpExamples": [
+        {"packageKey": "ttf", "exampleId": "text-status-messages", "label": "الانتقال إلى رسائل الحالة"},
+        {"packageKey": "ttf", "exampleId": "text-input-preview", "label": "الانتقال إلى إدخال النص"}
+      ]
+    },
+    "ttf::text-status-messages": {
+      "officialSummaryArabic": "هذه المراجع الرسمية توضح دورة إعادة توليد texture النصية عندما تتغير الحالة المنطقية للتطبيق ويجب أن تتغير الرسالة واللون معها.",
+      "officialReferences": [
+        {"type": "entity", "name": "TTF_RenderText_Blended"},
+        {"type": "entity", "name": "SDL_CreateTextureFromSurface"},
+        {"type": "external", "label": "SDL3_ttf API", "href": "https://wiki.libsdl.org/SDL3_ttf/CategoryAPI"}
+      ],
+      "fullProjectNoteArabic": "شاشات الحالة الحقيقية تحتاج طبقة Notification أو Status Banner قابلة لإعادة الاستخدام، لا مثالًا منفردًا يعيد بناء كل شيء داخل نفس الحلقة.",
+      "projectStepsArabic": [
+        "أنشئ بنية StatusMessage تضم النص والنوع واللون ومدة الظهور بدل توزيعها على متغيرات مستقلة.",
+        "وحّد سياسة الألوان والأيقونات ومسافات البطاقة حتى تصبح الرسائل جزءًا من design language ثابت.",
+        "أضف queue بسيطًا للرسائل إذا كان المشروع سيعرض أكثر من تنبيه متتابع."
+      ],
+      "followUpExamples": [
+        {"packageKey": "ttf", "exampleId": "text-button-toggle", "label": "الانتقال إلى رسالة تتغير بالنقر"},
+        {"packageKey": "ttf", "exampleId": "text-live-counter", "label": "الانتقال إلى نص يتغير مع الزمن"}
+      ]
+    },
+    "ttf::text-button-toggle": {
+      "officialSummaryArabic": "هذا المسار الرسمي يربط بين النص التفاعلي وإعادة توليد texture الرسالة بعد حدث نقر أو تغيّر state داخل الواجهة.",
+      "officialReferences": [
+        {"type": "entity", "name": "TTF_OpenFont"},
+        {"type": "entity", "name": "TTF_RenderText_Blended"},
+        {"type": "entity", "name": "SDL_PollEvent"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الأكبر، الزر النصي يجب أن يبنى فوق widget system يربط التفاعل بالرسائل والتأكيدات دون خلط منطق الإدخال بعرض النص.",
+      "projectStepsArabic": [
+        "افصل منطق hit testing للزر عن دالة إنشاء texture النصية حتى لا تختلط مسؤوليات الإدخال والرسم.",
+        "احتفظ بالرسائل النصية المحتملة في جدول states أو actions بدل سلاسل متفرقة داخل الفرع الشرطي.",
+        "أعد استخدام نفس widget مع callbacks منطقية مثل apply أو cancel أو retry بدل قصره على نص واحد."
+      ],
+      "followUpExamples": [
+        {"packageKey": "ttf", "exampleId": "text-input-preview", "label": "الانتقال إلى حقل إدخال نصي"},
+        {"packageKey": "ttf", "exampleId": "text-status-messages", "label": "العودة إلى رسائل الحالة"}
+      ]
+    }
+  }
+}

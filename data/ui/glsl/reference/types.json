@@ -1,0 +1,195 @@
+{
+  "key": "types",
+  "title": "الأنواع الأساسية",
+  "icon": "🔣",
+  "description": "",
+  "items": [
+    {
+      "name": "void",
+      "kind": "Scalar/Return Type",
+      "description": "نوع يستخدم للتعبير عن غياب قيمة مرجعة من الدالة.",
+      "usage": "يظهر غالباً في تعريف `main` أو أي دالة لا تعيد قيمة.",
+      "execution": "لا يمثل قيمة بيانات تمر بين المراحل، بل يحدد فقط شكل توقيع الدالة.",
+      "effect": "يؤكد للمترجم أن الدالة تنفذ عملاً ولا تعيد نتيجة قابلة للاستخدام.",
+      "vulkanBridge": "لا يقابله مورد Vulkan مباشر، لكنه يحدد فقط شكل الدالة داخل مصدر الشيدر.",
+      "example": "void main() { outColor = vec4(1.0); }",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "float",
+      "kind": "Scalar Type",
+      "description": "نوع عددي كسري أحادي الدقة يستخدم بكثرة في الإحداثيات والألوان والعوامل.",
+      "usage": "هو الأساس الذي تبنى منه المتجهات والمصفوفات الشائعة مثل vec3 وmat4.",
+      "execution": "تُجرى عليه العمليات الحسابية العشرية على GPU داخل تعليمات الشيدر.",
+      "effect": "اختيار float يحدد الدقة والتكلفة الحسابية وطبيعة العمليات الممكنة.",
+      "vulkanBridge": "يؤثر في نوع SPIR-V الناتج وفي التوافق مع تنسيقات الموارد أو الثوابت المرسلة من التطبيق.",
+      "example": "float intensity = 1.0;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "int",
+      "kind": "Scalar Type",
+      "description": "نوع عددي صحيح موقّع يستخدم للفهارس والعدادات والقيم الصحيحة.",
+      "usage": "شائع في الفهارس أو التحويلات التي تحتاج أعداداً صحيحة داخل الشيدر.",
+      "execution": "يترجم إلى نوع صحيح موقّع في SPIR-V وتنفذ عليه التعليمات الصحيحة المقابلة.",
+      "effect": "يحدد طبيعة العمليات المسموحة وكيفية مقارنة القيم أو استخدامها كفهارس.",
+      "vulkanBridge": "مهم عند مطابقة أنواع الثوابت أو الـ push constants أو القيم القادمة من التطبيق.",
+      "example": "int index = 0;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "uint",
+      "kind": "Scalar Type",
+      "description": "نوع عددي صحيح غير موقّع يستخدم للقيم التي لا تحتاج إشارة سالبة.",
+      "usage": "يظهر كثيراً مع built-ins مثل gl_VertexIndex أو عدادات الموارد.",
+      "execution": "يترجم إلى integer غير موقّع في SPIR-V.",
+      "effect": "يمنع التمثيل السالب ويؤثر في المقارنات والتحويلات الحسابية.",
+      "vulkanBridge": "يتطابق غالباً مع قيم Vulkan من عائلة uint32_t عند الربط أو تمرير الثوابت.",
+      "example": "uint vertexId = gl_VertexIndex;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "bool",
+      "kind": "Scalar Type",
+      "description": "نوع منطقي يمثل true أو false داخل الشيدر.",
+      "usage": "يستخدم للشروط والاختبارات المنطقية واختيار المسارات داخل الدوال.",
+      "execution": "يوجه الفروع أو الأقنعة المنطقية أثناء تنفيذ الشيدر.",
+      "effect": "يحدد إن كانت كتلة أو عملية ستنفذ أو لا ضمن المنطق البرمجي للشيدر.",
+      "vulkanBridge": "لا يقابله كيان Vulkan منفصل، لكنه يؤثر في التدفق الداخلي للتعليمات التي ينفذها GPU.",
+      "example": "bool enabled = true;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "vec2",
+      "kind": "Vector Type",
+      "description": "متجه من عنصرين float يستخدم غالبًا للإحداثيات الثنائية أو UV.",
+      "usage": "شائع في مواقع الرؤوس الثنائية، إحداثيات الخامة، والتحويلات البسيطة.",
+      "execution": "يترجم إلى نوع متجه ثنائي في SPIR-V وتعمل عليه تعليمات vector arithmetic مباشرة.",
+      "effect": "اختياره يحدد عدد المكونات التي ستمر بين المراحل أو تُقرأ من المورد.",
+      "vulkanBridge": "إذا كان دخلاً للـ Vertex Shader فيجب أن يطابق تنسيق VkFormat والوصف في VkVertexInputAttributeDescription.",
+      "example": "layout(location = 0) in vec2 inPosition;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "vec3",
+      "kind": "Vector Type",
+      "description": "متجه ثلاثي من float يستخدم للألوان، المتجهات، أو المواقع الثلاثية.",
+      "usage": "شائع في الألوان والـ normals والمواقع ثلاثية الأبعاد.",
+      "execution": "تجرى عليه تعليمات vector math مثل dot وnormalize على GPU.",
+      "effect": "عدد مكوناته يحدد حجم البيانات المنتقلة أو المقروءة في كل invocation.",
+      "vulkanBridge": "يجب أن يطابق format مناسبًا مثل VK_FORMAT_R32G32B32_SFLOAT عند مروره من Vertex Buffer.",
+      "example": "layout(location = 1) in vec3 inColor;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "vec4",
+      "kind": "Vector Type",
+      "description": "متجه رباعي من float يستخدم بكثرة للمواضع المتجانسة والألوان الرباعية.",
+      "usage": "يظهر مع gl_Position وoutColor والقيم اللونية الكاملة RGBA.",
+      "execution": "يترجم إلى متجه رباعي، وهو النوع الطبيعي لنتائج الموضع أو اللون النهائي.",
+      "effect": "غالباً ما يكون النوع الذي تستهلكه مراحل الإخراج أو المزج مباشرة.",
+      "vulkanBridge": "القيم اللونية الخارجة به تصل لاحقاً إلى Color Attachment ضمن VkRenderPass.",
+      "example": "gl_Position = vec4(inPosition, 0.0, 1.0);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "mat4",
+      "kind": "Matrix Type",
+      "description": "مصفوفة 4x4 من float تستخدم للتحويلات الهندسية مثل model/view/projection.",
+      "usage": "تستخدم داخل uniform blocks أو push-constant-style data لبناء Transform كامل.",
+      "execution": "تقرأها أو تبنيها المرحلة ثم تطبق عمليات ضرب المصفوفة على المتجهات.",
+      "effect": "تغيير قيمها يبدل موضع الهندسة واتجاهها وإسقاطها أثناء التنفيذ.",
+      "vulkanBridge": "غالباً ما تُمرر عبر VkDescriptorBufferInfo وVkWriteDescriptorSet إلى Uniform Buffer.",
+      "example": "layout(set = 0, binding = 0) uniform UBO { mat4 mvp; } ubo;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "sampler2D",
+      "kind": "Opaque Resource Type",
+      "description": "نوع مورد يمثل خامة ثنائية الأبعاد قابلة للقراءة عبر دوال أخذ العينات مثل texture.",
+      "usage": "يستخدم في Fragment Shader أو أي Stage تدعم sampling.",
+      "execution": "لا يحمل البكسلات داخل الشيدر نفسه؛ بل يمثل Descriptor يوجّه العتاد إلى Image/Sampler مربوطين من التطبيق.",
+      "effect": "يحدد مصدر العينة الذي ستقرأه دوال sampling أثناء التنفيذ.",
+      "vulkanBridge": "يرتبط مع VkImageView وVkSampler ثم يوصف داخل VkDescriptorImageInfo.",
+      "example": "layout(set = 0, binding = 1) uniform sampler2D texSampler;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "ivec2",
+      "kind": "Vector Type",
+      "description": "متجه صحيح موقّع من عنصرين يستخدم عندما تحتاج أزواج قيم صحيحة مثل إحداثيات texture integer أو indices ثنائية.",
+      "usage": "شائع مع texelFetch أو تحويلات الإحداثيات الصحيحة أو واجهات compute الصغيرة.",
+      "execution": "يترجم إلى متجه integer ثنائي في SPIR-V وتنفذ عليه تعليمات الحساب الصحيحة.",
+      "effect": "يضمن أن العمليات أو الفهارس ستتم بقيم صحيحة لا عشرية.",
+      "vulkanBridge": "يفيد عندما تتعامل مع إحداثيات موارد أو قيم تأتي من التطبيق كأعداد صحيحة موقعة.",
+      "example": "ivec2 pixel = ivec2(gl_FragCoord.xy);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "ivec3",
+      "kind": "Vector Type",
+      "description": "متجه صحيح موقّع من ثلاثة عناصر يستخدم مع الإحداثيات الحجمية أو مجموعات الأبعاد الصحيحة.",
+      "usage": "يفيد مع إحداثيات 3D textures أو الأحجام الثلاثية أو بعض واجهات compute.",
+      "execution": "يترجم إلى vector integer ثلاثي داخل SPIR-V.",
+      "effect": "يوفر بنية متجهية صحيحة لثلاث قيم مترابطة بدل ثلاثة متغيرات منفصلة.",
+      "vulkanBridge": "مفيد مع بعض built-ins أو عمليات image/texel التي تعتمد على إحداثيات صحيحة.",
+      "example": "ivec3 coord = ivec3(0, 1, 2);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "uvec2",
+      "kind": "Vector Type",
+      "description": "متجه غير موقّع من عنصرين يستخدم للفهارس والأعداد الثنائية التي لا تقبل القيم السالبة.",
+      "usage": "يظهر مع بعض built-ins أو counters أو حدود الموارد.",
+      "execution": "يترجم إلى vector integer غير موقّع من عنصرين في SPIR-V.",
+      "effect": "يحافظ على دلالة العدادات والفهارس غير السالبة عبر العمليات الحسابية الصحيحة.",
+      "vulkanBridge": "يتطابق غالبًا مع بيانات التطبيق من نوع uint32_t عند تمرير القيم إلى الشيدر.",
+      "example": "uvec2 tile = uvec2(8, 4);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "uvec3",
+      "kind": "Vector Type",
+      "description": "متجه غير موقّع من ثلاثة عناصر يستخدم كثيرًا مع built-ins الخاصة بمجموعات العمل في Compute.",
+      "usage": "تظهر قيمه مع gl_GlobalInvocationID وgl_WorkGroupID وgl_WorkGroupSize.",
+      "execution": "يترجم إلى vector integer غير موقّع ثلاثي، وتتم معالجته عبر تعليمات صحيحة داخل الشيدر.",
+      "effect": "يوفر تمثيلًا مباشرًا لأبعاد أو فهارس ثلاثية لا يجوز أن تكون سالبة.",
+      "vulkanBridge": "مهم في Compute Shaders التي تطابق أبعاد dispatch القادمة من vkCmdDispatch أو vkCmdDispatchIndirect.",
+      "example": "uvec3 gid = gl_GlobalInvocationID;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "mat3",
+      "kind": "Matrix Type",
+      "description": "مصفوفة 3x3 من float تستخدم للاتجاهات والدوران وتحويل الـ normals بدون مكون الإسقاط الكامل.",
+      "usage": "شائعة في تحويل normals أو بناء basis محلية أصغر من mat4.",
+      "execution": "تنفذ عمليات الضرب والتحويل عليها داخل الشيدر تمامًا كمصفوفة عددية.",
+      "effect": "اختيارها يقلل البيانات إذا كنت لا تحتاج الترجمة أو البعد الرابع الموجود في mat4.",
+      "vulkanBridge": "غالبًا تُمرر عبر Uniform Buffer أو Push Constants بحسب تخطيط الذاكرة المستخدم في التطبيق.",
+      "example": "mat3 normalMatrix = mat3(ubo.model);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "samplerCube",
+      "kind": "Opaque Resource Type",
+      "description": "نوع مورد يمثل Cube Map تُقرأ منه العينات وفق اتجاه ثلاثي الأبعاد بدل إحداثيات UV ثنائية.",
+      "usage": "يستخدم في الانعكاسات والسماء وenvironment sampling.",
+      "execution": "يوجه العتاد إلى أخذ عينة من وجوه cube map المناسبة حسب اتجاه الإدخال.",
+      "effect": "يبدل منطق الوصول من صورة 2D إلى حجم اتجاهي مكوّن من ستة أوجه مترابطة.",
+      "vulkanBridge": "يرتبط بـ VkImageView من نوع cube وبـ VkSampler مناسب داخل descriptor image.",
+      "example": "layout(set = 0, binding = 3) uniform samplerCube skyboxSampler;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "image2D",
+      "kind": "Opaque Resource Type",
+      "description": "نوع مورد image يتيح القراءة أو الكتابة المباشرة إلى صورة ثنائية الأبعاد بدل أخذ عينات sampler تقليدية.",
+      "usage": "يستخدم مع image load/store في Compute أو المسارات التي تحتاج وصولًا غير مفلتر إلى الصورة.",
+      "execution": "تنتج عنه تعليمات image access مباشرة على الذاكرة المقابلة للمورد المربوط من التطبيق.",
+      "effect": "يسمح بالوصول الصريح المنظم إلى texels للقراءة أو الكتابة بدل الاعتماد على sampling فقط.",
+      "vulkanBridge": "يرتبط عادة بصور ذات استخدام VK_IMAGE_USAGE_STORAGE_BIT ووصف Descriptor من نوع storage image.",
+      "example": "layout(set = 0, binding = 0, rgba8) uniform image2D storageImage;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_SetAudioDeviceGain",
+    "slug": "sdl-set-audio-device-gain",
+    "titleArabic": "Change the gain of an audio device",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-set-audio-device-gain",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-set-audio-device-gain.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Change the gain of an audio device",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Set الصوت الجهاز Gain داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Set الصوت الجهاز Gain داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Change the gain of an audio device."
+  },
+  "signature": {
+    "raw": "bool SDL_SetAudioDeviceGain(SDL_AudioDeviceID devid, float gain);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AudioDeviceID devid",
+      "float gain"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "devid",
+        "type": "SDL_AudioDeviceID",
+        "descriptionArabic": "يمثل المعامل devid من النوع SDL_AudioDeviceID القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the audio device on which to change gain."
+      },
+      {
+        "name": "gain",
+        "type": "float",
+        "descriptionArabic": "يمثل المعامل gain من النوع float القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the gain. 1.0f is no change, 0.0f is silence."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "The gain of a device is its volume; a larger gain means a louder\noutput, with a gain of zero being silence.",
+      "Audio devices default to a gain of 1.0f (no change in output).",
+      "Physical devices may not have their gain changed, only logical\ndevices, and this function will always return false when used on\nphysical devices. While it might seem attractive to adjust several\nlogical devices at once in this way, it would allow an app or library to\ninterfere with another portion of the program's otherwise-isolated\ndevices.",
+      "This is applied, along with any per-audiostream gain, during playback\nto the hardware, and can be continuously changed to create various\neffects. On recording devices, this will adjust the gain before passing\nthe data into an audiostream; that recording audiostream can then adjust\nits gain further when outputting the data elsewhere, if it likes, but\nthat second gain is not applied until the data leaves the audiostream\nagain."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread, as it holds a\nstream-specific mutex while running.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_SetAudioDeviceGain",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_GetAudioDeviceGain",
+        "route": "#ref/sdl3-core/functions/sdl-get-audio-device-gain",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

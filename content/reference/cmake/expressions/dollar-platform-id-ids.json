@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "expressions",
+    "displayName": "Expressions",
+    "displayNameArabic": "التعبيرات",
+    "description": "تعبيرات تتأخر قراءتها إلى سياقات محددة مثل توليد خصائص target أو أوامر التثبيت والاختبار."
+  },
+  "identity": {
+    "name": "$<PLATFORM_ID:ids>",
+    "slug": "dollar-platform-id-ids",
+    "titleArabic": "تعبير مولد يتحقق من منصة البناء الحالية",
+    "aliases": [
+      "PLATFORM_ID",
+      "platform id expression"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/expressions/dollar-platform-id-ids",
+    "contentPath": "content/reference/cmake/expressions/dollar-platform-id-ids.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تعبير مولد يتحقق من منصة البناء الحالية",
+    "actualMeaningArabic": "هذا التعبير يُرجع 1 إذا كانت منصة البناء الحالية ضمن القائمة ids، وإلا يُرجع 0.",
+    "purposeArabic": "يستخدم لتفعيل إعدادات أو تعريفات أو مصادر مختلفة حسب نظام التشغيل.",
+    "whyUseArabic": "لأن بعض الخيارات أو الملفات تختلف بين Windows وLinux وmacOS.",
+    "carriedValueArabic": "يُقيَّم في وقت generate بناءً على CMAKE_SYSTEM_NAME.",
+    "sourceDescription": "هذا التعبير يُرجع 1 إذا كانت منصة البناء الحالية ضمن القائمة ids، وإلا يُرجع 0."
+  },
+  "signature": {
+    "raw": "$<PLATFORM_ID:platform_ids>",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "$<PLATFORM_ID:platform_ids>",
+        "type": "Generator Expression",
+        "semanticKind": "expression",
+        "descriptionArabic": "هذه صيغة Generator Expression، أي أنها لا تُحسم فور قراءة الملف بل تُقيَّم في سياق لاحق مثل توليد الخصائص أو أوامر التثبيت أو الإعدادات المرتبطة بالهدف."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "شائع مع $<IF:...> لاختيار مسارات أو مكتبات حسب المنصة.",
+      "ids يمكن أن تكون قائمة مفصولة بفواصل منقوطة."
+    ],
+    "notes": [
+      "أسماء المنصات تشمل Windows وLinux وDarwin.",
+      "لا يتحول تلقائياً عند cross-compile؛ يعتمد على CMAKE_SYSTEM_NAME."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدمه بدل if(WIN32) داخل generator expressions لأن الأخيرة لا تعمل هناك."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "target_compile_definitions(calculator PRIVATE\n  $<IF:$<PLATFORM_ID:Windows>,WINDOWS_BUILD,UNIX_BUILD>\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#platform-expressions",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#platform-expressions",
+    "related": [
+      {
+        "name": "CMAKE_SYSTEM_NAME",
+        "route": ""
+      },
+      {
+        "name": "WIN32",
+        "route": ""
+      },
+      {
+        "name": "UNIX",
+        "route": ""
+      },
+      {
+        "name": "Generator Expressions",
+        "route": "#ref/cmake/expressions/generator-expressions",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/expressions.json",
+    "category": "التعبيرات",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

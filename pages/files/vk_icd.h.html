@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة vk_icd.h ضمن مجلد vulkan وتغطي جزءاً محدداً من واجهة Vulkan أو إحدى طبقاتها أو امتداداتها.">
+  <title>vk_icd.h - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vk_icd.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <span>vk_icd.h</span>
+      </nav>
+      <h1 class="page-title">📄 vk_icd.h</h1>
+      <p class="page-description">ترويسة vk_icd.h ضمن مجلد vulkan وتغطي جزءاً محدداً من واجهة Vulkan أو إحدى طبقاتها أو امتداداتها.</p>
+      <div class="standalone-badges">
+        <span class="standalone-badge">ملفات vulkan</span>
+        <span class="standalone-badge">مساعدات</span>
+        <span class="standalone-badge"><span dir="ltr">vulkan/vk_icd.h</span></span>
+      </div>
+    </div>
+
+    <div class="standalone-grid">
+      <section class="standalone-card">
+        <h2>الهدف الفعلي للملف</h2>
+        <ul class="insight-list">
+          <li>هذا الملف يركز على الحدود بين Vulkan loader وـ ICD، لذلك قيمته العملية تظهر عند تطوير سواقة أو مكوّن منخفض المستوى يتحدث مباشرة مع واجهة التحميل.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>متى تستخدمه؟</h2>
+        <p>استخدم vk_icd.h عندما تحتاج الجزء الذي يغطيه هذا الملف من واجهة Vulkan بدلاً من الاكتفاء بالترويسة العامة وحدها.</p>
+      </section>
+      <section class="standalone-card">
+        <h2>مثال تضمين</h2>
+        <pre class="code-block" dir="ltr"><code class="language-cpp">#include &lt;vulkan/vk_icd.h&gt;</code></pre>
+      </section>
+      <section class="standalone-card">
+        <h2>الملفات المضمنة</h2>
+        <ul><li><code>vulkan.h</code></li><li><code>stdbool.h</code></li></ul>
+      </section>
+      <section class="standalone-card">
+        <h2>تركيب الملف</h2>
+        <ul class="insight-list">
+          <li>يستورد 2 ملفاً آخر قبل بناء تعريفاته الخاصة.</li><li>فيه 5 ماكرو/تعريفاً مسبقاً لتنظيم التوافق، النسخ، أو بناء الأنواع.</li><li>يحتوي على 1 تعداداً يعبّر عن الحالات أو الأنواع أو الأعلام.</li><li>يحتوي على 17 بنية لتمرير البيانات بين التطبيق والواجهة.</li><li>يعلن 4 دالة أو نقطة دخول من API.</li><li>يستخدم 10 مؤشراً لدالة، ما يبرز دور الربط الديناميكي أو dispatch.</li><li>ملامحه C++ واضحة: 0 namespace، 0 class، و2 استعمالاً لـ inline تقريباً.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>ما الذي تقوله التعليقات نفسها؟</h2>
+        <ul class="insight-list">
+          
+            <li>
+              Loader-ICD version negotiation API. Versions add the following features: Version 0 - Initial. Doesn&#39;t support vk_icdGetInstanceProcAddr or vk_icdNegotiateLoaderICDInterfaceVersion. Version 1 - Add support for vk_icdGetInstanceProcAddr. Version 2 - Add Loader/ICD Interface version negotiation via vk_icdNegotiateLoaderICDInterfaceVersion. Version 3 - Add ICD creation/destruction of KHR_surface objects. Version 4 - Add unknown physical device extension querying via vk_icdGetPhysicalDeviceProcAddr. Version 5 - Tells ICDs that the loader is now paying attention to the application version of Vulkan passed into the ApplicationInfo structure during vkCreateInstance. This will tell the ICD that if the loader is older, it should automatically fail a call for any API version &gt; 1.0. Otherwise, the loader will manually determine if it can support the expected version. Version 6 - Add support for vk_icdEnumerateAdapterPhysicalDevices. Version 7 - If an ICD supports any of the following functions, they must be queryable with vk_icdGetInstanceProcAddr: vk_icdNegotiateLoaderICDInterfaceVersion vk_icdGetPhysicalDeviceProcAddr vk_icdEnumerateAdapterPhysicalDevices (Windows only) In addition, these functions no longer need to be exported directly. This version allows drivers provided through the extension VK_LUNARG_direct_driver_loading be able to support the entire Driver-Loader interface.
+              <span class="comment-context">CURRENT_LOADER_ICD_INTERFACE_VERSION</span>
+            </li>
+          
+            <li>
+              Old typedefs that don&#39;t follow a proper naming convention but are preserved for compatibility
+              <span class="comment-context">typedef VkResult(VKAPI_PTR *PFN_vkNegotiateLoaderICDInterfaceVersion)(uint32_t *pVersion);</span>
+            </li>
+          
+            <li>
+              This is defined in vk_layer.h which will be found by the loader, but if an ICD is building against this file directly, it won&#39;t be found.
+              <span class="comment-context">#ifndef IS_DEFINED_PFN_GetPhysicalDeviceProcAddr</span>
+            </li>
+          
+            <li>
+              Typedefs for loader/ICD interface
+              <span class="comment-context">typedef VkResult (VKAPI_PTR *PFN_vk_icdNegotiateLoaderICDInterfaceVersion)(uint32_t* pVersion);</span>
+            </li>
+          
+            <li>
+              Prototypes for loader/ICD interface
+              <span class="comment-context">#if !defined(VK_NO_PROTOTYPES)</span>
+            </li>
+          
+            <li>
+              The ICD must reserve space for a pointer for the loader&#39;s dispatch table, at the start of &lt;each object&gt;. The ICD must initialize this variable using the SET_LOADER_MAGIC_VALUE macro.
+              <span class="comment-context">ICD_LOADER_MAGIC</span>
+            </li>
+          
+            <li>
+              Windows and Linux ICDs will treat VkSurfaceKHR as a pointer to a struct that contains the platform-specific connection and surface information.
+              <span class="comment-context">typedef enum {</span>
+            </li>
+          
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الأسطر: 246</span>
+        <span class="source-stat">الحجم: 8.0 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>/*
+ * Copyright 2015-2023 The Khronos Group Inc.
+ * Copyright 2015-2023 Valve Corporation
+ * Copyright 2015-2023 LunarG, Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+#pragma once
+
+#include &quot;vulkan.h&quot;
+#include &lt;stdbool.h&gt;
+
+// Loader-ICD version negotiation API.  Versions add the following features:
+//   Version 0 - Initial.  Doesn&#39;t support vk_icdGetInstanceProcAddr
+//               or vk_icdNegotiateLoaderICDInterfaceVersion.
+//   Version 1 - Add support for vk_icdGetInstanceProcAddr.
+//   Version 2 - Add Loader/ICD Interface version negotiation
+//               via vk_icdNegotiateLoaderICDInterfaceVersion.
+//   Version 3 - Add ICD creation/destruction of KHR_surface objects.
+//   Version 4 - Add unknown physical device extension querying via
+//               vk_icdGetPhysicalDeviceProcAddr.
+//   Version 5 - Tells ICDs that the loader is now paying attention to the
+//               application version of Vulkan passed into the ApplicationInfo
+//               structure during vkCreateInstance.  This will tell the ICD
+//               that if the loader is older, it should automatically fail a
+//               call for any API version &gt; 1.0.  Otherwise, the loader will
+//               manually determine if it can support the expected version.
+//   Version 6 - Add support for vk_icdEnumerateAdapterPhysicalDevices.
+//   Version 7 - If an ICD supports any of the following functions, they must be
+//               queryable with vk_icdGetInstanceProcAddr:
+//                   vk_icdNegotiateLoaderICDInterfaceVersion
+//                   vk_icdGetPhysicalDeviceProcAddr
+//                   vk_icdEnumerateAdapterPhysicalDevices (Windows only)
+//               In addition, these functions no longer need to be exported directly.
+//               This version allows drivers provided through the extension
+//               VK_LUNARG_direct_driver_loading be able to support the entire
+//               Driver-Loader interface.
+
+#define CURRENT_LOADER_ICD_INTERFACE_VERSION 7
+#define MIN_SUPPORTED_LOADER_ICD_INTERFACE_VERSION 0
+#define MIN_PHYS_DEV_EXTENSION_ICD_INTERFACE_VERSION 4
+
+// Old typedefs that don&#39;t follow a proper naming convention but are preserved for compatibility
+typedef VkResult(VKAPI_PTR *PFN_vkNegotiateLoaderICDInterfaceVersion)(uint32_t *pVersion);
+// This is defined in vk_layer.h which will be found by the loader, but if an ICD is building against this
+// file directly, it won&#39;t be found.
+#ifndef IS_DEFINED_PFN_GetPhysicalDeviceProcAddr
+typedef PFN_vkVoidFunction(VKAPI_PTR *PFN_GetPhysicalDeviceProcAddr)(VkInstance instance, const char *pName);
+#define IS_DEFINED_PFN_GetPhysicalDeviceProcAddr
+#endif
+
+// Typedefs for loader/ICD interface
+typedef VkResult (VKAPI_PTR *PFN_vk_icdNegotiateLoaderICDInterfaceVersion)(uint32_t* pVersion);
+typedef PFN_vkVoidFunction (VKAPI_PTR *PFN_vk_icdGetInstanceProcAddr)(VkInstance instance, const char* pName);
+typedef PFN_vkVoidFunction (VKAPI_PTR *PFN_vk_icdGetPhysicalDeviceProcAddr)(VkInstance instance, const char* pName);
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+typedef VkResult (VKAPI_PTR *PFN_vk_icdEnumerateAdapterPhysicalDevices)(VkInstance instance, LUID adapterLUID,
+    uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
+#endif
+
+// Prototypes for loader/ICD interface
+#if !defined(VK_NO_PROTOTYPES)
+#ifdef __cplusplus
+extern &quot;C&quot; {
+#endif
+    VKAPI_ATTR VkResult VKAPI_CALL vk_icdNegotiateLoaderICDInterfaceVersion(uint32_t* pVersion);
+    VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetInstanceProcAddr(VkInstance instance, const char* pName);
+    VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetPhysicalDeviceProcAddr(VkInstance instance, const char* pName);
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    VKAPI_ATTR VkResult VKAPI_CALL vk_icdEnumerateAdapterPhysicalDevices(VkInstance instance, LUID adapterLUID,
+        uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
+#endif
+#ifdef __cplusplus
+}
+#endif
+#endif
+
+/*
+ * The ICD must reserve space for a pointer for the loader&#39;s dispatch
+ * table, at the start of &lt;each object&gt;.
+ * The ICD must initialize this variable using the SET_LOADER_MAGIC_VALUE macro.
+ */
+
+#define ICD_LOADER_MAGIC 0x01CDC0DE
+
+typedef union {
+    uintptr_t loaderMagic;
+    void *loaderData;
+} VK_LOADER_DATA;
+
+static inline void set_loader_magic_value(void *pNewObject) {
+    VK_LOADER_DATA *loader_info = (VK_LOADER_DATA *)pNewObject;
+    loader_info-&gt;loaderMagic = ICD_LOADER_MAGIC;
+}
+
+static inline bool valid_loader_magic_value(void *pNewObject) {
+    const VK_LOADER_DATA *loader_info = (VK_LOADER_DATA *)pNewObject;
+    return (loader_info-&gt;loaderMagic &amp; 0xffffffff) == ICD_LOADER_MAGIC;
+}
+
+/*
+ * Windows and Linux ICDs will treat VkSurfaceKHR as a pointer to a struct that
+ * contains the platform-specific connection and surface information.
+ */
+typedef enum {
+    VK_ICD_WSI_PLATFORM_MIR,
+    VK_ICD_WSI_PLATFORM_WAYLAND,
+    VK_ICD_WSI_PLATFORM_WIN32,
+    VK_ICD_WSI_PLATFORM_XCB,
+    VK_ICD_WSI_PLATFORM_XLIB,
+    VK_ICD_WSI_PLATFORM_ANDROID,
+    VK_ICD_WSI_PLATFORM_MACOS,
+    VK_ICD_WSI_PLATFORM_IOS,
+    VK_ICD_WSI_PLATFORM_DISPLAY,
+    VK_ICD_WSI_PLATFORM_HEADLESS,
+    VK_ICD_WSI_PLATFORM_METAL,
+    VK_ICD_WSI_PLATFORM_DIRECTFB,
+    VK_ICD_WSI_PLATFORM_VI,
+    VK_ICD_WSI_PLATFORM_GGP,
+    VK_ICD_WSI_PLATFORM_SCREEN,
+    VK_ICD_WSI_PLATFORM_FUCHSIA,
+} VkIcdWsiPlatform;
+
+typedef struct {
+    VkIcdWsiPlatform platform;
+} VkIcdSurfaceBase;
+
+#ifdef VK_USE_PLATFORM_MIR_KHR
+typedef struct {
+    VkIcdSurfaceBase base;
+    MirConnection *connection;
+    MirSurface *mirSurface;
+} VkIcdSurfaceMir;
+#endif  // VK_USE_PLATFORM_MIR_KHR
+
+#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+typedef struct {
+    VkIcdSurfaceBase base;
+    struct wl_display *display;
+    struct wl_surface *surface;
+} VkIcdSurfaceWayland;
+#endif  // VK_USE_PLATFORM_WAYLAND_KHR
+
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+typedef struct {
+    VkIcdSurfaceBase base;
+    HINSTANCE hinstance;
+    HWND hwnd;
+} VkIcdSurfaceWin32;
+#endif  // VK_USE_PLATFORM_WIN32_KHR
+
+#ifdef VK_USE_PLATFORM_XCB_KHR
+typedef struct {
+    VkIcdSurfaceBase base;
+    xcb_connection_t *connection;
+    xcb_window_t window;
+} VkIcdSurfaceXcb;
+#endif  // VK_USE_PLATFORM_XCB_KHR
+
+#ifdef VK_USE_PLATFORM_XLIB_KHR
+typedef struct {
+    VkIcdSurfaceBase base;
+    Display *dpy;
+    Window window;
+} VkIcdSurfaceXlib;
+#endif  // VK_USE_PLATFORM_XLIB_KHR
+
+#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
+typedef struct {
+    VkIcdSurfaceBase base;
+    IDirectFB *dfb;
+    IDirectFBSurface *surface;
+} VkIcdSurfaceDirectFB;
+#endif  // VK_USE_PLATFORM_DIRECTFB_EXT
+
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+typedef struct {
+    VkIcdSurfaceBase base;
+    struct ANativeWindow *window;
+} VkIcdSurfaceAndroid;
+#endif  // VK_USE_PLATFORM_ANDROID_KHR
+
+#ifdef VK_USE_PLATFORM_MACOS_MVK
+typedef struct {
+    VkIcdSurfaceBase base;
+    const void *pView;
+} VkIcdSurfaceMacOS;
+#endif  // VK_USE_PLATFORM_MACOS_MVK
+
+#ifdef VK_USE_PLATFORM_IOS_MVK
+typedef struct {
+    VkIcdSurfaceBase base;
+    const void *pView;
+} VkIcdSurfaceIOS;
+#endif  // VK_USE_PLATFORM_IOS_MVK
+
+#ifdef VK_USE_PLATFORM_GGP
+typedef struct {
+    VkIcdSurfaceBase base;
+    GgpStreamDescriptor streamDescriptor;
+} VkIcdSurfaceGgp;
+#endif  // VK_USE_PLATFORM_GGP
+
+typedef struct {
+    VkIcdSurfaceBase base;
+    VkDisplayModeKHR displayMode;
+    uint32_t planeIndex;
+    uint32_t planeStackIndex;
+    VkSurfaceTransformFlagBitsKHR transform;
+    float globalAlpha;
+    VkDisplayPlaneAlphaFlagBitsKHR alphaMode;
+    VkExtent2D imageExtent;
+} VkIcdSurfaceDisplay;
+
+typedef struct {
+    VkIcdSurfaceBase base;
+} VkIcdSurfaceHeadless;
+
+#ifdef VK_USE_PLATFORM_METAL_EXT
+typedef struct {
+    VkIcdSurfaceBase base;
+    const CAMetalLayer *pLayer;
+} VkIcdSurfaceMetal;
+#endif // VK_USE_PLATFORM_METAL_EXT
+
+#ifdef VK_USE_PLATFORM_VI_NN
+typedef struct {
+    VkIcdSurfaceBase base;
+    void *window;
+} VkIcdSurfaceVi;
+#endif // VK_USE_PLATFORM_VI_NN
+
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+typedef struct {
+    VkIcdSurfaceBase base;
+    struct _screen_context *context;
+    struct _screen_window *window;
+} VkIcdSurfaceScreen;
+#endif  // VK_USE_PLATFORM_SCREEN_QNX
+
+#ifdef VK_USE_PLATFORM_FUCHSIA
+typedef struct {
+  VkIcdSurfaceBase base;
+} VkIcdSurfaceImagePipe;
+#endif // VK_USE_PLATFORM_FUCHSIA
+</code></pre>
+    </section>
+    
+  </main>
+</body>
+</html>

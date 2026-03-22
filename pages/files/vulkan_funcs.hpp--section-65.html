@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_funcs.hpp • القسم 65 من 73 • الأسطر 28801-29250 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_funcs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_funcs.hpp.html">vulkan_funcs.hpp</a> /
+        <span>القسم 65 من 73 • الأسطر 28801-29250</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_funcs.hpp</h1>
+      <p class="page-description">القسم 65 من 73 • الأسطر 28801-29250</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-64.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-66.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_funcs.hpp</span>
+        <span class="source-stat">القسم: 65/73</span>
+        <span class="source-stat">الأسطر: 28801-29250</span>
+        <span class="source-stat">حجم الملف: 2.19 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createShadersEXT&quot;, { Result::eSuccess, Result::eIncompatibleShaderBinaryEXT } );
+
+    return ResultValue&lt;std::vector&lt;ShaderEXT, ShaderEXTAllocator&gt;&gt;( result, std::move( shaders ) );
+  }
+
+  // wrapper function for command vkCreateShadersEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShadersEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateShadersEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;ShaderEXT&gt;
+    Device::createShaderEXT( const ShaderCreateInfoEXT &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateShadersEXT &amp;&amp; &quot;Function &lt;vkCreateShadersEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#  endif
+
+    ShaderEXT shader;
+    Result    result = static_cast&lt;Result&gt;( d.vkCreateShadersEXT( m_device,
+                                                               1,
+                                                               reinterpret_cast&lt;const VkShaderCreateInfoEXT *&gt;( &amp;createInfo ),
+                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                               reinterpret_cast&lt;VkShaderEXT *&gt;( &amp;shader ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createShaderEXT&quot;, { Result::eSuccess, Result::eIncompatibleShaderBinaryEXT } );
+
+    return ResultValue&lt;ShaderEXT&gt;( result, std::move( shader ) );
+  }
+
+#  ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkCreateShadersEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShadersEXT.html
+  template &lt;typename Dispatch,
+            typename ShaderEXTAllocator,
+            typename std::enable_if&lt;std::is_same&lt;typename ShaderEXTAllocator::value_type, UniqueHandle&lt;ShaderEXT, Dispatch&gt;&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreateShadersEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;UniqueHandle&lt;ShaderEXT, Dispatch&gt;, ShaderEXTAllocator&gt;&gt; Device::createShadersEXTUnique(
+    ArrayProxy&lt;const ShaderCreateInfoEXT&gt; const &amp; createInfos, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateShadersEXT &amp;&amp; &quot;Function &lt;vkCreateShadersEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#    endif
+
+    std::vector&lt;ShaderEXT&gt; shaders( createInfos.size() );
+    Result                 result = static_cast&lt;Result&gt;( d.vkCreateShadersEXT( m_device,
+                                                               createInfos.size(),
+                                                               reinterpret_cast&lt;const VkShaderCreateInfoEXT *&gt;( createInfos.data() ),
+                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                               reinterpret_cast&lt;VkShaderEXT *&gt;( shaders.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createShadersEXTUnique&quot;, { Result::eSuccess, Result::eIncompatibleShaderBinaryEXT } );
+    std::vector&lt;UniqueHandle&lt;ShaderEXT, Dispatch&gt;, ShaderEXTAllocator&gt; uniqueShaders;
+    uniqueShaders.reserve( createInfos.size() );
+    detail::ObjectDestroy&lt;Device, Dispatch&gt; deleter( *this, allocator, d );
+    for ( auto const &amp; shader : shaders )
+    {
+      uniqueShaders.push_back( UniqueHandle&lt;ShaderEXT, Dispatch&gt;( shader, deleter ) );
+    }
+    return ResultValue&lt;std::vector&lt;UniqueHandle&lt;ShaderEXT, Dispatch&gt;, ShaderEXTAllocator&gt;&gt;( result, std::move( uniqueShaders ) );
+  }
+
+  // wrapper function for command vkCreateShadersEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShadersEXT.html
+  template &lt;typename Dispatch,
+            typename ShaderEXTAllocator,
+            typename std::enable_if&lt;std::is_same&lt;typename ShaderEXTAllocator::value_type, UniqueHandle&lt;ShaderEXT, Dispatch&gt;&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreateShadersEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;UniqueHandle&lt;ShaderEXT, Dispatch&gt;, ShaderEXTAllocator&gt;&gt;
+                                         Device::createShadersEXTUnique( ArrayProxy&lt;const ShaderCreateInfoEXT&gt; const &amp; createInfos,
+                                    Optional&lt;const AllocationCallbacks&gt;           allocator,
+                                    ShaderEXTAllocator const &amp;                    shaderEXTAllocator,
+                                    Dispatch const &amp;                              d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateShadersEXT &amp;&amp; &quot;Function &lt;vkCreateShadersEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#    endif
+
+    std::vector&lt;ShaderEXT&gt; shaders( createInfos.size() );
+    Result                 result = static_cast&lt;Result&gt;( d.vkCreateShadersEXT( m_device,
+                                                               createInfos.size(),
+                                                               reinterpret_cast&lt;const VkShaderCreateInfoEXT *&gt;( createInfos.data() ),
+                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                               reinterpret_cast&lt;VkShaderEXT *&gt;( shaders.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createShadersEXTUnique&quot;, { Result::eSuccess, Result::eIncompatibleShaderBinaryEXT } );
+    std::vector&lt;UniqueHandle&lt;ShaderEXT, Dispatch&gt;, ShaderEXTAllocator&gt; uniqueShaders( shaderEXTAllocator );
+    uniqueShaders.reserve( createInfos.size() );
+    detail::ObjectDestroy&lt;Device, Dispatch&gt; deleter( *this, allocator, d );
+    for ( auto const &amp; shader : shaders )
+    {
+      uniqueShaders.push_back( UniqueHandle&lt;ShaderEXT, Dispatch&gt;( shader, deleter ) );
+    }
+    return ResultValue&lt;std::vector&lt;UniqueHandle&lt;ShaderEXT, Dispatch&gt;, ShaderEXTAllocator&gt;&gt;( result, std::move( uniqueShaders ) );
+  }
+
+  // wrapper function for command vkCreateShadersEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShadersEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateShadersEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;UniqueHandle&lt;ShaderEXT, Dispatch&gt;&gt;
+    Device::createShaderEXTUnique( const ShaderCreateInfoEXT &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateShadersEXT &amp;&amp; &quot;Function &lt;vkCreateShadersEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#    endif
+
+    ShaderEXT shader;
+    Result    result = static_cast&lt;Result&gt;( d.vkCreateShadersEXT( m_device,
+                                                               1,
+                                                               reinterpret_cast&lt;const VkShaderCreateInfoEXT *&gt;( &amp;createInfo ),
+                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                               reinterpret_cast&lt;VkShaderEXT *&gt;( &amp;shader ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createShaderEXTUnique&quot;, { Result::eSuccess, Result::eIncompatibleShaderBinaryEXT } );
+
+    return ResultValue&lt;UniqueHandle&lt;ShaderEXT, Dispatch&gt;&gt;(
+      result, UniqueHandle&lt;ShaderEXT, Dispatch&gt;( shader, detail::ObjectDestroy&lt;Device, Dispatch&gt;( *this, allocator, d ) ) );
+  }
+#  endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkDestroyShaderEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyShaderEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyShaderEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::destroyShaderEXT( ShaderEXT shader, const AllocationCallbacks * pAllocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkDestroyShaderEXT(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkShaderEXT&gt;( shader ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkDestroyShaderEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyShaderEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyShaderEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void
+    Device::destroyShaderEXT( ShaderEXT shader, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkDestroyShaderEXT &amp;&amp; &quot;Function &lt;vkDestroyShaderEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#  endif
+
+    d.vkDestroyShaderEXT( m_device, static_cast&lt;VkShaderEXT&gt;( shader ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkDestroyShaderEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyShaderEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyShaderEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::destroy( ShaderEXT shader, const AllocationCallbacks * pAllocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkDestroyShaderEXT(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkShaderEXT&gt;( shader ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkDestroyShaderEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyShaderEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyShaderEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::destroy( ShaderEXT shader, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkDestroyShaderEXT &amp;&amp; &quot;Function &lt;vkDestroyShaderEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#  endif
+
+    d.vkDestroyShaderEXT( m_device, static_cast&lt;VkShaderEXT&gt;( shader ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetShaderBinaryDataEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetShaderBinaryDataEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetShaderBinaryDataEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result
+    Device::getShaderBinaryDataEXT( ShaderEXT shader, size_t * pDataSize, void * pData, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetShaderBinaryDataEXT( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkShaderEXT&gt;( shader ), pDataSize, pData ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetShaderBinaryDataEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetShaderBinaryDataEXT.html
+  template &lt;typename Uint8_tAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename Uint8_tAllocator::value_type, uint8_t&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetShaderBinaryDataEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt;::type
+                       Device::getShaderBinaryDataEXT( ShaderEXT shader, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetShaderBinaryDataEXT &amp;&amp; &quot;Function &lt;vkGetShaderBinaryDataEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#  endif
+
+    std::vector&lt;uint8_t, Uint8_tAllocator&gt; data;
+    size_t                                 dataSize;
+    Result                                 result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetShaderBinaryDataEXT( m_device, static_cast&lt;VkShaderEXT&gt;( shader ), &amp;dataSize, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; dataSize )
+      {
+        data.resize( dataSize );
+        result =
+          static_cast&lt;Result&gt;( d.vkGetShaderBinaryDataEXT( m_device, static_cast&lt;VkShaderEXT&gt;( shader ), &amp;dataSize, reinterpret_cast&lt;void *&gt;( data.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getShaderBinaryDataEXT&quot; );
+    VULKAN_HPP_ASSERT( dataSize &lt;= data.size() );
+    if ( dataSize &lt; data.size() )
+    {
+      data.resize( dataSize );
+    }
+    return detail::createResultValueType( result, std::move( data ) );
+  }
+
+  // wrapper function for command vkGetShaderBinaryDataEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetShaderBinaryDataEXT.html
+  template &lt;typename Uint8_tAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename Uint8_tAllocator::value_type, uint8_t&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetShaderBinaryDataEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt;::type
+                       Device::getShaderBinaryDataEXT( ShaderEXT shader, Uint8_tAllocator const &amp; uint8_tAllocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetShaderBinaryDataEXT &amp;&amp; &quot;Function &lt;vkGetShaderBinaryDataEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#  endif
+
+    std::vector&lt;uint8_t, Uint8_tAllocator&gt; data( uint8_tAllocator );
+    size_t                                 dataSize;
+    Result                                 result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetShaderBinaryDataEXT( m_device, static_cast&lt;VkShaderEXT&gt;( shader ), &amp;dataSize, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; dataSize )
+      {
+        data.resize( dataSize );
+        result =
+          static_cast&lt;Result&gt;( d.vkGetShaderBinaryDataEXT( m_device, static_cast&lt;VkShaderEXT&gt;( shader ), &amp;dataSize, reinterpret_cast&lt;void *&gt;( data.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getShaderBinaryDataEXT&quot; );
+    VULKAN_HPP_ASSERT( dataSize &lt;= data.size() );
+    if ( dataSize &lt; data.size() )
+    {
+      data.resize( dataSize );
+    }
+    return detail::createResultValueType( result, std::move( data ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdBindShadersEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindShadersEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdBindShadersEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::bindShadersEXT( uint32_t                    stageCount,
+                                                        const ShaderStageFlagBits * pStages,
+                                                        const ShaderEXT *           pShaders,
+                                                        Dispatch const &amp;            d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdBindShadersEXT( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                           stageCount,
+                           reinterpret_cast&lt;const VkShaderStageFlagBits *&gt;( pStages ),
+                           reinterpret_cast&lt;const VkShaderEXT *&gt;( pShaders ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdBindShadersEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindShadersEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdBindShadersEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::bindShadersEXT( ArrayProxy&lt;const ShaderStageFlagBits&gt; const &amp; stages,
+                                                        ArrayProxy&lt;const ShaderEXT&gt; const &amp;           shaders,
+                                                        Dispatch const &amp;                              d ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdBindShadersEXT &amp;&amp; &quot;Function &lt;vkCmdBindShadersEXT&gt; requires &lt;VK_EXT_shader_object&gt;&quot; );
+#  endif
+#  ifdef VULKAN_HPP_NO_EXCEPTIONS
+    VULKAN_HPP_ASSERT( stages.size() == shaders.size() );
+#  else
+    if ( stages.size() != shaders.size() )
+    {
+      throw LogicError( VULKAN_HPP_NAMESPACE_STRING &quot;::CommandBuffer::bindShadersEXT: stages.size() != shaders.size()&quot; );
+    }
+#  endif /*VULKAN_HPP_NO_EXCEPTIONS*/
+
+    d.vkCmdBindShadersEXT( m_commandBuffer,
+                           stages.size(),
+                           reinterpret_cast&lt;const VkShaderStageFlagBits *&gt;( stages.data() ),
+                           reinterpret_cast&lt;const VkShaderEXT *&gt;( shaders.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdSetDepthClampRangeEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthClampRangeEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetDepthClampRangeEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setDepthClampRangeEXT( DepthClampModeEXT          depthClampMode,
+                                                               const DepthClampRangeEXT * pDepthClampRange,
+                                                               Dispatch const &amp;           d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetDepthClampRangeEXT( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                  static_cast&lt;VkDepthClampModeEXT&gt;( depthClampMode ),
+                                  reinterpret_cast&lt;const VkDepthClampRangeEXT *&gt;( pDepthClampRange ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdSetDepthClampRangeEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthClampRangeEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetDepthClampRangeEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setDepthClampRangeEXT( DepthClampModeEXT                  depthClampMode,
+                                                               Optional&lt;const DepthClampRangeEXT&gt; depthClampRange,
+                                                               Dispatch const &amp;                   d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdSetDepthClampRangeEXT &amp;&amp;
+                       &quot;Function &lt;vkCmdSetDepthClampRangeEXT&gt; requires &lt;VK_EXT_depth_clamp_control&gt; or &lt;VK_EXT_shader_object&gt;&quot; );
+#  endif
+
+    d.vkCmdSetDepthClampRangeEXT(
+      m_commandBuffer, static_cast&lt;VkDepthClampModeEXT&gt;( depthClampMode ), reinterpret_cast&lt;const VkDepthClampRangeEXT *&gt;( depthClampRange.get() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  //=== VK_KHR_pipeline_binary ===
+
+  // wrapper function for command vkCreatePipelineBinariesKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineBinariesKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreatePipelineBinariesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::createPipelineBinariesKHR( const PipelineBinaryCreateInfoKHR * pCreateInfo,
+                                                                                   const AllocationCallbacks *         pAllocator,
+                                                                                   PipelineBinaryHandlesInfoKHR *      pBinaries,
+                                                                                   Dispatch const &amp;                    d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCreatePipelineBinariesKHR( static_cast&lt;VkDevice&gt;( m_device ),
+                                                               reinterpret_cast&lt;const VkPipelineBinaryCreateInfoKHR *&gt;( pCreateInfo ),
+                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                               reinterpret_cast&lt;VkPipelineBinaryHandlesInfoKHR *&gt;( pBinaries ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreatePipelineBinariesKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineBinariesKHR.html
+  template &lt;typename PipelineBinaryKHRAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename PipelineBinaryKHRAllocator::value_type, PipelineBinaryKHR&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreatePipelineBinariesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;PipelineBinaryKHR, PipelineBinaryKHRAllocator&gt;&gt;
+    Device::createPipelineBinariesKHR( const PipelineBinaryCreateInfoKHR &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreatePipelineBinariesKHR &amp;&amp; &quot;Function &lt;vkCreatePipelineBinariesKHR&gt; requires &lt;VK_KHR_pipeline_binary&gt;&quot; );
+#  endif
+
+    std::vector&lt;PipelineBinaryKHR, PipelineBinaryKHRAllocator&gt; pipelineBinaries;
+    PipelineBinaryHandlesInfoKHR                               binaries;
+    Result                                                     result;
+    if ( createInfo.pKeysAndDataInfo )
+    {
+      VULKAN_HPP_ASSERT( !createInfo.pipeline &amp;&amp; !createInfo.pPipelineCreateInfo );
+      pipelineBinaries.resize( createInfo.pKeysAndDataInfo-&gt;binaryCount );
+      binaries.pipelineBinaryCount = createInfo.pKeysAndDataInfo-&gt;binaryCount;
+      binaries.pPipelineBinaries   = pipelineBinaries.data();
+      result                       = static_cast&lt;Result&gt;( d.vkCreatePipelineBinariesKHR( m_device,
+                                                                   reinterpret_cast&lt;const VkPipelineBinaryCreateInfoKHR *&gt;( &amp;createInfo ),
+                                                                   reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                   reinterpret_cast&lt;VkPipelineBinaryHandlesInfoKHR *&gt;( &amp;binaries ) ) );
+    }
+    else
+    {
+      VULKAN_HPP_ASSERT( !createInfo.pipeline ^ !createInfo.pPipelineCreateInfo );
+      result = static_cast&lt;Result&gt;( d.vkCreatePipelineBinariesKHR( m_device,
+                                                                   reinterpret_cast&lt;const VkPipelineBinaryCreateInfoKHR *&gt;( &amp;createInfo ),
+                                                                   reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                   reinterpret_cast&lt;VkPipelineBinaryHandlesInfoKHR *&gt;( &amp;binaries ) ) );
+      if ( result == Result::eSuccess )
+      {
+        pipelineBinaries.resize( binaries.pipelineBinaryCount );
+        binaries.pPipelineBinaries = pipelineBinaries.data();
+        result                     = static_cast&lt;Result&gt;( d.vkCreatePipelineBinariesKHR( m_device,
+                                                                     reinterpret_cast&lt;const VkPipelineBinaryCreateInfoKHR *&gt;( &amp;createInfo ),
+                                                                     reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                     reinterpret_cast&lt;VkPipelineBinaryHandlesInfoKHR *&gt;( &amp;binaries ) ) );
+      }
+    }
+
+    detail::resultCheck(
+      result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createPipelineBinariesKHR&quot;, { Result::eSuccess, Result::eIncomplete, Result::ePipelineBinaryMissingKHR } );
+
+    return ResultValue&lt;std::vector&lt;PipelineBinaryKHR, PipelineBinaryKHRAllocator&gt;&gt;( result, std::move( pipelineBinaries ) );
+  }
+
+  // wrapper function for command vkCreatePipelineBinariesKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineBinariesKHR.html
+  template &lt;typename PipelineBinaryKHRAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename PipelineBinaryKHRAllocator::value_type, PipelineBinaryKHR&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreatePipelineBinariesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;PipelineBinaryKHR, PipelineBinaryKHRAllocator&gt;&gt;
+                                         Device::createPipelineBinariesKHR( const PipelineBinaryCreateInfoKHR &amp; createInfo,
+                                       Optional&lt;const AllocationCallbacks&gt; allocator,
+                                       PipelineBinaryKHRAllocator const &amp;  pipelineBinaryKHRAllocator,
+                                       Dispatch const &amp;                    d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreatePipelineBinariesKHR &amp;&amp; &quot;Function &lt;vkCreatePipelineBinariesKHR&gt; requires &lt;VK_KHR_pipeline_binary&gt;&quot; );
+#  endif
+
+    std::vector&lt;PipelineBinaryKHR, PipelineBinaryKHRAllocator&gt; pipelineBinaries( pipelineBinaryKHRAllocator );
+    PipelineBinaryHandlesInfoKHR                               binaries;
+    Result                                                     result;
+    if ( createInfo.pKeysAndDataInfo )
+    {
+      VULKAN_HPP_ASSERT( !createInfo.pipeline &amp;&amp; !createInfo.pPipelineCreateInfo );
+      pipelineBinaries.resize( createInfo.pKeysAndDataInfo-&gt;binaryCount );
+      binaries.pipelineBinaryCount = createInfo.pKeysAndDataInfo-&gt;binaryCount;
+      binaries.pPipelineBinaries   = pipelineBinaries.data();
+      result                       = static_cast&lt;Result&gt;( d.vkCreatePipelineBinariesKHR( m_device,
+                                                                   reinterpret_cast&lt;const VkPipelineBinaryCreateInfoKHR *&gt;( &amp;createInfo ),
+                                                                   reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                   reinterpret_cast&lt;VkPipelineBinaryHandlesInfoKHR *&gt;( &amp;binaries ) ) );
+    }
+    else
+    {
+      VULKAN_HPP_ASSERT( !createInfo.pipeline ^ !createInfo.pPipelineCreateInfo );
+      result = static_cast&lt;Result&gt;( d.vkCreatePipelineBinariesKHR( m_device,
+                                                                   reinterpret_cast&lt;const VkPipelineBinaryCreateInfoKHR *&gt;( &amp;createInfo ),
+                                                                   reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                   reinterpret_cast&lt;VkPipelineBinaryHandlesInfoKHR *&gt;( &amp;binaries ) ) );
+      if ( result == Result::eSuccess )
+      {
+        pipelineBinaries.resize( binaries.pipelineBinaryCount );
+        binaries.pPipelineBinaries = pipelineBinaries.data();
+        result                     = static_cast&lt;Result&gt;( d.vkCreatePipelineBinariesKHR( m_device,
+                                                                     reinterpret_cast&lt;const VkPipelineBinaryCreateInfoKHR *&gt;( &amp;createInfo ),
+                                                                     reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                     reinterpret_cast&lt;VkPipelineBinaryHandlesInfoKHR *&gt;( &amp;binaries ) ) );
+      }
+    }
+
+    detail::resultCheck(
+      result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createPipelineBinariesKHR&quot;, { Result::eSuccess, Result::eIncomplete, Result::ePipelineBinaryMissingKHR } );
+
+    return ResultValue&lt;std::vector&lt;PipelineBinaryKHR, PipelineBinaryKHRAllocator&gt;&gt;( result, std::move( pipelineBinaries ) );
+  }
+
+#  ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkCreatePipelineBinariesKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineBinariesKHR.html
+  template &lt;typename Dispatch,
+            typename PipelineBinaryKHRAllocator,
+            typename std::enable_if&lt;std::is_same&lt;typename PipelineBinaryKHRAllocator::value_type, UniqueHandle&lt;PipelineBinaryKHR, Dispatch&gt;&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreatePipelineBinariesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;UniqueHandle&lt;PipelineBinaryKHR, Dispatch&gt;, PipelineBinaryKHRAllocator&gt;&gt;
+                                         Device::createPipelineBinariesKHRUnique( const PipelineBinaryCreateInfoKHR &amp; createInfo,
+                                             Optional&lt;const AllocationCallbacks&gt; allocator,
+                                             Dispatch const &amp;                    d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreatePipelineBinariesKHR &amp;&amp; &quot;Function &lt;vkCreatePipelineBinariesKHR&gt; requires &lt;VK_KHR_pipeline_binary&gt;&quot; );
+#    endif</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-64.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-66.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

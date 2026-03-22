@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_WaitAsyncIOResult",
+    "slug": "sdl-wait-async-io-result",
+    "titleArabic": "Block until an async I/O task queue has a completed task",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-wait-async-io-result",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-wait-async-io-result.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Block until an async I/O task queue has a completed task",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Wait Async IO النتيجة داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Wait Async IO النتيجة داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true if task has completed, false otherwise. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Block until an async I/O task queue has a completed task."
+  },
+  "signature": {
+    "raw": "bool SDL_WaitAsyncIOResult(SDL_AsyncIOQueue *queue, SDL_AsyncIOOutcome *outcome, Sint32 timeoutMS);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AsyncIOQueue *queue",
+      "SDL_AsyncIOOutcome *outcome",
+      "Sint32 timeoutMS"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_asyncio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "queue",
+        "type": "SDL_AsyncIOQueue *",
+        "descriptionArabic": "يمثل المعامل queue من النوع SDL_AsyncIOQueue * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the async I/O task queue to wait on."
+      },
+      {
+        "name": "outcome",
+        "type": "SDL_AsyncIOOutcome *",
+        "descriptionArabic": "يمثل المعامل outcome من النوع SDL_AsyncIOOutcome * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "details of a finished task will be written here. May not be\nNULL."
+      },
+      {
+        "name": "timeoutMS",
+        "type": "Sint32",
+        "descriptionArabic": "يمثل المعامل timeoutMS من النوع Sint32 القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the maximum time to wait, in milliseconds, or -1 to wait\nindefinitely."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This function puts the calling thread to sleep until there a task\nassigned to the queue that has finished.",
+      "If a task assigned to the queue has finished, this will return true\nand fill in outcome with the details of the task. If no\ntask in the queue has finished, this function will return false.",
+      "If a task has completed, this function will free its resources and\nthe task pointer will no longer be valid. The task will be removed from\nthe queue.",
+      "It is safe for multiple threads to call this function on the same\nqueue at once; a completed task will only go to one of the threads.",
+      "Note that by the nature of various platforms, more than one waiting\nthread may wake to handle a single task, but only one will obtain it, so\n timeoutMS is a maximum wait time, and this\nfunction may return false sooner.",
+      "This function may return false if there was a system error, the OS\ninadvertently awoke multiple threads, or if SDL_SignalAsyncIOQueue () was\ncalled to wake up all waiting threads without a finished task.",
+      "A timeout can be used to specify a maximum wait time, but rather than\npolling, it is possible to have a timeout of -1 to wait forever, and use\n SDL_SignalAsyncIOQueue () to\nwake up the waiting threads later."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true if task has completed, false otherwise.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_WaitAsyncIOResult",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_SignalAsyncIOQueue",
+        "route": "#ref/sdl3-core/functions/sdl-signal-async-io-queue",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Async I/O",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

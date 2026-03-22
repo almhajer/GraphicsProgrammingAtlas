@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_handles.hpp • القسم 25 من 51 • الأسطر 10801-11250 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_handles.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_handles.hpp.html">vulkan_handles.hpp</a> /
+        <span>القسم 25 من 51 • الأسطر 10801-11250</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_handles.hpp</h1>
+      <p class="page-description">القسم 25 من 51 • الأسطر 10801-11250</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-24.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-26.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_handles.hpp</span>
+        <span class="source-stat">القسم: 25/51</span>
+        <span class="source-stat">الأسطر: 10801-11250</span>
+        <span class="source-stat">حجم الملف: 1.59 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    ValidationCacheEXT( ValidationCacheEXT &amp;&amp; rhs )             = default;
+    ValidationCacheEXT &amp; operator=( ValidationCacheEXT &amp;&amp; rhs ) = default;
+#else
+    ValidationCacheEXT( ValidationCacheEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_validationCacheEXT( exchange( rhs.m_validationCacheEXT, {} ) ) {}
+
+    ValidationCacheEXT &amp; operator=( ValidationCacheEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_validationCacheEXT = exchange( rhs.m_validationCacheEXT, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR ValidationCacheEXT( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT ValidationCacheEXT( VkValidationCacheEXT validationCacheEXT ) VULKAN_HPP_NOEXCEPT : m_validationCacheEXT( validationCacheEXT )
+    {
+    }
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    ValidationCacheEXT &amp; operator=( VkValidationCacheEXT validationCacheEXT ) VULKAN_HPP_NOEXCEPT
+    {
+      m_validationCacheEXT = validationCacheEXT;
+      return *this;
+    }
+#endif
+
+    ValidationCacheEXT &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_validationCacheEXT = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkValidationCacheEXT() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_validationCacheEXT;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_validationCacheEXT != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_validationCacheEXT == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkValidationCacheEXT m_validationCacheEXT = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eValidationCacheEXT&gt;
+  {
+    using Type = ValidationCacheEXT;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eValidationCacheEXT&gt;
+  {
+    using Type = ValidationCacheEXT;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkValidationCacheEXT, VK_NULL_HANDLE&gt;
+  {
+    using Type = ValidationCacheEXT;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;ValidationCacheEXT&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkVideoSessionParametersKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkVideoSessionParametersKHR.html
+  class VideoSessionParametersKHR
+  {
+  public:
+    using CType      = VkVideoSessionParametersKHR;
+    using NativeType = VkVideoSessionParametersKHR;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eVideoSessionParametersKHR;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+  public:
+    VideoSessionParametersKHR() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    VideoSessionParametersKHR( VideoSessionParametersKHR const &amp; rhs )             = default;
+    VideoSessionParametersKHR &amp; operator=( VideoSessionParametersKHR const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    VideoSessionParametersKHR( VideoSessionParametersKHR &amp;&amp; rhs )             = default;
+    VideoSessionParametersKHR &amp; operator=( VideoSessionParametersKHR &amp;&amp; rhs ) = default;
+#else
+    VideoSessionParametersKHR( VideoSessionParametersKHR &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : m_videoSessionParametersKHR( exchange( rhs.m_videoSessionParametersKHR, {} ) )
+    {
+    }
+
+    VideoSessionParametersKHR &amp; operator=( VideoSessionParametersKHR &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_videoSessionParametersKHR = exchange( rhs.m_videoSessionParametersKHR, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR VideoSessionParametersKHR( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT VideoSessionParametersKHR( VkVideoSessionParametersKHR videoSessionParametersKHR ) VULKAN_HPP_NOEXCEPT
+      : m_videoSessionParametersKHR( videoSessionParametersKHR )
+    {
+    }
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    VideoSessionParametersKHR &amp; operator=( VkVideoSessionParametersKHR videoSessionParametersKHR ) VULKAN_HPP_NOEXCEPT
+    {
+      m_videoSessionParametersKHR = videoSessionParametersKHR;
+      return *this;
+    }
+#endif
+
+    VideoSessionParametersKHR &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_videoSessionParametersKHR = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkVideoSessionParametersKHR() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_videoSessionParametersKHR;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_videoSessionParametersKHR != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_videoSessionParametersKHR == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkVideoSessionParametersKHR m_videoSessionParametersKHR = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eVideoSessionParametersKHR&gt;
+  {
+    using Type = VideoSessionParametersKHR;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkVideoSessionParametersKHR, VK_NULL_HANDLE&gt;
+  {
+    using Type = VideoSessionParametersKHR;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;VideoSessionParametersKHR&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkPipelineBinaryKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineBinaryKHR.html
+  class PipelineBinaryKHR
+  {
+  public:
+    using CType      = VkPipelineBinaryKHR;
+    using NativeType = VkPipelineBinaryKHR;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::ePipelineBinaryKHR;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+  public:
+    PipelineBinaryKHR() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    PipelineBinaryKHR( PipelineBinaryKHR const &amp; rhs )             = default;
+    PipelineBinaryKHR &amp; operator=( PipelineBinaryKHR const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    PipelineBinaryKHR( PipelineBinaryKHR &amp;&amp; rhs )             = default;
+    PipelineBinaryKHR &amp; operator=( PipelineBinaryKHR &amp;&amp; rhs ) = default;
+#else
+    PipelineBinaryKHR( PipelineBinaryKHR &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_pipelineBinaryKHR( exchange( rhs.m_pipelineBinaryKHR, {} ) ) {}
+
+    PipelineBinaryKHR &amp; operator=( PipelineBinaryKHR &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineBinaryKHR = exchange( rhs.m_pipelineBinaryKHR, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR PipelineBinaryKHR( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT PipelineBinaryKHR( VkPipelineBinaryKHR pipelineBinaryKHR ) VULKAN_HPP_NOEXCEPT : m_pipelineBinaryKHR( pipelineBinaryKHR ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    PipelineBinaryKHR &amp; operator=( VkPipelineBinaryKHR pipelineBinaryKHR ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineBinaryKHR = pipelineBinaryKHR;
+      return *this;
+    }
+#endif
+
+    PipelineBinaryKHR &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineBinaryKHR = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkPipelineBinaryKHR() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineBinaryKHR;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineBinaryKHR != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineBinaryKHR == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkPipelineBinaryKHR m_pipelineBinaryKHR = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::ePipelineBinaryKHR&gt;
+  {
+    using Type = PipelineBinaryKHR;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkPipelineBinaryKHR, VK_NULL_HANDLE&gt;
+  {
+    using Type = PipelineBinaryKHR;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;PipelineBinaryKHR&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkQueue, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueue.html
+  class Queue
+  {
+  public:
+    using CType      = VkQueue;
+    using NativeType = VkQueue;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eQueue;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eQueue;
+
+  public:
+    Queue() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    Queue( Queue const &amp; rhs )             = default;
+    Queue &amp; operator=( Queue const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    Queue( Queue &amp;&amp; rhs )             = default;
+    Queue &amp; operator=( Queue &amp;&amp; rhs ) = default;
+#else
+    Queue( Queue &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_queue( exchange( rhs.m_queue, {} ) ) {}
+
+    Queue &amp; operator=( Queue &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_queue = exchange( rhs.m_queue, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR Queue( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    Queue( VkQueue queue ) VULKAN_HPP_NOEXCEPT : m_queue( queue ) {}
+
+    Queue &amp; operator=( VkQueue queue ) VULKAN_HPP_NOEXCEPT
+    {
+      m_queue = queue;
+      return *this;
+    }
+
+    Queue &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_queue = {};
+      return *this;
+    }
+
+    //=== VK_VERSION_1_0 ===
+
+    // wrapper function for command vkQueueSubmit, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueSubmit ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD Result submit( uint32_t           submitCount,
+                                        const SubmitInfo * pSubmits,
+                                        Fence              fence,
+                                        Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkQueueSubmit, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueSubmit ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS typename ResultValueType&lt;void&gt;::type submit( ArrayProxy&lt;const SubmitInfo&gt; const &amp; submits,
+                                                                                         Fence fence        VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ),
+                                                                                         Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const;
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+#ifdef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkQueueWaitIdle, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueWaitIdle.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueWaitIdle ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD Result waitIdle( Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#else
+    // wrapper function for command vkQueueWaitIdle, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueWaitIdle.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueWaitIdle ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS typename ResultValueType&lt;void&gt;::type waitIdle( Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const;
+#endif /*VULKAN_HPP_DISABLE_ENHANCED_MODE*/
+
+    // wrapper function for command vkQueueBindSparse, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueBindSparse.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueBindSparse ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD Result bindSparse( uint32_t               bindInfoCount,
+                                            const BindSparseInfo * pBindInfo,
+                                            Fence                  fence,
+                                            Dispatch const &amp; d     VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkQueueBindSparse, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueBindSparse.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueBindSparse ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS typename ResultValueType&lt;void&gt;::type
+      bindSparse( ArrayProxy&lt;const BindSparseInfo&gt; const &amp; bindInfo,
+                  Fence fence                              VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ),
+                  Dispatch const &amp; d                       VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const;
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+    //=== VK_VERSION_1_3 ===
+
+    // wrapper function for command vkQueueSubmit2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit2.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueSubmit2 ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD Result submit2( uint32_t            submitCount,
+                                         const SubmitInfo2 * pSubmits,
+                                         Fence               fence,
+                                         Dispatch const &amp; d  VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkQueueSubmit2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit2.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueSubmit2 ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS typename ResultValueType&lt;void&gt;::type submit2( ArrayProxy&lt;const SubmitInfo2&gt; const &amp; submits,
+                                                                                          Fence fence        VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ),
+                                                                                          Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const;
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+    //=== VK_KHR_swapchain ===
+
+    // wrapper function for command vkQueuePresentKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueuePresentKHR.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueuePresentKHR ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD Result presentKHR( const PresentInfoKHR * pPresentInfo,
+                                            Dispatch const &amp; d     VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkQueuePresentKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueuePresentKHR.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueuePresentKHR ), bool&gt;::type = true&gt;
+    VULKAN_HPP_NODISCARD Result presentKHR( const PresentInfoKHR &amp; presentInfo, Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const;
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+    //=== VK_EXT_debug_utils ===
+
+    // wrapper function for command vkQueueBeginDebugUtilsLabelEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueBeginDebugUtilsLabelEXT.html
+    template &lt;typename Dispatch                                                                    = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename std::enable_if&lt;IS_DISPATCHED( vkQueueBeginDebugUtilsLabelEXT ), bool&gt;::type = true&gt;
+    void beginDebugUtilsLabelEXT( const DebugUtilsLabelEXT * pLabelInfo,
+                                  Dispatch const &amp; d         VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkQueueBeginDebugUtilsLabelEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueBeginDebugUtilsLabelEXT.html
+    template &lt;typename Dispatch                                                                    = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename std::enable_if&lt;IS_DISPATCHED( vkQueueBeginDebugUtilsLabelEXT ), bool&gt;::type = true&gt;
+    void beginDebugUtilsLabelEXT( const DebugUtilsLabelEXT &amp; labelInfo, Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+    // wrapper function for command vkQueueEndDebugUtilsLabelEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueEndDebugUtilsLabelEXT.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkQueueEndDebugUtilsLabelEXT ), bool&gt;::type = true&gt;
+    void endDebugUtilsLabelEXT( Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+
+    // wrapper function for command vkQueueInsertDebugUtilsLabelEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueInsertDebugUtilsLabelEXT.html
+    template &lt;typename Dispatch                                                                     = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename std::enable_if&lt;IS_DISPATCHED( vkQueueInsertDebugUtilsLabelEXT ), bool&gt;::type = true&gt;
+    void insertDebugUtilsLabelEXT( const DebugUtilsLabelEXT * pLabelInfo,
+                                   Dispatch const &amp; d         VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkQueueInsertDebugUtilsLabelEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueInsertDebugUtilsLabelEXT.html
+    template &lt;typename Dispatch                                                                     = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename std::enable_if&lt;IS_DISPATCHED( vkQueueInsertDebugUtilsLabelEXT ), bool&gt;::type = true&gt;
+    void insertDebugUtilsLabelEXT( const DebugUtilsLabelEXT &amp; labelInfo,
+                                   Dispatch const &amp; d         VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+    //=== VK_NV_device_diagnostic_checkpoints ===
+
+    // wrapper function for command vkGetQueueCheckpointDataNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointDataNV.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointDataNV ), bool&gt;::type = true&gt;
+    void getCheckpointDataNV( uint32_t *         pCheckpointDataCount,
+                              CheckpointDataNV * pCheckpointData,
+                              Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkGetQueueCheckpointDataNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointDataNV.html
+    template &lt;typename CheckpointDataNVAllocator = std::allocator&lt;CheckpointDataNV&gt;,
+              typename Dispatch                  = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename std::enable_if&lt;std::is_same&lt;typename CheckpointDataNVAllocator::value_type, CheckpointDataNV&gt;::value, int&gt;::type = 0,
+              typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointDataNV ), bool&gt;::type                                          = true&gt;
+    VULKAN_HPP_NODISCARD std::vector&lt;CheckpointDataNV, CheckpointDataNVAllocator&gt;
+                         getCheckpointDataNV( Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const;
+    // wrapper function for command vkGetQueueCheckpointDataNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointDataNV.html
+    template &lt;typename CheckpointDataNVAllocator = std::allocator&lt;CheckpointDataNV&gt;,
+              typename Dispatch                  = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename std::enable_if&lt;std::is_same&lt;typename CheckpointDataNVAllocator::value_type, CheckpointDataNV&gt;::value, int&gt;::type = 0,
+              typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointDataNV ), bool&gt;::type                                          = true&gt;
+    VULKAN_HPP_NODISCARD std::vector&lt;CheckpointDataNV, CheckpointDataNVAllocator&gt;
+      getCheckpointDataNV( CheckpointDataNVAllocator const &amp; checkpointDataNVAllocator, Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const;
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+    // wrapper function for command vkGetQueueCheckpointData2NV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointData2NV.html
+    template &lt;typename Dispatch = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE, typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointData2NV ), bool&gt;::type = true&gt;
+    void getCheckpointData2NV( uint32_t *          pCheckpointDataCount,
+                               CheckpointData2NV * pCheckpointData,
+                               Dispatch const &amp; d  VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const VULKAN_HPP_NOEXCEPT;
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+    // wrapper function for command vkGetQueueCheckpointData2NV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointData2NV.html
+    template &lt;typename CheckpointData2NVAllocator = std::allocator&lt;CheckpointData2NV&gt;,
+              typename Dispatch                   = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename std::enable_if&lt;std::is_same&lt;typename CheckpointData2NVAllocator::value_type, CheckpointData2NV&gt;::value, int&gt;::type = 0,
+              typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointData2NV ), bool&gt;::type                                           = true&gt;
+    VULKAN_HPP_NODISCARD std::vector&lt;CheckpointData2NV, CheckpointData2NVAllocator&gt;
+                         getCheckpointData2NV( Dispatch const &amp; d VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) const;
+    // wrapper function for command vkGetQueueCheckpointData2NV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointData2NV.html
+    template &lt;typename CheckpointData2NVAllocator = std::allocator&lt;CheckpointData2NV&gt;,
+              typename Dispatch                   = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename std::enable_if&lt;std::is_same&lt;typename CheckpointData2NVAllocator::value_type, CheckpointData2NV&gt;::value, int&gt;::type = 0,
+              typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointData2NV ), bool&gt;::type                                           = true&gt;
+    VULKAN_HPP_NODISCARD std::vector&lt;CheckpointData2NV, CheckpointData2NVAllocator&gt;</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-24.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-26.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

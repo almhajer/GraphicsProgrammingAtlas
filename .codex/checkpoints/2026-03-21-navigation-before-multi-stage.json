@@ -1,0 +1,187 @@
+{
+    "title": "عناصر التنقل والتنظيم",
+    "titleEn": "Navigation & Layout",
+    "description": "عناصر تُساعد في تنظيم المحتوى والتنقل بين أجزاء الواجهة.",
+    "items": [
+        {
+            "sectionKey": "navigation",
+            "sectionTitle": "عناصر التنقل والتنظيم",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Collapsing Panel",
+                "Sidebar",
+                "Paged Menu"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "تبويبات للإعدادات: عام، رسوميات، صوت، تحكم.",
+                "code": "struct TabBar {\n    const char** tabNames;\n    int tabCount;\n    int* activeTab;\n    Rectangle bounds;\n};\n\nvoid UpdateTabBar(TabBar& tabBar) {\n    Vector2 mousePos = GetMousePosition();\n\n    float tabWidth = tabBar.bounds.width / tabBar.tabCount;\n\n    for (int i = 0; i < tabBar.tabCount; i++) {\n        Rectangle tabRect = {\n            tabBar.bounds.x + i * tabWidth,\n            tabBar.bounds.y,\n            tabWidth,\n            tabBar.bounds.height\n        };\n\n        if (CheckCollisionPointRec(mousePos, tabRect) && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {\n            *tabBar.activeTab = i;\n        }\n    }\n}\n\nvoid DrawTabBar(const TabBar& tabBar) {\n    float tabWidth = tabBar.bounds.width / tabBar.tabCount;\n\n    for (int i = 0; i < tabBar.tabCount; i++) {\n        Rectangle tabRect = {\n            tabBar.bounds.x + i * tabWidth,\n            tabBar.bounds.y,\n            tabWidth,\n            tabBar.bounds.height\n        };\n\n        bool isActive = (i == *tabBar.activeTab);\n        Color bgColor = isActive ? Color{50, 50, 60} : Color{30, 30, 40};\n        Color borderColor = isActive ? Color{100, 150, 200} : Color{50, 50, 50};\n\n        DrawRectangleRec(tabRect, bgColor);\n        DrawRectangleLinesEx(tabRect, 1, borderColor);\n\n        // الخط السفلي للتبويب النشط\n        if (isActive) {\n            DrawLine(tabRect.x, tabRect.y + tabRect.height - 2,\n                    tabRect.x + tabRect.width, tabRect.y + tabRect.height - 2,\n                    Color{100, 150, 200});\n        }\n\n        // النص\n        int textWidth = MeasureText(tabBar.tabNames[i], 14);\n        DrawText(tabBar.tabNames[i],\n                tabRect.x + (tabWidth - textWidth) / 2,\n                tabRect.y + 12, 14,\n                isActive ? Color{255, 255, 255} : Color{150, 150, 150});\n    }\n}",
+                "explanation": "شريط تبويب مع تبويب نشط مُميز بلون وخط سفلي.",
+                "expectedResult": "تبويبات منظمة مع تمييز التبويب النشط."
+            },
+            "guiRepresentation": {
+                "title": "التبويبات",
+                "mockup": "┌─────────────────────────────────────────────┐\n│  [ عام ]  [الرسوميات]  [ الصوت ]  [التحكم] │\n│  ═══════                                   │\n│                                            │\n│  محتوى تبويب \"عام\" ...                     │\n│                                            │\n└────────────────────────────────────────────┘",
+                "visualHtml": "<div style=\"background:#1a1a2e;border-radius:8px;overflow:hidden;width:400px;\">\n  <div style=\"display:flex;background:#0d0d14;\">\n    <div style=\"padding:12px 20px;color:#fff;background:#1a1a2e;border-bottom:2px solid #3498db;cursor:pointer;\">عام</div>\n    <div style=\"padding:12px 20px;color:#888;cursor:pointer;\">الرسوميات</div>\n    <div style=\"padding:12px 20px;color:#888;cursor:pointer;\">الصوت</div>\n    <div style=\"padding:12px 20px;color:#888;cursor:pointer;\">التحكم</div>\n  </div>\n  <div style=\"padding:20px;color:#aaa;\">\n    محتوى تبويب \"عام\" ...\n  </div>\n</div>",
+                "explanation": "تبويبات مع التبويب النشط مُميز بخط أزرق سفلي."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Tabs",
+            "nameAr": "التبويبات",
+            "kind": "widget",
+            "shortTooltip": "مجموعة ألسنة للتنقل بين صفحات محتوى مختلفة.",
+            "description": "أشرطة تبويب تسمح بالتنقل بين أقسام مختلفة في نفس النافذة.",
+            "officialArabicDescription": "التبويبات تُنظم المحتوى في صفحات منفصلة مع إمكانية الوصول السريع لكل قسم.",
+            "realMeaning": "تُقلل الازدحام في الواجهة عبر تقسيم المحتوى إلى صفحات.",
+            "whenToUse": "نوافذ الإعدادات، لوحات الخصائص، أي واجهة ذات أقسام متعددة.",
+            "practicalBenefit": "تُنظم المحتوى وتُوفر المساحة.",
+            "misuseImpact": "إذا كانت التبويبات كثيرة قد تصعب القراءة."
+        },
+        {
+            "sectionKey": "navigation",
+            "sectionTitle": "عناصر التنقل والتنظيم",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Equipment Slots",
+                "Skill Tree Layout",
+                "Tooltip"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "شبكة مخزون 8x4 مع عناصر وأيقونات.",
+                "code": "struct InventoryItem {\n    int itemId;\n    Texture2D icon;\n    const char* name;\n    int quantity;\n    int slotX, slotY;\n    int width, height;  // للعناصر متعددة الخانات\n};\n\nstruct InventoryGrid {\n    int cols, rows;\n    float cellSize;\n    float padding;\n    Vector2 position;\n    std::vector<InventoryItem> items;\n    int selectedSlot;\n    int hoveredSlot;\n};\n\nint GetSlotIndex(int col, int row, int cols) {\n    return row * cols + col;\n}\n\nvoid DrawInventoryGrid(InventoryGrid& grid) {\n    Vector2 mousePos = GetMousePosition();\n    grid.hoveredSlot = -1;\n\n    for (int row = 0; row < grid.rows; row++) {\n        for (int col = 0; col < grid.cols; col++) {\n            float x = grid.position.x + col * (grid.cellSize + grid.padding);\n            float y = grid.position.y + row * (grid.cellSize + grid.padding);\n\n            Rectangle cellRect = {x, y, grid.cellSize, grid.cellSize};\n            int slotIndex = GetSlotIndex(col, row, grid.cols);\n\n            // التحقق من التحويم\n            bool isHovered = CheckCollisionPointRec(mousePos, cellRect);\n            if (isHovered) grid.hoveredSlot = slotIndex;\n\n            // لون الخلية\n            Color cellColor = Color{40, 40, 50};\n            if (isHovered) cellColor = Color{60, 60, 80};\n            if (slotIndex == grid.selectedSlot) cellColor = Color{50, 70, 100};\n\n            // رسم الخلية\n            DrawRectangleRec(cellRect, cellColor);\n            DrawRectangleLinesEx(cellRect, 1, Color{70, 70, 80});\n        }\n    }\n\n    // رسم العناصر فوق الخلايا\n    for (const auto& item : grid.items) {\n        float x = grid.position.x + item.slotX * (grid.cellSize + grid.padding);\n        float y = grid.position.y + item.slotY * (grid.cellSize + grid.padding);\n        float width = item.width * grid.cellSize + (item.width - 1) * grid.padding;\n        float height = item.height * grid.cellSize + (item.height - 1) * grid.padding;\n\n        // خلفية العنصر\n        Rectangle itemRect = {x + 2, y + 2, width - 4, height - 4};\n        DrawRectangleRec(itemRect, Color{60, 50, 40});\n        DrawRectangleLinesEx(itemRect, 1, Color{150, 120, 80});\n\n        // أيقونة العنصر\n        DrawTexturePro(item.icon, {0, 0, (float)item.icon.width, (float)item.icon.height},\n                      {x + 4, y + 4, width - 8, height - 8}, {0, 0}, 0, Color{255, 255, 255});\n\n        // الكمية\n        if (item.quantity > 1) {\n            char qtyText[16];\n            sprintf(qtyText, \"%d\", item.quantity);\n            DrawText(qtyText, x + width - 20, y + height - 18, 12, Color{255, 255, 255});\n        }\n    }\n}",
+                "explanation": "شبكة خلايا مع عناصر مُعرضة بأيقونات وكميات.",
+                "expectedResult": "شبكة مخزون منظمة مع عناصر قابلة للتحديد."
+            },
+            "guiRepresentation": {
+                "title": "شبكة المخزون",
+                "mockup": "┌─────────────────────────────────────────┐\n│  ┌───┬───┬───┬───┬───┬───┬───┬───┐      │\n│  │⚔️│🛡️│   │💊│   │   │💎│   │      │\n│  │ x2│   │   │x5│   │   │   │   │      │\n│  ├───┼───┼───┼───┼───┼───┼───┼───┤      │\n│  │   │🏹│   │   │🍖│   │   │🔑│      │\n│  │   │x1│   │   │x3│   │   │   │      │\n│  ├───┼───┼───┼───┼───┼───┼───┼───┤      │\n│  │   │   │   │📜│   │   │   │   │      │\n│  │   │   │   │   │   │   │   │   │      │\n│  └───┴───┴───┴───┴───┴───┴───┴───┘      │\n└─────────────────────────────────────────┘",
+                "visualHtml": "<div style=\"background:#1a1a2e;padding:16px;border-radius:8px;display:inline-block;\">\n  <div style=\"display:grid;grid-template-columns:repeat(8,44px);gap:4px;\">\n    <div style=\"background:#2c2c3a;width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;\"><span style=\"font-size:20px;\">⚔️</span><span style=\"position:absolute;bottom:2px;right:4px;font-size:10px;color:#fff;\">x2</span></div>\n    <div style=\"background:#2c2c3a;width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;\"><span style=\"font-size:20px;\">🛡️</span></div>\n    <div style=\"background:#252530;width:44px;height:44px;border-radius:4px;\"></div>\n    <div style=\"background:#2c2c3a;width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;\"><span style=\"font-size:20px;\">💊</span><span style=\"position:absolute;bottom:2px;right:4px;font-size:10px;color:#fff;\">x5</span></div>\n    <div style=\"background:#252530;width:44px;height:44px;border-radius:4px;\"></div>\n    <div style=\"background:#252530;width:44px;height:44px;border-radius:4px;\"></div>\n    <div style=\"background:#2c2c3a;width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;\"><span style=\"font-size:20px;\">💎</span></div>\n    <div style=\"background:#252530;width:44px;height:44px;border-radius:4px;\"></div>\n  </div>\n</div>",
+                "explanation": "شبكة 8x1 مع عناصر وأرقام الكميات في الزاوية."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Inventory Grid",
+            "nameAr": "شبكة المخزون",
+            "kind": "widget",
+            "shortTooltip": "شبكة من الخانات لعرض العناصر في المخزون.",
+            "description": "نظام عرض شبكي للعناصر في مخزون اللاعب، مع دعم السحب والإفلات.",
+            "officialArabicDescription": "شبكة المخزون تُعرض العناصر في خلايا منظمة مع إمكانية التفاعل معها.",
+            "realMeaning": "تُمثل طريقة بصرية منظمة لعرض وإدارة العناصر التي يملكها اللاعب.",
+            "whenToUse": "ألعاب RPG، ألعاب البقاء، أي لعبة تحتوي على نظام مخزون.",
+            "practicalBenefit": "تُسهل إدارة العناصر وعرضها بطريقة منظمة.",
+            "misuseImpact": "إذا كانت صغيرة جداً أو مزدحمة قد تصعب الاستخدام."
+        },
+        {
+            "sectionKey": "navigation",
+            "sectionTitle": "عناصر التنقل والتنظيم",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Popup",
+                "Tooltip",
+                "Notification Banner"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "نافذة تأكيد الخروج من اللعبة.",
+                "code": "struct ModalDialog {\n    bool isOpen;\n    const char* title;\n    const char* message;\n    const char* confirmText;\n    const char* cancelText;\n    Rectangle bounds;\n    bool* result;\n};\n\nvoid DrawModal(ModalDialog& modal) {\n    if (!modal.isOpen) return;\n\n    // تعتيم الخلفية\n    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Color{0, 0, 0, 150});\n\n    // النافذة\n    DrawRectangleRounded(modal.bounds, 0.1f, 8, Color{40, 40, 50});\n    DrawRectangleRoundedLines(modal.bounds, 0.1f, 8, Color{80, 80, 100});\n\n    // العنوان\n    int titleWidth = MeasureText(modal.title, 18);\n    DrawText(modal.title,\n            modal.bounds.x + (modal.bounds.width - titleWidth) / 2,\n            modal.bounds.y + 20, 18, Color{255, 200, 100});\n\n    // الرسالة\n    int msgWidth = MeasureText(modal.message, 14);\n    DrawText(modal.message,\n            modal.bounds.x + (modal.bounds.width - msgWidth) / 2,\n            modal.bounds.y + 60, 14, Color{200, 200, 200});\n\n    // زر التأكيد\n    Rectangle confirmBtn = {\n        modal.bounds.x + modal.bounds.width / 2 - 110,\n        modal.bounds.y + modal.bounds.height - 50,\n        100, 35\n    };\n    bool confirmHover = CheckCollisionPointRec(GetMousePosition(), confirmBtn);\n    DrawRectangleRec(confirmBtn, confirmHover ? Color{200, 80, 80} : Color{150, 50, 50});\n    DrawText(modal.confirmText, confirmBtn.x + 25, confirmBtn.y + 10, 14, Color{255, 255, 255});\n\n    // زر الإلغاء\n    Rectangle cancelBtn = {\n        modal.bounds.x + modal.bounds.width / 2 + 10,\n        modal.bounds.y + modal.bounds.height - 50,\n        100, 35\n    };\n    bool cancelHover = CheckCollisionPointRec(GetMousePosition(), cancelBtn);\n    DrawRectangleRec(cancelBtn, cancelHover ? Color{80, 80, 80} : Color{50, 50, 50});\n    DrawText(modal.cancelText, cancelBtn.x + 25, cancelBtn.y + 10, 14, Color{200, 200, 200});\n\n    // التفاعل\n    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {\n        if (confirmHover) {\n            *modal.result = true;\n            modal.isOpen = false;\n        } else if (cancelHover) {\n            *modal.result = false;\n            modal.isOpen = false;\n        }\n    }\n}",
+                "explanation": "نافذة مع خلفية معتمة وزرين للتأكيد والإلغاء.",
+                "expectedResult": "نافذة حوار تمنع التفاعل مع الخلفية."
+            },
+            "guiRepresentation": {
+                "title": "نافذة حوار مشروطة",
+                "mockup": "┌─────────────────────────────────────┐\n│░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n│░░░░┌─────────────────────────┐░░░░░░│\n│░░░░│    ⚠️ تأكيد الخروج     │░░░░░░│\n│░░░░│                         │░░░░░░│\n│░░░░│  هل أنت متأكد من رغبتك │░░░░░░│\n│░░░░│  في الخروج من اللعبة؟  │░░░░░░│\n│░░░░│                         │░░░░░░│\n│░░░░│  [إلغاء]   [خروج]      │░░░░░░│\n│░░░░└─────────────────────────┘░░░░░░│\n│░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n└─────────────────────────────────────┘",
+                "visualHtml": "<div style=\"background:rgba(0,0,0,0.7);padding:40px;border-radius:8px;text-align:center;\">\n  <div style=\"background:#1a1a2e;padding:24px;border-radius:8px;width:300px;margin:0 auto;box-shadow:0 10px 40px rgba(0,0,0,0.5);\">\n    <div style=\"color:#f39c12;font-size:18px;margin-bottom:16px;\">⚠️ تأكيد الخروج</div>\n    <div style=\"color:#aaa;font-size:14px;margin-bottom:24px;\">هل أنت متأكد من رغبتك في الخروج من اللعبة؟</div>\n    <div style=\"display:flex;gap:12px;justify-content:center;\">\n      <button style=\"background:#555;color:#fff;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;\">إلغاء</button>\n      <button style=\"background:#c0392b;color:#fff;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;\">خروج</button>\n    </div>\n  </div>\n</div>",
+                "explanation": "نافذة مشروطة مع خلفية معتمة وزرين."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Modal Dialog",
+            "nameAr": "نافذة حوار مشروطة",
+            "kind": "widget",
+            "shortTooltip": "نافذة تظهر فوق المحتوى وتتطلب استجابة.",
+            "description": "نافذة تظهر فوق كل المحتوى وتمنع التفاعل مع ما خلفها حتى تُغلق.",
+            "officialArabicDescription": "النافذة المشروطة تُستخدم للأسئلة المهمة أو التنبيهات التي تتطلب انتباهاً كاملاً.",
+            "realMeaning": "تُجبر اللاعب على التعامل معها قبل متابعة اللعب.",
+            "whenToUse": "تأكيد الخروج، رسائل الخطأ، إدخال بيانات مهمة.",
+            "practicalBenefit": "تضمن انتباه اللاعب للمعلومة المهمة.",
+            "misuseImpact": "الإفراط في استخدامها يُزعج اللاعب."
+        },
+        {
+            "sectionKey": "navigation",
+            "sectionTitle": "عناصر التنقل والتنظيم",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Scene Hierarchy",
+                "Inspector Panel",
+                "Collapsing Panel"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "هيكل مشهد لعبة مع كائنات متداخلة.",
+                "code": "struct TreeNode {\n    const char* name;\n    bool isExpanded;\n    bool isSelected;\n    std::vector<TreeNode> children;\n    int depth;\n};\n\nvoid DrawTreeNode(TreeNode& node, float& yOffset, float indent, float lineHeight) {\n    Vector2 mousePos = GetMousePosition();\n\n    float x = 20 + indent * node.depth;\n    float y = yOffset;\n\n    Rectangle rowRect = {x - 5, y, 300, lineHeight};\n    bool isHovered = CheckCollisionPointRec(mousePos, rowRect);\n\n    // خلفية الصف\n    if (node.isSelected) {\n        DrawRectangleRec(rowRect, Color{50, 80, 120});\n    } else if (isHovered) {\n        DrawRectangleRec(rowRect, Color{40, 40, 50});\n    }\n\n    // أيقونة التوسيع/الطي\n    if (!node.children.empty()) {\n        const char* expandIcon = node.isExpanded ? \"▼\" : \"▶\";\n        DrawText(expandIcon, x, y + 4, 12, Color{150, 150, 150});\n\n        // التفاعل مع الأيقونة\n        Rectangle expandRect = {x, y, 20, lineHeight};\n        if (isHovered && CheckCollisionPointRec(mousePos, expandRect) && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {\n            node.isExpanded = !node.isExpanded;\n        }\n    }\n\n    // اسم العقدة\n    DrawText(node.name, x + 20, y + 4, 14,\n            node.isSelected ? Color{255, 255, 255} : Color{180, 180, 180});\n\n    // تحديد العقدة\n    if (isHovered && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {\n        node.isSelected = true;\n    }\n\n    yOffset += lineHeight;\n\n    // رسم الأبناء\n    if (node.isExpanded) {\n        for (auto& child : node.children) {\n            DrawTreeNode(child, yOffset, indent, lineHeight);\n        }\n    }\n}",
+                "explanation": "شجرة قابلة للتوسيع مع تحديد وأيقونات طي.",
+                "expectedResult": "هيكل شجري تفاعلي مع عقد قابلة للتوسيع."
+            },
+            "guiRepresentation": {
+                "title": "عرض الشجرة",
+                "mockup": "┌─────────────────────────────┐\n│ 📁 المشهد                   │\n│   ├─ 📂 الإضاءة             │\n│   │   ├─ 💡 DirectionalLight │\n│   │   └─ 💡 PointLight       │\n│   ├─ 📂 الكائنات            │\n│   │   ├─ 📦 اللاعب          │\n│   │   │   └─ 📦 السلاح      │\n│   │   └─ 📦 العدو           │\n│   └─ 📂 الكاميرات           │\n│       └─ 🎥 MainCamera      │\n└─────────────────────────────┘",
+                "visualHtml": "<div style=\"background:#1a1a2e;padding:12px;border-radius:6px;width:260px;font-family:monospace;font-size:13px;\">\n  <div style=\"color:#f1c40f;\">▼ 📁 المشهد</div>\n  <div style=\"color:#3498db;padding-left:16px;\">  ▼ 📂 الإضاءة</div>\n  <div style=\"color:#aaa;padding-left:32px;\">      💡 DirectionalLight</div>\n  <div style=\"color:#aaa;padding-left:32px;\">      💡 PointLight</div>\n  <div style=\"color:#3498db;padding-left:16px;\">  ▼ 📂 الكائنات</div>\n  <div style=\"color:#2ecc71;padding-left:32px;background:rgba(46,204,113,0.1);\">      ▶ 📦 اللاعب</div>\n  <div style=\"color:#aaa;padding-left:32px;\">      ▶ 📦 العدو</div>\n  <div style=\"color:#3498db;padding-left:16px;\">  ▶ 📂 الكاميرات</div>\n</div>",
+                "explanation": "هيكل شجرة مع عقد قابلة للتوسيع والتحديد."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Tree View",
+            "nameAr": "عرض الشجرة",
+            "kind": "widget",
+            "shortTooltip": "عرض هرمي للبيانات مع عقد قابلة للتوسيع.",
+            "description": "هيكل شجري يعرض البيانات في علاقة أب-ابن مع إمكانية الطي والتوسيع.",
+            "officialArabicDescription": "عرض الشجرة يُنظم البيانات الهرمية بطريقة سهلة للملاحة.",
+            "realMeaning": "يُمثل بنية بيانات متداخلة بصرياً.",
+            "whenToUse": "هيكل المشهد، نظام الملفات، أي بيانات هرمية.",
+            "practicalBenefit": "يُوفر نظرة عامة منظمة على البيانات المعقدة.",
+            "misuseImpact": "إذا كان عميقاً جداً قد يصعب التنقل."
+        }
+    ]
+}

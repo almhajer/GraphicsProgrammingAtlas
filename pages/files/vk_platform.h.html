@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة vk_platform.h ضمن مجلد vulkan وتغطي جزءاً محدداً من واجهة Vulkan أو إحدى طبقاتها أو امتداداتها.">
+  <title>vk_platform.h - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vk_platform.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <span>vk_platform.h</span>
+      </nav>
+      <h1 class="page-title">📄 vk_platform.h</h1>
+      <p class="page-description">ترويسة vk_platform.h ضمن مجلد vulkan وتغطي جزءاً محدداً من واجهة Vulkan أو إحدى طبقاتها أو امتداداتها.</p>
+      <div class="standalone-badges">
+        <span class="standalone-badge">ملفات vulkan</span>
+        <span class="standalone-badge">مساعدات</span>
+        <span class="standalone-badge"><span dir="ltr">vulkan/vk_platform.h</span></span>
+      </div>
+    </div>
+
+    <div class="standalone-grid">
+      <section class="standalone-card">
+        <h2>الهدف الفعلي للملف</h2>
+        <ul class="insight-list">
+          <li>هدف هذا الملف هو تعريف السطح البرمجي أو البنية المساندة المرتبطة بالمجال الذي يغطيه، مع ترك المنطق التنفيذي الفعلي غالباً للتطبيق أو للـ loader أو للسواقة.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>متى تستخدمه؟</h2>
+        <p>استخدم vk_platform.h عندما تحتاج الجزء الذي يغطيه هذا الملف من واجهة Vulkan بدلاً من الاكتفاء بالترويسة العامة وحدها.</p>
+      </section>
+      <section class="standalone-card">
+        <h2>مثال تضمين</h2>
+        <pre class="code-block" dir="ltr"><code class="language-cpp">#include &lt;vulkan/vk_platform.h&gt;</code></pre>
+      </section>
+      <section class="standalone-card">
+        <h2>الملفات المضمنة</h2>
+        <ul><li>لا توجد ملفات مضمنة مباشرة في هذا الملف.</li></ul>
+      </section>
+      <section class="standalone-card">
+        <h2>تركيب الملف</h2>
+        <ul class="insight-list">
+          <li>فيه 10 ماكرو/تعريفاً مسبقاً لتنظيم التوافق، النسخ، أو بناء الأنواع.</li><li>يعلن 1 دالة أو نقطة دخول من API.</li><li>يستخدم 1 مؤشراً لدالة، ما يبرز دور الربط الديناميكي أو dispatch.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>ما الذي تقوله التعليقات نفسها؟</h2>
+        <ul class="insight-list">
+          
+            <li>
+              File: vk_platform.h
+              
+            </li>
+          
+            <li>
+              ************************************************************************************************** Platform-specific directives and type declarations **************************************************************************************************
+              
+            </li>
+          
+            <li>
+              Platform-specific calling convention macros. Platforms should define these so that Vulkan clients call Vulkan commands with the same calling conventions that the Vulkan implementation expects. VKAPI_ATTR - Placed before the return type in function declarations. Useful for C++11 and GCC/Clang-style function attribute syntax. VKAPI_CALL - Placed after the return type in function declarations. Useful for MSVC-style calling convention syntax. VKAPI_PTR - Placed between the &#39;(&#39; and &#39;*&#39; in function pointer types. Function declaration: VKAPI_ATTR void VKAPI_CALL vkCommand(void); Function pointer type: typedef void (VKAPI_PTR *PFN_vkCommand)(void);
+              <span class="comment-context">#if defined(_WIN32)</span>
+            </li>
+          
+            <li>
+              On Windows, Vulkan commands use the stdcall convention
+              <span class="comment-context">VKAPI_ATTR</span>
+            </li>
+          
+            <li>
+              On Android 32-bit ARM targets, Vulkan functions use the &quot;hardfloat&quot; calling convention, i.e. float parameters are passed in registers. This is true even if the rest of the application passes floats on the stack, as it does by default when compiling for the armeabi-v7a NDK ABI.
+              <span class="comment-context">VKAPI_ATTR</span>
+            </li>
+          
+            <li>
+              On other platforms, use the default calling convention
+              <span class="comment-context">VKAPI_ATTR</span>
+            </li>
+          
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الأسطر: 85</span>
+        <span class="source-stat">الحجم: 2.8 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>//
+// File: vk_platform.h
+//
+/*
+** Copyright 2014-2026 The Khronos Group Inc.
+**
+** SPDX-License-Identifier: Apache-2.0
+*/
+
+
+#ifndef VK_PLATFORM_H_
+#define VK_PLATFORM_H_
+
+#ifdef __cplusplus
+extern &quot;C&quot;
+{
+#endif // __cplusplus
+
+/*
+***************************************************************************************************
+*   Platform-specific directives and type declarations
+***************************************************************************************************
+*/
+
+/* Platform-specific calling convention macros.
+ *
+ * Platforms should define these so that Vulkan clients call Vulkan commands
+ * with the same calling conventions that the Vulkan implementation expects.
+ *
+ * VKAPI_ATTR - Placed before the return type in function declarations.
+ *              Useful for C++11 and GCC/Clang-style function attribute syntax.
+ * VKAPI_CALL - Placed after the return type in function declarations.
+ *              Useful for MSVC-style calling convention syntax.
+ * VKAPI_PTR  - Placed between the &#39;(&#39; and &#39;*&#39; in function pointer types.
+ *
+ * Function declaration:  VKAPI_ATTR void VKAPI_CALL vkCommand(void);
+ * Function pointer type: typedef void (VKAPI_PTR *PFN_vkCommand)(void);
+ */
+#if defined(_WIN32)
+    // On Windows, Vulkan commands use the stdcall convention
+    #define VKAPI_ATTR
+    #define VKAPI_CALL __stdcall
+    #define VKAPI_PTR  VKAPI_CALL
+#elif defined(__ANDROID__) &amp;&amp; defined(__ARM_ARCH) &amp;&amp; __ARM_ARCH &lt; 7
+    #error &quot;Vulkan is not supported for the &#39;armeabi&#39; NDK ABI&quot;
+#elif defined(__ANDROID__) &amp;&amp; defined(__ARM_ARCH) &amp;&amp; __ARM_ARCH &gt;= 7 &amp;&amp; defined(__ARM_32BIT_STATE)
+    // On Android 32-bit ARM targets, Vulkan functions use the &quot;hardfloat&quot;
+    // calling convention, i.e. float parameters are passed in registers. This
+    // is true even if the rest of the application passes floats on the stack,
+    // as it does by default when compiling for the armeabi-v7a NDK ABI.
+    #define VKAPI_ATTR __attribute__((pcs(&quot;aapcs-vfp&quot;)))
+    #define VKAPI_CALL
+    #define VKAPI_PTR  VKAPI_ATTR
+#else
+    // On other platforms, use the default calling convention
+    #define VKAPI_ATTR
+    #define VKAPI_CALL
+    #define VKAPI_PTR
+#endif
+
+#if !defined(VK_NO_STDDEF_H)
+    #include &lt;stddef.h&gt;
+#endif // !defined(VK_NO_STDDEF_H)
+
+#if !defined(VK_NO_STDINT_H)
+    #if defined(_MSC_VER) &amp;&amp; (_MSC_VER &lt; 1600)
+        typedef signed   __int8  int8_t;
+        typedef unsigned __int8  uint8_t;
+        typedef signed   __int16 int16_t;
+        typedef unsigned __int16 uint16_t;
+        typedef signed   __int32 int32_t;
+        typedef unsigned __int32 uint32_t;
+        typedef signed   __int64 int64_t;
+        typedef unsigned __int64 uint64_t;
+    #else
+        #include &lt;stdint.h&gt;
+    #endif
+#endif // !defined(VK_NO_STDINT_H)
+
+#ifdef __cplusplus
+} // extern &quot;C&quot;
+#endif // __cplusplus
+
+#endif
+</code></pre>
+    </section>
+    
+  </main>
+</body>
+</html>

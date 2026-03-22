@@ -1,0 +1,108 @@
+{
+  "exampleGuides": {
+    "ImGui::Begin": {
+      "officialSummaryArabic": "ارجع إلى هذه المراجع عندما تريد تحويل المثال من نافذة واحدة بسيطة إلى نوافذ أدوات متعددة لها lifecycle واضح داخل كل frame.",
+      "officialReferences": [
+        {"type": "entity", "name": "ImGui::Begin"},
+        {"type": "entity", "name": "ImGui::End"},
+        {"type": "external", "label": "Dear ImGui Wiki", "href": "https://github.com/ocornut/imgui/wiki"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال هو نواة أي واجهة Dear ImGui فعلية: فتح النطاق، بناء العناصر، ثم إغلاقه في كل إطار. المشروع الحقيقي سيكرر هذا النمط على نوافذ متعددة مع state واضحة لكل نافذة.",
+      "projectStepsArabic": [
+        "افصل حالة كل نافذة مثل open أو collapsed أو docked في بنية UI state بدل متغيرات متناثرة داخل frame loop.",
+        "عرّف طبقة renderUiPanels تجمع نوافذ الأدوات في مكان واحد بدل بناء كل نافذة عشوائيًا داخل main.",
+        "اربط النافذة بمسار بيانات واضح يحدد ما الذي يُعرض فيها وما الذي يحدّثه المستخدم عند التفاعل."
+      ],
+      "followUpExamples": [
+        {"type": "example", "name": "مساحة Docking احترافية مع نوافذ متعددة وToggles", "label": "الانتقال إلى مثال الـ Docking متعدد اللوحات"}
+      ]
+    },
+    "ImGui::Button": {
+      "officialSummaryArabic": "المرجع الرسمي هنا يفيد عندما تريد تذكّر أن الزر يعيد حدث التفعيل الآني فقط، بينما الحالة التي يغيّرها يجب أن تبقى داخل التطبيق نفسه.",
+      "officialReferences": [
+        {"type": "entity", "name": "ImGui::Button"},
+        {"type": "entity", "name": "ImGui::SameLine"},
+        {"type": "external", "label": "About the IMGUI paradigm", "href": "https://github.com/ocornut/imgui/wiki/About-the-IMGUI-paradigm"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل يجب أن تصبح الأزرار جزءًا من طبقة أوامر UI واضحة، لا مجرد ifات متفرقة داخل كل نافذة.",
+      "projectStepsArabic": [
+        "حوّل استجابة الزر من تنفيذ مباشر إلى أمر منطقي مثل save_scene أو rebuild_mesh ثم نفّذه في طبقة أعلى.",
+        "جمّع أزرار الشريط أو اللوحة في دوال UI صغيرة تعيد actions بدل الكتابة المباشرة داخل النافذة.",
+        "أضف feedback بصري أو toast أو disabled state عندما يصبح الزر مرتبطًا بحالة مشروع أوسع."
+      ],
+      "followUpExamples": [
+        {"type": "example", "name": "MenuBar وقوائم فرعية وقائمة سياقية", "label": "الانتقال إلى مثال الأوامر الهرمية"}
+      ]
+    },
+    "ImGui::InputText": {
+      "officialSummaryArabic": "هذه المراجع مهمة عندما ينتقل المثال من مخزن نص بسيط إلى widget إدخال يدعم حدود السعة والتحرير والتكامل مع أنواع سلاسل أعلى مستوى.",
+      "officialReferences": [
+        {"type": "entity", "name": "ImGui::InputText"},
+        {"type": "entity", "name": "ImGuiIO"},
+        {"type": "external", "label": "Useful Extensions", "href": "https://github.com/ocornut/imgui/wiki/Useful-Extensions"}
+      ],
+      "fullProjectNoteArabic": "أي مشروع أدوات حقيقي يحتاج TextInput state يعالج النص الفعلي، والتركيز، والتحقق، ورسائل الخطأ، بدل تمرير buffer خام من موضع واحد فقط.",
+      "projectStepsArabic": [
+        "غلف النص الحالي وحالة التركيز وأخطاء validation داخل بنية FormField أو TextFieldState مستقلة.",
+        "وحّد تحويل النص إلى أنواع منطقية أو أرقام في طبقة form logic بدل مزجها مباشرة مع الرسم.",
+        "إذا كنت تستخدم std::string أو محررات أكبر، أضف wrapper واضحًا بدل تكرار bufferات ثابتة الحجم في كل مثال."
+      ],
+      "followUpExamples": [
+        {"type": "example", "name": "Theme editor متعدد الحقول مع Palette ومعاينة مشهد", "label": "الانتقال إلى مثال الحقول المركبة"}
+      ]
+    },
+    "ImGui::ColorEdit4": {
+      "officialSummaryArabic": "المرجع الرسمي هنا مهم عندما تريد فهم الفرق بين اللون كبيانات RGBA وبين widget التحرير الذي يغيّر هذه القيم ويعرضها للمستخدم.",
+      "officialReferences": [
+        {"type": "entity", "name": "ImGui::ColorEdit4"},
+        {"type": "entity", "name": "ImVec4"},
+        {"type": "external", "label": "Dear ImGui Wiki", "href": "https://github.com/ocornut/imgui/wiki"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل يجب أن تنتقل من مجرد متغير لون محلي إلى نظام theme أو material parameters يرتبط بالرسم أو بالمحرر نفسه.",
+      "projectStepsArabic": [
+        "افصل اللون المعروض في الواجهة عن اللون المحفوظ في الإعدادات أو في المادة حتى يسهل التراجع والحفظ.",
+        "أضف معاينة حية أو swatches جاهزة حتى لا يبقى المثال مجرد widget معزول.",
+        "اربط تغييرات اللون بمسار serialization واضح إذا كانت الواجهة ستحفظ themes أو profiles."
+      ],
+      "followUpExamples": [
+        {"type": "example", "name": "لوحة أدوات الألوان والثيم", "label": "الانتقال إلى مثال الثيمات والألوان"}
+      ]
+    },
+    "ImGui + SDL3 + Vulkan": {
+      "officialSummaryArabic": "هذا المسار الرسمي هو المرجع عندما تتحول التجربة التعليمية إلى overlay حقيقي فوق مسار Vulkan مع نافذة SDL3 وbackendين مترابطين.",
+      "officialReferences": [
+        {"type": "entity", "name": "ImGuiIO"},
+        {"type": "reference", "name": "vkCreateRenderPass"},
+        {"type": "entity", "name": "Platform Backend و Renderer Backend"},
+        {"type": "external", "label": "Dear ImGui Backends", "href": "https://github.com/ocornut/imgui/tree/master/backends"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال هو البذرة الصحيحة لـ editor overlay فوق Vulkan. المسار التالي في المشروع الحقيقي هو فصل backend setup وframe submission وfont upload في طبقة مستقلة.",
+      "projectStepsArabic": [
+        "اجمع تهيئة SDL3 وImGui backend وImGui Vulkan backend في وحدة bootstrap مستقلة بدل نشرها عبر عدة ملفات.",
+        "افصل NewFrame وrecording وrender pass الخاص بالواجهة عن render pass المشهد كي يسهل إعادة البناء لاحقًا.",
+        "احتفظ بموارد ImGui مثل descriptor pool وfont texture داخل UI renderer context واضح العمر الزمني."
+      ],
+      "followUpExamples": [
+        {"type": "example", "name": "ImGui + Vulkan", "label": "الانتقال إلى تكامل Dear ImGui مع Vulkan"},
+        {"type": "example", "name": "ImGui + SDL3", "label": "الانتقال إلى تكامل Dear ImGui مع SDL3"}
+      ]
+    },
+    "مساحة Docking احترافية مع نوافذ متعددة وToggles": {
+      "officialSummaryArabic": "هذا المثال يتجاوز widget منفردة إلى معمارية workspace كاملة، لذلك يبقى المرجع الرسمي مفيدًا لفهم حدود Dear ImGui نفسها قبل إضافة منطق المحرر الخاص بك.",
+      "officialReferences": [
+        {"type": "entity", "name": "ImGui::Begin"},
+        {"type": "entity", "name": "ImGuiWindowFlags"},
+        {"type": "external", "label": "Dear ImGui Wiki", "href": "https://github.com/ocornut/imgui/wiki"}
+      ],
+      "fullProjectNoteArabic": "إذا تحول هذا المثال إلى محرر كامل، فالمطلوب ليس polish إضافي للواجهة فقط، بل بنية panels state وcommands وselection وpersistence.",
+      "projectStepsArabic": [
+        "عرّف PanelRegistry أو WorkspaceState يحدد اللوحات المفتوحة وترتيبها وأيها يملك التركيز.",
+        "افصل منطق كل لوحة مثل Scene أو Inspector أو Console في renderer مستقل بدل ملف وحيد ضخم.",
+        "أضف حفظ layout واستعادته بعد الإقلاع حتى يتحول المثال إلى بيئة عمل فعلية."
+      ],
+      "followUpExamples": [
+        {"type": "example", "name": "Sidebar متحركة مع Toast notification وتدرج ظهور", "label": "الانتقال إلى مثال تنبيهات وألواح متحركة"}
+      ]
+    }
+  }
+}

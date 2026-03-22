@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_profiles.hpp • القسم 43 من 47 • الأسطر 18901-19350 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_profiles.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_profiles.hpp.html">vulkan_profiles.hpp</a> /
+        <span>القسم 43 من 47 • الأسطر 18901-19350</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_profiles.hpp</h1>
+      <p class="page-description">القسم 43 من 47 • الأسطر 18901-19350</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-42.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-44.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_profiles.hpp</span>
+        <span class="source-stat">القسم: 43/47</span>
+        <span class="source-stat">الأسطر: 18901-19350</span>
+        <span class="source-stat">حجم الملف: 1.41 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>        }
+    }
+
+    gatheredProfiles.push_back(profile);
+
+    return gatheredProfiles;
+}
+
+VPAPI_ATTR bool vpCheckVersion(uint32_t actual, uint32_t expected) {
+    uint32_t actualMajor = VK_API_VERSION_MAJOR(actual);
+    uint32_t actualMinor = VK_API_VERSION_MINOR(actual);
+    uint32_t expectedMajor = VK_API_VERSION_MAJOR(expected);
+    uint32_t expectedMinor = VK_API_VERSION_MINOR(expected);
+    return actualMajor &gt; expectedMajor || (actualMajor == expectedMajor &amp;&amp; actualMinor &gt;= expectedMinor);
+}
+
+VPAPI_ATTR bool HasExtension(const std::vector&lt;VkExtensionProperties&gt;&amp; list, const VkExtensionProperties&amp; element) {
+    for (std::size_t i = 0, n = list.size(); i &lt; n; ++i) {
+        if (strcmp(list[i].extensionName, element.extensionName) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+VPAPI_ATTR bool CheckExtension(const VkExtensionProperties* supportedProperties, size_t supportedSize, const char *requestedExtension) {
+    bool found = false;
+    for (size_t i = 0, n = supportedSize; i &lt; n; ++i) {
+        if (strcmp(supportedProperties[i].extensionName, requestedExtension) == 0) {
+            found = true;
+            break;
+            // Drivers don&#39;t actually update their spec version, so we cannot rely on this
+            // if (supportedProperties[i].specVersion &gt;= expectedVersion) found = true;
+        }
+    }
+    return found;
+}
+
+VPAPI_ATTR bool CheckExtension(const std::vector&lt;const char*&gt;&amp; extensions, const char* extension) {
+    for (const char* c : extensions) {
+        if (strcmp(c, extension) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+VPAPI_ATTR void GetExtensions(uint32_t extensionCount, const VkExtensionProperties *pExtensions, std::vector&lt;const char *&gt; &amp;extensions) {
+    for (uint32_t ext_index = 0; ext_index &lt; extensionCount; ++ext_index) {
+        if (CheckExtension(extensions, pExtensions[ext_index].extensionName)) {
+            continue;
+        }
+        extensions.push_back(pExtensions[ext_index].extensionName);
+    }
+}
+
+VPAPI_ATTR std::vector&lt;VpBlockProperties&gt; GatherBlocks(
+    uint32_t enabledFullProfileCount, const VpProfileProperties* pEnabledFullProfiles,
+    uint32_t enabledProfileBlockCount, const VpBlockProperties* pEnabledProfileBlocks) {
+    std::vector&lt;VpBlockProperties&gt; results;
+
+    for (std::size_t profile_index = 0; profile_index &lt; enabledFullProfileCount; ++profile_index) {
+        const std::vector&lt;VpProfileProperties&gt;&amp; gathered_profiles = GatherProfiles(pEnabledFullProfiles[profile_index]);
+
+        for (std::size_t gathered_index = 0; gathered_index &lt; gathered_profiles.size(); ++gathered_index) {
+            VpBlockProperties block{gathered_profiles[gathered_index], 0, &quot;&quot;};
+            results.push_back(block);
+        }
+    }
+
+    for (std::size_t block_index = 0; block_index &lt; enabledProfileBlockCount; ++block_index) {
+        results.push_back(pEnabledProfileBlocks[block_index]);
+    }
+
+    return results;
+}
+
+VPAPI_ATTR VkResult vpGetInstanceProfileSupportSingleProfile(
+    uint32_t                                    api_version,
+    const std::vector&lt;VkExtensionProperties&gt;&amp;   supported_extensions,
+    const VpProfileProperties*                  pProfile,
+    VkBool32*                                   pSupported,
+    std::vector&lt;VpBlockProperties&gt;&amp;             supportedBlocks,
+    std::vector&lt;VpBlockProperties&gt;&amp;             unsupportedBlocks) {
+    assert(pProfile != nullptr);
+
+    const detail::VpProfileDesc* pProfileDesc = vpGetProfileDesc(pProfile-&gt;profileName);
+    if (pProfileDesc == nullptr) {
+        *pSupported = VK_FALSE;
+        return VK_ERROR_UNKNOWN;
+    }
+
+    VpBlockProperties block{*pProfile, api_version};
+
+    if (pProfileDesc-&gt;props.specVersion &lt; pProfile-&gt;specVersion) {
+        *pSupported = VK_FALSE;
+        unsupportedBlocks.push_back(block);
+    }
+
+    // Required API version is built in root profile, not need to check dependent profile API versions
+    if (api_version != 0) {
+        if (!vpCheckVersion(api_version, pProfileDesc-&gt;minApiVersion)) {
+
+            *pSupported = VK_FALSE;
+            unsupportedBlocks.push_back(block);
+        }
+    }
+
+    for (uint32_t capability_index = 0; capability_index &lt; pProfileDesc-&gt;requiredCapabilityCount; ++capability_index) {
+        const VpCapabilitiesDesc&amp; capabilities_desc = pProfileDesc-&gt;pRequiredCapabilities[capability_index];
+
+        VkBool32 supported_capabilities = VK_FALSE;
+        for (uint32_t variant_index = 0; variant_index &lt; capabilities_desc.variantCount; ++variant_index) {
+            const VpVariantDesc&amp; variant_desc = capabilities_desc.pVariants[variant_index];
+
+            VkBool32 supported_variant = VK_TRUE;
+            for (uint32_t i = 0; i &lt; variant_desc.instanceExtensionCount; ++i) {
+                if (!detail::CheckExtension(supported_extensions.data(), supported_extensions.size(),
+                                              variant_desc.pInstanceExtensions[i].extensionName)) {
+                    supported_variant = VK_FALSE;
+                    memcpy(block.blockName, variant_desc.blockName, VP_MAX_PROFILE_NAME_SIZE * sizeof(char));
+                    unsupportedBlocks.push_back(block);
+                }
+            }
+
+            if (supported_variant == VK_TRUE) {
+                supported_capabilities = VK_TRUE;
+                memcpy(block.blockName, variant_desc.blockName, VP_MAX_PROFILE_NAME_SIZE * sizeof(char));
+                supportedBlocks.push_back(block);
+            }
+        }
+
+        if (supported_capabilities == VK_FALSE) {
+            *pSupported = VK_FALSE;
+            return VK_SUCCESS;
+        }
+    }
+
+    return VK_SUCCESS;
+}
+
+enum structure_type {
+    STRUCTURE_FEATURE = 0,
+    STRUCTURE_PROPERTY,
+    STRUCTURE_QUEUE_FAMILY,
+    STRUCTURE_FORMAT
+};
+
+VPAPI_ATTR VkResult vpGetProfileStructureTypes(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    structure_type                              type,
+    uint32_t*                                   pStructureTypeCount,
+    VkStructureType*                            pStructureTypes) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+
+    VkResult result = pBlockName == nullptr ? VK_SUCCESS : VK_INCOMPLETE;
+
+    std::vector&lt;VkStructureType&gt; results;
+
+    const std::vector&lt;VpProfileProperties&gt;&amp; gathered_profiles = detail::GatherProfiles(*pProfile);
+
+    for (std::size_t profile_index = 0, profile_count = gathered_profiles.size(); profile_index &lt; profile_count; ++profile_index) {
+        const detail::VpProfileDesc* profile_desc = detail::vpGetProfileDesc(gathered_profiles[profile_index].profileName);
+        if (profile_desc == nullptr) return VK_ERROR_UNKNOWN;
+
+        for (uint32_t capability_index = 0; capability_index &lt; profile_desc-&gt;requiredCapabilityCount; ++capability_index) {
+            const detail::VpCapabilitiesDesc&amp; cap_desc = profile_desc-&gt;pRequiredCapabilities[capability_index];
+
+            for (uint32_t variant_index = 0; variant_index &lt; cap_desc.variantCount; ++variant_index) {
+                const detail::VpVariantDesc&amp; variant = cap_desc.pVariants[variant_index];
+                if (pBlockName != nullptr) {
+                    if (strcmp(variant.blockName, pBlockName) != 0) {
+                        continue;
+                    }
+                    result = VK_SUCCESS;
+                }
+
+                uint32_t count = 0;
+                const VkStructureType* data = nullptr;
+
+                switch (type) {
+                    default:
+                    case STRUCTURE_FEATURE:
+                        count = variant.featureStructTypeCount;
+                        data = variant.pFeatureStructTypes;
+                        break;
+                    case STRUCTURE_PROPERTY:
+                        count = variant.propertyStructTypeCount;
+                        data = variant.pPropertyStructTypes;
+                        break;
+                    case STRUCTURE_QUEUE_FAMILY:
+                        count = variant.queueFamilyStructTypeCount;
+                        data = variant.pQueueFamilyStructTypes;
+                        break;
+                    case STRUCTURE_FORMAT:
+                        count = variant.formatStructTypeCount;
+                        data = variant.pFormatStructTypes;
+                        break;
+                }
+
+                for (uint32_t type_index = 0; type_index &lt; count; ++type_index) {
+                    const VkStructureType dataType = data[type_index];
+                    if (std::find(results.begin(), results.end(), dataType) == std::end(results)) {
+                        results.push_back(dataType);
+                    }
+                }
+            }
+        }
+    }
+
+    const uint32_t count = static_cast&lt;uint32_t&gt;(results.size());
+    std::sort(results.begin(), results.end());
+
+    if (pStructureTypes == nullptr) {
+        *pStructureTypeCount = count;
+    } else {
+        if (*pStructureTypeCount &lt; count) {
+            result = VK_INCOMPLETE;
+        } else {
+            *pStructureTypeCount = count;
+        }
+
+        if (*pStructureTypeCount &gt; 0) {
+            memcpy(pStructureTypes, &amp;results[0], *pStructureTypeCount * sizeof(VkStructureType));
+        }
+    }
+
+    return result;
+}
+
+enum ExtensionType {
+    EXTENSION_INSTANCE,
+    EXTENSION_DEVICE,
+};
+
+VPAPI_ATTR VkResult vpGetProfileExtensionProperties(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    ExtensionType                               type,
+    uint32_t*                                   pPropertyCount,
+    VkExtensionProperties*                      pProperties) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+
+    VkResult result = pBlockName == nullptr ? VK_SUCCESS : VK_INCOMPLETE;
+
+    std::vector&lt;VkExtensionProperties&gt; results;
+
+    const std::vector&lt;VpProfileProperties&gt;&amp; gathered_profiles = detail::GatherProfiles(*pProfile, pBlockName);
+
+    for (std::size_t profile_index = 0, profile_count = gathered_profiles.size(); profile_index &lt; profile_count; ++profile_index) {
+        const detail::VpProfileDesc* profile_desc = detail::vpGetProfileDesc(gathered_profiles[profile_index].profileName);
+        if (profile_desc == nullptr) {
+            return VK_ERROR_UNKNOWN;
+        }
+
+        for (uint32_t capability_index = 0; capability_index &lt; profile_desc-&gt;requiredCapabilityCount; ++capability_index) {
+            const detail::VpCapabilitiesDesc&amp; cap_desc = profile_desc-&gt;pRequiredCapabilities[capability_index];
+
+            for (uint32_t variant_index = 0; variant_index &lt; cap_desc.variantCount; ++variant_index) {
+                const detail::VpVariantDesc&amp; variant = cap_desc.pVariants[variant_index];
+                if (pBlockName != nullptr) {
+                    if (strcmp(variant.blockName, pBlockName) != 0) {
+                        continue;
+                    }
+                    result = VK_SUCCESS;
+                }
+
+                switch (type) {
+                    default:
+                    case EXTENSION_INSTANCE:
+                        for (uint32_t ext_index = 0; ext_index &lt; variant.instanceExtensionCount; ++ext_index) {
+                            if (detail::HasExtension(results, variant.pInstanceExtensions[ext_index])) {
+                                continue;
+                            }
+                            results.push_back(variant.pInstanceExtensions[ext_index]);
+                        }
+                        break;
+                    case EXTENSION_DEVICE:
+                        for (uint32_t ext_index = 0; ext_index &lt; variant.deviceExtensionCount; ++ext_index) {
+                            if (detail::HasExtension(results, variant.pDeviceExtensions[ext_index])) {
+                                continue;
+                            }
+                            results.push_back(variant.pDeviceExtensions[ext_index]);
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    const uint32_t count = static_cast&lt;uint32_t&gt;(results.size());
+
+    if (pProperties == nullptr) {
+        *pPropertyCount = count;
+    } else {
+        if (*pPropertyCount &lt; count) {
+            result = VK_INCOMPLETE;
+        } else {
+            *pPropertyCount = count;
+        }
+        if (*pPropertyCount &gt; 0) {
+            memcpy(pProperties, &amp;results[0], *pPropertyCount * sizeof(VkExtensionProperties));
+        }
+    }
+
+    return result;
+}
+
+VPAPI_ATTR VkResult vpGetProfileVideoProfileDesc(
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t                                    videoProfileIndex,
+    const detail::VpVideoProfileDesc**          ppVideoProfileDesc) {
+    VkResult result = pBlockName == nullptr ? VK_SUCCESS : VK_INCOMPLETE;
+
+    uint32_t curr_base_video_profile_index = 0;
+
+    const std::vector&lt;VpProfileProperties&gt;&amp; gathered_profiles = detail::GatherProfiles(*pProfile);
+
+    for (std::size_t profile_index = 0, profile_count = gathered_profiles.size(); profile_index &lt; profile_count; ++profile_index) {
+        const detail::VpProfileDesc* profile_desc = detail::vpGetProfileDesc(gathered_profiles[profile_index].profileName);
+        if (profile_desc == nullptr) return VK_ERROR_UNKNOWN;
+
+        for (uint32_t capability_index = 0; capability_index &lt; profile_desc-&gt;requiredCapabilityCount; ++capability_index) {
+            const detail::VpCapabilitiesDesc&amp; cap_desc = profile_desc-&gt;pRequiredCapabilities[capability_index];
+
+            for (uint32_t variant_index = 0; variant_index &lt; cap_desc.variantCount; ++variant_index) {
+                const detail::VpVariantDesc&amp; variant = cap_desc.pVariants[variant_index];
+                if (pBlockName != nullptr) {
+                    if (strcmp(variant.blockName, pBlockName) != 0) {
+                        continue;
+                    }
+                    result = VK_SUCCESS;
+                }
+
+                if (videoProfileIndex &lt; curr_base_video_profile_index + variant.videoProfileCount) {
+                    *ppVideoProfileDesc = &amp;variant.pVideoProfiles[videoProfileIndex - curr_base_video_profile_index];
+                    return result;
+                } else {
+                    curr_base_video_profile_index += variant.videoProfileCount;
+                }
+            }
+        }
+    }
+
+    *ppVideoProfileDesc = nullptr;
+    return VK_ERROR_UNKNOWN;
+}
+
+} // namespace detail
+
+struct VpCapabilities_T : public VpVulkanFunctions {
+    bool singleton = false;
+    uint32_t apiVersion = VK_API_VERSION_1_0;
+
+    static VpCapabilities_T&amp; Get() {
+        static VpCapabilities_T instance;
+        VpCapabilitiesCreateInfo createInfo{};
+        createInfo.flags = VP_PROFILE_CREATE_STATIC_BIT;
+        instance.init(&amp;createInfo);
+        instance.singleton = true;
+        return instance;
+    }
+
+    VpCapabilities_T() {
+        this-&gt;GetInstanceProcAddr = nullptr;
+        this-&gt;GetDeviceProcAddr = nullptr;
+        this-&gt;EnumerateInstanceVersion = nullptr;
+        this-&gt;EnumerateInstanceExtensionProperties = nullptr;
+        this-&gt;EnumerateDeviceExtensionProperties = nullptr;
+        this-&gt;GetPhysicalDeviceFeatures2 = nullptr;
+        this-&gt;GetPhysicalDeviceProperties2 = nullptr;
+        this-&gt;GetPhysicalDeviceFormatProperties2 = nullptr;
+        this-&gt;GetPhysicalDeviceQueueFamilyProperties2 = nullptr;
+        this-&gt;CreateInstance = nullptr;
+        this-&gt;CreateDevice = nullptr;
+    }
+
+    VkResult init(const VpCapabilitiesCreateInfo* pCreateInfo) {
+        assert(pCreateInfo != nullptr);
+
+        return ImportVulkanFunctions(pCreateInfo);
+    }
+
+    VkResult ImportVulkanFunctions(const VpCapabilitiesCreateInfo* pCreateInfo) {
+        if (pCreateInfo-&gt;flags &amp; VP_PROFILE_CREATE_STATIC_BIT) {
+            ImportVulkanFunctions_Static();
+        }
+
+        if (pCreateInfo-&gt;pVulkanFunctions != nullptr) {
+            ImportVulkanFunctions_Custom((VpVulkanFunctions*)pCreateInfo-&gt;pVulkanFunctions);
+        }
+/*
+        if (pCreateInfo-&gt;flags &amp; VP_PROFILE_CREATE_DYNAMIC_BIT) {
+            ImportVulkanFunctions_Dynamic();
+        }
+*/
+        return ValidateVulkanFunctions();
+    }
+
+    void ImportVulkanFunctions_Static() {
+        // Vulkan 1.1
+        this-&gt;GetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)vkGetInstanceProcAddr;
+        this-&gt;GetDeviceProcAddr = (PFN_vkGetDeviceProcAddr)vkGetDeviceProcAddr;
+
+        this-&gt;EnumerateInstanceVersion = (PFN_vkEnumerateInstanceVersion)vkEnumerateInstanceVersion;
+        this-&gt;EnumerateInstanceExtensionProperties = (PFN_vkEnumerateInstanceExtensionProperties)vkEnumerateInstanceExtensionProperties;
+        this-&gt;EnumerateDeviceExtensionProperties = (PFN_vkEnumerateDeviceExtensionProperties)vkEnumerateDeviceExtensionProperties;
+
+        this-&gt;GetPhysicalDeviceFeatures2 = (PFN_vkGetPhysicalDeviceFeatures2)vkGetPhysicalDeviceFeatures2;
+        this-&gt;GetPhysicalDeviceProperties2 = (PFN_vkGetPhysicalDeviceProperties2)vkGetPhysicalDeviceProperties2;
+        this-&gt;GetPhysicalDeviceFormatProperties2 = (PFN_vkGetPhysicalDeviceFormatProperties2)vkGetPhysicalDeviceFormatProperties2;
+        this-&gt;GetPhysicalDeviceQueueFamilyProperties2 = (PFN_vkGetPhysicalDeviceQueueFamilyProperties2)vkGetPhysicalDeviceQueueFamilyProperties2;
+
+        this-&gt;CreateInstance = (PFN_vkCreateInstance)vkCreateInstance;
+        this-&gt;CreateDevice = (PFN_vkCreateDevice)vkCreateDevice;
+    }
+
+    void ImportVulkanFunctions_Custom(VpVulkanFunctions* pFunctions) {
+    #define VP_COPY_IF_NOT_NULL(funcName)         if(pFunctions-&gt;funcName != nullptr) this-&gt;funcName = pFunctions-&gt;funcName;
+
+        VP_COPY_IF_NOT_NULL(GetInstanceProcAddr);
+        VP_COPY_IF_NOT_NULL(GetDeviceProcAddr);
+
+        VP_COPY_IF_NOT_NULL(EnumerateInstanceVersion);
+        VP_COPY_IF_NOT_NULL(EnumerateInstanceExtensionProperties);
+        VP_COPY_IF_NOT_NULL(EnumerateDeviceExtensionProperties);
+
+        VP_COPY_IF_NOT_NULL(GetPhysicalDeviceFeatures2);
+        VP_COPY_IF_NOT_NULL(GetPhysicalDeviceProperties2);
+        VP_COPY_IF_NOT_NULL(GetPhysicalDeviceFormatProperties2);
+        VP_COPY_IF_NOT_NULL(GetPhysicalDeviceQueueFamilyProperties2);
+
+        VP_COPY_IF_NOT_NULL(CreateInstance);
+        VP_COPY_IF_NOT_NULL(CreateDevice);
+    #undef VP_COPY_IF_NOT_NULL
+    }
+/*</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-42.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-44.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

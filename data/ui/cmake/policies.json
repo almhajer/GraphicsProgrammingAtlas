@@ -1,0 +1,68 @@
+[
+  {
+    "name": "CMP0048",
+    "titleArabic": "تحدد هل يدير project() متغيرات الإصدار الرسمية للمشروع",
+    "actualMeaningArabic": "هذه السياسة تضبط الانتقال إلى السلوك الحديث الذي يجعل project(VERSION ...) يملأ متغيرات PROJECT_VERSION وما يتبعها بشكل رسمي.",
+    "purposeArabic": "تستخدم لفهم التوافق عند الاعتماد على VERSION داخل project() وربطه بملفات التصدير أو الرسائل أو الحزم.",
+    "whyUseArabic": "بدون ضبط السياسة أو رفع cmake_minimum_required قد ترى سلوكاً أقدم لا يملأ متغيرات الإصدار كما تتوقع.",
+    "carriedValueArabic": "تؤثر في configure لأنها تغيّر التفسير الدلالي للأمر project() نفسه عند وجود VERSION.",
+    "usage": [
+      "تظهر أهميتها مباشرة عندما تعلن VERSION داخل project() وتحتاج PROJECT_VERSION لاحقاً.",
+      "غالباً تُحل عملياً عبر رفع cmake_minimum_required بدلاً من set_policy اليدوي في المشاريع الجديدة."
+    ],
+    "notes": [
+      "السلوك القديم لا يدير متغيرات الإصدار بالصورة الحديثة نفسها.",
+      "هي مثال واضح على أن السياسات تغيّر تفسير أوامر موجودة أصلاً."
+    ],
+    "example": "cmake_minimum_required(VERSION 3.26)\nproject(MyLib VERSION 1.2.0 LANGUAGES CXX)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/policy/CMP0048.html",
+    "related": [
+      "cmake_minimum_required",
+      "project"
+    ]
+  },
+  {
+    "name": "CMP0074",
+    "titleArabic": "تحدد هل يقرأ find_package متغيرات <PackageName>_ROOT أثناء البحث",
+    "actualMeaningArabic": "هذه السياسة تضبط السلوك الحديث الذي يجعل find_package() يحترم متغيرات من نوع Foo_ROOT كجذور بحث مفضلة للحزمة.",
+    "purposeArabic": "تستخدم لفهم لماذا ينجح أو يفشل اكتشاف dependency عند تمرير root path عبر البيئة أو cache أو presets.",
+    "whyUseArabic": "لأن مشاريع كثيرة تعتمد على توجيه البحث إلى نسخة محلية أو حزمة مثبّتة في مسار مخصص، والسياسة تغيّر هل سيقرأ CMake هذا المسار تلقائياً أم لا.",
+    "carriedValueArabic": "تؤثر في منطق configure الخاص بالاكتشاف، وبالتالي تغير نتائج find_package() ومسارات imported targets الناتجة.",
+    "usage": [
+      "إذا كنت تستخدم ZLIB_ROOT أو SDL3_ROOT مثلاً فهذه السياسة جزء من تفسير find_package لذلك المسار.",
+      "غالباً يكفي رفع الحد الأدنى من CMake ليصبح السلوك الحديث هو المعتمد."
+    ],
+    "notes": [
+      "تمس البحث عن الحزم لا build graph مباشرة، لكن أثرها ينعكس على كل اعتمادية مكتشفة.",
+      "مهمة جداً في بيئات CI أو الحزم المحلية."
+    ],
+    "example": "set(SDL3_ROOT \"/opt/sdl3\")\nfind_package(SDL3 REQUIRED CONFIG)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/policy/CMP0074.html",
+    "related": [
+      "find_package"
+    ]
+  },
+  {
+    "name": "CMP0077",
+    "titleArabic": "تحدد هل يحترم option() المتغيرات العادية الموجودة مسبقاً",
+    "actualMeaningArabic": "هذه السياسة تنقل CMake إلى سلوك يجعل option() لا يمسح normal variable سبق تعريفها بالاسم نفسه، بل يحترم قيمتها كما هي.",
+    "purposeArabic": "تستخدم خصوصاً عندما تضم مشروعاً فرعياً وتريد فرض خيار معيّن عليه عبر normal variable قبل استدعاء option() داخله.",
+    "whyUseArabic": "لأن السلوك القديم كان قد يفاجئك بحذف المتغير العادي أو تجاهله، ما يصعّب التحكم في subprojects.",
+    "carriedValueArabic": "تؤثر في configure ومنطق الخيارات نفسها، لذلك تغيّر أي فروع شرطية أو أهداف تعتمد على option() لاحقاً.",
+    "usage": [
+      "مهمة في المشاريع المركبة التي تستخدم add_subdirectory لمشاريع خارجية أو داخلية.",
+      "ترتبط مباشرة بفهم الفرق بين normal variables وcache variables."
+    ],
+    "notes": [
+      "أضيفت في CMake 3.13.",
+      "هي من أكثر السياسات العملية لأن أثرها يظهر سريعاً في خيارات ON/OFF."
+    ],
+    "example": "set(BUILD_TESTING OFF)\nadd_subdirectory(external/project-that-calls-option)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/policy/CMP0077.html",
+    "related": [
+      "option",
+      "BUILD_TESTING",
+      "cache variables"
+    ]
+  }
+]

@@ -1,0 +1,827 @@
+{
+  "enumReferenceMetadata": {
+    "VkResult": {
+      "meaning": "تعداد نتائج الاستدعاءات في Vulkan. كل دالة تُرجع VkResult تستخدمه لتحديد هل اكتملت العملية، وهل توجد حالة خاصة تتطلب مساراً مختلفاً، أو هل حدث خطأ يمنع المتابعة.",
+      "apiPurpose": "وجوده في الـ API يمنع الاعتماد على true/false فقط، لأن كثيراً من دوال Vulkan تحتاج التمييز بين النجاح التام، النجاح الجزئي، والحالات الانتقالية أو أخطاء التهيئة والعرض.",
+      "values": {
+        "VK_SUCCESS": {
+          "numeric": "0",
+          "meaning": "نجاح كامل للاستدعاء.",
+          "usage": "يُستخدم في المقارنات بعد معظم دوال الإنشاء والاستحواذ والتقديم.",
+          "benefit": "يسمح بمتابعة المسار الطبيعي مثل استخدام المورد المُنشأ أو الانتقال إلى الخطوة التالية.",
+          "alternatives": [
+            "VK_SUBOPTIMAL_KHR",
+            "VK_NOT_READY",
+            "VK_TIMEOUT",
+            "VK_ERROR_OUT_OF_DATE_KHR"
+          ]
+        },
+        "VK_SUBOPTIMAL_KHR": {
+          "numeric": "1000001003",
+          "meaning": "الاستدعاء نجح، لكن المورد المرتبط بالعرض لم يعد بالحالة المثالية.",
+          "usage": "يظهر غالباً مع Swapchain وPresentation.",
+          "benefit": "يسمح باستمرار الرسم مؤقتاً مع التخطيط لإعادة إنشاء Swapchain.",
+          "alternatives": [
+            "VK_SUCCESS",
+            "VK_ERROR_OUT_OF_DATE_KHR"
+          ]
+        },
+        "VK_ERROR_OUT_OF_DATE_KHR": {
+          "numeric": "-1000001004",
+          "meaning": "السطح أو سلسلة التبديل لم تعد متوافقة مع حالة العرض الحالية.",
+          "usage": "يظهر مع `vkAcquireNextImageKHR` و`vkQueuePresentKHR` عند تغيير الحجم أو السطح.",
+          "benefit": "ينبهك أن إعادة إنشاء Swapchain أصبحت مطلوبة وليست اختيارية.",
+          "alternatives": [
+            "VK_SUBOPTIMAL_KHR",
+            "VK_SUCCESS"
+          ]
+        },
+        "VK_NOT_READY": {
+          "numeric": "1",
+          "meaning": "النتيجة غير جاهزة بعد، لكن هذا ليس خطأ قاتلاً.",
+          "usage": "يظهر في الاستعلامات غير الحاجزة أو عند فحص حالة مورد.",
+          "benefit": "يسمح بالانتظار أو إعادة المحاولة بدل التعامل معه كفشل نهائي.",
+          "alternatives": [
+            "VK_TIMEOUT",
+            "VK_SUCCESS"
+          ]
+        },
+        "VK_TIMEOUT": {
+          "numeric": "2",
+          "meaning": "انتهت المهلة قبل تحقق الشرط المطلوب.",
+          "usage": "يظهر في الاستدعاءات التي تقبل timeout.",
+          "benefit": "يفصل بين عدم الجاهزية المؤقتة والخطأ الحقيقي في التنفيذ.",
+          "alternatives": [
+            "VK_NOT_READY",
+            "VK_SUCCESS"
+          ]
+        }
+      }
+    },
+    "VkStructureType": {
+      "meaning": "تعداد يميز نوع كل بنية Vulkan تقريباً عبر الحقل `sType`. دوال Vulkan تعتمد عليه لتفسير الذاكرة الممررة على أنها البنية الصحيحة لا مجرد كتلة بايتات.",
+      "apiPurpose": "وجوده في الـ API يسمح للدالة بتمييز البنية الحالية وسلاسل `pNext` والتحقق من أن التطبيق مرر النوع الصحيح لكل استدعاء.",
+      "values": {
+        "VK_STRUCTURE_TYPE_APPLICATION_INFO": {
+          "numeric": "0",
+          "meaning": "يحدد أن البنية الحالية هي `VkApplicationInfo`.",
+          "usage": "يُسند إلى `VkApplicationInfo::sType` قبل تمرير البنية داخل `VkInstanceCreateInfo`.",
+          "benefit": "يجعل تعريف التطبيق والإصدار مقروءاً لدوال الإنشاء.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO": {
+          "numeric": "1",
+          "meaning": "يحدد أن البنية الحالية هي `VkInstanceCreateInfo`.",
+          "usage": "يُسند إلى `VkInstanceCreateInfo::sType` قبل `vkCreateInstance`.",
+          "benefit": "بدونه لا تستطيع `vkCreateInstance` الوثوق بنوع البنية الممررة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_APPLICATION_INFO",
+            "VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO": {
+          "numeric": "2",
+          "meaning": "يحدد بنية وصف إنشاء الطوابير داخل الجهاز المنطقي.",
+          "usage": "يظهر داخل `VkDeviceQueueCreateInfo::sType`.",
+          "benefit": "يسمح لـ `vkCreateDevice` بقراءة إعدادات الطوابير بالصيغة الصحيحة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO": {
+          "numeric": "3",
+          "meaning": "يحدد بنية إعداد إنشاء `VkDevice`.",
+          "usage": "يُستخدم مع `vkCreateDevice`.",
+          "benefit": "يجمع الطوابير والميزات والامتدادات في بنية واحدة صحيحة النوع.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_SUBMIT_INFO": {
+          "numeric": "4",
+          "meaning": "يحدد بنية إرسال الأوامر إلى الطابور.",
+          "usage": "يظهر مع `vkQueueSubmit`.",
+          "benefit": "يصف semaphores وcommand buffers والإشارات بطريقة تفهمها الدالة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PRESENT_INFO_KHR"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO": {
+          "numeric": "9",
+          "meaning": "يحدد بنية إنشاء `VkSemaphore`.",
+          "usage": "يُستخدم قبل `vkCreateSemaphore`.",
+          "benefit": "يعرّف للدالة أن البنية تحمل إعدادات إشارة مزامنة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_FENCE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO": {
+          "numeric": "38",
+          "meaning": "يحدد بنية إنشاء `VkRenderPass`.",
+          "usage": "يظهر مع `vkCreateRenderPass`.",
+          "benefit": "يجعل وصف المرفقات والممرات الفرعية صالحاً للقراءة من الدالة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO": {
+          "numeric": "39",
+          "meaning": "يحدد بنية إنشاء `VkCommandPool`.",
+          "usage": "يظهر مع `vkCreateCommandPool`.",
+          "benefit": "يخبر Vulkan أنك تصف مستودع مخازن أوامر مرتبطاً بعائلة طابور معينة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO": {
+          "numeric": "40",
+          "meaning": "يحدد بنية تخصيص مخازن الأوامر.",
+          "usage": "يُمرر إلى `vkAllocateCommandBuffers`.",
+          "benefit": "يصف من أي Command Pool سيتم الحجز وبأي مستوى.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO": {
+          "numeric": "42",
+          "meaning": "يحدد بنية بدء تسجيل `VkCommandBuffer`.",
+          "usage": "يُمرر إلى `vkBeginCommandBuffer`.",
+          "benefit": "يحدد نمط التسجيل والرايات المرتبطة به.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO": {
+          "numeric": "43",
+          "meaning": "يحدد بنية بدء Render Pass داخل أمر التسجيل.",
+          "usage": "تُستخدم مع `vkCmdBeginRenderPass`.",
+          "benefit": "تجمع framebuffer ومنطقة الرسم وقيم المسح في بنية واحدة واضحة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO": {
+          "numeric": "18",
+          "meaning": "يحدد بنية وصف مرحلة shader واحدة داخل الـ pipeline.",
+          "usage": "تُستخدم قبل `vkCreateGraphicsPipelines`.",
+          "benefit": "تربط module ونقطة الدخول والمرحلة البرمجية نفسها.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO": {
+          "numeric": "19",
+          "meaning": "يحدد بنية وصف إدخال الرؤوس.",
+          "usage": "يُمرر داخل `VkGraphicsPipelineCreateInfo`.",
+          "benefit": "يخبر الـ pipeline كيف تُقرأ بيانات الرؤوس من الذاكرة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO": {
+          "numeric": "20",
+          "meaning": "يحدد بنية تجميع الرؤوس إلى بدائيات.",
+          "usage": "يُستخدم داخل `VkGraphicsPipelineCreateInfo`.",
+          "benefit": "يحدد هل البيانات ستُقرأ كمثلثات أم خطوط أم نقاط.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO": {
+          "numeric": "22",
+          "meaning": "يحدد بنية توصيف viewport وscissor.",
+          "usage": "يظهر داخل إنشاء الـ pipeline.",
+          "benefit": "يربط الـ pipeline بمجال الرسم الفعلي داخل الصورة.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO": {
+          "numeric": "23",
+          "meaning": "يحدد بنية تحويل البدائيات إلى fragments.",
+          "usage": "يُستخدم في إعدادات rasterizer.",
+          "benefit": "يحدد التعبئة والقص واتجاه الواجهة الأمامية.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO": {
+          "numeric": "24",
+          "meaning": "يحدد بنية multisampling للـ pipeline.",
+          "usage": "يُستخدم في إنشاء الرسوميات.",
+          "benefit": "يحدد عدد العينات وسياسات أخذ العينات.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO": {
+          "numeric": "26",
+          "meaning": "يحدد بنية مزج الألوان.",
+          "usage": "تُمرر داخل `VkGraphicsPipelineCreateInfo`.",
+          "benefit": "تحدد هل اللون الناتج سيُكتب مباشرة أم يختلط بما في المرفق.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO": {
+          "numeric": "30",
+          "meaning": "يحدد بنية إنشاء `VkPipelineLayout`.",
+          "usage": "يظهر مع `vkCreatePipelineLayout`.",
+          "benefit": "يجمع descriptor sets وpush constants في عقدة واحدة تربط الشيدر بالموارد.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO": {
+          "numeric": "32",
+          "meaning": "يحدد بنية إنشاء تخطيط descriptor set.",
+          "usage": "يظهر مع `vkCreateDescriptorSetLayout`.",
+          "benefit": "يعرف للدالة شكل الروابط التي سيراها الشيدر.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO": {
+          "numeric": "37",
+          "meaning": "يحدد بنية إنشاء `VkFramebuffer`.",
+          "usage": "تُستخدم مع `vkCreateFramebuffer`.",
+          "benefit": "تربط Render Pass بصور العرض الحقيقية.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO": {
+          "numeric": "28",
+          "meaning": "يحدد بنية إنشاء Graphics Pipeline كامل.",
+          "usage": "يظهر مع `vkCreateGraphicsPipelines`.",
+          "benefit": "يجمع كل مراحل الشيدر والحالات الثابتة في بنية واحدة للإنشاء.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR": {
+          "numeric": "1000001000",
+          "meaning": "يحدد بنية إنشاء `VkSwapchainKHR` من امتداد العرض.",
+          "usage": "يظهر مع `vkCreateSwapchainKHR`.",
+          "benefit": "يصف عدد الصور، التنسيق، نمط العرض، وحالة المشاركة بين الطوابير.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_PRESENT_INFO_KHR"
+          ]
+        },
+        "VK_STRUCTURE_TYPE_PRESENT_INFO_KHR": {
+          "numeric": "1000001001",
+          "meaning": "يحدد بنية تقديم الصورة إلى محرك العرض.",
+          "usage": "يظهر مع `vkQueuePresentKHR`.",
+          "benefit": "يجمع swapchains والصور والـ semaphores المنتظر عليها قبل العرض.",
+          "alternatives": [
+            "VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR"
+          ]
+        }
+      }
+    },
+    "VkPresentModeKHR": {
+      "meaning": "تعداد يحدد سياسة تمرير الإطارات من Swapchain إلى محرك العرض في النظام.",
+      "apiPurpose": "اختيار قيمة مختلفة هنا يغيّر التأخير، السلاسة، واستهلاك الإطارات القديمة عند التقديم.",
+      "values": {
+        "VK_PRESENT_MODE_IMMEDIATE_KHR": {
+          "numeric": "0",
+          "meaning": "عرض فوري دون انتظار V-Sync وقد يؤدي إلى tearing.",
+          "usage": "يستخدم عندما تكون أقل درجة تأخير أهم من جودة العرض.",
+          "benefit": "أقل انتظار قبل العرض.",
+          "alternatives": [
+            "VK_PRESENT_MODE_FIFO_KHR",
+            "VK_PRESENT_MODE_MAILBOX_KHR"
+          ]
+        },
+        "VK_PRESENT_MODE_MAILBOX_KHR": {
+          "numeric": "1",
+          "meaning": "يحتفظ بآخر إطار جاهز ويستبدل الأقدم قبل العرض.",
+          "usage": "مفيد للرسم السريع مع تقليل tearing عندما يكون مدعوماً.",
+          "benefit": "سلاسة أعلى من FIFO عند ارتفاع معدل الإطارات.",
+          "alternatives": [
+            "VK_PRESENT_MODE_FIFO_KHR",
+            "VK_PRESENT_MODE_IMMEDIATE_KHR"
+          ]
+        },
+        "VK_PRESENT_MODE_FIFO_KHR": {
+          "numeric": "2",
+          "meaning": "يضع الإطارات في طابور FIFO متوافق مع V-Sync.",
+          "usage": "النمط المضمون في المواصفة والأكثر أماناً للتوافق.",
+          "benefit": "توافق عالٍ وسلوك عرض متوقع على كل الأنظمة.",
+          "alternatives": [
+            "VK_PRESENT_MODE_MAILBOX_KHR",
+            "VK_PRESENT_MODE_IMMEDIATE_KHR"
+          ]
+        },
+        "VK_PRESENT_MODE_FIFO_RELAXED_KHR": {
+          "numeric": "3",
+          "meaning": "شبيه FIFO لكن يسمح بعرض متأخر إذا فات التطبيق دورة عرض.",
+          "usage": "يستخدم عندما تريد سلوكاً وسطاً بين FIFO وIMMEDIATE.",
+          "benefit": "قد يقلل بعض الانتظار بعد فوات الإطار.",
+          "alternatives": [
+            "VK_PRESENT_MODE_FIFO_KHR"
+          ]
+        }
+      }
+    },
+    "VkPipelineStageFlagBits": {
+      "meaning": "رايات تحدد أي مرحلة من خط تنفيذ GPU تقرأ مورداً أو تكتب إليه أو يجب أن تنتظر قبل المتابعة.",
+      "apiPurpose": "تستخدمها المزامنة لتحديد أين يبدأ الاعتماد وأين ينتهي، حتى لا تُترك الحواجز عامة أكثر من اللازم.",
+      "values": {
+        "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT": {
+          "numeric": "0x00000001",
+          "meaning": "بداية خط الأنابيب قبل تنفيذ المراحل الفعلية.",
+          "usage": "يستخدم كنقطة مبكرة في بعض الحواجز.",
+          "benefit": "يصف اعتماداً يبدأ من أول الخط.",
+          "alternatives": [
+            "VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT",
+            "VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT"
+          ]
+        },
+        "VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT": {
+          "numeric": "0x00000400",
+          "meaning": "مرحلة كتابة مرفقات اللون قبل/أثناء الإخراج إلى الـ framebuffer.",
+          "usage": "تستخدم كثيراً مع semaphores الخاصة بصور Swapchain ومرفقات اللون.",
+          "benefit": "تجعل الانتظار محصوراً بالمرحلة التي ستكتب فعلاً إلى صورة العرض.",
+          "alternatives": [
+            "VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT",
+            "VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT"
+          ]
+        },
+        "VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT": {
+          "numeric": "0x00000080",
+          "meaning": "مرحلة تنفيذ fragment shader.",
+          "usage": "تستخدم عندما يكون المورد مقروءاً داخل fragment shader.",
+          "benefit": "تخصيص أدق من الانتظار على مراحل أوسع.",
+          "alternatives": [
+            "VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT"
+          ]
+        },
+        "VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT": {
+          "numeric": "0x00002000",
+          "meaning": "نهاية خط الأنابيب بعد اكتمال المعالجة.",
+          "usage": "يستخدم في بعض الحواجز الختامية.",
+          "benefit": "يمثل الاعتماد بعد اكتمال المراحل السابقة.",
+          "alternatives": [
+            "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT"
+          ]
+        }
+      }
+    },
+    "VkShaderStageFlagBits": {
+      "meaning": "رايات تحدد أي مرحلة shader يُسمح لها بالوصول إلى مورد أو تُستخدم لوصف مرحلة shader داخل pipeline.",
+      "apiPurpose": "تمكّن Vulkan من ربط المورد أو الـ push constants أو stage info بمرحلة محددة بدل جعله مرئياً لكل المراحل بلا حاجة.",
+      "values": {
+        "VK_SHADER_STAGE_VERTEX_BIT": {
+          "numeric": "0x00000001",
+          "meaning": "مرحلة vertex shader.",
+          "usage": "تستخدم في `stageFlags` أو `stage` عندما يكون المورد أو الـ module خاصاً بالرؤوس.",
+          "benefit": "تحصر المورد في المرحلة التي تحتاجه فقط.",
+          "alternatives": [
+            "VK_SHADER_STAGE_FRAGMENT_BIT",
+            "VK_SHADER_STAGE_COMPUTE_BIT"
+          ]
+        },
+        "VK_SHADER_STAGE_FRAGMENT_BIT": {
+          "numeric": "0x00000010",
+          "meaning": "مرحلة fragment shader.",
+          "usage": "تستخدم للموارد أو الـ shader modules الخاصة بالتظليل الجزئي.",
+          "benefit": "تربط المورد بمرحلة توليد اللون النهائي.",
+          "alternatives": [
+            "VK_SHADER_STAGE_VERTEX_BIT"
+          ]
+        },
+        "VK_SHADER_STAGE_COMPUTE_BIT": {
+          "numeric": "0x00000020",
+          "meaning": "مرحلة compute shader.",
+          "usage": "تظهر في مسارات الحوسبة لا الرسوميات.",
+          "benefit": "تفصل موارد الحوسبة عن مراحل الرسم.",
+          "alternatives": [
+            "VK_SHADER_STAGE_VERTEX_BIT",
+            "VK_SHADER_STAGE_FRAGMENT_BIT"
+          ]
+        }
+      }
+    },
+    "VkPrimitiveTopology": {
+      "meaning": "تعداد يحدد كيف تُفسر الرؤوس المتتابعة: نقاط أم خطوط أم مثلثات.",
+      "apiPurpose": "بدونه لا تعرف مرحلة Input Assembly كيف تحول الرؤوس إلى بدائيات قابلة للرسم.",
+      "values": {
+        "VK_PRIMITIVE_TOPOLOGY_POINT_LIST": {
+          "numeric": "0",
+          "meaning": "كل رأس يمثل نقطة مستقلة.",
+          "usage": "للرسم النقطي.",
+          "benefit": "أبسط تمثيل للرؤوس.",
+          "alternatives": [
+            "VK_PRIMITIVE_TOPOLOGY_LINE_LIST",
+            "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST"
+          ]
+        },
+        "VK_PRIMITIVE_TOPOLOGY_LINE_LIST": {
+          "numeric": "1",
+          "meaning": "كل زوج رؤوس يمثل خطاً مستقلاً.",
+          "usage": "للشبكات والخطوط الهندسية.",
+          "benefit": "سهل عند رسم أضلاع مستقلة.",
+          "alternatives": [
+            "VK_PRIMITIVE_TOPOLOGY_LINE_STRIP"
+          ]
+        },
+        "VK_PRIMITIVE_TOPOLOGY_LINE_STRIP": {
+          "numeric": "2",
+          "meaning": "كل رأس جديد يكمل خطاً مع السابق.",
+          "usage": "للمنحنيات والمسارات.",
+          "benefit": "أقل تكراراً للرؤوس من LINE_LIST.",
+          "alternatives": [
+            "VK_PRIMITIVE_TOPOLOGY_LINE_LIST"
+          ]
+        },
+        "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST": {
+          "numeric": "3",
+          "meaning": "كل ثلاث رؤوس تمثل مثلثاً مستقلاً.",
+          "usage": "الخيار القياسي لرسم المثلث في الأمثلة الأساسية.",
+          "benefit": "لا يعتمد على ترتيب متصل بين المثلثات المجاورة.",
+          "alternatives": [
+            "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP",
+            "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN"
+          ]
+        },
+        "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP": {
+          "numeric": "4",
+          "meaning": "كل رأس جديد بعد الأولين يكمل مثلثاً جديداً.",
+          "usage": "للهندسة المتصلة وتقليل عدد الرؤوس.",
+          "benefit": "أقل استهلاكاً للرؤوس من TRIANGLE_LIST في بعض الحالات.",
+          "alternatives": [
+            "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST"
+          ]
+        },
+        "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN": {
+          "numeric": "5",
+          "meaning": "كل مثلث يشارك الرأس الأول.",
+          "usage": "للأشكال الشعاعية أو الدائرية البسيطة.",
+          "benefit": "مفيد لبنى محددة فقط.",
+          "alternatives": [
+            "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST"
+          ]
+        }
+      }
+    },
+    "VkImageLayout": {
+      "meaning": "تعداد يصف الترتيب المنطقي الحالي لاستخدام الصورة داخل GPU.",
+      "apiPurpose": "يسمح لـ Vulkan بتتبع هل الصورة ستُقرأ أو تُكتب أو ستُعرض، لأن الانتقالات بين هذه الحالات جزء صريح من API.",
+      "values": {
+        "VK_IMAGE_LAYOUT_UNDEFINED": {
+          "numeric": "0",
+          "meaning": "محتوى الصورة السابق غير مهم ويمكن اعتباره غير صالح.",
+          "usage": "يستخدم كحالة أولية قبل أول كتابة جادة للصورة.",
+          "benefit": "يسمح للسائق بالتخلص من المحتوى السابق دون نسخ أو حفظ.",
+          "alternatives": [
+            "VK_IMAGE_LAYOUT_GENERAL",
+            "VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL"
+          ]
+        },
+        "VK_IMAGE_LAYOUT_GENERAL": {
+          "numeric": "1",
+          "meaning": "تخطيط عام صالح لعدة أنواع وصول لكنه أقل تخصصاً.",
+          "usage": "يستخدم عندما تحتاج مرونة أعلى.",
+          "benefit": "يدعم استخدامات مختلفة للصورة.",
+          "alternatives": [
+            "VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL",
+            "VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL"
+          ]
+        },
+        "VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL": {
+          "numeric": "2",
+          "meaning": "تخطيط مخصص للكتابة إلى الصورة كمرفق لون.",
+          "usage": "يظهر في render pass وattachment references.",
+          "benefit": "أفضل تخطيط لمسار كتابة اللون أثناء الرسم.",
+          "alternatives": [
+            "VK_IMAGE_LAYOUT_PRESENT_SRC_KHR",
+            "VK_IMAGE_LAYOUT_GENERAL"
+          ]
+        },
+        "VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL": {
+          "numeric": "7",
+          "meaning": "تخطيط مخصص لاستقبال نسخ بيانات إلى الصورة.",
+          "usage": "يظهر قبل `vkCmdCopyBufferToImage` مثلاً.",
+          "benefit": "يحسن مسار النسخ إلى الصورة.",
+          "alternatives": [
+            "VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL"
+          ]
+        },
+        "VK_IMAGE_LAYOUT_PRESENT_SRC_KHR": {
+          "numeric": "1000001002",
+          "meaning": "تخطيط الصورة الجاهزة للتقديم إلى محرك العرض.",
+          "usage": "يُستخدم كـ `finalLayout` لصور Swapchain قبل `vkQueuePresentKHR`.",
+          "benefit": "يجعل الصورة في الحالة التي يتوقعها محرك العرض.",
+          "alternatives": [
+            "VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL"
+          ]
+        }
+      }
+    },
+    "VkColorSpaceKHR": {
+      "meaning": "تعداد يحدد فضاء الألوان الذي تُفسَّر به قيم Swapchain عند العرض.",
+      "apiPurpose": "يضمن أن النظام يعرف هل البيانات ستحسب على أنها sRGB أو فضاء آخر عند التقديم.",
+      "values": {
+        "VK_COLOR_SPACE_SRGB_NONLINEAR_KHR": {
+          "numeric": "0",
+          "meaning": "فضاء ألوان sRGB غير خطي، وهو الأكثر شيوعاً للشاشات التقليدية.",
+          "usage": "يُستخدم عند اختيار تنسيق Swapchain شائع ومتوافق.",
+          "benefit": "سلوك لوني متوقع مع صيغ مثل `VK_FORMAT_B8G8R8A8_SRGB`.",
+          "alternatives": []
+        }
+      }
+    },
+    "VkFormat": {
+      "meaning": "تعداد يحدد شكل تخزين البيانات داخل الصورة أو المخزن: ترتيب القنوات، عرضها، وهل هي خطية أم sRGB.",
+      "apiPurpose": "بدونه لا يعرف Vulkan كيف يفسر البكسلات أو العناصر الثنائية في الذاكرة.",
+      "values": {
+        "VK_FORMAT_B8G8R8A8_UNORM": {
+          "numeric": "44",
+          "meaning": "تنسيق BGRA بثمانية بتات لكل قناة دون تصحيح sRGB.",
+          "usage": "مفيد عندما تريد إدارة التحويل اللوني بنفسك.",
+          "benefit": "تمثيل لوني مباشر دون تحويل sRGB.",
+          "alternatives": [
+            "VK_FORMAT_B8G8R8A8_SRGB"
+          ]
+        },
+        "VK_FORMAT_B8G8R8A8_SRGB": {
+          "numeric": "50",
+          "meaning": "تنسيق BGRA بثمانية بتات لكل قناة مع تفسير sRGB.",
+          "usage": "خيار شائع لصور Swapchain مع شاشات sRGB.",
+          "benefit": "يعطي مخرجات عرض صحيحة لونياً عند التقديم المعتاد.",
+          "alternatives": [
+            "VK_FORMAT_B8G8R8A8_UNORM"
+          ]
+        }
+      }
+    },
+    "VkCompositeAlphaFlagBitsKHR": {
+      "meaning": "رايات تحدد كيف يتعامل نظام العرض مع قناة alpha الخاصة بصورة Swapchain عند دمجها مع سطح النظام.",
+      "apiPurpose": "تسمح للتطبيق باختيار هل ستكون نافذة العرض معتمة أو شفافة أو تعتمد alpha من صورة السطح.",
+      "values": {
+        "VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR": {
+          "numeric": "0x00000001",
+          "meaning": "يعامل الصورة على أنها معتمة تماماً بغض النظر عن alpha.",
+          "usage": "الخيار الأبسط والأكثر شيوعاً لنوافذ الرسم التقليدية.",
+          "benefit": "يتجنب تعقيدات مزج نافذة التطبيق مع خلفية سطح المكتب.",
+          "alternatives": [
+            "VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR",
+            "VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR",
+            "VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR"
+          ]
+        }
+      }
+    },
+    "VkSharingMode": {
+      "meaning": "تعداد يحدد هل يملك المورد صفاً واحداً من الطوابير أم يمكن مشاركته مباشرة بين أكثر من عائلة طوابير.",
+      "apiPurpose": "يؤثر في أداء الوصول إلى الموارد بين graphics/present/compute queue families.",
+      "values": {
+        "VK_SHARING_MODE_EXCLUSIVE": {
+          "numeric": "0",
+          "meaning": "المورد مملوك لعائلة طابور واحدة في كل لحظة.",
+          "usage": "الأفضل أداء عندما تكون نفس العائلة تستخدم المورد.",
+          "benefit": "أقل كلفة في التعقب الداخلي.",
+          "alternatives": [
+            "VK_SHARING_MODE_CONCURRENT"
+          ]
+        },
+        "VK_SHARING_MODE_CONCURRENT": {
+          "numeric": "1",
+          "meaning": "المورد يمكن الوصول إليه من أكثر من عائلة دون نقل ملكية صريح.",
+          "usage": "يستخدم عندما تختلف عائلة graphics عن present.",
+          "benefit": "يبسط المسار عندما تحتاج أكثر من queue family.",
+          "alternatives": [
+            "VK_SHARING_MODE_EXCLUSIVE"
+          ]
+        }
+      }
+    },
+    "VkPipelineBindPoint": {
+      "meaning": "تعداد يحدد هل الأوامر أو الموارد مرتبطة بخط رسم رسومي أم حسابي أم نوع آخر من خطوط التنفيذ.",
+      "apiPurpose": "يمنع خلط موارد graphics مع compute عند الربط أو التسجيل.",
+      "values": {
+        "VK_PIPELINE_BIND_POINT_GRAPHICS": {
+          "numeric": "0",
+          "meaning": "ربط ضمن مسار الرسوميات.",
+          "usage": "يظهر مع `vkCmdBindPipeline` وsubpasses الرسومية.",
+          "benefit": "يوضح أن الأوامر التالية ستخدم الرسم.",
+          "alternatives": [
+            "VK_PIPELINE_BIND_POINT_COMPUTE"
+          ]
+        },
+        "VK_PIPELINE_BIND_POINT_COMPUTE": {
+          "numeric": "1",
+          "meaning": "ربط ضمن مسار الحوسبة.",
+          "usage": "يظهر مع أوامر compute pipelines.",
+          "benefit": "يفصل مسار compute عن graphics.",
+          "alternatives": [
+            "VK_PIPELINE_BIND_POINT_GRAPHICS"
+          ]
+        }
+      }
+    },
+    "VkSampleCountFlagBits": {
+      "meaning": "رايات تحدد عدد العينات لكل بكسل عند multisampling.",
+      "apiPurpose": "الـ API يحتاجها لوصف جودة أخذ العينات في الصور والمرفقات والـ pipeline.",
+      "values": {
+        "VK_SAMPLE_COUNT_1_BIT": {
+          "numeric": "0x00000001",
+          "meaning": "بدون multisampling؛ عينة واحدة لكل بكسل.",
+          "usage": "الخيار الأبسط في أمثلة المثلث.",
+          "benefit": "أسهل إعداد وأقل كلفة.",
+          "alternatives": [
+            "VK_SAMPLE_COUNT_2_BIT",
+            "VK_SAMPLE_COUNT_4_BIT",
+            "VK_SAMPLE_COUNT_8_BIT"
+          ]
+        }
+      }
+    },
+    "VkAttachmentLoadOp": {
+      "meaning": "تعداد يحدد ماذا يحدث لمحتوى المرفق عند بداية subpass.",
+      "apiPurpose": "يحدد هل سيتم مسح المرفق أو الاحتفاظ بمحتواه السابق أو تجاهله.",
+      "values": {
+        "VK_ATTACHMENT_LOAD_OP_LOAD": {
+          "numeric": "0",
+          "meaning": "الاحتفاظ بالمحتوى السابق للمرفق.",
+          "usage": "يستخدم عندما تريد البناء فوق محتوى قائم.",
+          "benefit": "يحافظ على البيانات السابقة.",
+          "alternatives": [
+            "VK_ATTACHMENT_LOAD_OP_CLEAR",
+            "VK_ATTACHMENT_LOAD_OP_DONT_CARE"
+          ]
+        },
+        "VK_ATTACHMENT_LOAD_OP_CLEAR": {
+          "numeric": "1",
+          "meaning": "مسح المرفق إلى قيمة clear في بداية الممر.",
+          "usage": "الخيار المعتاد في أول مثال رسم.",
+          "benefit": "يضمن خلفية معروفة قبل الرسم.",
+          "alternatives": [
+            "VK_ATTACHMENT_LOAD_OP_LOAD",
+            "VK_ATTACHMENT_LOAD_OP_DONT_CARE"
+          ]
+        },
+        "VK_ATTACHMENT_LOAD_OP_DONT_CARE": {
+          "numeric": "2",
+          "meaning": "لا يهم المحتوى السابق للمرفق.",
+          "usage": "يستخدم عندما ستكتب فوقه كلياً ولا تحتاج حفظ ما سبقه.",
+          "benefit": "قد يسمح بتحسينات داخلية إضافية.",
+          "alternatives": [
+            "VK_ATTACHMENT_LOAD_OP_CLEAR"
+          ]
+        }
+      }
+    },
+    "VkAttachmentStoreOp": {
+      "meaning": "تعداد يحدد ماذا يحدث لمحتوى المرفق عند نهاية subpass أو render pass.",
+      "apiPurpose": "يقرر هل القيمة النهائية للمرفق ستُحفظ للاستعمال اللاحق أو يمكن تجاهلها.",
+      "values": {
+        "VK_ATTACHMENT_STORE_OP_STORE": {
+          "numeric": "0",
+          "meaning": "الاحتفاظ بالمحتوى النهائي بعد اكتمال الرسم.",
+          "usage": "مطلوب لصور Swapchain التي ستُعرض.",
+          "benefit": "يجعل النتيجة النهائية متاحة للتقديم أو القراءة اللاحقة.",
+          "alternatives": [
+            "VK_ATTACHMENT_STORE_OP_DONT_CARE"
+          ]
+        },
+        "VK_ATTACHMENT_STORE_OP_DONT_CARE": {
+          "numeric": "1",
+          "meaning": "لا حاجة للاحتفاظ بالمحتوى النهائي.",
+          "usage": "يستخدم عندما لن تحتاج إلى النتيجة بعد انتهاء الممر.",
+          "benefit": "قد يخفض كلفة الحفظ لبعض المرفقات.",
+          "alternatives": [
+            "VK_ATTACHMENT_STORE_OP_STORE"
+          ]
+        }
+      }
+    },
+    "VkCommandBufferLevel": {
+      "meaning": "تعداد يحدد هل مخزن الأوامر أساسي يمكن إرساله مباشرة أم ثانوي يُستدعى من مخزن آخر.",
+      "apiPurpose": "يوضح علاقة التسجيل والتنفيذ بين command buffers داخل النظام.",
+      "values": {
+        "VK_COMMAND_BUFFER_LEVEL_PRIMARY": {
+          "numeric": "0",
+          "meaning": "مخزن أوامر أساسي يمكن إرساله مباشرة إلى الطابور.",
+          "usage": "الخيار المعتاد في أمثلة الإطار الأساسية.",
+          "benefit": "الأبسط للتجارب والدروس.",
+          "alternatives": [
+            "VK_COMMAND_BUFFER_LEVEL_SECONDARY"
+          ]
+        },
+        "VK_COMMAND_BUFFER_LEVEL_SECONDARY": {
+          "numeric": "1",
+          "meaning": "مخزن أوامر ثانوي يُنفذ من داخل مخزن أساسي.",
+          "usage": "مفيد لتقسيم التسجيل بين خيوط أو وحدات.",
+          "benefit": "تنظيم أفضل في المشاريع الكبيرة.",
+          "alternatives": [
+            "VK_COMMAND_BUFFER_LEVEL_PRIMARY"
+          ]
+        }
+      }
+    }
+  },
+  "knownFieldMetadata": {
+    "sType": {
+      "what": "عضو تمييز نوع البنية في هياكل Vulkan.",
+      "meaning": "يحمل قيمة من VkStructureType تخبر الدالة بالنوع الفعلي للبنية الممررة.",
+      "usage": "يجب ضبطه قبل تمرير البنية إلى أي دالة Vulkan تعتمد على هذا النوع من الهياكل.",
+      "possibleValues": "قيمة واحدة محددة من VkStructureType توافق نوع البنية الحالية.",
+      "invalid": "إذا كانت القيمة خاطئة فقد ترفض Validation Layers البنية أو تتعامل معها كنوع غير صحيح."
+    },
+    "pNext": {
+      "what": "مؤشر إلى بداية سلسلة امتدادات Vulkan.",
+      "meaning": "يسمح بربط هياكل إضافية لتفعيل ميزات أو امتدادات لا تحتويها البنية الأساسية مباشرة.",
+      "usage": "يكون nullptr عند عدم تمرير أي بنية إضافية، أو يشير إلى أول بنية امتدادية متوافقة.",
+      "possibleValues": "nullptr أو عنوان بنية إضافية تبدأ بسطر sType/pNext خاص بها.",
+      "invalid": "إذا أشار إلى بنية غير متوافقة أو غير مهيأة فقد ينتج خطأ تحقق أو يتم تجاهل الامتداد."
+    },
+    "pApplicationInfo": {
+      "what": "مؤشر إلى بنية VkApplicationInfo.",
+      "meaning": "ينقل معلومات تعريف التطبيق والمحرك وإصدار API المطلوب إلى VkInstanceCreateInfo.",
+      "usage": "تقرأه vkCreateInstance لفهم هوية التطبيق والإصدار الذي يستهدفه.",
+      "possibleValues": "nullptr إذا لم ترغب في تمرير معلومات التطبيق، أو عنوان بنية VkApplicationInfo صالحة.",
+      "invalid": "إذا كان المؤشر غير صالح أو كانت البنية المشار إليها غير مهيأة فستظهر أخطاء تحقق أو فشل في الإنشاء."
+    },
+    "flags": {
+      "what": "حقل رايات bitmask داخل البنية.",
+      "meaning": "يضيف سلوكيات اختيارية تعرفها المواصفة لهذه البنية أو لهذا الاستدعاء.",
+      "usage": "يُترك صفراً عند عدم الحاجة لأي راية إضافية.",
+      "possibleValues": "0 أو مزيج من الرايات التي تسمح بها المواصفة لهذا الحقل.",
+      "invalid": "أي راية غير مدعومة أو غير متوافقة قد تؤدي إلى فشل الاستدعاء أو تحذيرات تحقق."
+    },
+    "enabledLayerCount": {
+      "what": "عدد طبقات التحقق أو الطبقات المطلوبة.",
+      "meaning": "يجب أن يطابق عدد الأسماء الموجودة في ppEnabledLayerNames.",
+      "usage": "تقرأه دالة الإنشاء لمعرفة عدد عناصر مصفوفة الطبقات.",
+      "possibleValues": "0 إذا لم تكن هناك طبقات، أو عدد صحيح يساوي طول المصفوفة.",
+      "invalid": "إذا لم يطابق القيمة الفعلية للمصفوفة قد تقرأ الدالة بيانات غير صحيحة أو تفشل Validation."
+    },
+    "ppEnabledLayerNames": {
+      "what": "مؤشر إلى مصفوفة أسماء الطبقات.",
+      "meaning": "يحمل أسماء طبقات Vulkan المطلوب تفعيلها على مستوى المثيل أو الجهاز.",
+      "usage": "يرتبط دائماً بالحقل enabledLayerCount.",
+      "possibleValues": "nullptr عند عدم تفعيل أي طبقة، أو عنوان مصفوفة أسماء نصية صحيحة.",
+      "invalid": "الأسماء غير الموجودة أو المؤشر غير الصالح يسببان فشل التهيئة أو رسائل تحقق واضحة."
+    },
+    "enabledExtensionCount": {
+      "what": "عدد الامتدادات المطلوبة.",
+      "meaning": "يحدد عدد العناصر التي يجب أن تقرأها الدالة من ppEnabledExtensionNames.",
+      "usage": "يجب أن يساوي طول مصفوفة الامتدادات تماماً.",
+      "possibleValues": "0 أو عدد صحيح موجب يطابق المصفوفة.",
+      "invalid": "عدم التطابق مع المصفوفة قد يؤدي إلى قراءة خاطئة أو فشل إنشاء المثيل أو الجهاز."
+    },
+    "ppEnabledExtensionNames": {
+      "what": "مؤشر إلى مصفوفة أسماء امتدادات Vulkan.",
+      "meaning": "ينقل أسماء الامتدادات المطلوبة مثل امتداد surface أو swapchain.",
+      "usage": "تقرأه دالة الإنشاء مع enabledExtensionCount لتفعيل الامتدادات.",
+      "possibleValues": "nullptr عند عدم طلب امتدادات، أو عنوان مصفوفة أسماء نصية صحيحة.",
+      "invalid": "طلب امتداد غير مدعوم أو تمرير مؤشر غير صالح يؤدي غالباً إلى فشل الاستدعاء."
+    },
+    "queueFamilyIndex": {
+      "what": "فهرس عائلة الطابور المطلوبة.",
+      "meaning": "يحدد أي Queue Family داخل الجهاز الفيزيائي سيُنشأ منها الطابور.",
+      "usage": "يجب أن يكون فهرساً تم العثور عليه مسبقاً عبر استعلام خصائص Queue Families.",
+      "possibleValues": "أي فهرس صحيح لعائلة تدعم القدرات المطلوبة.",
+      "invalid": "الفهرس الخاطئ يمنع إنشاء الجهاز أو ينتج طابوراً لا يدعم العمل المطلوب."
+    },
+    "queueCount": {
+      "what": "عدد الطوابير المطلوبة من العائلة المحددة.",
+      "meaning": "يخبر الجهاز المنطقي بعدد مقابض الطوابير التي تريد حجزها من Queue Family معينة.",
+      "usage": "يرتبط عادة بعدد عناصر pQueuePriorities.",
+      "possibleValues": "قيمة بين 1 والحد الأقصى المدعوم لتلك العائلة.",
+      "invalid": "إذا تجاوز العدد ما تدعمه العائلة سيفشل إنشاء الجهاز."
+    },
+    "pQueuePriorities": {
+      "what": "مؤشر إلى مصفوفة أولويات الطوابير.",
+      "meaning": "يعطي لكل طابور قيمة أولوية عائمة بين 0.0 و 1.0.",
+      "usage": "كل عنصر منها يقابل طابوراً سيُنشأ من Queue Family المحددة.",
+      "possibleValues": "عنوان مصفوفة float بطول queueCount.",
+      "invalid": "إذا كان المؤشر غير صالح أو الطول لا يطابق queueCount فسيفشل الإنشاء أو تظهر أخطاء تحقق."
+    },
+    "stage": {
+      "what": "حقل يحدد مرحلة Shader أو مرحلة تنفيذ.",
+      "meaning": "يعتمد معناه الدقيق على البنية، لكنه غالباً يختار مرحلة مثل vertex أو fragment.",
+      "usage": "يربط هذا الكائن بالمرحلة التي سيعمل فيها داخل الـ Pipeline أو المزامنة.",
+      "possibleValues": "قيمة تعداد أو flag محددة من المواصفة بحسب نوع الحقل.",
+      "invalid": "المرحلة غير المتوافقة مع بقية الإعدادات قد تمنع إنشاء الـ Pipeline أو تسبب أخطاء تحقق."
+    },
+    "module": {
+      "what": "مقبض Shader Module أو مورد مماثل.",
+      "meaning": "يشير إلى الكائن الذي يحمل بايت كود SPIR-V أو المورد المطلوب.",
+      "usage": "تقرأه البنية الحالية لربط المرحلة البرمجية بموردها الحقيقي.",
+      "possibleValues": "مقبض صالح أُنشئ سابقاً بالدالة المناسبة.",
+      "invalid": "إذا كان VK_NULL_HANDLE أو مقبضاً مدمراً سيفشل الاستدعاء اللاحق."
+    },
+    "pName": {
+      "what": "مؤشر إلى اسم نصي.",
+      "meaning": "في هياكل Shader stages يحدد اسم نقطة الدخول داخل الشيدر، وغالباً يكون main.",
+      "usage": "تقرأه مرحلة الإنشاء لاختيار الدالة البرمجية داخل الشيدر.",
+      "possibleValues": "عنوان سلسلة نصية منتهية بصفر مثل \"main\".",
+      "invalid": "إذا لم تطابق السلسلة نقطة دخول موجودة سيفشل إنشاء المرحلة أو الـ Pipeline."
+    }
+  }
+}

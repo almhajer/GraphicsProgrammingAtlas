@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_format_utils.h • القسم 4 من 5 • الأسطر 1351-1800 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vk_format_utils.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_format_utils.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vk_format_utils.h.html">vk_format_utils.h</a> /
+        <span>القسم 4 من 5 • الأسطر 1351-1800</span>
+      </nav>
+      <h1 class="page-title">📄 vk_format_utils.h</h1>
+      <p class="page-description">القسم 4 من 5 • الأسطر 1351-1800</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_format_utils.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_format_utils.h--section-3.html">القسم السابق</a>
+      <a class="standalone-link" href="./vk_format_utils.h--section-5.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vk_format_utils.h</span>
+        <span class="source-stat">القسم: 4/5</span>
+        <span class="source-stat">الأسطر: 1351-1800</span>
+        <span class="source-stat">حجم الملف: 135.7 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>}
+
+// Return true if format is a depth OR stencil format
+bool vkuFormatIsDepthOrStencil(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_D16_UNORM:
+        case VK_FORMAT_X8_D24_UNORM_PACK32:
+        case VK_FORMAT_D32_SFLOAT:
+        case VK_FORMAT_S8_UINT:
+        case VK_FORMAT_D16_UNORM_S8_UINT:
+        case VK_FORMAT_D24_UNORM_S8_UINT:
+        case VK_FORMAT_D32_SFLOAT_S8_UINT:
+            return true;
+        default:
+            return false;
+    }
+}
+
+// Return true if format is a depth AND stencil format
+bool vkuFormatIsDepthAndStencil(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_D16_UNORM_S8_UINT:
+        case VK_FORMAT_D24_UNORM_S8_UINT:
+        case VK_FORMAT_D32_SFLOAT_S8_UINT:
+            return true;
+        default:
+            return false;
+    }
+}
+
+// Return true if format is a depth ONLY format
+bool vkuFormatIsDepthOnly(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_D16_UNORM:
+        case VK_FORMAT_X8_D24_UNORM_PACK32:
+        case VK_FORMAT_D32_SFLOAT:
+            return true;
+        default:
+            return false;
+    }
+}
+
+// Return true if format is a stencil ONLY format
+bool vkuFormatIsStencilOnly(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_S8_UINT:
+            return true;
+        default:
+            return false;
+    }
+}
+
+// Returns size of depth component in bits
+// Returns zero if no depth component
+uint32_t vkuFormatDepthSize(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_D16_UNORM:
+        case VK_FORMAT_D16_UNORM_S8_UINT:
+            return 16;
+        case VK_FORMAT_D24_UNORM_S8_UINT:
+        case VK_FORMAT_X8_D24_UNORM_PACK32:
+            return 24;
+        case VK_FORMAT_D32_SFLOAT:
+        case VK_FORMAT_D32_SFLOAT_S8_UINT:
+            return 32;
+        default:
+            return 0;
+    }
+}
+
+// Returns size of stencil component in bits
+// Returns zero if no stencil component
+uint32_t vkuFormatStencilSize(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_D16_UNORM_S8_UINT:
+        case VK_FORMAT_D24_UNORM_S8_UINT:
+        case VK_FORMAT_D32_SFLOAT_S8_UINT:
+        case VK_FORMAT_S8_UINT:
+            return 8;
+        default:
+            return 0;
+    }
+}
+
+// Returns NONE if no depth component
+enum VKU_FORMAT_NUMERICAL_TYPE vkuFormatDepthNumericalType(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_D16_UNORM:
+        case VK_FORMAT_D16_UNORM_S8_UINT:
+        case VK_FORMAT_D24_UNORM_S8_UINT:
+        case VK_FORMAT_X8_D24_UNORM_PACK32:
+            return VKU_FORMAT_NUMERICAL_TYPE_UNORM;
+        case VK_FORMAT_D32_SFLOAT:
+        case VK_FORMAT_D32_SFLOAT_S8_UINT:
+            return VKU_FORMAT_NUMERICAL_TYPE_SFLOAT;
+        default:
+            return VKU_FORMAT_NUMERICAL_TYPE_NONE;
+    }
+}
+
+// Returns NONE if no stencil component
+enum VKU_FORMAT_NUMERICAL_TYPE vkuFormatStencilNumericalType(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_D16_UNORM_S8_UINT:
+        case VK_FORMAT_D24_UNORM_S8_UINT:
+        case VK_FORMAT_D32_SFLOAT_S8_UINT:
+        case VK_FORMAT_S8_UINT:
+            return VKU_FORMAT_NUMERICAL_TYPE_UINT;
+        default:
+            return VKU_FORMAT_NUMERICAL_TYPE_NONE;
+    }
+}
+
+// Return true if format is a packed format
+bool vkuFormatIsPacked(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_R4G4_UNORM_PACK8:
+        case VK_FORMAT_R4G4B4A4_UNORM_PACK16:
+        case VK_FORMAT_B4G4R4A4_UNORM_PACK16:
+        case VK_FORMAT_R5G6B5_UNORM_PACK16:
+        case VK_FORMAT_B5G6R5_UNORM_PACK16:
+        case VK_FORMAT_R5G5B5A1_UNORM_PACK16:
+        case VK_FORMAT_B5G5R5A1_UNORM_PACK16:
+        case VK_FORMAT_A1R5G5B5_UNORM_PACK16:
+        case VK_FORMAT_A1B5G5R5_UNORM_PACK16:
+        case VK_FORMAT_A8B8G8R8_UNORM_PACK32:
+        case VK_FORMAT_A8B8G8R8_SNORM_PACK32:
+        case VK_FORMAT_A8B8G8R8_USCALED_PACK32:
+        case VK_FORMAT_A8B8G8R8_SSCALED_PACK32:
+        case VK_FORMAT_A8B8G8R8_UINT_PACK32:
+        case VK_FORMAT_A8B8G8R8_SINT_PACK32:
+        case VK_FORMAT_A8B8G8R8_SRGB_PACK32:
+        case VK_FORMAT_A2R10G10B10_UNORM_PACK32:
+        case VK_FORMAT_A2R10G10B10_SNORM_PACK32:
+        case VK_FORMAT_A2R10G10B10_USCALED_PACK32:
+        case VK_FORMAT_A2R10G10B10_SSCALED_PACK32:
+        case VK_FORMAT_A2R10G10B10_UINT_PACK32:
+        case VK_FORMAT_A2R10G10B10_SINT_PACK32:
+        case VK_FORMAT_A2B10G10R10_UNORM_PACK32:
+        case VK_FORMAT_A2B10G10R10_SNORM_PACK32:
+        case VK_FORMAT_A2B10G10R10_USCALED_PACK32:
+        case VK_FORMAT_A2B10G10R10_SSCALED_PACK32:
+        case VK_FORMAT_A2B10G10R10_UINT_PACK32:
+        case VK_FORMAT_A2B10G10R10_SINT_PACK32:
+        case VK_FORMAT_B10G11R11_UFLOAT_PACK32:
+        case VK_FORMAT_E5B9G9R9_UFLOAT_PACK32:
+        case VK_FORMAT_X8_D24_UNORM_PACK32:
+        case VK_FORMAT_R10X6_UNORM_PACK16:
+        case VK_FORMAT_R10X6G10X6_UNORM_2PACK16:
+        case VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16:
+        case VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16:
+        case VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_R12X4_UNORM_PACK16:
+        case VK_FORMAT_R12X4G12X4_UNORM_2PACK16:
+        case VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16:
+        case VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16:
+        case VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_A4R4G4B4_UNORM_PACK16:
+        case VK_FORMAT_A4B4G4R4_UNORM_PACK16:
+        case VK_FORMAT_R10X6_UINT_PACK16_ARM:
+        case VK_FORMAT_R10X6G10X6_UINT_2PACK16_ARM:
+        case VK_FORMAT_R10X6G10X6B10X6A10X6_UINT_4PACK16_ARM:
+        case VK_FORMAT_R12X4_UINT_PACK16_ARM:
+        case VK_FORMAT_R12X4G12X4_UINT_2PACK16_ARM:
+        case VK_FORMAT_R12X4G12X4B12X4A12X4_UINT_4PACK16_ARM:
+        case VK_FORMAT_R14X2_UINT_PACK16_ARM:
+        case VK_FORMAT_R14X2G14X2_UINT_2PACK16_ARM:
+        case VK_FORMAT_R14X2G14X2B14X2A14X2_UINT_4PACK16_ARM:
+        case VK_FORMAT_R14X2_UNORM_PACK16_ARM:
+        case VK_FORMAT_R14X2G14X2_UNORM_2PACK16_ARM:
+        case VK_FORMAT_R14X2G14X2B14X2A14X2_UNORM_4PACK16_ARM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_420_UNORM_3PACK16_ARM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_422_UNORM_3PACK16_ARM:
+            return true;
+        default:
+            return false;
+    }
+}
+
+// Return true if format requires sampler YCBCR conversion
+// for VK_IMAGE_ASPECT_COLOR_BIT image views
+// Table found in spec
+bool vkuFormatRequiresYcbcrConversion(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_G8B8G8R8_422_UNORM:
+        case VK_FORMAT_B8G8R8G8_422_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM:
+        case VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16:
+        case VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16:
+        case VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16:
+        case VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16:
+        case VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G16B16G16R16_422_UNORM:
+        case VK_FORMAT_B16G16R16G16_422_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM:
+        case VK_FORMAT_G16_B16R16_2PLANE_422_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_444_UNORM:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G16_B16R16_2PLANE_444_UNORM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_420_UNORM_3PACK16_ARM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_422_UNORM_3PACK16_ARM:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool vkuFormatIsXChromaSubsampled(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_G8B8G8R8_422_UNORM:
+        case VK_FORMAT_B8G8R8G8_422_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:
+        case VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16:
+        case VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16:
+        case VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G16B16G16R16_422_UNORM:
+        case VK_FORMAT_B16G16R16G16_422_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM:
+        case VK_FORMAT_G16_B16R16_2PLANE_422_UNORM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_420_UNORM_3PACK16_ARM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_422_UNORM_3PACK16_ARM:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool vkuFormatIsYChromaSubsampled(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_420_UNORM_3PACK16_ARM:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool vkuFormatIsSinglePlane_422(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_G8B8G8R8_422_UNORM:
+        case VK_FORMAT_B8G8R8G8_422_UNORM:
+        case VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16:
+        case VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16:
+        case VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16:
+        case VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16:
+        case VK_FORMAT_G16B16G16R16_422_UNORM:
+        case VK_FORMAT_B16G16R16G16_422_UNORM:
+            return true;
+        default:
+            return false;
+    }
+}
+
+// Returns number of planes in format (which is 1 by default)
+uint32_t vkuFormatPlaneCount(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16R16_2PLANE_422_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_444_UNORM:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G16_B16R16_2PLANE_444_UNORM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_420_UNORM_3PACK16_ARM:
+        case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_422_UNORM_3PACK16_ARM:
+            return 2;
+        case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM:
+            return 3;
+        default:
+            return 1;
+    }
+}
+
+// Will return VK_FORMAT_UNDEFINED if given a plane aspect that doesn&#39;t exist for the format
+static inline VkFormat vkuFindMultiplaneCompatibleFormat(VkFormat mp_fmt, VkImageAspectFlagBits plane_aspect) {
+    const uint32_t plane_idx = vkuGetPlaneIndex(plane_aspect);
+    const struct VKU_FORMAT_MULTIPLANE_COMPATIBILITY multiplane_compatibility = vkuGetFormatCompatibility(mp_fmt);
+    if ((multiplane_compatibility.per_plane[0].compatible_format == VK_FORMAT_UNDEFINED) || (plane_idx &gt;= VKU_FORMAT_MAX_PLANES)) {
+        return VK_FORMAT_UNDEFINED;
+    }
+
+    return multiplane_compatibility.per_plane[plane_idx].compatible_format;
+}
+
+static inline VkExtent2D vkuFindMultiplaneExtentDivisors(VkFormat mp_fmt, VkImageAspectFlagBits plane_aspect) {
+    VkExtent2D divisors = {1, 1};
+    const uint32_t plane_idx = vkuGetPlaneIndex(plane_aspect);
+    const struct VKU_FORMAT_MULTIPLANE_COMPATIBILITY multiplane_compatibility = vkuGetFormatCompatibility(mp_fmt);
+    if ((multiplane_compatibility.per_plane[0].compatible_format == VK_FORMAT_UNDEFINED) || (plane_idx &gt;= VKU_FORMAT_MAX_PLANES)) {
+        return divisors;
+    }
+
+    divisors.width = multiplane_compatibility.per_plane[plane_idx].width_divisor;
+    divisors.height = multiplane_compatibility.per_plane[plane_idx].height_divisor;
+    return divisors;
+}
+
+// TODO - This should be generated, but will need updating the spec XML and table
+// Some few case don&#39;t have an aspect mask, so might need to check both the Depth and Stencil possiblity
+static inline bool vkuFormatIsDepthStencilWithColorSizeCompatible(VkFormat color_format, VkFormat ds_format, VkImageAspectFlags aspect_mask) {
+    bool valid = false;
+
+    if (aspect_mask &amp; VK_IMAGE_ASPECT_STENCIL_BIT) {
+        if (ds_format == VK_FORMAT_S8_UINT || ds_format == VK_FORMAT_D16_UNORM_S8_UINT ||
+            ds_format == VK_FORMAT_D24_UNORM_S8_UINT || ds_format == VK_FORMAT_D32_SFLOAT_S8_UINT) {
+            valid |= (color_format == VK_FORMAT_R8_UINT || color_format == VK_FORMAT_R8_SINT ||
+                      color_format == VK_FORMAT_R8_UNORM || color_format == VK_FORMAT_R8_SNORM);
+        }
+    }
+
+    if (aspect_mask &amp; VK_IMAGE_ASPECT_DEPTH_BIT) {
+        if (ds_format == VK_FORMAT_D32_SFLOAT || ds_format == VK_FORMAT_D32_SFLOAT_S8_UINT ||
+            ds_format == VK_FORMAT_X8_D24_UNORM_PACK32 || ds_format == VK_FORMAT_D24_UNORM_S8_UINT) {
+            valid |= (color_format == VK_FORMAT_R32_SFLOAT || color_format == VK_FORMAT_R32_SINT || color_format == VK_FORMAT_R32_UINT);
+        }
+        if (ds_format == VK_FORMAT_D16_UNORM || ds_format == VK_FORMAT_D16_UNORM_S8_UINT) {
+            valid |= (color_format == VK_FORMAT_R16_SFLOAT || color_format == VK_FORMAT_R16_UNORM ||
+                      color_format == VK_FORMAT_R16_SNORM  || color_format == VK_FORMAT_R16_UINT || color_format == VK_FORMAT_R16_SINT);
+        }
+    }
+
+    return valid;
+}
+
+static inline uint32_t vkuFormatComponentCount(VkFormat format) { return vkuGetFormatInfo(format).component_count; }
+
+static inline VkExtent3D vkuFormatTexelBlockExtent(VkFormat format) { return vkuGetFormatInfo(format).block_extent; }
+
+static inline enum VKU_FORMAT_COMPATIBILITY_CLASS vkuFormatCompatibilityClass(VkFormat format) { return vkuGetFormatInfo(format).compatibility; }
+
+static inline uint32_t vkuFormatTexelsPerBlock(VkFormat format) { return vkuGetFormatInfo(format).texels_per_block; }
+
+static inline uint32_t vkuFormatTexelBlockSize(VkFormat format) { return vkuGetFormatInfo(format).texel_block_size; }
+
+static inline bool vkuFormatIs8bit(VkFormat format) {
+    switch (format) {
+        case VK_FORMAT_A8_UNORM:
+        case VK_FORMAT_R8_UNORM:
+        case VK_FORMAT_R8_SNORM:
+        case VK_FORMAT_R8_USCALED:
+        case VK_FORMAT_R8_SSCALED:
+        case VK_FORMAT_R8_UINT:
+        case VK_FORMAT_R8_SINT:
+        case VK_FORMAT_R8_SRGB:
+        case VK_FORMAT_R8G8_UNORM:
+        case VK_FORMAT_R8G8_SNORM:
+        case VK_FORMAT_R8G8_USCALED:
+        case VK_FORMAT_R8G8_SSCALED:
+        case VK_FORMAT_R8G8_UINT:
+        case VK_FORMAT_R8G8_SINT:
+        case VK_FORMAT_R8G8_SRGB:
+        case VK_FORMAT_R8G8B8_UNORM:
+        case VK_FORMAT_R8G8B8_SNORM:
+        case VK_FORMAT_R8G8B8_USCALED:
+        case VK_FORMAT_R8G8B8_SSCALED:
+        case VK_FORMAT_R8G8B8_UINT:
+        case VK_FORMAT_R8G8B8_SINT:
+        case VK_FORMAT_R8G8B8_SRGB:
+        case VK_FORMAT_B8G8R8_UNORM:
+        case VK_FORMAT_B8G8R8_SNORM:
+        case VK_FORMAT_B8G8R8_USCALED:
+        case VK_FORMAT_B8G8R8_SSCALED:
+        case VK_FORMAT_B8G8R8_UINT:
+        case VK_FORMAT_B8G8R8_SINT:
+        case VK_FORMAT_B8G8R8_SRGB:
+        case VK_FORMAT_R8G8B8A8_UNORM:
+        case VK_FORMAT_R8G8B8A8_SNORM:
+        case VK_FORMAT_R8G8B8A8_USCALED:
+        case VK_FORMAT_R8G8B8A8_SSCALED:
+        case VK_FORMAT_R8G8B8A8_UINT:
+        case VK_FORMAT_R8G8B8A8_SINT:
+        case VK_FORMAT_R8G8B8A8_SRGB:
+        case VK_FORMAT_B8G8R8A8_UNORM:
+        case VK_FORMAT_B8G8R8A8_SNORM:
+        case VK_FORMAT_B8G8R8A8_USCALED:
+        case VK_FORMAT_B8G8R8A8_SSCALED:
+        case VK_FORMAT_B8G8R8A8_UINT:
+        case VK_FORMAT_B8G8R8A8_SINT:
+        case VK_FORMAT_B8G8R8A8_SRGB:
+        case VK_FORMAT_A8B8G8R8_UNORM_PACK32:
+        case VK_FORMAT_A8B8G8R8_SNORM_PACK32:
+        case VK_FORMAT_A8B8G8R8_USCALED_PACK32:</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_format_utils.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_format_utils.h--section-3.html">القسم السابق</a>
+      <a class="standalone-link" href="./vk_format_utils.h--section-5.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

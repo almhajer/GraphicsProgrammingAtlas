@@ -1,0 +1,252 @@
+[
+  {
+    "name": "CMAKE_<LANG>_STANDARD",
+    "aliases": [
+      "CMAKE_LANG_STANDARD"
+    ],
+    "titleArabic": "عائلة متغيرات تضبط المعيار الافتراضي للغة معيّنة على الأهداف الجديدة",
+    "actualMeaningArabic": "هذا ليس متغيرًا منفردًا بقيمة سحرية جاهزة، بل نمط عائلي template-like في CMake من الشكل CMAKE_<LANG>_STANDARD. عند استبدال <LANG> بلغة فعلية مثل C أو CXX يصبح المتغير خاصًا بهذه اللغة ويغذي الخاصية الموافقة على الأهداف الجديدة التي تُنشأ بعد ذلك.",
+    "purposeArabic": "يستخدم لشرح الفكرة العامة قبل النزول إلى حالة متخصصة مثل CMAKE_CXX_STANDARD، حتى يفهم القارئ أن CMake تكرر نفس النمط عبر أكثر من لغة بدل اختراع اسم مختلف لكل حالة.",
+    "whyUseArabic": "يفيد عندما تريد التمييز بين السياسة العامة للغة ما على مستوى المشروع وبين الخاصية الدقيقة المرتبطة بهدف واحد مثل CXX_STANDARD.",
+    "carriedValueArabic": "أثره يظهر أثناء configure عند إنشاء أهداف جديدة: CMake يقرأ المتغير المتخصص للغة الحالية ثم يملأ منه الخاصية الموافقة على target الجديد قبل generate/build.",
+    "usage": [
+      "اقرأه كعائلة أسماء لا كاسم حرفي نهائي: المثال الأشهر هنا هو CMAKE_CXX_STANDARD للغة ++C.",
+      "إذا احتجت سلوكًا مختلفًا لهدف واحد فقط فغالبًا تكون الخاصية المرتبطة بالهدف أوضح من المتغير العام."
+    ],
+    "notes": [
+      "الجزء <LANG> placeholder يكتب بلغة فعلية مثل C أو CXX أو CUDA بحسب ما فعّله project(... LANGUAGES ...).",
+      "الحالة المتخصصة CMAKE_CXX_STANDARD تضبط القيمة الافتراضية لخاصية CXX_STANDARD على الأهداف الجديدة، ولا تستبدل الخاصية نفسها عندما تحتاج قرارًا أدق على target معين."
+    ],
+    "example": "set(CMAKE_CXX_STANDARD 20)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_STANDARD.html",
+    "related": [
+      "CMAKE_CXX_STANDARD",
+      "CXX_STANDARD",
+      "project"
+    ]
+  },
+  {
+    "name": "CMAKE_CURRENT_SOURCE_DIR",
+    "aliases": [
+      "${CMAKE_CURRENT_SOURCE_DIR}"
+    ],
+    "titleArabic": "يشير إلى مجلد المصدر الحالي الذي يُقرأ منه CMakeLists.txt في هذا النطاق",
+    "actualMeaningArabic": "هذا متغير مدمج يصف source directory للدليل الجاري معالجته الآن، لذلك تتغير قيمته عند الدخول إلى add_subdirectory() آخر.",
+    "purposeArabic": "يستخدم لبناء مسارات قراءة الملفات القريبة من الدليل الحالي دون افتراض أنك ما زلت في الجذر.",
+    "whyUseArabic": "يجنبك خلط المسارات الجذرية مع المسارات المحلية، خاصة في المشاريع المقسمة إلى مجلدات فرعية.",
+    "carriedValueArabic": "لا يبني target بحد ذاته، لكنه يوجّه أين يبحث CMake عن الملفات أثناء configure داخل scope الدليل الحالي.",
+    "usage": [
+      "يفيد عندما تريد قراءة قالب أو ملف مصدر مرتبط مباشرة بالمجلد الحالي.",
+      "داخل add_subdirectory() يختلف عن PROJECT_SOURCE_DIR لأن الثاني يبقى خاصاً بالمشروع الأعلى.",
+      "عندما تراه بصيغة ${CMAKE_CURRENT_SOURCE_DIR} فهذا يعني توسعة قيمة المتغير المدمج في لحظة قراءة الأمر الحالي أثناء configure."
+    ],
+    "notes": [
+      "هو متغير built-in مرتبط بالـ directory scope الحالي.",
+      "غالباً يقترن مع CMAKE_CURRENT_BINARY_DIR عند توليد ملفات مقابلة.",
+      "الأقواس ${...} هنا لا تعني خاصية target ولا placeholder؛ بل تعني إدخال القيمة الحالية لهذا المتغير المدمج داخل السطر."
+    ],
+    "example": "configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in\n               ${CMAKE_CURRENT_BINARY_DIR}/config.h)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/CMAKE_CURRENT_SOURCE_DIR.html",
+    "related": [
+      "CMAKE_CURRENT_BINARY_DIR",
+      "PROJECT_SOURCE_DIR",
+      "add_subdirectory"
+    ]
+  },
+  {
+    "name": "CMAKE_CURRENT_BINARY_DIR",
+    "aliases": [
+      "${CMAKE_CURRENT_BINARY_DIR}"
+    ],
+    "titleArabic": "يشير إلى مجلد البناء الحالي المقابل للدليل الجاري معالجته",
+    "actualMeaningArabic": "هذا متغير مدمج يمثل binary directory الذي يكتب فيه CMake الملفات الناتجة أو المولدة للدليل الحالي أثناء configure وgenerate.",
+    "purposeArabic": "يستخدم لتوجيه الملفات المولدة إلى build tree الصحيح بدل الكتابة داخل source tree.",
+    "whyUseArabic": "يبقي نواتج التهيئة منفصلة عن ملفات المصدر ويجعل كل مجلد فرعي يملك مخرجاته المقابلة بوضوح.",
+    "carriedValueArabic": "يوجه مكان الملفات الناتجة داخل build tree، لذلك يؤثر عملياً في أين توضع config headers أو artefacts الوسيطة.",
+    "usage": [
+      "استخدمه مع configure_file() أو file(GENERATE) أو custom commands التي تكتب ملفات في الشجرة الثنائية.",
+      "قيمته تتغير مع add_subdirectory() لأنها مرتبطة بنطاق الدليل الحالي."
+    ],
+    "notes": [
+      "يمثل binary counterpart لـ CMAKE_CURRENT_SOURCE_DIR.",
+      "هو متغير built-in وليس cache variable."
+    ],
+    "example": "target_include_directories(calclib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/CMAKE_CURRENT_BINARY_DIR.html",
+    "related": [
+      "CMAKE_CURRENT_SOURCE_DIR",
+      "configure_file"
+    ]
+  },
+  {
+    "name": "PROJECT_SOURCE_DIR",
+    "aliases": [
+      "${PROJECT_SOURCE_DIR}"
+    ],
+    "titleArabic": "يمثل مجلد المصدر الجذري للمشروع الحالي المعلن عبر project()",
+    "actualMeaningArabic": "هذا متغير built-in يعكس source dir الخاص بآخر project() فعّال في النطاق، وغالباً يكون جذر المشروع الذي تعمل داخله.",
+    "purposeArabic": "يستخدم عندما تحتاج مساراً ثابتاً نسبياً إلى جذر المشروع بدل الدليل الفرعي الحالي.",
+    "whyUseArabic": "يفصل بين معنى الجذر المنطقي للمشروع وبين معنى الدليل الجاري، وهو فرق مهم في المشاريع المتشعبة أو المدمجة.",
+    "carriedValueArabic": "يوجه مسارات configure والقراءة المرجعية إلى الجذر المنطقي للمشروع الحالي كما عرفه project().",
+    "usage": [
+      "مفيد للوصول إلى ملفات docs أو cmake modules المشتركة على مستوى المشروع.",
+      "قد يختلف عن CMAKE_SOURCE_DIR عندما يكون المشروع الحالي subproject ضمن مشروع أعلى."
+    ],
+    "notes": [
+      "يرتبط مباشرة بالأمر project().",
+      "تغيّره قد لا يكون مقصودًا إذا استدعيت project() في subdirectory."
+    ],
+    "example": "message(STATUS \"Project root: ${PROJECT_SOURCE_DIR}\")",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/PROJECT_SOURCE_DIR.html",
+    "related": [
+      "project",
+      "PROJECT_BINARY_DIR",
+      "CMAKE_CURRENT_SOURCE_DIR"
+    ]
+  },
+  {
+    "name": "PROJECT_BINARY_DIR",
+    "aliases": [
+      "${PROJECT_BINARY_DIR}"
+    ],
+    "titleArabic": "يمثل مجلد البناء الجذري للمشروع الحالي المرتبط بـ project()",
+    "actualMeaningArabic": "هذا متغير built-in يحدد binary dir المرتبط بآخر project() فعّال، وهو النظير الثنائي لـ PROJECT_SOURCE_DIR.",
+    "purposeArabic": "يستخدم عندما تريد وضع ملفات مولدة أو قراءة artefacts على مستوى المشروع كله لا على مستوى دليل فرعي فقط.",
+    "whyUseArabic": "يساعدك على التفريق بين مخرجات المشروع الحالي ومخرجات subdirectories الأخرى داخل نفس build tree.",
+    "carriedValueArabic": "يوجه مسارات الكتابة على مستوى المشروع، خاصة عندما تحتاج ملفًا مشتركًا تقرؤه أكثر من مكتبة أو executable.",
+    "usage": [
+      "قد تستخدمه مع configure_file أو install/export helpers عندما تكون المخرجات مشتركة على مستوى المشروع.",
+      "في subprojects قد يختلف عن CMAKE_BINARY_DIR."
+    ],
+    "notes": [
+      "مرتبط بـ project() مثل PROJECT_SOURCE_DIR.",
+      "ليس المقصود به عادةً مسار artefact نهائي معين مثل executable output."
+    ],
+    "example": "set(PROJECT_GENERATED_DIR ${PROJECT_BINARY_DIR}/generated)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/PROJECT_BINARY_DIR.html",
+    "related": [
+      "PROJECT_SOURCE_DIR",
+      "CMAKE_CURRENT_BINARY_DIR"
+    ]
+  },
+  {
+    "name": "CMAKE_CXX_STANDARD",
+    "aliases": [
+      "${CMAKE_CXX_STANDARD}"
+    ],
+    "titleArabic": "يضبط معيار C++ الافتراضي للأهداف الجديدة عند إنشائها",
+    "actualMeaningArabic": "هذا متغير CMake يحدد القيمة الافتراضية لخاصية target المسماة CXX_STANDARD عندما تنشئ أهداف C++ بعد ضبطه.",
+    "purposeArabic": "يستخدم لتحديد معيار C++ المطلوب مثل 17 أو 20 من مكان مركزي في المشروع.",
+    "whyUseArabic": "يعطيك سياسة معيار موحدة للأهداف الجديدة بدلاً من ضبط كل هدف يدوياً إن كان المشروع بسيطاً، وهو الحالة المتخصصة الأكثر شيوعًا من عائلة CMAKE_<LANG>_STANDARD.",
+    "carriedValueArabic": "أثره يظهر في configure على الأهداف التي ستنشأ لاحقاً، لأنه يملأ خاصية CXX_STANDARD الافتراضية لها قبل generate/build.",
+    "usage": [
+      "اضبطه قبل add_executable() أو add_library() إذا كنت تريد أن ترث الأهداف الجديدة هذا المعيار تلقائياً.",
+      "إذا احتجت هدفًا واحدًا بمعيار مختلف فقد يكون ضبط خاصية CXX_STANDARD على الهدف نفسه أوضح.",
+      "عندما ترى الاسم النمطي CMAKE_<LANG>_STANDARD في الشرح فالمقصود عائلة المتغيرات العامة لكل لغة، بينما CMAKE_CXX_STANDARD هو عضو هذه العائلة الخاص بـ ++C."
+    ],
+    "notes": [
+      "هو متغير project-level شائع، وليس بديلاً تامًا عن خاصية target CXX_STANDARD.",
+      "يمكن اعتباره التطبيق المباشر للنمط العام CMAKE_<LANG>_STANDARD عندما تكون اللغة هي CXX.",
+      "يتعلق عادةً بالمترجمات التي يفعّلها project(... LANGUAGES CXX)، أي حين تعلن صراحة أن المشروع يبني كود ++C.",
+      "الفرق العملي مهم: CMAKE_CXX_STANDARD يضع default للأهداف الجديدة، أما CXX_STANDARD فهي خاصية تلزم target بعينه حتى لو اختلف عن بقية المشروع."
+    ],
+    "example": "set(CMAKE_CXX_STANDARD 20)\nadd_executable(calculator main.cpp)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/CMAKE_CXX_STANDARD.html",
+    "related": [
+      "CMAKE_<LANG>_STANDARD",
+      "CXX_STANDARD",
+      "project"
+    ]
+  },
+  {
+    "name": "CMAKE_INSTALL_PREFIX",
+    "titleArabic": "يمثل الجذر الذي تبنى تحته قواعد التثبيت",
+    "actualMeaningArabic": "هذا متغير يحدد المسار الأعلى الذي ستكتب تحته install() الملفات عند تنفيذ cmake --install ما لم تُستبدل الوجهة لاحقاً.",
+    "purposeArabic": "يستخدم لتحديد مكان تثبيت البرنامج أو المكتبة أو الرؤوس داخل النظام أو داخل مجلد محلي مخصص.",
+    "whyUseArabic": "يجعل التثبيت قابلاً للتبديل من سطر الأوامر أو من الضبطات المسبقة (Presets) أو من cache، من دون تعديل أوامر install نفسها داخل المشروع.",
+    "carriedValueArabic": "يؤثر في install step لا في compile مباشرة، لكنه يحدد الوجهة النهائية التي تبنى عليها كل DESTINATION نسبية، لذلك يرتبط فعليًا بمسار package/config بعد التثبيت أيضًا.",
+    "usage": [
+      "يمكن ضبطه عبر cmake -S . -B build -DCMAKE_INSTALL_PREFIX=$ENV{HOME}/.local أو من preset مناسب.",
+      "غالباً يقترن مع GNUInstallDirs ليصبح التثبيت محمولاً بين الأنظمة."
+    ],
+    "notes": [
+      "هو من أشهر cache variables في CMake.",
+      "DESTINATION داخل install() تكون غالباً نسبية لهذا الجذر."
+    ],
+    "example": "cmake -S . -B build -DCMAKE_INSTALL_PREFIX=$ENV{HOME}/.local",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.html",
+    "related": [
+      "install",
+      "GNUInstallDirs",
+      "CMakePresets.json",
+      "package config files and Config mode"
+    ]
+  },
+  {
+    "name": "CMAKE_BUILD_TYPE",
+    "titleArabic": "يحدد نوع البناء الافتراضي في generators أحادية التهيئة",
+    "actualMeaningArabic": "هذا متغير يختار التشكيلة مثل وضع التطوير (Debug) أو وضع النشر (Release) في generators التي تبني تهيئة واحدة فقط لكل build directory.",
+    "purposeArabic": "يستخدم لضبط نوع optimization وdebug flags عندما لا يدعم generator عدة configurations معاً.",
+    "whyUseArabic": "في Makefiles وNinja الأحاديين لا يكفي امتلاك target؛ يجب أن تعرف أي إعداد compile/link سيولد فعلاً.",
+    "carriedValueArabic": "يؤثر في اختيار flags والخصائص المرتبطة بالتشكيلة أثناء generate ثم build داخل generators الأحادية.",
+    "usage": [
+      "مهم في Ninja وUnix Makefiles أكثر من Visual Studio أو Xcode متعددة التهيئة.",
+      "يمكن دعمه من خلال preset بدل مطالبة المطور بكتابته يدوياً كل مرة."
+    ],
+    "notes": [
+      "لا يمثل شيئاً مطلقاً لكل generators؛ قيمته أساسية فقط في single-config generators.",
+      "يرتبط عملياً بكثير من generator expressions مثل $<CONFIG:Debug> حيث تصبح كلمة Debug جزءًا دلاليًا من اختيار التشكيلة لا مجرد نص عابر."
+    ],
+    "example": "cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html",
+    "related": [
+      "Generator Expressions",
+      "CMakePresets.json"
+    ]
+  },
+  {
+    "name": "BUILD_SHARED_LIBS",
+    "titleArabic": "يجعل add_library() تفترض SHARED بدلاً من STATIC عند غياب النوع الصريح",
+    "actualMeaningArabic": "هذا متغير يغيّر السلوك الافتراضي لـ add_library() عندما تستدعيها دون تحديد STATIC أو SHARED بشكل مباشر.",
+    "purposeArabic": "يستخدم كمفتاح project-wide يبدّل نوع المكتبات الافتراضي للمشروع أو للمستخدم.",
+    "whyUseArabic": "يعطيك سلوكاً موحداً قابلًا للتغيير من cache أو presets دون تكرار النوع في كل add_library().",
+    "carriedValueArabic": "أثره يظهر لحظة إنشاء targets المكتبية الجديدة، لأنه يحدد نوعها الافتراضي ضمن الرسم البياني.",
+    "usage": [
+      "من المعتاد تعريفه عبر option(BUILD_SHARED_LIBS ...) مع قيمة مفعلة (ON) أو معطلة (OFF) بحسب السياسة التي يريدها المشروع.",
+      "يجب ضبطه قبل أي add_library() تعتمد على النوع الافتراضي."
+    ],
+    "notes": [
+      "CMake لا يعرّفه تلقائياً، لكن كثيرًا من المشاريع تضعه كخيار cache واضح.",
+      "لا يغير targets التي حددت نوعها صراحة."
+    ],
+    "example": "option(BUILD_SHARED_LIBS \"Build using shared libraries\" ON)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html",
+    "related": [
+      "add_library",
+      "option"
+    ]
+  },
+  {
+    "name": "BUILD_TESTING",
+    "titleArabic": "مفتاح شائع يقرر هل يفعّل include(CTest) مسار الاختبارات",
+    "actualMeaningArabic": "هذا متغير cache شائع يقرأه Module CTest ليقرر هل سيستدعي enable_testing() ويُبقي مسار الاختبارات فعالاً أم لا.",
+    "purposeArabic": "يستخدم لإتاحة تعطيل بناء الاختبارات للمستخدم أو CI دون حذف كود الاختبارات من المشروع.",
+    "whyUseArabic": "يسمح بالإبقاء على CTest وadd_test() في المشروع مع تقديم مفتاح بسيط لتعطيلها عند الحاجة إلى build أخف.",
+    "carriedValueArabic": "يغيّر مسار configure الخاص بالاختبارات: هل تُنشأ بيانات CTest وتُبنى test targets أم يتجاوزها المشروع.",
+    "usage": [
+      "غالباً يأتي ضمن include(CTest) تلقائياً أو كـ option في أعلى الملف الجذري.",
+      "يمكنك الالتفاف به حول add_subdirectory(tests) أيضاً."
+    ],
+    "notes": [
+      "ليس متغيراً سحرياً عاماً لكل المشروع إلا إذا ربطت منطق الاختبارات به فعلاً.",
+      "النص الرسمي للـ CTest module يشير إليه مباشرة."
+    ],
+    "example": "include(CTest)\nif(BUILD_TESTING)\n  add_subdirectory(tests)\nendif()",
+    "officialUrl": "https://cmake.org/cmake/help/latest/module/CTest.html",
+    "related": [
+      "CTest",
+      "enable_testing",
+      "option"
+    ]
+  }
+]

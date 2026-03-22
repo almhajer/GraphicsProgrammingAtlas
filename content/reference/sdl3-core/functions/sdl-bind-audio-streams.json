@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_BindAudioStreams",
+    "slug": "sdl-bind-audio-streams",
+    "titleArabic": "Bind a list of audio streams to an audio device",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-bind-audio-streams",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-bind-audio-streams.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Bind a list of audio streams to an audio device",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Bind الصوت Streams داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Bind الصوت Streams داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Bind a list of audio streams to an audio device."
+  },
+  "signature": {
+    "raw": "bool SDL_BindAudioStreams(SDL_AudioDeviceID devid, SDL_AudioStream * const *streams, int num_streams);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AudioDeviceID devid",
+      "SDL_AudioStream * const *streams",
+      "int num_streams"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "devid",
+        "type": "SDL_AudioDeviceID",
+        "descriptionArabic": "يمثل المعامل devid من النوع SDL_AudioDeviceID القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an audio device to bind a stream to."
+      },
+      {
+        "name": "streams",
+        "type": "SDL_AudioStream * const *",
+        "descriptionArabic": "يمثل المعامل streams من النوع SDL_AudioStream * const * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an array of audio streams to bind."
+      },
+      {
+        "name": "num_streams",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل num_streams من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "number streams listed in the streams array."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Audio data will flow through any bound streams. For a playback\ndevice, data for all bound streams will be mixed together and fed to the\ndevice. For a recording device, a copy of recorded data will be provided\nto each bound stream.",
+      "Audio streams can only be bound to an open device. This operation is\natomic--all streams bound in the same call will start processing at the\nsame time, so they can stay in sync. Also: either all streams will be\nbound or none of them will be.",
+      "It is an error to bind an already-bound stream; it must be explicitly\nunbound first.",
+      "Binding a stream to a device will set its output format for playback\ndevices, and its input format for recording devices, so they match the\ndevice's settings. The caller is welcome to change the other end of the\nstream's format at any time with SDL_SetAudioStreamFormat (). If\nthe other end of the stream's format has never been set (the audio\nstream was created with a NULL audio spec), this function will set it to\nmatch the device end's format."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_BindAudioStreams",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_BindAudioStreams",
+        "route": "#ref/sdl3-core/functions/sdl-bind-audio-streams",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_UnbindAudioStream",
+        "route": "#ref/sdl3-core/functions/sdl-unbind-audio-stream",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetAudioStreamDevice",
+        "route": "#ref/sdl3-core/functions/sdl-get-audio-stream-device",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

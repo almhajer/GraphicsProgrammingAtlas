@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "target_link_libraries",
+    "slug": "target-link-libraries",
+    "titleArabic": "يربط target باعتمادياته وينشر متطلبات الاستعمال بحسب النطاق",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/target-link-libraries",
+    "contentPath": "content/reference/cmake/commands/target-link-libraries.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يربط target باعتمادياته وينشر متطلبات الاستعمال بحسب النطاق",
+    "actualMeaningArabic": "هذا الأمر يربط مكتبات أو targets أخرى بهدف معيّن، ويحدد عبر PRIVATE أو PUBLIC أو INTERFACE ما الذي يستهلكه الهدف بنفسه وما الذي يورثه للمستهلكين.",
+    "purposeArabic": "يستخدم لربط executable أو library باعتمادياتها بدل كتابة أسطر linker خام لكل generator.",
+    "whyUseArabic": "يوحّد معنى الربط مع واجهة الهدف نفسه، ويجعل transitive dependencies قابلة للإدارة من داخل CMake بدل منطق build خارجي.",
+    "carriedValueArabic": "يملأ خصائص الربط وواجهة الربط للهدف، ما يغير أوامر linker الفعلية ويحدد ما الذي سينتقل إلى targets تابعة.",
+    "sourceDescription": "هذا الأمر يربط مكتبات أو targets أخرى بهدف معيّن، ويحدد عبر PRIVATE أو PUBLIC أو INTERFACE ما الذي يستهلكه الهدف بنفسه وما الذي يورثه للمستهلكين."
+  },
+  "signature": {
+    "raw": "target_link_libraries(<target> <PRIVATE|PUBLIC|INTERFACE> <item>...)",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "<target>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسم هدف موجود داخل الرسم البنائي ليُطبَّق عليه الأمر أو تُقرأ خصائصه. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "<PRIVATE|PUBLIC|INTERFACE>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل قيمة يكتبها المبرمج في هذا الموضع من الصياغة، وليست كلمة ثابتة من كلمات CMake نفسها. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "<item>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل عنصرًا واحدًا يمرره المبرمج إلى الأمر مثل target أو مكتبة أو مسار أو خيار مرتبط بالسياق. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "اربط التطبيق بالمكتبة المحلية أو بالمكتبات القادمة من find_package() عبر أسماء targets كلما أمكن.",
+      "PUBLIC يعني أن الهدف نفسه يحتاج العنصر وأن من يربطه لاحقاً يحتاجه أيضاً."
+    ],
+    "notes": [
+      "هذا الأمر لا يضيف compile options مباشرة، لكنه قد ينشر include directories وdefinitions transitively عبر target الواجهة.",
+      "الاعتماد على targets أفضل من تمرير مسارات linker خام."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدم كلمات scope بوعي لأن الخطأ هنا يظهر عادة في المستهلك downstream لا في الهدف الحالي فقط."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "target_link_libraries(calculator\n  PRIVATE calclib\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/target_link_libraries.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/target_link_libraries.html",
+    "related": [
+      {
+        "name": "add_library",
+        "route": "#ref/cmake/commands/add-library",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "find_package",
+        "route": "#ref/cmake/commands/find-package",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "INTERFACE_INCLUDE_DIRECTORIES",
+        "route": "#ref/cmake/properties/interface-include-directories",
+        "libraryId": "cmake",
+        "kindId": "properties"
+      },
+      {
+        "name": "PUBLIC/PRIVATE/INTERFACE",
+        "route": "#ref/cmake/concepts/public-private-interface",
+        "libraryId": "cmake",
+        "kindId": "concepts"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

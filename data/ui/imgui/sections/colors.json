@@ -1,0 +1,110 @@
+{
+  "key": "colors",
+  "title": "الألوان والثيمات",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "colors",
+      "sectionTitle": "الألوان والثيمات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::ColorEdit4",
+        "ImGui::ColorPicker4",
+        "ImGui::ColorButton",
+        "ImGui::SameLine",
+        "ImVec4"
+      ],
+      "instructions": [],
+      "notes": [
+        "القيم اللونية تحفظ عادة بصيغة float RGBA ثم يمكن عرضها كنص RGB أو HEX عند الحاجة.",
+        "معاينة قبل/بعد مهمة حتى يرى المستخدم أثر اللون قبل تثبيته على العنصر النهائي.",
+        "Dear ImGui لا يفرض نظام Themes معين؛ التطبيق يقرر أين يطبق اللون بعد تعديله."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يعرض المثال ColorEdit4 وColorPicker4 وColorButton معاً. يطبق اللون على نص ومعاينة خلفية، ويعرض RGB وRGBA وHEX، كما يسمح بإسقاط اللون من زر إلى حقل آخر.",
+        "code": "ImGui::ColorEdit4(\"Text Color\", text_rgba);\nImGui::ColorPicker4(\"Theme Color\", theme_rgba);\nImGui::ColorButton(\"Current\", ImVec4(theme_rgba[0], theme_rgba[1], theme_rgba[2], theme_rgba[3]));\nImGui::Text(\"RGBA: %.2f %.2f %.2f %.2f\", theme_rgba[0], theme_rgba[1], theme_rgba[2], theme_rgba[3]);",
+        "fullCode": "#include <imgui.h>\n#include <cstdio>\n\nvoid DrawColorToolsExample() {\n    static float text_rgba[4] = {0.95f, 0.78f, 0.22f, 1.0f};\n    static float theme_rgba[4] = {0.24f, 0.52f, 0.96f, 1.0f};\n    static float preview_before[4] = {0.18f, 0.20f, 0.24f, 1.0f};\n\n    const int r = (int)(theme_rgba[0] * 255.0f);\n    const int g = (int)(theme_rgba[1] * 255.0f);\n    const int b = (int)(theme_rgba[2] * 255.0f);\n    const int a = (int)(theme_rgba[3] * 255.0f);\n    char hex_value[16] = {};\n    std::snprintf(hex_value, sizeof(hex_value), \"#%02X%02X%02X%02X\", r, g, b, a);\n\n    ImGui::Begin(\"Color Tools\");\n    ImGui::Text(\"اختر لوناً وطبقه على النص والخلفية.\");\n    ImGui::Separator();\n\n    ImGui::ColorEdit4(\"Text Color\", text_rgba);\n    ImGui::ColorPicker4(\"Theme Color\", theme_rgba);\n    ImGui::ColorButton(\"Current\", ImVec4(theme_rgba[0], theme_rgba[1], theme_rgba[2], theme_rgba[3]));\n    if (ImGui::BeginDragDropSource()) {\n        ImGui::SetDragDropPayload(\"COLOR4\", theme_rgba, sizeof(float) * 4);\n        ImGui::Text(\"اسحب اللون الحالي\");\n        ImGui::EndDragDropSource();\n    }\n    ImGui::SameLine();\n    ImGui::ColorButton(\"Preview Before\", ImVec4(preview_before[0], preview_before[1], preview_before[2], preview_before[3]));\n    if (ImGui::BeginDragDropTarget()) {\n        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"COLOR4\")) {\n            memcpy(preview_before, payload->Data, sizeof(float) * 4);\n        }\n        ImGui::EndDragDropTarget();\n    }\n\n    ImGui::Text(\"RGB: %d, %d, %d\", r, g, b);\n    ImGui::Text(\"RGBA: %.2f, %.2f, %.2f, %.2f\", theme_rgba[0], theme_rgba[1], theme_rgba[2], theme_rgba[3]);\n    ImGui::Text(\"HEX: %s\", hex_value);\n    ImGui::TextColored(ImVec4(text_rgba[0], text_rgba[1], text_rgba[2], text_rgba[3]), \"هذا النص يطبق اللون المختار مباشرة.\");\n\n    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(theme_rgba[0], theme_rgba[1], theme_rgba[2], 0.22f));\n    ImGui::BeginChild(\"theme_preview\", ImVec2(0.0f, 80.0f), true);\n    ImGui::Text(\"معاينة الخلفية بعد التعديل\");\n    ImGui::EndChild();\n    ImGui::PopStyleColor();\n    ImGui::End();\n}",
+        "explanation": "المثال لا يكتفي باختيار اللون، بل يربطه بنص وخلفية وزر لون وقيم رقمية وHEX ومعاينة قبل/بعد، ويضيف أيضاً نقل اللون بين عنصرين عبر Drag & Drop.",
+        "expectedResult": "يحصل المستخدم على نافذة أدوات ألوان واضحة يستطيع منها اختيار اللون وتحريره ومعاينته وتطبيقه فوراً على النص والخلفية، مع قراءة القيم العددية والهيكس عند الحاجة.",
+        "importantNote": "ColorEdit4 وColorPicker4 وColorButton ليست بدائل متطابقة؛ الأول للتحرير السريع، والثاني للتحكم البصري الأوسع، والثالث للمعاينة أو الاختيار السريع."
+      },
+      "guiRepresentation": {
+        "title": "Color Tools",
+        "mockup": "ColorEdit4 + ColorPicker4 + ColorButton\nRGBA / RGB / HEX\nPreview Before / After\nتطبيق اللون على النص والخلفية",
+        "explanation": "الصورة هنا منظمة كلوحة أدوات ألوان حقيقية، لا كسطر منفرد، حتى تكون الوظائف اللونية كلها واضحة للقارئ."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "لوحة أدوات الألوان والثيم",
+      "shortTooltip": "مثال مستقل غني يجمع ColorEdit وColorPicker وColorButton وقيم RGB/RGBA/HEX ومعاينة قبل/بعد وتطبيق اللون على النص والخلفية.",
+      "description": "هذا المثال مخصص لعناصر الألوان في Dear ImGui: اختيار اللون، ColorPicker، ColorEdit، زر اللون، عرض القيمة اللونية كنص وأرقام، نقل اللون بين العناصر، ومعاينة قبل/بعد داخل نافذة أدوات واضحة.",
+      "officialArabicDescription": "بدلاً من الاكتفاء بزر لون واحد، يعرض المثال محرر ألوان صغيراً يمكن استخدامه كجزء من Theme editor أو نافذة أدوات مشهد أو خصائص عنصر.",
+      "realMeaning": "المعنى الحقيقي أن اللون في Dear ImGui هو حالة يملكها التطبيق عادة بصيغة RGB أو RGBA، ثم تعرضه الأدوات وتحدثه وتعيد رسم النص أو الخلفية أو العنصر الذي يعتمد عليه.",
+      "whenToUse": "استخدم هذا النمط في Theme editors وScene tools وProperty panels وواجهات تخصيص النصوص أو الخلفيات أو ألوان العناصر المرئية.",
+      "practicalBenefit": "يوحد اختيار اللون وتعديله ومعاينته وتطبيقه في نافذة واحدة، ويقلل الحاجة إلى الانتقال بين أدوات متفرقة أو قيم رقمية مجردة.",
+      "misuseImpact": "إذا أخفيت القيم أو لم تعرض معاينة واضحة قبل/بعد، فسيصعب على المستخدم ربط ما يغيره فعلياً بما يراه في الواجهة أو في المشهد."
+    },
+    {
+      "sectionKey": "colors",
+      "sectionTitle": "الألوان والثيمات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::ColorEdit4",
+        "ImGui::ColorButton",
+        "ImGui::BeginDragDropSource",
+        "ImGui::BeginDragDropTarget",
+        "ImGui::TextColored"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال مكمل جيد للـ Color Picker الأساسي لأنه يربط الألوان بسياق Theme كامل.",
+        "Palette presets تجعل تعديل الواجهة أسرع للمستخدم من إدخال كل لون يدويًا من البداية.",
+        "يمكن ربط القيم نفسها لاحقًا بستايلات ImGui أو بواجهات المشهد أو بنظام ثيم خاص بالمشروع."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يعرض المثال ثلاثة حقول ألوان رئيسية مع Palette جاهزة. يمكن سحب أي لون من الـ Palette وإفلاته على Accent أو Panel أو Background ثم رؤية النتيجة مباشرة.",
+        "code": "ImGui::ColorEdit4(\"Accent\", accent_rgba);\nImGui::ColorEdit4(\"Panel\", panel_rgba);\nImGui::ColorEdit4(\"Background\", background_rgba);\nImGui::ColorButton(\"Preset\", preset_color);",
+        "fullCode": "#include <imgui.h>\n#include <cstdio>\n#include <cstring>\n\nvoid DrawThemeEditorExample() {\n    static float accent_rgba[4] = {0.29f, 0.60f, 0.96f, 1.0f};\n    static float panel_rgba[4] = {0.15f, 0.19f, 0.26f, 1.0f};\n    static float background_rgba[4] = {0.08f, 0.10f, 0.15f, 1.0f};\n    static float before_rgba[4] = {0.14f, 0.17f, 0.21f, 1.0f};\n    static const float presets[4][4] = {\n        {0.29f, 0.60f, 0.96f, 1.0f},\n        {0.96f, 0.52f, 0.32f, 1.0f},\n        {0.36f, 0.74f, 0.58f, 1.0f},\n        {0.82f, 0.50f, 0.92f, 1.0f}\n    };\n\n    auto draw_target = [&](const char* id, float* value) {\n        ImGui::ColorButton(id, ImVec4(value[0], value[1], value[2], value[3]));\n        if (ImGui::BeginDragDropTarget()) {\n            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"THEME_COLOR\")) {\n                std::memcpy(value, payload->Data, sizeof(float) * 4);\n            }\n            ImGui::EndDragDropTarget();\n        }\n    };\n\n    const int r = (int)(accent_rgba[0] * 255.0f);\n    const int g = (int)(accent_rgba[1] * 255.0f);\n    const int b = (int)(accent_rgba[2] * 255.0f);\n    char hex_value[16] = {};\n    std::snprintf(hex_value, sizeof(hex_value), \"#%02X%02X%02X\", r, g, b);\n\n    ImGui::Begin(\"Theme Editor\");\n    ImGui::Text(\"Palette presets + scene preview + multi-color roles.\");\n    ImGui::Separator();\n\n    ImGui::ColorEdit4(\"Accent\", accent_rgba);\n    ImGui::SameLine();\n    draw_target(\"accent_target\", accent_rgba);\n\n    ImGui::ColorEdit4(\"Panel\", panel_rgba);\n    ImGui::SameLine();\n    draw_target(\"panel_target\", panel_rgba);\n\n    ImGui::ColorEdit4(\"Background\", background_rgba);\n    ImGui::SameLine();\n    draw_target(\"background_target\", background_rgba);\n\n    ImGui::Separator();\n    for (int i = 0; i < 4; ++i) {\n        char preset_label[24] = {};\n        std::snprintf(preset_label, sizeof(preset_label), \"preset_%d\", i);\n        if (i > 0) ImGui::SameLine();\n        ImGui::ColorButton(preset_label, ImVec4(presets[i][0], presets[i][1], presets[i][2], presets[i][3]));\n        if (ImGui::BeginDragDropSource()) {\n            ImGui::SetDragDropPayload(\"THEME_COLOR\", presets[i], sizeof(float) * 4);\n            ImGui::Text(\"اسحب هذا اللون إلى أي حقل.\");\n            ImGui::EndDragDropSource();\n        }\n    }\n\n    ImGui::Separator();\n    ImGui::Text(\"Accent HEX: %s\", hex_value);\n    ImGui::ColorButton(\"Before\", ImVec4(before_rgba[0], before_rgba[1], before_rgba[2], before_rgba[3]));\n    ImGui::SameLine();\n    ImGui::ColorButton(\"After\", ImVec4(background_rgba[0], background_rgba[1], background_rgba[2], background_rgba[3]));\n    ImGui::TextColored(ImVec4(accent_rgba[0], accent_rgba[1], accent_rgba[2], accent_rgba[3]), \"This title uses the current accent color.\");\n\n    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(panel_rgba[0], panel_rgba[1], panel_rgba[2], 0.92f));\n    ImGui::BeginChild(\"scene_preview\", ImVec2(0.0f, 88.0f), true);\n    ImGui::TextColored(ImVec4(accent_rgba[0], accent_rgba[1], accent_rgba[2], accent_rgba[3]), \"Scene Panel\");\n    ImGui::Text(\"Background and panel colors reflect the active theme.\");\n    ImGui::EndChild();\n    ImGui::PopStyleColor();\n    ImGui::End();\n}",
+        "explanation": "المثال يربط اللون بدور واضح داخل الثيم، ثم يسمح بنقل القيم من Palette جاهزة إلى الحقول المختلفة. بعد ذلك يعرض معاينة Scene وHEX ولوني before/after.",
+        "expectedResult": "يحصل المستخدم على نافذة Theme Editor يمكنه منها تبديل Accent وPanel وBackground، وسحب ألوان من Palette، ثم رؤية النتيجة مباشرة داخل معاينة المشهد والنصوص.",
+        "importantNote": "قيمة اللون وحدها لا تكفي؛ وضوح دور اللون في الواجهة هو ما يجعل الأداة مفهومة ومفيدة فعلاً."
+      },
+      "guiRepresentation": {
+        "title": "Theme Editor",
+        "mockup": "Accent / Panel / Background\nPalette -> Drag to target\nBefore / After\nScene Preview -> يطبق الثيم الحالي",
+        "explanation": "الصورة تنظم الألوان بحسب أدوارها داخل Theme حقيقية، مع Palette ومعاينة واضحة قبل وبعد."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "Theme editor متعدد الحقول مع Palette ومعاينة مشهد",
+      "shortTooltip": "مثال مستقل يوسع أدوات اللون إلى محرر Theme كامل مع Palette presets ومعاينة Scene وحقول متعددة.",
+      "description": "هذا المثال يعامل اللون كمجموعة أدوار داخل الواجهة: لون Accent، ولون Panel، ولون Background، ثم يسمح بنقل الألوان من Palette جاهزة إلى أي حقل مع معاينة مباشرة.",
+      "officialArabicDescription": "بدلاً من حقل لون واحد، يعرض المثال محرر Theme مصغرًا يستخدم ColorEdit وColorButton وPalette جاهزة وHEX preview ومعاينة Scene panel قبل/بعد.",
+      "realMeaning": "المعنى الحقيقي أن تطبيق اللون في Dear ImGui يحدث عندما تحفظ القيم في حالة Theme داخل التطبيق ثم تستخدمها في النصوص والخلفيات وأزرار المعاينة والرسم المخصص.",
+      "whenToUse": "استخدمه في محررات الثيمات وواجهات أدوات المشهد ولوحات UI التي تحتاج أكثر من لون مترابط في آن واحد.",
+      "practicalBenefit": "يجعل تعديل الثيم عملية بصرية ومباشرة، ويعطي المستخدم Palette جاهزة ومعاينة متعددة بدل الاكتفاء بأداة لون معزولة.",
+      "misuseImpact": "إذا لم تربط الألوان بأدوار واضحة مثل Accent وPanel وBackground فستصبح الأداة مربكة وسيفقد المستخدم معنى كل قيمة يعدلها."
+    }
+  ]
+}

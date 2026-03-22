@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_Init",
+    "slug": "sdl-init",
+    "titleArabic": "تهيئة SDL library",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-init",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-init.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تهيئة SDL library",
+    "actualMeaningArabic": "تهيئة SDL library.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تهيئة SDL library داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Initialize the SDL library."
+  },
+  "signature": {
+    "raw": "bool SDL_Init(SDL_InitFlags flags);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_InitFlags flags"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_init.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "flags",
+        "type": "SDL_InitFlags",
+        "descriptionArabic": "يمثل المعامل flags من النوع SDL_InitFlags القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "subsystem initialization flags."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "SDL_Init () simply forwards to calling SDL_InitSubSystem (). Therefore, the\ntwo may be used interchangeably. Though for readability of your code SDL_InitSubSystem () might be\npreferred.",
+      "The file I/O (for example: SDL_IOFromFile ) and threading ( SDL_CreateThread ) subsystems are\ninitialized by default. Message boxes ( SDL_ShowSimpleMessageBox ) also\nattempt to work without initializing the video subsystem, in hopes of\nbeing useful in showing an error dialog when SDL_Init fails. You must specifically\ninitialize other subsystems if you use them in your application.",
+      "Logging (such as SDL_Log ) works without\ninitialization, too.",
+      "flags may be any of the following OR'd together:",
+      "SDL_INIT_AUDIO : audio\nsubsystem; automatically initializes the events subsystem",
+      "SDL_INIT_VIDEO : video\nsubsystem; automatically initializes the events subsystem, should be\ninitialized on the main thread.",
+      "SDL_INIT_JOYSTICK :\njoystick subsystem; automatically initializes the events subsystem",
+      "SDL_INIT_HAPTIC :\nhaptic (force feedback) subsystem",
+      "SDL_INIT_GAMEPAD :\ngamepad subsystem; automatically initializes the joystick subsystem",
+      "SDL_INIT_EVENTS :\nevents subsystem",
+      "SDL_INIT_SENSOR :\nsensor subsystem; automatically initializes the events subsystem",
+      "SDL_INIT_CAMERA :\ncamera subsystem; automatically initializes the events subsystem",
+      "Subsystem initialization is ref-counted, you must call SDL_QuitSubSystem () for each SDL_InitSubSystem () to correctly\nshutdown a subsystem manually (or call SDL_Quit () to force shutdown). If a subsystem\nis already loaded then this call will increase the ref-count and\nreturn.",
+      "Consider reporting some basic metadata about your application before\ncalling SDL_Init , using either SDL_SetAppMetadata () or SDL_SetAppMetadataProperty ()."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_Init",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_SetAppMetadata",
+        "route": "#ref/sdl3-core/functions/sdl-set-app-metadata",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_SetAppMetadataProperty",
+        "route": "#ref/sdl3-core/functions/sdl-set-app-metadata-property",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_InitSubSystem",
+        "route": "#ref/sdl3-core/functions/sdl-init-sub-system",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_Quit",
+        "route": "#ref/sdl3-core/functions/sdl-quit",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_SetMainReady",
+        "route": "#ref/sdl3-core/functions/sdl-set-main-ready",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_WasInit",
+        "route": "#ref/sdl3-core/functions/sdl-was-init",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Initialization and Shutdown",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "types",
+    "displayName": "Types",
+    "displayNameArabic": "الأنواع",
+    "description": "أنواع مجردة أو صريحة تحمل معنى دلالياً وتظهر في التواقيع والبنى."
+  },
+  "identity": {
+    "name": "SDL_AudioStreamCallback",
+    "slug": "sdl-audio-stream-callback",
+    "titleArabic": "A callback that fires when data passes through an SDL_AudioStream",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/types/sdl-audio-stream-callback",
+    "contentPath": "content/reference/sdl3-core/types/sdl-audio-stream-callback.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "A callback that fires when data passes through an SDL_AudioStream",
+    "actualMeaningArabic": "يمثل هذا النوع نوع SDL الصوت الدفق Callback، أي القيمة أو المقبض أو المؤشر الذي تتعامل معه بقية الواجهة في هذا السياق.",
+    "purposeArabic": "يستخدم هذا النوع عندما تحتاج القيمة أو المقبض أو المؤشر الذي يمثله داخل بقية الواجهة.",
+    "whyUseArabic": "القيمة الحقيقية هنا أنه يمثل نوع القيمة التي تتداولها بقية الواجهة بين الحقول والدوال.",
+    "carriedValueArabic": "يحمل هذا النوع القيمة الفعلية أو المقبض أو المؤشر الذي تمرره بقية الدوال والحقول في هذا المسار.",
+    "sourceDescription": "A callback that fires when data passes through an SDL_AudioStream ."
+  },
+  "signature": {
+    "raw": "typedef void (SDLCALL *SDL_AudioStreamCallback)(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount);",
+    "returnType": "typedef",
+    "parameters": [
+      "SDLCALL *SDL_AudioStreamCallback)(void *userdata",
+      "SDL_AudioStream *stream",
+      "int additional_amount",
+      "int total_amount"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [
+      "Apps can (optionally) register a callback with an audio stream that\nis called when data is added with SDL_PutAudioStreamData , or\nrequested with SDL_GetAudioStreamData .",
+      "Two values are offered here: one is the amount of additional data\nneeded to satisfy the immediate request (which might be zero if the\nstream already has enough data queued) and the other is the total amount\nbeing requested. In a Get call triggering a Put callback, these values\ncan be different. In a Put call triggering a Get callback, these values\nare always the same.",
+      "Byte counts might be slightly overestimated due to buffering or\nresampling, and may change from call to call.",
+      "This callback is not required to do anything. Generally this is\nuseful for adding/reading data on demand, and the app will often put/get\ndata as appropriate, but the system goes on with the data currently\navailable to it if this callback does nothing."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "This callbacks may run from any thread, so if you need to protect\nshared data, you should use SDL_LockAudioStream to serialize\naccess; this lock will be held before your callback is called, so your\ncallback does not need to manage the lock explicitly.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_AudioStreamCallback",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_SetAudioStreamGetCallback",
+        "route": "#ref/sdl3-core/functions/sdl-set-audio-stream-get-callback",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_SetAudioStreamPutCallback",
+        "route": "#ref/sdl3-core/functions/sdl-set-audio-stream-put-callback",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

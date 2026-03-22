@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="يحتوي على النواة الأساسية لواجهة Vulkan: الأنواع، الهياكل، التعدادات، وتصريحات الدوال العامة بعيداً عن ترويسات المنصات.">
+  <title>vulkan_core.h • القسم 20 من 57 • الأسطر 8551-9000 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_core.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_core.h.html">vulkan_core.h</a> /
+        <span>القسم 20 من 57 • الأسطر 8551-9000</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_core.h</h1>
+      <p class="page-description">القسم 20 من 57 • الأسطر 8551-9000</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-19.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-21.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_core.h</span>
+        <span class="source-stat">القسم: 20/57</span>
+        <span class="source-stat">الأسطر: 8551-9000</span>
+        <span class="source-stat">حجم الملف: 1.21 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    const VkDescriptorSet*    pDescriptorSets;
+    uint32_t                  dynamicOffsetCount;
+    const uint32_t*           pDynamicOffsets;
+} VkBindDescriptorSetsInfo;
+
+typedef struct VkPushConstantsInfo {
+    VkStructureType       sType;
+    const void*           pNext;
+    VkPipelineLayout      layout;
+    VkShaderStageFlags    stageFlags;
+    uint32_t              offset;
+    uint32_t              size;
+    const void*           pValues;
+} VkPushConstantsInfo;
+
+typedef struct VkPushDescriptorSetInfo {
+    VkStructureType                sType;
+    const void*                    pNext;
+    VkShaderStageFlags             stageFlags;
+    VkPipelineLayout               layout;
+    uint32_t                       set;
+    uint32_t                       descriptorWriteCount;
+    const VkWriteDescriptorSet*    pDescriptorWrites;
+} VkPushDescriptorSetInfo;
+
+typedef struct VkPushDescriptorSetWithTemplateInfo {
+    VkStructureType               sType;
+    const void*                   pNext;
+    VkDescriptorUpdateTemplate    descriptorUpdateTemplate;
+    VkPipelineLayout              layout;
+    uint32_t                      set;
+    const void*                   pData;
+} VkPushDescriptorSetWithTemplateInfo;
+
+typedef struct VkPhysicalDevicePipelineProtectedAccessFeatures {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           pipelineProtectedAccess;
+} VkPhysicalDevicePipelineProtectedAccessFeatures;
+
+typedef struct VkPhysicalDevicePipelineRobustnessFeatures {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           pipelineRobustness;
+} VkPhysicalDevicePipelineRobustnessFeatures;
+
+typedef struct VkPhysicalDevicePipelineRobustnessProperties {
+    VkStructureType                       sType;
+    void*                                 pNext;
+    VkPipelineRobustnessBufferBehavior    defaultRobustnessStorageBuffers;
+    VkPipelineRobustnessBufferBehavior    defaultRobustnessUniformBuffers;
+    VkPipelineRobustnessBufferBehavior    defaultRobustnessVertexInputs;
+    VkPipelineRobustnessImageBehavior     defaultRobustnessImages;
+} VkPhysicalDevicePipelineRobustnessProperties;
+
+typedef struct VkPipelineRobustnessCreateInfo {
+    VkStructureType                       sType;
+    const void*                           pNext;
+    VkPipelineRobustnessBufferBehavior    storageBuffers;
+    VkPipelineRobustnessBufferBehavior    uniformBuffers;
+    VkPipelineRobustnessBufferBehavior    vertexInputs;
+    VkPipelineRobustnessImageBehavior     images;
+} VkPipelineRobustnessCreateInfo;
+
+typedef struct VkPhysicalDeviceLineRasterizationFeatures {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           rectangularLines;
+    VkBool32           bresenhamLines;
+    VkBool32           smoothLines;
+    VkBool32           stippledRectangularLines;
+    VkBool32           stippledBresenhamLines;
+    VkBool32           stippledSmoothLines;
+} VkPhysicalDeviceLineRasterizationFeatures;
+
+typedef struct VkPhysicalDeviceLineRasterizationProperties {
+    VkStructureType    sType;
+    void*              pNext;
+    uint32_t           lineSubPixelPrecisionBits;
+} VkPhysicalDeviceLineRasterizationProperties;
+
+typedef struct VkPipelineRasterizationLineStateCreateInfo {
+    VkStructureType            sType;
+    const void*                pNext;
+    VkLineRasterizationMode    lineRasterizationMode;
+    VkBool32                   stippledLineEnable;
+    uint32_t                   lineStippleFactor;
+    uint16_t                   lineStipplePattern;
+} VkPipelineRasterizationLineStateCreateInfo;
+
+typedef struct VkPhysicalDeviceVertexAttributeDivisorProperties {
+    VkStructureType    sType;
+    void*              pNext;
+    uint32_t           maxVertexAttribDivisor;
+    VkBool32           supportsNonZeroFirstInstance;
+} VkPhysicalDeviceVertexAttributeDivisorProperties;
+
+typedef struct VkVertexInputBindingDivisorDescription {
+    uint32_t    binding;
+    uint32_t    divisor;
+} VkVertexInputBindingDivisorDescription;
+
+typedef struct VkPipelineVertexInputDivisorStateCreateInfo {
+    VkStructureType                                  sType;
+    const void*                                      pNext;
+    uint32_t                                         vertexBindingDivisorCount;
+    const VkVertexInputBindingDivisorDescription*    pVertexBindingDivisors;
+} VkPipelineVertexInputDivisorStateCreateInfo;
+
+typedef struct VkPhysicalDeviceVertexAttributeDivisorFeatures {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           vertexAttributeInstanceRateDivisor;
+    VkBool32           vertexAttributeInstanceRateZeroDivisor;
+} VkPhysicalDeviceVertexAttributeDivisorFeatures;
+
+typedef struct VkRenderingAreaInfo {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           viewMask;
+    uint32_t           colorAttachmentCount;
+    const VkFormat*    pColorAttachmentFormats;
+    VkFormat           depthAttachmentFormat;
+    VkFormat           stencilAttachmentFormat;
+} VkRenderingAreaInfo;
+
+typedef struct VkPhysicalDeviceDynamicRenderingLocalReadFeatures {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           dynamicRenderingLocalRead;
+} VkPhysicalDeviceDynamicRenderingLocalReadFeatures;
+
+typedef struct VkRenderingAttachmentLocationInfo {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           colorAttachmentCount;
+    const uint32_t*    pColorAttachmentLocations;
+} VkRenderingAttachmentLocationInfo;
+
+typedef struct VkRenderingInputAttachmentIndexInfo {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           colorAttachmentCount;
+    const uint32_t*    pColorAttachmentInputIndices;
+    const uint32_t*    pDepthInputAttachmentIndex;
+    const uint32_t*    pStencilInputAttachmentIndex;
+} VkRenderingInputAttachmentIndexInfo;
+
+typedef VkResult (VKAPI_PTR *PFN_vkMapMemory2)(VkDevice device, const VkMemoryMapInfo* pMemoryMapInfo, void** ppData);
+typedef VkResult (VKAPI_PTR *PFN_vkUnmapMemory2)(VkDevice device, const VkMemoryUnmapInfo* pMemoryUnmapInfo);
+typedef void (VKAPI_PTR *PFN_vkGetDeviceImageSubresourceLayout)(VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, VkSubresourceLayout2* pLayout);
+typedef void (VKAPI_PTR *PFN_vkGetImageSubresourceLayout2)(VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout);
+typedef VkResult (VKAPI_PTR *PFN_vkCopyMemoryToImage)(VkDevice device, const VkCopyMemoryToImageInfo*    pCopyMemoryToImageInfo);
+typedef VkResult (VKAPI_PTR *PFN_vkCopyImageToMemory)(VkDevice device, const VkCopyImageToMemoryInfo*    pCopyImageToMemoryInfo);
+typedef VkResult (VKAPI_PTR *PFN_vkCopyImageToImage)(VkDevice device, const VkCopyImageToImageInfo*    pCopyImageToImageInfo);
+typedef VkResult (VKAPI_PTR *PFN_vkTransitionImageLayout)(VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo*    pTransitions);
+typedef void (VKAPI_PTR *PFN_vkCmdPushDescriptorSet)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
+typedef void (VKAPI_PTR *PFN_vkCmdPushDescriptorSetWithTemplate)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
+typedef void (VKAPI_PTR *PFN_vkCmdBindDescriptorSets2)(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo*   pBindDescriptorSetsInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdPushConstants2)(VkCommandBuffer commandBuffer, const VkPushConstantsInfo*        pPushConstantsInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdPushDescriptorSet2)(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo*    pPushDescriptorSetInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdPushDescriptorSetWithTemplate2)(VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdSetLineStipple)(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
+typedef void (VKAPI_PTR *PFN_vkCmdBindIndexBuffer2)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType);
+typedef void (VKAPI_PTR *PFN_vkGetRenderingAreaGranularity)(VkDevice device, const VkRenderingAreaInfo* pRenderingAreaInfo, VkExtent2D* pGranularity);
+typedef void (VKAPI_PTR *PFN_vkCmdSetRenderingAttachmentLocations)(VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdSetRenderingInputAttachmentIndices)(VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
+
+#ifndef VK_NO_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory2(
+    VkDevice                                    device,
+    const VkMemoryMapInfo*                      pMemoryMapInfo,
+    void**                                      ppData);
+
+VKAPI_ATTR VkResult VKAPI_CALL vkUnmapMemory2(
+    VkDevice                                    device,
+    const VkMemoryUnmapInfo*                    pMemoryUnmapInfo);
+
+VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSubresourceLayout(
+    VkDevice                                    device,
+    const VkDeviceImageSubresourceInfo*         pInfo,
+    VkSubresourceLayout2*                       pLayout);
+
+VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout2(
+    VkDevice                                    device,
+    VkImage                                     image,
+    const VkImageSubresource2*                  pSubresource,
+    VkSubresourceLayout2*                       pLayout);
+
+VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToImage(
+    VkDevice                                    device,
+    const VkCopyMemoryToImageInfo*              pCopyMemoryToImageInfo);
+
+VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToMemory(
+    VkDevice                                    device,
+    const VkCopyImageToMemoryInfo*              pCopyImageToMemoryInfo);
+
+VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToImage(
+    VkDevice                                    device,
+    const VkCopyImageToImageInfo*               pCopyImageToImageInfo);
+
+VKAPI_ATTR VkResult VKAPI_CALL vkTransitionImageLayout(
+    VkDevice                                    device,
+    uint32_t                                    transitionCount,
+    const VkHostImageLayoutTransitionInfo*      pTransitions);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSet(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineBindPoint                         pipelineBindPoint,
+    VkPipelineLayout                            layout,
+    uint32_t                                    set,
+    uint32_t                                    descriptorWriteCount,
+    const VkWriteDescriptorSet*                 pDescriptorWrites);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplate(
+    VkCommandBuffer                             commandBuffer,
+    VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
+    VkPipelineLayout                            layout,
+    uint32_t                                    set,
+    const void*                                 pData);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets2(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfo*             pBindDescriptorSetsInfo);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants2(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfo*                  pPushConstantsInfo);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSet2(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfo*              pPushDescriptorSetInfo);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfo*  pPushDescriptorSetWithTemplateInfo);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStipple(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer2(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType);
+
+VKAPI_ATTR void VKAPI_CALL vkGetRenderingAreaGranularity(
+    VkDevice                                    device,
+    const VkRenderingAreaInfo*                  pRenderingAreaInfo,
+    VkExtent2D*                                 pGranularity);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingAttachmentLocations(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfo*    pLocationInfo);
+
+VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfo*  pInputAttachmentIndexInfo);
+#endif
+
+
+// VK_KHR_surface is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_surface 1
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkSurfaceKHR)
+#define VK_KHR_SURFACE_SPEC_VERSION       25
+#define VK_KHR_SURFACE_EXTENSION_NAME     &quot;VK_KHR_surface&quot;
+
+typedef enum VkPresentModeKHR {
+    VK_PRESENT_MODE_IMMEDIATE_KHR = 0,
+    VK_PRESENT_MODE_MAILBOX_KHR = 1,
+    VK_PRESENT_MODE_FIFO_KHR = 2,
+    VK_PRESENT_MODE_FIFO_RELAXED_KHR = 3,
+    VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR = 1000111000,
+    VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR = 1000111001,
+    VK_PRESENT_MODE_FIFO_LATEST_READY_KHR = 1000361000,
+    VK_PRESENT_MODE_FIFO_LATEST_READY_EXT = VK_PRESENT_MODE_FIFO_LATEST_READY_KHR,
+    VK_PRESENT_MODE_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkPresentModeKHR;
+
+typedef enum VkColorSpaceKHR {
+    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR = 0,
+    VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT = 1000104001,
+    VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT = 1000104002,
+    VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT = 1000104003,
+    VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT = 1000104004,
+    VK_COLOR_SPACE_BT709_LINEAR_EXT = 1000104005,
+    VK_COLOR_SPACE_BT709_NONLINEAR_EXT = 1000104006,
+    VK_COLOR_SPACE_BT2020_LINEAR_EXT = 1000104007,
+    VK_COLOR_SPACE_HDR10_ST2084_EXT = 1000104008,
+  // VK_COLOR_SPACE_DOLBYVISION_EXT is legacy, but no reason was given in the API XML
+    VK_COLOR_SPACE_DOLBYVISION_EXT = 1000104009,
+    VK_COLOR_SPACE_HDR10_HLG_EXT = 1000104010,
+    VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT = 1000104011,
+    VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT = 1000104012,
+    VK_COLOR_SPACE_PASS_THROUGH_EXT = 1000104013,
+    VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT = 1000104014,
+    VK_COLOR_SPACE_DISPLAY_NATIVE_AMD = 1000213000,
+  // VK_COLORSPACE_SRGB_NONLINEAR_KHR is a legacy alias
+    VK_COLORSPACE_SRGB_NONLINEAR_KHR = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+  // VK_COLOR_SPACE_DCI_P3_LINEAR_EXT is a legacy alias
+    VK_COLOR_SPACE_DCI_P3_LINEAR_EXT = VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT,
+    VK_COLOR_SPACE_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkColorSpaceKHR;
+
+typedef enum VkSurfaceTransformFlagBitsKHR {
+    VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR = 0x00000001,
+    VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR = 0x00000002,
+    VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR = 0x00000004,
+    VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR = 0x00000008,
+    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR = 0x00000010,
+    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR = 0x00000020,
+    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR = 0x00000040,
+    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR = 0x00000080,
+    VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR = 0x00000100,
+    VK_SURFACE_TRANSFORM_FLAG_BITS_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkSurfaceTransformFlagBitsKHR;
+
+typedef enum VkCompositeAlphaFlagBitsKHR {
+    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR = 0x00000001,
+    VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR = 0x00000002,
+    VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR = 0x00000004,
+    VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR = 0x00000008,
+    VK_COMPOSITE_ALPHA_FLAG_BITS_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkCompositeAlphaFlagBitsKHR;
+typedef VkFlags VkCompositeAlphaFlagsKHR;
+typedef VkFlags VkSurfaceTransformFlagsKHR;
+typedef struct VkSurfaceCapabilitiesKHR {
+    uint32_t                         minImageCount;
+    uint32_t                         maxImageCount;
+    VkExtent2D                       currentExtent;
+    VkExtent2D                       minImageExtent;
+    VkExtent2D                       maxImageExtent;
+    uint32_t                         maxImageArrayLayers;
+    VkSurfaceTransformFlagsKHR       supportedTransforms;
+    VkSurfaceTransformFlagBitsKHR    currentTransform;
+    VkCompositeAlphaFlagsKHR         supportedCompositeAlpha;
+    VkImageUsageFlags                supportedUsageFlags;
+} VkSurfaceCapabilitiesKHR;
+
+typedef struct VkSurfaceFormatKHR {
+    VkFormat           format;
+    VkColorSpaceKHR    colorSpace;
+} VkSurfaceFormatKHR;
+
+typedef void (VKAPI_PTR *PFN_vkDestroySurfaceKHR)(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator);
+typedef VkResult (VKAPI_PTR *PFN_vkGetPhysicalDeviceSurfaceSupportKHR)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported);
+typedef VkResult (VKAPI_PTR *PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR)(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities);
+typedef VkResult (VKAPI_PTR *PFN_vkGetPhysicalDeviceSurfaceFormatsKHR)(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats);
+typedef VkResult (VKAPI_PTR *PFN_vkGetPhysicalDeviceSurfacePresentModesKHR)(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(
+    VkInstance                                  instance,
+    VkSurfaceKHR                                surface,
+    const VkAllocationCallbacks*                pAllocator);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    queueFamilyIndex,
+    VkSurfaceKHR                                surface,
+    VkBool32*                                   pSupported);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    VkSurfaceKHR                                surface,
+    VkSurfaceCapabilitiesKHR*                   pSurfaceCapabilities);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(
+    VkPhysicalDevice                            physicalDevice,
+    VkSurfaceKHR                                surface,
+    uint32_t*                                   pSurfaceFormatCount,
+    VkSurfaceFormatKHR*                         pSurfaceFormats);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    VkSurfaceKHR                                surface,
+    uint32_t*                                   pPresentModeCount,
+    VkPresentModeKHR*                           pPresentModes);
+#endif
+#endif
+
+
+// VK_KHR_swapchain is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_swapchain 1
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkSwapchainKHR)
+#define VK_KHR_SWAPCHAIN_SPEC_VERSION     70
+#define VK_KHR_SWAPCHAIN_EXTENSION_NAME   &quot;VK_KHR_swapchain&quot;
+
+typedef enum VkSwapchainCreateFlagBitsKHR {
+    VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR = 0x00000001,
+    VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR = 0x00000002,
+    VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR = 0x00000004,
+    VK_SWAPCHAIN_CREATE_PRESENT_TIMING_BIT_EXT = 0x00000200,
+    VK_SWAPCHAIN_CREATE_PRESENT_ID_2_BIT_KHR = 0x00000040,
+    VK_SWAPCHAIN_CREATE_PRESENT_WAIT_2_BIT_KHR = 0x00000080,
+    VK_SWAPCHAIN_CREATE_DEFERRED_MEMORY_ALLOCATION_BIT_KHR = 0x00000008,
+    VK_SWAPCHAIN_CREATE_DEFERRED_MEMORY_ALLOCATION_BIT_EXT = VK_SWAPCHAIN_CREATE_DEFERRED_MEMORY_ALLOCATION_BIT_KHR,
+    VK_SWAPCHAIN_CREATE_FLAG_BITS_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkSwapchainCreateFlagBitsKHR;
+typedef VkFlags VkSwapchainCreateFlagsKHR;
+
+typedef enum VkDeviceGroupPresentModeFlagBitsKHR {
+    VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR = 0x00000001,
+    VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR = 0x00000002,
+    VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR = 0x00000004,
+    VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR = 0x00000008,
+    VK_DEVICE_GROUP_PRESENT_MODE_FLAG_BITS_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkDeviceGroupPresentModeFlagBitsKHR;
+typedef VkFlags VkDeviceGroupPresentModeFlagsKHR;
+typedef struct VkSwapchainCreateInfoKHR {
+    VkStructureType                  sType;
+    const void*                      pNext;
+    VkSwapchainCreateFlagsKHR        flags;
+    VkSurfaceKHR                     surface;
+    uint32_t                         minImageCount;
+    VkFormat                         imageFormat;
+    VkColorSpaceKHR                  imageColorSpace;
+    VkExtent2D                       imageExtent;
+    uint32_t                         imageArrayLayers;
+    VkImageUsageFlags                imageUsage;
+    VkSharingMode                    imageSharingMode;
+    uint32_t                         queueFamilyIndexCount;
+    const uint32_t*                  pQueueFamilyIndices;
+    VkSurfaceTransformFlagBitsKHR    preTransform;
+    VkCompositeAlphaFlagBitsKHR      compositeAlpha;
+    VkPresentModeKHR                 presentMode;
+    VkBool32                         clipped;
+    VkSwapchainKHR                   oldSwapchain;
+} VkSwapchainCreateInfoKHR;
+
+typedef struct VkPresentInfoKHR {
+    VkStructureType          sType;
+    const void*              pNext;
+    uint32_t                 waitSemaphoreCount;
+    const VkSemaphore*       pWaitSemaphores;
+    uint32_t                 swapchainCount;
+    const VkSwapchainKHR*    pSwapchains;
+    const uint32_t*          pImageIndices;</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-19.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-21.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

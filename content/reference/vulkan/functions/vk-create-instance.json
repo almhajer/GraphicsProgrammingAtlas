@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "vulkan",
+    "displayName": "Vulkan",
+    "displayNameArabic": "فولكان",
+    "description": "طبقة المرجع العربية لعناصر Vulkan منخفضة المستوى: الدوال والبنى والتعدادات والثوابت والأنواع."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "vkCreateInstance",
+    "slug": "vk-create-instance",
+    "titleArabic": "لإنشاء كائن أو مورد جديد داخل Vulkan وإرجاع مقبض صالح لاستخدامه لاحقاً",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/vulkan/functions/vk-create-instance",
+    "contentPath": "content/reference/vulkan/functions/vk-create-instance.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "لإنشاء كائن أو مورد جديد داخل Vulkan وإرجاع مقبض صالح لاستخدامه لاحقاً",
+    "actualMeaningArabic": "دالة لإنشاء كائن أو مورد جديد داخل Vulkan وإرجاع مقبض صالح لاستخدامه لاحقاً.",
+    "purposeArabic": "المعنى الأساسي لهذه الدالة: دالة لإنشاء كائن أو مورد جديد داخل Vulkan وإرجاع مقبض صالح لاستخدامه لاحقاً.",
+    "whyUseArabic": "قبل الاستدعاء جهّز المعاملات الأساسية بالشكل الصحيح، وأهمها: pCreateInfo: معلومات إنشاء المثيل، pAllocator: مخصص الذاكرة المخصص، pInstance: مؤشر إلى المثيل المنشأ.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه VkResult وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "الوصف الرسمي: دالة لإنشاء كائن أو مورد جديد داخل Vulkan وإرجاع مقبض صالح لاستخدامه لاحقاً."
+  },
+  "signature": {
+    "raw": "VkResult vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance)",
+    "returnType": "VkResult",
+    "parameters": [
+      "const VkInstanceCreateInfo* pCreateInfo",
+      "const VkAllocationCallbacks* pAllocator",
+      "VkInstance* pInstance"
+    ],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "pCreateInfo",
+        "type": "const VkInstanceCreateInfo*",
+        "descriptionArabic": "معلومات إنشاء المثيل.",
+        "originalDescription": "معلومات إنشاء المثيل."
+      },
+      {
+        "name": "pAllocator",
+        "type": "const VkAllocationCallbacks*",
+        "descriptionArabic": "مخصص الذاكرة المخصص.",
+        "originalDescription": "مخصص الذاكرة المخصص."
+      },
+      {
+        "name": "pInstance",
+        "type": "VkInstance*",
+        "descriptionArabic": "مؤشر إلى المثيل المنشأ.",
+        "originalDescription": "مؤشر إلى المثيل المنشأ."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "المعنى الأساسي لهذه الدالة: دالة لإنشاء كائن أو مورد جديد داخل Vulkan وإرجاع مقبض صالح لاستخدامه لاحقاً.",
+      "قبل الاستدعاء جهّز المعاملات الأساسية بالشكل الصحيح، وأهمها: pCreateInfo: معلومات إنشاء المثيل، pAllocator: مخصص الذاكرة المخصص، pInstance: مؤشر إلى المثيل المنشأ.",
+      "قد تكتب الدالة نواتجها في معاملات الإخراج مثل pInstance، لذلك تأكد من تمرير مؤشرات صالحة وقابلة للكتابة.",
+      "تعيد الدالة VkResult لتوضح هل اكتملت العملية بنجاح أو أعادت نتائج جزئية أو فشلت، لذلك تعتمد عليها في تحديد الخطوة التالية في الكود."
+    ],
+    "notes": [
+      "المثيل يمثل اتصالاً بين التطبيق ومكتبة Vulkan.",
+      "يجب تدمير المثيل باستخدام عند الانتهاء.",
+      "يمكن إنشاء عدة المثيل في نفس التطبيق."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// إنشاء مثيل Vulkan\nVkApplicationInfo appInfo = {};\nappInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;\nappInfo.pApplicationName = \"تطبيقي الأول\";\nappInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);\nappInfo.pEngineName = \"No Engine\";\nappInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);\nappInfo.apiVersion = VK_API_VERSION_1_0;\n\nVkInstanceCreateInfo createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;\ncreateInfo.pApplicationInfo = &appInfo;\n\n// تفعيل الطبقات (اختياري)\nconst char* validationLayers[] = {\"VK_LAYER_KHRONOS_validation\"};\n#ifdef NDEBUG\ncreateInfo.enabledLayerCount = 0;\n#else\ncreateInfo.enabledLayerCount = 1;\ncreateInfo.ppEnabledLayerNames = validationLayers;\n#endif\n\nVkInstance instance;\nVkResult result = vkCreateInstance(&createInfo, nullptr, &instance);\n\nif (result != VK_SUCCESS) {\n throw std::runtime_error(\"فشل إنشاء المثيل!\");\n}"
+  },
+  "links": {
+    "officialUrl": "https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateInstance.html",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "vkDestroyInstance",
+        "route": "#ref/vulkan/functions/vk-destroy-instance",
+        "libraryId": "vulkan",
+        "kindId": "functions"
+      },
+      {
+        "name": "vkEnumerateInstanceExtensionProperties",
+        "route": "#ref/vulkan/functions/vk-enumerate-instance-extension-properties",
+        "libraryId": "vulkan",
+        "kindId": "functions"
+      },
+      {
+        "name": "vkEnumerateInstanceLayerProperties",
+        "route": "#ref/vulkan/functions/vk-enumerate-instance-layer-properties",
+        "libraryId": "vulkan",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/vulkan_site_data.json",
+    "category": "المثيل",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

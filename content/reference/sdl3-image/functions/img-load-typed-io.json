@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-image",
+    "displayName": "SDL3_image",
+    "displayNameArabic": "SDL3_image",
+    "description": "ملحق SDL3 الرسمي للصور والرسوم المتحركة وتحويلها إلى موارد قابلة للاستهلاك."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "IMG_LoadTyped_IO",
+    "slug": "img-load-typed-io",
+    "titleArabic": "تحميل الصورة SDL data source software السطح",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-image/functions/img-load-typed-io",
+    "contentPath": "content/reference/sdl3-image/functions/img-load-typed-io.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تحميل الصورة SDL data source software السطح",
+    "actualMeaningArabic": "تحميل الصورة SDL data source software السطح.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تحميل الصورة SDL data source software السطح داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (SDL_Surface *) Returns a new SDL surface, or NULL on error. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Load an image from an SDL data source into a software surface."
+  },
+  "signature": {
+    "raw": "SDL_Surface * IMG_LoadTyped_IO(SDL_IOStream *src, bool closeio, const char *type);",
+    "returnType": "SDL_Surface *",
+    "parameters": [
+      "SDL_IOStream *src",
+      "bool closeio",
+      "const char *type"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_image/blob/main/include/SDL3_image/SDL_image.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "src",
+        "type": "SDL_IOStream *",
+        "descriptionArabic": "يمثل المعامل src من النوع SDL_IOStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an SDL_IOStream that data will be read from."
+      },
+      {
+        "name": "closeio",
+        "type": "bool",
+        "descriptionArabic": "يمثل المعامل closeio من النوع bool القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "true to close/free the SDL_IOStream before returning, false to leave\nit open."
+      },
+      {
+        "name": "type",
+        "type": "const char *",
+        "descriptionArabic": "يمثل المعامل type من النوع const char * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a filename extension that represent this data (\"BMP\", \"GIF\", \"PNG\",\netc)."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_image 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "An SDL_Surface is a buffer of pixels in memory accessible by the CPU.\nUse this if you plan to hand the data to something else or manipulate it\nfurther in code.",
+      "There are no guarantees about what format the new SDL_Surface data\nwill be; in many cases, SDL_image will attempt to supply a surface that\nexactly matches the provided image, but in others it might have to\nconvert (either because the image is in a format that SDL doesn't\ndirectly support or because it's compressed data that could reasonably\nuncompress to various formats and SDL_image had to pick one). You can\ninspect an SDL_Surface for its specifics, and use SDL_ConvertSurface to\nthen migrate to any supported format.",
+      "If the image format supports a transparent pixel, SDL will set the\ncolorkey for the surface. You can enable RLE acceleration on the surface\nafterwards by calling: SDL_SetSurfaceColorKey(image, SDL_RLEACCEL,\nimage->format->colorkey);",
+      "If closeio is true, src will be closed\nbefore returning, whether this function succeeds or not. SDL_image reads\neverything it needs from src during this call in any\ncase.",
+      "Even though this function accepts a file type, SDL_image may still\ntry other decoders that are capable of detecting file type from the\ncontents of the image data, but may rely on the caller-provided type\nstring for formats that it cannot autodetect. If type is\nNULL, SDL_image will rely solely on its ability to guess the format.",
+      "There is a separate function to read files from disk without having\nto deal with SDL_IOStream: IMG_Load(\"filename.jpg\") will\ncall this function and manage those details for you, determining the\nfile type from the filename's extension.",
+      "There is also IMG_Load_IO (), which is\nequivalent to this function except that it will rely on SDL_image to\ndetermine what type of data it is loading, much like passing a NULL for\ntype.",
+      "If you are using SDL's 2D rendering API, there is an equivalent call\nto load images directly into an SDL_Texture for use by the GPU without\nusing a software surface: call IMG_LoadTextureTyped_IO ()\ninstead.",
+      "When done with the returned surface, the app should dispose of it\nwith a call to SDL_DestroySurface()."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(SDL_Surface *) Returns a new SDL surface, or NULL on error.",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_image/IMG_LoadTyped_IO",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "IMG_Load",
+        "route": "#ref/sdl3-image/functions/img-load",
+        "libraryId": "sdl3-image",
+        "kindId": "functions"
+      },
+      {
+        "name": "IMG_Load_IO",
+        "route": "#ref/sdl3-image/functions/img-load-io",
+        "libraryId": "sdl3-image",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_image API",
+    "packageKey": "image",
+    "packageName": "SDL3_image"
+  }
+}

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="يحتوي على النواة الأساسية لواجهة Vulkan: الأنواع، الهياكل، التعدادات، وتصريحات الدوال العامة بعيداً عن ترويسات المنصات.">
+  <title>vulkan_core.h • القسم 38 من 57 • الأسطر 16651-17100 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_core.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_core.h.html">vulkan_core.h</a> /
+        <span>القسم 38 من 57 • الأسطر 16651-17100</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_core.h</h1>
+      <p class="page-description">القسم 38 من 57 • الأسطر 16651-17100</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-37.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-39.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_core.h</span>
+        <span class="source-stat">القسم: 38/57</span>
+        <span class="source-stat">الأسطر: 16651-17100</span>
+        <span class="source-stat">حجم الملف: 1.21 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    const void*                         pNext;
+    uint32_t                            accelerationStructureCount;
+    const VkAccelerationStructureNV*    pAccelerationStructures;
+} VkWriteDescriptorSetAccelerationStructureNV;
+
+typedef struct VkAccelerationStructureMemoryRequirementsInfoNV {
+    VkStructureType                                    sType;
+    const void*                                        pNext;
+    VkAccelerationStructureMemoryRequirementsTypeNV    type;
+    VkAccelerationStructureNV                          accelerationStructure;
+} VkAccelerationStructureMemoryRequirementsInfoNV;
+
+typedef struct VkPhysicalDeviceRayTracingPropertiesNV {
+    VkStructureType    sType;
+    void*              pNext;
+    uint32_t           shaderGroupHandleSize;
+    uint32_t           maxRecursionDepth;
+    uint32_t           maxShaderGroupStride;
+    uint32_t           shaderGroupBaseAlignment;
+    uint64_t           maxGeometryCount;
+    uint64_t           maxInstanceCount;
+    uint64_t           maxTriangleCount;
+    uint32_t           maxDescriptorSetAccelerationStructures;
+} VkPhysicalDeviceRayTracingPropertiesNV;
+
+typedef struct VkTransformMatrixKHR {
+    float    matrix[3][4];
+} VkTransformMatrixKHR;
+
+typedef VkTransformMatrixKHR VkTransformMatrixNV;
+
+typedef struct VkAabbPositionsKHR {
+    float    minX;
+    float    minY;
+    float    minZ;
+    float    maxX;
+    float    maxY;
+    float    maxZ;
+} VkAabbPositionsKHR;
+
+typedef VkAabbPositionsKHR VkAabbPositionsNV;
+
+typedef struct VkAccelerationStructureInstanceKHR {
+    VkTransformMatrixKHR          transform;
+    uint32_t                      instanceCustomIndex:24;
+    uint32_t                      mask:8;
+    uint32_t                      instanceShaderBindingTableRecordOffset:24;
+    VkGeometryInstanceFlagsKHR    flags:8;
+    uint64_t                      accelerationStructureReference;
+} VkAccelerationStructureInstanceKHR;
+
+typedef VkAccelerationStructureInstanceKHR VkAccelerationStructureInstanceNV;
+
+typedef VkResult (VKAPI_PTR *PFN_vkCreateAccelerationStructureNV)(VkDevice device, const VkAccelerationStructureCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureNV* pAccelerationStructure);
+typedef void (VKAPI_PTR *PFN_vkDestroyAccelerationStructureNV)(VkDevice device, VkAccelerationStructureNV accelerationStructure, const VkAllocationCallbacks* pAllocator);
+typedef void (VKAPI_PTR *PFN_vkGetAccelerationStructureMemoryRequirementsNV)(VkDevice device, const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
+typedef VkResult (VKAPI_PTR *PFN_vkBindAccelerationStructureMemoryNV)(VkDevice device, uint32_t bindInfoCount, const VkBindAccelerationStructureMemoryInfoNV* pBindInfos);
+typedef void (VKAPI_PTR *PFN_vkCmdBuildAccelerationStructureNV)(VkCommandBuffer commandBuffer, const VkAccelerationStructureInfoNV* pInfo, VkBuffer instanceData, VkDeviceSize instanceOffset, VkBool32 update, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkBuffer scratch, VkDeviceSize scratchOffset);
+typedef void (VKAPI_PTR *PFN_vkCmdCopyAccelerationStructureNV)(VkCommandBuffer commandBuffer, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkCopyAccelerationStructureModeKHR mode);
+typedef void (VKAPI_PTR *PFN_vkCmdTraceRaysNV)(VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer, VkDeviceSize raygenShaderBindingOffset, VkBuffer missShaderBindingTableBuffer, VkDeviceSize missShaderBindingOffset, VkDeviceSize missShaderBindingStride, VkBuffer hitShaderBindingTableBuffer, VkDeviceSize hitShaderBindingOffset, VkDeviceSize hitShaderBindingStride, VkBuffer callableShaderBindingTableBuffer, VkDeviceSize callableShaderBindingOffset, VkDeviceSize callableShaderBindingStride, uint32_t width, uint32_t height, uint32_t depth);
+typedef VkResult (VKAPI_PTR *PFN_vkCreateRayTracingPipelinesNV)(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkRayTracingPipelineCreateInfoNV* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines);
+typedef VkResult (VKAPI_PTR *PFN_vkGetRayTracingShaderGroupHandlesKHR)(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData);
+typedef VkResult (VKAPI_PTR *PFN_vkGetRayTracingShaderGroupHandlesNV)(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData);
+typedef VkResult (VKAPI_PTR *PFN_vkGetAccelerationStructureHandleNV)(VkDevice device, VkAccelerationStructureNV accelerationStructure, size_t dataSize, void* pData);
+typedef void (VKAPI_PTR *PFN_vkCmdWriteAccelerationStructuresPropertiesNV)(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, const VkAccelerationStructureNV* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery);
+typedef VkResult (VKAPI_PTR *PFN_vkCompileDeferredNV)(VkDevice device, VkPipeline pipeline, uint32_t shader);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateAccelerationStructureNV(
+    VkDevice                                    device,
+    const VkAccelerationStructureCreateInfoNV*  pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkAccelerationStructureNV*                  pAccelerationStructure);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkDestroyAccelerationStructureNV(
+    VkDevice                                    device,
+    VkAccelerationStructureNV                   accelerationStructure,
+    const VkAllocationCallbacks*                pAllocator);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetAccelerationStructureMemoryRequirementsNV(
+    VkDevice                                    device,
+    const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo,
+    VkMemoryRequirements2KHR*                   pMemoryRequirements);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkBindAccelerationStructureMemoryNV(
+    VkDevice                                    device,
+    uint32_t                                    bindInfoCount,
+    const VkBindAccelerationStructureMemoryInfoNV* pBindInfos);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdBuildAccelerationStructureNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkAccelerationStructureInfoNV*        pInfo,
+    VkBuffer                                    instanceData,
+    VkDeviceSize                                instanceOffset,
+    VkBool32                                    update,
+    VkAccelerationStructureNV                   dst,
+    VkAccelerationStructureNV                   src,
+    VkBuffer                                    scratch,
+    VkDeviceSize                                scratchOffset);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdCopyAccelerationStructureNV(
+    VkCommandBuffer                             commandBuffer,
+    VkAccelerationStructureNV                   dst,
+    VkAccelerationStructureNV                   src,
+    VkCopyAccelerationStructureModeKHR          mode);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysNV(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    raygenShaderBindingTableBuffer,
+    VkDeviceSize                                raygenShaderBindingOffset,
+    VkBuffer                                    missShaderBindingTableBuffer,
+    VkDeviceSize                                missShaderBindingOffset,
+    VkDeviceSize                                missShaderBindingStride,
+    VkBuffer                                    hitShaderBindingTableBuffer,
+    VkDeviceSize                                hitShaderBindingOffset,
+    VkDeviceSize                                hitShaderBindingStride,
+    VkBuffer                                    callableShaderBindingTableBuffer,
+    VkDeviceSize                                callableShaderBindingOffset,
+    VkDeviceSize                                callableShaderBindingStride,
+    uint32_t                                    width,
+    uint32_t                                    height,
+    uint32_t                                    depth);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateRayTracingPipelinesNV(
+    VkDevice                                    device,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkRayTracingPipelineCreateInfoNV*     pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetRayTracingShaderGroupHandlesKHR(
+    VkDevice                                    device,
+    VkPipeline                                  pipeline,
+    uint32_t                                    firstGroup,
+    uint32_t                                    groupCount,
+    size_t                                      dataSize,
+    void*                                       pData);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetRayTracingShaderGroupHandlesNV(
+    VkDevice                                    device,
+    VkPipeline                                  pipeline,
+    uint32_t                                    firstGroup,
+    uint32_t                                    groupCount,
+    size_t                                      dataSize,
+    void*                                       pData);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetAccelerationStructureHandleNV(
+    VkDevice                                    device,
+    VkAccelerationStructureNV                   accelerationStructure,
+    size_t                                      dataSize,
+    void*                                       pData);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdWriteAccelerationStructuresPropertiesNV(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    accelerationStructureCount,
+    const VkAccelerationStructureNV*            pAccelerationStructures,
+    VkQueryType                                 queryType,
+    VkQueryPool                                 queryPool,
+    uint32_t                                    firstQuery);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkCompileDeferredNV(
+    VkDevice                                    device,
+    VkPipeline                                  pipeline,
+    uint32_t                                    shader);
+#endif
+#endif
+
+
+// VK_NV_representative_fragment_test is a preprocessor guard. Do not pass it to API calls.
+#define VK_NV_representative_fragment_test 1
+#define VK_NV_REPRESENTATIVE_FRAGMENT_TEST_SPEC_VERSION 2
+#define VK_NV_REPRESENTATIVE_FRAGMENT_TEST_EXTENSION_NAME &quot;VK_NV_representative_fragment_test&quot;
+typedef struct VkPhysicalDeviceRepresentativeFragmentTestFeaturesNV {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           representativeFragmentTest;
+} VkPhysicalDeviceRepresentativeFragmentTestFeaturesNV;
+
+typedef struct VkPipelineRepresentativeFragmentTestStateCreateInfoNV {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkBool32           representativeFragmentTestEnable;
+} VkPipelineRepresentativeFragmentTestStateCreateInfoNV;
+
+
+
+// VK_EXT_filter_cubic is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_filter_cubic 1
+#define VK_EXT_FILTER_CUBIC_SPEC_VERSION  3
+#define VK_EXT_FILTER_CUBIC_EXTENSION_NAME &quot;VK_EXT_filter_cubic&quot;
+typedef struct VkPhysicalDeviceImageViewImageFormatInfoEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkImageViewType    imageViewType;
+} VkPhysicalDeviceImageViewImageFormatInfoEXT;
+
+typedef struct VkFilterCubicImageViewImageFormatPropertiesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           filterCubic;
+    VkBool32           filterCubicMinmax;
+} VkFilterCubicImageViewImageFormatPropertiesEXT;
+
+
+
+// VK_QCOM_render_pass_shader_resolve is a preprocessor guard. Do not pass it to API calls.
+#define VK_QCOM_render_pass_shader_resolve 1
+#define VK_QCOM_RENDER_PASS_SHADER_RESOLVE_SPEC_VERSION 4
+#define VK_QCOM_RENDER_PASS_SHADER_RESOLVE_EXTENSION_NAME &quot;VK_QCOM_render_pass_shader_resolve&quot;
+
+
+// VK_EXT_global_priority is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_global_priority 1
+#define VK_EXT_GLOBAL_PRIORITY_SPEC_VERSION 2
+#define VK_EXT_GLOBAL_PRIORITY_EXTENSION_NAME &quot;VK_EXT_global_priority&quot;
+typedef VkQueueGlobalPriority VkQueueGlobalPriorityEXT;
+
+typedef VkDeviceQueueGlobalPriorityCreateInfo VkDeviceQueueGlobalPriorityCreateInfoEXT;
+
+
+
+// VK_EXT_external_memory_host is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_external_memory_host 1
+#define VK_EXT_EXTERNAL_MEMORY_HOST_SPEC_VERSION 1
+#define VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME &quot;VK_EXT_external_memory_host&quot;
+typedef struct VkImportMemoryHostPointerInfoEXT {
+    VkStructureType                       sType;
+    const void*                           pNext;
+    VkExternalMemoryHandleTypeFlagBits    handleType;
+    void*                                 pHostPointer;
+} VkImportMemoryHostPointerInfoEXT;
+
+typedef struct VkMemoryHostPointerPropertiesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    uint32_t           memoryTypeBits;
+} VkMemoryHostPointerPropertiesEXT;
+
+typedef struct VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkDeviceSize       minImportedHostPointerAlignment;
+} VkPhysicalDeviceExternalMemoryHostPropertiesEXT;
+
+typedef VkResult (VKAPI_PTR *PFN_vkGetMemoryHostPointerPropertiesEXT)(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHostPointer, VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryHostPointerPropertiesEXT(
+    VkDevice                                    device,
+    VkExternalMemoryHandleTypeFlagBits          handleType,
+    const void*                                 pHostPointer,
+    VkMemoryHostPointerPropertiesEXT*           pMemoryHostPointerProperties);
+#endif
+#endif
+
+
+// VK_AMD_buffer_marker is a preprocessor guard. Do not pass it to API calls.
+#define VK_AMD_buffer_marker 1
+#define VK_AMD_BUFFER_MARKER_SPEC_VERSION 1
+#define VK_AMD_BUFFER_MARKER_EXTENSION_NAME &quot;VK_AMD_buffer_marker&quot;
+typedef void (VKAPI_PTR *PFN_vkCmdWriteBufferMarkerAMD)(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker);
+typedef void (VKAPI_PTR *PFN_vkCmdWriteBufferMarker2AMD)(VkCommandBuffer                   commandBuffer, VkPipelineStageFlags2               stage, VkBuffer                                            dstBuffer, VkDeviceSize                                        dstOffset, uint32_t                                            marker);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdWriteBufferMarkerAMD(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineStageFlagBits                     pipelineStage,
+    VkBuffer                                    dstBuffer,
+    VkDeviceSize                                dstOffset,
+    uint32_t                                    marker);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdWriteBufferMarker2AMD(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineStageFlags2                       stage,
+    VkBuffer                                    dstBuffer,
+    VkDeviceSize                                dstOffset,
+    uint32_t                                    marker);
+#endif
+#endif
+
+
+// VK_AMD_pipeline_compiler_control is a preprocessor guard. Do not pass it to API calls.
+#define VK_AMD_pipeline_compiler_control 1
+#define VK_AMD_PIPELINE_COMPILER_CONTROL_SPEC_VERSION 1
+#define VK_AMD_PIPELINE_COMPILER_CONTROL_EXTENSION_NAME &quot;VK_AMD_pipeline_compiler_control&quot;
+
+typedef enum VkPipelineCompilerControlFlagBitsAMD {
+    VK_PIPELINE_COMPILER_CONTROL_FLAG_BITS_MAX_ENUM_AMD = 0x7FFFFFFF
+} VkPipelineCompilerControlFlagBitsAMD;
+typedef VkFlags VkPipelineCompilerControlFlagsAMD;
+typedef struct VkPipelineCompilerControlCreateInfoAMD {
+    VkStructureType                      sType;
+    const void*                          pNext;
+    VkPipelineCompilerControlFlagsAMD    compilerControlFlags;
+} VkPipelineCompilerControlCreateInfoAMD;
+
+
+
+// VK_EXT_calibrated_timestamps is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_calibrated_timestamps 1
+#define VK_EXT_CALIBRATED_TIMESTAMPS_SPEC_VERSION 2
+#define VK_EXT_CALIBRATED_TIMESTAMPS_EXTENSION_NAME &quot;VK_EXT_calibrated_timestamps&quot;
+typedef VkTimeDomainKHR VkTimeDomainEXT;
+
+typedef VkCalibratedTimestampInfoKHR VkCalibratedTimestampInfoEXT;
+
+typedef VkResult (VKAPI_PTR *PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT)(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains);
+typedef VkResult (VKAPI_PTR *PFN_vkGetCalibratedTimestampsEXT)(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pTimeDomainCount,
+    VkTimeDomainKHR*                            pTimeDomains);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetCalibratedTimestampsEXT(
+    VkDevice                                    device,
+    uint32_t                                    timestampCount,
+    const VkCalibratedTimestampInfoKHR*         pTimestampInfos,
+    uint64_t*                                   pTimestamps,
+    uint64_t*                                   pMaxDeviation);
+#endif
+#endif
+
+
+// VK_AMD_shader_core_properties is a preprocessor guard. Do not pass it to API calls.
+#define VK_AMD_shader_core_properties 1
+#define VK_AMD_SHADER_CORE_PROPERTIES_SPEC_VERSION 2
+#define VK_AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME &quot;VK_AMD_shader_core_properties&quot;
+typedef struct VkPhysicalDeviceShaderCorePropertiesAMD {
+    VkStructureType    sType;
+    void*              pNext;
+    uint32_t           shaderEngineCount;
+    uint32_t           shaderArraysPerEngineCount;
+    uint32_t           computeUnitsPerShaderArray;
+    uint32_t           simdPerComputeUnit;
+    uint32_t           wavefrontsPerSimd;
+    uint32_t           wavefrontSize;
+    uint32_t           sgprsPerSimd;
+    uint32_t           minSgprAllocation;
+    uint32_t           maxSgprAllocation;
+    uint32_t           sgprAllocationGranularity;
+    uint32_t           vgprsPerSimd;
+    uint32_t           minVgprAllocation;
+    uint32_t           maxVgprAllocation;
+    uint32_t           vgprAllocationGranularity;
+} VkPhysicalDeviceShaderCorePropertiesAMD;
+
+
+
+// VK_AMD_memory_overallocation_behavior is a preprocessor guard. Do not pass it to API calls.
+#define VK_AMD_memory_overallocation_behavior 1
+#define VK_AMD_MEMORY_OVERALLOCATION_BEHAVIOR_SPEC_VERSION 1
+#define VK_AMD_MEMORY_OVERALLOCATION_BEHAVIOR_EXTENSION_NAME &quot;VK_AMD_memory_overallocation_behavior&quot;
+
+typedef enum VkMemoryOverallocationBehaviorAMD {
+    VK_MEMORY_OVERALLOCATION_BEHAVIOR_DEFAULT_AMD = 0,
+    VK_MEMORY_OVERALLOCATION_BEHAVIOR_ALLOWED_AMD = 1,
+    VK_MEMORY_OVERALLOCATION_BEHAVIOR_DISALLOWED_AMD = 2,
+    VK_MEMORY_OVERALLOCATION_BEHAVIOR_MAX_ENUM_AMD = 0x7FFFFFFF
+} VkMemoryOverallocationBehaviorAMD;
+typedef struct VkDeviceMemoryOverallocationCreateInfoAMD {
+    VkStructureType                      sType;
+    const void*                          pNext;
+    VkMemoryOverallocationBehaviorAMD    overallocationBehavior;
+} VkDeviceMemoryOverallocationCreateInfoAMD;
+
+
+
+// VK_EXT_vertex_attribute_divisor is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_vertex_attribute_divisor 1
+#define VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION 3
+#define VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME &quot;VK_EXT_vertex_attribute_divisor&quot;
+typedef struct VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    uint32_t           maxVertexAttribDivisor;
+} VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT;
+
+typedef VkVertexInputBindingDivisorDescription VkVertexInputBindingDivisorDescriptionEXT;
+
+typedef VkPipelineVertexInputDivisorStateCreateInfo VkPipelineVertexInputDivisorStateCreateInfoEXT;
+
+typedef VkPhysicalDeviceVertexAttributeDivisorFeatures VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT;
+
+
+
+// VK_EXT_pipeline_creation_feedback is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_pipeline_creation_feedback 1
+#define VK_EXT_PIPELINE_CREATION_FEEDBACK_SPEC_VERSION 1
+#define VK_EXT_PIPELINE_CREATION_FEEDBACK_EXTENSION_NAME &quot;VK_EXT_pipeline_creation_feedback&quot;
+typedef VkPipelineCreationFeedbackFlagBits VkPipelineCreationFeedbackFlagBitsEXT;
+
+typedef VkPipelineCreationFeedbackFlags VkPipelineCreationFeedbackFlagsEXT;
+
+typedef VkPipelineCreationFeedbackCreateInfo VkPipelineCreationFeedbackCreateInfoEXT;
+
+typedef VkPipelineCreationFeedback VkPipelineCreationFeedbackEXT;
+
+
+
+// VK_NV_shader_subgroup_partitioned is a preprocessor guard. Do not pass it to API calls.
+#define VK_NV_shader_subgroup_partitioned 1
+#define VK_NV_SHADER_SUBGROUP_PARTITIONED_SPEC_VERSION 1
+#define VK_NV_SHADER_SUBGROUP_PARTITIONED_EXTENSION_NAME &quot;VK_NV_shader_subgroup_partitioned&quot;
+
+
+// VK_NV_compute_shader_derivatives is a preprocessor guard. Do not pass it to API calls.
+#define VK_NV_compute_shader_derivatives 1
+#define VK_NV_COMPUTE_SHADER_DERIVATIVES_SPEC_VERSION 1
+#define VK_NV_COMPUTE_SHADER_DERIVATIVES_EXTENSION_NAME &quot;VK_NV_compute_shader_derivatives&quot;
+typedef VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR VkPhysicalDeviceComputeShaderDerivativesFeaturesNV;
+
+
+
+// VK_NV_mesh_shader is a preprocessor guard. Do not pass it to API calls.
+#define VK_NV_mesh_shader 1</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-37.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-39.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "misc",
+    "displayName": "Misc",
+    "displayNameArabic": "عناصر أخرى",
+    "description": "أي نوع لا يندرج مباشرة تحت الأقسام القياسية الأخرى."
+  },
+  "identity": {
+    "name": "تحريك مؤشر ولوحة بين الإطارات",
+    "slug": "--9",
+    "titleArabic": "الحركة هنا لا تأتي من نظام Animation جاهز في Dear ImGui؛ التطبيق نفسه يحدث القيم مثل",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/misc/--9",
+    "contentPath": "content/reference/imgui/misc/--9.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "الحركة هنا لا تأتي من نظام Animation جاهز في Dear ImGui؛ التطبيق نفسه يحدث القيم مثل",
+    "actualMeaningArabic": "المعنى الحقيقي هو أن الموضع في Dear ImGui ليس قيمة تتذكرها الواجهة وحدها، بل حالة يملكها التطبيق ويعيد تمريرها كل إطار إلى SetNextWindowPos أو SetCursorScreenPos أو عناصر الرسم.",
+    "purposeArabic": "استخدم هذا النمط عندما تريد مؤشراً يتحرك فوق نافذة، أو لوحة تنزلق للداخل والخارج، أو نصاً أو أيقونة تنتقل بين موضعين داخل UI.",
+    "whyUseArabic": "يعطيك حركة مفهومة وبسيطة داخل أدوات التحرير من دون انتظار نظام Motion خارجي؛ كل شيء يعتمد على قيمك أنت وعلى DeltaTime الحالي.",
+    "carriedValueArabic": "يحمل هذا العنصر معنى تنفيذياً أو دلالياً يقرأه النظام أو اللغة عند استخدامه داخل السياق الصحيح.",
+    "sourceDescription": "يجمع هذا المثال بين حركة عنصر صغير داخل نافذة أدوات وحركة لوحة خصائص تنزلق بين موضعين، مع شرح أين تحفظ الحالة وكيف ينعكس ذلك على الرسم في كل إطار."
+  },
+  "signature": {
+    "raw": "",
+    "returnType": "",
+    "parameters": [],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [
+      "الإحداثيات تحفظ في متغيرات ثابتة أو في كائن حالة يملكه التطبيق.",
+      "التحديث الزمني يستخدم io.DeltaTime لا عدداً ثابتاً لكل إطار.",
+      "الرسم لا يحدث الحركة من تلقاء نفسه؛ هو فقط يعرض آخر قيمة وصل إليها التطبيق."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+    "example": "ImGuiIO& io = ImGui::GetIO();\npanel_x += (target_panel_x - panel_x) * io.DeltaTime * 10.0f;\nmarker_x += io.DeltaTime * 140.0f;\nImGui::SetNextWindowPos(ImVec2(panel_x, 90.0f));\nImGui::SetCursorScreenPos(ImVec2(track_min.x + marker_x, track_min.y));"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::Button",
+        "route": "#ref/imgui/functions/im-gui-button",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::SetNextWindowPos",
+        "route": ""
+      },
+      {
+        "name": "ImGui::SetCursorScreenPos",
+        "route": ""
+      },
+      {
+        "name": "ImGui::GetTime",
+        "route": ""
+      },
+      {
+        "name": "ImGuiIO",
+        "route": "#ref/imgui/types/im-gui-io",
+        "libraryId": "imgui",
+        "kindId": "types"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/movement.json",
+    "category": "الحركة وتحديث الموضع",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

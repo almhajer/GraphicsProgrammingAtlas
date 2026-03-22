@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "presets",
+    "displayName": "Presets",
+    "displayNameArabic": "الضبطات المسبقة",
+    "description": "ملفات JSON تعلن إعدادات configure وbuild وtest القابلة لإعادة الاستخدام بين المطورين والأدوات."
+  },
+  "identity": {
+    "name": "CMakePresets.json",
+    "slug": "cmakepresets-json",
+    "titleArabic": "ملف يعلن إعدادات configure وbuild وtest القابلة لإعادة الاستخدام على مستوى المشروع",
+    "aliases": [
+      "cmake-presets",
+      "cmake --preset"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/presets/cmakepresets-json",
+    "contentPath": "content/reference/cmake/presets/cmakepresets-json.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "ملف يعلن إعدادات configure وbuild وtest القابلة لإعادة الاستخدام على مستوى المشروع",
+    "actualMeaningArabic": "هذا الملف هو واجهة JSON رسمية لتعريف presets مثل configurePresets وbuildPresets وtestPresets حتى يشترك المطور وCI والمحرر في نفس أوامر CMake ومعاملاتها.",
+    "purposeArabic": "يستخدم لتوحيد طريقة تشغيل CMake بين أعضاء الفريق أو الأدوات بدل تكرار أوامر الطرفية في الذاكرة أو الويكي.",
+    "whyUseArabic": "يجعل build directories والخيارات والمولّدات والمتغيرات cache جزءًا معلنًا من المشروع نفسه، ويمكن ربطه مباشرةً بالمحررات وCI.",
+    "carriedValueArabic": "يؤثر قبل configure نفسه لأنه يحدد كيف ستُستدعى أوامر CMake وما القيم والمولدات والمسارات التي ستبدأ بها الجلسة.",
+    "sourceDescription": "هذا الملف هو واجهة JSON رسمية لتعريف presets مثل configurePresets وbuildPresets وtestPresets حتى يشترك المطور وCI والمحرر في نفس أوامر CMake ومعاملاتها."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يظهر رسمياً في Tutorial Step 3 ضمن Configuration and Cache Variables.",
+      "يمكنه تعريف configurePreset ثم buildPreset يعتمد عليه وtestPreset فوقه.",
+      "يمكن استدعاؤه من الطرفية عبر cmake --preset <name> بدل إعادة كتابة generator وbinaryDir وcacheVariables في كل مرة."
+    ],
+    "notes": [
+      "هو ملف قابل للمشاركة داخل المستودع.",
+      "يدعم الوراثة بين presets لتجنب التكرار.",
+      "ملف CMakePresets.json يخص الإعدادات المشتركة للمشروع، بينما CMakeUserPresets.json يبقى للمخصصات المحلية."
+    ],
+    "remarks": [],
+    "instructions": [
+      "ضع فيه الإعدادات المشتركة التي يجب أن تتكرر بين جميع المطورين والأنظمة."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "{\n  \"version\": 6,\n  \"configurePresets\": [\n    {\n      \"name\": \"debug\",\n      \"generator\": \"Ninja\",\n      \"binaryDir\": \"${sourceDir}/build/debug\",\n      \"cacheVariables\": {\n        \"CMAKE_BUILD_TYPE\": \"Debug\",\n        \"BUILD_TESTING\": \"ON\"\n      }\n    }\n  ]\n}"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html",
+    "related": [
+      {
+        "name": "CMakeUserPresets.json",
+        "route": "#ref/cmake/presets/cmakeuserpresets-json",
+        "libraryId": "cmake",
+        "kindId": "presets"
+      },
+      {
+        "name": "CMAKE_BUILD_TYPE",
+        "route": "#ref/cmake/variables/cmake-build-type",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "BUILD_TESTING",
+        "route": "#ref/cmake/variables/build-testing",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/presets.json",
+    "category": "الضبطات المسبقة",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

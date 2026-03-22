@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_structs.hpp • القسم 137 من 459 • الأسطر 61201-61650 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_structs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_structs.hpp.html">vulkan_structs.hpp</a> /
+        <span>القسم 137 من 459 • الأسطر 61201-61650</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_structs.hpp</h1>
+      <p class="page-description">القسم 137 من 459 • الأسطر 61201-61650</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_structs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp--section-136.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp--section-138.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_structs.hpp</span>
+        <span class="source-stat">القسم: 137/459</span>
+        <span class="source-stat">الأسطر: 61201-61650</span>
+        <span class="source-stat">حجم الملف: 7.97 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>      return *this;
+    }
+
+    operator VkExternalMemoryProperties const &amp;() const VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;const VkExternalMemoryProperties *&gt;( this );
+    }
+
+    operator VkExternalMemoryProperties &amp;() VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;VkExternalMemoryProperties *&gt;( this );
+    }
+
+    operator VkExternalMemoryProperties const *() const VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;const VkExternalMemoryProperties *&gt;( this );
+    }
+
+    operator VkExternalMemoryProperties *() VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;VkExternalMemoryProperties *&gt;( this );
+    }
+
+#if defined( VULKAN_HPP_USE_REFLECT )
+    std::tuple&lt;ExternalMemoryFeatureFlags const &amp;, ExternalMemoryHandleTypeFlags const &amp;, ExternalMemoryHandleTypeFlags const &amp;&gt;
+      reflect() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( externalMemoryFeatures, exportFromImportedHandleTypes, compatibleHandleTypes );
+    }
+#endif
+
+#if defined( VULKAN_HPP_HAS_SPACESHIP_OPERATOR )
+    auto operator&lt;=&gt;( ExternalMemoryProperties const &amp; ) const = default;
+#else
+    bool operator==( ExternalMemoryProperties const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+#  if defined( VULKAN_HPP_USE_REFLECT )
+      return this-&gt;reflect() == rhs.reflect();
+#  else
+      return ( externalMemoryFeatures == rhs.externalMemoryFeatures ) &amp;&amp; ( exportFromImportedHandleTypes == rhs.exportFromImportedHandleTypes ) &amp;&amp;
+             ( compatibleHandleTypes == rhs.compatibleHandleTypes );
+#  endif
+    }
+
+    bool operator!=( ExternalMemoryProperties const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+      return !operator==( rhs );
+    }
+#endif
+
+  public:
+    ExternalMemoryFeatureFlags    externalMemoryFeatures        = {};
+    ExternalMemoryHandleTypeFlags exportFromImportedHandleTypes = {};
+    ExternalMemoryHandleTypeFlags compatibleHandleTypes         = {};
+  };
+
+#if 20 &lt;= VULKAN_HPP_CPP_VERSION
+  template &lt;&gt;
+  struct CppType&lt;VkExternalMemoryProperties&gt;
+  {
+    using Type = ExternalMemoryProperties;
+  };
+#endif
+  using ExternalMemoryPropertiesKHR = ExternalMemoryProperties;
+
+  // wrapper struct for struct VkExternalBufferProperties, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkExternalBufferProperties.html
+  struct ExternalBufferProperties
+  {
+    using NativeType = VkExternalBufferProperties;
+
+    static const bool                                  allowDuplicate = false;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR StructureType structureType  = StructureType::eExternalBufferProperties;
+
+#if !defined( VULKAN_HPP_NO_CONSTRUCTORS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_CONSTRUCTORS )
+    VULKAN_HPP_CONSTEXPR ExternalBufferProperties( ExternalMemoryProperties externalMemoryProperties_ = {}, void * pNext_ = nullptr ) VULKAN_HPP_NOEXCEPT
+      : pNext{ pNext_ }
+      , externalMemoryProperties{ externalMemoryProperties_ }
+    {
+    }
+
+    VULKAN_HPP_CONSTEXPR ExternalBufferProperties( ExternalBufferProperties const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+
+    ExternalBufferProperties( VkExternalBufferProperties const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : ExternalBufferProperties( *reinterpret_cast&lt;ExternalBufferProperties const *&gt;( &amp;rhs ) )
+    {
+    }
+
+    ExternalBufferProperties &amp; operator=( ExternalBufferProperties const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+#endif /*VULKAN_HPP_NO_CONSTRUCTORS*/
+
+    ExternalBufferProperties &amp; operator=( VkExternalBufferProperties const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      *this = *reinterpret_cast&lt;ExternalBufferProperties const *&gt;( &amp;rhs );
+      return *this;
+    }
+
+    operator VkExternalBufferProperties const &amp;() const VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;const VkExternalBufferProperties *&gt;( this );
+    }
+
+    operator VkExternalBufferProperties &amp;() VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;VkExternalBufferProperties *&gt;( this );
+    }
+
+    operator VkExternalBufferProperties const *() const VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;const VkExternalBufferProperties *&gt;( this );
+    }
+
+    operator VkExternalBufferProperties *() VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;VkExternalBufferProperties *&gt;( this );
+    }
+
+#if defined( VULKAN_HPP_USE_REFLECT )
+    std::tuple&lt;StructureType const &amp;, void * const &amp;, ExternalMemoryProperties const &amp;&gt; reflect() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( sType, pNext, externalMemoryProperties );
+    }
+#endif
+
+#if defined( VULKAN_HPP_HAS_SPACESHIP_OPERATOR )
+    auto operator&lt;=&gt;( ExternalBufferProperties const &amp; ) const = default;
+#else
+    bool operator==( ExternalBufferProperties const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+#  if defined( VULKAN_HPP_USE_REFLECT )
+      return this-&gt;reflect() == rhs.reflect();
+#  else
+      return ( sType == rhs.sType ) &amp;&amp; ( pNext == rhs.pNext ) &amp;&amp; ( externalMemoryProperties == rhs.externalMemoryProperties );
+#  endif
+    }
+
+    bool operator!=( ExternalBufferProperties const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+      return !operator==( rhs );
+    }
+#endif
+
+  public:
+    StructureType            sType                    = StructureType::eExternalBufferProperties;
+    void *                   pNext                    = {};
+    ExternalMemoryProperties externalMemoryProperties = {};
+  };
+
+#if 20 &lt;= VULKAN_HPP_CPP_VERSION
+  template &lt;&gt;
+  struct CppType&lt;VkExternalBufferProperties&gt;
+  {
+    using Type = ExternalBufferProperties;
+  };
+#endif
+
+  template &lt;&gt;
+  struct CppType&lt;StructureType, StructureType::eExternalBufferProperties&gt;
+  {
+    using Type = ExternalBufferProperties;
+  };
+
+  using ExternalBufferPropertiesKHR = ExternalBufferProperties;
+
+  // wrapper struct for struct VkExternalComputeQueueCreateInfoNV, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/VkExternalComputeQueueCreateInfoNV.html
+  struct ExternalComputeQueueCreateInfoNV
+  {
+    using NativeType = VkExternalComputeQueueCreateInfoNV;
+
+    static const bool                                  allowDuplicate = false;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR StructureType structureType  = StructureType::eExternalComputeQueueCreateInfoNV;
+
+#if !defined( VULKAN_HPP_NO_CONSTRUCTORS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_CONSTRUCTORS )
+    VULKAN_HPP_CONSTEXPR ExternalComputeQueueCreateInfoNV( Queue preferredQueue_ = {}, const void * pNext_ = nullptr ) VULKAN_HPP_NOEXCEPT
+      : pNext{ pNext_ }
+      , preferredQueue{ preferredQueue_ }
+    {
+    }
+
+    VULKAN_HPP_CONSTEXPR ExternalComputeQueueCreateInfoNV( ExternalComputeQueueCreateInfoNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+
+    ExternalComputeQueueCreateInfoNV( VkExternalComputeQueueCreateInfoNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : ExternalComputeQueueCreateInfoNV( *reinterpret_cast&lt;ExternalComputeQueueCreateInfoNV const *&gt;( &amp;rhs ) )
+    {
+    }
+
+    ExternalComputeQueueCreateInfoNV &amp; operator=( ExternalComputeQueueCreateInfoNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+#endif /*VULKAN_HPP_NO_CONSTRUCTORS*/
+
+    ExternalComputeQueueCreateInfoNV &amp; operator=( VkExternalComputeQueueCreateInfoNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      *this = *reinterpret_cast&lt;ExternalComputeQueueCreateInfoNV const *&gt;( &amp;rhs );
+      return *this;
+    }
+
+#if !defined( VULKAN_HPP_NO_SETTERS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_SETTERS )
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueCreateInfoNV &amp; setPNext( const void * pNext_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueCreateInfoNV &amp;&amp; setPNext( const void * pNext_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return std::move( *this );
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueCreateInfoNV &amp; setPreferredQueue( Queue preferredQueue_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      preferredQueue = preferredQueue_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueCreateInfoNV &amp;&amp; setPreferredQueue( Queue preferredQueue_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      preferredQueue = preferredQueue_;
+      return std::move( *this );
+    }
+#endif /*VULKAN_HPP_NO_SETTERS*/
+
+    operator VkExternalComputeQueueCreateInfoNV const &amp;() const VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;const VkExternalComputeQueueCreateInfoNV *&gt;( this );
+    }
+
+    operator VkExternalComputeQueueCreateInfoNV &amp;() VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;VkExternalComputeQueueCreateInfoNV *&gt;( this );
+    }
+
+    operator VkExternalComputeQueueCreateInfoNV const *() const VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;const VkExternalComputeQueueCreateInfoNV *&gt;( this );
+    }
+
+    operator VkExternalComputeQueueCreateInfoNV *() VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;VkExternalComputeQueueCreateInfoNV *&gt;( this );
+    }
+
+#if defined( VULKAN_HPP_USE_REFLECT )
+    std::tuple&lt;StructureType const &amp;, const void * const &amp;, Queue const &amp;&gt; reflect() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( sType, pNext, preferredQueue );
+    }
+#endif
+
+#if defined( VULKAN_HPP_HAS_SPACESHIP_OPERATOR )
+    auto operator&lt;=&gt;( ExternalComputeQueueCreateInfoNV const &amp; ) const = default;
+#else
+    bool operator==( ExternalComputeQueueCreateInfoNV const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+#  if defined( VULKAN_HPP_USE_REFLECT )
+      return this-&gt;reflect() == rhs.reflect();
+#  else
+      return ( sType == rhs.sType ) &amp;&amp; ( pNext == rhs.pNext ) &amp;&amp; ( preferredQueue == rhs.preferredQueue );
+#  endif
+    }
+
+    bool operator!=( ExternalComputeQueueCreateInfoNV const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+      return !operator==( rhs );
+    }
+#endif
+
+  public:
+    StructureType sType          = StructureType::eExternalComputeQueueCreateInfoNV;
+    const void *  pNext          = {};
+    Queue         preferredQueue = {};
+  };
+
+#if 20 &lt;= VULKAN_HPP_CPP_VERSION
+  template &lt;&gt;
+  struct CppType&lt;VkExternalComputeQueueCreateInfoNV&gt;
+  {
+    using Type = ExternalComputeQueueCreateInfoNV;
+  };
+#endif
+
+  template &lt;&gt;
+  struct CppType&lt;StructureType, StructureType::eExternalComputeQueueCreateInfoNV&gt;
+  {
+    using Type = ExternalComputeQueueCreateInfoNV;
+  };
+
+  // wrapper struct for struct VkExternalComputeQueueDataParamsNV, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/VkExternalComputeQueueDataParamsNV.html
+  struct ExternalComputeQueueDataParamsNV
+  {
+    using NativeType = VkExternalComputeQueueDataParamsNV;
+
+    static const bool                                  allowDuplicate = false;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR StructureType structureType  = StructureType::eExternalComputeQueueDataParamsNV;
+
+#if !defined( VULKAN_HPP_NO_CONSTRUCTORS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_CONSTRUCTORS )
+    VULKAN_HPP_CONSTEXPR ExternalComputeQueueDataParamsNV( uint32_t deviceIndex_ = {}, const void * pNext_ = nullptr ) VULKAN_HPP_NOEXCEPT
+      : pNext{ pNext_ }
+      , deviceIndex{ deviceIndex_ }
+    {
+    }
+
+    VULKAN_HPP_CONSTEXPR ExternalComputeQueueDataParamsNV( ExternalComputeQueueDataParamsNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+
+    ExternalComputeQueueDataParamsNV( VkExternalComputeQueueDataParamsNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : ExternalComputeQueueDataParamsNV( *reinterpret_cast&lt;ExternalComputeQueueDataParamsNV const *&gt;( &amp;rhs ) )
+    {
+    }
+
+    ExternalComputeQueueDataParamsNV &amp; operator=( ExternalComputeQueueDataParamsNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+#endif /*VULKAN_HPP_NO_CONSTRUCTORS*/
+
+    ExternalComputeQueueDataParamsNV &amp; operator=( VkExternalComputeQueueDataParamsNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      *this = *reinterpret_cast&lt;ExternalComputeQueueDataParamsNV const *&gt;( &amp;rhs );
+      return *this;
+    }
+
+#if !defined( VULKAN_HPP_NO_SETTERS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_SETTERS )
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueDataParamsNV &amp; setPNext( const void * pNext_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueDataParamsNV &amp;&amp; setPNext( const void * pNext_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return std::move( *this );
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueDataParamsNV &amp; setDeviceIndex( uint32_t deviceIndex_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      deviceIndex = deviceIndex_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueDataParamsNV &amp;&amp; setDeviceIndex( uint32_t deviceIndex_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      deviceIndex = deviceIndex_;
+      return std::move( *this );
+    }
+#endif /*VULKAN_HPP_NO_SETTERS*/
+
+    operator VkExternalComputeQueueDataParamsNV const &amp;() const VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;const VkExternalComputeQueueDataParamsNV *&gt;( this );
+    }
+
+    operator VkExternalComputeQueueDataParamsNV &amp;() VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;VkExternalComputeQueueDataParamsNV *&gt;( this );
+    }
+
+    operator VkExternalComputeQueueDataParamsNV const *() const VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;const VkExternalComputeQueueDataParamsNV *&gt;( this );
+    }
+
+    operator VkExternalComputeQueueDataParamsNV *() VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;VkExternalComputeQueueDataParamsNV *&gt;( this );
+    }
+
+#if defined( VULKAN_HPP_USE_REFLECT )
+    std::tuple&lt;StructureType const &amp;, const void * const &amp;, uint32_t const &amp;&gt; reflect() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( sType, pNext, deviceIndex );
+    }
+#endif
+
+#if defined( VULKAN_HPP_HAS_SPACESHIP_OPERATOR )
+    auto operator&lt;=&gt;( ExternalComputeQueueDataParamsNV const &amp; ) const = default;
+#else
+    bool operator==( ExternalComputeQueueDataParamsNV const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+#  if defined( VULKAN_HPP_USE_REFLECT )
+      return this-&gt;reflect() == rhs.reflect();
+#  else
+      return ( sType == rhs.sType ) &amp;&amp; ( pNext == rhs.pNext ) &amp;&amp; ( deviceIndex == rhs.deviceIndex );
+#  endif
+    }
+
+    bool operator!=( ExternalComputeQueueDataParamsNV const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+      return !operator==( rhs );
+    }
+#endif
+
+  public:
+    StructureType sType       = StructureType::eExternalComputeQueueDataParamsNV;
+    const void *  pNext       = {};
+    uint32_t      deviceIndex = {};
+  };
+
+#if 20 &lt;= VULKAN_HPP_CPP_VERSION
+  template &lt;&gt;
+  struct CppType&lt;VkExternalComputeQueueDataParamsNV&gt;
+  {
+    using Type = ExternalComputeQueueDataParamsNV;
+  };
+#endif
+
+  template &lt;&gt;
+  struct CppType&lt;StructureType, StructureType::eExternalComputeQueueDataParamsNV&gt;
+  {
+    using Type = ExternalComputeQueueDataParamsNV;
+  };
+
+  // wrapper struct for struct VkExternalComputeQueueDeviceCreateInfoNV, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/VkExternalComputeQueueDeviceCreateInfoNV.html
+  struct ExternalComputeQueueDeviceCreateInfoNV
+  {
+    using NativeType = VkExternalComputeQueueDeviceCreateInfoNV;
+
+    static const bool                                  allowDuplicate = false;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR StructureType structureType  = StructureType::eExternalComputeQueueDeviceCreateInfoNV;
+
+#if !defined( VULKAN_HPP_NO_CONSTRUCTORS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_CONSTRUCTORS )
+    VULKAN_HPP_CONSTEXPR ExternalComputeQueueDeviceCreateInfoNV( uint32_t reservedExternalQueues_ = {}, const void * pNext_ = nullptr ) VULKAN_HPP_NOEXCEPT
+      : pNext{ pNext_ }
+      , reservedExternalQueues{ reservedExternalQueues_ }
+    {
+    }
+
+    VULKAN_HPP_CONSTEXPR ExternalComputeQueueDeviceCreateInfoNV( ExternalComputeQueueDeviceCreateInfoNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+
+    ExternalComputeQueueDeviceCreateInfoNV( VkExternalComputeQueueDeviceCreateInfoNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : ExternalComputeQueueDeviceCreateInfoNV( *reinterpret_cast&lt;ExternalComputeQueueDeviceCreateInfoNV const *&gt;( &amp;rhs ) )
+    {
+    }
+
+    ExternalComputeQueueDeviceCreateInfoNV &amp; operator=( ExternalComputeQueueDeviceCreateInfoNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+#endif /*VULKAN_HPP_NO_CONSTRUCTORS*/
+
+    ExternalComputeQueueDeviceCreateInfoNV &amp; operator=( VkExternalComputeQueueDeviceCreateInfoNV const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      *this = *reinterpret_cast&lt;ExternalComputeQueueDeviceCreateInfoNV const *&gt;( &amp;rhs );
+      return *this;
+    }
+
+#if !defined( VULKAN_HPP_NO_SETTERS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_SETTERS )
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueDeviceCreateInfoNV &amp; setPNext( const void * pNext_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 ExternalComputeQueueDeviceCreateInfoNV &amp;&amp; setPNext( const void * pNext_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_structs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp--section-136.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp--section-138.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

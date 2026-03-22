@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_concurrent_unordered_map.hpp - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_concurrent_unordered_map.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <span>vk_concurrent_unordered_map.hpp</span>
+      </nav>
+      <h1 class="page-title">📄 vk_concurrent_unordered_map.hpp</h1>
+      <p class="page-description">ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.</p>
+      <div class="standalone-badges">
+        <span class="standalone-badge">ملفات vulkan/utility</span>
+        <span class="standalone-badge">utility</span>
+        <span class="standalone-badge"><span dir="ltr">vulkan/utility/vk_concurrent_unordered_map.hpp</span></span>
+      </div>
+    </div>
+
+    <div class="standalone-grid">
+      <section class="standalone-card">
+        <h2>الهدف الفعلي للملف</h2>
+        <ul class="insight-list">
+          <li>هذا الملف أداة مساندة أكثر من كونه جزءاً من عقد API الرسمي؛ الغرض منه تسهيل النسخ، التحويل، dispatch، أو التعامل مع هياكل Vulkan المساعدة داخل الأدوات والطبقات.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>متى تستخدمه؟</h2>
+        <p>استخدم vk_concurrent_unordered_map.hpp عندما تحتاج وظائف أو بنى مساعدة تدعم الطبقات أو الأدوات أو الشيفرات المساندة حول Vulkan.</p>
+      </section>
+      <section class="standalone-card">
+        <h2>مثال تضمين</h2>
+        <pre class="code-block" dir="ltr"><code class="language-cpp">#include &lt;vulkan/utility/vk_concurrent_unordered_map.hpp&gt;</code></pre>
+      </section>
+      <section class="standalone-card">
+        <h2>الملفات المضمنة</h2>
+        <ul><li><code>stdint.h</code></li><li><code>array</code></li><li><code>functional</code></li><li><code>mutex</code></li><li><code>shared_mutex</code></li><li><code>unordered_map</code></li><li><code>vector</code></li></ul>
+      </section>
+      <section class="standalone-card">
+        <h2>تركيب الملف</h2>
+        <ul class="insight-list">
+          <li>يستورد 7 ملفاً آخر قبل بناء تعريفاته الخاصة.</li><li>ملامحه C++ واضحة: 4 namespace، 2 class، و0 استعمالاً لـ inline تقريباً.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>ما الذي تقوله التعليقات نفسها؟</h2>
+        <ul class="insight-list">
+          
+            <li>
+              https://en.cppreference.com/w/cpp/thread/hardware_destructive_interference_size https://en.wikipedia.org/wiki/False_sharing TODO use C++20 to check for std::hardware_destructive_interference_size feature support.
+              <span class="comment-context">constexpr std::size_t get_hardware_destructive_interference_size() { return 64; }</span>
+            </li>
+          
+            <li>
+              Limited concurrent unordered_map that supports internally-synchronized insert/erase/access. Splits locking across N buckets and uses shared_mutex for read/write locking. Iterators are not supported. The following operations are supported: insert_or_assign: Insert a new element or update an existing element. insert: Insert a new element and return whether it was inserted. erase: Remove an element. contains: Returns true if the key is in the map. find: Returns != end() if found, value is in ret-&gt;second. pop: Erases and returns the erased value if found. find/end: find returns a vaguely iterator-like type that can be compared to end and can use iter-&gt;second to retrieve the reference. This is to ease porting for existing code that combines the existence check and lookup in a single operation (and thus a single lock). i.e.: auto iter = map.find(key); if (iter != map.end()) { T t = iter-&gt;second; ... snapshot: Return an array of elements (key, value pairs) that satisfy an optional predicate. This can be used as a substitute for iterators in exceptional cases.
+              <span class="comment-context">template &lt;typename Key, typename T, int BUCKETSLOG2 = 2, typename Map = std::unordered_map&lt;Key, T&gt;&gt;</span>
+            </li>
+          
+            <li>
+              Aliases to avoid excessive typing. We can&#39;t easily auto these away because there are virtual methods in ValidationObject which return lock guards and those cannot use return type deduction.
+              <span class="comment-context">using ReadLockGuard = std::shared_lock&lt;std::shared_mutex&gt;;</span>
+            </li>
+          
+            <li>
+              type returned by find() and end().
+              <span class="comment-context">class FindResult {</span>
+            </li>
+          
+            <li>
+              == and != only support comparing against end()
+              <span class="comment-context">bool operator==(const FindResult &amp;other) const {</span>
+            </li>
+          
+            <li>
+              Make -&gt; act kind of like an iterator.
+              <span class="comment-context">std::pair&lt;bool, T&gt; *operator-&gt;() { return &amp;result; }</span>
+            </li>
+          
+            <li>
+              (found, reference to element)
+              <span class="comment-context">std::pair&lt;bool, T&gt; result;</span>
+            </li>
+          
+            <li>
+              find()/end() return a FindResult containing a copy of the value. For end(), return a default value.
+              <span class="comment-context">FindResult end() const { return FindResult(false, T()); }</span>
+            </li>
+          
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الأسطر: 204</span>
+        <span class="source-stat">الحجم: 6.6 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>/* Copyright (c) 2015-2017, 2019-2024 The Khronos Group Inc.
+ * Copyright (c) 2015-2017, 2019-2024 Valve Corporation
+ * Copyright (c) 2015-2017, 2019-2024 LunarG, Inc.
+ * Modifications Copyright (C) 2022 RasterGrid Kft.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ */
+
+#pragma once
+
+#include &lt;stdint.h&gt;
+
+#include &lt;array&gt;
+#include &lt;functional&gt;
+#include &lt;mutex&gt;
+#include &lt;shared_mutex&gt;
+#include &lt;unordered_map&gt;
+#include &lt;vector&gt;
+
+namespace vku {
+namespace concurrent {
+// https://en.cppreference.com/w/cpp/thread/hardware_destructive_interference_size
+// https://en.wikipedia.org/wiki/False_sharing
+// TODO use C++20 to check for std::hardware_destructive_interference_size feature support.
+constexpr std::size_t get_hardware_destructive_interference_size() { return 64; }
+
+// Limited concurrent unordered_map that supports internally-synchronized
+// insert/erase/access. Splits locking across N buckets and uses shared_mutex
+// for read/write locking. Iterators are not supported. The following
+// operations are supported:
+//
+// insert_or_assign: Insert a new element or update an existing element.
+// insert: Insert a new element and return whether it was inserted.
+// erase: Remove an element.
+// contains: Returns true if the key is in the map.
+// find: Returns != end() if found, value is in ret-&gt;second.
+// pop: Erases and returns the erased value if found.
+//
+// find/end: find returns a vaguely iterator-like type that can be compared to
+// end and can use iter-&gt;second to retrieve the reference. This is to ease porting
+// for existing code that combines the existence check and lookup in a single
+// operation (and thus a single lock). i.e.:
+//
+//      auto iter = map.find(key);
+//      if (iter != map.end()) {
+//          T t = iter-&gt;second;
+//          ...
+//
+// snapshot: Return an array of elements (key, value pairs) that satisfy an optional
+// predicate. This can be used as a substitute for iterators in exceptional cases.
+template &lt;typename Key, typename T, int BUCKETSLOG2 = 2, typename Map = std::unordered_map&lt;Key, T&gt;&gt;
+class unordered_map {
+    // Aliases to avoid excessive typing. We can&#39;t easily auto these away because
+    // there are virtual methods in ValidationObject which return lock guards
+    // and those cannot use return type deduction.
+    using ReadLockGuard = std::shared_lock&lt;std::shared_mutex&gt;;
+    using WriteLockGuard = std::unique_lock&lt;std::shared_mutex&gt;;
+
+  public:
+    template &lt;typename... Args&gt;
+    void insert_or_assign(const Key &amp;key, Args &amp;&amp;...args) {
+        uint32_t h = ConcurrentMapHashObject(key);
+        WriteLockGuard lock(locks[h].lock);
+        maps[h][key] = {std::forward&lt;Args&gt;(args)...};
+    }
+
+    template &lt;typename... Args&gt;
+    bool insert(const Key &amp;key, Args &amp;&amp;...args) {
+        uint32_t h = ConcurrentMapHashObject(key);
+        WriteLockGuard lock(locks[h].lock);
+        auto ret = maps[h].emplace(key, std::forward&lt;Args&gt;(args)...);
+        return ret.second;
+    }
+
+    // returns size_type
+    size_t erase(const Key &amp;key) {
+        uint32_t h = ConcurrentMapHashObject(key);
+        WriteLockGuard lock(locks[h].lock);
+        return maps[h].erase(key);
+    }
+
+    bool contains(const Key &amp;key) const {
+        uint32_t h = ConcurrentMapHashObject(key);
+        ReadLockGuard lock(locks[h].lock);
+        return maps[h].count(key) != 0;
+    }
+
+    // type returned by find() and end().
+    class FindResult {
+      public:
+        FindResult(bool a, T b) : result(a, std::move(b)) {}
+
+        // == and != only support comparing against end()
+        bool operator==(const FindResult &amp;other) const {
+            if (result.first == false &amp;&amp; other.result.first == false) {
+                return true;
+            }
+            return false;
+        }
+        bool operator!=(const FindResult &amp;other) const { return !(*this == other); }
+
+        // Make -&gt; act kind of like an iterator.
+        std::pair&lt;bool, T&gt; *operator-&gt;() { return &amp;result; }
+        const std::pair&lt;bool, T&gt; *operator-&gt;() const { return &amp;result; }
+
+      private:
+        // (found, reference to element)
+        std::pair&lt;bool, T&gt; result;
+    };
+
+    // find()/end() return a FindResult containing a copy of the value. For end(),
+    // return a default value.
+    FindResult end() const { return FindResult(false, T()); }
+    FindResult cend() const { return end(); }
+
+    FindResult find(const Key &amp;key) const {
+        uint32_t h = ConcurrentMapHashObject(key);
+        ReadLockGuard lock(locks[h].lock);
+
+        auto itr = maps[h].find(key);
+        const bool found = itr != maps[h].end();
+
+        if (found) {
+            return FindResult(true, itr-&gt;second);
+        } else {
+            return end();
+        }
+    }
+
+    FindResult pop(const Key &amp;key) {
+        uint32_t h = ConcurrentMapHashObject(key);
+        WriteLockGuard lock(locks[h].lock);
+
+        auto itr = maps[h].find(key);
+        const bool found = itr != maps[h].end();
+
+        if (found) {
+            auto ret = FindResult(true, itr-&gt;second);
+            maps[h].erase(itr);
+            return ret;
+        } else {
+            return end();
+        }
+    }
+
+    std::vector&lt;std::pair&lt;const Key, T&gt;&gt; snapshot(std::function&lt;bool(T)&gt; f = nullptr) const {
+        std::vector&lt;std::pair&lt;const Key, T&gt;&gt; ret;
+        for (int h = 0; h &lt; BUCKETS; ++h) {
+            ReadLockGuard lock(locks[h].lock);
+            for (const auto &amp;j : maps[h]) {
+                if (!f || f(j.second)) {
+                    ret.emplace_back(j.first, j.second);
+                }
+            }
+        }
+        return ret;
+    }
+
+    void clear() {
+        for (int h = 0; h &lt; BUCKETS; ++h) {
+            WriteLockGuard lock(locks[h].lock);
+            maps[h].clear();
+        }
+    }
+
+    size_t size() const {
+        size_t result = 0;
+        for (int h = 0; h &lt; BUCKETS; ++h) {
+            ReadLockGuard lock(locks[h].lock);
+            result += maps[h].size();
+        }
+        return result;
+    }
+
+    bool empty() const {
+        bool all_maps_empty = true;
+        for (size_t h = 0; h &lt; BUCKETS; ++h) {
+            ReadLockGuard lock(locks[h].lock);
+            all_maps_empty &amp;= maps[h].empty();
+        }
+        return all_maps_empty;
+    }
+
+  private:
+    static const int BUCKETS = (1 &lt;&lt; BUCKETSLOG2);
+
+    Map maps[BUCKETS];
+    struct alignas(get_hardware_destructive_interference_size()) AlignedSharedMutex {
+        std::shared_mutex lock;
+    };
+    mutable std::array&lt;AlignedSharedMutex, BUCKETS&gt; locks;
+
+    uint32_t ConcurrentMapHashObject(const Key &amp;object) const {
+        uint64_t u64 = (uint64_t)(uintptr_t)object;
+        uint32_t hash = (uint32_t)(u64 &gt;&gt; 32) + (uint32_t)u64;
+        hash ^= (hash &gt;&gt; BUCKETSLOG2) ^ (hash &gt;&gt; (2 * BUCKETSLOG2));
+        hash &amp;= (BUCKETS - 1);
+        return hash;
+    }
+};
+}  // namespace concurrent
+}  // namespace vku
+</code></pre>
+    </section>
+    
+  </main>
+</body>
+</html>

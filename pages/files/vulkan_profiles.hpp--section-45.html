@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_profiles.hpp • القسم 45 من 47 • الأسطر 19801-20250 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_profiles.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_profiles.hpp.html">vulkan_profiles.hpp</a> /
+        <span>القسم 45 من 47 • الأسطر 19801-20250</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_profiles.hpp</h1>
+      <p class="page-description">القسم 45 من 47 • الأسطر 19801-20250</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-44.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-46.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_profiles.hpp</span>
+        <span class="source-stat">القسم: 45/47</span>
+        <span class="source-stat">الأسطر: 19801-20250</span>
+        <span class="source-stat">حجم الملف: 1.41 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    }
+
+    if (!has_portability_ext) {
+        extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+    }
+
+    createInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+#endif
+
+    if (!extensions.empty()) {
+        createInfo.enabledExtensionCount = static_cast&lt;uint32_t&gt;(extensions.size());
+        createInfo.ppEnabledExtensionNames = extensions.data();
+    }
+
+    return vp.CreateInstance(&amp;createInfo, pAllocator, pInstance);
+}
+
+VPAPI_ATTR VkResult vpGetPhysicalDeviceProfileVariantsSupport(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    VkInstance instance,
+    VkPhysicalDevice physicalDevice,
+    const VpProfileProperties *pProfile,
+    VkBool32 *pSupported,
+    uint32_t *pPropertyCount,
+    VpBlockProperties* pProperties) {
+#ifdef VP_USE_OBJECT
+    const VpCapabilities_T&amp; vp = capabilities == nullptr ? VpCapabilities_T::Get() : *capabilities;
+#else
+    const VpCapabilities_T&amp; vp = VpCapabilities_T::Get();
+#endif//VP_USE_OBJECT
+
+    VkResult result = VK_SUCCESS;
+
+    uint32_t supported_device_extension_count = 0;
+    result = vp.EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &amp;supported_device_extension_count, nullptr);
+    if (result != VK_SUCCESS) {
+        return result;
+    }
+    std::vector&lt;VkExtensionProperties&gt; supported_device_extensions;
+    if (supported_device_extension_count &gt; 0) {
+        supported_device_extensions.resize(supported_device_extension_count);
+    }
+    result = vp.EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &amp;supported_device_extension_count, supported_device_extensions.data());
+    if (result != VK_SUCCESS) {
+        return result;
+    }
+
+    // Workaround old loader bug where count could be smaller on the second call to vkEnumerateDeviceExtensionProperties
+    if (supported_device_extension_count &gt; 0) {
+        supported_device_extensions.resize(supported_device_extension_count);
+    }
+
+    {
+        const detail::VpProfileDesc* pProfileDesc = detail::vpGetProfileDesc(pProfile-&gt;profileName);
+        if (pProfileDesc == nullptr) {
+            return VK_ERROR_UNKNOWN;
+        }
+    }
+
+    struct GPDP2EntryPoints {
+        PFN_vkGetPhysicalDeviceFeatures2KHR                 pfnGetPhysicalDeviceFeatures2;
+        PFN_vkGetPhysicalDeviceProperties2KHR               pfnGetPhysicalDeviceProperties2;
+        PFN_vkGetPhysicalDeviceFormatProperties2KHR         pfnGetPhysicalDeviceFormatProperties2;
+        PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR    pfnGetPhysicalDeviceQueueFamilyProperties2;
+    };
+
+#ifdef VK_KHR_video_queue
+    struct VideoInfo {
+        PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR         pfnGetPhysicalDeviceVideoCapabilitiesKHR;
+        PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR     pfnGetPhysicalDeviceVideoFormatPropertiesKHR;
+        const detail::VpVideoProfileDesc*                   pProfileDesc;
+        VkVideoProfileInfoKHR                               profileInfo;
+        VkPhysicalDeviceVideoFormatInfoKHR                  formatInfo;
+        bool                                                supportedProfile;
+        uint32_t                                            matchingProfiles;
+    };
+#endif  // VK_KHR_video_queue
+
+    std::vector&lt;VpBlockProperties&gt; supported_blocks;
+    std::vector&lt;VpBlockProperties&gt; unsupported_blocks;
+
+    struct UserData {
+        VkPhysicalDevice physicalDevice;
+        std::vector&lt;VpBlockProperties&gt;&amp; supported_blocks;
+        std::vector&lt;VpBlockProperties&gt;&amp; unsupported_blocks;
+        const detail::VpVariantDesc* variant;
+        GPDP2EntryPoints gpdp2;
+#ifdef VK_KHR_video_queue
+        VideoInfo video;
+#endif  // VK_KHR_video_queue
+        uint32_t index;
+        detail::PFN_vpStructChainerCb pfnCb;
+        bool supported;
+    } userData{physicalDevice, supported_blocks, unsupported_blocks};
+
+    if (!vp.singleton) {
+        userData.gpdp2.pfnGetPhysicalDeviceFeatures2 = vp.GetPhysicalDeviceFeatures2;
+        userData.gpdp2.pfnGetPhysicalDeviceProperties2 = vp.GetPhysicalDeviceProperties2;
+        userData.gpdp2.pfnGetPhysicalDeviceFormatProperties2 = vp.GetPhysicalDeviceFormatProperties2;
+        userData.gpdp2.pfnGetPhysicalDeviceQueueFamilyProperties2 = vp.GetPhysicalDeviceQueueFamilyProperties2;
+    }
+
+    // Attempt to load core versions of the GPDP2 entry points
+    if (userData.gpdp2.pfnGetPhysicalDeviceFeatures2 == nullptr) {
+        userData.gpdp2.pfnGetPhysicalDeviceFeatures2 =
+            (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(instance, &quot;vkGetPhysicalDeviceFeatures2&quot;);
+        userData.gpdp2.pfnGetPhysicalDeviceProperties2 =
+            (PFN_vkGetPhysicalDeviceProperties2KHR)vkGetInstanceProcAddr(instance, &quot;vkGetPhysicalDeviceProperties2&quot;);
+        userData.gpdp2.pfnGetPhysicalDeviceFormatProperties2 =
+            (PFN_vkGetPhysicalDeviceFormatProperties2KHR)vkGetInstanceProcAddr(instance, &quot;vkGetPhysicalDeviceFormatProperties2&quot;);
+        userData.gpdp2.pfnGetPhysicalDeviceQueueFamilyProperties2 =
+            (PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR)vkGetInstanceProcAddr(instance, &quot;vkGetPhysicalDeviceQueueFamilyProperties2&quot;);
+    }
+
+    // If not successful, try to load KHR variant
+    if (userData.gpdp2.pfnGetPhysicalDeviceFeatures2 == nullptr) {
+        userData.gpdp2.pfnGetPhysicalDeviceFeatures2 =
+            (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(instance, &quot;vkGetPhysicalDeviceFeatures2KHR&quot;);
+        userData.gpdp2.pfnGetPhysicalDeviceProperties2 =
+            (PFN_vkGetPhysicalDeviceProperties2KHR)vkGetInstanceProcAddr(instance, &quot;vkGetPhysicalDeviceProperties2KHR&quot;);
+        userData.gpdp2.pfnGetPhysicalDeviceFormatProperties2 =
+            (PFN_vkGetPhysicalDeviceFormatProperties2KHR)vkGetInstanceProcAddr(instance, &quot;vkGetPhysicalDeviceFormatProperties2KHR&quot;);
+        userData.gpdp2.pfnGetPhysicalDeviceQueueFamilyProperties2 =
+            (PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR)vkGetInstanceProcAddr(instance, &quot;vkGetPhysicalDeviceQueueFamilyProperties2KHR&quot;);
+    }
+
+    if (userData.gpdp2.pfnGetPhysicalDeviceFeatures2 == nullptr ||
+        userData.gpdp2.pfnGetPhysicalDeviceProperties2 == nullptr ||
+        userData.gpdp2.pfnGetPhysicalDeviceFormatProperties2 == nullptr ||
+        userData.gpdp2.pfnGetPhysicalDeviceQueueFamilyProperties2 == nullptr) {
+        return VK_ERROR_EXTENSION_NOT_PRESENT;
+    }
+
+#ifdef VK_KHR_video_queue
+    PFN_vkGetInstanceProcAddr gipa = vp.singleton ? vkGetInstanceProcAddr : vp.GetInstanceProcAddr;
+    userData.video.pfnGetPhysicalDeviceVideoCapabilitiesKHR =
+        (PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR)gipa(instance, &quot;vkGetPhysicalDeviceVideoCapabilitiesKHR&quot;);
+    userData.video.pfnGetPhysicalDeviceVideoFormatPropertiesKHR =
+        (PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR)gipa(instance, &quot;vkGetPhysicalDeviceVideoFormatPropertiesKHR&quot;);
+#endif  // VK_KHR_video_queue
+
+    bool supported = true;
+
+    const std::vector&lt;VpProfileProperties&gt;&amp; gathered_profiles = detail::GatherProfiles(*pProfile);
+
+    for (std::size_t profile_index = 0, profile_count = gathered_profiles.size(); profile_index &lt; profile_count; ++profile_index) {
+        const char* profile_name = gathered_profiles[profile_index].profileName;
+
+        const detail::VpProfileDesc* profile_desc = detail::vpGetProfileDesc(profile_name);
+        if (profile_desc == nullptr) {
+            return VK_ERROR_UNKNOWN;
+        }
+
+        bool supported_profile = true;
+
+        if (profile_desc-&gt;props.specVersion &lt; gathered_profiles[profile_index].specVersion) {
+            supported_profile = false;
+        }
+
+        VpBlockProperties block{gathered_profiles[profile_index], profile_desc-&gt;minApiVersion};
+
+        {
+            VkPhysicalDeviceProperties2KHR properties2{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR };
+            userData.gpdp2.pfnGetPhysicalDeviceProperties2(physicalDevice, &amp;properties2);
+            if (!detail::vpCheckVersion(properties2.properties.apiVersion, profile_desc-&gt;minApiVersion)) {
+                supported_profile = false;
+            }
+        }
+
+        for (uint32_t required_capability_index = 0; required_capability_index &lt; profile_desc-&gt;requiredCapabilityCount; ++required_capability_index) {
+            const detail::VpCapabilitiesDesc* required_capabilities = &amp;profile_desc-&gt;pRequiredCapabilities[required_capability_index];
+
+            bool supported_block = false;
+
+            for (uint32_t variant_index = 0; variant_index &lt; required_capabilities-&gt;variantCount; ++variant_index) {
+                const detail::VpVariantDesc&amp; variant_desc = required_capabilities-&gt;pVariants[variant_index];
+
+                bool supported_variant = true;
+
+                for (uint32_t ext_index = 0; ext_index &lt; variant_desc.deviceExtensionCount; ++ext_index) {
+                    const char *requested_extension = variant_desc.pDeviceExtensions[ext_index].extensionName;
+                    if (!detail::CheckExtension(supported_device_extensions.data(), supported_device_extensions.size(), requested_extension)) {
+                        supported_variant = false;
+                    }
+                }
+
+                userData.variant = &amp;variant_desc;
+
+                VkPhysicalDeviceFeatures2KHR features{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR };
+                userData.variant-&gt;chainers.pfnFeature(
+                    static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(&amp;features)), &amp;userData,
+                    [](VkBaseOutStructure* p, void* pUser) {
+                        UserData* pUserData = static_cast&lt;UserData*&gt;(pUser);
+                        pUserData-&gt;gpdp2.pfnGetPhysicalDeviceFeatures2(
+                            pUserData-&gt;physicalDevice,
+                            static_cast&lt;VkPhysicalDeviceFeatures2KHR*&gt;(static_cast&lt;void*&gt;(p)));
+
+                        pUserData-&gt;supported = true;
+                        while (p != nullptr) {
+                            if (!pUserData-&gt;variant-&gt;feature.pfnComparator(p)) {
+                                pUserData-&gt;supported = false;
+                            }
+                            p = p-&gt;pNext;
+                        }
+                    }
+                );
+                if (!userData.supported) {
+                    supported_variant = false;
+                }
+
+                VkPhysicalDeviceProperties2KHR device_properties2{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR };
+                userData.variant-&gt;chainers.pfnProperty(
+                    static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(&amp;device_properties2)), &amp;userData,
+                    [](VkBaseOutStructure* p, void* pUser) {
+                        UserData* pUserData = static_cast&lt;UserData*&gt;(pUser);
+                        pUserData-&gt;gpdp2.pfnGetPhysicalDeviceProperties2(
+                            pUserData-&gt;physicalDevice,
+                            static_cast&lt;VkPhysicalDeviceProperties2KHR*&gt;(static_cast&lt;void*&gt;(p)));
+
+                        pUserData-&gt;supported = true;
+                        while (p != nullptr) {
+                            if (!pUserData-&gt;variant-&gt;property.pfnComparator(p)) {
+                                pUserData-&gt;supported = false;
+                            }
+                            p = p-&gt;pNext;
+                        }
+                    }
+                );
+                if (!userData.supported) {
+                    supported_variant = false;
+                }
+
+                if (userData.variant-&gt;queueFamilyCount &gt; 0) {
+                    uint32_t queue_family_count = 0;
+                    userData.gpdp2.pfnGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &amp;queue_family_count, nullptr);
+                    std::vector&lt;VkQueueFamilyProperties2KHR&gt; queueFamilyProps(queue_family_count, { VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR });
+                    userData.variant-&gt;chainers.pfnQueueFamily(
+                        queue_family_count, static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(queueFamilyProps.data())), &amp;userData,
+                        [](uint32_t queue_family_count, VkBaseOutStructure* pBaseArray, void* pUser) {
+                            UserData* pUserData = static_cast&lt;UserData*&gt;(pUser);
+                            VkQueueFamilyProperties2KHR* pArray = static_cast&lt;VkQueueFamilyProperties2KHR*&gt;(static_cast&lt;void*&gt;(pBaseArray));
+                            pUserData-&gt;gpdp2.pfnGetPhysicalDeviceQueueFamilyProperties2(pUserData-&gt;physicalDevice, &amp;queue_family_count, pArray);
+                            pUserData-&gt;supported = true;
+                            for (uint32_t profile_qf_idx = 0; profile_qf_idx &lt; pUserData-&gt;variant-&gt;queueFamilyCount; ++profile_qf_idx) {
+                                bool found_matching = false;
+                                for (uint32_t queue_family_index = 0; queue_family_index &lt; queue_family_count; ++queue_family_index) {
+                                    bool this_matches = true;
+                                    VkBaseOutStructure* p = static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(&amp;pArray[queue_family_index]));
+                                    while (p != nullptr) {
+                                        if (!pUserData-&gt;variant-&gt;pQueueFamilies[profile_qf_idx].pfnComparator(p)) {
+                                            this_matches = false;
+                                        }
+                                        p = p-&gt;pNext;
+                                    }
+                                    if (this_matches) {
+                                        found_matching = true;
+                                        break;
+                                    }
+                                }
+                                if (!found_matching) {
+                                    pUserData-&gt;supported = false;
+                                    break;
+                                }
+                            }
+                        }
+                    );
+                    if (!userData.supported) {
+                        supported_variant = false;
+                    }
+                }
+
+                for (uint32_t format_index = 0; format_index &lt; userData.variant-&gt;formatCount &amp;&amp; supported_variant; ++format_index) {
+                    userData.index = format_index;
+                    VkFormatProperties2KHR format_properties2{ VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR };
+                    userData.variant-&gt;chainers.pfnFormat(
+                        static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(&amp;format_properties2)), &amp;userData,
+                        [](VkBaseOutStructure* p, void* pUser) {
+                            UserData* pUserData = static_cast&lt;UserData*&gt;(pUser);
+                            pUserData-&gt;gpdp2.pfnGetPhysicalDeviceFormatProperties2(
+                                pUserData-&gt;physicalDevice,
+                                pUserData-&gt;variant-&gt;pFormats[pUserData-&gt;index].format,
+                                static_cast&lt;VkFormatProperties2KHR*&gt;(static_cast&lt;void*&gt;(p)));
+                            pUserData-&gt;supported = true;
+                            while (p != nullptr) {
+                                if (!pUserData-&gt;variant-&gt;pFormats[pUserData-&gt;index].pfnComparator(p)) {
+                                    pUserData-&gt;supported = false;
+                                }
+                                p = p-&gt;pNext;
+                            }
+                        }
+                    );
+                    if (!userData.supported) {
+                        supported_variant = false;
+                    }
+                }
+
+#ifdef VK_KHR_video_queue
+                if (userData.variant-&gt;videoProfileCount &gt; 0) {
+                    VkVideoProfileListInfoKHR profile_list{ VK_STRUCTURE_TYPE_VIDEO_PROFILE_LIST_INFO_KHR };
+                    profile_list.profileCount = 1;
+                    profile_list.pProfiles = &amp;userData.video.profileInfo;
+                    userData.video.formatInfo.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_FORMAT_INFO_KHR;
+                    userData.video.formatInfo.pNext = &amp;profile_list;
+
+                    if (userData.video.pfnGetPhysicalDeviceVideoCapabilitiesKHR != nullptr &amp;&amp;
+                        userData.video.pfnGetPhysicalDeviceVideoFormatPropertiesKHR != nullptr) {
+                        for (uint32_t video_profile_index = 0; video_profile_index &lt; userData.variant-&gt;videoProfileCount; ++video_profile_index) {
+                            userData.video.profileInfo = VkVideoProfileInfoKHR{ VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR };
+                            userData.video.pProfileDesc = &amp;userData.variant-&gt;pVideoProfiles[video_profile_index];
+                            userData.supported = true;
+                            userData.video.matchingProfiles = 0;
+
+                            detail::vpForEachMatchingVideoProfiles(&amp;userData.video.profileInfo, &amp;userData,
+                                [](VkBaseOutStructure* p, void* pUser) {
+                                    UserData* pUserData = static_cast&lt;UserData*&gt;(pUser);
+                                    while (p != nullptr) {
+                                        if (!pUserData-&gt;video.pProfileDesc-&gt;info.pfnComparator(p)) {
+                                            return;
+                                        }
+                                        p = p-&gt;pNext;
+                                    }
+
+                                    pUserData-&gt;video.supportedProfile = true;
+
+                                    VkVideoCapabilitiesKHR capabilities{ VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR };
+                                    pUserData-&gt;video.pProfileDesc-&gt;chainers.pfnCapability(
+                                        static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(&amp;capabilities)), pUserData,
+                                        [](VkBaseOutStructure* p, void* pUser) {
+                                            UserData* pUserData = static_cast&lt;UserData*&gt;(pUser);
+                                            VkResult result = pUserData-&gt;video.pfnGetPhysicalDeviceVideoCapabilitiesKHR(
+                                                pUserData-&gt;physicalDevice,
+                                                &amp;pUserData-&gt;video.profileInfo,
+                                                static_cast&lt;VkVideoCapabilitiesKHR*&gt;(static_cast&lt;void*&gt;(p)));
+                                            if (result != VK_SUCCESS) {
+                                                pUserData-&gt;video.supportedProfile = false;
+                                                return;
+                                            }
+                                            while (p != nullptr) {
+                                                if (!pUserData-&gt;video.pProfileDesc-&gt;capability.pfnComparator(p)) {
+                                                    pUserData-&gt;supported = false;
+                                                }
+                                                p = p-&gt;pNext;
+                                            }
+                                        }
+                                    );
+
+                                    if (pUserData-&gt;video.supportedProfile) {
+                                        pUserData-&gt;video.matchingProfiles++;
+                                    } else {
+                                        return;
+                                    }
+
+                                    std::vector&lt;VkVideoFormatPropertiesKHR&gt; format_props;
+                                    for (uint32_t format_index = 0; format_index &lt; pUserData-&gt;video.pProfileDesc-&gt;formatCount; ++format_index) {
+                                        pUserData-&gt;index = format_index;
+                                        {
+                                            VkVideoFormatPropertiesKHR tmp_props{ VK_STRUCTURE_TYPE_VIDEO_FORMAT_PROPERTIES_KHR };
+                                            pUserData-&gt;video.pProfileDesc-&gt;pFormats[format_index].pfnFiller(static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(&amp;tmp_props)));
+                                            pUserData-&gt;video.formatInfo.imageUsage = tmp_props.imageUsageFlags;
+                                        }
+
+                                        uint32_t format_count = 0;
+                                        pUserData-&gt;video.pfnGetPhysicalDeviceVideoFormatPropertiesKHR(pUserData-&gt;physicalDevice, &amp;pUserData-&gt;video.formatInfo, &amp;format_count, nullptr);
+                                        format_props.resize(format_count, { VK_STRUCTURE_TYPE_VIDEO_FORMAT_PROPERTIES_KHR });
+                                        pUserData-&gt;video.pProfileDesc-&gt;chainers.pfnFormat(
+                                            format_count, static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(format_props.data())), pUserData,
+                                            [](uint32_t format_count, VkBaseOutStructure* pBaseArray, void* pUser) {
+                                                UserData* pUserData = static_cast&lt;UserData*&gt;(pUser);
+                                                VkVideoFormatPropertiesKHR* pArray = static_cast&lt;VkVideoFormatPropertiesKHR*&gt;(static_cast&lt;void*&gt;(pBaseArray));
+                                                pUserData-&gt;video.pfnGetPhysicalDeviceVideoFormatPropertiesKHR(pUserData-&gt;physicalDevice, &amp;pUserData-&gt;video.formatInfo, &amp;format_count, pArray);
+                                                bool found_matching = false;
+                                                for (uint32_t i = 0; i &lt; format_count; ++i) {
+                                                    bool this_matches = true;
+                                                    VkBaseOutStructure* p = static_cast&lt;VkBaseOutStructure*&gt;(static_cast&lt;void*&gt;(&amp;pArray[i]));
+                                                    while (p != nullptr) {
+                                                        if (!pUserData-&gt;video.pProfileDesc-&gt;pFormats[pUserData-&gt;index].pfnComparator(p)) {
+                                                            this_matches = false;
+                                                        }
+                                                        p = p-&gt;pNext;
+                                                    }
+                                                    if (this_matches) {
+                                                        found_matching = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!found_matching) {
+                                                    pUserData-&gt;supported = false;
+                                                }
+                                            }
+                                        );
+                                    }
+                                }
+                            );
+                            if (!userData.supported || userData.video.matchingProfiles == 0) {
+                                supported_variant = false;
+                            }
+                        }
+                    } else {
+                        supported_variant = false;
+                    }
+                }
+#endif  // VK_KHR_video_queue
+
+                memcpy(block.blockName, variant_desc.blockName, VP_MAX_PROFILE_NAME_SIZE * sizeof(char));
+                if (supported_variant) {
+                    supported_blocks.push_back(block);
+                    supported_block = true;
+                    break;
+                } else {
+                    unsupported_blocks.push_back(block);
+                }
+            }
+
+            if (!supported_block) {
+                supported_profile = false;
+            }
+        }
+
+        if (!supported_profile) {
+            supported = false;
+        }
+    }
+
+    const std::vector&lt;VpBlockProperties&gt;&amp; blocks = supported ? supported_blocks : unsupported_blocks;
+
+    if (pProperties == nullptr) {
+        *pPropertyCount = static_cast&lt;uint32_t&gt;(blocks.size());
+    } else {
+        if (*pPropertyCount &lt; static_cast&lt;uint32_t&gt;(blocks.size())) {
+            result = VK_INCOMPLETE;
+        } else {
+            *pPropertyCount = static_cast&lt;uint32_t&gt;(blocks.size());
+        }
+        for (uint32_t i = 0, n = static_cast&lt;uint32_t&gt;(blocks.size()); i &lt; n; ++i) {
+            pProperties[i] = blocks[i];
+        }
+    }
+
+    *pSupported = supported ? VK_TRUE : VK_FALSE;
+    return VK_SUCCESS;
+}
+
+VPAPI_ATTR VkResult vpGetPhysicalDeviceProfileSupport(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    VkInstance                                  instance,
+    VkPhysicalDevice                            physicalDevice,</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-44.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-46.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

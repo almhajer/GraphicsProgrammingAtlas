@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة صغيرة تربط أوامر CMake الأساسية بمسار عملي كامل داخل CMakeLists.txt وملفات البناء المرافقة."
+  },
+  "identity": {
+    "name": "Installing and Exporting",
+    "slug": "installing-and-exporting",
+    "titleArabic": "تثبيت الأهداف ثم تصديرها كي يستهلكها مشروع آخر عبر find_package",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/examples/installing-and-exporting",
+    "contentPath": "content/reference/cmake/examples/installing-and-exporting.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تثبيت الأهداف ثم تصديرها كي يستهلكها مشروع آخر عبر find_package",
+    "actualMeaningArabic": "هذا المثال يجمع بين install() وملفات التصدير ووحدة CMakePackageConfigHelpers حتى يتحول المشروع من build محلي إلى dependency قابلة لإعادة الاستهلاك عبر package config files واضحة.",
+    "purposeArabic": "يعلمك كيف تنهي دورة المكتبة: بناء ثم تثبيت ثم تصدير targets ثم توليد ملفات Config وConfigVersion التي يقرأها المستهلك لاحقاً.",
+    "whyUseArabic": "لأن المكتبة التي لا تصدر واجهتها جيداً تجبر المستهلكين على include/link يدوي هش، بينما package config الجيد يجعل find_package هو بوابة الاستهلاك الرسمية.",
+    "carriedValueArabic": "ينشئ install rules وexport metadata وملفات package config تؤثر في الاستخدام downstream بعد التثبيت، وتربط install/package step مباشرة بمسار configure في المشروع المستهلك.",
+    "sourceDescription": "هذا المثال يجمع بين install() وملفات التصدير ووحدة CMakePackageConfigHelpers حتى يتحول المشروع من build محلي إلى dependency قابلة لإعادة الاستهلاك عبر package config files واضحة."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا المثال يستلهم Tutorial Step 9 مباشرة.",
+      "يناسب أي مكتبة تريد أن تصبح قابلة للاستهلاك عبر find_package(MyLib CONFIG)."
+    ],
+    "notes": [
+      "GNUInstallDirs وCMakePackageConfigHelpers يكملان هذا المسار عادةً.",
+      "التثبيت ليس نهاية المطاف؛ التصدير وملفات Config/ConfigVersion هما ما يجعل الواجهة قابلة للاستهلاك المعياري."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "include(GNUInstallDirs)\ninclude(CMakePackageConfigHelpers)\n\nwrite_basic_package_version_file(\n  MyLibConfigVersion.cmake\n  VERSION ${PROJECT_VERSION}\n  COMPATIBILITY SameMajorVersion\n)\n\ninstall(TARGETS calclib EXPORT CalcTargets\n  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}\n  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}\n)\ninstall(EXPORT CalcTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Calc)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      {
+        "name": "install",
+        "route": "#ref/cmake/commands/install",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "GNUInstallDirs",
+        "route": "#ref/cmake/modules/gnuinstalldirs",
+        "libraryId": "cmake",
+        "kindId": "modules"
+      },
+      {
+        "name": "CMakePackageConfigHelpers",
+        "route": "#ref/cmake/modules/cmakepackageconfighelpers",
+        "libraryId": "cmake",
+        "kindId": "modules"
+      },
+      {
+        "name": "find_package",
+        "route": "#ref/cmake/commands/find-package",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "package config files and Config mode",
+        "route": "#ref/cmake/concepts/package-config-files-and-config-mode",
+        "libraryId": "cmake",
+        "kindId": "concepts"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/examples.json",
+    "category": "الأمثلة",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

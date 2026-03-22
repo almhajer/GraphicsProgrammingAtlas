@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_AppInit",
+    "slug": "sdl-app-init",
+    "titleArabic": "App-implemented initial entry point for SDL_MAIN_USE_CALLBACKS apps",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-app-init",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-app-init.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "App-implemented initial entry point for SDL_MAIN_USE_CALLBACKS apps",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL App Init داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL App Init داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_AppResult ) Returns SDL_APP_FAILURE to terminate with an\nerror, SDL_APP_SUCCESS to terminate\nwith success, SDL_APP_CONTINUE to\ncontinue. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "App-implemented initial entry point for SDL_MAIN_USE_CALLBACKS apps."
+  },
+  "signature": {
+    "raw": "SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]);",
+    "returnType": "SDL_AppResult",
+    "parameters": [
+      "void **appstate",
+      "int argc",
+      "char *argv[]"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_main.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "appstate",
+        "type": "void **",
+        "descriptionArabic": "يمثل المعامل appstate من النوع void ** القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a place where the app can optionally store a pointer for future\nuse."
+      },
+      {
+        "name": "argc",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل argc من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the standard ANSI C main's argc; number of elements in\n argv ."
+      },
+      {
+        "name": "argv",
+        "type": "char **",
+        "descriptionArabic": "يمثل المعامل argv من النوع char ** القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the standard ANSI C main's argv; array of command line\narguments."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Apps implement this function when using SDL_MAIN_USE_CALLBACKS . If using\na standard \"main\" function, you should not supply this.",
+      "This function is called by SDL once, at startup. The function should\ninitialize whatever is necessary, possibly create windows and open audio\ndevices, etc. The argc and argv parameters\nwork like they would with a standard \"main\" function.",
+      "This function should not go into an infinite mainloop; it should do\nany one-time setup it requires and then return.",
+      "The app may optionally assign a pointer to *appstate .\nThis pointer will be provided on every future call to the other entry\npoints, to allow application state to be preserved between functions\nwithout the app needing to use a global variable. If this isn't set, the\npointer will be NULL in future entry points.",
+      "If this function returns SDL_APP_CONTINUE , the app will proceed\nto normal operation, and will begin receiving repeated calls to SDL_AppIterate and SDL_AppEvent for the life of the program.\nIf this function returns SDL_APP_FAILURE , SDL will call SDL_AppQuit and terminate the process with\nan exit code that reports an error to the platform. If it returns SDL_APP_SUCCESS , SDL calls SDL_AppQuit and terminates with an exit code\nthat reports success to the platform.",
+      "This function is called by SDL on the main thread."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_AppResult ) Returns SDL_APP_FAILURE to terminate with an\nerror, SDL_APP_SUCCESS to terminate\nwith success, SDL_APP_CONTINUE to\ncontinue.",
+    "threadSafety": "This function is called once by SDL, at startup, on a single\nthread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_AppInit",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_AppIterate",
+        "route": "#ref/sdl3-core/functions/sdl-app-iterate",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_AppEvent",
+        "route": "#ref/sdl3-core/functions/sdl-app-event",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_AppQuit",
+        "route": "#ref/sdl3-core/functions/sdl-app-quit",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Application entry points",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

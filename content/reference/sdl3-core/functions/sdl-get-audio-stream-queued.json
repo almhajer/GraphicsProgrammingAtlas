@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_GetAudioStreamQueued",
+    "slug": "sdl-get-audio-stream-queued",
+    "titleArabic": "جلب number bytes currently queued",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-get-audio-stream-queued",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-get-audio-stream-queued.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "جلب number bytes currently queued",
+    "actualMeaningArabic": "جلب number bytes currently queued.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى جلب number bytes currently queued داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (int) Returns the number of bytes queued or -1 on failure; call SDL_GetError () for more information. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Get the number of bytes currently queued."
+  },
+  "signature": {
+    "raw": "int SDL_GetAudioStreamQueued(SDL_AudioStream *stream);",
+    "returnType": "int",
+    "parameters": [
+      "SDL_AudioStream *stream"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "SDL_AudioStream *",
+        "descriptionArabic": "يمثل المعامل stream من النوع SDL_AudioStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the audio stream to query."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This is the number of bytes put into a stream as input, not the\nnumber that can be retrieved as output. Because of several details, it's\nnot possible to calculate one number directly from the other. If you\nneed to know how much usable data can be retrieved right now, you should\nuse SDL_GetAudioStreamAvailable ()\nand not this function.",
+      "Note that audio streams can change their input format at any time,\neven if there is still data queued in a different format, so the\nreturned byte count will not necessarily match the number of sample\nframes available. Users of this API should be aware of format\nchanges they make when feeding a stream and plan accordingly.",
+      "Queued data is not converted until it is consumed by SDL_GetAudioStreamData , so this\nvalue should be representative of the exact data that was put into the\nstream.",
+      "If the stream has so much data that it would overflow an int, the\nreturn value is clamped to a maximum value, but no queued data is lost;\nif there are gigabytes of data queued, the app might need to read some\nof it with SDL_GetAudioStreamData before\nthis function's return value is no longer clamped."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(int) Returns the number of bytes queued or -1 on failure; call SDL_GetError () for more information.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_GetAudioStreamQueued",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_PutAudioStreamData",
+        "route": "#ref/sdl3-core/functions/sdl-put-audio-stream-data",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_ClearAudioStream",
+        "route": "#ref/sdl3-core/functions/sdl-clear-audio-stream",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

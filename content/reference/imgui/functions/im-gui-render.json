@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "ImGui::Render",
+    "slug": "im-gui-render",
+    "titleArabic": "تنهي بناء الإطار وتجهز بيانات الرسم للـ backend",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/functions/im-gui-render",
+    "contentPath": "content/reference/imgui/functions/im-gui-render.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تنهي بناء الإطار وتجهز بيانات الرسم للـ backend",
+    "actualMeaningArabic": "هذه الدالة تحول ما بنيته من نوافذ وعناصر خلال الإطار الحالي إلى ImDrawList وImDrawCmd داخل ImDrawData، وهي الصيغة التي يفهمها renderer backend لاحقاً.",
+    "purposeArabic": "استخدمها مرة واحدة بعد الانتهاء من كل عناصر الواجهة في الإطار الحالي وقبل استدعاء GetDrawData أو RenderDrawData في الـ backend.",
+    "whyUseArabic": "تفصل بوضوح بين مرحلة الوصف المنطقي للواجهة ومرحلة إعداد أوامر الرسم الفعلية التي سينفذها backend.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء ليست نصاً أو تعريفاً فقط، بل الأثر الذي يحدثه على الحالة أو المورد المستهدف.",
+    "sourceDescription": "تغلق مرحلة بناء widgets وتطلب من Dear ImGui تجهيز قوائم الرسم النهائية لهذا الإطار."
+  },
+  "signature": {
+    "raw": "void ImGui::Render()",
+    "returnType": "void",
+    "parameters": [],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [
+      "Render لا ترسم على الشاشة بنفسها؛ هي فقط تحضر بيانات الرسم النهائية.",
+      "الـ backend الرسومي هو الذي يستهلك الناتج ويرسله إلى OpenGL أو Vulkan أو غيرهما."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استدعها بعد أن تنتهي من بناء كل عناصر Dear ImGui في الإطار الحالي.",
+      "اتبعها عادة مباشرة بـ GetDrawData أو بدالة backend مثل RenderDrawData.",
+      "لا تبن widgets جديدة بعد Render ضمن الإطار نفسه."
+    ],
+    "lifecycle": [
+      "يبدأ الإطار بـ NewFrame.",
+      "يسجل التطبيق كل النوافذ والعناصر خلال مرحلة البناء.",
+      "عند Render تتحول هذه المرحلة إلى بيانات رسم نهائية صالحة للاستهلاك من backend."
+    ],
+    "returns": "",
+    "threadSafety": "استخدمها من الخيط الذي يملك سياق Dear ImGui الحالي، لأنها تنهي دورة الإطار الخاصة بذلك السياق وتحضّر بيانات رسمه.",
+    "example": "ImGui::Begin(\"Tools\");\nImGui::Text(\"Ready\");\nImGui::End();\n\nImGui::Render();\nImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::NewFrame",
+        "route": "#ref/imgui/functions/im-gui-new-frame",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::GetDrawData",
+        "route": "#ref/imgui/functions/im-gui-get-draw-data",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImDrawData",
+        "route": "#ref/imgui/types/im-draw-data",
+        "libraryId": "imgui",
+        "kindId": "types"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/functions.json",
+    "category": "الدوال",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

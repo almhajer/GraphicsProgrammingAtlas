@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "message",
+    "slug": "message",
+    "titleArabic": "يطبع رسالة أثناء configure أو يوقف التهيئة بحسب نوع الرسالة",
+    "aliases": [
+      "MESSAGE"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/message",
+    "contentPath": "content/reference/cmake/commands/message.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يطبع رسالة أثناء configure أو يوقف التهيئة بحسب نوع الرسالة",
+    "actualMeaningArabic": "هذا الأمر هو قناة الإخراج الأساسية في CMake أثناء configure: تستطيع به إظهار معلومات حالة أو تحذير أو خطأ قاتل يوقف قراءة المشروع.",
+    "purposeArabic": "يستخدم لتوضيح ما يحدث للمطور أثناء التهيئة، أو لتشخيص قيمة متغير، أو لإبلاغ المستخدم بأن شرطًا مطلوبًا غير متحقق.",
+    "whyUseArabic": "لأن CMake لا يملك واجهة تفاعلية معقدة أثناء configure؛ لذلك الرسالة الواضحة هي أسرع طريقة لفهم القيم والفروع والسبب وراء فشل أو نجاح خطوة ما.",
+    "carriedValueArabic": "أثره عملي لكنه غير بنيوي في أغلب الأوضاع: يطبع نصًا في المخرجات، لكن بعض الأنماط مثل FATAL_ERROR تغيّر المسار فعليًا لأنها توقف configure فورًا.",
+    "sourceDescription": "هذا الأمر هو قناة الإخراج الأساسية في CMake أثناء configure: تستطيع به إظهار معلومات حالة أو تحذير أو خطأ قاتل يوقف قراءة المشروع."
+  },
+  "signature": {
+    "raw": "message([<mode>] \"message text\" ...)",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "STATUS",
+        "type": "نمط رسالة معلوماتية",
+        "semanticKind": "keyword",
+        "descriptionArabic": "يطبع رسالة حالة عادية يقصد بها توضيح خطوة أو قيمة أثناء configure من دون اعتبارها خطأ."
+      },
+      {
+        "name": "WARNING",
+        "type": "نمط رسالة تحذيرية",
+        "semanticKind": "keyword",
+        "descriptionArabic": "يعرض تحذيرًا للمطور لكنه لا يوقف التهيئة، ويستخدم عندما يوجد وضع غير مثالي لكن المشروع ما زال قادرًا على المتابعة."
+      },
+      {
+        "name": "FATAL_ERROR",
+        "type": "نمط رسالة قاتلة",
+        "semanticKind": "keyword",
+        "descriptionArabic": "يطبع الرسالة ثم يوقف configure فورًا، لذلك يستخدم عندما يكون استمرار المشروع غير صحيح فعليًا."
+      },
+      {
+        "name": "<mode>",
+        "type": "argument اختياري يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل قيمة يكتبها المبرمج في هذا الموضع من الصياغة، وليست كلمة ثابتة من كلمات CMake نفسها. وجوده هنا اختياري لأنه يقع داخل جزء محاط بأقواس مربعة في التوقيع."
+      },
+      {
+        "name": "\"message text\"",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "argument",
+        "descriptionArabic": "يمثل قيمة فعلية يكتبها المستخدم في هذا الموضع داخل صياغة message، وليس كلمة ثابتة يقرأها CMake حرفيًا. هذا الوسيط جزء مطلوب من الاستدعاء، لذلك يجب على المستخدم كتابة قيمة حقيقية هنا بدل الاسم النمطي."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يظهر كثيرًا بعد set() أو find_package() حتى تفهم القيمة التي استقرت عليها التهيئة أو المسار الذي اتخذه المشروع.",
+      "message(STATUS \"Hello ${var}\") يوضح أن وضع الحالة (STATUS) يطبع رسالة تشخيصية عادية من دون أن يحول المسار إلى فشل.",
+      "يمكنه أيضًا إظهار متغير مدمج مثل ${CMAKE_CURRENT_SOURCE_DIR} أو مرجع بيئة مثل $ENV{HOME} بعد تقييمهما في لحظة قراءة الرسالة."
+    ],
+    "notes": [
+      "message() لا يعمل وقت build إلا إذا وصل التنفيذ إليه أثناء configure؛ هو ليس بديلًا عن طباعة البرنامج نفسه بعد بنائه.",
+      "التوسع ${var} يحصل قبل طباعة النص، لذلك ترى القيمة الحالية لا اسم المتغير الخام.",
+      "$ENV{HOME} يقرأ بيئة النظام الحالية أثناء configure، أما ${CMAKE_CURRENT_SOURCE_DIR} فيقرأ متغيرًا مدمجًا مرتبطًا بنطاق الدليل الحالي."
+    ],
+    "remarks": [],
+    "instructions": [
+      "اكتب الرسالة كما لو أن مطورًا آخر سيقرأها لأول مرة في CI أو في IDE ويحتاج أن يفهم ما الذي حدث.",
+      "استخدم وضع الحالة (STATUS) للمعلومات اليومية واحتفظ بالخطأ القاتل (FATAL_ERROR) للحالات التي يجب أن تفشل فعلاً."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "message(STATUS \"Hello ${var}\")"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/message.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/message.html",
+    "related": [
+      {
+        "name": "set",
+        "route": "#ref/cmake/commands/set",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "find_package",
+        "route": "#ref/cmake/commands/find-package",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "PROJECT_SOURCE_DIR",
+        "route": "#ref/cmake/variables/project-source-dir",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "Core Variables, Flow, and Reusable Blocks",
+        "route": "#ref/cmake/examples/core-variables-flow-and-reusable-blocks",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

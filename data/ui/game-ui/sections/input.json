@@ -1,0 +1,231 @@
+{
+    "title": "عناصر التحكم والإدخال",
+    "titleEn": "Input Widgets",
+    "description": "عناصر واجهة تسمح للاعب بالتفاعل مع اللعبة وتغيير الإعدادات.",
+    "items": [
+        {
+            "sectionKey": "input",
+            "sectionTitle": "عناصر التحكم والإدخال",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Toggle",
+                "Dropdown List",
+                "Slider"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "زر \"ابدأ اللعب\" في القائمة الرئيسية.",
+                "code": "struct Button {\n    Rectangle bounds;\n    const char* text;\n    Color normalColor;\n    Color hoverColor;\n    Color pressedColor;\n    bool isHovered;\n    bool isPressed;\n};\n\nbool UpdateButton(Button& btn) {\n    Vector2 mousePos = GetMousePosition();\n\n    btn.isHovered = CheckCollisionPointRec(mousePos, btn.bounds);\n    btn.isPressed = btn.isHovered && IsMouseButtonDown(MOUSE_LEFT_BUTTON);\n\n    // إرجاع true عند الإفلات فوق الزر\n    return btn.isHovered && IsMouseButtonReleased(MOUSE_LEFT_BUTTON);\n}\n\nvoid DrawButton(const Button& btn) {\n    Color currentColor = btn.normalColor;\n\n    if (btn.isPressed) {\n        currentColor = btn.pressedColor;\n    } else if (btn.isHovered) {\n        currentColor = btn.hoverColor;\n    }\n\n    // رسم الخلفية مع زوايا مستديرة\n    DrawRectangleRounded(btn.bounds, 0.3f, 8, currentColor);\n\n    // إطار\n    DrawRectangleRoundedLines(btn.bounds, 0.3f, 8, Color{255, 255, 255, 100});\n\n    // النص في المنتصف\n    int textWidth = MeasureText(btn.text, 20);\n    Vector2 textPos = {\n        btn.bounds.x + (btn.bounds.width - textWidth) / 2,\n        btn.bounds.y + (btn.bounds.height - 20) / 2\n    };\n    DrawText(btn.text, textPos.x, textPos.y, 20, Color{255, 255, 255});\n}\n\n// الاستخدام\nButton startBtn = {\n    .bounds = {screenWidth/2 - 100, 300, 200, 50},\n    .text = \"ابدأ اللعب\",\n    .normalColor = Color{50, 150, 50},\n    .hoverColor = Color{70, 180, 70},\n    .pressedColor = Color{30, 100, 30}\n};\n\nif (UpdateButton(startBtn)) {\n    StartGame();\n}\nDrawButton(startBtn);",
+                "explanation": "زر بحالات مختلفة (عادي، تحويم، ضغط) مع رسم جميل ونص في المنتصف.",
+                "expectedResult": "زر تفاعلي يتغير لونه عند التحويم والضغط."
+            },
+            "guiRepresentation": {
+                "title": "زر الإجراء",
+                "mockup": "┌─────────────────────────────┐\n│                             │\n│     ┌─────────────────┐     │\n│     │  ابدأ اللعب ▶   │     │\n│     └─────────────────┘     │\n│                             │\n│     ┌─────────────────┐     │\n│     │  إعدادات ⚙️     │     │\n│     └─────────────────┘     │\n│                             │\n└─────────────────────────────┘",
+                "visualHtml": "<div style=\"text-align:center;padding:20px;\">\n  <button style=\"background:linear-gradient(180deg,#27ae60,#1e8449);color:#fff;border:none;padding:14px 40px;font-size:18px;border-radius:8px;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.3);margin:8px;\">ابدأ اللعب ▶</button>\n  <br>\n  <button style=\"background:linear-gradient(180deg,#3498db,#2980b9);color:#fff;border:none;padding:14px 40px;font-size:18px;border-radius:8px;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.3);margin:8px;\">إعدادات ⚙️</button>\n</div>",
+                "explanation": "أزرار بحالات مختلفة: عادي، تحويم (أفتح)، ضغط (أغمق)."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Action Button",
+            "nameAr": "زر الإجراء",
+            "kind": "widget",
+            "shortTooltip": "زر يُنفذ إجراءً محدداً عند الضغط عليه.",
+            "description": "عنصر تفاعلي يُشغّل دالة أو إجراء عند النقر عليه، مع حالات بصرية مختلفة.",
+            "officialArabicDescription": "زر الإجراء هو عنصر تفاعلي أساسي يُستخدم لتنفيذ أوامر في واجهة اللعبة.",
+            "realMeaning": "يمثل نقطة تفاعل أساسية بين اللاعب واللعبة أو قوائمها.",
+            "whenToUse": "قوائم اللعبة، نوافذ الحوار، شريط الأدوات، أي واجهة تحتاج تفاعل المستخدم.",
+            "practicalBenefit": "يوفر طريقة بديهية وسريعة لتنفيذ الإجراءات.",
+            "misuseImpact": "إذا كان صغيراً جداً أو بلون غير واضح قد يصعب النقر عليه."
+        },
+        {
+            "sectionKey": "input",
+            "sectionTitle": "عناصر التحكم والإدخال",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Volume Slider",
+                "Brightness Slider",
+                "Toggle"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "منزلق مستوى الصوت في إعدادات اللعبة.",
+                "code": "struct Slider {\n    Rectangle bounds;\n    float* value;\n    float minValue;\n    float maxValue;\n    const char* label;\n    bool isDragging;\n};\n\nbool UpdateSlider(Slider& slider) {\n    Vector2 mousePos = GetMousePosition();\n\n    // مقبض السحب\n    float handleWidth = 16;\n    float trackWidth = slider.bounds.width - handleWidth;\n    float normalizedValue = (*slider.value - slider.minValue) / (slider.maxValue - slider.minValue);\n    Rectangle handleRect = {\n        slider.bounds.x + normalizedValue * trackWidth,\n        slider.bounds.y - 4,\n        handleWidth,\n        slider.bounds.height + 8\n    };\n\n    bool isHoveringHandle = CheckCollisionPointRec(mousePos, handleRect);\n    bool isHoveringTrack = CheckCollisionPointRec(mousePos, slider.bounds);\n\n    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (isHoveringHandle || isHoveringTrack)) {\n        slider.isDragging = true;\n    }\n\n    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {\n        slider.isDragging = false;\n    }\n\n    if (slider.isDragging) {\n        float relativeX = mousePos.x - slider.bounds.x;\n        normalizedValue = Clamp(relativeX / trackWidth, 0.0f, 1.0f);\n        *slider.value = slider.minValue + normalizedValue * (slider.maxValue - slider.minValue);\n    }\n\n    return slider.isDragging;\n}\n\nvoid DrawSlider(const Slider& slider) {\n    float normalizedValue = (*slider.value - slider.minValue) / (slider.maxValue - slider.minValue);\n\n    // مسار الخلفية\n    DrawRectangleRounded(slider.bounds, 0.5f, 4, Color{60, 60, 60});\n\n    // التعبئة\n    Rectangle fillRect = {\n        slider.bounds.x,\n        slider.bounds.y,\n        slider.bounds.width * normalizedValue,\n        slider.bounds.height\n    };\n    DrawRectangleRounded(fillRect, 0.5f, 4, Color{100, 150, 200});\n\n    // المقبض\n    float handleX = slider.bounds.x + normalizedValue * (slider.bounds.width - 16);\n    Rectangle handleRect = {handleX, slider.bounds.y - 4, 16, slider.bounds.height + 8};\n    Color handleColor = slider.isDragging ? Color{150, 200, 255} : Color{200, 200, 200};\n    DrawRectangleRounded(handleRect, 0.3f, 4, handleColor);\n\n    // النص\n    char valueText[32];\n    sprintf(valueText, \"%s: %.0f%%\", slider.label, normalizedValue * 100);\n    DrawText(valueText, slider.bounds.x, slider.bounds.y - 20, 14, Color{200, 200, 200});\n}",
+                "explanation": "منزلق مع مسار ومقبض قابل للسحب ونص يعرض القيمة الحالية.",
+                "expectedResult": "منزلق تفاعلي يعرض القيمة ويتحرك مع السحب."
+            },
+            "guiRepresentation": {
+                "title": "المنزلق",
+                "mockup": "┌─────────────────────────────────────┐\n│ مستوى الصوت: 65%                    │\n│ ████████████████░░░░░░░░░░░░ [●]   │\n│                                     │\n│ السطوع: 80%                         │\n│ ████████████████████░░░░░░░ [●]    │\n└─────────────────────────────────────┘",
+                "visualHtml": "<div style=\"padding:16px;background:#1a1a2e;border-radius:8px;width:280px;\">\n  <div style=\"margin-bottom:16px;\">\n    <div style=\"color:#fff;font-size:13px;margin-bottom:6px;\">مستوى الصوت: 65%</div>\n    <div style=\"background:#333;height:8px;border-radius:4px;position:relative;\">\n      <div style=\"background:linear-gradient(90deg,#3498db,#2980b9);width:65%;height:100%;border-radius:4px;\"></div>\n      <div style=\"position:absolute;top:-4px;left:calc(65% - 8px);width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,0.3);\"></div>\n    </div>\n  </div>\n  <div>\n    <div style=\"color:#fff;font-size:13px;margin-bottom:6px;\">السطوع: 80%</div>\n    <div style=\"background:#333;height:8px;border-radius:4px;position:relative;\">\n      <div style=\"background:linear-gradient(90deg,#f39c12,#e67e22);width:80%;height:100%;border-radius:4px;\"></div>\n      <div style=\"position:absolute;top:-4px;left:calc(80% - 8px);width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,0.3);\"></div>\n    </div>\n  </div>\n</div>",
+                "explanation": "منزلقان: أزرق للصوت وبرتقالي للسطوع، مع مقابض قابلة للسحب."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Slider",
+            "nameAr": "المنزلق",
+            "kind": "widget",
+            "shortTooltip": "عنصر سحب لضبط قيمة عددية ضمن مجال محدد.",
+            "description": "شريط أفقي أو عمودي يمكن سحبه لضبط قيمة بين حد أدنى وأعلى.",
+            "officialArabicDescription": "المنزلق يسمح بضبط القيم المتصلة مثل مستوى الصوت أو السطوع بطريقة بديهية.",
+            "realMeaning": "يوفر تحكماً بصرياً في القيم العددية مع تغذية راجعة فورية.",
+            "whenToUse": "إعدادات الصوت، السطوع، الحساسية، أي خيار له مجال واسع من القيم.",
+            "practicalBenefit": "أسهل من إدخال الأرقام ويعطي فكرة بصرية عن القيمة.",
+            "misuseImpact": "إذا كان صغيراً جداً قد يصعب ضبطه بدقة."
+        },
+        {
+            "sectionKey": "input",
+            "sectionTitle": "عناصر التحكم والإدخال",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Checkbox",
+                "Slider",
+                "Action Button"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "مفتاح تبديل لتفعيل الصوت في الإعدادات.",
+                "code": "struct Toggle {\n    Rectangle bounds;\n    bool* value;\n    const char* label;\n    bool isHovered;\n    float animationProgress;  // للانيميشن\n};\n\nbool UpdateToggle(Toggle& toggle) {\n    Vector2 mousePos = GetMousePosition();\n    toggle.isHovered = CheckCollisionPointRec(mousePos, toggle.bounds);\n\n    if (toggle.isHovered && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {\n        *toggle.value = !(*toggle.value);\n        return true;\n    }\n\n    // تحديث الانيميشن\n    float targetProgress = *toggle.value ? 1.0f : 0.0f;\n    toggle.animationProgress += (targetProgress - toggle.animationProgress) * 0.2f;\n\n    return false;\n}\n\nvoid DrawToggle(const Toggle& toggle) {\n    // الخلفية\n    Color bgColor = *toggle.value ? Color{50, 150, 50} : Color{80, 80, 80};\n    if (toggle.isHovered) {\n        bgColor = *toggle.value ? Color{70, 180, 70} : Color{100, 100, 100};\n    }\n    DrawRectangleRounded(toggle.bounds, 0.5f, 8, bgColor);\n\n    // المقبض الدائري\n    float handleRadius = toggle.bounds.height / 2 - 4;\n    float handleX = toggle.bounds.x + 4 + toggle.animationProgress * (toggle.bounds.width - 2 * handleRadius - 8);\n    Vector2 handleCenter = {handleX + handleRadius, toggle.bounds.y + toggle.bounds.height / 2};\n    DrawCircleV(handleCenter, handleRadius, Color{255, 255, 255});\n\n    // الظل تحت المقبض\n    DrawCircleV({handleCenter.x, handleCenter.y + 2}, handleRadius - 2, Color{200, 200, 200});\n\n    // النص\n    int textWidth = MeasureText(toggle.label, 14);\n    DrawText(toggle.label, toggle.bounds.x - textWidth - 10,\n             toggle.bounds.y + (toggle.bounds.height - 14) / 2, 14, Color{200, 200, 200});\n\n    // حالة ON/OFF\n    const char* stateText = *toggle.value ? \"ON\" : \"OFF\";\n    DrawText(stateText, toggle.bounds.x + toggle.bounds.width + 10,\n             toggle.bounds.y + (toggle.bounds.height - 12) / 2, 12,\n             *toggle.value ? Color{100, 255, 100} : Color{150, 150, 150});\n}",
+                "explanation": "مفتاح دائري يتحرك بين الحالتين مع انيميشن سلس.",
+                "expectedResult": "مفتاح تبديل متحرك مع تغيير لون الخلفية."
+            },
+            "guiRepresentation": {
+                "title": "مفتاح التبديل",
+                "mockup": "┌─────────────────────────────────────┐\n│                                     │\n│  الصوت      [●────────] ON          │\n│                                     │\n│  الموسيقى   [────────●] OFF         │\n│                                     │\n│  الاهتزاز   [●────────] ON          │\n│                                     │\n└─────────────────────────────────────┘",
+                "visualHtml": "<div style=\"padding:16px;background:#1a1a2e;border-radius:8px;width:260px;\">\n  <div style=\"display:flex;justify-content:space-between;align-items:center;margin:12px 0;\">\n    <span style=\"color:#fff;font-size:14px;\">الصوت</span>\n    <div style=\"display:flex;align-items:center;gap:10px;\">\n      <div style=\"width:44px;height:24px;background:#27ae60;border-radius:12px;position:relative;\">\n        <div style=\"position:absolute;top:2px;right:2px;width:20px;height:20px;background:#fff;border-radius:50%;\"></div>\n      </div>\n      <span style=\"color:#2ecc71;font-size:12px;\">ON</span>\n    </div>\n  </div>\n  <div style=\"display:flex;justify-content:space-between;align-items:center;margin:12px 0;\">\n    <span style=\"color:#fff;font-size:14px;\">الموسيقى</span>\n    <div style=\"display:flex;align-items:center;gap:10px;\">\n      <div style=\"width:44px;height:24px;background:#555;border-radius:12px;position:relative;\">\n        <div style=\"position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;\"></div>\n      </div>\n      <span style=\"color:#888;font-size:12px;\">OFF</span>\n    </div>\n  </div>\n  <div style=\"display:flex;justify-content:space-between;align-items:center;margin:12px 0;\">\n    <span style=\"color:#fff;font-size:14px;\">الاهتزاز</span>\n    <div style=\"display:flex;align-items:center;gap:10px;\">\n      <div style=\"width:44px;height:24px;background:#27ae60;border-radius:12px;position:relative;\">\n        <div style=\"position:absolute;top:2px;right:2px;width:20px;height:20px;background:#fff;border-radius:50%;\"></div>\n      </div>\n      <span style=\"color:#2ecc71;font-size:12px;\">ON</span>\n    </div>\n  </div>\n</div>",
+                "explanation": "مفاتيح تبديل بحالتين: أخضر للتفعيل، رمادي للتعطيل."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Toggle Switch",
+            "nameAr": "مفتاح التبديل",
+            "kind": "widget",
+            "shortTooltip": "مفتاح ذو حالتين: تشغيل وإيقاف.",
+            "description": "عنصر تبديل بصري بين حالتين (ON/OFF) بضغطة واحدة.",
+            "officialArabicDescription": "مفتاح التبديل يوفر طريقة بصرية واضحة لتفعيل أو تعطيل خيار.",
+            "realMeaning": "يمثل خياراً ثنائي الحالة بطريقة أكثر وضوحاً من Checkbox.",
+            "whenToUse": "الإعدادات، تفعيل الميزات، أي خيار ON/OFF.",
+            "practicalBenefit": "أكثر وضوحاً بصرياً من Checkbox ويُوفر مساحة.",
+            "misuseImpact": "إذا كان صغيراً جداً قد يصعب النقر عليه."
+        },
+        {
+            "sectionKey": "input",
+            "sectionTitle": "عناصر التحكم والإدخال",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Combo Box",
+                "Radio Buttons",
+                "List"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "قائمة منسدلة لاختيار دقة الشاشة.",
+                "code": "struct Dropdown {\n    Rectangle bounds;\n    const char** options;\n    int optionCount;\n    int* selectedIndex;\n    bool isOpen;\n    int hoveredIndex;\n};\n\nbool UpdateDropdown(Dropdown& dropdown) {\n    Vector2 mousePos = GetMousePosition();\n\n    if (CheckCollisionPointRec(mousePos, dropdown.bounds)) {\n        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {\n            dropdown.isOpen = !dropdown.isOpen;\n        }\n    } else if (dropdown.isOpen) {\n        // التحقق من النقر على خيار\n        for (int i = 0; i < dropdown.optionCount; i++) {\n            Rectangle optionRect = {\n                dropdown.bounds.x,\n                dropdown.bounds.y + dropdown.bounds.height * (i + 1),\n                dropdown.bounds.width,\n                dropdown.bounds.height\n            };\n            if (CheckCollisionPointRec(mousePos, optionRect)) {\n                dropdown.hoveredIndex = i;\n                if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {\n                    *dropdown.selectedIndex = i;\n                    dropdown.isOpen = false;\n                    return true;\n                }\n            }\n        }\n\n        // إغلاق عند النقر خارج القائمة\n        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {\n            dropdown.isOpen = false;\n        }\n    }\n\n    return false;\n}\n\nvoid DrawDropdown(const Dropdown& dropdown) {\n    // الزر الرئيسي\n    Color btnColor = dropdown.isOpen ? Color{70, 70, 70} : Color{50, 50, 50};\n    DrawRectangleRounded(dropdown.bounds, 0.2f, 4, btnColor);\n    DrawRectangleRoundedLines(dropdown.bounds, 0.2f, 4, Color{100, 100, 100});\n\n    // النص المحدد\n    DrawText(dropdown.options[*dropdown.selectedIndex],\n             dropdown.bounds.x + 10, dropdown.bounds.y + 8, 14, Color{255, 255, 255});\n\n    // سهم القائمة\n    const char* arrow = dropdown.isOpen ? \"▲\" : \"▼\";\n    DrawText(arrow, dropdown.bounds.x + dropdown.bounds.width - 20,\n             dropdown.bounds.y + 8, 14, Color{200, 200, 200});\n\n    // القائمة المنسدلة\n    if (dropdown.isOpen) {\n        for (int i = 0; i < dropdown.optionCount; i++) {\n            Rectangle optionRect = {\n                dropdown.bounds.x,\n                dropdown.bounds.y + dropdown.bounds.height * (i + 1),\n                dropdown.bounds.width,\n                dropdown.bounds.height\n            };\n\n            Color optionColor = (i == dropdown.hoveredIndex) ? Color{70, 100, 70} : Color{40, 40, 40};\n            DrawRectangleRec(optionRect, optionColor);\n\n            Color textColor = (i == *dropdown.selectedIndex) ? Color{100, 255, 100} : Color{200, 200, 200};\n            DrawText(dropdown.options[i], optionRect.x + 10, optionRect.y + 8, 14, textColor);\n        }\n    }\n}",
+                "explanation": "قائمة تُظهر الخيار الحالي وتُظهر الخيارات عند النقر مع تمييز الخيار المُحدد.",
+                "expectedResult": "قائمة منسدلة تفاعلية مع تمييز الخيارات."
+            },
+            "guiRepresentation": {
+                "title": "القائمة المنسدلة",
+                "mockup": "┌─────────────────────────────────────┐\n│  دقة الشاشة: [1920x1080     ▼]     │\n└─────────────────────────────────────┘\n         ↓ عند النقر ↓\n┌─────────────────────────────────────┐\n│  دقة الشاشة: [1920x1080     ▲]     │\n│              ├ 1280x720            │\n│              ├ ✓ 1920x1080         │\n│              └ 2560x1440           │\n└─────────────────────────────────────┘",
+                "visualHtml": "<div style=\"width:200px;\">\n  <div style=\"background:#2c3e50;padding:10px 12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;\">\n    <span style=\"color:#fff;\">1920x1080</span>\n    <span style=\"color:#888;\">▼</span>\n  </div>\n  <div style=\"background:#1a252f;border-radius:0 0 6px 6px;overflow:hidden;margin-top:2px;\">\n    <div style=\"padding:10px 12px;color:#888;cursor:pointer;\">1280x720</div>\n    <div style=\"padding:10px 12px;color:#2ecc71;background:rgba(46,204,113,0.1);cursor:pointer;\">✓ 1920x1080</div>\n    <div style=\"padding:10px 12px;color:#888;cursor:pointer;\">2560x1440</div>\n  </div>\n</div>",
+                "explanation": "قائمة منسدلة مع الخيار المحدد مُميزاً باللون الأخضر."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Dropdown List",
+            "nameAr": "القائمة المنسدلة",
+            "kind": "widget",
+            "shortTooltip": "قائمة تُظهر خيارات متعددة عند النقر عليها.",
+            "description": "عنصر يعرض خياراً محدداً حالياً، ويُظهر قائمة بالخيارات المتاحة عند النقر.",
+            "officialArabicDescription": "القائمة المنسدلة توفر مساحة في الواجهة عبر إخفاء الخيارات حتى يتم النقر عليها.",
+            "realMeaning": "تسمح بالاختيار من مجموعة خيارات في مساحة صغيرة.",
+            "whenToUse": "اختيار الجودة، اختيار اللغة، اختيار الشخصية، أي مجموعة خيارات.",
+            "practicalBenefit": "توفر مساحة وتنظم الخيارات الكثيرة.",
+            "misuseImpact": "إذا كانت الخيارات كثيرة جداً قد تصبح التصفح صعبة."
+        },
+        {
+            "sectionKey": "input",
+            "sectionTitle": "عناصر التحكم والإدخال",
+            "header": "game_ui.h",
+            "headerTooltip": "ملف وهمي يمثل مجموعة عناصر واجهات الألعاب المستخدمة في تطوير الألعاب.",
+            "sourceUrl": null,
+            "threadSafety": "تعتمد سلامة الخيوط على التنفيذ الفعلي في المحرك أو المكتبة المستخدمة.",
+            "related": [
+                "Action Button",
+                "Settings Panel"
+            ],
+            "instructions": [],
+            "notes": [],
+            "lifecycle": [],
+            "frameSimulation": [],
+            "executionMap": null,
+            "usageExample": {
+                "scenario": "واجهة ربط المفاتيح مع إمكانية التعديل.",
+                "code": "struct KeyBinding {\n    const char* actionName;\n    int* primaryKey;\n    int* secondaryKey;\n    bool isWaitingForInput;\n    bool isWaitingForSecondary;\n};\n\nvoid UpdateKeyBinding(KeyBinding& binding) {\n    if (binding.isWaitingForInput) {\n        // التحقق من أي مفتاح مضغوط\n        for (int key = 32; key < 350; key++) {\n            if (IsKeyPressed(key)) {\n                *binding.primaryKey = key;\n                binding.isWaitingForInput = false;\n                break;\n            }\n        }\n        // إلغاء بالضغط على Escape\n        if (IsKeyPressed(KEY_ESCAPE)) {\n            binding.isWaitingForInput = false;\n        }\n    }\n}\n\nvoid DrawKeyBinding(KeyBinding& binding, Rectangle bounds) {\n    Vector2 mousePos = GetMousePosition();\n    bool isHovered = CheckCollisionPointRec(mousePos, bounds);\n\n    // خلفية الصف\n    Color bgColor = isHovered ? Color{50, 50, 60} : Color{35, 35, 45};\n    DrawRectangleRec(bounds, bgColor);\n\n    // اسم الإجراء\n    DrawText(binding.actionName, bounds.x + 10, bounds.y + 10, 14, Color{200, 200, 200});\n\n    // زر المفتاح الأساسي\n    Rectangle primaryBtn = {bounds.x + bounds.width - 180, bounds.y + 5, 80, 30};\n    Color primaryColor = binding.isWaitingForInput ? Color{100, 100, 50} : Color{60, 60, 70};\n    DrawRectangleRec(primaryBtn, primaryColor);\n    DrawRectangleLinesEx(primaryBtn, 1, Color{100, 100, 100});\n\n    const char* primaryText = binding.isWaitingForInput ? \"...\" : GetKeyName(*binding.primaryKey);\n    int textWidth = MeasureText(primaryText, 12);\n    DrawText(primaryText, primaryBtn.x + (80 - textWidth)/2, primaryBtn.y + 9, 12, Color{255, 255, 255});\n\n    // التفاعل\n    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mousePos, primaryBtn)) {\n        binding.isWaitingForInput = true;\n    }\n}\n\nconst char* GetKeyName(int key) {\n    static char name[16];\n    switch(key) {\n        case KEY_SPACE: return \"Space\";\n        case KEY_LEFT_SHIFT: return \"L-Shift\";\n        case KEY_LEFT_CONTROL: return \"L-Ctrl\";\n        case KEY_ENTER: return \"Enter\";\n        default:\n            sprintf(name, \"%c\", (char)key);\n            return name;\n    }\n}",
+                "explanation": "يعرض المفتاح الحالي وينتظر ضغطة جديدة عند النقر.",
+                "expectedResult": "قائمة ربط مفاتيح تفاعلية مع إمكانية التغيير."
+            },
+            "guiRepresentation": {
+                "title": "إدخال ربط المفاتيح",
+                "mockup": "┌─────────────────────────────────────────┐\n│ التحكم                                  │\n├─────────────────────────────────────────┤\n│ التحرك للأمام        [ W ]  [ ↑ ]      │\n│ التحرك للخلف         [ S ]  [ ↓ ]      │\n│ القفز               [Space] [   ]      │\n│ الهجوم              [ LMB ] [ R ]      │\n│ إعادة تحميل         [ R ]   [   ]      │\n└─────────────────────────────────────────┘",
+                "visualHtml": "<div style=\"background:#1a1a2e;padding:16px;border-radius:8px;width:320px;\">\n  <div style=\"color:#f1c40f;font-size:16px;margin-bottom:12px;\">التحكم</div>\n  <div style=\"display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #333;\">\n    <span style=\"color:#ccc;font-size:13px;\">التحرك للأمام</span>\n    <div style=\"display:flex;gap:8px;\">\n      <span style=\"background:#333;padding:4px 12px;border-radius:4px;color:#fff;font-size:12px;\">W</span>\n      <span style=\"background:#333;padding:4px 12px;border-radius:4px;color:#fff;font-size:12px;\">↑</span>\n    </div>\n  </div>\n  <div style=\"display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #333;\">\n    <span style=\"color:#ccc;font-size:13px;\">القفز</span>\n    <div style=\"display:flex;gap:8px;\">\n      <span style=\"background:#333;padding:4px 12px;border-radius:4px;color:#fff;font-size:12px;\">Space</span>\n      <span style=\"background:#222;padding:4px 12px;border-radius:4px;color:#666;font-size:12px;\">+</span>\n    </div>\n  </div>\n  <div style=\"display:flex;justify-content:space-between;padding:8px 0;\">\n    <span style=\"color:#ccc;font-size:13px;\">الهجوم</span>\n    <div style=\"display:flex;gap:8px;\">\n      <span style=\"background:#f39c12;padding:4px 12px;border-radius:4px;color:#fff;font-size:12px;\">LMB</span>\n      <span style=\"background:#333;padding:4px 12px;border-radius:4px;color:#fff;font-size:12px;\">R</span>\n    </div>\n  </div>\n</div>",
+                "explanation": "قائمة ربط مفاتيح مع مفتاحين لكل إجراء (أساسي وثانوي)."
+            },
+            "parameterExample": "",
+            "values": [],
+            "parameters": [],
+            "signature": null,
+            "returns": null,
+            "name": "Key Binding Input",
+            "nameAr": "إدخال ربط المفاتيح",
+            "kind": "widget",
+            "shortTooltip": "عنصر يسمح للاعب بتغيير مفاتيح التحكم.",
+            "description": "حقل تفاعلي ينتظر ضغطة مفتاح لربطها بإجراء معين في اللعبة.",
+            "officialArabicDescription": "إدخال ربط المفاتيح يسمح للاعب بتخصيص تحكماته حسب تفضيلاته.",
+            "realMeaning": "يعطي اللاعب حرية تخصيص التحكم بما يناسبه.",
+            "whenToUse": "إعدادات التحكم، تخصيص الأزرار، أي لعبة تدعم إعادة ربط المفاتيح.",
+            "practicalBenefit": "يُحسّن تجربة اللاعب بتخصيص التحكم.",
+            "misuseImpact": "إذا لم يكن واضحاً قد يرتبك اللاعب."
+        }
+    ]
+}

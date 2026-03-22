@@ -1,0 +1,47 @@
+{
+  "phase": "cmake-keyword-semantics-phase133",
+  "done": [
+    "أضيفت تغطية دلالية مركزة للكلمات APPEND وIN وLISTS وSTATUS وFATAL_ERROR وVERSION وREQUIRED وCOMPONENTS وLANGUAGES وCXX وON وOFF وDebug وREQUIRED_VARS وما يجاورها في نفس السياق",
+    "حُسّن مسار الشرح العربي بحيث يوضح الفرق بين الكلمة كجزء من الصياغة وبين أثرها العملي على configure أو discovery أو build configuration",
+    "فُعّلت روابط دقيقة مدعومة بالـ anchor لبعض هذه الكلمات إلى مواضعها في صفحات list وforeach وmessage وproject وfind_package وFindPackageHandleStandardArgs وCMAKE_BUILD_TYPE"
+  ],
+  "changed": [
+    "scripts/build-cmake-reference.js",
+    "js/app.js",
+    "data/ui/cmake/commands.json",
+    "data/ui/cmake/modules.json",
+    "data/ui/cmake/variables.json",
+    "data/ui/cmake/examples.json",
+    "data/ui/cmake-search.json",
+    "content/reference/cmake/commands/cmake-minimum-required.json",
+    "content/reference/cmake/commands/find-package.json",
+    "content/reference/cmake/commands/index.json",
+    "content/reference/cmake/commands/project.json",
+    "content/reference/cmake/concepts/cache-variables.json",
+    "content/reference/cmake/concepts/directory-scope-and-add-subdirectory.json",
+    "content/reference/cmake/concepts/index.json",
+    "content/reference/cmake/examples/finding-dependencies.json",
+    "content/reference/cmake/examples/index.json",
+    "content/reference/cmake/index.json",
+    "content/reference/cmake/modules/findpackagehandlestandardargs.json",
+    "content/reference/cmake/modules/index.json",
+    "content/reference/cmake/variables/build-shared-libs.json",
+    "content/reference/cmake/variables/cmake-build-type.json",
+    "content/reference/cmake/variables/cmake-cxx-standard.json",
+    "content/reference/cmake/variables/index.json",
+    "content/reference/manifest.json",
+    ".codex/work-progress.json"
+  ],
+  "tested": [
+    "node --check js/app.js",
+    "node --check scripts/build-cmake-reference.js",
+    "node -e \"JSON.parse(require('fs').readFileSync('data/ui/cmake/commands.json','utf8'));JSON.parse(require('fs').readFileSync('data/ui/cmake/modules.json','utf8'));JSON.parse(require('fs').readFileSync('data/ui/cmake/variables.json','utf8'));JSON.parse(require('fs').readFileSync('data/ui/cmake/examples.json','utf8'));console.log('cmake-phase133-source-json-ok')\"",
+    "node scripts/build-cmake-reference.js",
+    "node -e \"const fs=require('fs');const project=JSON.parse(fs.readFileSync('content/reference/cmake/commands/project.json','utf8'));const findPackage=JSON.parse(fs.readFileSync('content/reference/cmake/commands/find-package.json','utf8'));const minimum=JSON.parse(fs.readFileSync('content/reference/cmake/commands/cmake-minimum-required.json','utf8'));const module=JSON.parse(fs.readFileSync('content/reference/cmake/modules/findpackagehandlestandardargs.json','utf8'));const buildType=JSON.parse(fs.readFileSync('content/reference/cmake/variables/cmake-build-type.json','utf8'));if(!project.details.parameters.some((row)=>row.name==='LANGUAGES')) throw new Error('missing LANGUAGES'); if(!findPackage.details.parameters.some((row)=>row.name==='REQUIRED')) throw new Error('missing REQUIRED'); if(!minimum.details.parameters.some((row)=>row.name==='VERSION')) throw new Error('missing VERSION'); if(!/QUIET/.test(module.summary.actualMeaningArabic)) throw new Error('missing QUIET wording'); if(!/وضع التطوير/.test(buildType.summary.actualMeaningArabic)) throw new Error('missing Debug wording'); console.log('phase133-generated-keyword-semantics-ok');\""
+  ],
+  "next": [
+    "إذا طُلبت المرحلة التالية فتابع شريحة ضيقة أخرى من كلمات CMake أو placeholders المرتبطة بها فقط بعد فحص بصري سريع لهذه المرحلة"
+  ],
+  "issues": [],
+  "context_updated": true
+}

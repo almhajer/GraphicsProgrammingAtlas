@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "expressions",
+    "displayName": "Expressions",
+    "displayNameArabic": "التعبيرات",
+    "description": "تعبيرات تتأخر قراءتها إلى سياقات محددة مثل توليد خصائص target أو أوامر التثبيت والاختبار."
+  },
+  "identity": {
+    "name": "$<BUILD_INTERFACE:...>",
+    "slug": "dollar-build-interface",
+    "titleArabic": "تعبير مولد يحدد ما يُستخدم عندما يُستهلك target من داخل شجرة البناء",
+    "aliases": [
+      "BUILD_INTERFACE",
+      "build interface expression"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/expressions/dollar-build-interface",
+    "contentPath": "content/reference/cmake/expressions/dollar-build-interface.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تعبير مولد يحدد ما يُستخدم عندما يُستهلك target من داخل شجرة البناء",
+    "actualMeaningArabic": "هذا التعبير يُرجع المحتوى المحدد عندما يُستهلك target من داخل نفس شجرة البناء، ويُتجاهل عند التصدير أو التثبيت.",
+    "purposeArabic": "يستخدم داخل target_include_directories لتحديد مسارات تختلف بين البناء المحلي والتثبيت.",
+    "whyUseArabic": "لأن المسارات النسبية تختلف بين build tree وinstall tree، وهذا التعبير يضمن صحة كل سياق.",
+    "carriedValueArabic": "يُقيَّم حسب سياق الاستهلاك: يظهر داخل البناء ويختفي عند التصدير.",
+    "sourceDescription": "هذا التعبير يُرجع المحتوى المحدد عندما يُستهلك target من داخل نفس شجرة البناء، ويُتجاهل عند التصدير أو التثبيت."
+  },
+  "signature": {
+    "raw": "$<BUILD_INTERFACE:content>",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "$<BUILD_INTERFACE:content>",
+        "type": "Generator Expression",
+        "semanticKind": "expression",
+        "descriptionArabic": "هذه صيغة Generator Expression، أي أنها لا تُحسم فور قراءة الملف بل تُقيَّم في سياق لاحق مثل توليد الخصائص أو أوامر التثبيت أو الإعدادات المرتبطة بالهدف."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "شائع جداً مع $<INSTALL_INTERFACE:...> داخل نفس target_include_directories.",
+      "المحتوى غالباً مسار مثل ${CMAKE_CURRENT_SOURCE_DIR}/include."
+    ],
+    "notes": [
+      "لا يستعمل وحده؛ يظهر داخل قائمة أو خاصية تستوعب تعبيرات مولد متعددة.",
+      "يُستخدم مع targets قابلة للتصدير."
+    ],
+    "remarks": [],
+    "instructions": [
+      "اجعل المسارات داخل BUILD_INTERFACE تشير إلى source tree لا binary tree."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "target_include_directories(calclib\n  PUBLIC\n    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n    $<INSTALL_INTERFACE:include>\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#build-configuration-expressions",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#build-configuration-expressions",
+    "related": [
+      {
+        "name": "$<INSTALL_INTERFACE:...>",
+        "route": "#ref/cmake/expressions/dollar-install-interface",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      },
+      {
+        "name": "target_include_directories",
+        "route": "#ref/cmake/commands/target-include-directories",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Generator Expressions",
+        "route": "#ref/cmake/expressions/generator-expressions",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/expressions.json",
+    "category": "التعبيرات",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

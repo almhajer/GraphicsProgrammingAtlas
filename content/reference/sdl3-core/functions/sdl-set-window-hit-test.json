@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_SetWindowHitTest",
+    "slug": "sdl-set-window-hit-test",
+    "titleArabic": "Provide a callback that decides if a window region has special\nproperties",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-set-window-hit-test",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-set-window-hit-test.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Provide a callback that decides if a window region has special\nproperties",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Set النافذة Hit Test داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Set النافذة Hit Test داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Provide a callback that decides if a window region has special\nproperties."
+  },
+  "signature": {
+    "raw": "bool SDL_SetWindowHitTest(SDL_Window *window, SDL_HitTest callback, void *callback_data);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_Window *window",
+      "SDL_HitTest callback",
+      "void *callback_data"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_video.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "window",
+        "type": "SDL_Window *",
+        "descriptionArabic": "يمثل المعامل window من النوع SDL_Window * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the window to set hit-testing on."
+      },
+      {
+        "name": "callback",
+        "type": "SDL_HitTest",
+        "descriptionArabic": "يمثل المعامل callback من النوع SDL_HitTest القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the function to call when doing a hit-test."
+      },
+      {
+        "name": "callback_data",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل callback_data من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an app-defined void pointer passed to\n callback ."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Normally windows are dragged and resized by decorations provided by\nthe system window manager (a title bar, borders, etc), but for some\napps, it makes sense to drag them from somewhere else inside the window\nitself; for example, one might have a borderless window that wants to be\ndraggable from any part, or simulate its own title bar, etc.",
+      "This function lets the app provide a callback that designates pieces\nof a given window as special. This callback is run during event\nprocessing if we need to tell the OS to treat a region of the window\nspecially; the use of this callback is known as \"hit testing.\"",
+      "Mouse input may not be delivered to your application if it is within\na special area; the OS will often apply that input to moving the window\nor resizing the window and not deliver it to the application.",
+      "Specifying NULL for a callback disables hit-testing. Hit-testing is\ndisabled by default.",
+      "Platforms that don't support this functionality will return false\nunconditionally, even if you're attempting to disable hit-testing.",
+      "Your callback may fire at any time, and its firing does not indicate\nany specific behavior (for example, on Windows, this certainly might\nfire when the OS is deciding whether to drag your window, but it fires\nfor lots of other reasons, too, some unrelated to anything you probably\ncare about and when the mouse isn't actually at the location it is\ntesting ). Since this can fire at any time, you should try to keep\nyour callback efficient, devoid of allocations, etc."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_SetWindowHitTest",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Display and Window Management",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

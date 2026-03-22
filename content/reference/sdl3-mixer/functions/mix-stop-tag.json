@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_StopTag",
+    "slug": "mix-stop-tag",
+    "titleArabic": "Halt all tracks with a specific tag",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-stop-tag",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-stop-tag.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Halt all tracks with a specific tag",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل MIX Stop Tag داخل SDL3_mixer، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل MIX Stop Tag داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success, false on error; call SDL_GetError()\nfor details. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Halt all tracks with a specific tag, possibly fading out over\ntime."
+  },
+  "signature": {
+    "raw": "bool MIX_StopTag(MIX_Mixer *mixer, const char *tag, Sint64 fade_out_ms);",
+    "returnType": "bool",
+    "parameters": [
+      "MIX_Mixer *mixer",
+      "const char *tag",
+      "Sint64 fade_out_ms"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "mixer",
+        "type": "MIX_Mixer *",
+        "descriptionArabic": "يمثل المعامل mixer من النوع MIX_Mixer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the mixer on which to stop tracks."
+      },
+      {
+        "name": "tag",
+        "type": "const char *",
+        "descriptionArabic": "يمثل المعامل tag من النوع const char * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the tag to use when searching for tracks."
+      },
+      {
+        "name": "fade_out_ms",
+        "type": "Sint64",
+        "descriptionArabic": "يمثل المعامل fade_out_ms من النوع Sint64 القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the number of milliseconds to spend fading out to silence before\nhalting. 0 to stop immediately."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "If fade_out_ms is > 0, the tracks do not stop mixing\nimmediately, but rather fades to silence over that many milliseconds\nbefore stopping. Note that this is different than MIX_StopTrack (), which wants sample\nframes; this function takes milliseconds because different tracks might\nhave different sample rates.",
+      "If a track ends normally while the fade-out is still in progress, the\naudio stops there; the fade is not adjusted to be shorter if it will\nlast longer than the audio remaining.",
+      "Once a track has completed any fadeout and come to a stop, it will\ncall its MIX_TrackStoppedCallback , if\nany. It is legal to assign the track a new input and/or restart it\nduring this callback. This function does not prevent new play requests\nfrom being made."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success, false on error; call SDL_GetError()\nfor details.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_StopTag",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_StopTrack",
+        "route": "#ref/sdl3-mixer/functions/mix-stop-track",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_TagTrack",
+        "route": "#ref/sdl3-mixer/functions/mix-tag-track",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

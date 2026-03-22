@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_GetRelativeMouseState",
+    "slug": "sdl-get-relative-mouse-state",
+    "titleArabic": "Query SDL's cache for the synchronous mouse button state and\naccumulated mouse delta since",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-get-relative-mouse-state",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-get-relative-mouse-state.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Query SDL's cache for the synchronous mouse button state and\naccumulated mouse delta since",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Get Relative الفأرة الحالة داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Get Relative الفأرة الحالة داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_MouseButtonFlags )\nReturns a 32-bit bitmask of the button state that can be\nbitwise-compared against the SDL_BUTTON_MASK (X) macro. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Query SDL's cache for the synchronous mouse button state and\naccumulated mouse delta since last call."
+  },
+  "signature": {
+    "raw": "SDL_MouseButtonFlags SDL_GetRelativeMouseState(float *x, float *y);",
+    "returnType": "SDL_MouseButtonFlags",
+    "parameters": [
+      "float *x",
+      "float *y"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_mouse.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "x",
+        "type": "float *",
+        "descriptionArabic": "يمثل المعامل x من النوع float * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer to receive the x mouse delta accumulated since last call,\ncan be NULL if unused."
+      },
+      {
+        "name": "y",
+        "type": "float *",
+        "descriptionArabic": "يمثل المعامل y من النوع float * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer to receive the y mouse delta accumulated since last call,\ncan be NULL if unused."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This function returns the cached synchronous state as SDL understands\nit from the last pump of the event queue.",
+      "To query the platform for immediate asynchronous state, use SDL_GetGlobalMouseState .",
+      "Passing non-NULL pointers to x or y will\nwrite the destination with respective x or y deltas accumulated since\nthe last call to this function (or since event initialization).",
+      "This function is useful for reducing overhead by processing relative\nmouse inputs in one go per-frame instead of individually per-event, at\nthe expense of losing the order between events within the frame (e.g.\nquickly pressing and releasing a button within the same frame)."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_MouseButtonFlags )\nReturns a 32-bit bitmask of the button state that can be\nbitwise-compared against the SDL_BUTTON_MASK (X) macro.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_GetRelativeMouseState",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_GetMouseState",
+        "route": "#ref/sdl3-core/functions/sdl-get-mouse-state",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetGlobalMouseState",
+        "route": "#ref/sdl3-core/functions/sdl-get-global-mouse-state",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Mouse Support",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

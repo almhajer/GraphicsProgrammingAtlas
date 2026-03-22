@@ -1,0 +1,200 @@
+{
+  "key": "popups",
+  "title": "النوافذ المنبثقة",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "popups",
+      "sectionTitle": "النوافذ المنبثقة",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Button",
+        "ImGui::BeginPopup",
+        "ImGui::EndPopup"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [
+        {
+          "title": "الإطار 1",
+          "body": "يضغط المستخدم الزر فيستدعي التطبيق ImGui::OpenPopup وتسجل Dear ImGui طلب الفتح."
+        },
+        {
+          "title": "الإطار نفسه",
+          "body": "إذا استدعيت ImGui::BeginPopup بالمعرف نفسه لاحقاً في الكود فستعيد `true` وتبني المحتوى."
+        },
+        {
+          "title": "الإطار التالي",
+          "body": "تبقى popup مفتوحة أو تغلق بحسب منطق Dear ImGui وتفاعل المستخدم."
+        }
+      ],
+      "executionMap": {
+        "steps": [
+          "حدث المستخدم",
+          "ImGui::OpenPopup",
+          "حالة popup الداخلية",
+          "ImGui::BeginPopup",
+          "رسم المحتوى المنبثق"
+        ],
+        "benefit": "تفهم من هذه الخريطة لماذا لا يكفي استدعاء OpenPopup وحده، ولماذا يجب أن يوجد مسار بناء فعلي للـ popup في نفس دورة الإطار."
+      },
+      "usageExample": {
+        "code": "if (ImGui::Begin(\"إجراءات المورد\")) {\n    if (ImGui::Button(\"المزيد\")) {\n        ImGui::OpenPopup(\"asset_actions\");\n    }\n\n    if (ImGui::BeginPopup(\"asset_actions\")) {\n        ImGui::Text(\"إعادة تسمية\");\n        ImGui::Text(\"حذف\");\n        ImGui::EndPopup();\n    }\n}\nImGui::End();",
+        "explanation": "OpenPopup تسجل حالة الفتح فقط، ثم BeginPopup تستهلك هذه الحالة لتقرر هل تبني النافذة المنبثقة ومحتواها."
+      },
+      "guiRepresentation": {
+        "title": "سلوك الفتح",
+        "mockup": "[ المزيد ]  →  popup \"asset_actions\" تصبح مؤهلة للظهور في هذا الإطار",
+        "explanation": "لا يوجد تمثيل مرئي فوري عند OpenPopup وحدها؛ الأثر المرئي يظهر عند نجاح BeginPopup المقابلة."
+      },
+      "parameterExample": "if (ImGui::Button(\"المزيد\")) {\n    ImGui::OpenPopup(\"asset_actions\");\n}",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "str_id",
+          "officialArabicDescription": "معرف النافذة المنبثقة المطلوب فتحها.",
+          "realRole": "يربط طلب الفتح بالنافذة المنبثقة التي ستقرأ هذا الطلب لاحقاً.",
+          "whyPassed": "تحتاجه Dear ImGui لمطابقة الطلب مع استدعاء ImGui::BeginPopup الصحيح.",
+          "actualUsage": "استخدم المعرف نفسه حرفياً في OpenPopup و BeginPopup."
+        }
+      ],
+      "signature": {
+        "returnType": "void",
+        "name": "ImGui::OpenPopup",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "str_id"
+          }
+        ]
+      },
+      "returns": null,
+      "name": "ImGui::OpenPopup",
+      "kind": "function",
+      "shortTooltip": "دالة تطلب فتح نافذة منبثقة باسم محدد في الإطار الحالي.",
+      "description": "تسجل طلب فتح نافذة منبثقة يمكن استهلاكها لاحقاً بواسطة ImGui::BeginPopup.",
+      "officialArabicDescription": "تضع Dear ImGui طلباً لفتح Popup بمعرف محدد بحيث يصبح جاهزاً للظهور عند استدعاء ImGui::BeginPopup المناسب.",
+      "realMeaning": "لا ترسم نافذة بنفسها، بل تعدّل الحالة الداخلية لمنظومة popups بحيث تضع popup معرّفة في حالة الفتح لهذا الإطار.",
+      "whenToUse": "تستخدم عادة بعد حدث مثل ضغط زر أو اختيار عنصر قائمة عندما تريد إظهار قائمة أو لوحة صغيرة مرتبطة بالسياق.",
+      "practicalBenefit": "تفصل لحظة طلب الفتح عن لحظة بناء محتوى النافذة المنبثقة، مما يسهل وضع منطق الفتح في مكان ومحتوى popup في مكان آخر من الكود نفسه.",
+      "misuseImpact": "إذا لم تستدع بعدها ImGui::BeginPopup بالمعرف نفسه فلن يظهر شيء مرئي رغم أن الطلب سجل داخلياً، وإذا اختلف المعرفان فستبدو popup وكأنها لا تعمل."
+    },
+    {
+      "sectionKey": "popups",
+      "sectionTitle": "النوافذ المنبثقة",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::OpenPopup",
+        "ImGui::EndPopup",
+        "ImGui::Button"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [
+        "تبدأ عادة بعد OpenPopup أو بعد حدث سياقي مشابه.",
+        "عند إعادة `true` ينشأ نطاق popup ويجب أن ينتهي بـ ImGui::EndPopup.",
+        "تنتهي popup عندما تغلق داخلياً أو عندما يقرر Dear ImGui إسقاطها بسبب التفاعل."
+      ],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "code": "if (ImGui::Begin(\"إجراءات المورد\")) {\n    if (ImGui::Button(\"المزيد\")) {\n        ImGui::OpenPopup(\"asset_actions\");\n    }\n\n    if (ImGui::BeginPopup(\"asset_actions\")) {\n        ImGui::Text(\"إعادة تسمية\");\n        ImGui::Text(\"حذف\");\n        ImGui::EndPopup();\n    }\n}\nImGui::End();",
+        "explanation": "القيمة المعادة من BeginPopup تضبط دخولك إلى النطاق. إذا كانت false فلن تبني Dear ImGui popup في هذا الموضع خلال الإطار الحالي."
+      },
+      "guiRepresentation": {
+        "title": "شكل popup عندما تفتح",
+        "mockup": "┌ asset_actions ───────┐\n│ إعادة تسمية          │\n│ حذف                  │\n└──────────────────────┘",
+        "explanation": "تبدو popup كنافذة صغيرة أو قائمة عائمة مرتبطة بحالة الفتح الداخلية."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "str_id",
+          "officialArabicDescription": "معرف popup المراد بناؤها.",
+          "realRole": "يطابق popup المفتوحة بحالتها الداخلية مع موضع بناء محتواها في الكود.",
+          "whyPassed": "بدونه لا يمكن Dear ImGui أن تحدد أي popup من المفتوحة يجب بناؤها هنا.",
+          "actualUsage": "استخدم المعرف نفسه الذي مررته إلى ImGui::OpenPopup."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::BeginPopup",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "str_id"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما تكون popup مفتوحة ويجب بناء محتواها في هذا الإطار.",
+        "trueMeaning": "ابدأ فوراً بكتابة عناصر popup ثم أغلقها بـ ImGui::EndPopup.",
+        "falseMeaning": "لا توجد popup مفتوحة بهذا المعرف في هذا الموضع الآن."
+      },
+      "name": "ImGui::BeginPopup",
+      "kind": "function",
+      "shortTooltip": "دالة تبدأ بناء popup إذا كانت حالتها الداخلية مفتوحة في هذا الإطار.",
+      "description": "تبدأ محتوى نافذة منبثقة مفتوحة حالياً إذا كانت Dear ImGui تملك لها حالة فتح صالحة.",
+      "officialArabicDescription": "تبدأ نطاق popup بالمعرف المحدد وتعيد هل يجب بناء محتواها الآن.",
+      "realMeaning": "تسأل Dear ImGui هل popup المطابقة للمعرف في حالة ظهور، فإذا كانت كذلك تنشئ نطاق تخطيط ورسم خاصاً بها يشبه النوافذ الأخرى لكن ضمن نظام popups.",
+      "whenToUse": "تستخدم بعد OpenPopup أو مع popups السياقية عندما تريد رسم محتوى القائمة أو النافذة المنبثقة نفسها.",
+      "practicalBenefit": "تعطيك نفس نمط العمل القائم على النطاقات: تبني المحتوى فقط عندما تكون popup فعلاً مفتوحة.",
+      "misuseImpact": "إذا لم تغلق النطاق بـ ImGui::EndPopup سيختل مكدس popups؛ وإذا اختلف المعرف عن OpenPopup فلن تبنى popup أصلاً."
+    },
+    {
+      "sectionKey": "popups",
+      "sectionTitle": "النوافذ المنبثقة",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::BeginPopup",
+        "ImGui::OpenPopup"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [
+        "تستدعى فقط بعد نطاق popup فعلي بدأ بـ ImGui::BeginPopup وأعاد `true`.",
+        "بمجرد استدعائها ينتهي نطاق popup ولا يجوز إضافة عناصر أخرى داخله بعدها."
+      ],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "code": "if (ImGui::Begin(\"إجراءات المورد\")) {\n    if (ImGui::Button(\"المزيد\")) {\n        ImGui::OpenPopup(\"asset_actions\");\n    }\n\n    if (ImGui::BeginPopup(\"asset_actions\")) {\n        ImGui::Text(\"إعادة تسمية\");\n        ImGui::Text(\"حذف\");\n        ImGui::EndPopup();\n    }\n}\nImGui::End();",
+        "explanation": "لا تملك EndPopup أثراً مرئياً مستقلاً، لكنها الخطوة التي تنهي popup الحالية وتعيد التخطيط إلى النافذة الأم بعد آخر عنصر داخل القائمة المنبثقة."
+      },
+      "guiRepresentation": null,
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": {
+        "returnType": "void",
+        "name": "ImGui::EndPopup",
+        "params": []
+      },
+      "returns": null,
+      "name": "ImGui::EndPopup",
+      "kind": "function",
+      "shortTooltip": "دالة تغلق نطاق popup الحالي وتحافظ على توازن مكدس النوافذ المنبثقة.",
+      "description": "تنهي بناء popup الحالية بعد ImGui::BeginPopup.",
+      "officialArabicDescription": "تغلق نطاق popup المفتوح حالياً وتعيد السياق الداخلي إلى الموضع الأب.",
+      "realMeaning": "تغلق إطار التخطيط والرسم الخاص بالنافذة المنبثقة الحالية داخل Dear ImGui.",
+      "whenToUse": "تستخدم مباشرة بعد آخر عنصر داخل popup بدأت بـ ImGui::BeginPopup.",
+      "practicalBenefit": "تحافظ على سلامة المكدس الداخلي للـ popups وتمنع انتقال العناصر التالية إلى النافذة المنبثقة السابقة.",
+      "misuseImpact": "نسيانها يفسد موازنة النطاقات تماماً كما يحدث مع ImGui::End في النوافذ العادية."
+    }
+  ]
+}

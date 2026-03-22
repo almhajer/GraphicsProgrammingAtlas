@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_funcs.hpp • القسم 11 من 73 • الأسطر 4501-4950 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_funcs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_funcs.hpp.html">vulkan_funcs.hpp</a> /
+        <span>القسم 11 من 73 • الأسطر 4501-4950</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_funcs.hpp</h1>
+      <p class="page-description">القسم 11 من 73 • الأسطر 4501-4950</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-10.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-12.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_funcs.hpp</span>
+        <span class="source-stat">القسم: 11/73</span>
+        <span class="source-stat">الأسطر: 4501-4950</span>
+        <span class="source-stat">حجم الملف: 2.19 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkAllocateDescriptorSets &amp;&amp; &quot;Function &lt;vkAllocateDescriptorSets&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    std::vector&lt;DescriptorSet, DescriptorSetAllocator&gt; descriptorSets( allocateInfo.descriptorSetCount, {}, descriptorSetAllocator );
+    Result                                             result = static_cast&lt;Result&gt;( d.vkAllocateDescriptorSets(
+      m_device, reinterpret_cast&lt;const VkDescriptorSetAllocateInfo *&gt;( &amp;allocateInfo ), reinterpret_cast&lt;VkDescriptorSet *&gt;( descriptorSets.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::allocateDescriptorSets&quot; );
+
+    return detail::createResultValueType( result, std::move( descriptorSets ) );
+  }
+
+#  ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkAllocateDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateDescriptorSets.html
+  template &lt;typename Dispatch,
+            typename DescriptorSetAllocator,
+            typename std::enable_if&lt;std::is_same&lt;typename DescriptorSetAllocator::value_type, UniqueHandle&lt;DescriptorSet, Dispatch&gt;&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkAllocateDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;UniqueHandle&lt;DescriptorSet, Dispatch&gt;, DescriptorSetAllocator&gt;&gt;::type
+                       Device::allocateDescriptorSetsUnique( const DescriptorSetAllocateInfo &amp; allocateInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkAllocateDescriptorSets &amp;&amp; &quot;Function &lt;vkAllocateDescriptorSets&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#    endif
+
+    std::vector&lt;DescriptorSet&gt; descriptorSets( allocateInfo.descriptorSetCount );
+    Result                     result = static_cast&lt;Result&gt;( d.vkAllocateDescriptorSets(
+      m_device, reinterpret_cast&lt;const VkDescriptorSetAllocateInfo *&gt;( &amp;allocateInfo ), reinterpret_cast&lt;VkDescriptorSet *&gt;( descriptorSets.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::allocateDescriptorSetsUnique&quot; );
+    std::vector&lt;UniqueHandle&lt;DescriptorSet, Dispatch&gt;, DescriptorSetAllocator&gt; uniqueDescriptorSets;
+    uniqueDescriptorSets.reserve( allocateInfo.descriptorSetCount );
+    detail::PoolFree&lt;Device, DescriptorPool, Dispatch&gt; deleter( *this, allocateInfo.descriptorPool, d );
+    for ( auto const &amp; descriptorSet : descriptorSets )
+    {
+      uniqueDescriptorSets.push_back( UniqueHandle&lt;DescriptorSet, Dispatch&gt;( descriptorSet, deleter ) );
+    }
+    return detail::createResultValueType( result, std::move( uniqueDescriptorSets ) );
+  }
+
+  // wrapper function for command vkAllocateDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateDescriptorSets.html
+  template &lt;typename Dispatch,
+            typename DescriptorSetAllocator,
+            typename std::enable_if&lt;std::is_same&lt;typename DescriptorSetAllocator::value_type, UniqueHandle&lt;DescriptorSet, Dispatch&gt;&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkAllocateDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;UniqueHandle&lt;DescriptorSet, Dispatch&gt;, DescriptorSetAllocator&gt;&gt;::type
+                       Device::allocateDescriptorSetsUnique( const DescriptorSetAllocateInfo &amp; allocateInfo,
+                                          DescriptorSetAllocator const &amp;    descriptorSetAllocator,
+                                          Dispatch const &amp;                  d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkAllocateDescriptorSets &amp;&amp; &quot;Function &lt;vkAllocateDescriptorSets&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#    endif
+
+    std::vector&lt;DescriptorSet&gt; descriptorSets( allocateInfo.descriptorSetCount );
+    Result                     result = static_cast&lt;Result&gt;( d.vkAllocateDescriptorSets(
+      m_device, reinterpret_cast&lt;const VkDescriptorSetAllocateInfo *&gt;( &amp;allocateInfo ), reinterpret_cast&lt;VkDescriptorSet *&gt;( descriptorSets.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::allocateDescriptorSetsUnique&quot; );
+    std::vector&lt;UniqueHandle&lt;DescriptorSet, Dispatch&gt;, DescriptorSetAllocator&gt; uniqueDescriptorSets( descriptorSetAllocator );
+    uniqueDescriptorSets.reserve( allocateInfo.descriptorSetCount );
+    detail::PoolFree&lt;Device, DescriptorPool, Dispatch&gt; deleter( *this, allocateInfo.descriptorPool, d );
+    for ( auto const &amp; descriptorSet : descriptorSets )
+    {
+      uniqueDescriptorSets.push_back( UniqueHandle&lt;DescriptorSet, Dispatch&gt;( descriptorSet, deleter ) );
+    }
+    return detail::createResultValueType( result, std::move( uniqueDescriptorSets ) );
+  }
+#  endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkFreeDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkFreeDescriptorSets.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkFreeDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::freeDescriptorSets( DescriptorPool        descriptorPool,
+                                                                            uint32_t              descriptorSetCount,
+                                                                            const DescriptorSet * pDescriptorSets,
+                                                                            Dispatch const &amp;      d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkFreeDescriptorSets( static_cast&lt;VkDevice&gt;( m_device ),
+                                                        static_cast&lt;VkDescriptorPool&gt;( descriptorPool ),
+                                                        descriptorSetCount,
+                                                        reinterpret_cast&lt;const VkDescriptorSet *&gt;( pDescriptorSets ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkFreeDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkFreeDescriptorSets.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkFreeDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+    Device::freeDescriptorSets( DescriptorPool descriptorPool, ArrayProxy&lt;const DescriptorSet&gt; const &amp; descriptorSets, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkFreeDescriptorSets &amp;&amp; &quot;Function &lt;vkFreeDescriptorSets&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;( d.vkFreeDescriptorSets(
+      m_device, static_cast&lt;VkDescriptorPool&gt;( descriptorPool ), descriptorSets.size(), reinterpret_cast&lt;const VkDescriptorSet *&gt;( descriptorSets.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::freeDescriptorSets&quot; );
+
+    return detail::createResultValueType( result );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkFreeDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkFreeDescriptorSets.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkFreeDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result( Device::free )( DescriptorPool        descriptorPool,
+                                                                 uint32_t              descriptorSetCount,
+                                                                 const DescriptorSet * pDescriptorSets,
+                                                                 Dispatch const &amp;      d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkFreeDescriptorSets( static_cast&lt;VkDevice&gt;( m_device ),
+                                                        static_cast&lt;VkDescriptorPool&gt;( descriptorPool ),
+                                                        descriptorSetCount,
+                                                        reinterpret_cast&lt;const VkDescriptorSet *&gt;( pDescriptorSets ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkFreeDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkFreeDescriptorSets.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkFreeDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE
+    typename ResultValueType&lt;void&gt;::type( Device::free )( DescriptorPool                          descriptorPool,
+                                                          ArrayProxy&lt;const DescriptorSet&gt; const &amp; descriptorSets,
+                                                          Dispatch const &amp;                        d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkFreeDescriptorSets &amp;&amp; &quot;Function &lt;vkFreeDescriptorSets&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;( d.vkFreeDescriptorSets(
+      m_device, static_cast&lt;VkDescriptorPool&gt;( descriptorPool ), descriptorSets.size(), reinterpret_cast&lt;const VkDescriptorSet *&gt;( descriptorSets.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::( Device::free )&quot; );
+
+    return detail::createResultValueType( result );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkUpdateDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSets.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkUpdateDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::updateDescriptorSets( uint32_t                   descriptorWriteCount,
+                                                       const WriteDescriptorSet * pDescriptorWrites,
+                                                       uint32_t                   descriptorCopyCount,
+                                                       const CopyDescriptorSet *  pDescriptorCopies,
+                                                       Dispatch const &amp;           d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkUpdateDescriptorSets( static_cast&lt;VkDevice&gt;( m_device ),
+                              descriptorWriteCount,
+                              reinterpret_cast&lt;const VkWriteDescriptorSet *&gt;( pDescriptorWrites ),
+                              descriptorCopyCount,
+                              reinterpret_cast&lt;const VkCopyDescriptorSet *&gt;( pDescriptorCopies ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkUpdateDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSets.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkUpdateDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::updateDescriptorSets( ArrayProxy&lt;const WriteDescriptorSet&gt; const &amp; descriptorWrites,
+                                                       ArrayProxy&lt;const CopyDescriptorSet&gt; const &amp;  descriptorCopies,
+                                                       Dispatch const &amp;                             d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkUpdateDescriptorSets &amp;&amp; &quot;Function &lt;vkUpdateDescriptorSets&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    d.vkUpdateDescriptorSets( m_device,
+                              descriptorWrites.size(),
+                              reinterpret_cast&lt;const VkWriteDescriptorSet *&gt;( descriptorWrites.data() ),
+                              descriptorCopies.size(),
+                              reinterpret_cast&lt;const VkCopyDescriptorSet *&gt;( descriptorCopies.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdBindPipeline, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindPipeline.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdBindPipeline ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::bindPipeline( PipelineBindPoint pipelineBindPoint, Pipeline pipeline, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdBindPipeline(
+      static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkPipelineBindPoint&gt;( pipelineBindPoint ), static_cast&lt;VkPipeline&gt;( pipeline ) );
+  }
+
+  // wrapper function for command vkCmdBindDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdBindDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::bindDescriptorSets( PipelineBindPoint     pipelineBindPoint,
+                                                            PipelineLayout        layout,
+                                                            uint32_t              firstSet,
+                                                            uint32_t              descriptorSetCount,
+                                                            const DescriptorSet * pDescriptorSets,
+                                                            uint32_t              dynamicOffsetCount,
+                                                            const uint32_t *      pDynamicOffsets,
+                                                            Dispatch const &amp;      d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdBindDescriptorSets( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                               static_cast&lt;VkPipelineBindPoint&gt;( pipelineBindPoint ),
+                               static_cast&lt;VkPipelineLayout&gt;( layout ),
+                               firstSet,
+                               descriptorSetCount,
+                               reinterpret_cast&lt;const VkDescriptorSet *&gt;( pDescriptorSets ),
+                               dynamicOffsetCount,
+                               pDynamicOffsets );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdBindDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdBindDescriptorSets ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::bindDescriptorSets( PipelineBindPoint                       pipelineBindPoint,
+                                                            PipelineLayout                          layout,
+                                                            uint32_t                                firstSet,
+                                                            ArrayProxy&lt;const DescriptorSet&gt; const &amp; descriptorSets,
+                                                            ArrayProxy&lt;const uint32_t&gt; const &amp;      dynamicOffsets,
+                                                            Dispatch const &amp;                        d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdBindDescriptorSets &amp;&amp; &quot;Function &lt;vkCmdBindDescriptorSets&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    d.vkCmdBindDescriptorSets( m_commandBuffer,
+                               static_cast&lt;VkPipelineBindPoint&gt;( pipelineBindPoint ),
+                               static_cast&lt;VkPipelineLayout&gt;( layout ),
+                               firstSet,
+                               descriptorSets.size(),
+                               reinterpret_cast&lt;const VkDescriptorSet *&gt;( descriptorSets.data() ),
+                               dynamicOffsets.size(),
+                               dynamicOffsets.data() );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdClearColorImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdClearColorImage.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdClearColorImage ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::clearColorImage( Image                         image,
+                                                         ImageLayout                   imageLayout,
+                                                         const ClearColorValue *       pColor,
+                                                         uint32_t                      rangeCount,
+                                                         const ImageSubresourceRange * pRanges,
+                                                         Dispatch const &amp;              d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdClearColorImage( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                            static_cast&lt;VkImage&gt;( image ),
+                            static_cast&lt;VkImageLayout&gt;( imageLayout ),
+                            reinterpret_cast&lt;const VkClearColorValue *&gt;( pColor ),
+                            rangeCount,
+                            reinterpret_cast&lt;const VkImageSubresourceRange *&gt;( pRanges ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdClearColorImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdClearColorImage.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdClearColorImage ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::clearColorImage( Image                                           image,
+                                                         ImageLayout                                     imageLayout,
+                                                         const ClearColorValue &amp;                         color,
+                                                         ArrayProxy&lt;const ImageSubresourceRange&gt; const &amp; ranges,
+                                                         Dispatch const &amp;                                d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdClearColorImage &amp;&amp; &quot;Function &lt;vkCmdClearColorImage&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    d.vkCmdClearColorImage( m_commandBuffer,
+                            static_cast&lt;VkImage&gt;( image ),
+                            static_cast&lt;VkImageLayout&gt;( imageLayout ),
+                            reinterpret_cast&lt;const VkClearColorValue *&gt;( &amp;color ),
+                            ranges.size(),
+                            reinterpret_cast&lt;const VkImageSubresourceRange *&gt;( ranges.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdDispatch, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDispatch.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdDispatch ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void
+    CommandBuffer::dispatch( uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdDispatch( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), groupCountX, groupCountY, groupCountZ );
+  }
+
+  // wrapper function for command vkCmdDispatchIndirect, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDispatchIndirect.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdDispatchIndirect ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::dispatchIndirect( Buffer buffer, DeviceSize offset, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdDispatchIndirect( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkBuffer&gt;( buffer ), static_cast&lt;VkDeviceSize&gt;( offset ) );
+  }
+
+  // wrapper function for command vkCmdSetEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetEvent.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetEvent ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setEvent( Event event, PipelineStageFlags stageMask, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetEvent( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkEvent&gt;( event ), static_cast&lt;VkPipelineStageFlags&gt;( stageMask ) );
+  }
+
+  // wrapper function for command vkCmdResetEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResetEvent.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdResetEvent ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::resetEvent( Event event, PipelineStageFlags stageMask, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdResetEvent( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkEvent&gt;( event ), static_cast&lt;VkPipelineStageFlags&gt;( stageMask ) );
+  }
+
+  // wrapper function for command vkCmdWaitEvents, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWaitEvents.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdWaitEvents ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::waitEvents( uint32_t                    eventCount,
+                                                    const Event *               pEvents,
+                                                    PipelineStageFlags          srcStageMask,
+                                                    PipelineStageFlags          dstStageMask,
+                                                    uint32_t                    memoryBarrierCount,
+                                                    const MemoryBarrier *       pMemoryBarriers,
+                                                    uint32_t                    bufferMemoryBarrierCount,
+                                                    const BufferMemoryBarrier * pBufferMemoryBarriers,
+                                                    uint32_t                    imageMemoryBarrierCount,
+                                                    const ImageMemoryBarrier *  pImageMemoryBarriers,
+                                                    Dispatch const &amp;            d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdWaitEvents( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                       eventCount,
+                       reinterpret_cast&lt;const VkEvent *&gt;( pEvents ),
+                       static_cast&lt;VkPipelineStageFlags&gt;( srcStageMask ),
+                       static_cast&lt;VkPipelineStageFlags&gt;( dstStageMask ),
+                       memoryBarrierCount,
+                       reinterpret_cast&lt;const VkMemoryBarrier *&gt;( pMemoryBarriers ),
+                       bufferMemoryBarrierCount,
+                       reinterpret_cast&lt;const VkBufferMemoryBarrier *&gt;( pBufferMemoryBarriers ),
+                       imageMemoryBarrierCount,
+                       reinterpret_cast&lt;const VkImageMemoryBarrier *&gt;( pImageMemoryBarriers ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdWaitEvents, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWaitEvents.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdWaitEvents ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::waitEvents( ArrayProxy&lt;const Event&gt; const &amp;               events,
+                                                    PipelineStageFlags                            srcStageMask,
+                                                    PipelineStageFlags                            dstStageMask,
+                                                    ArrayProxy&lt;const MemoryBarrier&gt; const &amp;       memoryBarriers,
+                                                    ArrayProxy&lt;const BufferMemoryBarrier&gt; const &amp; bufferMemoryBarriers,
+                                                    ArrayProxy&lt;const ImageMemoryBarrier&gt; const &amp;  imageMemoryBarriers,
+                                                    Dispatch const &amp;                              d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdWaitEvents &amp;&amp; &quot;Function &lt;vkCmdWaitEvents&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    d.vkCmdWaitEvents( m_commandBuffer,
+                       events.size(),
+                       reinterpret_cast&lt;const VkEvent *&gt;( events.data() ),
+                       static_cast&lt;VkPipelineStageFlags&gt;( srcStageMask ),
+                       static_cast&lt;VkPipelineStageFlags&gt;( dstStageMask ),
+                       memoryBarriers.size(),
+                       reinterpret_cast&lt;const VkMemoryBarrier *&gt;( memoryBarriers.data() ),
+                       bufferMemoryBarriers.size(),
+                       reinterpret_cast&lt;const VkBufferMemoryBarrier *&gt;( bufferMemoryBarriers.data() ),
+                       imageMemoryBarriers.size(),
+                       reinterpret_cast&lt;const VkImageMemoryBarrier *&gt;( imageMemoryBarriers.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdPushConstants, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushConstants.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdPushConstants ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::pushConstants(
+    PipelineLayout layout, ShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void * pValues, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdPushConstants( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                          static_cast&lt;VkPipelineLayout&gt;( layout ),
+                          static_cast&lt;VkShaderStageFlags&gt;( stageFlags ),
+                          offset,
+                          size,
+                          pValues );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdPushConstants, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushConstants.html
+  template &lt;typename ValuesType, typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdPushConstants ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::pushConstants( PipelineLayout                       layout,
+                                                       ShaderStageFlags                     stageFlags,
+                                                       uint32_t                             offset,
+                                                       ArrayProxy&lt;const ValuesType&gt; const &amp; values,
+                                                       Dispatch const &amp;                     d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdPushConstants &amp;&amp; &quot;Function &lt;vkCmdPushConstants&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    d.vkCmdPushConstants( m_commandBuffer,
+                          static_cast&lt;VkPipelineLayout&gt;( layout ),
+                          static_cast&lt;VkShaderStageFlags&gt;( stageFlags ),
+                          offset,
+                          values.size() * sizeof( ValuesType ),
+                          reinterpret_cast&lt;const void *&gt;( values.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCreateGraphicsPipelines, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateGraphicsPipelines ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::createGraphicsPipelines( PipelineCache                      pipelineCache,
+                                                                                 uint32_t                           createInfoCount,
+                                                                                 const GraphicsPipelineCreateInfo * pCreateInfos,
+                                                                                 const AllocationCallbacks *        pAllocator,
+                                                                                 Pipeline *                         pPipelines,
+                                                                                 Dispatch const &amp;                   d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCreateGraphicsPipelines( static_cast&lt;VkDevice&gt;( m_device ),
+                                                             static_cast&lt;VkPipelineCache&gt;( pipelineCache ),
+                                                             createInfoCount,
+                                                             reinterpret_cast&lt;const VkGraphicsPipelineCreateInfo *&gt;( pCreateInfos ),
+                                                             reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                             reinterpret_cast&lt;VkPipeline *&gt;( pPipelines ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreateGraphicsPipelines, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html
+  template &lt;typename PipelineAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename PipelineAllocator::value_type, Pipeline&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreateGraphicsPipelines ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;Pipeline, PipelineAllocator&gt;&gt;
+                                         Device::createGraphicsPipelines( PipelineCache                                        pipelineCache,
+                                     ArrayProxy&lt;const GraphicsPipelineCreateInfo&gt; const &amp; createInfos,
+                                     Optional&lt;const AllocationCallbacks&gt;                  allocator,
+                                     Dispatch const &amp;                                     d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateGraphicsPipelines &amp;&amp; &quot;Function &lt;vkCreateGraphicsPipelines&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+#  endif
+
+    std::vector&lt;Pipeline, PipelineAllocator&gt; pipelines( createInfos.size() );
+    Result                                   result = static_cast&lt;Result&gt;( d.vkCreateGraphicsPipelines( m_device,
+                                                                      static_cast&lt;VkPipelineCache&gt;( pipelineCache ),
+                                                                      createInfos.size(),
+                                                                      reinterpret_cast&lt;const VkGraphicsPipelineCreateInfo *&gt;( createInfos.data() ),
+                                                                      reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                      reinterpret_cast&lt;VkPipeline *&gt;( pipelines.data() ) ) );
+    detail::resultCheck( result,
+                         VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createGraphicsPipelines&quot;,
+                         { Result::eSuccess, Result::ePipelineCompileRequiredEXT },
+                         m_device,
+                         pipelines,
+                         allocator.get(),</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-10.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-12.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

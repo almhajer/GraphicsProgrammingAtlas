@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "macro",
+    "slug": "macro",
+    "titleArabic": "يعرّف كتلة أوامر قابلة لإعادة الاستخدام تعمل في نطاق المستدعي نفسه",
+    "aliases": [
+      "MACRO"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/macro",
+    "contentPath": "content/reference/cmake/commands/macro.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يعرّف كتلة أوامر قابلة لإعادة الاستخدام تعمل في نطاق المستدعي نفسه",
+    "actualMeaningArabic": "هذا الأمر يعرّف ماكرو في CMake، أي كتلة أوامر يمكن استدعاؤها لاحقًا بالاسم نفسه، لكنها لا تفتح scope مستقلًا مثل function() بل تعمل عمليًا داخل نطاق المستدعي.",
+    "purposeArabic": "يستخدم لتجميع أسطر متكررة قصيرة أو لصنع واجهة تعليمية صغيرة فوق بضعة أوامر متكررة داخل المشروع.",
+    "whyUseArabic": "يفيد عندما تريد تقليل التكرار من دون الحاجة إلى عزل متغيرات محلي، لكن هذا يعني أيضًا أن التعديلات التي تجريها داخل macro() قد تتسرب إلى النطاق المستدعي.",
+    "carriedValueArabic": "أثره يبدأ لحظة التعريف لأنه يسجل اسماً جديدًا يمكن استدعاؤه لاحقًا، ثم يظهر عمليًا عند الاستدعاء لأن الجسم يفسَّر داخل نفس scope الحالي.",
+    "sourceDescription": "هذا الأمر يعرّف ماكرو في CMake، أي كتلة أوامر يمكن استدعاؤها لاحقًا بالاسم نفسه، لكنها لا تفتح scope مستقلًا مثل function() بل تعمل عمليًا داخل نطاق المستدعي."
+  },
+  "signature": {
+    "raw": "macro(<name> [<arg>...])",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "<name>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسمًا يختاره المبرمج لهذا الهدف أو الاختبار أو الرسالة أو الكيان الذي يبنيه الأمر. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "[<arg>...]",
+        "type": "مجموعة اختيارية في الصياغة",
+        "semanticKind": "group",
+        "descriptionArabic": "هذه مجموعة اختيارية داخل صياغة macro. الأقواس المربعة تعني أنك تستطيع حذف المجموعة كلها، وإذا استخدمتها فعليك كتابة عناصرها الفعلية بالترتيب الظاهر داخلها لا باعتبارها نصًا توضيحيًا فقط."
+      },
+      {
+        "name": "<arg>",
+        "type": "argument اختياري يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل وسيطًا مفردًا يمرره المبرمج للأمر أو للاختبار أو للأمر الخارجي. وجوده هنا اختياري لأنه يقع داخل جزء محاط بأقواس مربعة في التوقيع."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يستعمل مع endmacro() لتحديد بداية الجسم ونهايته داخل الملف أو الملف المدرج عبر include().",
+      "يناسب المغلفات القصيرة التي لا تعتمد على إرجاع قيم محلية معزولة أو على إدارة دقيقة للنطاق."
+    ],
+    "notes": [
+      "الفرق العملي الأهم عن function() هو النطاق: macro() لا تعطيك scope مستقلًا، لذلك set() أو unset() داخلها قد يغيران ما يراه المستدعي مباشرة.",
+      "لهذا السبب يفضل كثير من المشاريع الحديثة function() عندما تكون العزلة والوضوح أهم من الاختصار الخام."
+    ],
+    "remarks": [],
+    "instructions": [
+      "إذا كان الجسم سيعدل متغيرات محلية كثيرة أو يحتاج سلوكًا أكثر أمانًا ففكر أولًا في function() بدل macro()."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "macro(MyMacro MacroArgument)\n  message(STATUS \"Macro says ${MacroArgument}\")\nendmacro()"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/macro.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/macro.html",
+    "related": [
+      {
+        "name": "endmacro",
+        "route": "#ref/cmake/commands/endmacro",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "function",
+        "route": "#ref/cmake/commands/function",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "include",
+        "route": "#ref/cmake/commands/include",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Core Variables, Flow, and Reusable Blocks",
+        "route": "#ref/cmake/examples/core-variables-flow-and-reusable-blocks",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

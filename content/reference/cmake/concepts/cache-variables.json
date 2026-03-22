@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "concepts",
+    "displayName": "Concepts",
+    "displayNameArabic": "المفاهيم",
+    "description": "مفاهيم تشغيلية تشرح كيف يفكر CMake في التهيئة والتوليد والبناء، وفي الأهداف ونطاقات الأدلة والمتغيرات المخزنة."
+  },
+  "identity": {
+    "name": "cache variables",
+    "slug": "cache-variables",
+    "titleArabic": "المتغيرات المخزنة في الذاكرة الدائمة (Cache Variables)",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/concepts/cache-variables",
+    "contentPath": "content/reference/cmake/concepts/cache-variables.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "المتغيرات المخزنة في الذاكرة الدائمة (Cache Variables)",
+    "actualMeaningArabic": "المتغيرات المخزنة في الذاكرة الدائمة (Cache Variables) هي قيم يحفظها CMake داخل مجلد البناء لتبقى بين تشغيلات التهيئة المختلفة، وتصبح قابلة للضبط من المستخدم أو من الضبطات المسبقة (Presets) أو من الأدوات الخارجية.",
+    "purposeArabic": "تستخدم لتكوين المشروع بخيارات طويلة الأمد مثل CMAKE_INSTALL_PREFIX وBUILD_SHARED_LIBS وBUILD_TESTING، أي القيم التي لا تريد إعادة تعريفها يدويًا في كل مرة.",
+    "whyUseArabic": "لأن هذه القيم يجب أن تبقى بين تشغيل تهيئة وآخر، وأن تكون قابلة للتعديل من خارج الملف نفسه دون إعادة كتابة منطق المشروع.",
+    "carriedValueArabic": "أثرها العملي يظهر في التهيئة اللاحقة: فالقيمة المحفوظة في الذاكرة الدائمة تغير الفروع الشرطية والخيارات التي سيقرأها CMake عند كل تشغيل جديد داخل مجلد البناء نفسه.",
+    "sourceDescription": "المتغيرات المخزنة في الذاكرة الدائمة (Cache Variables) هي قيم يحفظها CMake داخل مجلد البناء لتبقى بين تشغيلات التهيئة المختلفة، وتصبح قابلة للضبط من المستخدم أو من الضبطات المسبقة (Presets) أو من الأدوات الخارجية."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "غالباً تُنشأ عبر option() أو set(... CACHE ...).",
+      "إذا أردت إزالة القيمة المخزنة والعودة إلى اكتشاف جديد أو إلى اختيار جديد من المستخدم فصيغة unset(<variable> CACHE) هي المسار الصريح لذلك.",
+      "تظهر بوضوح في خطوة إعداد القيم والذاكرة الدائمة داخل الدليل الرسمي لـ CMake Tutorial."
+    ],
+    "notes": [
+      "تختلف عن المتغيرات العادية المحلية (Normal Variables) التي تعيش فقط داخل نطاق التهيئة الحالي ثم تنتهي.",
+      "جزء كبير من سلوك CMake العملي يتحكم فيه هذا النوع لأنه يمثل واجهة إعداد المشروع للمستخدم.",
+      "وجود set() وunset() هنا ليس تفصيلاً شكليًا؛ هما الأداتان اللتان تنشئان cache entry أو تزيلانها فعليًا من مجلد البناء.",
+      "عندما ترى $ENV{HOME} داخل set(... CACHE ...) فهذا يعني أن CMake يقرأ البيئة الحالية أثناء configure ثم ينسخ القيمة الناتجة إلى cache؛ ليست وصلة حية تتحدث وحدها لاحقًا."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "option(BUILD_TESTING \"Enable tests\" ON)\nset(CMAKE_INSTALL_PREFIX \"$ENV{HOME}/.local\" CACHE PATH \"Install path\")"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      {
+        "name": "option",
+        "route": "#ref/cmake/commands/option",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "set",
+        "route": "#ref/cmake/commands/set",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "unset",
+        "route": "#ref/cmake/commands/unset",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "CMAKE_INSTALL_PREFIX",
+        "route": "#ref/cmake/variables/cmake-install-prefix",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "BUILD_SHARED_LIBS",
+        "route": "#ref/cmake/variables/build-shared-libs",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "CMP0077",
+        "route": "#ref/cmake/policies/cmp0077",
+        "libraryId": "cmake",
+        "kindId": "policies"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/concepts.json",
+    "category": "المفاهيم",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

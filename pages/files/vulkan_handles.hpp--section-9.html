@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_handles.hpp • القسم 9 من 51 • الأسطر 3601-4050 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_handles.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_handles.hpp.html">vulkan_handles.hpp</a> /
+        <span>القسم 9 من 51 • الأسطر 3601-4050</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_handles.hpp</h1>
+      <p class="page-description">القسم 9 من 51 • الأسطر 3601-4050</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-8.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-10.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_handles.hpp</span>
+        <span class="source-stat">القسم: 9/51</span>
+        <span class="source-stat">الأسطر: 3601-4050</span>
+        <span class="source-stat">حجم الملف: 1.59 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_fence == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkFence m_fence = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eFence&gt;
+  {
+    using Type = Fence;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eFence&gt;
+  {
+    using Type = Fence;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkFence, VK_NULL_HANDLE&gt;
+  {
+    using Type = Fence;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;Fence&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkPerformanceConfigurationINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPerformanceConfigurationINTEL.html
+  class PerformanceConfigurationINTEL
+  {
+  public:
+    using CType      = VkPerformanceConfigurationINTEL;
+    using NativeType = VkPerformanceConfigurationINTEL;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::ePerformanceConfigurationINTEL;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+  public:
+    PerformanceConfigurationINTEL() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    PerformanceConfigurationINTEL( PerformanceConfigurationINTEL const &amp; rhs )             = default;
+    PerformanceConfigurationINTEL &amp; operator=( PerformanceConfigurationINTEL const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    PerformanceConfigurationINTEL( PerformanceConfigurationINTEL &amp;&amp; rhs )             = default;
+    PerformanceConfigurationINTEL &amp; operator=( PerformanceConfigurationINTEL &amp;&amp; rhs ) = default;
+#else
+    PerformanceConfigurationINTEL( PerformanceConfigurationINTEL &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : m_performanceConfigurationINTEL( exchange( rhs.m_performanceConfigurationINTEL, {} ) )
+    {
+    }
+
+    PerformanceConfigurationINTEL &amp; operator=( PerformanceConfigurationINTEL &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_performanceConfigurationINTEL = exchange( rhs.m_performanceConfigurationINTEL, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR PerformanceConfigurationINTEL( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT PerformanceConfigurationINTEL( VkPerformanceConfigurationINTEL performanceConfigurationINTEL ) VULKAN_HPP_NOEXCEPT
+      : m_performanceConfigurationINTEL( performanceConfigurationINTEL )
+    {
+    }
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    PerformanceConfigurationINTEL &amp; operator=( VkPerformanceConfigurationINTEL performanceConfigurationINTEL ) VULKAN_HPP_NOEXCEPT
+    {
+      m_performanceConfigurationINTEL = performanceConfigurationINTEL;
+      return *this;
+    }
+#endif
+
+    PerformanceConfigurationINTEL &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_performanceConfigurationINTEL = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkPerformanceConfigurationINTEL() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_performanceConfigurationINTEL;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_performanceConfigurationINTEL != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_performanceConfigurationINTEL == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkPerformanceConfigurationINTEL m_performanceConfigurationINTEL = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::ePerformanceConfigurationINTEL&gt;
+  {
+    using Type = PerformanceConfigurationINTEL;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkPerformanceConfigurationINTEL, VK_NULL_HANDLE&gt;
+  {
+    using Type = PerformanceConfigurationINTEL;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;PerformanceConfigurationINTEL&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkQueryPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueryPool.html
+  class QueryPool
+  {
+  public:
+    using CType      = VkQueryPool;
+    using NativeType = VkQueryPool;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eQueryPool;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eQueryPool;
+
+  public:
+    QueryPool() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    QueryPool( QueryPool const &amp; rhs )             = default;
+    QueryPool &amp; operator=( QueryPool const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    QueryPool( QueryPool &amp;&amp; rhs )             = default;
+    QueryPool &amp; operator=( QueryPool &amp;&amp; rhs ) = default;
+#else
+    QueryPool( QueryPool &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_queryPool( exchange( rhs.m_queryPool, {} ) ) {}
+
+    QueryPool &amp; operator=( QueryPool &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_queryPool = exchange( rhs.m_queryPool, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR QueryPool( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT QueryPool( VkQueryPool queryPool ) VULKAN_HPP_NOEXCEPT : m_queryPool( queryPool ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    QueryPool &amp; operator=( VkQueryPool queryPool ) VULKAN_HPP_NOEXCEPT
+    {
+      m_queryPool = queryPool;
+      return *this;
+    }
+#endif
+
+    QueryPool &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_queryPool = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkQueryPool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_queryPool;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_queryPool != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_queryPool == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkQueryPool m_queryPool = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eQueryPool&gt;
+  {
+    using Type = QueryPool;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eQueryPool&gt;
+  {
+    using Type = QueryPool;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkQueryPool, VK_NULL_HANDLE&gt;
+  {
+    using Type = QueryPool;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;QueryPool&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkBuffer.html
+  class Buffer
+  {
+  public:
+    using CType      = VkBuffer;
+    using NativeType = VkBuffer;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eBuffer;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eBuffer;
+
+  public:
+    Buffer() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    Buffer( Buffer const &amp; rhs )             = default;
+    Buffer &amp; operator=( Buffer const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    Buffer( Buffer &amp;&amp; rhs )             = default;
+    Buffer &amp; operator=( Buffer &amp;&amp; rhs ) = default;
+#else
+    Buffer( Buffer &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_buffer( exchange( rhs.m_buffer, {} ) ) {}
+
+    Buffer &amp; operator=( Buffer &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_buffer = exchange( rhs.m_buffer, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR Buffer( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT Buffer( VkBuffer buffer ) VULKAN_HPP_NOEXCEPT : m_buffer( buffer ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    Buffer &amp; operator=( VkBuffer buffer ) VULKAN_HPP_NOEXCEPT
+    {
+      m_buffer = buffer;
+      return *this;
+    }
+#endif
+
+    Buffer &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_buffer = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkBuffer() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_buffer;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_buffer != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_buffer == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkBuffer m_buffer = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eBuffer&gt;
+  {
+    using Type = Buffer;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eBuffer&gt;
+  {
+    using Type = Buffer;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkBuffer, VK_NULL_HANDLE&gt;
+  {
+    using Type = Buffer;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;Buffer&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkPipelineLayout, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineLayout.html
+  class PipelineLayout
+  {
+  public:
+    using CType      = VkPipelineLayout;
+    using NativeType = VkPipelineLayout;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::ePipelineLayout;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::ePipelineLayout;
+
+  public:
+    PipelineLayout() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    PipelineLayout( PipelineLayout const &amp; rhs )             = default;
+    PipelineLayout &amp; operator=( PipelineLayout const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    PipelineLayout( PipelineLayout &amp;&amp; rhs )             = default;
+    PipelineLayout &amp; operator=( PipelineLayout &amp;&amp; rhs ) = default;
+#else
+    PipelineLayout( PipelineLayout &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_pipelineLayout( exchange( rhs.m_pipelineLayout, {} ) ) {}
+
+    PipelineLayout &amp; operator=( PipelineLayout &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineLayout = exchange( rhs.m_pipelineLayout, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR PipelineLayout( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT PipelineLayout( VkPipelineLayout pipelineLayout ) VULKAN_HPP_NOEXCEPT : m_pipelineLayout( pipelineLayout ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    PipelineLayout &amp; operator=( VkPipelineLayout pipelineLayout ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineLayout = pipelineLayout;
+      return *this;
+    }
+#endif
+
+    PipelineLayout &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineLayout = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkPipelineLayout() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineLayout;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineLayout != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineLayout == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkPipelineLayout m_pipelineLayout = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::ePipelineLayout&gt;
+  {
+    using Type = PipelineLayout;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::ePipelineLayout&gt;
+  {
+    using Type = PipelineLayout;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkPipelineLayout, VK_NULL_HANDLE&gt;
+  {
+    using Type = PipelineLayout;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;PipelineLayout&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkDescriptorSet, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDescriptorSet.html
+  class DescriptorSet
+  {
+  public:
+    using CType      = VkDescriptorSet;
+    using NativeType = VkDescriptorSet;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDescriptorSet;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eDescriptorSet;
+
+  public:
+    DescriptorSet() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    DescriptorSet( DescriptorSet const &amp; rhs )             = default;
+    DescriptorSet &amp; operator=( DescriptorSet const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    DescriptorSet( DescriptorSet &amp;&amp; rhs )             = default;
+    DescriptorSet &amp; operator=( DescriptorSet &amp;&amp; rhs ) = default;
+#else
+    DescriptorSet( DescriptorSet &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_descriptorSet( exchange( rhs.m_descriptorSet, {} ) ) {}
+
+    DescriptorSet &amp; operator=( DescriptorSet &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_descriptorSet = exchange( rhs.m_descriptorSet, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR DescriptorSet( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT DescriptorSet( VkDescriptorSet descriptorSet ) VULKAN_HPP_NOEXCEPT : m_descriptorSet( descriptorSet ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    DescriptorSet &amp; operator=( VkDescriptorSet descriptorSet ) VULKAN_HPP_NOEXCEPT
+    {
+      m_descriptorSet = descriptorSet;
+      return *this;
+    }
+#endif
+
+    DescriptorSet &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_descriptorSet = {};
+      return *this;</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-8.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-10.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

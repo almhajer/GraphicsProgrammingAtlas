@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_CreateProcessWithProperties",
+    "slug": "sdl-create-process-with-properties",
+    "titleArabic": "إنشاء new process الخصائص",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-create-process-with-properties",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-create-process-with-properties.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "إنشاء new process الخصائص",
+    "actualMeaningArabic": "إنشاء new process الخصائص.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى إنشاء new process الخصائص داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_Process *) Returns the newly\ncreated and running process, or NULL if the process couldn't be\ncreated. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Create a new process with the specified properties."
+  },
+  "signature": {
+    "raw": "SDL_Process * SDL_CreateProcessWithProperties(SDL_PropertiesID props);",
+    "returnType": "SDL_Process *",
+    "parameters": [
+      "SDL_PropertiesID props"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_process.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "props",
+        "type": "SDL_PropertiesID",
+        "descriptionArabic": "يمثل المعامل props من النوع SDL_PropertiesID القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the properties to use."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "These are the supported properties:",
+      "SDL_PROP_PROCESS_CREATE_ARGS_POINTER :\nan array of strings containing the program to run, any arguments, and a\nNULL pointer, e.g. const char *args[] = { \"myprogram\", \"argument\", NULL\n}. This is a required property.",
+      "SDL_PROP_PROCESS_CREATE_ENVIRONMENT_POINTER :\nan SDL_Environment pointer. If this\nproperty is set, it will be the entire environment for the process,\notherwise the current environment is used.",
+      "SDL_PROP_PROCESS_CREATE_WORKING_DIRECTORY_STRING :\na UTF-8 encoded string representing the working directory for the\nprocess, defaults to the current working directory.",
+      "SDL_PROP_PROCESS_CREATE_STDIN_NUMBER :\nan SDL_ProcessIO value describing where\nstandard input for the process comes from, defaults to SDL_PROCESS_STDIO_NULL .",
+      "SDL_PROP_PROCESS_CREATE_STDIN_POINTER :\nan SDL_IOStream pointer used for\nstandard input when SDL_PROP_PROCESS_CREATE_STDIN_NUMBER\nis set to SDL_PROCESS_STDIO_REDIRECT .",
+      "SDL_PROP_PROCESS_CREATE_STDOUT_NUMBER :\nan SDL_ProcessIO value describing where\nstandard output for the process goes to, defaults to SDL_PROCESS_STDIO_INHERITED .",
+      "SDL_PROP_PROCESS_CREATE_STDOUT_POINTER :\nan SDL_IOStream pointer used for\nstandard output when SDL_PROP_PROCESS_CREATE_STDOUT_NUMBER\nis set to SDL_PROCESS_STDIO_REDIRECT .",
+      "SDL_PROP_PROCESS_CREATE_STDERR_NUMBER :\nan SDL_ProcessIO value describing where\nstandard error for the process goes to, defaults to SDL_PROCESS_STDIO_INHERITED .",
+      "SDL_PROP_PROCESS_CREATE_STDERR_POINTER :\nan SDL_IOStream pointer used for\nstandard error when SDL_PROP_PROCESS_CREATE_STDERR_NUMBER\nis set to SDL_PROCESS_STDIO_REDIRECT .",
+      "SDL_PROP_PROCESS_CREATE_STDERR_TO_STDOUT_BOOLEAN :\ntrue if the error output of the process should be redirected into the\nstandard output of the process. This property has no effect if SDL_PROP_PROCESS_CREATE_STDERR_NUMBER\nis set.",
+      "SDL_PROP_PROCESS_CREATE_BACKGROUND_BOOLEAN :\ntrue if the process should run in the background. In this case the\ndefault input and output is SDL_PROCESS_STDIO_NULL\nand the exitcode of the process is not available, and will always be\n0.",
+      "SDL_PROP_PROCESS_CREATE_CMDLINE_STRING :\na string containing the program to run and any parameters. This string\nis passed directly to CreateProcess on Windows, and does\nnothing on other platforms. This property is only important if you want\nto start programs that does non-standard command-line processing, and in\nmost cases using SDL_PROP_PROCESS_CREATE_ARGS_POINTER\nis sufficient.",
+      "On POSIX platforms, wait() and waitpid(-1, ...) should not be called,\nand SIGCHLD should not be ignored or handled because those would prevent\nSDL from properly tracking the lifetime of the underlying process. You\nshould use SDL_WaitProcess ()\ninstead."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_Process *) Returns the newly\ncreated and running process, or NULL if the process couldn't be\ncreated.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_CreateProcessWithProperties",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_CreateProcess",
+        "route": "#ref/sdl3-core/functions/sdl-create-process",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetProcessProperties",
+        "route": "#ref/sdl3-core/functions/sdl-get-process-properties",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_ReadProcess",
+        "route": "#ref/sdl3-core/functions/sdl-read-process",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetProcessInput",
+        "route": "#ref/sdl3-core/functions/sdl-get-process-input",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetProcessOutput",
+        "route": "#ref/sdl3-core/functions/sdl-get-process-output",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_KillProcess",
+        "route": "#ref/sdl3-core/functions/sdl-kill-process",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_WaitProcess",
+        "route": "#ref/sdl3-core/functions/sdl-wait-process",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_DestroyProcess",
+        "route": "#ref/sdl3-core/functions/sdl-destroy-process",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Process Control",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

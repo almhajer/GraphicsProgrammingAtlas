@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_OpenAudioDevice",
+    "slug": "sdl-open-audio-device",
+    "titleArabic": "فتح specific الصوت الجهاز",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-open-audio-device",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-open-audio-device.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "فتح specific الصوت الجهاز",
+    "actualMeaningArabic": "فتح specific الصوت الجهاز.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى فتح specific الصوت الجهاز داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_AudioDeviceID ) Returns the\ndevice ID on success or 0 on failure; call SDL_GetError () for more information. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Open a specific audio device."
+  },
+  "signature": {
+    "raw": "SDL_AudioDeviceID SDL_OpenAudioDevice(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec);",
+    "returnType": "SDL_AudioDeviceID",
+    "parameters": [
+      "SDL_AudioDeviceID devid",
+      "const SDL_AudioSpec *spec"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "devid",
+        "type": "SDL_AudioDeviceID",
+        "descriptionArabic": "يمثل المعامل devid من النوع SDL_AudioDeviceID القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the device instance id to open, or SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK\nor SDL_AUDIO_DEVICE_DEFAULT_RECORDING\nfor the most reasonable default device."
+      },
+      {
+        "name": "spec",
+        "type": "const SDL_AudioSpec *",
+        "descriptionArabic": "يمثل المعامل spec من النوع const SDL_AudioSpec * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the requested device configuration. Can be NULL to use reasonable\ndefaults."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "You can open both playback and recording devices through this\nfunction. Playback devices will take data from bound audio streams, mix\nit, and send it to the hardware. Recording devices will feed any bound\naudio streams with a copy of any incoming data.",
+      "An opened audio device starts out with no audio streams bound. To\nstart audio playing, bind a stream and supply audio data to it. Unlike\nSDL2, there is no audio callback; you only bind audio streams and make\nsure they have data flowing into them (however, you can simulate SDL2's\nsemantics fairly closely by using SDL_OpenAudioDeviceStream\ninstead of this function).",
+      "If you don't care about opening a specific device, pass a\n devid of either SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK\nor SDL_AUDIO_DEVICE_DEFAULT_RECORDING .\nIn this case, SDL will try to pick the most reasonable default, and may\nalso switch between physical devices seamlessly later, if the most\nreasonable default changes during the lifetime of this opened device\n(user changed the default in the OS's system preferences, the default\ngot unplugged so the system jumped to a new default, the user plugged in\nheadphones on a mobile device, etc). Unless you have a good reason to\nchoose a specific device, this is probably what you want.",
+      "You may request a specific format for the audio device, but there is\nno promise the device will honor that request for several reasons. As\nsuch, it's only meant to be a hint as to what data your app will\nprovide. Audio streams will accept data in whatever format you specify\nand manage conversion for you as appropriate. SDL_GetAudioDeviceFormat can\ntell you the preferred format for the device before opening and the\nactual format the device is using after opening.",
+      "It's legal to open the same device ID more than once; each successful\nopen will generate a new logical SDL_AudioDeviceID that is managed\nseparately from others on the same physical device. This allows\nlibraries to open a device separately from the main app and bind its own\nstreams without conflicting.",
+      "It is also legal to open a device ID returned by a previous call to\nthis function; doing so just creates another logical device on the same\nphysical device. This may be useful for making logical groupings of\naudio streams.",
+      "This function returns the opened device ID on success. This is a new,\nunique SDL_AudioDeviceID that\nrepresents a logical device.",
+      "Some backends might offer arbitrary devices (for example, a networked\naudio protocol that can connect to an arbitrary server). For these, as a\nchange from SDL2, you should open a default device ID and use an SDL\nhint to specify the target if you care, or otherwise let the backend\nfigure out a reasonable default. Most backends don't offer anything like\nthis, and often this would be an end user setting an environment\nvariable for their custom need, and not something an application should\nspecifically manage.",
+      "When done with an audio device, possibly at the end of the app's\nlife, one should call SDL_CloseAudioDevice () on the\nreturned device id."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_AudioDeviceID ) Returns the\ndevice ID on success or 0 on failure; call SDL_GetError () for more information.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_OpenAudioDevice",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_CloseAudioDevice",
+        "route": "#ref/sdl3-core/functions/sdl-close-audio-device",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetAudioDeviceFormat",
+        "route": "#ref/sdl3-core/functions/sdl-get-audio-device-format",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

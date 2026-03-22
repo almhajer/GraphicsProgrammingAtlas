@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="يحتوي على النواة الأساسية لواجهة Vulkan: الأنواع، الهياكل، التعدادات، وتصريحات الدوال العامة بعيداً عن ترويسات المنصات.">
+  <title>vulkan_core.h • القسم 30 من 57 • الأسطر 13051-13500 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_core.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_core.h.html">vulkan_core.h</a> /
+        <span>القسم 30 من 57 • الأسطر 13051-13500</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_core.h</h1>
+      <p class="page-description">القسم 30 من 57 • الأسطر 13051-13500</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-29.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-31.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_core.h</span>
+        <span class="source-stat">القسم: 30/57</span>
+        <span class="source-stat">الأسطر: 13051-13500</span>
+        <span class="source-stat">حجم الملف: 1.21 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pPropertyCount,
+    VkCooperativeMatrixPropertiesKHR*           pProperties);
+#endif
+#endif
+
+
+// VK_KHR_compute_shader_derivatives is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_compute_shader_derivatives 1
+#define VK_KHR_COMPUTE_SHADER_DERIVATIVES_SPEC_VERSION 1
+#define VK_KHR_COMPUTE_SHADER_DERIVATIVES_EXTENSION_NAME &quot;VK_KHR_compute_shader_derivatives&quot;
+typedef struct VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           computeDerivativeGroupQuads;
+    VkBool32           computeDerivativeGroupLinear;
+} VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR;
+
+typedef struct VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           meshAndTaskShaderDerivatives;
+} VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR;
+
+
+
+// VK_KHR_video_decode_av1 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_video_decode_av1 1
+#include &quot;vk_video/vulkan_video_codec_av1std.h&quot;
+#include &quot;vk_video/vulkan_video_codec_av1std_decode.h&quot;
+#define VK_MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR 7U
+#define VK_KHR_VIDEO_DECODE_AV1_SPEC_VERSION 1
+#define VK_KHR_VIDEO_DECODE_AV1_EXTENSION_NAME &quot;VK_KHR_video_decode_av1&quot;
+typedef struct VkVideoDecodeAV1ProfileInfoKHR {
+    VkStructureType       sType;
+    const void*           pNext;
+    StdVideoAV1Profile    stdProfile;
+    VkBool32              filmGrainSupport;
+} VkVideoDecodeAV1ProfileInfoKHR;
+
+typedef struct VkVideoDecodeAV1CapabilitiesKHR {
+    VkStructureType     sType;
+    void*               pNext;
+    StdVideoAV1Level    maxLevel;
+} VkVideoDecodeAV1CapabilitiesKHR;
+
+typedef struct VkVideoDecodeAV1SessionParametersCreateInfoKHR {
+    VkStructureType                     sType;
+    const void*                         pNext;
+    const StdVideoAV1SequenceHeader*    pStdSequenceHeader;
+} VkVideoDecodeAV1SessionParametersCreateInfoKHR;
+
+typedef struct VkVideoDecodeAV1PictureInfoKHR {
+    VkStructureType                        sType;
+    const void*                            pNext;
+    const StdVideoDecodeAV1PictureInfo*    pStdPictureInfo;
+    int32_t                                referenceNameSlotIndices[VK_MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR];
+    uint32_t                               frameHeaderOffset;
+    uint32_t                               tileCount;
+    const uint32_t*                        pTileOffsets;
+    const uint32_t*                        pTileSizes;
+} VkVideoDecodeAV1PictureInfoKHR;
+
+typedef struct VkVideoDecodeAV1DpbSlotInfoKHR {
+    VkStructureType                          sType;
+    const void*                              pNext;
+    const StdVideoDecodeAV1ReferenceInfo*    pStdReferenceInfo;
+} VkVideoDecodeAV1DpbSlotInfoKHR;
+
+
+
+// VK_KHR_video_encode_av1 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_video_encode_av1 1
+#include &quot;vk_video/vulkan_video_codec_av1std_encode.h&quot;
+#define VK_KHR_VIDEO_ENCODE_AV1_SPEC_VERSION 1
+#define VK_KHR_VIDEO_ENCODE_AV1_EXTENSION_NAME &quot;VK_KHR_video_encode_av1&quot;
+
+typedef enum VkVideoEncodeAV1PredictionModeKHR {
+    VK_VIDEO_ENCODE_AV1_PREDICTION_MODE_INTRA_ONLY_KHR = 0,
+    VK_VIDEO_ENCODE_AV1_PREDICTION_MODE_SINGLE_REFERENCE_KHR = 1,
+    VK_VIDEO_ENCODE_AV1_PREDICTION_MODE_UNIDIRECTIONAL_COMPOUND_KHR = 2,
+    VK_VIDEO_ENCODE_AV1_PREDICTION_MODE_BIDIRECTIONAL_COMPOUND_KHR = 3,
+    VK_VIDEO_ENCODE_AV1_PREDICTION_MODE_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkVideoEncodeAV1PredictionModeKHR;
+
+typedef enum VkVideoEncodeAV1RateControlGroupKHR {
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_GROUP_INTRA_KHR = 0,
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_GROUP_PREDICTIVE_KHR = 1,
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_GROUP_BIPREDICTIVE_KHR = 2,
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_GROUP_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkVideoEncodeAV1RateControlGroupKHR;
+
+typedef enum VkVideoEncodeAV1CapabilityFlagBitsKHR {
+    VK_VIDEO_ENCODE_AV1_CAPABILITY_PER_RATE_CONTROL_GROUP_MIN_MAX_Q_INDEX_BIT_KHR = 0x00000001,
+    VK_VIDEO_ENCODE_AV1_CAPABILITY_GENERATE_OBU_EXTENSION_HEADER_BIT_KHR = 0x00000002,
+    VK_VIDEO_ENCODE_AV1_CAPABILITY_PRIMARY_REFERENCE_CDF_ONLY_BIT_KHR = 0x00000004,
+    VK_VIDEO_ENCODE_AV1_CAPABILITY_FRAME_SIZE_OVERRIDE_BIT_KHR = 0x00000008,
+    VK_VIDEO_ENCODE_AV1_CAPABILITY_MOTION_VECTOR_SCALING_BIT_KHR = 0x00000010,
+    VK_VIDEO_ENCODE_AV1_CAPABILITY_COMPOUND_PREDICTION_INTRA_REFRESH_BIT_KHR = 0x00000020,
+    VK_VIDEO_ENCODE_AV1_CAPABILITY_FLAG_BITS_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkVideoEncodeAV1CapabilityFlagBitsKHR;
+typedef VkFlags VkVideoEncodeAV1CapabilityFlagsKHR;
+
+typedef enum VkVideoEncodeAV1StdFlagBitsKHR {
+    VK_VIDEO_ENCODE_AV1_STD_UNIFORM_TILE_SPACING_FLAG_SET_BIT_KHR = 0x00000001,
+    VK_VIDEO_ENCODE_AV1_STD_SKIP_MODE_PRESENT_UNSET_BIT_KHR = 0x00000002,
+    VK_VIDEO_ENCODE_AV1_STD_PRIMARY_REF_FRAME_BIT_KHR = 0x00000004,
+    VK_VIDEO_ENCODE_AV1_STD_DELTA_Q_BIT_KHR = 0x00000008,
+    VK_VIDEO_ENCODE_AV1_STD_FLAG_BITS_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkVideoEncodeAV1StdFlagBitsKHR;
+typedef VkFlags VkVideoEncodeAV1StdFlagsKHR;
+
+typedef enum VkVideoEncodeAV1SuperblockSizeFlagBitsKHR {
+    VK_VIDEO_ENCODE_AV1_SUPERBLOCK_SIZE_64_BIT_KHR = 0x00000001,
+    VK_VIDEO_ENCODE_AV1_SUPERBLOCK_SIZE_128_BIT_KHR = 0x00000002,
+    VK_VIDEO_ENCODE_AV1_SUPERBLOCK_SIZE_FLAG_BITS_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkVideoEncodeAV1SuperblockSizeFlagBitsKHR;
+typedef VkFlags VkVideoEncodeAV1SuperblockSizeFlagsKHR;
+
+typedef enum VkVideoEncodeAV1RateControlFlagBitsKHR {
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_REGULAR_GOP_BIT_KHR = 0x00000001,
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_TEMPORAL_LAYER_PATTERN_DYADIC_BIT_KHR = 0x00000002,
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_REFERENCE_PATTERN_FLAT_BIT_KHR = 0x00000004,
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_REFERENCE_PATTERN_DYADIC_BIT_KHR = 0x00000008,
+    VK_VIDEO_ENCODE_AV1_RATE_CONTROL_FLAG_BITS_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkVideoEncodeAV1RateControlFlagBitsKHR;
+typedef VkFlags VkVideoEncodeAV1RateControlFlagsKHR;
+typedef struct VkPhysicalDeviceVideoEncodeAV1FeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           videoEncodeAV1;
+} VkPhysicalDeviceVideoEncodeAV1FeaturesKHR;
+
+typedef struct VkVideoEncodeAV1CapabilitiesKHR {
+    VkStructureType                           sType;
+    void*                                     pNext;
+    VkVideoEncodeAV1CapabilityFlagsKHR        flags;
+    StdVideoAV1Level                          maxLevel;
+    VkExtent2D                                codedPictureAlignment;
+    VkExtent2D                                maxTiles;
+    VkExtent2D                                minTileSize;
+    VkExtent2D                                maxTileSize;
+    VkVideoEncodeAV1SuperblockSizeFlagsKHR    superblockSizes;
+    uint32_t                                  maxSingleReferenceCount;
+    uint32_t                                  singleReferenceNameMask;
+    uint32_t                                  maxUnidirectionalCompoundReferenceCount;
+    uint32_t                                  maxUnidirectionalCompoundGroup1ReferenceCount;
+    uint32_t                                  unidirectionalCompoundReferenceNameMask;
+    uint32_t                                  maxBidirectionalCompoundReferenceCount;
+    uint32_t                                  maxBidirectionalCompoundGroup1ReferenceCount;
+    uint32_t                                  maxBidirectionalCompoundGroup2ReferenceCount;
+    uint32_t                                  bidirectionalCompoundReferenceNameMask;
+    uint32_t                                  maxTemporalLayerCount;
+    uint32_t                                  maxSpatialLayerCount;
+    uint32_t                                  maxOperatingPoints;
+    uint32_t                                  minQIndex;
+    uint32_t                                  maxQIndex;
+    VkBool32                                  prefersGopRemainingFrames;
+    VkBool32                                  requiresGopRemainingFrames;
+    VkVideoEncodeAV1StdFlagsKHR               stdSyntaxFlags;
+} VkVideoEncodeAV1CapabilitiesKHR;
+
+typedef struct VkVideoEncodeAV1QIndexKHR {
+    uint32_t    intraQIndex;
+    uint32_t    predictiveQIndex;
+    uint32_t    bipredictiveQIndex;
+} VkVideoEncodeAV1QIndexKHR;
+
+typedef struct VkVideoEncodeAV1QualityLevelPropertiesKHR {
+    VkStructureType                        sType;
+    void*                                  pNext;
+    VkVideoEncodeAV1RateControlFlagsKHR    preferredRateControlFlags;
+    uint32_t                               preferredGopFrameCount;
+    uint32_t                               preferredKeyFramePeriod;
+    uint32_t                               preferredConsecutiveBipredictiveFrameCount;
+    uint32_t                               preferredTemporalLayerCount;
+    VkVideoEncodeAV1QIndexKHR              preferredConstantQIndex;
+    uint32_t                               preferredMaxSingleReferenceCount;
+    uint32_t                               preferredSingleReferenceNameMask;
+    uint32_t                               preferredMaxUnidirectionalCompoundReferenceCount;
+    uint32_t                               preferredMaxUnidirectionalCompoundGroup1ReferenceCount;
+    uint32_t                               preferredUnidirectionalCompoundReferenceNameMask;
+    uint32_t                               preferredMaxBidirectionalCompoundReferenceCount;
+    uint32_t                               preferredMaxBidirectionalCompoundGroup1ReferenceCount;
+    uint32_t                               preferredMaxBidirectionalCompoundGroup2ReferenceCount;
+    uint32_t                               preferredBidirectionalCompoundReferenceNameMask;
+} VkVideoEncodeAV1QualityLevelPropertiesKHR;
+
+typedef struct VkVideoEncodeAV1SessionCreateInfoKHR {
+    VkStructureType     sType;
+    const void*         pNext;
+    VkBool32            useMaxLevel;
+    StdVideoAV1Level    maxLevel;
+} VkVideoEncodeAV1SessionCreateInfoKHR;
+
+typedef struct VkVideoEncodeAV1SessionParametersCreateInfoKHR {
+    VkStructureType                               sType;
+    const void*                                   pNext;
+    const StdVideoAV1SequenceHeader*              pStdSequenceHeader;
+    const StdVideoEncodeAV1DecoderModelInfo*      pStdDecoderModelInfo;
+    uint32_t                                      stdOperatingPointCount;
+    const StdVideoEncodeAV1OperatingPointInfo*    pStdOperatingPoints;
+} VkVideoEncodeAV1SessionParametersCreateInfoKHR;
+
+typedef struct VkVideoEncodeAV1PictureInfoKHR {
+    VkStructureType                        sType;
+    const void*                            pNext;
+    VkVideoEncodeAV1PredictionModeKHR      predictionMode;
+    VkVideoEncodeAV1RateControlGroupKHR    rateControlGroup;
+    uint32_t                               constantQIndex;
+    const StdVideoEncodeAV1PictureInfo*    pStdPictureInfo;
+    int32_t                                referenceNameSlotIndices[VK_MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR];
+    VkBool32                               primaryReferenceCdfOnly;
+    VkBool32                               generateObuExtensionHeader;
+} VkVideoEncodeAV1PictureInfoKHR;
+
+typedef struct VkVideoEncodeAV1DpbSlotInfoKHR {
+    VkStructureType                          sType;
+    const void*                              pNext;
+    const StdVideoEncodeAV1ReferenceInfo*    pStdReferenceInfo;
+} VkVideoEncodeAV1DpbSlotInfoKHR;
+
+typedef struct VkVideoEncodeAV1ProfileInfoKHR {
+    VkStructureType       sType;
+    const void*           pNext;
+    StdVideoAV1Profile    stdProfile;
+} VkVideoEncodeAV1ProfileInfoKHR;
+
+typedef struct VkVideoEncodeAV1FrameSizeKHR {
+    uint32_t    intraFrameSize;
+    uint32_t    predictiveFrameSize;
+    uint32_t    bipredictiveFrameSize;
+} VkVideoEncodeAV1FrameSizeKHR;
+
+typedef struct VkVideoEncodeAV1GopRemainingFrameInfoKHR {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkBool32           useGopRemainingFrames;
+    uint32_t           gopRemainingIntra;
+    uint32_t           gopRemainingPredictive;
+    uint32_t           gopRemainingBipredictive;
+} VkVideoEncodeAV1GopRemainingFrameInfoKHR;
+
+typedef struct VkVideoEncodeAV1RateControlInfoKHR {
+    VkStructureType                        sType;
+    const void*                            pNext;
+    VkVideoEncodeAV1RateControlFlagsKHR    flags;
+    uint32_t                               gopFrameCount;
+    uint32_t                               keyFramePeriod;
+    uint32_t                               consecutiveBipredictiveFrameCount;
+    uint32_t                               temporalLayerCount;
+} VkVideoEncodeAV1RateControlInfoKHR;
+
+typedef struct VkVideoEncodeAV1RateControlLayerInfoKHR {
+    VkStructureType                 sType;
+    const void*                     pNext;
+    VkBool32                        useMinQIndex;
+    VkVideoEncodeAV1QIndexKHR       minQIndex;
+    VkBool32                        useMaxQIndex;
+    VkVideoEncodeAV1QIndexKHR       maxQIndex;
+    VkBool32                        useMaxFrameSize;
+    VkVideoEncodeAV1FrameSizeKHR    maxFrameSize;
+} VkVideoEncodeAV1RateControlLayerInfoKHR;
+
+
+
+// VK_KHR_video_decode_vp9 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_video_decode_vp9 1
+#include &quot;vk_video/vulkan_video_codec_vp9std.h&quot;
+#include &quot;vk_video/vulkan_video_codec_vp9std_decode.h&quot;
+#define VK_MAX_VIDEO_VP9_REFERENCES_PER_FRAME_KHR 3U
+#define VK_KHR_VIDEO_DECODE_VP9_SPEC_VERSION 1
+#define VK_KHR_VIDEO_DECODE_VP9_EXTENSION_NAME &quot;VK_KHR_video_decode_vp9&quot;
+typedef struct VkPhysicalDeviceVideoDecodeVP9FeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           videoDecodeVP9;
+} VkPhysicalDeviceVideoDecodeVP9FeaturesKHR;
+
+typedef struct VkVideoDecodeVP9ProfileInfoKHR {
+    VkStructureType       sType;
+    const void*           pNext;
+    StdVideoVP9Profile    stdProfile;
+} VkVideoDecodeVP9ProfileInfoKHR;
+
+typedef struct VkVideoDecodeVP9CapabilitiesKHR {
+    VkStructureType     sType;
+    void*               pNext;
+    StdVideoVP9Level    maxLevel;
+} VkVideoDecodeVP9CapabilitiesKHR;
+
+typedef struct VkVideoDecodeVP9PictureInfoKHR {
+    VkStructureType                        sType;
+    const void*                            pNext;
+    const StdVideoDecodeVP9PictureInfo*    pStdPictureInfo;
+    int32_t                                referenceNameSlotIndices[VK_MAX_VIDEO_VP9_REFERENCES_PER_FRAME_KHR];
+    uint32_t                               uncompressedHeaderOffset;
+    uint32_t                               compressedHeaderOffset;
+    uint32_t                               tilesOffset;
+} VkVideoDecodeVP9PictureInfoKHR;
+
+
+
+// VK_KHR_video_maintenance1 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_video_maintenance1 1
+#define VK_KHR_VIDEO_MAINTENANCE_1_SPEC_VERSION 1
+#define VK_KHR_VIDEO_MAINTENANCE_1_EXTENSION_NAME &quot;VK_KHR_video_maintenance1&quot;
+typedef struct VkPhysicalDeviceVideoMaintenance1FeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           videoMaintenance1;
+} VkPhysicalDeviceVideoMaintenance1FeaturesKHR;
+
+typedef struct VkVideoInlineQueryInfoKHR {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkQueryPool        queryPool;
+    uint32_t           firstQuery;
+    uint32_t           queryCount;
+} VkVideoInlineQueryInfoKHR;
+
+
+
+// VK_KHR_vertex_attribute_divisor is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_vertex_attribute_divisor 1
+#define VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION 1
+#define VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME &quot;VK_KHR_vertex_attribute_divisor&quot;
+typedef VkPhysicalDeviceVertexAttributeDivisorProperties VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR;
+
+typedef VkVertexInputBindingDivisorDescription VkVertexInputBindingDivisorDescriptionKHR;
+
+typedef VkPipelineVertexInputDivisorStateCreateInfo VkPipelineVertexInputDivisorStateCreateInfoKHR;
+
+typedef VkPhysicalDeviceVertexAttributeDivisorFeatures VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR;
+
+
+
+// VK_KHR_load_store_op_none is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_load_store_op_none 1
+#define VK_KHR_LOAD_STORE_OP_NONE_SPEC_VERSION 1
+#define VK_KHR_LOAD_STORE_OP_NONE_EXTENSION_NAME &quot;VK_KHR_load_store_op_none&quot;
+
+
+// VK_KHR_unified_image_layouts is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_unified_image_layouts 1
+#define VK_KHR_UNIFIED_IMAGE_LAYOUTS_SPEC_VERSION 1
+#define VK_KHR_UNIFIED_IMAGE_LAYOUTS_EXTENSION_NAME &quot;VK_KHR_unified_image_layouts&quot;
+typedef struct VkPhysicalDeviceUnifiedImageLayoutsFeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           unifiedImageLayouts;
+    VkBool32           unifiedImageLayoutsVideo;
+} VkPhysicalDeviceUnifiedImageLayoutsFeaturesKHR;
+
+typedef struct VkAttachmentFeedbackLoopInfoEXT {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkBool32           feedbackLoopEnable;
+} VkAttachmentFeedbackLoopInfoEXT;
+
+
+
+// VK_KHR_shader_float_controls2 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_shader_float_controls2 1
+#define VK_KHR_SHADER_FLOAT_CONTROLS_2_SPEC_VERSION 1
+#define VK_KHR_SHADER_FLOAT_CONTROLS_2_EXTENSION_NAME &quot;VK_KHR_shader_float_controls2&quot;
+typedef VkPhysicalDeviceShaderFloatControls2Features VkPhysicalDeviceShaderFloatControls2FeaturesKHR;
+
+
+
+// VK_KHR_index_type_uint8 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_index_type_uint8 1
+#define VK_KHR_INDEX_TYPE_UINT8_SPEC_VERSION 1
+#define VK_KHR_INDEX_TYPE_UINT8_EXTENSION_NAME &quot;VK_KHR_index_type_uint8&quot;
+typedef VkPhysicalDeviceIndexTypeUint8Features VkPhysicalDeviceIndexTypeUint8FeaturesKHR;
+
+
+
+// VK_KHR_line_rasterization is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_line_rasterization 1
+#define VK_KHR_LINE_RASTERIZATION_SPEC_VERSION 1
+#define VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME &quot;VK_KHR_line_rasterization&quot;
+typedef VkLineRasterizationMode VkLineRasterizationModeKHR;
+
+typedef VkPhysicalDeviceLineRasterizationFeatures VkPhysicalDeviceLineRasterizationFeaturesKHR;
+
+typedef VkPhysicalDeviceLineRasterizationProperties VkPhysicalDeviceLineRasterizationPropertiesKHR;
+
+typedef VkPipelineRasterizationLineStateCreateInfo VkPipelineRasterizationLineStateCreateInfoKHR;
+
+typedef void (VKAPI_PTR *PFN_vkCmdSetLineStippleKHR)(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern);
+#endif
+#endif
+
+
+// VK_KHR_calibrated_timestamps is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_calibrated_timestamps 1
+#define VK_KHR_CALIBRATED_TIMESTAMPS_SPEC_VERSION 1
+#define VK_KHR_CALIBRATED_TIMESTAMPS_EXTENSION_NAME &quot;VK_KHR_calibrated_timestamps&quot;
+
+typedef enum VkTimeDomainKHR {
+    VK_TIME_DOMAIN_DEVICE_KHR = 0,
+    VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR = 1,
+    VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR = 2,
+    VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR = 3,
+    VK_TIME_DOMAIN_PRESENT_STAGE_LOCAL_EXT = 1000208000,
+    VK_TIME_DOMAIN_SWAPCHAIN_LOCAL_EXT = 1000208001,
+    VK_TIME_DOMAIN_DEVICE_EXT = VK_TIME_DOMAIN_DEVICE_KHR,
+    VK_TIME_DOMAIN_CLOCK_MONOTONIC_EXT = VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR,
+    VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_EXT = VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR,
+    VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_EXT = VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR,
+    VK_TIME_DOMAIN_MAX_ENUM_KHR = 0x7FFFFFFF
+} VkTimeDomainKHR;
+typedef struct VkCalibratedTimestampInfoKHR {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkTimeDomainKHR    timeDomain;
+} VkCalibratedTimestampInfoKHR;
+
+typedef VkResult (VKAPI_PTR *PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR)(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains);
+typedef VkResult (VKAPI_PTR *PFN_vkGetCalibratedTimestampsKHR)(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pTimeDomainCount,
+    VkTimeDomainKHR*                            pTimeDomains);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetCalibratedTimestampsKHR(
+    VkDevice                                    device,
+    uint32_t                                    timestampCount,
+    const VkCalibratedTimestampInfoKHR*         pTimestampInfos,
+    uint64_t*                                   pTimestamps,
+    uint64_t*                                   pMaxDeviation);
+#endif
+#endif
+
+
+// VK_KHR_shader_expect_assume is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_shader_expect_assume 1</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-29.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-31.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

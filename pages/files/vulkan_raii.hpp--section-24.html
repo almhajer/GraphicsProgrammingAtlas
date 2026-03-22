@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 24 من 64 • الأسطر 10351-10800 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 24 من 64 • الأسطر 10351-10800</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 24 من 64 • الأسطر 10351-10800</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-23.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-25.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 24/64</span>
+        <span class="source-stat">الأسطر: 10351-10800</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>      // wrapper function for command vkResetEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetEvent.html
+      typename ResultValueType&lt;void&gt;::type reset() const;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device     m_device     = {};
+      VULKAN_HPP_NAMESPACE::Event      m_event      = {};
+      const AllocationCallbacks *      m_allocator  = {};
+      detail::DeviceDispatcher const * m_dispatcher = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;Event&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkExternalComputeQueueNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkExternalComputeQueueNV.html
+    class ExternalComputeQueueNV
+    {
+    public:
+      using CType   = VkExternalComputeQueueNV;
+      using CppType = VULKAN_HPP_NAMESPACE::ExternalComputeQueueNV;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eExternalComputeQueueNV;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      ExternalComputeQueueNV( Device const &amp;                           device,
+                              ExternalComputeQueueCreateInfoNV const &amp; createInfo,
+                              Optional&lt;const AllocationCallbacks&gt;      allocator = nullptr )
+      {
+        *this = device.createExternalComputeQueueNV( createInfo, allocator );
+      }
+#  endif
+
+      ExternalComputeQueueNV( Device const &amp; device, VkExternalComputeQueueNV externalQueue, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_externalComputeQueueNV( externalQueue )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      ExternalComputeQueueNV( std::nullptr_t ) {}
+
+      ~ExternalComputeQueueNV()
+      {
+        clear();
+      }
+
+      ExternalComputeQueueNV()                                 = delete;
+      ExternalComputeQueueNV( ExternalComputeQueueNV const &amp; ) = delete;
+
+      ExternalComputeQueueNV( ExternalComputeQueueNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_externalComputeQueueNV( exchange( rhs.m_externalComputeQueueNV, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      ExternalComputeQueueNV &amp; operator=( ExternalComputeQueueNV const &amp; ) = delete;
+
+      ExternalComputeQueueNV &amp; operator=( ExternalComputeQueueNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_externalComputeQueueNV, rhs.m_externalComputeQueueNV );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::ExternalComputeQueueNV const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_externalComputeQueueNV;
+      }
+
+      VULKAN_HPP_NAMESPACE::ExternalComputeQueueNV const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_externalComputeQueueNV );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::ExternalComputeQueueNV() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_externalComputeQueueNV;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_externalComputeQueueNV )
+        {
+          getDispatcher()-&gt;vkDestroyExternalComputeQueueNV( static_cast&lt;VkDevice&gt;( m_device ),
+                                                            static_cast&lt;VkExternalComputeQueueNV&gt;( m_externalComputeQueueNV ),
+                                                            reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device                 = nullptr;
+        m_externalComputeQueueNV = nullptr;
+        m_allocator              = nullptr;
+        m_dispatcher             = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::ExternalComputeQueueNV release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_externalComputeQueueNV, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( ExternalComputeQueueNV &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_externalComputeQueueNV, rhs.m_externalComputeQueueNV );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_NV_external_compute_queue ===
+
+      // wrapper function for command vkGetExternalComputeQueueDataNV, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetExternalComputeQueueDataNV.html
+      template &lt;typename DataType&gt;
+      VULKAN_HPP_NODISCARD std::pair&lt;ExternalComputeQueueDataParamsNV, DataType&gt; getData() const VULKAN_HPP_NOEXCEPT;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device                 m_device                 = {};
+      VULKAN_HPP_NAMESPACE::ExternalComputeQueueNV m_externalComputeQueueNV = {};
+      const AllocationCallbacks *                  m_allocator              = {};
+      detail::DeviceDispatcher const *             m_dispatcher             = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;ExternalComputeQueueNV&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkFence, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkFence.html
+    class Fence
+    {
+    public:
+      using CType   = VkFence;
+      using CppType = VULKAN_HPP_NAMESPACE::Fence;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eFence;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eFence;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Fence( Device const &amp; device, FenceCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createFence( createInfo, allocator );
+      }
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Fence( Device const &amp; device, DeviceEventInfoEXT const &amp; deviceEventInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.registerEventEXT( deviceEventInfo, allocator );
+      }
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Fence( Device const &amp;                      device,
+             DisplayKHR const &amp;                  display,
+             DisplayEventInfoEXT const &amp;         displayEventInfo,
+             Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.registerDisplayEventEXT( display, displayEventInfo, allocator );
+      }
+#  endif
+
+      Fence( Device const &amp; device, VkFence fence, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device ), m_fence( fence ), m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) ), m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      Fence( std::nullptr_t ) {}
+
+      ~Fence()
+      {
+        clear();
+      }
+
+      Fence()                = delete;
+      Fence( Fence const &amp; ) = delete;
+
+      Fence( Fence &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_fence( exchange( rhs.m_fence, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      Fence &amp; operator=( Fence const &amp; ) = delete;
+
+      Fence &amp; operator=( Fence &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_fence, rhs.m_fence );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::Fence const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_fence;
+      }
+
+      VULKAN_HPP_NAMESPACE::Fence const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_fence );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::Fence() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_fence;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_fence )
+        {
+          getDispatcher()-&gt;vkDestroyFence(
+            static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkFence&gt;( m_fence ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device     = nullptr;
+        m_fence      = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::Fence release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_fence, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( Fence &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_fence, rhs.m_fence );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_VERSION_1_0 ===
+
+      // wrapper function for command vkGetFenceStatus, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetFenceStatus.html
+      VULKAN_HPP_NODISCARD Result getStatus() const;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device     m_device     = {};
+      VULKAN_HPP_NAMESPACE::Fence      m_fence      = {};
+      const AllocationCallbacks *      m_allocator  = {};
+      detail::DeviceDispatcher const * m_dispatcher = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;Fence&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkFramebuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkFramebuffer.html
+    class Framebuffer
+    {
+    public:
+      using CType   = VkFramebuffer;
+      using CppType = VULKAN_HPP_NAMESPACE::Framebuffer;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eFramebuffer;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eFramebuffer;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Framebuffer( Device const &amp; device, FramebufferCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createFramebuffer( createInfo, allocator );
+      }
+#  endif
+
+      Framebuffer( Device const &amp; device, VkFramebuffer framebuffer, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_framebuffer( framebuffer )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      Framebuffer( std::nullptr_t ) {}
+
+      ~Framebuffer()
+      {
+        clear();
+      }
+
+      Framebuffer()                      = delete;
+      Framebuffer( Framebuffer const &amp; ) = delete;
+
+      Framebuffer( Framebuffer &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_framebuffer( exchange( rhs.m_framebuffer, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      Framebuffer &amp; operator=( Framebuffer const &amp; ) = delete;
+
+      Framebuffer &amp; operator=( Framebuffer &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_framebuffer, rhs.m_framebuffer );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::Framebuffer const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_framebuffer;
+      }
+
+      VULKAN_HPP_NAMESPACE::Framebuffer const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_framebuffer );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::Framebuffer() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_framebuffer;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_framebuffer )
+        {
+          getDispatcher()-&gt;vkDestroyFramebuffer(
+            static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkFramebuffer&gt;( m_framebuffer ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device      = nullptr;
+        m_framebuffer = nullptr;
+        m_allocator   = nullptr;
+        m_dispatcher  = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::Framebuffer release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_framebuffer, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( Framebuffer &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_framebuffer, rhs.m_framebuffer );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_QCOM_tile_properties ===
+
+      // wrapper function for command vkGetFramebufferTilePropertiesQCOM, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetFramebufferTilePropertiesQCOM.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;std::vector&lt;TilePropertiesQCOM&gt;&gt;::type getTilePropertiesQCOM() const;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device      m_device      = {};
+      VULKAN_HPP_NAMESPACE::Framebuffer m_framebuffer = {};
+      const AllocationCallbacks *       m_allocator   = {};
+      detail::DeviceDispatcher const *  m_dispatcher  = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;Framebuffer&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkImage.html
+    class Image
+    {
+    public:
+      using CType   = VkImage;
+      using CppType = VULKAN_HPP_NAMESPACE::Image;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eImage;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eImage;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Image( Device const &amp; device, ImageCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createImage( createInfo, allocator );
+      }
+#  endif
+
+      Image( Device const &amp; device, VkImage image, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device ), m_image( image ), m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) ), m_dispatcher( device.getDispatcher() )
+      {</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-23.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-25.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

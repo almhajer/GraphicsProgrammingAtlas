@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "target_compile_options",
+    "slug": "target-compile-options",
+    "titleArabic": "يضيف خيارات الترجمة إلى target دون خلطها بخيارات الربط",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/target-compile-options",
+    "contentPath": "content/reference/cmake/commands/target-compile-options.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يضيف خيارات الترجمة إلى target دون خلطها بخيارات الربط",
+    "actualMeaningArabic": "هذا الأمر يضبط flags خاصة بالمصرّف للهدف الحالي أو لواجهته، مثل التحذيرات أو مستوى التحسين، مع دعم النطاق PUBLIC وPRIVATE وINTERFACE.",
+    "purposeArabic": "يستخدم عندما تحتاج خيارات ترجمة مرتبطة بهدف محدد بدلاً من فرضها على كل المشروع.",
+    "whyUseArabic": "يفصل compile flags عن link flags، ويجعلها مرتبطة بالهدف الصحيح ويمكن توريثها بشكل منضبط.",
+    "carriedValueArabic": "يملأ COMPILE_OPTIONS أو INTERFACE_COMPILE_OPTIONS للهدف، وبالتالي يغيّر أوامر compile في generator الناتج.",
+    "sourceDescription": "هذا الأمر يضبط flags خاصة بالمصرّف للهدف الحالي أو لواجهته، مثل التحذيرات أو مستوى التحسين، مع دعم النطاق PUBLIC وPRIVATE وINTERFACE."
+  },
+  "signature": {
+    "raw": "target_compile_options(<target> [BEFORE] <PRIVATE|PUBLIC|INTERFACE> <item>...)",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "<target>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسم هدف موجود داخل الرسم البنائي ليُطبَّق عليه الأمر أو تُقرأ خصائصه. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "BEFORE",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "خيار يطلب إدراج الإعداد أو المسار قبل القيم السابقة بدل إضافته في النهاية. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      },
+      {
+        "name": "<PRIVATE|PUBLIC|INTERFACE>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل قيمة يكتبها المبرمج في هذا الموضع من الصياغة، وليست كلمة ثابتة من كلمات CMake نفسها. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "<item>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل عنصرًا واحدًا يمرره المبرمج إلى الأمر مثل target أو مكتبة أو مسار أو خيار مرتبط بالسياق. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "استعمله لتمرير تحذيرات أو إعدادات compiler الخاصة بهدف دون تلويث بقية الشجرة.",
+      "إذا احتجت flags للربط فاستخدم target_link_options() لا هذا الأمر."
+    ],
+    "notes": [
+      "الأمر يضيف compile options فقط؛ النص الرسمي يفرق صراحة بينه وبين link options.",
+      "ترتيب BEFORE قد يتأثر بالسياسات حسب الحالة."
+    ],
+    "remarks": [],
+    "instructions": [
+      "لا تخلط بين تعريفات preprocessor والخيارات الفعلية للمصرّف؛ لكل منهما أمره."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "target_compile_options(calculator\n  PRIVATE -Wall -Wextra\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/target_compile_options.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/target_compile_options.html",
+    "related": [
+      {
+        "name": "target_compile_definitions",
+        "route": "#ref/cmake/commands/target-compile-definitions",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "target_link_libraries",
+        "route": "#ref/cmake/commands/target-link-libraries",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

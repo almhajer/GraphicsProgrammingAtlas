@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "types",
+    "displayName": "Types",
+    "displayNameArabic": "الأنواع",
+    "description": "أنواع مجردة أو صريحة تحمل معنى دلالياً وتظهر في التواقيع والبنى."
+  },
+  "identity": {
+    "name": "SDL_StorageInterface",
+    "slug": "sdl-storage-interface",
+    "titleArabic": "Function interface for SDL_Storage",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/types/sdl-storage-interface",
+    "contentPath": "content/reference/sdl3-core/types/sdl-storage-interface.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Function interface for SDL_Storage",
+    "actualMeaningArabic": "يمثل هذا النوع نوع SDL التخزين Interface، أي القيمة أو المقبض أو المؤشر الذي تتعامل معه بقية الواجهة في هذا السياق.",
+    "purposeArabic": "يستخدم هذا النوع عندما تحتاج القيمة أو المقبض أو المؤشر الذي يمثله داخل بقية الواجهة.",
+    "whyUseArabic": "القيمة الحقيقية هنا أنه يمثل نوع القيمة التي تتداولها بقية الواجهة بين الحقول والدوال.",
+    "carriedValueArabic": "يحمل هذا النوع القيمة الفعلية أو المقبض أو المؤشر الذي تمرره بقية الدوال والحقول في هذا المسار.",
+    "sourceDescription": "Function interface for SDL_Storage ."
+  },
+  "signature": {
+    "raw": "typedef struct SDL_StorageInterface\n{\n /* The version of this interface */\n Uint32 version;\n\n /* Called when the storage is closed */\n bool (SDLCALL *close)(void *userdata);\n\n /* Optional, returns whether the storage is currently ready for access */\n bool (SDLCALL *ready)(void *userdata);\n\n /* Enumerate a directory, optional for write-only storage */\n bool (SDLCALL *enumerate)(void *userdata, const char *path, SDL_EnumerateDirectoryCallback callback, void *callback_userdata);\n\n /* Get path information, optional for write-only storage */\n bool (SDLCALL *info)(void *userdata, const char *path, SDL_PathInfo *info);\n\n /* Read a file from storage, optional for write-only storage */\n bool (SDLCALL *read_file)(void *userdata, const char *path, void *destination, Uint64 length);\n\n /* Write a file to storage, optional for read-only storage */\n bool (SDLCALL *write_file)(void *userdata, const char *path, const void *source, Uint64 length);\n\n /* Create a directory, optional for read-only storage */\n bool (SDLCALL *mkdir)(void *userdata, const char *path);\n\n /* Remove a file or empty directory, optional for read-only storage */\n bool (SDLCALL *remove)(void *userdata, const char *path);\n\n /* Rename a path, optional for read-only storage */\n bool (SDLCALL *rename)(void *userdata, const char *oldpath, const char *newpath);\n\n /* Copy a file, optional for read-only storage */\n bool (SDLCALL *copy)(void *userdata, const char *oldpath, const char *newpath);\n\n /* Get the space remaining, optional for read-only storage */\n Uint64 (SDLCALL *space_remaining)(void *userdata);\n} SDL_StorageInterface;",
+    "returnType": "/* Called when the storage is closed */",
+    "parameters": [
+      "SDLCALL *close)(void *userdata);\n\n /* Optional",
+      "returns whether the storage is currently ready for access */\n bool (SDLCALL *ready)(void *userdata);\n\n /* Enumerate a directory",
+      "optional for write-only storage */\n bool (SDLCALL *enumerate)(void *userdata",
+      "const char *path",
+      "SDL_EnumerateDirectoryCallback callback",
+      "void *callback_userdata);\n\n /* Get path information",
+      "optional for write-only storage */\n bool (SDLCALL *info)(void *userdata",
+      "const char *path",
+      "SDL_PathInfo *info);\n\n /* Read a file from storage",
+      "optional for write-only storage */\n bool (SDLCALL *read_file)(void *userdata",
+      "const char *path",
+      "void *destination",
+      "Uint64 length);\n\n /* Write a file to storage",
+      "optional for read-only storage */\n bool (SDLCALL *write_file)(void *userdata",
+      "const char *path",
+      "const void *source",
+      "Uint64 length);\n\n /* Create a directory",
+      "optional for read-only storage */\n bool (SDLCALL *mkdir)(void *userdata",
+      "const char *path);\n\n /* Remove a file or empty directory",
+      "optional for read-only storage */\n bool (SDLCALL *remove)(void *userdata",
+      "const char *path);\n\n /* Rename a path",
+      "optional for read-only storage */\n bool (SDLCALL *rename)(void *userdata",
+      "const char *oldpath",
+      "const char *newpath);\n\n /* Copy a file",
+      "optional for read-only storage */\n bool (SDLCALL *copy)(void *userdata",
+      "const char *oldpath",
+      "const char *newpath);\n\n /* Get the space remaining",
+      "optional for read-only storage */\n Uint64 (SDLCALL *space_remaining)(void *userdata"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_storage.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Apps that want to supply a custom implementation of SDL_Storage will fill in all the functions\nin this struct, and then pass it to SDL_OpenStorage to create a custom SDL_Storage object.",
+      "It is not usually necessary to do this; SDL provides standard\nimplementations for many things you might expect to do with an SDL_Storage .",
+      "This structure should be initialized using SDL_INIT_INTERFACE ()"
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_StorageInterface",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_INIT_INTERFACE",
+        "route": "#ref/sdl3-core/macros/sdl-init-interface",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Storage Abstraction",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

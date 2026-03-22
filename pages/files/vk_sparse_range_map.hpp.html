@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_sparse_range_map.hpp - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_sparse_range_map.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <span>vk_sparse_range_map.hpp</span>
+      </nav>
+      <h1 class="page-title">📄 vk_sparse_range_map.hpp</h1>
+      <p class="page-description">ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.</p>
+      <div class="standalone-badges">
+        <span class="standalone-badge">ملفات vulkan/utility</span>
+        <span class="standalone-badge">utility</span>
+        <span class="standalone-badge"><span dir="ltr">vulkan/utility/vk_sparse_range_map.hpp</span></span>
+      </div>
+    </div>
+
+    <div class="standalone-grid">
+      <section class="standalone-card">
+        <h2>الهدف الفعلي للملف</h2>
+        <ul class="insight-list">
+          <li>هذا الملف أداة مساندة أكثر من كونه جزءاً من عقد API الرسمي؛ الغرض منه تسهيل النسخ، التحويل، dispatch، أو التعامل مع هياكل Vulkan المساعدة داخل الأدوات والطبقات.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>متى تستخدمه؟</h2>
+        <p>استخدم vk_sparse_range_map.hpp عندما تحتاج وظائف أو بنى مساعدة تدعم الطبقات أو الأدوات أو الشيفرات المساندة حول Vulkan.</p>
+      </section>
+      <section class="standalone-card">
+        <h2>مثال تضمين</h2>
+        <pre class="code-block" dir="ltr"><code class="language-cpp">#include &lt;vulkan/utility/vk_sparse_range_map.hpp&gt;</code></pre>
+      </section>
+      <section class="standalone-card">
+        <h2>الملفات المضمنة</h2>
+        <ul><li><code>algorithm</code></li><li><code>array</code></li><li><code>cassert</code></li><li><code>limits</code></li><li><code>map</code></li><li><code>optional</code></li><li><code>string</code></li><li><code>sstream</code></li><li><code>utility</code></li><li><code>cstdint</code></li><li><a class="standalone-link" href="./vk_small_containers.hpp.html"><code>vulkan/utility/vk_small_containers.hpp</code></a></li></ul>
+      </section>
+      <section class="standalone-card">
+        <h2>تركيب الملف</h2>
+        <ul class="insight-list">
+          <li>يستورد 11 ملفاً آخر قبل بناء تعريفاته الخاصة.</li><li>ملامحه C++ واضحة: 4 namespace، 10 class، و38 استعمالاً لـ inline تقريباً.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>ما الذي تقوله التعليقات نفسها؟</h2>
+        <ul class="insight-list">
+          
+            <li>
+              range_map Implements an ordered map of non-overlapping, non-empty ranges
+              <span class="comment-context">template &lt;typename Index&gt;</span>
+            </li>
+          
+            <li>
+              for a reversible/transitive &lt; operator compare first on begin and then end only less or begin is less or if end is less when begin is equal
+              <span class="comment-context">bool operator&lt;(const range &amp;rhs) const {</span>
+            </li>
+          
+            <li>
+              all invalid &lt; valid, allows map/set validity check by looking at begin()-&gt;first all invalid are equal, thus only equal if this is invalid and rhs is valid
+              <span class="comment-context">result = rhs.valid();</span>
+            </li>
+          
+            <li>
+              use as &quot;strictly less/greater than&quot; to check for non-overlapping ranges
+              <span class="comment-context">bool strictly_less(const range &amp;rhs) const { return end &lt;= rhs.begin; }</span>
+            </li>
+          
+            <li>
+              Compute ranges intersection. Returns empty range on non-intersection
+              <span class="comment-context">range operator&amp;(const range &amp;rhs) const {</span>
+            </li>
+          
+            <li>
+              Type parameters for the range_map(s)
+              <span class="comment-context">struct insert_range_no_split_bounds {</span>
+            </li>
+          
+            <li>
+              The range based sparse map implemented on the ImplMap
+              <span class="comment-context">template &lt;typename Key, typename T, typename RangeKey = range&lt;Key&gt;, typename ImplMap = std::map&lt;RangeKey, T&gt;&gt;</span>
+            </li>
+          
+            <li>
+              ImplMap doesn&#39;t give us what want with a direct query, it will give us the first entry contained (if any) in key, not the first entry intersecting key, so, first look for the the first entry that starts at or after key.begin with the operator &gt; in range, we can safely use an empty range for comparison
+              <span class="comment-context">auto lower = that.impl_map_.lower_bound(key_type(key.begin, key.begin));</span>
+            </li>
+          
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="source-overview">
+      <h2>📚 أقسام المصدر</h2>
+      <p>هذا الملف كبير (2,034 سطر)، لذلك قُسِّم إلى صفحات أقسام ثابتة متتابعة حتى لا يعلق المتصفح. افتح القسم المطلوب ثم انتقل عبر السابق/التالي.</p>
+      <div class="source-toolbar">
+        <span class="source-stat">الأسطر: 2,034</span>
+        <span class="source-stat">الحجم: 87.8 KB</span>
+        <span class="source-stat">عدد الأقسام: 5</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      
+    <div class="chunk-grid">
+      
+        <a class="chunk-card" href="./vk_sparse_range_map.hpp--section-1.html">
+          <strong>القسم 1 من 5 • الأسطر 1-450</strong>
+          <span>#pragma once</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_sparse_range_map.hpp--section-2.html">
+          <strong>القسم 2 من 5 • الأسطر 451-900</strong>
+          <span>friend class range_map;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_sparse_range_map.hpp--section-3.html">
+          <strong>القسم 3 من 5 • الأسطر 901-1350</strong>
+          <span>iterator erase(iterator pos) {</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_sparse_range_map.hpp--section-4.html">
+          <strong>القسم 4 من 5 • الأسطر 1351-1800</strong>
+          <span>}</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_sparse_range_map.hpp--section-5.html">
+          <strong>القسم 5 من 5 • الأسطر 1801-2034</strong>
+          <span>assert(pos_A_-&gt;index == pos_B_-&gt;index);</span>
+        </a>
+      
+    </div>
+  
+    </section>
+    
+  </main>
+</body>
+</html>

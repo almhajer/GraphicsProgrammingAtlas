@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "concepts",
+    "displayName": "Concepts",
+    "displayNameArabic": "المفاهيم",
+    "description": "مفاهيم تشغيلية تشرح كيف يفكر CMake في التهيئة والتوليد والبناء، وفي الأهداف ونطاقات الأدلة والمتغيرات المخزنة."
+  },
+  "identity": {
+    "name": "configure-generate-build flow",
+    "slug": "configure-generate-build-flow",
+    "titleArabic": "مسار العمل في CMake: التهيئة ثم التوليد ثم البناء (Configure / Generate / Build)",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/concepts/configure-generate-build-flow",
+    "contentPath": "content/reference/cmake/concepts/configure-generate-build-flow.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "مسار العمل في CMake: التهيئة ثم التوليد ثم البناء (Configure / Generate / Build)",
+    "actualMeaningArabic": "هذا المفهوم يشرح أن CMake لا ينفذ كل شيء دفعة واحدة. في مرحلة التهيئة (Configure) يقرأ ملفات CMakeLists.txt ويكوّن الأهداف والقيم والعلاقات بينها، ثم في مرحلة التوليد (Generate) يحول هذه الصورة الداخلية إلى ملفات يفهمها المولد المختار مثل Ninja أو Visual Studio، ثم تأتي مرحلة البناء (Build) لاحقًا لتنفذ أوامر الترجمة والربط الفعلية.",
+    "purposeArabic": "هو المفتاح العملي لفهم متى يقرأ CMake الأمر أو المتغير، ومتى يظهر أثره على ملفات البناء أو على الترجمة والتنفيذ الفعليين.",
+    "whyUseArabic": "من دون هذا التفريق يختلط على المبتدئ لماذا يختلف configure_file عن add_custom_command، ولماذا لا تظهر قيمة التعبيرات المولدة (Generator Expressions) مباشرة لحظة قراءة الملف.",
+    "carriedValueArabic": "أثر هذا المفهوم عملي جدًا: فهو يحدد هل التغيير الذي كتبته سيؤثر في مرحلة التهيئة، أم في ملفات التوليد، أم في البناء الذي تنفذه الأداة لاحقًا.",
+    "sourceDescription": "هذا المفهوم يشرح أن CMake لا ينفذ كل شيء دفعة واحدة. في مرحلة التهيئة (Configure) يقرأ ملفات CMakeLists.txt ويكوّن الأهداف والقيم والعلاقات بينها، ثم في مرحلة التوليد (Generate) يحول هذه الصورة الداخلية إلى ملفات يفهمها المولد المختار مثل Ninja أو Visual Studio، ثم تأتي مرحلة البناء (Build) لاحقًا لتنفذ أوامر الترجمة والربط الفعلية."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "الأوامر مثل project() وadd_library() تحدد شكل المشروع أساسًا في مرحلة التهيئة (Configure).",
+      "التعبيرات المولدة (Generator Expressions) تُحسم غالبًا وقت التوليد (Generate) عندما يكتب CMake ملفات المولد النهائية.",
+      "الأوامر المخصصة وخطوات الترجمة والربط تظهر آثارها العملية في مرحلة البناء (Build)."
+    ],
+    "notes": [
+      "التهيئة تصف ما الذي سيُبنى، والتوليد يكتب ملفات الأداة المختارة، والبناء ينفذ هذه الملفات فعليًا.",
+      "عدد كبير من أسئلة CMake التعليمية لا يُحل إلا بعد تحديد المرحلة التي تنتمي إليها المشكلة."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "# configure: يقرأ CMake هذا الملف ويبني target\nadd_executable(calculator main.cpp)\n\n# generate: يكتب Ninja/VS rules بحسب المولد\n# build: ينفذ المولد أوامر compile/link الفعلية"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      {
+        "name": "configure_file",
+        "route": "#ref/cmake/commands/configure-file",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "add_custom_command",
+        "route": "#ref/cmake/commands/add-custom-command",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Generator Expressions",
+        "route": "#ref/cmake/expressions/generator-expressions",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/concepts.json",
+    "category": "المفاهيم",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

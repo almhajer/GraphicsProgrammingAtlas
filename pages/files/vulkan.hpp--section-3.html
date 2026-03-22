@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan.hpp • القسم 3 من 58 • الأسطر 901-1350 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan.hpp.html">vulkan.hpp</a> /
+        <span>القسم 3 من 58 • الأسطر 901-1350</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan.hpp</h1>
+      <p class="page-description">القسم 3 من 58 • الأسطر 901-1350</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-2.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-4.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan.hpp</span>
+        <span class="source-stat">القسم: 3/58</span>
+        <span class="source-stat">الأسطر: 901-1350</span>
+        <span class="source-stat">حجم الملف: 1.05 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+    explicit UniqueHandle( Type const &amp; value, Deleter const &amp; deleter = Deleter() ) VULKAN_HPP_NOEXCEPT
+      : Deleter( deleter )
+      , m_value( value )
+    {
+    }
+
+    UniqueHandle( UniqueHandle const &amp; ) = delete;
+
+    UniqueHandle( UniqueHandle &amp;&amp; other ) VULKAN_HPP_NOEXCEPT
+      : Deleter( std::move( static_cast&lt;Deleter &amp;&gt;( other ) ) )
+      , m_value( other.release() )
+    {
+    }
+
+    ~UniqueHandle() VULKAN_HPP_NOEXCEPT
+    {
+      if ( m_value )
+      {
+        this-&gt;destroy( m_value );
+      }
+    }
+
+    UniqueHandle &amp; operator=( UniqueHandle const &amp; ) = delete;
+
+    UniqueHandle &amp; operator=( UniqueHandle &amp;&amp; other ) VULKAN_HPP_NOEXCEPT
+    {
+      reset( other.release() );
+      *static_cast&lt;Deleter *&gt;( this ) = std::move( static_cast&lt;Deleter &amp;&gt;( other ) );
+      return *this;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_value.operator bool();
+    }
+
+#    if defined( VULKAN_HPP_SMART_HANDLE_IMPLICIT_CAST )
+    operator Type() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_value;
+    }
+#    endif
+
+    Type const * operator-&gt;() const VULKAN_HPP_NOEXCEPT
+    {
+      return &amp;m_value;
+    }
+
+    Type * operator-&gt;() VULKAN_HPP_NOEXCEPT
+    {
+      return &amp;m_value;
+    }
+
+    Type const &amp; operator*() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_value;
+    }
+
+    Type &amp; operator*() VULKAN_HPP_NOEXCEPT
+    {
+      return m_value;
+    }
+
+    const Type &amp; get() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_value;
+    }
+
+    Type &amp; get() VULKAN_HPP_NOEXCEPT
+    {
+      return m_value;
+    }
+
+    void reset( Type const &amp; value = Type() ) VULKAN_HPP_NOEXCEPT
+    {
+      if ( m_value != value )
+      {
+        if ( m_value )
+        {
+          this-&gt;destroy( m_value );
+        }
+        m_value = value;
+      }
+    }
+
+    Type release() VULKAN_HPP_NOEXCEPT
+    {
+      Type value = m_value;
+      m_value    = nullptr;
+      return value;
+    }
+
+    void swap( UniqueHandle&lt;Type, Dispatch&gt; &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      std::swap( m_value, rhs.m_value );
+      std::swap( static_cast&lt;Deleter &amp;&gt;( *this ), static_cast&lt;Deleter &amp;&gt;( rhs ) );
+    }
+
+  private:
+    Type m_value;
+  };
+
+  template &lt;typename UniqueType&gt;
+  VULKAN_HPP_INLINE std::vector&lt;typename UniqueType::element_type&gt; uniqueToRaw( std::vector&lt;UniqueType&gt; const &amp; handles )
+  {
+    std::vector&lt;typename UniqueType::element_type&gt; newBuffer( handles.size() );
+    std::transform( handles.begin(), handles.end(), newBuffer.begin(), []( UniqueType const &amp; handle ) { return handle.get(); } );
+    return newBuffer;
+  }
+
+  template &lt;typename Type, typename Dispatch&gt;
+  VULKAN_HPP_INLINE void swap( UniqueHandle&lt;Type, Dispatch&gt; &amp; lhs, UniqueHandle&lt;Type, Dispatch&gt; &amp; rhs ) VULKAN_HPP_NOEXCEPT
+  {
+    lhs.swap( rhs );
+  }
+#  endif
+#endif  // VULKAN_HPP_DISABLE_ENHANCED_MODE
+
+  namespace detail
+  {
+
+    //==========================
+    //=== Is Dispatched List ===
+    //==========================
+
+    // C++11-compatible void_t
+    template &lt;typename...&gt;
+    struct voider
+    {
+      typedef void type;
+    };
+
+    template &lt;typename... Ts&gt;
+    using void_t = typename voider&lt;Ts...&gt;::type;
+
+    // helper macro to declare a SFINAE-friendly has_&lt;fn&gt; trait
+#define DECLARE_IS_DISPATCHED( name )                                 \
+  template &lt;typename D, typename = void&gt;                              \
+  struct has_##name : std::false_type                                 \
+  {                                                                   \
+  };                                                                  \
+  template &lt;typename D&gt;                                               \
+  struct has_##name&lt;D, void_t&lt;decltype( &amp;D::name )&gt;&gt; : std::true_type \
+  {                                                                   \
+  };
+
+    DECLARE_IS_DISPATCHED( vkAcquireDrmDisplayEXT )
+    DECLARE_IS_DISPATCHED( vkAcquireFullScreenExclusiveModeEXT )
+    DECLARE_IS_DISPATCHED( vkAcquireImageANDROID )
+    DECLARE_IS_DISPATCHED( vkAcquireImageOHOS )
+    DECLARE_IS_DISPATCHED( vkAcquireNextImage2KHR )
+    DECLARE_IS_DISPATCHED( vkAcquireNextImageKHR )
+    DECLARE_IS_DISPATCHED( vkAcquirePerformanceConfigurationINTEL )
+    DECLARE_IS_DISPATCHED( vkAcquireProfilingLockKHR )
+    DECLARE_IS_DISPATCHED( vkAcquireWinrtDisplayNV )
+    DECLARE_IS_DISPATCHED( vkAcquireXlibDisplayEXT )
+    DECLARE_IS_DISPATCHED( vkAllocateCommandBuffers )
+    DECLARE_IS_DISPATCHED( vkAllocateDescriptorSets )
+    DECLARE_IS_DISPATCHED( vkAllocateMemory )
+    DECLARE_IS_DISPATCHED( vkAntiLagUpdateAMD )
+    DECLARE_IS_DISPATCHED( vkBeginCommandBuffer )
+    DECLARE_IS_DISPATCHED( vkBindAccelerationStructureMemoryNV )
+    DECLARE_IS_DISPATCHED( vkBindBufferMemory )
+    DECLARE_IS_DISPATCHED( vkBindBufferMemory2 )
+    DECLARE_IS_DISPATCHED( vkBindBufferMemory2KHR )
+    DECLARE_IS_DISPATCHED( vkBindDataGraphPipelineSessionMemoryARM )
+    DECLARE_IS_DISPATCHED( vkBindImageMemory )
+    DECLARE_IS_DISPATCHED( vkBindImageMemory2 )
+    DECLARE_IS_DISPATCHED( vkBindImageMemory2KHR )
+    DECLARE_IS_DISPATCHED( vkBindOpticalFlowSessionImageNV )
+    DECLARE_IS_DISPATCHED( vkBindTensorMemoryARM )
+    DECLARE_IS_DISPATCHED( vkBindVideoSessionMemoryKHR )
+    DECLARE_IS_DISPATCHED( vkBuildAccelerationStructuresKHR )
+    DECLARE_IS_DISPATCHED( vkBuildMicromapsEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBeginConditionalRenderingEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBeginCustomResolveEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBeginDebugUtilsLabelEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBeginPerTileExecutionQCOM )
+    DECLARE_IS_DISPATCHED( vkCmdBeginQuery )
+    DECLARE_IS_DISPATCHED( vkCmdBeginQueryIndexedEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBeginRenderPass )
+    DECLARE_IS_DISPATCHED( vkCmdBeginRenderPass2 )
+    DECLARE_IS_DISPATCHED( vkCmdBeginRenderPass2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdBeginRendering )
+    DECLARE_IS_DISPATCHED( vkCmdBeginRenderingKHR )
+    DECLARE_IS_DISPATCHED( vkCmdBeginTransformFeedbackEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBeginVideoCodingKHR )
+    DECLARE_IS_DISPATCHED( vkCmdBindDescriptorBufferEmbeddedSamplers2EXT )
+    DECLARE_IS_DISPATCHED( vkCmdBindDescriptorBufferEmbeddedSamplersEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBindDescriptorBuffersEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBindDescriptorSets )
+    DECLARE_IS_DISPATCHED( vkCmdBindDescriptorSets2 )
+    DECLARE_IS_DISPATCHED( vkCmdBindDescriptorSets2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdBindIndexBuffer )
+    DECLARE_IS_DISPATCHED( vkCmdBindIndexBuffer2 )
+    DECLARE_IS_DISPATCHED( vkCmdBindIndexBuffer2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdBindInvocationMaskHUAWEI )
+    DECLARE_IS_DISPATCHED( vkCmdBindPipeline )
+    DECLARE_IS_DISPATCHED( vkCmdBindPipelineShaderGroupNV )
+    DECLARE_IS_DISPATCHED( vkCmdBindResourceHeapEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBindSamplerHeapEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBindShadersEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBindShadingRateImageNV )
+    DECLARE_IS_DISPATCHED( vkCmdBindTileMemoryQCOM )
+    DECLARE_IS_DISPATCHED( vkCmdBindTransformFeedbackBuffersEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBindVertexBuffers )
+    DECLARE_IS_DISPATCHED( vkCmdBindVertexBuffers2 )
+    DECLARE_IS_DISPATCHED( vkCmdBindVertexBuffers2EXT )
+    DECLARE_IS_DISPATCHED( vkCmdBlitImage )
+    DECLARE_IS_DISPATCHED( vkCmdBlitImage2 )
+    DECLARE_IS_DISPATCHED( vkCmdBlitImage2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdBuildAccelerationStructureNV )
+    DECLARE_IS_DISPATCHED( vkCmdBuildAccelerationStructuresIndirectKHR )
+    DECLARE_IS_DISPATCHED( vkCmdBuildAccelerationStructuresKHR )
+    DECLARE_IS_DISPATCHED( vkCmdBuildClusterAccelerationStructureIndirectNV )
+    DECLARE_IS_DISPATCHED( vkCmdBuildMicromapsEXT )
+    DECLARE_IS_DISPATCHED( vkCmdBuildPartitionedAccelerationStructuresNV )
+    DECLARE_IS_DISPATCHED( vkCmdClearAttachments )
+    DECLARE_IS_DISPATCHED( vkCmdClearColorImage )
+    DECLARE_IS_DISPATCHED( vkCmdClearDepthStencilImage )
+    DECLARE_IS_DISPATCHED( vkCmdControlVideoCodingKHR )
+    DECLARE_IS_DISPATCHED( vkCmdConvertCooperativeVectorMatrixNV )
+    DECLARE_IS_DISPATCHED( vkCmdCopyAccelerationStructureKHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyAccelerationStructureNV )
+    DECLARE_IS_DISPATCHED( vkCmdCopyAccelerationStructureToMemoryKHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyBuffer )
+    DECLARE_IS_DISPATCHED( vkCmdCopyBuffer2 )
+    DECLARE_IS_DISPATCHED( vkCmdCopyBuffer2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyBufferToImage )
+    DECLARE_IS_DISPATCHED( vkCmdCopyBufferToImage2 )
+    DECLARE_IS_DISPATCHED( vkCmdCopyBufferToImage2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyImage )
+    DECLARE_IS_DISPATCHED( vkCmdCopyImage2 )
+    DECLARE_IS_DISPATCHED( vkCmdCopyImage2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyImageToBuffer )
+    DECLARE_IS_DISPATCHED( vkCmdCopyImageToBuffer2 )
+    DECLARE_IS_DISPATCHED( vkCmdCopyImageToBuffer2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyMemoryIndirectKHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyMemoryIndirectNV )
+    DECLARE_IS_DISPATCHED( vkCmdCopyMemoryToAccelerationStructureKHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyMemoryToImageIndirectKHR )
+    DECLARE_IS_DISPATCHED( vkCmdCopyMemoryToImageIndirectNV )
+    DECLARE_IS_DISPATCHED( vkCmdCopyMemoryToMicromapEXT )
+    DECLARE_IS_DISPATCHED( vkCmdCopyMicromapEXT )
+    DECLARE_IS_DISPATCHED( vkCmdCopyMicromapToMemoryEXT )
+    DECLARE_IS_DISPATCHED( vkCmdCopyQueryPoolResults )
+    DECLARE_IS_DISPATCHED( vkCmdCopyTensorARM )
+    DECLARE_IS_DISPATCHED( vkCmdCuLaunchKernelNVX )
+    DECLARE_IS_DISPATCHED( vkCmdCudaLaunchKernelNV )
+    DECLARE_IS_DISPATCHED( vkCmdDebugMarkerBeginEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDebugMarkerEndEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDebugMarkerInsertEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDecodeVideoKHR )
+    DECLARE_IS_DISPATCHED( vkCmdDecompressMemoryEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDecompressMemoryIndirectCountEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDecompressMemoryIndirectCountNV )
+    DECLARE_IS_DISPATCHED( vkCmdDecompressMemoryNV )
+    DECLARE_IS_DISPATCHED( vkCmdDispatch )
+    DECLARE_IS_DISPATCHED( vkCmdDispatchBase )
+    DECLARE_IS_DISPATCHED( vkCmdDispatchBaseKHR )
+    DECLARE_IS_DISPATCHED( vkCmdDispatchDataGraphARM )
+    DECLARE_IS_DISPATCHED( vkCmdDispatchGraphAMDX )
+    DECLARE_IS_DISPATCHED( vkCmdDispatchGraphIndirectAMDX )
+    DECLARE_IS_DISPATCHED( vkCmdDispatchGraphIndirectCountAMDX )
+    DECLARE_IS_DISPATCHED( vkCmdDispatchIndirect )
+    DECLARE_IS_DISPATCHED( vkCmdDispatchTileQCOM )
+    DECLARE_IS_DISPATCHED( vkCmdDraw )
+    DECLARE_IS_DISPATCHED( vkCmdDrawClusterHUAWEI )
+    DECLARE_IS_DISPATCHED( vkCmdDrawClusterIndirectHUAWEI )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndexed )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndexedIndirect )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndexedIndirectCount )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndexedIndirectCountAMD )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndexedIndirectCountKHR )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndirect )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndirectByteCountEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndirectCount )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndirectCountAMD )
+    DECLARE_IS_DISPATCHED( vkCmdDrawIndirectCountKHR )
+    DECLARE_IS_DISPATCHED( vkCmdDrawMeshTasksEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDrawMeshTasksIndirectCountEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDrawMeshTasksIndirectCountNV )
+    DECLARE_IS_DISPATCHED( vkCmdDrawMeshTasksIndirectEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDrawMeshTasksIndirectNV )
+    DECLARE_IS_DISPATCHED( vkCmdDrawMeshTasksNV )
+    DECLARE_IS_DISPATCHED( vkCmdDrawMultiEXT )
+    DECLARE_IS_DISPATCHED( vkCmdDrawMultiIndexedEXT )
+    DECLARE_IS_DISPATCHED( vkCmdEncodeVideoKHR )
+    DECLARE_IS_DISPATCHED( vkCmdEndConditionalRenderingEXT )
+    DECLARE_IS_DISPATCHED( vkCmdEndDebugUtilsLabelEXT )
+    DECLARE_IS_DISPATCHED( vkCmdEndPerTileExecutionQCOM )
+    DECLARE_IS_DISPATCHED( vkCmdEndQuery )
+    DECLARE_IS_DISPATCHED( vkCmdEndQueryIndexedEXT )
+    DECLARE_IS_DISPATCHED( vkCmdEndRenderPass )
+    DECLARE_IS_DISPATCHED( vkCmdEndRenderPass2 )
+    DECLARE_IS_DISPATCHED( vkCmdEndRenderPass2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdEndRendering )
+    DECLARE_IS_DISPATCHED( vkCmdEndRenderingKHR )
+    DECLARE_IS_DISPATCHED( vkCmdEndRendering2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdEndRendering2EXT )
+    DECLARE_IS_DISPATCHED( vkCmdEndTransformFeedbackEXT )
+    DECLARE_IS_DISPATCHED( vkCmdEndVideoCodingKHR )
+    DECLARE_IS_DISPATCHED( vkCmdExecuteCommands )
+    DECLARE_IS_DISPATCHED( vkCmdExecuteGeneratedCommandsEXT )
+    DECLARE_IS_DISPATCHED( vkCmdExecuteGeneratedCommandsNV )
+    DECLARE_IS_DISPATCHED( vkCmdFillBuffer )
+    DECLARE_IS_DISPATCHED( vkCmdInitializeGraphScratchMemoryAMDX )
+    DECLARE_IS_DISPATCHED( vkCmdInsertDebugUtilsLabelEXT )
+    DECLARE_IS_DISPATCHED( vkCmdNextSubpass )
+    DECLARE_IS_DISPATCHED( vkCmdNextSubpass2 )
+    DECLARE_IS_DISPATCHED( vkCmdNextSubpass2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdOpticalFlowExecuteNV )
+    DECLARE_IS_DISPATCHED( vkCmdPipelineBarrier )
+    DECLARE_IS_DISPATCHED( vkCmdPipelineBarrier2 )
+    DECLARE_IS_DISPATCHED( vkCmdPipelineBarrier2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdPreprocessGeneratedCommandsEXT )
+    DECLARE_IS_DISPATCHED( vkCmdPreprocessGeneratedCommandsNV )
+    DECLARE_IS_DISPATCHED( vkCmdPushConstants )
+    DECLARE_IS_DISPATCHED( vkCmdPushConstants2 )
+    DECLARE_IS_DISPATCHED( vkCmdPushConstants2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdPushDataEXT )
+    DECLARE_IS_DISPATCHED( vkCmdPushDescriptorSet )
+    DECLARE_IS_DISPATCHED( vkCmdPushDescriptorSetKHR )
+    DECLARE_IS_DISPATCHED( vkCmdPushDescriptorSet2 )
+    DECLARE_IS_DISPATCHED( vkCmdPushDescriptorSet2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdPushDescriptorSetWithTemplate )
+    DECLARE_IS_DISPATCHED( vkCmdPushDescriptorSetWithTemplateKHR )
+    DECLARE_IS_DISPATCHED( vkCmdPushDescriptorSetWithTemplate2 )
+    DECLARE_IS_DISPATCHED( vkCmdPushDescriptorSetWithTemplate2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdRefreshObjectsKHR )
+    DECLARE_IS_DISPATCHED( vkCmdResetEvent )
+    DECLARE_IS_DISPATCHED( vkCmdResetEvent2 )
+    DECLARE_IS_DISPATCHED( vkCmdResetEvent2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdResetQueryPool )
+    DECLARE_IS_DISPATCHED( vkCmdResolveImage )
+    DECLARE_IS_DISPATCHED( vkCmdResolveImage2 )
+    DECLARE_IS_DISPATCHED( vkCmdResolveImage2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdSetAlphaToCoverageEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetAlphaToOneEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetAttachmentFeedbackLoopEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetBlendConstants )
+    DECLARE_IS_DISPATCHED( vkCmdSetCheckpointNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetCoarseSampleOrderNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetColorBlendAdvancedEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetColorBlendEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetColorBlendEquationEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetColorWriteEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetColorWriteMaskEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetComputeOccupancyPriorityNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetConservativeRasterizationModeEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetCoverageModulationModeNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetCoverageModulationTableEnableNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetCoverageModulationTableNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetCoverageReductionModeNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetCoverageToColorEnableNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetCoverageToColorLocationNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetCullMode )
+    DECLARE_IS_DISPATCHED( vkCmdSetCullModeEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthBias )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthBias2EXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthBiasEnable )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthBiasEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthBounds )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthBoundsTestEnable )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthBoundsTestEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthClampEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthClampRangeEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthClipEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthClipNegativeOneToOneEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthCompareOp )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthCompareOpEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthTestEnable )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthTestEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthWriteEnable )
+    DECLARE_IS_DISPATCHED( vkCmdSetDepthWriteEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDescriptorBufferOffsets2EXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDescriptorBufferOffsetsEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDeviceMask )
+    DECLARE_IS_DISPATCHED( vkCmdSetDeviceMaskKHR )
+    DECLARE_IS_DISPATCHED( vkCmdSetDiscardRectangleEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDiscardRectangleEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetDiscardRectangleModeEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetEvent )
+    DECLARE_IS_DISPATCHED( vkCmdSetEvent2 )
+    DECLARE_IS_DISPATCHED( vkCmdSetEvent2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdSetExclusiveScissorEnableNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetExclusiveScissorNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetExtraPrimitiveOverestimationSizeEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetFragmentShadingRateEnumNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetFragmentShadingRateKHR )
+    DECLARE_IS_DISPATCHED( vkCmdSetFrontFace )
+    DECLARE_IS_DISPATCHED( vkCmdSetFrontFaceEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetLineRasterizationModeEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetLineStipple )
+    DECLARE_IS_DISPATCHED( vkCmdSetLineStippleEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetLineStippleKHR )
+    DECLARE_IS_DISPATCHED( vkCmdSetLineStippleEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetLineWidth )
+    DECLARE_IS_DISPATCHED( vkCmdSetLogicOpEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetLogicOpEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetPatchControlPointsEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetPerformanceMarkerINTEL )
+    DECLARE_IS_DISPATCHED( vkCmdSetPerformanceOverrideINTEL )
+    DECLARE_IS_DISPATCHED( vkCmdSetPerformanceStreamMarkerINTEL )
+    DECLARE_IS_DISPATCHED( vkCmdSetPolygonModeEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetPrimitiveRestartEnable )
+    DECLARE_IS_DISPATCHED( vkCmdSetPrimitiveRestartEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetPrimitiveTopology )
+    DECLARE_IS_DISPATCHED( vkCmdSetPrimitiveTopologyEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetProvokingVertexModeEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetRasterizationSamplesEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetRasterizationStreamEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetRasterizerDiscardEnable )
+    DECLARE_IS_DISPATCHED( vkCmdSetRasterizerDiscardEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetRayTracingPipelineStackSizeKHR )
+    DECLARE_IS_DISPATCHED( vkCmdSetRenderingAttachmentLocations )
+    DECLARE_IS_DISPATCHED( vkCmdSetRenderingAttachmentLocationsKHR )
+    DECLARE_IS_DISPATCHED( vkCmdSetRenderingInputAttachmentIndices )
+    DECLARE_IS_DISPATCHED( vkCmdSetRenderingInputAttachmentIndicesKHR )
+    DECLARE_IS_DISPATCHED( vkCmdSetRepresentativeFragmentTestEnableNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetSampleLocationsEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetSampleLocationsEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetSampleMaskEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetScissor )
+    DECLARE_IS_DISPATCHED( vkCmdSetScissorWithCount )
+    DECLARE_IS_DISPATCHED( vkCmdSetScissorWithCountEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetShadingRateImageEnableNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetStencilCompareMask )
+    DECLARE_IS_DISPATCHED( vkCmdSetStencilOp )
+    DECLARE_IS_DISPATCHED( vkCmdSetStencilOpEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetStencilReference )
+    DECLARE_IS_DISPATCHED( vkCmdSetStencilTestEnable )
+    DECLARE_IS_DISPATCHED( vkCmdSetStencilTestEnableEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetStencilWriteMask )
+    DECLARE_IS_DISPATCHED( vkCmdSetTessellationDomainOriginEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetVertexInputEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSetViewport )
+    DECLARE_IS_DISPATCHED( vkCmdSetViewportShadingRatePaletteNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetViewportSwizzleNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetViewportWScalingEnableNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetViewportWScalingNV )
+    DECLARE_IS_DISPATCHED( vkCmdSetViewportWithCount )
+    DECLARE_IS_DISPATCHED( vkCmdSetViewportWithCountEXT )
+    DECLARE_IS_DISPATCHED( vkCmdSubpassShadingHUAWEI )
+    DECLARE_IS_DISPATCHED( vkCmdTraceRaysIndirect2KHR )
+    DECLARE_IS_DISPATCHED( vkCmdTraceRaysIndirectKHR )
+    DECLARE_IS_DISPATCHED( vkCmdTraceRaysKHR )
+    DECLARE_IS_DISPATCHED( vkCmdTraceRaysNV )
+    DECLARE_IS_DISPATCHED( vkCmdUpdateBuffer )</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-2.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-4.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

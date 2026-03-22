@@ -1,0 +1,622 @@
+{
+  "key": "integrations",
+  "title": "التكاملات وBackends",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "integrations",
+      "sectionTitle": "التكاملات وBackends",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/tree/master/backends",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::CreateContext",
+        "ImGuiIO",
+        "ImGui::NewFrame",
+        "ImGui::Render",
+        "imgui.h"
+      ],
+      "instructions": [],
+      "notes": [
+        "إذا أردت مشروعاً بسيطاً وسريعاً فالمسار الأكثر شيوعاً هو GLFW + OpenGL.",
+        "إذا كان مشروعك الرسومي مبنياً على Vulkan فالاختيار الطبيعي يكون SDL3 + Vulkan أو GLFW + Vulkan بحسب مكتبة النوافذ الموجودة لديك.",
+        "داخل محرك أو أداة موجودة مسبقاً لا تغيّر نظام النوافذ والرسم عبثاً؛ اختر backend ينسجم مع ما هو قائم بالفعل."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "هذا المثال ليس تكاملاً منفرداً بحد ذاته، بل skeleton يوضح أين توضع طبقة المنصة وطبقة الرسم عند دمج Dear ImGui في تطبيق حقيقي.",
+        "code": "IMGUI_CHECKVERSION();\nImGui::CreateContext();\nImGuiIO& io = ImGui::GetIO();\nio.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\nPlatformBackend_Init(...);\nRendererBackend_Init(...);\n\nwhile (application_running) {\n    PlatformBackend_ProcessEvents(...);\n    RendererBackend_NewFrame();\n    PlatformBackend_NewFrame();\n    ImGui::NewFrame();\n\n    ImGui::Begin(\"Main Tools\");\n    ImGui::Text(\"Dear ImGui is ready\");\n    ImGui::End();\n\n    ImGui::Render();\n    RendererBackend_RenderDrawData(ImGui::GetDrawData());\n}\n\nRendererBackend_Shutdown();\nPlatformBackend_Shutdown();\nImGui::DestroyContext();",
+        "fullCode": "#include <imgui.h>\n\nvoid InitGuiBackends() {\n    IMGUI_CHECKVERSION();\n    ImGui::CreateContext();\n\n    ImGuiIO& io = ImGui::GetIO();\n    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    PlatformBackend_Init();\n    RendererBackend_Init();\n}\n\nvoid RunGuiFrame() {\n    PlatformBackend_ProcessEvents();\n    RendererBackend_NewFrame();\n    PlatformBackend_NewFrame();\n    ImGui::NewFrame();\n\n    ImGui::Begin(\"Main Tools\");\n    ImGui::Text(\"Choose a platform backend and a renderer backend.\");\n    ImGui::End();\n\n    ImGui::Render();\n    RendererBackend_RenderDrawData(ImGui::GetDrawData());\n}\n\nvoid ShutdownGuiBackends() {\n    RendererBackend_Shutdown();\n    PlatformBackend_Shutdown();\n    ImGui::DestroyContext();\n}",
+        "explanation": "الهيكل العام ثابت تقريباً في كل مشروع: تنشئ السياق، تهيئ Platform Backend وRenderer Backend، تبدأ الإطار بالترتيب الصحيح، تبني الواجهة، ثم ترسم draw data عبر Renderer Backend.",
+        "expectedResult": "النتيجة نافذة أو سطح رسم يحتوي أدوات Dear ImGui الفعلية، مع إدخال يعمل بشكل صحيح لأن طبقة المنصة والرسم مهيأتان معاً.",
+        "importantNote": "الاسم يختلف من backend إلى آخر، لكن البنية العامة لا تتغير: Platform Backend للإدخال والمنصة، وRenderer Backend للرسم."
+      },
+      "guiRepresentation": {
+        "title": "العلاقة بين الطبقات",
+        "mockup": "Platform Backend: SDL3 / GLFW\nDear ImGui Context\nRenderer Backend: Vulkan / OpenGL\nنافذة أدوات ظاهرة على الشاشة",
+        "explanation": "الصورة تلخص أن Dear ImGui تقع في الوسط بين المنصة التي تمدها بالإدخال والـ renderer الذي يرسم ناتجها."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "Platform Backend و Renderer Backend",
+      "kind": "integration",
+      "shortTooltip": "دليل يشرح الفرق بين Platform Backend و Renderer Backend وكيف يقترنان لتشغيل Dear ImGui داخل التطبيق.",
+      "description": "شرح تمهيدي يوضح البنية العملية لتشغيل Dear ImGui عبر طبقة منصة للإدخال والنوافذ وطبقة رسم تحول بيانات الواجهة إلى أوامر عرض فعلية.",
+      "officialArabicDescription": "يوضح هذا الدليل أن تشغيل Dear ImGui يعتمد عادة على Platform Backend يربط النافذة والأحداث والإدخال، وعلى Renderer Backend يحول بيانات ImGui إلى أوامر رسم على الشاشة.",
+      "realMeaning": "يمثل هذا الباب خريطة التشغيل الحقيقية لـ Dear ImGui داخل التطبيقات. قلب المكتبة يبني عناصر الواجهة ويولد draw data فقط، بينما يدير Platform Backend النوافذ والإدخال، ويتولى Renderer Backend تحويل تلك البيانات إلى أوامر رسم على OpenGL أو Vulkan أو غيرهما.",
+      "whenToUse": "استخدم هذا الدليل قبل اختيار أي تكامل فعلي حتى تفهم ما الذي يجب تهيئته قبل ظهور الواجهة، ولماذا يحتاج المشروع غالباً إلى طبقتين منفصلتين لا طبقة واحدة.",
+      "practicalBenefit": "يساعدك على اختيار الدمج الصحيح بحسب مشروعك، ويمنع خلط مسؤولية مكتبة النوافذ مع مسؤولية واجهة الرسم، ويجعل تشخيص أخطاء NewFrame و Render و ProcessEvent أوضح.",
+      "misuseImpact": "إذا هيأت Platform Backend فقط فلن ترى رسماً فعلياً، وإذا هيأت Renderer Backend فقط فلن تصل الأحداث والإدخال إلى Dear ImGui. كما أن ترتيب NewFrame الخاطئ قد يعطي واجهة تبدو موجودة لكن لا تتفاعل أو لا ترسم بشكل صحيح.",
+      "integrationRoles": [
+        {
+          "label": "Platform Backend",
+          "value": "الطبقة التي تربط Dear ImGui بالنافذة والأحداث والإدخال والمؤشر ونظام التشغيل.",
+          "note": "أمثلة شائعة: GLFW و SDL3 و Win32."
+        },
+        {
+          "label": "Renderer Backend",
+          "value": "الطبقة التي تحول ImGui::GetDrawData إلى أوامر رسم فعلية على الشاشة.",
+          "note": "أمثلة شائعة: Vulkan و OpenGL و DirectX و Metal."
+        },
+        {
+          "label": "القاعدة العملية",
+          "value": "المشروع يحتاج غالباً Platform Backend + Renderer Backend معاً، مثل GLFW + OpenGL أو SDL3 + Vulkan.",
+          "note": "اختر Platform Backend بحسب نظام النوافذ والإدخال الموجود لديك، واختر Renderer Backend بحسب واجهة الرسم الفعلية في مشروعك."
+        }
+      ],
+      "backendFiles": [
+        {
+          "name": "imgui_impl_glfw.*",
+          "url": "https://github.com/ocornut/imgui/tree/master/backends",
+          "role": "ملفات Platform Backend الخاصة بـ GLFW، وتتعامل مع إنشاء الإدخال وتمرير الأحداث وحالة المؤشر والنوافذ."
+        },
+        {
+          "name": "imgui_impl_sdl3.*",
+          "url": "https://github.com/ocornut/imgui/tree/master/backends",
+          "role": "ملفات Platform Backend الخاصة بـ SDL3، وتتعامل مع SDL_Event وحالة الفأرة ولوحة المفاتيح ومعلومات النافذة."
+        },
+        {
+          "name": "imgui_impl_vulkan.*",
+          "url": "https://github.com/ocornut/imgui/tree/master/backends",
+          "role": "ملفات Renderer Backend الخاصة بـ Vulkan، وتحول بيانات Dear ImGui إلى أوامر تسجل داخل VkCommandBuffer."
+        },
+        {
+          "name": "imgui_impl_opengl3.*",
+          "url": "https://github.com/ocornut/imgui/tree/master/backends",
+          "role": "ملفات Renderer Backend الخاصة بـ OpenGL 3، وتحول بيانات Dear ImGui إلى استدعاءات OpenGL فعلية."
+        },
+        {
+          "name": "imgui_impl_win32.*",
+          "url": "https://github.com/ocornut/imgui/tree/master/backends",
+          "role": "ملفات Platform Backend الخاصة بـ Win32 عندما يدير التطبيق النوافذ مباشرة عبر Windows API."
+        },
+        {
+          "name": "imgui_impl_dx11.*",
+          "url": "https://github.com/ocornut/imgui/tree/master/backends",
+          "role": "ملفات Renderer Backend الخاصة بـ DirectX 11 عندما يكون الرسم الفعلي مبنياً على هذه الواجهة."
+        }
+      ],
+      "setupSteps": [
+        "أنشئ النافذة أو سياق المنصة أولاً عبر GLFW أو SDL3 أو Win32.",
+        "أنشئ سياق Dear ImGui عبر IMGUI_CHECKVERSION ثم ImGui::CreateContext وجهز ImGuiIO والأعلام التي تحتاجها.",
+        "هيئ Platform Backend المناسب مثل imgui_impl_glfw.* أو imgui_impl_sdl3.* حتى تتدفق الأحداث والإدخال إلى Dear ImGui.",
+        "هيئ Renderer Backend المناسب مثل imgui_impl_opengl3.* أو imgui_impl_vulkan.* حتى يمكن رسم draw data على الشاشة.",
+        "في كل إطار: مرر الأحداث إلى Platform Backend، ثم استدع NewFrame الخاص بالـ renderer backend والـ platform backend، ثم ImGui::NewFrame، ثم ابنِ الواجهة، ثم ImGui::Render، ثم استدع دالة RenderDrawData الخاصة بالرسم.",
+        "عند الإنهاء أغلق backends أولاً، ثم DestroyContext، ثم حرر النافذة أو موارد الرسم الخاصة بالتطبيق."
+      ],
+      "commonMistakes": [
+        "تهيئة Platform Backend وترك Renderer Backend غير مهيأ، فتصل الأحداث لكن لا تظهر أي واجهة مرسومة.",
+        "استدعاء ImGui::NewFrame قبل NewFrame الخاص بالـ backends، فيؤدي ذلك إلى حالة إدخال أو عرض غير متزامنة.",
+        "نسيان تمرير الأحداث إلى backend الخاص بالمنصة مثل ImGui_ImplSDL3_ProcessEvent أو ما يكافئه.",
+        "عدم إغلاق backends بالترتيب العكسي أثناء الإنهاء، فيبقى السياق أو بعض الموارد في حالة غير نظيفة."
+      ]
+    },
+    {
+      "sectionKey": "integrations",
+      "sectionTitle": "التكاملات وBackends",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_glfw.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::CreateContext",
+        "ImGuiIO",
+        "ImGui::NewFrame",
+        "ImGui::Render",
+        "ImGui::Begin"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مثال عملي يوضح GLFW كطبقة منصة، مع OpenGL كـ renderer backend فقط حتى يظهر التكامل كاملاً للمطور.",
+        "code": "glfwPollEvents();\nImGui_ImplOpenGL3_NewFrame();\nImGui_ImplGlfw_NewFrame();\nImGui::NewFrame();\n\nImGui::Begin(\"GLFW Tools\");\nImGui::Text(\"GLFW feeds window and input state.\");\nImGui::End();\n\nImGui::Render();\nImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());",
+        "fullCode": "#include <imgui.h>\n#include <backends/imgui_impl_glfw.h>\n#include <backends/imgui_impl_opengl3.h>\n#include <GLFW/glfw3.h>\n#include <glad/gl.h>\n\nint main() {\n    glfwInit();\n    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);\n    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);\n\n    GLFWwindow* window = glfwCreateWindow(1280, 720, \"ImGui + GLFW\", nullptr, nullptr);\n    glfwMakeContextCurrent(window);\n    glfwSwapInterval(1);\n    gladLoadGL(glfwGetProcAddress);\n\n    IMGUI_CHECKVERSION();\n    ImGui::CreateContext();\n    ImGuiIO& io = ImGui::GetIO();\n    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    ImGui_ImplGlfw_InitForOpenGL(window, true);\n    ImGui_ImplOpenGL3_Init(\"#version 330\");\n\n    while (!glfwWindowShouldClose(window)) {\n        glfwPollEvents();\n\n        ImGui_ImplOpenGL3_NewFrame();\n        ImGui_ImplGlfw_NewFrame();\n        ImGui::NewFrame();\n\n        static bool lock_camera = false;\n        ImGui::Begin(\"GLFW Tools\");\n        ImGui::Text(\"GLFW handles the platform side.\");\n        ImGui::Checkbox(\"Lock Camera\", &lock_camera);\n        ImGui::End();\n\n        ImGui::Render();\n\n        int display_w = 0;\n        int display_h = 0;\n        glfwGetFramebufferSize(window, &display_w, &display_h);\n        glViewport(0, 0, display_w, display_h);\n        glClearColor(0.10f, 0.12f, 0.16f, 1.0f);\n        glClear(GL_COLOR_BUFFER_BIT);\n        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());\n        glfwSwapBuffers(window);\n    }\n\n    ImGui_ImplOpenGL3_Shutdown();\n    ImGui_ImplGlfw_Shutdown();\n    ImGui::DestroyContext();\n    glfwDestroyWindow(window);\n    glfwTerminate();\n    return 0;\n}",
+        "explanation": "الدور المركزي هنا هو GLFW: هي التي تنشئ النافذة وتضخ الأحداث وتحدث حالة المنصة قبل أن يبدأ Dear ImGui بناء الإطار.",
+        "expectedResult": "تظهر نافذة GLFW عادية تحتوي نافذة أدوات Dear ImGui داخلها مع Checkbox يعمل مباشرة عند التفاعل.",
+        "importantNote": "حتى لو كان المثال يستخدم OpenGL للرسم، فإن مسؤولية GLFW تظل محصورة في المنصة والإدخال لا في RenderDrawData."
+      },
+      "guiRepresentation": {
+        "title": "شكل الناتج مع GLFW",
+        "mockup": "نافذة GLFW\nشريط أدوات Dear ImGui\nCheckbox فعال\nOpenGL يرسم الناتج",
+        "explanation": "GLFW تدير الغلاف الخارجي للنافذة، بينما تظهر أدوات Dear ImGui داخلها فوق سطح الرسم."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "ImGui + GLFW",
+      "kind": "integration",
+      "shortTooltip": "تكامل يربط Dear ImGui مع GLFW كـ Platform Backend لإدارة النافذة والإدخال.",
+      "description": "يشرح هذا التكامل كيف تستخدم GLFW لتوفير النافذة والأحداث والمؤشر ولوحة المفاتيح إلى Dear ImGui، بينما يستمر renderer backend في تولي الرسم الفعلي.",
+      "officialArabicDescription": "في هذا التكامل تكون GLFW مسؤولة عن النافذة وسياق المنصة وتمرير الإدخال إلى Dear ImGui، بينما يقترن بها renderer backend منفصل مثل OpenGL أو Vulkan بحسب التطبيق.",
+      "realMeaning": "هذا التكامل يحوّل GLFW من مجرد مكتبة نافذة إلى طبقة منصة كاملة بالنسبة لـ Dear ImGui. فهي تمد ImGuiIO بحالة الفأرة ولوحة المفاتيح وحجم النافذة وتوقيت الإطار، بينما تبقى عملية الرسم نفسها في backend آخر.",
+      "whenToUse": "استخدمه عندما يكون مشروعك مبنياً بالفعل على GLFW أو عندما تريد منصة خفيفة وشائعة وسهلة الدمج في أدوات سطح المكتب والتجارب السريعة.",
+      "practicalBenefit": "يجعل مسار الإدخال والنافذة بسيطاً وواضحاً، ويمنحك تكاملاً مستقراً مع أمثلة Dear ImGui الرسمية، خاصة إذا كان renderer backend هو OpenGL أو Vulkan.",
+      "misuseImpact": "إذا تجاهلت GLFW NewFrame أو لم تمرر إعدادات النافذة والسياق بشكل صحيح فستظهر الواجهة لكن قد تتجمد حالة الإدخال أو يتعطل حجم العرض أو يفقد المؤشر دقته.",
+      "integrationRoles": [
+        {
+          "label": "دور GLFW",
+          "value": "GLFW هنا هي Platform Backend؛ تنشئ النافذة، وتدير الأحداث، وتزود Dear ImGui بحالة الإدخال والمؤشر.",
+          "note": "يمكنك استخدام GLFW مع OpenGL أو Vulkan أو أي renderer backend مناسب."
+        },
+        {
+          "label": "دور renderer backend في المثال",
+          "value": "هذا المثال يستخدم OpenGL للرسم، لكن محور هذه الصفحة هو مسؤولية GLFW في جانب المنصة والإدخال.",
+          "note": "لو استبدلت OpenGL بـ Vulkan فسيبقى دور GLFW نفسه تقريباً."
+        }
+      ],
+      "backendFiles": [
+        {
+          "name": "imgui_impl_glfw.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_glfw.h",
+          "role": "ملفات Platform Backend الخاصة بربط Dear ImGui مع GLFW."
+        },
+        {
+          "name": "imgui_impl_opengl3.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_opengl3.h",
+          "role": "ملفات Renderer Backend في المثال العملي الحالي حتى ترى التكامل كاملاً على الشاشة."
+        }
+      ],
+      "setupSteps": [
+        "أنشئ GLFWwindow وأنشئ سياق الرسم الذي سيتولى العرض الفعلي.",
+        "أنشئ Dear ImGui Context ثم هيئ imgui_impl_glfw.* لالتقاط الإدخال وحالة النافذة.",
+        "هيئ renderer backend المصاحب مثل imgui_impl_opengl3.* أو imgui_impl_vulkan.* بحسب مشروعك.",
+        "في كل إطار استدع glfwPollEvents، ثم NewFrame الخاص بالـ renderer backend، ثم ImGui_ImplGlfw_NewFrame، ثم ImGui::NewFrame.",
+        "ابن عناصر الواجهة ثم استدع ImGui::Render وارسم الناتج عبر backend الرسم."
+      ],
+      "commonMistakes": [
+        "استدعاء ImGui::NewFrame قبل ImGui_ImplGlfw_NewFrame.",
+        "نسيان glfwPollEvents في بداية الإطار، فتتوقف الفأرة ولوحة المفاتيح عن تحديث الحالة داخل Dear ImGui.",
+        "تهيئة imgui_impl_glfw.* قبل أن يصبح GLFWwindow صالحاً أو قبل ربط سياق الرسم المرتبط بالتطبيق."
+      ]
+    },
+    {
+      "sectionKey": "integrations",
+      "sectionTitle": "التكاملات وBackends",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_sdl3.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::CreateContext",
+        "ImGuiIO",
+        "ImGui::NewFrame",
+        "ImGui::Render",
+        "ImGui::Begin"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مثال عملي يوضح SDL3 كـ Platform Backend مع OpenGL كمثال Renderer Backend حتى ترى الدورة الكاملة للإطار.",
+        "code": "while (SDL_PollEvent(&event)) {\n    ImGui_ImplSDL3_ProcessEvent(&event);\n}\nImGui_ImplOpenGL3_NewFrame();\nImGui_ImplSDL3_NewFrame();\nImGui::NewFrame();",
+        "fullCode": "#include <imgui.h>\n#include <backends/imgui_impl_sdl3.h>\n#include <backends/imgui_impl_opengl3.h>\n#include <SDL3/SDL.h>\n#include <glad/gl.h>\n\nint main() {\n    SDL_Init(SDL_INIT_VIDEO);\n    SDL_Window* window = SDL_CreateWindow(\"ImGui + SDL3\", 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);\n    SDL_GLContext gl_context = SDL_GL_CreateContext(window);\n    SDL_GL_MakeCurrent(window, gl_context);\n    SDL_GL_SetSwapInterval(1);\n    gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);\n\n    IMGUI_CHECKVERSION();\n    ImGui::CreateContext();\n    ImGuiIO& io = ImGui::GetIO();\n    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    ImGui_ImplSDL3_InitForOpenGL(window, gl_context);\n    ImGui_ImplOpenGL3_Init(\"#version 330\");\n\n    bool running = true;\n    while (running) {\n        SDL_Event event;\n        while (SDL_PollEvent(&event)) {\n            ImGui_ImplSDL3_ProcessEvent(&event);\n            if (event.type == SDL_EVENT_QUIT) {\n                running = false;\n            }\n        }\n\n        ImGui_ImplOpenGL3_NewFrame();\n        ImGui_ImplSDL3_NewFrame();\n        ImGui::NewFrame();\n\n        static bool show_metrics = true;\n        ImGui::Begin(\"SDL3 Tools\");\n        ImGui::Text(\"SDL3 owns the window and events.\");\n        ImGui::Checkbox(\"Show Metrics\", &show_metrics);\n        ImGui::End();\n\n        ImGui::Render();\n\n        int display_w = 0;\n        int display_h = 0;\n        SDL_GetWindowSizeInPixels(window, &display_w, &display_h);\n        glViewport(0, 0, display_w, display_h);\n        glClearColor(0.11f, 0.12f, 0.15f, 1.0f);\n        glClear(GL_COLOR_BUFFER_BIT);\n        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());\n        SDL_GL_SwapWindow(window);\n    }\n\n    ImGui_ImplOpenGL3_Shutdown();\n    ImGui_ImplSDL3_Shutdown();\n    ImGui::DestroyContext();\n    SDL_GL_DestroyContext(gl_context);\n    SDL_DestroyWindow(window);\n    SDL_Quit();\n    return 0;\n}",
+        "explanation": "النقطة المهمة هنا هي أن SDL3 تدير حلقة الأحداث وSDL_Window وتمرير الإدخال إلى Dear ImGui، بينما يتولى OpenGL فقط الرسم الفعلي للناتج.",
+        "expectedResult": "تظهر نافذة SDL3 تحتوي نافذة أدوات Dear ImGui تعمل فوقها مباشرة مع استجابة صحيحة للأحداث والإغلاق.",
+        "importantNote": "ضع ImGui_ImplSDL3_ProcessEvent داخل حلقة الأحداث نفسها، لأن Dear ImGui لا يقرأ SDL_Event تلقائياً من دون هذا الربط."
+      },
+      "guiRepresentation": {
+        "title": "شكل الناتج مع SDL3",
+        "mockup": "نافذة SDL3\nأحداث SDL_Event\nلوحة Dear ImGui\nOpenGL يرسم الناتج",
+        "explanation": "تظهر أدوات Dear ImGui داخل نافذة SDL3 نفسها، ويصل الإدخال إليها عبر طبقة SDL3 backend."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "ImGui + SDL3",
+      "kind": "integration",
+      "shortTooltip": "تكامل يربط Dear ImGui مع SDL3 كـ Platform Backend للنوافذ والأحداث والإدخال.",
+      "description": "يوضح هذا التكامل كيف تستخدم SDL3 لتوفير النافذة وحلقة الأحداث والإدخال إلى Dear ImGui، مع إبقاء renderer backend مسؤولاً عن الرسم الفعلي.",
+      "officialArabicDescription": "في هذا التكامل تكون SDL3 مسؤولة عن إنشاء النافذة وتمرير SDL_Event وحالة الإدخال إلى Dear ImGui، بينما يقترن بها renderer backend منفصل مثل OpenGL أو Vulkan.",
+      "realMeaning": "يجعل هذا التكامل SDL3 طبقة المنصة الفعلية لـ Dear ImGui. فهي تزود ImGuiIO بحالة الفأرة ولوحة المفاتيح والأحداث وحجم النافذة، بينما تبقى أوامر الرسم في backend آخر.",
+      "whenToUse": "استخدمه عندما يكون تطبيقك مبنياً على SDL3 أو عندما تريد توحيد النافذة والإدخال والصوت والأحداث في مكتبة واحدة ثم إضافة Dear ImGui فوقها.",
+      "practicalBenefit": "يفيد كثيراً في الأدوات والمحركات الصغيرة التي تعتمد SDL3 بالفعل، لأنك لا تحتاج طبقة منصة ثانية أو نظام أحداث منفصل.",
+      "misuseImpact": "إذا نسيت ImGui_ImplSDL3_ProcessEvent أو وضعت NewFrame بترتيب خاطئ فستفقد Dear ImGui التفاعل الصحيح رغم أن النافذة موجودة والرسم يعمل.",
+      "integrationRoles": [
+        {
+          "label": "دور SDL3",
+          "value": "SDL3 هنا هي Platform Backend؛ تنشئ SDL_Window وتزود Dear ImGui بالأحداث والمؤشر ولوحة المفاتيح وحجم النافذة.",
+          "note": "يمكن إقرانها مع OpenGL أو Vulkan أو backends رسم أخرى بحسب مشروعك."
+        },
+        {
+          "label": "دور renderer backend في المثال",
+          "value": "هذا المثال يستخدم OpenGL فقط ليبقى التكامل عملياً ومكتمل الصورة، بينما يبقى تركيز الصفحة على SDL3 نفسها.",
+          "note": "إذا استخدمت Vulkan بدلاً من OpenGL فسيبقى جانب SDL3 قريباً جداً من هذا التسلسل."
+        }
+      ],
+      "backendFiles": [
+        {
+          "name": "imgui_impl_sdl3.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_sdl3.h",
+          "role": "ملفات Platform Backend الخاصة بربط Dear ImGui مع SDL3 والأحداث والإدخال."
+        },
+        {
+          "name": "imgui_impl_opengl3.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_opengl3.h",
+          "role": "ملفات Renderer Backend المستخدمة في المثال كي يظهر الناتج على الشاشة."
+        }
+      ],
+      "setupSteps": [
+        "هيئ SDL3 وأنشئ SDL_Window وسياق الرسم المناسب للتطبيق.",
+        "أنشئ Dear ImGui Context ثم هيئ imgui_impl_sdl3.* لربط النافذة والأحداث.",
+        "هيئ renderer backend الذي سيرسم draw data فعلياً، مثل imgui_impl_opengl3.* أو imgui_impl_vulkan.*.",
+        "في كل إطار مرر SDL_Event إلى ImGui_ImplSDL3_ProcessEvent، ثم استدع NewFrame الخاص بالـ renderer backend ثم ImGui_ImplSDL3_NewFrame ثم ImGui::NewFrame."
+      ],
+      "commonMistakes": [
+        "نسيان تمرير SDL_Event إلى ImGui_ImplSDL3_ProcessEvent.",
+        "استدعاء ImGui_ImplSDL3_NewFrame قبل أن تنتهي حلقة SDL_PollEvent الخاصة بالإطار الحالي.",
+        "تدمير SDL_Window أو SDL_GLContext قبل إغلاق backends وDestroyContext."
+      ]
+    },
+    {
+      "sectionKey": "integrations",
+      "sectionTitle": "التكاملات وBackends",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_vulkan.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::CreateContext",
+        "ImGui::NewFrame",
+        "ImGui::Render",
+        "ImGuiIO"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مثال عملي يوضح الجزء الذي يضيف Dear ImGui إلى تطبيق Vulkan قائم بالفعل، مع SDL3 كمنصة نافذة في هذا المسار.",
+        "code": "ImGui_ImplVulkan_NewFrame();\nImGui_ImplSDL3_NewFrame();\nImGui::NewFrame();\n...\nImGui::Render();\nImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), command_buffer);",
+        "fullCode": "#include <imgui.h>\n#include <backends/imgui_impl_sdl3.h>\n#include <backends/imgui_impl_vulkan.h>\n#include <SDL3/SDL.h>\n#include <vulkan/vulkan.h>\n\nvoid InitGuiForVulkan(SDL_Window* window,\n                      VkInstance instance,\n                      VkPhysicalDevice physical_device,\n                      VkDevice device,\n                      uint32_t queue_family,\n                      VkQueue queue,\n                      VkRenderPass render_pass,\n                      uint32_t image_count,\n                      VkDescriptorPool descriptor_pool) {\n    IMGUI_CHECKVERSION();\n    ImGui::CreateContext();\n    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    ImGui_ImplSDL3_InitForVulkan(window);\n\n    ImGui_ImplVulkan_InitInfo init_info = {};\n    init_info.Instance = instance;\n    init_info.PhysicalDevice = physical_device;\n    init_info.Device = device;\n    init_info.QueueFamily = queue_family;\n    init_info.Queue = queue;\n    init_info.DescriptorPool = descriptor_pool;\n    init_info.MinImageCount = image_count;\n    init_info.ImageCount = image_count;\n    init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;\n    ImGui_ImplVulkan_Init(&init_info, render_pass);\n}\n\nvoid RecordGuiFrame(VkCommandBuffer command_buffer) {\n    ImGui_ImplVulkan_NewFrame();\n    ImGui_ImplSDL3_NewFrame();\n    ImGui::NewFrame();\n\n    ImGui::Begin(\"Profiler\");\n    ImGui::Text(\"Vulkan renders Dear ImGui draw data.\");\n    ImGui::End();\n\n    ImGui::Render();\n    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), command_buffer);\n}\n\nvoid ShutdownGuiForVulkan() {\n    ImGui_ImplVulkan_Shutdown();\n    ImGui_ImplSDL3_Shutdown();\n    ImGui::DestroyContext();\n}",
+        "explanation": "المثال يوضح مكان Vulkan بالضبط: backend Vulkan لا يدير النافذة، لكنه يستهلك موارد الرسم الحالية ويسجل draw data داخل command buffer.",
+        "expectedResult": "تظهر نافذة أدوات Dear ImGui كطبقة مرسومة فوق تطبيق Vulkan نفسه، وتدخل بياناتها ضمن نفس مسار الإطار المسجل.",
+        "importantNote": "الخطأ الشائع هو استدعاء ImGui_ImplVulkan_RenderDrawData خارج command buffer الصحيح أو قبل إنهاء بناء الواجهة عبر ImGui::Render."
+      },
+      "guiRepresentation": {
+        "title": "شكل الناتج مع Vulkan",
+        "mockup": "نافذة التطبيق\nDear ImGui Tools\nVkCommandBuffer يسجل الواجهة\nVulkan يقدم الصورة",
+        "explanation": "Dear ImGui تظهر كطبقة أدوات مرسومة داخل نفس إطار Vulkan بدل أن تكون نافذة منفصلة عن التطبيق."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "ImGui + Vulkan",
+      "kind": "integration",
+      "shortTooltip": "تكامل يشرح استخدام Vulkan كـ Renderer Backend لرسم Dear ImGui عبر VkCommandBuffer.",
+      "description": "يركز هذا التكامل على دور Vulkan في رسم Dear ImGui: تهيئة backend، تمرير الموارد الأساسية، وتسجيل أوامر RenderDrawData داخل VkCommandBuffer.",
+      "officialArabicDescription": "في هذا التكامل تكون Vulkan مسؤولة عن رسم بيانات Dear ImGui النهائية عبر backend خاص بها، بينما تستمر طبقة منصة منفصلة مثل SDL3 أو GLFW في إدارة النافذة والإدخال.",
+      "realMeaning": "هذا التكامل يجعل backend Vulkan يقرأ ImGui::GetDrawData في نهاية الإطار ثم يحولها إلى أوامر تكتب داخل VkCommandBuffer. لذلك هو أقرب إلى طبقة ترجمة بين قلب Dear ImGui وبنية الرسم الصريحة في Vulkan.",
+      "whenToUse": "استخدمه عندما يكون مشروعك الرسومي مبنياً على Vulkan وتحتاج Dear ImGui كطبقة أدوات أو تصحيح أو واجهة تحكم فوق مسار الرسم الحالي.",
+      "practicalBenefit": "يعطيك واجهة أدوات فوق تطبيق Vulkan من دون تغيير بنية الرسم الرئيسية، مع الاستفادة من نفس VkDevice وVkQueue وVkRenderPass أو المسار الديناميكي الذي يملكه التطبيق.",
+      "misuseImpact": "إذا أخطأت في تمرير VkDescriptorPool أو عدد صور swapchain أو موضع RenderDrawData داخل التسجيل فستظهر أخطاء مزامنة أو موارد أو قد لا ترسم الواجهة أصلاً.",
+      "integrationRoles": [
+        {
+          "label": "دور Vulkan",
+          "value": "Vulkan هنا هي Renderer Backend؛ تستقبل draw data النهائية وتترجمها إلى أوامر تسجيل داخل VkCommandBuffer.",
+          "note": "المنصة نفسها تبقى في backend آخر مثل SDL3 أو GLFW."
+        },
+        {
+          "label": "ما الذي يمرره التطبيق",
+          "value": "يمرر التطبيق موارد مثل VkInstance وVkPhysicalDevice وVkDevice وVkQueue وVkDescriptorPool وVkRenderPass أو ما يعادله في مساره.",
+          "note": "هذه الموارد هي ما يسمح للـ backend أن يعيش داخل التطبيق القائم بدل بناء محرك رسم مستقل."
+        }
+      ],
+      "backendFiles": [
+        {
+          "name": "imgui_impl_vulkan.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_vulkan.h",
+          "role": "ملفات Renderer Backend الخاصة بـ Vulkan، وهي المسؤولة عن Init وNewFrame وRenderDrawData وShutdown."
+        },
+        {
+          "name": "imgui_impl_sdl3.* أو imgui_impl_glfw.*",
+          "url": "https://github.com/ocornut/imgui/tree/master/backends",
+          "role": "Platform Backend مرافقة لازمة لتدفق النافذة والإدخال، لأن Vulkan لا تدير هذا الجزء وحدها."
+        }
+      ],
+      "setupSteps": [
+        "أكمل تهيئة Vulkan الأساسية أولاً حتى تصبح VkDevice وVkQueue وswapchain ومسار التسجيل جاهزة.",
+        "أنشئ Dear ImGui Context ثم هيئ Platform Backend المرافقة للنافذة مثل SDL3 أو GLFW.",
+        "املأ ImGui_ImplVulkan_InitInfo بالقيم الصحيحة مثل VkInstance وVkDevice وVkQueue وVkDescriptorPool وImageCount.",
+        "استدع ImGui_ImplVulkan_Init في المرحلة التي يكون فيها render pass أو مسار الرسم النهائي معروفاً.",
+        "في كل إطار استدع ImGui_ImplVulkan_NewFrame ثم PlatformBackend_NewFrame ثم ImGui::NewFrame، وابن الواجهة، ثم ImGui::Render، ثم سجل ImGui_ImplVulkan_RenderDrawData داخل command buffer المناسب."
+      ],
+      "commonMistakes": [
+        "تمرير VkDescriptorPool غير مناسب أو صغير جداً، فيفشل backend في تخصيص ما يحتاجه.",
+        "عدم مطابقة ImageCount وMinImageCount مع حالة swapchain الفعلية.",
+        "استدعاء ImGui_ImplVulkan_RenderDrawData قبل ImGui::Render أو في command buffer ليس هو الذي سيقدم الإطار الحالي.",
+        "نسيان خطوة رفع Fonts في مسار التهيئة الأولية إذا كان backend في مشروعك يتطلبها صراحة."
+      ]
+    },
+    {
+      "sectionKey": "integrations",
+      "sectionTitle": "التكاملات وBackends",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_opengl3.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::CreateContext",
+        "ImGui::NewFrame",
+        "ImGui::Render",
+        "ImGuiIO"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مثال يوضح OpenGL كـ Renderer Backend في تطبيق GLFW، مع إبراز الجزء الذي يخص الرسم نفسه لا المنصة.",
+        "code": "ImGui_ImplOpenGL3_NewFrame();\nImGui_ImplGlfw_NewFrame();\nImGui::NewFrame();\n...\nImGui::Render();\nImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());",
+        "fullCode": "#include <imgui.h>\n#include <backends/imgui_impl_glfw.h>\n#include <backends/imgui_impl_opengl3.h>\n#include <GLFW/glfw3.h>\n#include <glad/gl.h>\n\nvoid InitGuiForOpenGL(GLFWwindow* window) {\n    IMGUI_CHECKVERSION();\n    ImGui::CreateContext();\n    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    ImGui_ImplGlfw_InitForOpenGL(window, true);\n    ImGui_ImplOpenGL3_Init(\"#version 330\");\n}\n\nvoid DrawGuiFrame() {\n    ImGui_ImplOpenGL3_NewFrame();\n    ImGui_ImplGlfw_NewFrame();\n    ImGui::NewFrame();\n\n    ImGui::Begin(\"Renderer State\");\n    ImGui::Text(\"OpenGL draws Dear ImGui on the current framebuffer.\");\n    ImGui::End();\n\n    ImGui::Render();\n    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());\n}\n\nvoid ShutdownGuiForOpenGL() {\n    ImGui_ImplOpenGL3_Shutdown();\n    ImGui_ImplGlfw_Shutdown();\n    ImGui::DestroyContext();\n}",
+        "explanation": "هذا المثال يوضح أن backend OpenGL تعمل في آخر الإطار بعد اكتمال البناء، فتسحب draw data وترسمها على الـ framebuffer الحالي.",
+        "expectedResult": "تظهر أدوات Dear ImGui فوق سطح الرسم الحالي في نافذة OpenGL نفسها.",
+        "importantNote": "لا تحاول استعمال backend OpenGL قبل إنشاء سياق OpenGL وربطه بالخيط الذي يعمل فيه Dear ImGui."
+      },
+      "guiRepresentation": {
+        "title": "شكل الناتج مع OpenGL",
+        "mockup": "Framebuffer OpenGL\nDear ImGui Tools\nشريط تحكم ظاهر\nالواجهة ترسم في نهاية الإطار",
+        "explanation": "OpenGL ترسم الناتج النهائي للواجهة فوق الـ framebuffer الحالي بعد اكتمال Dear ImGui."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "ImGui + OpenGL",
+      "kind": "integration",
+      "shortTooltip": "تكامل يشرح استخدام OpenGL كـ Renderer Backend لرسم Dear ImGui على الشاشة.",
+      "description": "يركز هذا التكامل على دور OpenGL 3 في تحويل Dear ImGui draw data إلى استدعاءات رسم فعلية بعد انتهاء بناء الواجهة في كل إطار.",
+      "officialArabicDescription": "في هذا التكامل تكون OpenGL مسؤولة عن رسم Dear ImGui عبر renderer backend خاص بها، بينما تتولى منصة منفصلة مثل GLFW أو SDL3 إدارة النافذة والإدخال.",
+      "realMeaning": "يجعل هذا التكامل OpenGL طبقة الرسم التي تنفذ أوامر Dear ImGui النهائية. فالـ backend يقرأ ImGui::GetDrawData بعد ImGui::Render ثم يبني الاستدعاءات اللازمة للرسم داخل framebuffer الحالي.",
+      "whenToUse": "استخدمه عندما يكون مشروعك مبنياً على OpenGL 3 وتريد Dear ImGui كأدوات تحرير أو تصحيح أو إعدادات سريعة داخل التطبيق.",
+      "practicalBenefit": "يمثل أبسط renderer backend شائع لـ Dear ImGui، ويعطي دورة واضحة وسريعة للبناء والرسم في الأدوات والنماذج الأولية والتطبيقات الخفيفة.",
+      "misuseImpact": "إذا كان سياق OpenGL غير مربوط بشكل صحيح أو استدعيت RenderDrawData قبل تهيئة viewport والحالة الأساسية فقد ترسم الواجهة في موضع خاطئ أو لا تظهر أصلاً.",
+      "integrationRoles": [
+        {
+          "label": "دور OpenGL",
+          "value": "OpenGL هنا هي Renderer Backend؛ تستقبل draw data النهائية وتترجمها إلى استدعاءات رسم على الـ framebuffer الحالي.",
+          "note": "المنصة نفسها تبقى في backend مستقل مثل GLFW أو SDL3."
+        },
+        {
+          "label": "ما الذي يجب أن يكون جاهزاً قبلها",
+          "value": "يجب أن يكون سياق OpenGL صالحاً ومربوطاً بالخيط الحالي قبل تهيئة backend أو قبل بدء أي إطار Dear ImGui.",
+          "note": "بدون سياق صالح لا يستطيع backend بناء موارده أو تنفيذ RenderDrawData."
+        }
+      ],
+      "backendFiles": [
+        {
+          "name": "imgui_impl_opengl3.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_opengl3.h",
+          "role": "ملفات Renderer Backend الخاصة بـ OpenGL 3."
+        },
+        {
+          "name": "imgui_impl_glfw.* أو imgui_impl_sdl3.*",
+          "url": "https://github.com/ocornut/imgui/tree/master/backends",
+          "role": "Platform Backend المرافقة للنافذة والإدخال في المشروع الفعلي."
+        }
+      ],
+      "setupSteps": [
+        "أنشئ سياق OpenGL واربطه بالنافذة والخيط الحالي.",
+        "أنشئ Dear ImGui Context وهيئ Platform Backend المناسبة للنافذة.",
+        "استدع ImGui_ImplOpenGL3_Init بعد أن يصبح سياق OpenGL صالحاً ومحملاً.",
+        "في كل إطار استدع ImGui_ImplOpenGL3_NewFrame ثم NewFrame الخاص بالمنصة ثم ImGui::NewFrame، وابن الواجهة، ثم ImGui::Render، ثم ImGui_ImplOpenGL3_RenderDrawData."
+      ],
+      "commonMistakes": [
+        "استدعاء ImGui_ImplOpenGL3_Init قبل أن يصبح سياق OpenGL صالحاً.",
+        "استدعاء RenderDrawData قبل ImGui::Render.",
+        "نسيان تحديث viewport أو حالة الـ framebuffer إذا كان التطبيق يغير حجم النافذة أو يبدل الأهداف."
+      ]
+    },
+    {
+      "sectionKey": "integrations",
+      "sectionTitle": "التكاملات وBackends",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_vulkan.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::CreateContext",
+        "ImGuiIO",
+        "ImGui::NewFrame",
+        "ImGui::Render",
+        "ImGui::Begin"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مثال عملي يوضح دورة التكامل الكاملة داخل تطبيق SDL3 + Vulkan يضيف نافذة أدوات Dear ImGui فوق الإطار الحالي.",
+        "code": "ImGui_ImplVulkan_NewFrame();\nImGui_ImplSDL3_NewFrame();\nImGui::NewFrame();\n...\nImGui::Render();\nImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), command_buffer);",
+        "fullCode": "#include <imgui.h>\n#include <backends/imgui_impl_sdl3.h>\n#include <backends/imgui_impl_vulkan.h>\n#include <SDL3/SDL.h>\n#include <vulkan/vulkan.h>\n\nstruct GuiContext {\n    SDL_Window* window;\n    VkInstance instance;\n    VkPhysicalDevice physical_device;\n    VkDevice device;\n    uint32_t queue_family;\n    VkQueue queue;\n    VkRenderPass render_pass;\n    uint32_t image_count;\n    VkDescriptorPool descriptor_pool;\n};\n\nvoid InitGui(GuiContext& ctx) {\n    IMGUI_CHECKVERSION();\n    ImGui::CreateContext();\n    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    ImGui_ImplSDL3_InitForVulkan(ctx.window);\n\n    ImGui_ImplVulkan_InitInfo init_info = {};\n    init_info.Instance = ctx.instance;\n    init_info.PhysicalDevice = ctx.physical_device;\n    init_info.Device = ctx.device;\n    init_info.QueueFamily = ctx.queue_family;\n    init_info.Queue = ctx.queue;\n    init_info.DescriptorPool = ctx.descriptor_pool;\n    init_info.MinImageCount = ctx.image_count;\n    init_info.ImageCount = ctx.image_count;\n    init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;\n    ImGui_ImplVulkan_Init(&init_info, ctx.render_pass);\n}\n\nvoid RunGuiFrame(VkCommandBuffer command_buffer) {\n    ImGui_ImplVulkan_NewFrame();\n    ImGui_ImplSDL3_NewFrame();\n    ImGui::NewFrame();\n\n    static bool show_stats = true;\n    ImGui::Begin(\"Renderer Debug\");\n    ImGui::Text(\"SDL3 drives events, Vulkan draws the UI.\");\n    ImGui::Checkbox(\"Show Stats\", &show_stats);\n    ImGui::End();\n\n    ImGui::Render();\n    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), command_buffer);\n}\n\nvoid HandleGuiEvent(const SDL_Event& event) {\n    ImGui_ImplSDL3_ProcessEvent(&event);\n}\n\nvoid ShutdownGui() {\n    ImGui_ImplVulkan_Shutdown();\n    ImGui_ImplSDL3_Shutdown();\n    ImGui::DestroyContext();\n}",
+        "explanation": "المثال يجمع التسلسل الحقيقي المطلوب في مشروع SDL3 + Vulkan: SDL3 للأحداث والنافذة، Vulkan للرسم، Dear ImGui في الوسط لبناء أدوات الواجهة.",
+        "expectedResult": "تظهر نافذة أدوات Dear ImGui فوق تطبيق Vulkan نفسه، وتتفاعل مع SDL3 events وتُرسم داخل الإطار الذي تقدمه Vulkan.",
+        "importantNote": "في هذا المسار يجب أن يكون command buffer الذي تسجل فيه RenderDrawData هو نفسه أو تابعاً للمسار الذي سيقدم الإطار النهائي."
+      },
+      "guiRepresentation": {
+        "title": "شكل الناتج مع SDL3 وVulkan",
+        "mockup": "نافذة SDL3\nلوحة Dear ImGui\nVulkan frame\nتقديم الصورة النهائية",
+        "explanation": "الواجهة تظهر كطبقة أدوات فوق نافذة SDL3 نفسها، وتدخل في إطار Vulkan المعروض للمستخدم."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "ImGui + SDL3 + Vulkan",
+      "kind": "integration",
+      "shortTooltip": "تكامل كامل يربط SDL3 للنوافذ والأحداث مع Vulkan للرسم، وDear ImGui كطبقة أدوات فوق التطبيق.",
+      "description": "هذا من أهم المسارات العملية في المشروع: SDL3 تدير النافذة والأحداث، Vulkan ترسم، وDear ImGui تبني الواجهة فوق الإطار نفسه.",
+      "officialArabicDescription": "يشرح هذا التكامل كيف يعمل Dear ImGui داخل تطبيق SDL3 + Vulkan كامل، من تهيئة Context والـ backends حتى بدء الإطار وتسجيل RenderDrawData والتنظيف النهائي.",
+      "realMeaning": "هذا التكامل يجمع طبقتين متكاملتين: SDL3 كطبقة منصة، وVulkan كطبقة رسم. Dear ImGui تجلس بينهما فتقرأ الإدخال القادم من SDL3 وتولد draw data تستهلكها Vulkan داخل نفس command buffers والإطار الحالي.",
+      "whenToUse": "استخدمه عندما يكون مشروعك الرسومي الحديث مبنياً على Vulkan لكنك تريد واجهة أدوات أو تصحيح أو لوحات إعدادات فوقه مع الاستفادة من SDL3 للنوافذ والأحداث.",
+      "practicalBenefit": "يعطيك مساراً عملياً وقابلاً للتوسع لبناء أدوات فوق تطبيق Vulkan من دون إدخال مكتبة نوافذ ثانية أو فصل دورة الأدوات عن دورة الرسم الأساسية.",
+      "misuseImpact": "إذا اختل ترتيب التهيئة أو NewFrame أو RenderDrawData فستظهر أخطاء مزامنة أو فقدان إدخال أو فشل رسم الواجهة رغم أن كل جزء يبدو صحيحاً منفرداً.",
+      "integrationRoles": [
+        {
+          "label": "دور SDL3",
+          "value": "SDL3 تنشئ النافذة وتضخ SDL_Event وتحدث حالة الإدخال التي يقرأها Dear ImGui.",
+          "note": "هذا هو Platform Backend في هذا التكامل."
+        },
+        {
+          "label": "دور Vulkan",
+          "value": "Vulkan تستهلك draw data النهائية وتسجل أوامر الرسم داخل command buffers ثم تقدم الصورة للشاشة.",
+          "note": "هذا هو Renderer Backend في هذا التكامل."
+        },
+        {
+          "label": "دور Dear ImGui",
+          "value": "تبني طبقة الواجهة نفسها بين المرحلتين: تقرأ الإدخال عبر SDL3 وتنتج draw data تستهلكها Vulkan.",
+          "note": "لذلك يجب أن يأتي NewFrame وRender بالترتيب الصحيح بين الطبقتين."
+        }
+      ],
+      "backendFiles": [
+        {
+          "name": "imgui_impl_sdl3.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_sdl3.h",
+          "role": "Platform Backend الخاصة بـ SDL3."
+        },
+        {
+          "name": "imgui_impl_vulkan.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_vulkan.h",
+          "role": "Renderer Backend الخاصة بـ Vulkan."
+        }
+      ],
+      "setupSteps": [
+        "هيئ SDL3 وأنشئ SDL_Window تدعم Vulkan.",
+        "هيئ Vulkan الأساسية حتى تصبح VkInstance وVkDevice وVkQueue وswapchain والمسار الذي سترسم فيه الواجهة جاهزة.",
+        "أنشئ Dear ImGui Context ثم هيئ imgui_impl_sdl3.* للنافذة الحالية.",
+        "هيئ imgui_impl_vulkan.* عبر ImGui_ImplVulkan_InitInfo بالقيم الصحيحة من تطبيقك.",
+        "في كل إطار: مرر SDL_Event إلى ImGui_ImplSDL3_ProcessEvent، ثم ImGui_ImplVulkan_NewFrame، ثم ImGui_ImplSDL3_NewFrame، ثم ImGui::NewFrame، ثم ابن الواجهة، ثم ImGui::Render، ثم سجل ImGui_ImplVulkan_RenderDrawData داخل command buffer الحالي."
+      ],
+      "commonMistakes": [
+        "نسيان تمرير SDL_Event إلى ImGui_ImplSDL3_ProcessEvent.",
+        "تمرير ImageCount أو DescriptorPool غير مناسبين إلى backend Vulkan.",
+        "وضع RenderDrawData خارج مرحلة التسجيل التي سترسم فعلياً الإطار النهائي.",
+        "نسيان إغلاق SDL3 backend أو Vulkan backend أثناء التنظيف النهائي."
+      ]
+    },
+    {
+      "sectionKey": "integrations",
+      "sectionTitle": "التكاملات وBackends",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_glfw.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::CreateContext",
+        "ImGuiIO",
+        "ImGui::NewFrame",
+        "ImGui::Render",
+        "ImGui::SliderFloat"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "هذا هو المثال الشائع الذي يبدأ منه كثير من المطورين عند تجربة Dear ImGui لأول مرة.",
+        "code": "glfwPollEvents();\nImGui_ImplOpenGL3_NewFrame();\nImGui_ImplGlfw_NewFrame();\nImGui::NewFrame();",
+        "fullCode": "#include <imgui.h>\n#include <backends/imgui_impl_glfw.h>\n#include <backends/imgui_impl_opengl3.h>\n#include <GLFW/glfw3.h>\n#include <glad/gl.h>\n\nint main() {\n    glfwInit();\n    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);\n    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);\n\n    GLFWwindow* window = glfwCreateWindow(1280, 720, \"ImGui + GLFW + OpenGL\", nullptr, nullptr);\n    glfwMakeContextCurrent(window);\n    glfwSwapInterval(1);\n    gladLoadGL(glfwGetProcAddress);\n\n    IMGUI_CHECKVERSION();\n    ImGui::CreateContext();\n    ImGuiIO& io = ImGui::GetIO();\n    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    ImGui_ImplGlfw_InitForOpenGL(window, true);\n    ImGui_ImplOpenGL3_Init(\"#version 330\");\n\n    while (!glfwWindowShouldClose(window)) {\n        glfwPollEvents();\n\n        ImGui_ImplOpenGL3_NewFrame();\n        ImGui_ImplGlfw_NewFrame();\n        ImGui::NewFrame();\n\n        static float speed = 1.0f;\n        ImGui::Begin(\"Quick Tool\");\n        ImGui::Text(\"This is the common GLFW + OpenGL path.\");\n        ImGui::SliderFloat(\"Speed\", &speed, 0.1f, 4.0f);\n        ImGui::End();\n\n        ImGui::Render();\n\n        int display_w = 0;\n        int display_h = 0;\n        glfwGetFramebufferSize(window, &display_w, &display_h);\n        glViewport(0, 0, display_w, display_h);\n        glClearColor(0.09f, 0.10f, 0.13f, 1.0f);\n        glClear(GL_COLOR_BUFFER_BIT);\n        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());\n        glfwSwapBuffers(window);\n    }\n\n    ImGui_ImplOpenGL3_Shutdown();\n    ImGui_ImplGlfw_Shutdown();\n    ImGui::DestroyContext();\n    glfwDestroyWindow(window);\n    glfwTerminate();\n    return 0;\n}",
+        "explanation": "المثال قصير لكنه كامل: نافذة، سياق، Dear ImGui Context، backends، حلقة إطار، ثم تنظيف نهائي.",
+        "expectedResult": "تظهر نافذة أدوات بسيطة داخل نافذة GLFW مع Slider يعمل مباشرة، وهذا يوضح المسار الأبسط لبدء Dear ImGui.",
+        "importantNote": "هذا المسار ممتاز للتعلم السريع، لكنه ليس وحده الخيار الصحيح؛ في المشاريع المبنية على SDL3 أو Vulkan من الأفضل احترام البنية القائمة بدل فرض GLFW + OpenGL عليها."
+      },
+      "guiRepresentation": {
+        "title": "شكل الناتج مع GLFW وOpenGL",
+        "mockup": "نافذة GLFW\nلوحة Quick Tool\nSlider فعال\nOpenGL يقدم الإطار",
+        "explanation": "الصورة تمثل المسار الشائع الذي يرى فيه المطور نافذة أدوات جاهزة بسرعة داخل نافذة GLFW واحدة."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "ImGui + GLFW + OpenGL",
+      "kind": "integration",
+      "shortTooltip": "أحد أكثر تكاملات Dear ImGui شيوعاً وبساطة: GLFW للنافذة والإدخال وOpenGL للرسم.",
+      "description": "يمثل هذا التكامل المسار الأبسط والأكثر شيوعاً لبدء Dear ImGui في أدوات سطح المكتب والنماذج الأولية: GLFW تنشئ النافذة وتدير الإدخال، وOpenGL ترسم الواجهة.",
+      "officialArabicDescription": "يوضح هذا المثال العملي التكامل الكامل بين Dear ImGui وGLFW وOpenGL، من إنشاء النافذة والسياق حتى NewFrame وبناء الواجهة وRender والتنظيف النهائي.",
+      "realMeaning": "هذا هو التكامل المرجعي الخفيف لـ Dear ImGui: منصة بسيطة، renderer backend مباشر، وتسلسل تهيئة قصير وواضح. لذلك يستخدم كثيراً كنقطة بداية أو كمرجع لفهم بقية التكاملات.",
+      "whenToUse": "استخدمه عندما تريد مشروعاً سريعاً وخفيفاً أو أداة صغيرة أو نموذجاً أولياً يركز على سرعة الدمج أكثر من تعقيد بنية الرسم.",
+      "practicalBenefit": "يعطيك أقل عدد من الأجزاء المتحركة للوصول إلى نافذة أدوات عاملة بالكامل، ولذلك فهو مناسب لفهم دورة ImGui الأساسية قبل الانتقال إلى مسارات أثقل مثل Vulkan.",
+      "misuseImpact": "إذا أخطأت في ترتيب التهيئة أو في ربط سياق OpenGL أو في NewFrame فستفقد بساطة هذا المسار وتظهر نفس الأخطاء الشائعة لأي تكامل أكبر.",
+      "integrationRoles": [
+        {
+          "label": "GLFW",
+          "value": "Platform Backend للنافذة وحالة الإدخال والمؤشر.",
+          "note": "تضخ الأحداث وتحدث حالة النافذة كل إطار."
+        },
+        {
+          "label": "OpenGL",
+          "value": "Renderer Backend التي ترسم Dear ImGui على الـ framebuffer الحالي.",
+          "note": "تعمل بعد ImGui::Render في نهاية الإطار."
+        }
+      ],
+      "backendFiles": [
+        {
+          "name": "imgui_impl_glfw.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_glfw.h",
+          "role": "Platform Backend الخاصة بـ GLFW."
+        },
+        {
+          "name": "imgui_impl_opengl3.*",
+          "url": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_opengl3.h",
+          "role": "Renderer Backend الخاصة بـ OpenGL 3."
+        }
+      ],
+      "setupSteps": [
+        "أنشئ GLFWwindow وسياق OpenGL واربطه بالخيط الحالي.",
+        "أنشئ Dear ImGui Context وجهز ImGuiIO.",
+        "هيئ imgui_impl_glfw.* ثم imgui_impl_opengl3.*.",
+        "في كل إطار: glfwPollEvents، ثم ImGui_ImplOpenGL3_NewFrame، ثم ImGui_ImplGlfw_NewFrame، ثم ImGui::NewFrame، ثم ابن الواجهة، ثم ImGui::Render، ثم ImGui_ImplOpenGL3_RenderDrawData."
+      ],
+      "commonMistakes": [
+        "نسيان تحميل دوال OpenGL قبل تهيئة imgui_impl_opengl3.*.",
+        "نسيان glfwSwapInterval أو ضبطه بطريقة لا تناسب سلوك الإطار المطلوب.",
+        "إغلاق GLFW window قبل Shutdown الخاص بالـ backends وDestroyContext."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_sparse_range_map.hpp • القسم 3 من 5 • الأسطر 901-1350 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_sparse_range_map.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vk_sparse_range_map.hpp.html">vk_sparse_range_map.hpp</a> /
+        <span>القسم 3 من 5 • الأسطر 901-1350</span>
+      </nav>
+      <h1 class="page-title">📄 vk_sparse_range_map.hpp</h1>
+      <p class="page-description">القسم 3 من 5 • الأسطر 901-1350</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-2.html">القسم السابق</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-4.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vk_sparse_range_map.hpp</span>
+        <span class="source-stat">القسم: 3/5</span>
+        <span class="source-stat">الأسطر: 901-1350</span>
+        <span class="source-stat">حجم الملف: 87.8 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>    iterator erase(iterator pos) {
+        assert(pos.map_ == this);
+        return erase_impl(pos.get_pos());
+    }
+
+    // Must be called with rvalue or lvalue of value_type
+    template &lt;typename Value&gt;
+    iterator emplace(Value &amp;&amp;value) {
+        const auto &amp;key = value.first;
+        assert(in_bounds(key));
+        if (key.begin &gt;= limit_) return end();  // Invalid key (end is checked in &quot;is_open&quot;)
+        const SmallRange range(static_cast&lt;SmallIndex&gt;(key.begin), static_cast&lt;SmallIndex&gt;(key.end));
+        if (is_open(key)) {
+            // This needs to be the fast path, but I don&#39;t see how we can avoid the sanity checks above
+            for (auto i = range.begin; i &lt; range.end; ++i) {
+                ranges_[i] = range;
+            }
+            // Update the next information for the previous unused slots (as stored in begin invalidly)
+            auto prev = range.begin;
+            while (prev &gt; 0) {
+                --prev;
+                if (ranges_[prev].valid()) break;
+                ranges_[prev].begin = range.begin;
+            }
+            // Placement new into the storage interpreted as Value
+            construct_value(range.begin, value_type(std::forward&lt;Value&gt;(value)));
+            auto next = range.end;
+            // update the previous range information for the next unsed slots (as stored in end invalidly)
+            while (next &lt; limit_) {
+                // End is exclusive... increment *after* update
+                if (ranges_[next].valid()) break;
+                ranges_[next].end = range.end;
+                ++next;
+            }
+            return iterator(this, range.begin);
+        } else {
+            // Can&#39;t insert into occupied ranges.
+            // if ranges_[key.begin] is valid then this is the collision (starting at .begin
+            // if it&#39;s invalid .begin points to the overlapping entry from is_open (or end if key was out of range)
+            return iterator(this, ranges_[range.begin].begin);
+        }
+    }
+
+    // As hint is going to be ignored, make it as lightweight as possible, by reference and no conversion construction
+    template &lt;typename Value&gt;
+    iterator emplace_hint([[maybe_unused]] const const_iterator &amp;hint, Value &amp;&amp;value) {
+        // We have direct access so we can drop the hint
+        return emplace(std::forward&lt;Value&gt;(value));
+    }
+
+    template &lt;typename Value&gt;
+    iterator emplace_hint([[maybe_unused]] const iterator &amp;hint, Value &amp;&amp;value) {
+        // We have direct access so we can drop the hint
+        return emplace(std::forward&lt;Value&gt;(value));
+    }
+
+    // Again, hint is going to be ignored, make it as lightweight as possible, by reference and no conversion construction
+    iterator insert([[maybe_unused]] const const_iterator &amp;hint, const value_type &amp;value) { return emplace(value); }
+    iterator insert([[maybe_unused]] const iterator &amp;hint, const value_type &amp;value) { return emplace(value); }
+
+    std::pair&lt;iterator, bool&gt; insert(const value_type &amp;value) {
+        const auto &amp;key = value.first;
+        assert(in_bounds(key));
+        if (key.begin &gt;= limit_) return std::make_pair(end(), false);  // Invalid key, not inserted.
+        if (is_open(key)) {
+            return std::make_pair(emplace(value), true);
+        }
+        // If invalid we point to the subsequent range that collided, if valid begin is the start of the valid range
+        const auto &amp;collision_begin = ranges_[key.begin].begin;
+        assert(ranges_[collision_begin].valid());
+        return std::make_pair(iterator(this, collision_begin), false);
+    }
+
+    template &lt;typename SplitOp&gt;
+    iterator split(const iterator whole_it, const index_type &amp;index, [[maybe_unused]] const SplitOp &amp;split_op) {
+        if (!whole_it-&gt;first.includes(index)) return whole_it;  // If we don&#39;t have a valid split point, just return the iterator
+
+        const auto &amp;key = whole_it-&gt;first;
+        const auto small_key = make_small_range(key);
+        key_type lower_key(key.begin, index);
+        if (lower_key.empty() &amp;&amp; SplitOp::keep_upper()) {
+            return whole_it;  // this is a noop we&#39;re keeping the upper half which is the same as whole_it;
+        }
+
+        if ((lower_key.empty() &amp;&amp; !SplitOp::keep_upper()) || !(SplitOp::keep_lower() || SplitOp::keep_upper())) {
+            // This effectively an erase... so erase.
+            return erase(whole_it);
+        }
+
+        // Upper range cannot be empty (because the split point would be included...
+        const auto small_lower_key = make_small_range(lower_key);
+        const SmallRange small_upper_key{small_lower_key.end, small_key.end};
+        if (SplitOp::keep_upper()) {
+            // Note: create the upper section before the lower, as processing the lower may erase it
+            assert(!small_upper_key.empty());
+            const key_type upper_key{lower_key.end, key.end};
+            if (SplitOp::keep_lower()) {
+                construct_value(small_upper_key.begin, std::make_pair(upper_key, get_value(small_key.begin)-&gt;second));
+            } else {
+                // If we aren&#39;t keeping the lower, move instead of copy
+                construct_value(small_upper_key.begin, std::make_pair(upper_key, std::move(get_value(small_key.begin)-&gt;second)));
+            }
+            for (auto i = small_upper_key.begin; i &lt; small_upper_key.end; ++i) {
+                ranges_[i] = small_upper_key;
+            }
+        } else {
+            // rewrite &quot;end&quot; to the next valid range (or end)
+            assert(SplitOp::keep_lower());
+            auto next = next_range(small_key.begin);
+            rerange(small_upper_key, SmallRange(next, small_lower_key.end));
+            // for any already invalid, we just rewrite the end.
+            rerange_end(small_upper_key.end, next, small_lower_key.end);
+        }
+        SmallIndex split_index;
+        if (SplitOp::keep_lower()) {
+            resize_value(small_key.begin, lower_key.end);
+            rerange_end(small_lower_key.begin, small_lower_key.end, small_lower_key.end);
+            split_index = small_lower_key.begin;
+        } else {
+            // Remove lower and rewrite empty space
+            assert(SplitOp::keep_upper());
+            destruct_value(small_key.begin);
+
+            // Rewrite prior empty space (if any)
+            auto prev = prev_range(small_key.begin);
+            SmallIndex limit = small_lower_key.end;
+            SmallIndex start = 0;
+            if (small_key.begin != 0) {
+                const auto &amp;prev_start = ranges_[prev];
+                if (prev_start.valid()) {
+                    // If there is a previous used range, the empty space starts after it.
+                    start = prev_start.end;
+                } else {
+                    assert(prev == 0);  // prev_range only returns invalid ranges &quot;off the front&quot;
+                    start = prev;
+                }
+                // for the section *prior* to key begin only need to rewrite the &quot;invalid&quot; begin (i.e. next &quot;in use&quot; begin)
+                rerange_begin(start, small_lower_key.begin, limit);
+            }
+            // for the section being erased rewrite the invalid range reflecting the empty space
+            rerange(small_lower_key, SmallRange(limit, start));
+            split_index = small_lower_key.end;
+        }
+
+        return iterator(this, split_index);
+    }
+
+    // For the value.first range rewrite the range...
+    template &lt;typename Value&gt;
+    iterator overwrite_range(Value &amp;&amp;value) {
+        const auto &amp;key = value.first;
+
+        // Small map only has a restricted range supported
+        assert(in_bounds(key));
+        if (key.end &gt; get_limit()) {
+            return end();
+        }
+
+        const auto small_key = make_small_range(key);
+        clear_out_range(small_key, /* valid clear range */ true);
+        construct_value(small_key.begin, std::forward&lt;Value&gt;(value));
+        return iterator(this, small_key.begin);
+    }
+
+    // We don&#39;t need a hint...
+    template &lt;typename Value&gt;
+    iterator overwrite_range([[maybe_unused]] const iterator &amp;hint, Value &amp;&amp;value) {
+        return overwrite_range(std::forward&lt;Value&gt;(value));
+    }
+
+    // For the range erase all contents within range, trimming any overlapping ranges
+    iterator erase_range(const key_type &amp;range) {
+        // Small map only has a restricted range supported
+        assert(in_bounds(range));
+        if (range.end &gt; get_limit() || range.empty()) {
+            return end();
+        }
+        const auto empty = clear_out_range(make_small_range(range), /* valid clear range */ false);
+        return iterator(this, empty.end);
+    }
+
+    template &lt;typename Iterator&gt;
+    iterator erase(const Iterator &amp;first, const Iterator &amp;last) {
+        assert(this == first.map_);
+        assert(this == last.map_);
+        auto first_pos = !first.at_end() ? first.pos_ : limit_;
+        auto last_pos = !last.at_end() ? last.pos_ : limit_;
+        assert(first_pos &lt;= last_pos);
+        const SmallRange clear_me(first_pos, last_pos);
+        if (!clear_me.empty()) {
+            const SmallRange empty_range(find_empty_left(clear_me), last_pos);
+            clear_and_set_range(empty_range.begin, empty_range.end, make_invalid_range(empty_range));
+        }
+        return iterator(this, last_pos);
+    }
+
+    iterator lower_bound(const key_type &amp;key) { return iterator(this, lower_bound_impl(this, key)); }
+    const_iterator lower_bound(const key_type &amp;key) const { return const_iterator(this, lower_bound_impl(this, key)); }
+
+    iterator upper_bound(const key_type &amp;key) { return iterator(this, upper_bound_impl(this, key)); }
+    const_iterator upper_bound(const key_type &amp;key) const { return const_iterator(this, upper_bound_impl(this, key)); }
+
+    small_range_map(index_type limit = N) : size_(0), limit_(static_cast&lt;SmallIndex&gt;(limit)) {
+        assert(limit &lt;= std::numeric_limits&lt;SmallIndex&gt;::max());
+        init_range();
+    }
+
+    // Only valid for empty maps
+    void set_limit(size_t limit) {
+        assert(size_ == 0);
+        assert(limit &lt;= std::numeric_limits&lt;SmallIndex&gt;::max());
+        limit_ = static_cast&lt;SmallIndex&gt;(limit);
+        init_range();
+    }
+    inline index_type get_limit() const { return static_cast&lt;index_type&gt;(limit_); }
+
+  private:
+    inline bool in_bounds(index_type index) const { return index &lt; get_limit(); }
+    inline bool in_bounds(const RangeKey &amp;key) const { return key.begin &lt; get_limit() &amp;&amp; key.end &lt;= get_limit(); }
+
+    inline SmallRange make_small_range(const RangeKey &amp;key) const {
+        assert(in_bounds(key));
+        return SmallRange(static_cast&lt;SmallIndex&gt;(key.begin), static_cast&lt;SmallIndex&gt;(key.end));
+    }
+
+    inline SmallRange make_invalid_range(const SmallRange &amp;key) const { return SmallRange(key.end, key.begin); }
+
+    bool is_open(const key_type &amp;key) const {
+        // Remebering that invalid range.begin is the beginning the next used range.
+        const auto small_key = make_small_range(key);
+        const auto &amp;range = ranges_[small_key.begin];
+        return range.invalid() &amp;&amp; small_key.end &lt;= range.begin;
+    }
+    // Only call this with a valid beginning index
+    iterator erase_impl(SmallIndex erase_index) {
+        assert(erase_index == ranges_[erase_index].begin);
+        auto &amp;range = ranges_[erase_index];
+        destruct_value(erase_index);
+        // Need to update the ranges to accommodate the erasure
+        SmallIndex prev = 0;  // This is correct for the case erase_index is 0....
+        if (erase_index != 0) {
+            prev = prev_range(erase_index);
+            // This works if prev is valid or invalid, because the invalid end will be either 0 (and correct) or the end of the
+            // prior valid range and the valid end will be the end of the previous range (and thus correct)
+            prev = ranges_[prev].end;
+        }
+        auto next = next_range(erase_index);
+        // We have to be careful of next == limit_...
+        if (next &lt; limit_) {
+            next = ranges_[next].begin;
+        }
+        // Rewrite both adjoining and newly empty entries
+        SmallRange infill(next, prev);
+        for (auto i = prev; i &lt; next; ++i) {
+            ranges_[i] = infill;
+        }
+        return iterator(this, next);
+    }
+    // This implements the &quot;range lower bound logic&quot; directly on the ranges
+    template &lt;typename Map&gt;
+    static SmallIndex lower_bound_impl(Map *const that, const key_type &amp;key) {
+        if (!that-&gt;in_bounds(key.begin)) return that-&gt;limit_;
+        // If range is invalid, then begin points to the next valid (or end) with must be the lower bound
+        // If range is valid, the begin points to a the lowest range that interects key
+        const auto lb = that-&gt;ranges_[static_cast&lt;SmallIndex&gt;(key.begin)].begin;
+        return lb;
+    }
+
+    template &lt;typename Map&gt;
+    static SmallIndex upper_bound_impl(Map *that, const key_type &amp;key) {
+        const auto limit = that-&gt;get_limit();
+        if (key.end &gt;= limit) return that-&gt;limit_;  //  at end
+        const auto &amp;end_range = that-&gt;ranges_[key.end];
+        // If range is invalid, then begin points to the next valid (or end) with must be the upper bound (key &lt; range because
+        auto ub = end_range.begin;
+        // If range is valid, the begin points to a range that may interects key, which is be upper iff range.begin == key.end
+        if (end_range.valid() &amp;&amp; (key.end &gt; end_range.begin)) {
+            // the ub candidate *intersects* the key, so we have to go to the next range.
+            ub = that-&gt;next_range(end_range.begin);
+        }
+        return ub;
+    }
+
+    // This is and inclusive &quot;inuse&quot;, the entry itself
+    SmallIndex find_inuse_right(const SmallRange &amp;range) const {
+        if (range.end &gt;= limit_) return limit_;
+        // if range is valid, begin is the first use (== range.end), else it&#39;s the first used after the invalid range
+        return ranges_[range.end].begin;
+    }
+    // This is an exclusive &quot;inuse&quot;, the end of the previous range
+    SmallIndex find_inuse_left(const SmallRange &amp;range) const {
+        if (range.begin == 0) return 0;
+        // if range is valid, end is the end of the first use (== range.begin), else it&#39;s the end of the in use range before the
+        // invalid range
+        return ranges_[range.begin - 1].end;
+    }
+    SmallRange find_empty(const SmallRange &amp;range) const { return SmallRange(find_inuse_left(range), find_inuse_right(range)); }
+
+    // Clear out the given range, trimming as needed.  The clear_range can be set as valid or invalid
+    SmallRange clear_out_range(const SmallRange &amp;clear_range, bool valid_clear_range) {
+        // By copy to avoid reranging side affect
+        auto first_range = ranges_[clear_range.begin];
+
+        // fast path for matching ranges...
+        if (first_range == clear_range) {
+            // clobber the existing value
+            destruct_value(clear_range.begin);
+            if (valid_clear_range) {
+                return clear_range;  // This is the overwrite fastpath for matching range
+            } else {
+                const auto empty_range = find_empty(clear_range);
+                rerange(empty_range, make_invalid_range(empty_range));
+                return empty_range;
+            }
+        }
+
+        SmallRange empty_left(clear_range.begin, clear_range.begin);
+        SmallRange empty_right(clear_range.end, clear_range.end);
+
+        // The clearout is entirely within a single extant range, trim and set.
+        if (first_range.valid() &amp;&amp; first_range.includes(clear_range)) {
+            // Shuffle around first_range, three cases...
+            if (first_range.begin &lt; clear_range.begin) {
+                // We have a lower trimmed area to preserve.
+                resize_value(first_range.begin, clear_range.begin);
+                rerange_end(first_range.begin, clear_range.begin, clear_range.begin);
+                if (first_range.end &gt; clear_range.end) {
+                    // And an upper portion of first that needs to copy from the lower
+                    construct_value(clear_range.end, std::make_pair(key_type(clear_range.end, first_range.end),
+                                                                    get_value(first_range.begin)-&gt;second));
+                    rerange_begin(clear_range.end, first_range.end, clear_range.end);
+                } else {
+                    assert(first_range.end == clear_range.end);
+                    empty_right.end = find_inuse_right(clear_range);
+                }
+            } else {
+                assert(first_range.end &gt; clear_range.end);
+                assert(first_range.begin == clear_range.begin);
+                // Only an upper trimmed area to preserve, so move the first range value to the upper trim zone.
+                resize_value_right(first_range, clear_range.end);
+                rerange_begin(clear_range.end, first_range.end, clear_range.end);
+                empty_left.begin = find_inuse_left(clear_range);
+            }
+        } else {
+            if (first_range.valid()) {
+                if (first_range.begin &lt; clear_range.begin) {
+                    // Trim left.
+                    assert(first_range.end &lt; clear_range.end);  // we handled the &quot;includes&quot; case above
+                    resize_value(first_range.begin, clear_range.begin);
+                    rerange_end(first_range.begin, clear_range.begin, clear_range.begin);
+                }
+            } else {
+                empty_left.begin = find_inuse_left(clear_range);
+            }
+
+            // rewrite excluded portion of final range
+            if (clear_range.end &lt; limit_) {
+                const auto &amp;last_range = ranges_[clear_range.end];
+                if (last_range.valid()) {
+                    // for a valid adjoining range we don&#39;t have to change empty_right, but we may have to trim
+                    if (last_range.begin &lt; clear_range.end) {
+                        resize_value_right(last_range, clear_range.end);
+                        rerange_begin(clear_range.end, last_range.end, clear_range.end);
+                    }
+                } else {
+                    // Note: invalid ranges &quot;begin&quot; and the next inuse range (or end)
+                    empty_right.end = last_range.begin;
+                }
+            }
+        }
+
+        const SmallRange empty(empty_left.begin, empty_right.end);
+        // Clear out the contents
+        for (auto i = empty.begin; i &lt; empty.end; ++i) {
+            const auto &amp;range = ranges_[i];
+            if (range.begin == i) {
+                assert(range.valid());
+                // Clean up the backing store
+                destruct_value(i);
+            }
+        }
+
+        // Rewrite the ranges
+        if (valid_clear_range) {
+            rerange_begin(empty_left.begin, empty_left.end, clear_range.begin);
+            rerange(clear_range, clear_range);
+            rerange_end(empty_right.begin, empty_right.end, clear_range.end);
+        } else {
+            rerange(empty, make_invalid_range(empty));
+        }
+        assert(empty.end == limit_ || ranges_[empty.end].valid());
+        assert(empty.begin == 0 || ranges_[empty.begin - 1].valid());
+        return empty;
+    }
+
+    void init_range() {
+        const SmallRange init_val(limit_, 0);
+        for (SmallIndex i = 0; i &lt; limit_; ++i) {
+            ranges_[i] = init_val;
+            in_use_[i] = false;
+        }
+    }
+    value_type *get_value(SmallIndex index) {
+        assert(index &lt; limit_);  // Must be inbounds
+        return reinterpret_cast&lt;value_type *&gt;(&amp;(backing_store_[index]));
+    }
+    const value_type *get_value(SmallIndex index) const {
+        assert(index &lt; limit_);                 // Must be inbounds
+        assert(index == ranges_[index].begin);  // Must be the record at begin
+        return reinterpret_cast&lt;const value_type *&gt;(&amp;(backing_store_[index]));
+    }
+
+    template &lt;typename Value&gt;
+    void construct_value(SmallIndex index, Value &amp;&amp;value) {
+        assert(!in_use_[index]);
+        new (get_value(index)) value_type(std::forward&lt;Value&gt;(value));
+        in_use_[index] = true;
+        ++size_;
+    }
+
+    void destruct_value(SmallIndex index) {
+        // there are times when the range and destruct logic clash... allow for double attempted deletes
+        if (in_use_[index]) {
+            assert(size_ &gt; 0);
+            --size_;
+            get_value(index)-&gt;~value_type();
+            in_use_[index] = false;
+        }
+    }
+
+    // No need to move around the value, when just the key is moving
+    // Use the destructor/placement new just in case of a complex key with range&#39;s semantics
+    // Note: Call resize before rewriting ranges_
+    void resize_value(SmallIndex current_begin, index_type new_end) {
+        // Destroy and rewrite the key in place
+        assert(ranges_[current_begin].end != new_end);
+        key_type new_key(current_begin, new_end);
+        key_type *key = const_cast&lt;key_type *&gt;(&amp;get_value(current_begin)-&gt;first);
+        key-&gt;~key_type();
+        new (key) key_type(new_key);
+    }
+
+    inline void rerange_end(SmallIndex old_begin, SmallIndex new_end, SmallIndex new_end_value) {
+        for (auto i = old_begin; i &lt; new_end; ++i) {
+            ranges_[i].end = new_end_value;
+        }
+    }
+    inline void rerange_begin(SmallIndex new_begin, SmallIndex old_end, SmallIndex new_begin_value) {
+        for (auto i = new_begin; i &lt; old_end; ++i) {
+            ranges_[i].begin = new_begin_value;</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-2.html">القسم السابق</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-4.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

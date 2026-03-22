@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_WaitAndAcquireGPUSwapchainTexture",
+    "slug": "sdl-wait-and-acquire-gpu-swapchain-texture",
+    "titleArabic": "Blocks the thread until a swapchain texture is available to be\nacquired",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-wait-and-acquire-gpu-swapchain-texture",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-wait-and-acquire-gpu-swapchain-texture.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Blocks the thread until a swapchain texture is available to be\nacquired",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Wait And Acquire GPU Swapchain الخامة داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Wait And Acquire GPU Swapchain الخامة داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success, false on error; call SDL_GetError () for more information. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Blocks the thread until a swapchain texture is available to be\nacquired, and then acquires it."
+  },
+  "signature": {
+    "raw": "bool SDL_WaitAndAcquireGPUSwapchainTexture(\n SDL_GPUCommandBuffer *command_buffer,\n SDL_Window *window,\n SDL_GPUTexture **swapchain_texture,\n Uint32 *swapchain_texture_width,\n Uint32 *swapchain_texture_height);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_GPUCommandBuffer *command_buffer",
+      "SDL_Window *window",
+      "SDL_GPUTexture **swapchain_texture",
+      "Uint32 *swapchain_texture_width",
+      "Uint32 *swapchain_texture_height"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_gpu.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "command_buffer",
+        "type": "SDL_GPUCommandBuffer *",
+        "descriptionArabic": "يمثل المعامل command_buffer من النوع SDL_GPUCommandBuffer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a command buffer."
+      },
+      {
+        "name": "window",
+        "type": "SDL_Window *",
+        "descriptionArabic": "يمثل المعامل window من النوع SDL_Window * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a window that has been claimed."
+      },
+      {
+        "name": "swapchain_texture",
+        "type": "SDL_GPUTexture **",
+        "descriptionArabic": "يمثل المعامل swapchain_texture من النوع SDL_GPUTexture ** القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled in with a swapchain texture handle."
+      },
+      {
+        "name": "swapchain_texture_width",
+        "type": "Uint32 *",
+        "descriptionArabic": "يمثل المعامل swapchain_texture_width من النوع Uint32 * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled in with the swapchain texture width, may be\nNULL."
+      },
+      {
+        "name": "swapchain_texture_height",
+        "type": "Uint32 *",
+        "descriptionArabic": "يمثل المعامل swapchain_texture_height من النوع Uint32 * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled in with the swapchain texture height, may be\nNULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "When a swapchain texture is acquired on a command buffer, it will\nautomatically be submitted for presentation when the command buffer is\nsubmitted. The swapchain texture should only be referenced by the\ncommand buffer used to acquire it. It is an error to call SDL_CancelGPUCommandBuffer ()\nafter a swapchain texture is acquired.",
+      "This function can fill the swapchain texture handle with NULL in\ncertain cases, for example if the window is minimized. This is not an\nerror. You should always make sure to check whether the pointer is NULL\nbefore actually using it.",
+      "The swapchain texture is managed by the implementation and must not\nbe freed by the user. You MUST NOT call this function from any thread\nother than the one that created the window.",
+      "The swapchain texture is write-only and cannot be used as a sampler\nor for another reading operation."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success, false on error; call SDL_GetError () for more information.",
+    "threadSafety": "This function should only be called from the thread that created the\nwindow.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_WaitAndAcquireGPUSwapchainTexture",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_SubmitGPUCommandBuffer",
+        "route": "#ref/sdl3-core/functions/sdl-submit-gpu-command-buffer",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_SubmitGPUCommandBufferAndAcquireFence",
+        "route": "#ref/sdl3-core/functions/sdl-submit-gpu-command-buffer-and-acquire-fence",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_AcquireGPUSwapchainTexture",
+        "route": "#ref/sdl3-core/functions/sdl-acquire-gpu-swapchain-texture",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "3D Rendering and GPU Compute",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

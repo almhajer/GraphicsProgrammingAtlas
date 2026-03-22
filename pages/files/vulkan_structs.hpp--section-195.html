@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_structs.hpp • القسم 195 من 459 • الأسطر 87301-87750 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_structs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_structs.hpp.html">vulkan_structs.hpp</a> /
+        <span>القسم 195 من 459 • الأسطر 87301-87750</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_structs.hpp</h1>
+      <p class="page-description">القسم 195 من 459 • الأسطر 87301-87750</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_structs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp--section-194.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp--section-196.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_structs.hpp</span>
+        <span class="source-stat">القسم: 195/459</span>
+        <span class="source-stat">الأسطر: 87301-87750</span>
+        <span class="source-stat">حجم الملف: 7.97 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    }
+
+    operator VkMemoryType *() VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;VkMemoryType *&gt;( this );
+    }
+
+#if defined( VULKAN_HPP_USE_REFLECT )
+    std::tuple&lt;MemoryPropertyFlags const &amp;, uint32_t const &amp;&gt; reflect() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( propertyFlags, heapIndex );
+    }
+#endif
+
+#if defined( VULKAN_HPP_HAS_SPACESHIP_OPERATOR )
+    auto operator&lt;=&gt;( MemoryType const &amp; ) const = default;
+#else
+    bool operator==( MemoryType const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+#  if defined( VULKAN_HPP_USE_REFLECT )
+      return this-&gt;reflect() == rhs.reflect();
+#  else
+      return ( propertyFlags == rhs.propertyFlags ) &amp;&amp; ( heapIndex == rhs.heapIndex );
+#  endif
+    }
+
+    bool operator!=( MemoryType const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+      return !operator==( rhs );
+    }
+#endif
+
+  public:
+    MemoryPropertyFlags propertyFlags = {};
+    uint32_t            heapIndex     = {};
+  };
+
+#if 20 &lt;= VULKAN_HPP_CPP_VERSION
+  template &lt;&gt;
+  struct CppType&lt;VkMemoryType&gt;
+  {
+    using Type = MemoryType;
+  };
+#endif
+
+  // wrapper struct for struct VkMemoryUnmapInfo, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkMemoryUnmapInfo.html
+  struct MemoryUnmapInfo
+  {
+    using NativeType = VkMemoryUnmapInfo;
+
+    static const bool                                  allowDuplicate = false;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR StructureType structureType  = StructureType::eMemoryUnmapInfo;
+
+#if !defined( VULKAN_HPP_NO_CONSTRUCTORS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_CONSTRUCTORS )
+    VULKAN_HPP_CONSTEXPR MemoryUnmapInfo( MemoryUnmapFlags flags_ = {}, DeviceMemory memory_ = {}, const void * pNext_ = nullptr ) VULKAN_HPP_NOEXCEPT
+      : pNext{ pNext_ }
+      , flags{ flags_ }
+      , memory{ memory_ }
+    {
+    }
+
+    VULKAN_HPP_CONSTEXPR MemoryUnmapInfo( MemoryUnmapInfo const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+
+    MemoryUnmapInfo( VkMemoryUnmapInfo const &amp; rhs ) VULKAN_HPP_NOEXCEPT : MemoryUnmapInfo( *reinterpret_cast&lt;MemoryUnmapInfo const *&gt;( &amp;rhs ) ) {}
+
+    MemoryUnmapInfo &amp; operator=( MemoryUnmapInfo const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+#endif /*VULKAN_HPP_NO_CONSTRUCTORS*/
+
+    MemoryUnmapInfo &amp; operator=( VkMemoryUnmapInfo const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      *this = *reinterpret_cast&lt;MemoryUnmapInfo const *&gt;( &amp;rhs );
+      return *this;
+    }
+
+#if !defined( VULKAN_HPP_NO_SETTERS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_SETTERS )
+    VULKAN_HPP_CONSTEXPR_14 MemoryUnmapInfo &amp; setPNext( const void * pNext_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MemoryUnmapInfo &amp;&amp; setPNext( const void * pNext_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return std::move( *this );
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MemoryUnmapInfo &amp; setFlags( MemoryUnmapFlags flags_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      flags = flags_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MemoryUnmapInfo &amp;&amp; setFlags( MemoryUnmapFlags flags_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      flags = flags_;
+      return std::move( *this );
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MemoryUnmapInfo &amp; setMemory( DeviceMemory memory_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      memory = memory_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MemoryUnmapInfo &amp;&amp; setMemory( DeviceMemory memory_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      memory = memory_;
+      return std::move( *this );
+    }
+#endif /*VULKAN_HPP_NO_SETTERS*/
+
+    operator VkMemoryUnmapInfo const &amp;() const VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;const VkMemoryUnmapInfo *&gt;( this );
+    }
+
+    operator VkMemoryUnmapInfo &amp;() VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;VkMemoryUnmapInfo *&gt;( this );
+    }
+
+    operator VkMemoryUnmapInfo const *() const VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;const VkMemoryUnmapInfo *&gt;( this );
+    }
+
+    operator VkMemoryUnmapInfo *() VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;VkMemoryUnmapInfo *&gt;( this );
+    }
+
+#if defined( VULKAN_HPP_USE_REFLECT )
+    std::tuple&lt;StructureType const &amp;, const void * const &amp;, MemoryUnmapFlags const &amp;, DeviceMemory const &amp;&gt; reflect() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( sType, pNext, flags, memory );
+    }
+#endif
+
+#if defined( VULKAN_HPP_HAS_SPACESHIP_OPERATOR )
+    auto operator&lt;=&gt;( MemoryUnmapInfo const &amp; ) const = default;
+#else
+    bool operator==( MemoryUnmapInfo const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+#  if defined( VULKAN_HPP_USE_REFLECT )
+      return this-&gt;reflect() == rhs.reflect();
+#  else
+      return ( sType == rhs.sType ) &amp;&amp; ( pNext == rhs.pNext ) &amp;&amp; ( flags == rhs.flags ) &amp;&amp; ( memory == rhs.memory );
+#  endif
+    }
+
+    bool operator!=( MemoryUnmapInfo const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+      return !operator==( rhs );
+    }
+#endif
+
+  public:
+    StructureType    sType  = StructureType::eMemoryUnmapInfo;
+    const void *     pNext  = {};
+    MemoryUnmapFlags flags  = {};
+    DeviceMemory     memory = {};
+  };
+
+#if 20 &lt;= VULKAN_HPP_CPP_VERSION
+  template &lt;&gt;
+  struct CppType&lt;VkMemoryUnmapInfo&gt;
+  {
+    using Type = MemoryUnmapInfo;
+  };
+#endif
+
+  template &lt;&gt;
+  struct CppType&lt;StructureType, StructureType::eMemoryUnmapInfo&gt;
+  {
+    using Type = MemoryUnmapInfo;
+  };
+
+  using MemoryUnmapInfoKHR = MemoryUnmapInfo;
+
+#if defined( VK_USE_PLATFORM_WIN32_KHR )
+  // wrapper struct for struct VkMemoryWin32HandlePropertiesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/VkMemoryWin32HandlePropertiesKHR.html
+  struct MemoryWin32HandlePropertiesKHR
+  {
+    using NativeType = VkMemoryWin32HandlePropertiesKHR;
+
+    static const bool                                  allowDuplicate = false;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR StructureType structureType  = StructureType::eMemoryWin32HandlePropertiesKHR;
+
+#  if !defined( VULKAN_HPP_NO_CONSTRUCTORS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_CONSTRUCTORS )
+    VULKAN_HPP_CONSTEXPR MemoryWin32HandlePropertiesKHR( uint32_t memoryTypeBits_ = {}, void * pNext_ = nullptr ) VULKAN_HPP_NOEXCEPT
+      : pNext{ pNext_ }
+      , memoryTypeBits{ memoryTypeBits_ }
+    {
+    }
+
+    VULKAN_HPP_CONSTEXPR MemoryWin32HandlePropertiesKHR( MemoryWin32HandlePropertiesKHR const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+
+    MemoryWin32HandlePropertiesKHR( VkMemoryWin32HandlePropertiesKHR const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : MemoryWin32HandlePropertiesKHR( *reinterpret_cast&lt;MemoryWin32HandlePropertiesKHR const *&gt;( &amp;rhs ) )
+    {
+    }
+
+    MemoryWin32HandlePropertiesKHR &amp; operator=( MemoryWin32HandlePropertiesKHR const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+#  endif /*VULKAN_HPP_NO_CONSTRUCTORS*/
+
+    MemoryWin32HandlePropertiesKHR &amp; operator=( VkMemoryWin32HandlePropertiesKHR const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      *this = *reinterpret_cast&lt;MemoryWin32HandlePropertiesKHR const *&gt;( &amp;rhs );
+      return *this;
+    }
+
+    operator VkMemoryWin32HandlePropertiesKHR const &amp;() const VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;const VkMemoryWin32HandlePropertiesKHR *&gt;( this );
+    }
+
+    operator VkMemoryWin32HandlePropertiesKHR &amp;() VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;VkMemoryWin32HandlePropertiesKHR *&gt;( this );
+    }
+
+    operator VkMemoryWin32HandlePropertiesKHR const *() const VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;const VkMemoryWin32HandlePropertiesKHR *&gt;( this );
+    }
+
+    operator VkMemoryWin32HandlePropertiesKHR *() VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;VkMemoryWin32HandlePropertiesKHR *&gt;( this );
+    }
+
+#  if defined( VULKAN_HPP_USE_REFLECT )
+    std::tuple&lt;StructureType const &amp;, void * const &amp;, uint32_t const &amp;&gt; reflect() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( sType, pNext, memoryTypeBits );
+    }
+#  endif
+
+#  if defined( VULKAN_HPP_HAS_SPACESHIP_OPERATOR )
+    auto operator&lt;=&gt;( MemoryWin32HandlePropertiesKHR const &amp; ) const = default;
+#  else
+    bool operator==( MemoryWin32HandlePropertiesKHR const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+#    if defined( VULKAN_HPP_USE_REFLECT )
+      return this-&gt;reflect() == rhs.reflect();
+#    else
+      return ( sType == rhs.sType ) &amp;&amp; ( pNext == rhs.pNext ) &amp;&amp; ( memoryTypeBits == rhs.memoryTypeBits );
+#    endif
+    }
+
+    bool operator!=( MemoryWin32HandlePropertiesKHR const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+      return !operator==( rhs );
+    }
+#  endif
+
+  public:
+    StructureType sType          = StructureType::eMemoryWin32HandlePropertiesKHR;
+    void *        pNext          = {};
+    uint32_t      memoryTypeBits = {};
+  };
+
+#  if 20 &lt;= VULKAN_HPP_CPP_VERSION
+  template &lt;&gt;
+  struct CppType&lt;VkMemoryWin32HandlePropertiesKHR&gt;
+  {
+    using Type = MemoryWin32HandlePropertiesKHR;
+  };
+#  endif
+
+  template &lt;&gt;
+  struct CppType&lt;StructureType, StructureType::eMemoryWin32HandlePropertiesKHR&gt;
+  {
+    using Type = MemoryWin32HandlePropertiesKHR;
+  };
+#endif /*VK_USE_PLATFORM_WIN32_KHR*/
+
+#if defined( VK_USE_PLATFORM_FUCHSIA )
+  // wrapper struct for struct VkMemoryZirconHandlePropertiesFUCHSIA, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/VkMemoryZirconHandlePropertiesFUCHSIA.html
+  struct MemoryZirconHandlePropertiesFUCHSIA
+  {
+    using NativeType = VkMemoryZirconHandlePropertiesFUCHSIA;
+
+    static const bool                                  allowDuplicate = false;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR StructureType structureType  = StructureType::eMemoryZirconHandlePropertiesFUCHSIA;
+
+#  if !defined( VULKAN_HPP_NO_CONSTRUCTORS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_CONSTRUCTORS )
+    VULKAN_HPP_CONSTEXPR MemoryZirconHandlePropertiesFUCHSIA( uint32_t memoryTypeBits_ = {}, void * pNext_ = nullptr ) VULKAN_HPP_NOEXCEPT
+      : pNext{ pNext_ }
+      , memoryTypeBits{ memoryTypeBits_ }
+    {
+    }
+
+    VULKAN_HPP_CONSTEXPR MemoryZirconHandlePropertiesFUCHSIA( MemoryZirconHandlePropertiesFUCHSIA const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+
+    MemoryZirconHandlePropertiesFUCHSIA( VkMemoryZirconHandlePropertiesFUCHSIA const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : MemoryZirconHandlePropertiesFUCHSIA( *reinterpret_cast&lt;MemoryZirconHandlePropertiesFUCHSIA const *&gt;( &amp;rhs ) )
+    {
+    }
+
+    MemoryZirconHandlePropertiesFUCHSIA &amp; operator=( MemoryZirconHandlePropertiesFUCHSIA const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+#  endif /*VULKAN_HPP_NO_CONSTRUCTORS*/
+
+    MemoryZirconHandlePropertiesFUCHSIA &amp; operator=( VkMemoryZirconHandlePropertiesFUCHSIA const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      *this = *reinterpret_cast&lt;MemoryZirconHandlePropertiesFUCHSIA const *&gt;( &amp;rhs );
+      return *this;
+    }
+
+    operator VkMemoryZirconHandlePropertiesFUCHSIA const &amp;() const VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;const VkMemoryZirconHandlePropertiesFUCHSIA *&gt;( this );
+    }
+
+    operator VkMemoryZirconHandlePropertiesFUCHSIA &amp;() VULKAN_HPP_NOEXCEPT
+    {
+      return *reinterpret_cast&lt;VkMemoryZirconHandlePropertiesFUCHSIA *&gt;( this );
+    }
+
+    operator VkMemoryZirconHandlePropertiesFUCHSIA const *() const VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;const VkMemoryZirconHandlePropertiesFUCHSIA *&gt;( this );
+    }
+
+    operator VkMemoryZirconHandlePropertiesFUCHSIA *() VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;VkMemoryZirconHandlePropertiesFUCHSIA *&gt;( this );
+    }
+
+#  if defined( VULKAN_HPP_USE_REFLECT )
+    std::tuple&lt;StructureType const &amp;, void * const &amp;, uint32_t const &amp;&gt; reflect() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( sType, pNext, memoryTypeBits );
+    }
+#  endif
+
+#  if defined( VULKAN_HPP_HAS_SPACESHIP_OPERATOR )
+    auto operator&lt;=&gt;( MemoryZirconHandlePropertiesFUCHSIA const &amp; ) const = default;
+#  else
+    bool operator==( MemoryZirconHandlePropertiesFUCHSIA const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+#    if defined( VULKAN_HPP_USE_REFLECT )
+      return this-&gt;reflect() == rhs.reflect();
+#    else
+      return ( sType == rhs.sType ) &amp;&amp; ( pNext == rhs.pNext ) &amp;&amp; ( memoryTypeBits == rhs.memoryTypeBits );
+#    endif
+    }
+
+    bool operator!=( MemoryZirconHandlePropertiesFUCHSIA const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+    {
+      return !operator==( rhs );
+    }
+#  endif
+
+  public:
+    StructureType sType          = StructureType::eMemoryZirconHandlePropertiesFUCHSIA;
+    void *        pNext          = {};
+    uint32_t      memoryTypeBits = {};
+  };
+
+#  if 20 &lt;= VULKAN_HPP_CPP_VERSION
+  template &lt;&gt;
+  struct CppType&lt;VkMemoryZirconHandlePropertiesFUCHSIA&gt;
+  {
+    using Type = MemoryZirconHandlePropertiesFUCHSIA;
+  };
+#  endif
+
+  template &lt;&gt;
+  struct CppType&lt;StructureType, StructureType::eMemoryZirconHandlePropertiesFUCHSIA&gt;
+  {
+    using Type = MemoryZirconHandlePropertiesFUCHSIA;
+  };
+#endif /*VK_USE_PLATFORM_FUCHSIA*/
+
+#if defined( VK_USE_PLATFORM_METAL_EXT )
+  // wrapper struct for struct VkMetalSurfaceCreateInfoEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkMetalSurfaceCreateInfoEXT.html
+  struct MetalSurfaceCreateInfoEXT
+  {
+    using NativeType = VkMetalSurfaceCreateInfoEXT;
+
+    static const bool                                  allowDuplicate = false;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR StructureType structureType  = StructureType::eMetalSurfaceCreateInfoEXT;
+
+#  if !defined( VULKAN_HPP_NO_CONSTRUCTORS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_CONSTRUCTORS )
+    VULKAN_HPP_CONSTEXPR
+      MetalSurfaceCreateInfoEXT( MetalSurfaceCreateFlagsEXT flags_ = {}, const CAMetalLayer * pLayer_ = {}, const void * pNext_ = nullptr ) VULKAN_HPP_NOEXCEPT
+      : pNext{ pNext_ }
+      , flags{ flags_ }
+      , pLayer{ pLayer_ }
+    {
+    }
+
+    VULKAN_HPP_CONSTEXPR MetalSurfaceCreateInfoEXT( MetalSurfaceCreateInfoEXT const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+
+    MetalSurfaceCreateInfoEXT( VkMetalSurfaceCreateInfoEXT const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      : MetalSurfaceCreateInfoEXT( *reinterpret_cast&lt;MetalSurfaceCreateInfoEXT const *&gt;( &amp;rhs ) )
+    {
+    }
+
+    MetalSurfaceCreateInfoEXT &amp; operator=( MetalSurfaceCreateInfoEXT const &amp; rhs ) VULKAN_HPP_NOEXCEPT = default;
+#  endif /*VULKAN_HPP_NO_CONSTRUCTORS*/
+
+    MetalSurfaceCreateInfoEXT &amp; operator=( VkMetalSurfaceCreateInfoEXT const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      *this = *reinterpret_cast&lt;MetalSurfaceCreateInfoEXT const *&gt;( &amp;rhs );
+      return *this;
+    }
+
+#  if !defined( VULKAN_HPP_NO_SETTERS ) &amp;&amp; !defined( VULKAN_HPP_NO_STRUCT_SETTERS )
+    VULKAN_HPP_CONSTEXPR_14 MetalSurfaceCreateInfoEXT &amp; setPNext( const void * pNext_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MetalSurfaceCreateInfoEXT &amp;&amp; setPNext( const void * pNext_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      pNext = pNext_;
+      return std::move( *this );
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MetalSurfaceCreateInfoEXT &amp; setFlags( MetalSurfaceCreateFlagsEXT flags_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      flags = flags_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MetalSurfaceCreateInfoEXT &amp;&amp; setFlags( MetalSurfaceCreateFlagsEXT flags_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      flags = flags_;
+      return std::move( *this );
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MetalSurfaceCreateInfoEXT &amp; setPLayer( const CAMetalLayer * pLayer_ ) &amp; VULKAN_HPP_NOEXCEPT
+    {
+      pLayer = pLayer_;
+      return *this;
+    }
+
+    VULKAN_HPP_CONSTEXPR_14 MetalSurfaceCreateInfoEXT &amp;&amp; setPLayer( const CAMetalLayer * pLayer_ ) &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      pLayer = pLayer_;
+      return std::move( *this );
+    }
+#  endif /*VULKAN_HPP_NO_SETTERS*/
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_structs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp--section-194.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_structs.hpp--section-196.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

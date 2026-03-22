@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_AddTimerNS",
+    "slug": "sdl-add-timer-ns",
+    "titleArabic": "Call a callback function at a future time",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-add-timer-ns",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-add-timer-ns.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Call a callback function at a future time",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Add Timer NS داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Add Timer NS داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_TimerID ) Returns a timer ID or 0\non failure; call SDL_GetError () for more\ninformation. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Call a callback function at a future time."
+  },
+  "signature": {
+    "raw": "SDL_TimerID SDL_AddTimerNS(Uint64 interval, SDL_NSTimerCallback callback, void *userdata);",
+    "returnType": "SDL_TimerID",
+    "parameters": [
+      "Uint64 interval",
+      "SDL_NSTimerCallback callback",
+      "void *userdata"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_timer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "interval",
+        "type": "Uint64",
+        "descriptionArabic": "يمثل المعامل interval من النوع Uint64 القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the timer delay, in nanoseconds, passed to\n callback ."
+      },
+      {
+        "name": "callback",
+        "type": "SDL_NSTimerCallback",
+        "descriptionArabic": "يمثل المعامل callback من النوع SDL_NSTimerCallback القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the SDL_TimerCallback function\nto call when the specified interval elapses."
+      },
+      {
+        "name": "userdata",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل userdata من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer that is passed to callback ."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "The callback function is passed the current timer interval and the\nuser supplied parameter from the SDL_AddTimerNS () call and should return\nthe next timer interval. If the value returned from the callback is 0,\nthe timer is canceled and will be removed.",
+      "The callback is run on a separate thread, and for short timeouts can\npotentially be called before this function returns.",
+      "Timers take into account the amount of time it took to execute the\ncallback. For example, if the callback took 250 ns to execute and\nreturned 1000 (ns), the timer would only wait another 750 ns before its\nnext iteration.",
+      "Timing may be inexact due to OS scheduling. Be sure to note the\ncurrent time with SDL_GetTicksNS () or\n SDL_GetPerformanceCounter ()\nin case your callback needs to adjust for variances."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_TimerID ) Returns a timer ID or 0\non failure; call SDL_GetError () for more\ninformation.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_AddTimerNS",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_AddTimer",
+        "route": "#ref/sdl3-core/functions/sdl-add-timer",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_RemoveTimer",
+        "route": "#ref/sdl3-core/functions/sdl-remove-timer",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Timer Support",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

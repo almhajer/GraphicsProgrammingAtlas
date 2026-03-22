@@ -1,0 +1,169 @@
+[
+  {
+    "name": "configure-generate-build flow",
+    "titleArabic": "مسار العمل في CMake: التهيئة ثم التوليد ثم البناء (Configure / Generate / Build)",
+    "actualMeaningArabic": "هذا المفهوم يشرح أن CMake لا ينفذ كل شيء دفعة واحدة. في مرحلة التهيئة (Configure) يقرأ ملفات CMakeLists.txt ويكوّن الأهداف والقيم والعلاقات بينها، ثم في مرحلة التوليد (Generate) يحول هذه الصورة الداخلية إلى ملفات يفهمها المولد المختار مثل Ninja أو Visual Studio، ثم تأتي مرحلة البناء (Build) لاحقًا لتنفذ أوامر الترجمة والربط الفعلية.",
+    "purposeArabic": "هو المفتاح العملي لفهم متى يقرأ CMake الأمر أو المتغير، ومتى يظهر أثره على ملفات البناء أو على الترجمة والتنفيذ الفعليين.",
+    "whyUseArabic": "من دون هذا التفريق يختلط على المبتدئ لماذا يختلف configure_file عن add_custom_command، ولماذا لا تظهر قيمة التعبيرات المولدة (Generator Expressions) مباشرة لحظة قراءة الملف.",
+    "carriedValueArabic": "أثر هذا المفهوم عملي جدًا: فهو يحدد هل التغيير الذي كتبته سيؤثر في مرحلة التهيئة، أم في ملفات التوليد، أم في البناء الذي تنفذه الأداة لاحقًا.",
+    "usage": [
+      "الأوامر مثل project() وadd_library() تحدد شكل المشروع أساسًا في مرحلة التهيئة (Configure).",
+      "التعبيرات المولدة (Generator Expressions) تُحسم غالبًا وقت التوليد (Generate) عندما يكتب CMake ملفات المولد النهائية.",
+      "الأوامر المخصصة وخطوات الترجمة والربط تظهر آثارها العملية في مرحلة البناء (Build)."
+    ],
+    "notes": [
+      "التهيئة تصف ما الذي سيُبنى، والتوليد يكتب ملفات الأداة المختارة، والبناء ينفذ هذه الملفات فعليًا.",
+      "عدد كبير من أسئلة CMake التعليمية لا يُحل إلا بعد تحديد المرحلة التي تنتمي إليها المشكلة."
+    ],
+    "example": "# configure: يقرأ CMake هذا الملف ويبني target\nadd_executable(calculator main.cpp)\n\n# generate: يكتب Ninja/VS rules بحسب المولد\n# build: ينفذ المولد أوامر compile/link الفعلية",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "configure_file",
+      "add_custom_command",
+      "Generator Expressions"
+    ]
+  },
+  {
+    "name": "targets and usage requirements",
+    "titleArabic": "الأهداف ومتطلبات الاستعمال المنقولة (Targets and Usage Requirements)",
+    "actualMeaningArabic": "بدل التفكير في أعلام الترجمة ومسارات الترويسات بوصفها قوائم عامة مبعثرة، ينظم CMake المشروع حول أهداف (Targets) تحمل خصائصها ومتطلبات استعمالها التي يمكن أن تنتقل إلى الأهداف المستهلكة عند الربط.",
+    "purposeArabic": "هذا المفهوم يشرح لماذا تعتمد المشاريع الحديثة على أوامر مثل target_link_libraries وtarget_include_directories وtarget_compile_definitions بدل الإعدادات العامة على مستوى المشروع كله.",
+    "whyUseArabic": "لأنه يبني شجرة اعتماديات واضحة تنقل ما يحتاجه الهدف المستهلك تلقائيًا وبحدود صريحة، بدل الاعتماد على متغيرات عامة أو مسارات يدوية متناثرة.",
+    "carriedValueArabic": "أثره العملي يظهر مباشرة في رسم البناء: كل هدف يعلن ما يحتاجه داخليًا، وما الذي يجب أن ينتقل إلى من يربطه لاحقًا، وبذلك يصبح سلوك الربط والترجمة أوضح وأكثر استقرارًا.",
+    "usage": [
+      "فكر دائماً: ما الذي يحتاجه الهدف لنفسه؟ وما الذي يجب أن ينتقل إلى من يربطه؟",
+      "إذا كان الشيء يجب أن ينتقل إلى المستهلك فغالبًا ستستخدم النطاق العام أو الواجهي (PUBLIC أو INTERFACE).",
+      "إذا كتبت set(CMAKE_CXX_STANDARD 20) فأنت تضبط default عام للأهداف الجديدة، أما CXX_STANDARD فهي خاصية target تلتصق بهدف بعينه عندما تحتاج قرارًا أدق."
+    ],
+    "notes": [
+      "هذا المفهوم هو جوهر الخطوات المتقدمة في الدليل الرسمي عندما يبدأ المشروع بنشر واجهته بدل الاكتفاء ببناء ملف تنفيذي بسيط.",
+      "يجعل التصدير والبحث اللاحق عن الحزم أسهل، لأن الواجهة تكون مرتبطة بالهدف نفسه منذ البداية.",
+      "لهذا يكون الفرق بين متغير عام مثل CMAKE_CXX_STANDARD وبين خاصية هدف مثل CXX_STANDARD فرقًا بنيويًا لا مجرد فرق تسمية."
+    ],
+    "example": "add_library(calclib STATIC calculator.cpp)\ntarget_include_directories(calclib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)\nadd_executable(calculator main.cpp)\ntarget_link_libraries(calculator PRIVATE calclib)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "target_link_libraries",
+      "target_include_directories",
+      "INTERFACE_INCLUDE_DIRECTORIES",
+      "PUBLIC/PRIVATE/INTERFACE"
+    ]
+  },
+  {
+    "name": "cache variables",
+    "titleArabic": "المتغيرات المخزنة في الذاكرة الدائمة (Cache Variables)",
+    "actualMeaningArabic": "المتغيرات المخزنة في الذاكرة الدائمة (Cache Variables) هي قيم يحفظها CMake داخل مجلد البناء لتبقى بين تشغيلات التهيئة المختلفة، وتصبح قابلة للضبط من المستخدم أو من الضبطات المسبقة (Presets) أو من الأدوات الخارجية.",
+    "purposeArabic": "تستخدم لتكوين المشروع بخيارات طويلة الأمد مثل CMAKE_INSTALL_PREFIX وBUILD_SHARED_LIBS وBUILD_TESTING، أي القيم التي لا تريد إعادة تعريفها يدويًا في كل مرة.",
+    "whyUseArabic": "لأن هذه القيم يجب أن تبقى بين تشغيل تهيئة وآخر، وأن تكون قابلة للتعديل من خارج الملف نفسه دون إعادة كتابة منطق المشروع.",
+    "carriedValueArabic": "أثرها العملي يظهر في التهيئة اللاحقة: فالقيمة المحفوظة في الذاكرة الدائمة تغير الفروع الشرطية والخيارات التي سيقرأها CMake عند كل تشغيل جديد داخل مجلد البناء نفسه.",
+    "usage": [
+      "غالباً تُنشأ عبر option() أو set(... CACHE ...).",
+      "إذا أردت إزالة القيمة المخزنة والعودة إلى اكتشاف جديد أو إلى اختيار جديد من المستخدم فصيغة unset(<variable> CACHE) هي المسار الصريح لذلك.",
+      "تظهر بوضوح في خطوة إعداد القيم والذاكرة الدائمة داخل الدليل الرسمي لـ CMake Tutorial."
+    ],
+    "notes": [
+      "تختلف عن المتغيرات العادية المحلية (Normal Variables) التي تعيش فقط داخل نطاق التهيئة الحالي ثم تنتهي.",
+      "جزء كبير من سلوك CMake العملي يتحكم فيه هذا النوع لأنه يمثل واجهة إعداد المشروع للمستخدم.",
+      "وجود set() وunset() هنا ليس تفصيلاً شكليًا؛ هما الأداتان اللتان تنشئان cache entry أو تزيلانها فعليًا من مجلد البناء.",
+      "عندما ترى $ENV{HOME} داخل set(... CACHE ...) فهذا يعني أن CMake يقرأ البيئة الحالية أثناء configure ثم ينسخ القيمة الناتجة إلى cache؛ ليست وصلة حية تتحدث وحدها لاحقًا."
+    ],
+    "example": "option(BUILD_TESTING \"Enable tests\" ON)\nset(CMAKE_INSTALL_PREFIX \"$ENV{HOME}/.local\" CACHE PATH \"Install path\")",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "option",
+      "set",
+      "unset",
+      "CMAKE_INSTALL_PREFIX",
+      "BUILD_SHARED_LIBS",
+      "CMP0077"
+    ]
+  },
+  {
+    "name": "package config files and Config mode",
+    "aliases": [
+      "config",
+      "Config mode",
+      "package config",
+      "MyLibConfig.cmake",
+      "MyLibConfigVersion.cmake"
+    ],
+    "titleArabic": "ملفات package config ووضع ملفات الإعداد (Package Config Files and Config Mode)",
+    "actualMeaningArabic": "هذا المفهوم يشرح أن بعض الحزم لا تُكتشف عبر Find module عام فقط، بل عبر ملفات إعداد تصدرها الحزمة نفسها مثل MyLibConfig.cmake وMyLibConfigVersion.cmake. عندها يدخل find_package في وضع ملفات الإعداد (Config mode) ويقرأ metadata الواجهة والإصدار من هذه الملفات مباشرة.",
+    "purposeArabic": "يستخدم لشرح ما الذي يحدث بعد install/export عندما تريد أن تصبح المكتبة dependency قابلة للاستهلاك المعياري من مشروع آخر.",
+    "whyUseArabic": "من دون هذا المفهوم تبدو أسماء الملفات Config.cmake وConfigVersion.cmake مجرد artefacts غامضة، بينما هي في الحقيقة الجسر بين package step وfind_package() وversion matching.",
+    "carriedValueArabic": "أثره العملي يظهر بين install/package step وconfigure في المشروع المستهلك: المشروع المصدِّر يولد هذه الملفات أثناء التهيئة والتثبيت، ثم المشروع المستهلك يقرأها لاحقًا أثناء find_package ليحصل على imported targets ويفحص توافق الإصدار.",
+    "usage": [
+      "عندما تستخدم CMakePackageConfigHelpers فأنت غالبًا تبني ملفات Config وConfigVersion كي يعمل find_package(MyLib CONFIG) بصورة صحيحة.",
+      "ملف MyLibConfig.cmake يعرّف imported targets ومسارات الواجهة، بينما MyLibConfigVersion.cmake يقرر هل الإصدار المطلوب مقبول أم لا."
+    ],
+    "notes": [
+      "هذا المسار يخص Config mode أكثر من module mode، لذلك تكون الحزمة نفسها هي مصدر الحقيقة بدل Find*.cmake عام.",
+      "version matching ليس زينة شكلية: قيمة مثل SameMajorVersion تغيّر فعليًا قرار القبول أو الرفض عند الاستهلاك.",
+      "وجود ملفات package config الجيدة يجعل الاستهلاك downstream أنظف من تمرير include paths وlibs يدويًا."
+    ],
+    "example": "include(CMakePackageConfigHelpers)\nwrite_basic_package_version_file(\n  MyLibConfigVersion.cmake\n  VERSION ${PROJECT_VERSION}\n  COMPATIBILITY SameMajorVersion\n)\n\nfind_package(MyLib CONFIG REQUIRED)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-packages.7.html",
+    "related": [
+      "find_package",
+      "CMakePackageConfigHelpers",
+      "install",
+      "Installing and Exporting"
+    ]
+  },
+  {
+    "name": "directory scope and add_subdirectory",
+    "titleArabic": "نطاق الدليل مع الإدراج الفرعي (Directory Scope و add_subdirectory)",
+    "actualMeaningArabic": "عندما يستدعي المشروع add_subdirectory() ينشئ CMake نطاق دليل (Directory Scope) جديدًا. داخل هذا النطاق تُقرأ المتغيرات المحلية والمسارات والأوامر نسبةً إلى ذلك المجلد، مع بقاء الأهداف جزءًا من الشجرة الكبرى نفسها. وهذا يختلف عن include() الذي يقرأ ملفًا مساعدًا في نفس التدفق من دون فتح directory scope جديد.",
+    "purposeArabic": "يفسر هذا المفهوم لماذا تتغير قيم CMAKE_CURRENT_SOURCE_DIR وCMAKE_CURRENT_BINARY_DIR، ولماذا لا تنتقل بعض المتغيرات المحلية تلقائيًا بين ملفات CMakeLists.txt المختلفة، ولماذا يختلف أثر set()/unset() بين add_subdirectory() وfunction() وmacro().",
+    "whyUseArabic": "بدون فهمه يصعب التفريق بين تنظيم المشروع على شكل مجلدات، وبين إدراج ملف مساعد، وبين نشر القيم أو الواجهات بطريقة صحيحة عبر الأهداف أو عبر الذاكرة الدائمة للمشروع.",
+    "carriedValueArabic": "أثره العملي يظهر في مرحلة التهيئة: فهو يحدد حدود تأثير المتغيرات والمسارات والأوامر داخل كل مجلد فرعي، ويمنع الخلط بين القيم المحلية والقيم التي يجب نشرها صراحة، ويشرح لماذا تبدو بعض رسائل message() أو قيم set() مختلفة بعد الانتقال بين النطاقات.",
+    "usage": [
+      "استعمل add_subdirectory للتقسيم البنيوي، واستعمل الأهداف أو الذاكرة الدائمة أو الدوال المساعدة لنقل ما يجب نقله فقط.",
+      "استعمل include() عندما تريد منطقًا مساعدًا في نفس السياق، واستعمل function() عندما تريد منطقًا reusable مع scope محلي، وmacro() عندما تقبل العمل داخل نطاق المستدعي نفسه.",
+      "إذا أردت مشاركة واجهة مكتبة فالقناة الأنسب غالبًا هي الهدف نفسه، لا متغيرات متناثرة على مستوى الأدلة."
+    ],
+    "notes": [
+      "نطاق الدليل (Directory Scope) لا يعني عزلة كاملة؛ فالأهداف تظل مرئية عادة داخل الشجرة نفسها.",
+      "المتغيرات المدمجة الحالية مثل CMAKE_CURRENT_SOURCE_DIR تكشف هذا المفهوم عمليًا بسرعة.",
+      "إذا رأيت set() أو unset() أو message() داخل ملف فرعي فالسؤال المهم ليس السطر نفسه فقط، بل في أي scope ينفذ هذا السطر.",
+      "عندما تظهر الصيغة ${CMAKE_CURRENT_SOURCE_DIR} فهي توسعة متغير مدمج تُقيَّم لحظة قراءة السطر، لذلك تتغير نتيجتها عند الانتقال بين الأدلة الفرعية."
+    ],
+    "example": "# CMakeLists.txt الجذري\nadd_subdirectory(src)\n\n# src/CMakeLists.txt\nmessage(STATUS \"Now in ${CMAKE_CURRENT_SOURCE_DIR}\")",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "add_subdirectory",
+      "include",
+      "function",
+      "macro",
+      "set",
+      "message",
+      "CMAKE_CURRENT_SOURCE_DIR",
+      "CMAKE_CURRENT_BINARY_DIR"
+    ]
+  },
+  {
+    "name": "PUBLIC/PRIVATE/INTERFACE",
+    "titleArabic": "نطاقات النشر والاستهلاك: عام وخاص وواجهي (PUBLIC / PRIVATE / INTERFACE)",
+    "actualMeaningArabic": "هذه الكلمات ليست زينة شكلية داخل أوامر CMake، بل هي النموذج الذي يحدد كيف تنتقل مسارات الترويسات وتعريفات الترجمة والاعتماديات بين الأهداف: ما الذي يخص الهدف نفسه، وما الذي يجب أن يراه المستهلك، وما الذي يخص الواجهة فقط.",
+    "purposeArabic": "تستخدم مع أوامر target_* لتحديد حدود الاستهلاك والنشر لكل إعداد بطريقة صريحة يمكن لـ CMake أن يبني عليها العلاقات بين الأهداف.",
+    "whyUseArabic": "لأن الخطأ في اختيار هذه النطاقات لا يكسر الهدف الحالي فقط، بل قد يرسل واجهة ناقصة أو زائدة إلى كل هدف يعتمد عليه لاحقًا.",
+    "carriedValueArabic": "أثرها العملي يظهر مباشرة في رسم البناء وواجهة الهدف: فمن خلالها يعرف CMake ما الذي يبقى داخليًا، وما الذي ينتقل بصورة مترابطة إلى الأهداف المستهلكة.",
+    "usage": [
+      "الخاص (PRIVATE): لما يحتاجه تنفيذ الهدف نفسه فقط.",
+      "العام (PUBLIC): لما يحتاجه الهدف نفسه ويجب أن ينتقل أيضًا إلى واجهته العامة.",
+      "الواجهي (INTERFACE): لما يجب أن يراه المستهلك، حتى لو لم يحتجه الهدف نفسه أثناء بنائه."
+    ],
+    "notes": [
+      "هذا المفهوم حاضر في target_link_libraries وtarget_include_directories وtarget_compile_definitions وغيرها من أوامر الأهداف الحديثة.",
+      "وهو أساس فهم متطلبات الاستعمال المنقولة (Usage Requirements) في CMake الحديث."
+    ],
+    "example": "target_compile_definitions(calclib PUBLIC CALC_API)\ntarget_compile_options(calclib PRIVATE -Wall)\ntarget_include_directories(calclib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "target_link_libraries",
+      "target_include_directories",
+      "target_compile_definitions",
+      "targets and usage requirements"
+    ]
+  }
+]

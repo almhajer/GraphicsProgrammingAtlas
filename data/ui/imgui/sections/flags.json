@@ -1,0 +1,106 @@
+{
+  "key": "flags",
+  "title": "التعدادات والأعلام",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "flags",
+      "sectionTitle": "التعدادات والأعلام",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Begin",
+        "ImGui::BeginChild",
+        "ImGuiWindowFlags_NoResize"
+      ],
+      "instructions": [
+        "ادمج القيم بالعملية الثنائية المناسبة عندما تحتاج أكثر من سلوك في الوقت نفسه.",
+        "مرر الأعلام عند بداية النافذة، لأن Dear ImGui تقرأها في هذه اللحظة لتحديد سلوك النطاق كله."
+      ],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "code": "ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize;\nImGui::Begin(\"لوحة الأدوات\", nullptr, flags);",
+        "explanation": "تقرأ Dear ImGui هذه القيمة عند بداية النافذة لتقرير السلوك العام قبل رسم محتواها."
+      },
+      "guiRepresentation": null,
+      "parameterExample": "",
+      "values": [
+        {
+          "name": "ImGuiWindowFlags_NoResize",
+          "meaning": "يعطل تغيير حجم النافذة من قبل المستخدم.",
+          "effect": "يبقي الأبعاد تحت سيطرة التطبيق أو الإعدادات الحالية ويمنع مقابض السحب الخاصة بتغيير الحجم.",
+          "usage": "يناسب ألواح الأدوات أو النوافذ التي يفترض أن تبقى بقياس ثابت."
+        }
+      ],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "ImGuiWindowFlags",
+      "kind": "enum",
+      "shortTooltip": "نوع أعلام يضبط سلوك النوافذ في Dear ImGui ويمكن دمج قيمه معاً.",
+      "description": "نوع أعلام يجمع خيارات تعديل سلوك النوافذ ومظهرها داخل Dear ImGui.",
+      "officialArabicDescription": "نوع رايات يمكن دمج قيمه لضبط خصائص نافذة Dear ImGui مثل قابلية تغيير الحجم أو التحريك أو إظهار الأشرطة.",
+      "realMeaning": "هو الحزمة الرسمية للقرارات السلوكية التي تقرأها Dear ImGui عند بدء نافذة جديدة لتحديد ما يجب تمكينه أو تعطيله في هذه النافذة.",
+      "whenToUse": "يستخدم غالباً مع ImGui::Begin أو BeginChild عندما تحتاج سلوك نافذة غير افتراضي.",
+      "practicalBenefit": "يجمع قرارات سلوك النافذة في قيمة واحدة قابلة للدمج بدلاً من عدد كبير من المعاملات المنفصلة.",
+      "misuseImpact": "إذا جمعت أعلاماً لا تناسب السياق أو عطلت خصائص مهمة مثل تغيير الحجم في موضع خاطئ فقد تبني نافذة يصعب استخدامها أو لا تطابق توقع المستخدم.",
+      "syntax": "typedef int ImGuiWindowFlags;"
+    },
+    {
+      "sectionKey": "flags",
+      "sectionTitle": "التعدادات والأعلام",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGuiWindowFlags",
+        "ImGui::Begin"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": {
+        "steps": [
+          "قيمة العلم",
+          "ImGui::Begin",
+          "فحص أعلام النافذة",
+          "تعطيل منطق resize",
+          "الرسم النهائي للنافذة"
+        ],
+        "benefit": "توضح الخريطة أن العلم لا يعمل وحده، بل يقرأ عند بداية النافذة ويغير فرع السلوك الداخلي الخاص بالتحجيم."
+      },
+      "usageExample": {
+        "code": "ImGui::Begin(\"الخصائص\", nullptr, ImGuiWindowFlags_NoResize);\nImGui::Text(\"لوحة ثابتة القياس\");\nImGui::End();",
+        "explanation": "بمجرد قراءة العلم في بداية النافذة، تتوقف Dear ImGui عن إظهار أو احترام مقابض تغيير الحجم الخاصة بهذه النافذة."
+      },
+      "guiRepresentation": {
+        "title": "الأثر في الواجهة",
+        "mockup": "نافذة بلا مقابض تغيير حجم عند الحواف أو الزوايا",
+        "explanation": "النافذة تبقى قابلة للعرض والتفاعل، لكن المستخدم لا يستطيع تغيير أبعادها يدوياً."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "name": "ImGuiWindowFlags_NoResize",
+      "kind": "flag",
+      "shortTooltip": "علم يمنع المستخدم من تغيير حجم النافذة التي تقرأ هذه القيمة.",
+      "description": "قيمة علمية ضمن ImGuiWindowFlags تمنع تغيير حجم النافذة من الحواف أو الزوايا.",
+      "officialArabicDescription": "قيمة من ImGuiWindowFlags تعلن أن النافذة يجب ألا تسمح للمستخدم بتغيير حجمها يدوياً.",
+      "realMeaning": "تقرأها Dear ImGui أثناء بناء النافذة لتعطيل منطق مقابض السحب ومؤشرات تغيير الحجم الخاصة بهذه النافذة.",
+      "whenToUse": "تستخدم في النوافذ التي يجب أن تبقى بأبعاد محسوبة من التطبيق أو في الألواح الصغيرة ذات التخطيط الثابت.",
+      "practicalBenefit": "تحمي تخطيط النوافذ التي تعتمد على قياس محدد من أن يتشوه بسبب تغيير حجم غير مقصود من المستخدم.",
+      "misuseImpact": "إذا أضفتها إلى نافذة محتواها متغير ويحتاج مساحة أوسع فقد تمنع المستخدم من الوصول المريح إلى المحتوى أو تضطره إلى تمرير زائد.",
+      "syntax": "ImGuiWindowFlags_NoResize"
+    }
+  ]
+}

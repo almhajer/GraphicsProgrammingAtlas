@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_safe_struct.hpp • القسم 1 من 54 • الأسطر 1-450 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vk_safe_struct.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_safe_struct.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vk_safe_struct.hpp.html">vk_safe_struct.hpp</a> /
+        <span>القسم 1 من 54 • الأسطر 1-450</span>
+      </nav>
+      <h1 class="page-title">📄 vk_safe_struct.hpp</h1>
+      <p class="page-description">القسم 1 من 54 • الأسطر 1-450</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_safe_struct.hpp.html">ملخص الملف</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم سابق</span>
+      <a class="standalone-link" href="./vk_safe_struct.hpp--section-2.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vk_safe_struct.hpp</span>
+        <span class="source-stat">القسم: 1/54</span>
+        <span class="source-stat">الأسطر: 1-450</span>
+        <span class="source-stat">حجم الملف: 1.42 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>// *** THIS FILE IS GENERATED - DO NOT EDIT ***
+// See safe_struct_generator.py for modifications
+
+/***************************************************************************
+ *
+ * Copyright (c) 2015-2025 The Khronos Group Inc.
+ * Copyright (c) 2015-2025 Valve Corporation
+ * Copyright (c) 2015-2025 LunarG, Inc.
+ * Copyright (c) 2015-2025 Google Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ ****************************************************************************/
+
+// NOLINTBEGIN
+
+#pragma once
+#include &lt;vulkan/vulkan.h&gt;
+#include &lt;algorithm&gt;
+
+#include &lt;vulkan/utility/vk_safe_struct_utils.hpp&gt;
+
+namespace vku {
+
+// Mapping of unknown stype codes to structure lengths. This should be set up by the application
+// before vkCreateInstance() and not modified afterwards.
+std::vector&lt;std::pair&lt;uint32_t, uint32_t&gt;&gt;&amp; GetCustomStypeInfo();
+
+struct safe_VkBufferMemoryBarrier {
+    VkStructureType sType;
+    const void* pNext{};
+    VkAccessFlags srcAccessMask;
+    VkAccessFlags dstAccessMask;
+    uint32_t srcQueueFamilyIndex;
+    uint32_t dstQueueFamilyIndex;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+    VkDeviceSize size;
+
+    safe_VkBufferMemoryBarrier(const VkBufferMemoryBarrier* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkBufferMemoryBarrier(const safe_VkBufferMemoryBarrier&amp; copy_src);
+    safe_VkBufferMemoryBarrier&amp; operator=(const safe_VkBufferMemoryBarrier&amp; copy_src);
+    safe_VkBufferMemoryBarrier();
+    ~safe_VkBufferMemoryBarrier();
+    void initialize(const VkBufferMemoryBarrier* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkBufferMemoryBarrier* copy_src, PNextCopyState* copy_state = {});
+    VkBufferMemoryBarrier* ptr() { return reinterpret_cast&lt;VkBufferMemoryBarrier*&gt;(this); }
+    VkBufferMemoryBarrier const* ptr() const { return reinterpret_cast&lt;VkBufferMemoryBarrier const*&gt;(this); }
+};
+struct safe_VkImageMemoryBarrier {
+    VkStructureType sType;
+    const void* pNext{};
+    VkAccessFlags srcAccessMask;
+    VkAccessFlags dstAccessMask;
+    VkImageLayout oldLayout;
+    VkImageLayout newLayout;
+    uint32_t srcQueueFamilyIndex;
+    uint32_t dstQueueFamilyIndex;
+    VkImage image;
+    VkImageSubresourceRange subresourceRange;
+
+    safe_VkImageMemoryBarrier(const VkImageMemoryBarrier* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkImageMemoryBarrier(const safe_VkImageMemoryBarrier&amp; copy_src);
+    safe_VkImageMemoryBarrier&amp; operator=(const safe_VkImageMemoryBarrier&amp; copy_src);
+    safe_VkImageMemoryBarrier();
+    ~safe_VkImageMemoryBarrier();
+    void initialize(const VkImageMemoryBarrier* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkImageMemoryBarrier* copy_src, PNextCopyState* copy_state = {});
+    VkImageMemoryBarrier* ptr() { return reinterpret_cast&lt;VkImageMemoryBarrier*&gt;(this); }
+    VkImageMemoryBarrier const* ptr() const { return reinterpret_cast&lt;VkImageMemoryBarrier const*&gt;(this); }
+};
+struct safe_VkMemoryBarrier {
+    VkStructureType sType;
+    const void* pNext{};
+    VkAccessFlags srcAccessMask;
+    VkAccessFlags dstAccessMask;
+
+    safe_VkMemoryBarrier(const VkMemoryBarrier* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkMemoryBarrier(const safe_VkMemoryBarrier&amp; copy_src);
+    safe_VkMemoryBarrier&amp; operator=(const safe_VkMemoryBarrier&amp; copy_src);
+    safe_VkMemoryBarrier();
+    ~safe_VkMemoryBarrier();
+    void initialize(const VkMemoryBarrier* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkMemoryBarrier* copy_src, PNextCopyState* copy_state = {});
+    VkMemoryBarrier* ptr() { return reinterpret_cast&lt;VkMemoryBarrier*&gt;(this); }
+    VkMemoryBarrier const* ptr() const { return reinterpret_cast&lt;VkMemoryBarrier const*&gt;(this); }
+};
+struct safe_VkAllocationCallbacks {
+    void* pUserData{};
+    PFN_vkAllocationFunction pfnAllocation;
+    PFN_vkReallocationFunction pfnReallocation;
+    PFN_vkFreeFunction pfnFree;
+    PFN_vkInternalAllocationNotification pfnInternalAllocation;
+    PFN_vkInternalFreeNotification pfnInternalFree;
+
+    safe_VkAllocationCallbacks(const VkAllocationCallbacks* in_struct, PNextCopyState* copy_state = {});
+    safe_VkAllocationCallbacks(const safe_VkAllocationCallbacks&amp; copy_src);
+    safe_VkAllocationCallbacks&amp; operator=(const safe_VkAllocationCallbacks&amp; copy_src);
+    safe_VkAllocationCallbacks();
+    ~safe_VkAllocationCallbacks();
+    void initialize(const VkAllocationCallbacks* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkAllocationCallbacks* copy_src, PNextCopyState* copy_state = {});
+    VkAllocationCallbacks* ptr() { return reinterpret_cast&lt;VkAllocationCallbacks*&gt;(this); }
+    VkAllocationCallbacks const* ptr() const { return reinterpret_cast&lt;VkAllocationCallbacks const*&gt;(this); }
+};
+struct safe_VkApplicationInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    const char* pApplicationName{};
+    uint32_t applicationVersion;
+    const char* pEngineName{};
+    uint32_t engineVersion;
+    uint32_t apiVersion;
+
+    safe_VkApplicationInfo(const VkApplicationInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkApplicationInfo(const safe_VkApplicationInfo&amp; copy_src);
+    safe_VkApplicationInfo&amp; operator=(const safe_VkApplicationInfo&amp; copy_src);
+    safe_VkApplicationInfo();
+    ~safe_VkApplicationInfo();
+    void initialize(const VkApplicationInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkApplicationInfo* copy_src, PNextCopyState* copy_state = {});
+    VkApplicationInfo* ptr() { return reinterpret_cast&lt;VkApplicationInfo*&gt;(this); }
+    VkApplicationInfo const* ptr() const { return reinterpret_cast&lt;VkApplicationInfo const*&gt;(this); }
+};
+struct safe_VkInstanceCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkInstanceCreateFlags flags;
+    safe_VkApplicationInfo* pApplicationInfo{};
+    uint32_t enabledLayerCount;
+    const char* const* ppEnabledLayerNames{};
+    uint32_t enabledExtensionCount;
+    const char* const* ppEnabledExtensionNames{};
+
+    safe_VkInstanceCreateInfo(const VkInstanceCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkInstanceCreateInfo(const safe_VkInstanceCreateInfo&amp; copy_src);
+    safe_VkInstanceCreateInfo&amp; operator=(const safe_VkInstanceCreateInfo&amp; copy_src);
+    safe_VkInstanceCreateInfo();
+    ~safe_VkInstanceCreateInfo();
+    void initialize(const VkInstanceCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkInstanceCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkInstanceCreateInfo* ptr() { return reinterpret_cast&lt;VkInstanceCreateInfo*&gt;(this); }
+    VkInstanceCreateInfo const* ptr() const { return reinterpret_cast&lt;VkInstanceCreateInfo const*&gt;(this); }
+};
+struct safe_VkDeviceQueueCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkDeviceQueueCreateFlags flags;
+    uint32_t queueFamilyIndex;
+    uint32_t queueCount;
+    const float* pQueuePriorities{};
+
+    safe_VkDeviceQueueCreateInfo(const VkDeviceQueueCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkDeviceQueueCreateInfo(const safe_VkDeviceQueueCreateInfo&amp; copy_src);
+    safe_VkDeviceQueueCreateInfo&amp; operator=(const safe_VkDeviceQueueCreateInfo&amp; copy_src);
+    safe_VkDeviceQueueCreateInfo();
+    ~safe_VkDeviceQueueCreateInfo();
+    void initialize(const VkDeviceQueueCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkDeviceQueueCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkDeviceQueueCreateInfo* ptr() { return reinterpret_cast&lt;VkDeviceQueueCreateInfo*&gt;(this); }
+    VkDeviceQueueCreateInfo const* ptr() const { return reinterpret_cast&lt;VkDeviceQueueCreateInfo const*&gt;(this); }
+};
+struct safe_VkDeviceCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkDeviceCreateFlags flags;
+    uint32_t queueCreateInfoCount;
+    safe_VkDeviceQueueCreateInfo* pQueueCreateInfos{};
+    uint32_t enabledLayerCount;
+    const char* const* ppEnabledLayerNames{};
+    uint32_t enabledExtensionCount;
+    const char* const* ppEnabledExtensionNames{};
+    const VkPhysicalDeviceFeatures* pEnabledFeatures{};
+
+    safe_VkDeviceCreateInfo(const VkDeviceCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkDeviceCreateInfo(const safe_VkDeviceCreateInfo&amp; copy_src);
+    safe_VkDeviceCreateInfo&amp; operator=(const safe_VkDeviceCreateInfo&amp; copy_src);
+    safe_VkDeviceCreateInfo();
+    ~safe_VkDeviceCreateInfo();
+    void initialize(const VkDeviceCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkDeviceCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkDeviceCreateInfo* ptr() { return reinterpret_cast&lt;VkDeviceCreateInfo*&gt;(this); }
+    VkDeviceCreateInfo const* ptr() const { return reinterpret_cast&lt;VkDeviceCreateInfo const*&gt;(this); }
+};
+struct safe_VkSubmitInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    uint32_t waitSemaphoreCount;
+    VkSemaphore* pWaitSemaphores{};
+    const VkPipelineStageFlags* pWaitDstStageMask{};
+    uint32_t commandBufferCount;
+    VkCommandBuffer* pCommandBuffers{};
+    uint32_t signalSemaphoreCount;
+    VkSemaphore* pSignalSemaphores{};
+
+    safe_VkSubmitInfo(const VkSubmitInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkSubmitInfo(const safe_VkSubmitInfo&amp; copy_src);
+    safe_VkSubmitInfo&amp; operator=(const safe_VkSubmitInfo&amp; copy_src);
+    safe_VkSubmitInfo();
+    ~safe_VkSubmitInfo();
+    void initialize(const VkSubmitInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkSubmitInfo* copy_src, PNextCopyState* copy_state = {});
+    VkSubmitInfo* ptr() { return reinterpret_cast&lt;VkSubmitInfo*&gt;(this); }
+    VkSubmitInfo const* ptr() const { return reinterpret_cast&lt;VkSubmitInfo const*&gt;(this); }
+};
+struct safe_VkMappedMemoryRange {
+    VkStructureType sType;
+    const void* pNext{};
+    VkDeviceMemory memory;
+    VkDeviceSize offset;
+    VkDeviceSize size;
+
+    safe_VkMappedMemoryRange(const VkMappedMemoryRange* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkMappedMemoryRange(const safe_VkMappedMemoryRange&amp; copy_src);
+    safe_VkMappedMemoryRange&amp; operator=(const safe_VkMappedMemoryRange&amp; copy_src);
+    safe_VkMappedMemoryRange();
+    ~safe_VkMappedMemoryRange();
+    void initialize(const VkMappedMemoryRange* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkMappedMemoryRange* copy_src, PNextCopyState* copy_state = {});
+    VkMappedMemoryRange* ptr() { return reinterpret_cast&lt;VkMappedMemoryRange*&gt;(this); }
+    VkMappedMemoryRange const* ptr() const { return reinterpret_cast&lt;VkMappedMemoryRange const*&gt;(this); }
+};
+struct safe_VkMemoryAllocateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkDeviceSize allocationSize;
+    uint32_t memoryTypeIndex;
+
+    safe_VkMemoryAllocateInfo(const VkMemoryAllocateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkMemoryAllocateInfo(const safe_VkMemoryAllocateInfo&amp; copy_src);
+    safe_VkMemoryAllocateInfo&amp; operator=(const safe_VkMemoryAllocateInfo&amp; copy_src);
+    safe_VkMemoryAllocateInfo();
+    ~safe_VkMemoryAllocateInfo();
+    void initialize(const VkMemoryAllocateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkMemoryAllocateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkMemoryAllocateInfo* ptr() { return reinterpret_cast&lt;VkMemoryAllocateInfo*&gt;(this); }
+    VkMemoryAllocateInfo const* ptr() const { return reinterpret_cast&lt;VkMemoryAllocateInfo const*&gt;(this); }
+};
+struct safe_VkSparseBufferMemoryBindInfo {
+    VkBuffer buffer;
+    uint32_t bindCount;
+    VkSparseMemoryBind* pBinds{};
+
+    safe_VkSparseBufferMemoryBindInfo(const VkSparseBufferMemoryBindInfo* in_struct, PNextCopyState* copy_state = {});
+    safe_VkSparseBufferMemoryBindInfo(const safe_VkSparseBufferMemoryBindInfo&amp; copy_src);
+    safe_VkSparseBufferMemoryBindInfo&amp; operator=(const safe_VkSparseBufferMemoryBindInfo&amp; copy_src);
+    safe_VkSparseBufferMemoryBindInfo();
+    ~safe_VkSparseBufferMemoryBindInfo();
+    void initialize(const VkSparseBufferMemoryBindInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkSparseBufferMemoryBindInfo* copy_src, PNextCopyState* copy_state = {});
+    VkSparseBufferMemoryBindInfo* ptr() { return reinterpret_cast&lt;VkSparseBufferMemoryBindInfo*&gt;(this); }
+    VkSparseBufferMemoryBindInfo const* ptr() const { return reinterpret_cast&lt;VkSparseBufferMemoryBindInfo const*&gt;(this); }
+};
+struct safe_VkSparseImageOpaqueMemoryBindInfo {
+    VkImage image;
+    uint32_t bindCount;
+    VkSparseMemoryBind* pBinds{};
+
+    safe_VkSparseImageOpaqueMemoryBindInfo(const VkSparseImageOpaqueMemoryBindInfo* in_struct, PNextCopyState* copy_state = {});
+    safe_VkSparseImageOpaqueMemoryBindInfo(const safe_VkSparseImageOpaqueMemoryBindInfo&amp; copy_src);
+    safe_VkSparseImageOpaqueMemoryBindInfo&amp; operator=(const safe_VkSparseImageOpaqueMemoryBindInfo&amp; copy_src);
+    safe_VkSparseImageOpaqueMemoryBindInfo();
+    ~safe_VkSparseImageOpaqueMemoryBindInfo();
+    void initialize(const VkSparseImageOpaqueMemoryBindInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkSparseImageOpaqueMemoryBindInfo* copy_src, PNextCopyState* copy_state = {});
+    VkSparseImageOpaqueMemoryBindInfo* ptr() { return reinterpret_cast&lt;VkSparseImageOpaqueMemoryBindInfo*&gt;(this); }
+    VkSparseImageOpaqueMemoryBindInfo const* ptr() const {
+        return reinterpret_cast&lt;VkSparseImageOpaqueMemoryBindInfo const*&gt;(this);
+    }
+};
+struct safe_VkSparseImageMemoryBindInfo {
+    VkImage image;
+    uint32_t bindCount;
+    VkSparseImageMemoryBind* pBinds{};
+
+    safe_VkSparseImageMemoryBindInfo(const VkSparseImageMemoryBindInfo* in_struct, PNextCopyState* copy_state = {});
+    safe_VkSparseImageMemoryBindInfo(const safe_VkSparseImageMemoryBindInfo&amp; copy_src);
+    safe_VkSparseImageMemoryBindInfo&amp; operator=(const safe_VkSparseImageMemoryBindInfo&amp; copy_src);
+    safe_VkSparseImageMemoryBindInfo();
+    ~safe_VkSparseImageMemoryBindInfo();
+    void initialize(const VkSparseImageMemoryBindInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkSparseImageMemoryBindInfo* copy_src, PNextCopyState* copy_state = {});
+    VkSparseImageMemoryBindInfo* ptr() { return reinterpret_cast&lt;VkSparseImageMemoryBindInfo*&gt;(this); }
+    VkSparseImageMemoryBindInfo const* ptr() const { return reinterpret_cast&lt;VkSparseImageMemoryBindInfo const*&gt;(this); }
+};
+struct safe_VkBindSparseInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    uint32_t waitSemaphoreCount;
+    VkSemaphore* pWaitSemaphores{};
+    uint32_t bufferBindCount;
+    safe_VkSparseBufferMemoryBindInfo* pBufferBinds{};
+    uint32_t imageOpaqueBindCount;
+    safe_VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds{};
+    uint32_t imageBindCount;
+    safe_VkSparseImageMemoryBindInfo* pImageBinds{};
+    uint32_t signalSemaphoreCount;
+    VkSemaphore* pSignalSemaphores{};
+
+    safe_VkBindSparseInfo(const VkBindSparseInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkBindSparseInfo(const safe_VkBindSparseInfo&amp; copy_src);
+    safe_VkBindSparseInfo&amp; operator=(const safe_VkBindSparseInfo&amp; copy_src);
+    safe_VkBindSparseInfo();
+    ~safe_VkBindSparseInfo();
+    void initialize(const VkBindSparseInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkBindSparseInfo* copy_src, PNextCopyState* copy_state = {});
+    VkBindSparseInfo* ptr() { return reinterpret_cast&lt;VkBindSparseInfo*&gt;(this); }
+    VkBindSparseInfo const* ptr() const { return reinterpret_cast&lt;VkBindSparseInfo const*&gt;(this); }
+};
+struct safe_VkFenceCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkFenceCreateFlags flags;
+
+    safe_VkFenceCreateInfo(const VkFenceCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkFenceCreateInfo(const safe_VkFenceCreateInfo&amp; copy_src);
+    safe_VkFenceCreateInfo&amp; operator=(const safe_VkFenceCreateInfo&amp; copy_src);
+    safe_VkFenceCreateInfo();
+    ~safe_VkFenceCreateInfo();
+    void initialize(const VkFenceCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkFenceCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkFenceCreateInfo* ptr() { return reinterpret_cast&lt;VkFenceCreateInfo*&gt;(this); }
+    VkFenceCreateInfo const* ptr() const { return reinterpret_cast&lt;VkFenceCreateInfo const*&gt;(this); }
+};
+struct safe_VkSemaphoreCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkSemaphoreCreateFlags flags;
+
+    safe_VkSemaphoreCreateInfo(const VkSemaphoreCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkSemaphoreCreateInfo(const safe_VkSemaphoreCreateInfo&amp; copy_src);
+    safe_VkSemaphoreCreateInfo&amp; operator=(const safe_VkSemaphoreCreateInfo&amp; copy_src);
+    safe_VkSemaphoreCreateInfo();
+    ~safe_VkSemaphoreCreateInfo();
+    void initialize(const VkSemaphoreCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkSemaphoreCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkSemaphoreCreateInfo* ptr() { return reinterpret_cast&lt;VkSemaphoreCreateInfo*&gt;(this); }
+    VkSemaphoreCreateInfo const* ptr() const { return reinterpret_cast&lt;VkSemaphoreCreateInfo const*&gt;(this); }
+};
+struct safe_VkQueryPoolCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkQueryPoolCreateFlags flags;
+    VkQueryType queryType;
+    uint32_t queryCount;
+    VkQueryPipelineStatisticFlags pipelineStatistics;
+
+    safe_VkQueryPoolCreateInfo(const VkQueryPoolCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkQueryPoolCreateInfo(const safe_VkQueryPoolCreateInfo&amp; copy_src);
+    safe_VkQueryPoolCreateInfo&amp; operator=(const safe_VkQueryPoolCreateInfo&amp; copy_src);
+    safe_VkQueryPoolCreateInfo();
+    ~safe_VkQueryPoolCreateInfo();
+    void initialize(const VkQueryPoolCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkQueryPoolCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkQueryPoolCreateInfo* ptr() { return reinterpret_cast&lt;VkQueryPoolCreateInfo*&gt;(this); }
+    VkQueryPoolCreateInfo const* ptr() const { return reinterpret_cast&lt;VkQueryPoolCreateInfo const*&gt;(this); }
+};
+struct safe_VkBufferCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkBufferCreateFlags flags;
+    VkDeviceSize size;
+    VkBufferUsageFlags usage;
+    VkSharingMode sharingMode;
+    uint32_t queueFamilyIndexCount;
+    const uint32_t* pQueueFamilyIndices{};
+
+    safe_VkBufferCreateInfo(const VkBufferCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkBufferCreateInfo(const safe_VkBufferCreateInfo&amp; copy_src);
+    safe_VkBufferCreateInfo&amp; operator=(const safe_VkBufferCreateInfo&amp; copy_src);
+    safe_VkBufferCreateInfo();
+    ~safe_VkBufferCreateInfo();
+    void initialize(const VkBufferCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkBufferCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkBufferCreateInfo* ptr() { return reinterpret_cast&lt;VkBufferCreateInfo*&gt;(this); }
+    VkBufferCreateInfo const* ptr() const { return reinterpret_cast&lt;VkBufferCreateInfo const*&gt;(this); }
+};
+struct safe_VkImageCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkImageCreateFlags flags;
+    VkImageType imageType;
+    VkFormat format;
+    VkExtent3D extent;
+    uint32_t mipLevels;
+    uint32_t arrayLayers;
+    VkSampleCountFlagBits samples;
+    VkImageTiling tiling;
+    VkImageUsageFlags usage;
+    VkSharingMode sharingMode;
+    uint32_t queueFamilyIndexCount;
+    const uint32_t* pQueueFamilyIndices{};
+    VkImageLayout initialLayout;
+
+    safe_VkImageCreateInfo(const VkImageCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkImageCreateInfo(const safe_VkImageCreateInfo&amp; copy_src);
+    safe_VkImageCreateInfo&amp; operator=(const safe_VkImageCreateInfo&amp; copy_src);
+    safe_VkImageCreateInfo();
+    ~safe_VkImageCreateInfo();
+    void initialize(const VkImageCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkImageCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkImageCreateInfo* ptr() { return reinterpret_cast&lt;VkImageCreateInfo*&gt;(this); }
+    VkImageCreateInfo const* ptr() const { return reinterpret_cast&lt;VkImageCreateInfo const*&gt;(this); }
+};
+struct safe_VkImageViewCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkImageViewCreateFlags flags;
+    VkImage image;
+    VkImageViewType viewType;
+    VkFormat format;
+    VkComponentMapping components;
+    VkImageSubresourceRange subresourceRange;
+
+    safe_VkImageViewCreateInfo(const VkImageViewCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkImageViewCreateInfo(const safe_VkImageViewCreateInfo&amp; copy_src);
+    safe_VkImageViewCreateInfo&amp; operator=(const safe_VkImageViewCreateInfo&amp; copy_src);
+    safe_VkImageViewCreateInfo();
+    ~safe_VkImageViewCreateInfo();
+    void initialize(const VkImageViewCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkImageViewCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkImageViewCreateInfo* ptr() { return reinterpret_cast&lt;VkImageViewCreateInfo*&gt;(this); }
+    VkImageViewCreateInfo const* ptr() const { return reinterpret_cast&lt;VkImageViewCreateInfo const*&gt;(this); }
+};
+struct safe_VkCommandPoolCreateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkCommandPoolCreateFlags flags;
+    uint32_t queueFamilyIndex;
+
+    safe_VkCommandPoolCreateInfo(const VkCommandPoolCreateInfo* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);
+    safe_VkCommandPoolCreateInfo(const safe_VkCommandPoolCreateInfo&amp; copy_src);
+    safe_VkCommandPoolCreateInfo&amp; operator=(const safe_VkCommandPoolCreateInfo&amp; copy_src);
+    safe_VkCommandPoolCreateInfo();
+    ~safe_VkCommandPoolCreateInfo();
+    void initialize(const VkCommandPoolCreateInfo* in_struct, PNextCopyState* copy_state = {});
+    void initialize(const safe_VkCommandPoolCreateInfo* copy_src, PNextCopyState* copy_state = {});
+    VkCommandPoolCreateInfo* ptr() { return reinterpret_cast&lt;VkCommandPoolCreateInfo*&gt;(this); }
+    VkCommandPoolCreateInfo const* ptr() const { return reinterpret_cast&lt;VkCommandPoolCreateInfo const*&gt;(this); }
+};
+struct safe_VkCommandBufferAllocateInfo {
+    VkStructureType sType;
+    const void* pNext{};
+    VkCommandPool commandPool;
+    VkCommandBufferLevel level;
+    uint32_t commandBufferCount;
+
+    safe_VkCommandBufferAllocateInfo(const VkCommandBufferAllocateInfo* in_struct, PNextCopyState* copy_state = {},
+                                     bool copy_pnext = true);
+    safe_VkCommandBufferAllocateInfo(const safe_VkCommandBufferAllocateInfo&amp; copy_src);</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_safe_struct.hpp.html">ملخص الملف</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم سابق</span>
+      <a class="standalone-link" href="./vk_safe_struct.hpp--section-2.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

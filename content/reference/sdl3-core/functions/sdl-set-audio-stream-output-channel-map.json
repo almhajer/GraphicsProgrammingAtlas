@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_SetAudioStreamOutputChannelMap",
+    "slug": "sdl-set-audio-stream-output-channel-map",
+    "titleArabic": "ضبط current الإخراج channel map الصوت الدفق",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-set-audio-stream-output-channel-map",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-set-audio-stream-output-channel-map.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "ضبط current الإخراج channel map الصوت الدفق",
+    "actualMeaningArabic": "ضبط current الإخراج channel map الصوت الدفق.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى ضبط current الإخراج channel map الصوت الدفق داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Set the current output channel map of an audio stream."
+  },
+  "signature": {
+    "raw": "bool SDL_SetAudioStreamOutputChannelMap(SDL_AudioStream *stream, const int *chmap, int count);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AudioStream *stream",
+      "const int *chmap",
+      "int count"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "SDL_AudioStream *",
+        "descriptionArabic": "يمثل المعامل stream من النوع SDL_AudioStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the SDL_AudioStream to\nchange."
+      },
+      {
+        "name": "chmap",
+        "type": "const int *",
+        "descriptionArabic": "يمثل المعامل chmap من النوع const int * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new channel map, NULL to reset to default."
+      },
+      {
+        "name": "count",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل count من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "The number of channels in the map."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Channel maps are optional; most things do not need them, instead\npassing data in the order\nthat SDL expects .",
+      "The output channel map reorders data that is leaving a stream via SDL_GetAudioStreamData .",
+      "Each item in the array represents an input channel, and its value is\nthe channel that it should be remapped to. To reverse a stereo signal's\nleft and right values, you'd have an array of { 1, 0 } . It\nis legal to remap multiple channels to the same thing, so\n { 1, 1 } would duplicate the right channel to both channels\nof a stereo signal. An element in the channel map set to -1 instead of a\nvalid channel will mute that channel, setting it to a silence value.",
+      "You cannot change the number of channels through a channel map, just\nreorder/mute them.",
+      "The output channel map can be changed at any time, as output\nremapping is applied during SDL_GetAudioStreamData .",
+      "Audio streams default to no remapping applied. Passing a NULL channel\nmap is legal, and turns off remapping.",
+      "SDL will copy the channel map; the caller does not have to save this\narray after this call.",
+      "If count is not equal to the current number of channels\nin the audio stream's format, this will fail. This is a safety measure\nto make sure a race condition hasn't changed the format while this call\nis setting the channel map.",
+      "Unlike attempting to change the stream's format, the output channel\nmap on a stream bound to a recording device is permitted to change at\nany time; any data added to the stream after this call will have the new\nmapping, but previously-added data will still have the prior mapping.\nWhen the channel map doesn't match the hardware's channel layout, SDL\nwill convert the data before feeding it to the device for playback."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread, as it holds a\nstream-specific mutex while running. Don't change the stream's format to\nhave a different number of channels from a a different thread at the\nsame time, though!",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_SetAudioStreamOutputChannelMap",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_SetAudioStreamInputChannelMap",
+        "route": "#ref/sdl3-core/functions/sdl-set-audio-stream-input-channel-map",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

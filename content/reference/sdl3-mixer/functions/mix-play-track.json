@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_PlayTrack",
+    "slug": "mix-play-track",
+    "titleArabic": "بدء restart mixing track playback",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-play-track",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-play-track.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "بدء restart mixing track playback",
+    "actualMeaningArabic": "بدء restart mixing track playback.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى بدء restart mixing track playback داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success, false on error; call SDL_GetError()\nfor details. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Start (or restart) mixing a track for playback."
+  },
+  "signature": {
+    "raw": "bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options);",
+    "returnType": "bool",
+    "parameters": [
+      "MIX_Track *track",
+      "SDL_PropertiesID options"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "track",
+        "type": "MIX_Track *",
+        "descriptionArabic": "يمثل المعامل track من النوع MIX_Track * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the track to start (or restart) mixing."
+      },
+      {
+        "name": "options",
+        "type": "SDL_PropertiesID",
+        "descriptionArabic": "يمثل المعامل options من النوع SDL_PropertiesID القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a set of properties that control playback. May be zero."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "The track will use whatever input was last assigned to it when\nplaying; an input must be assigned to this track or this function will\nfail. Inputs are assigned with calls to MIX_SetTrackAudio (), MIX_SetTrackAudioStream (), or MIX_SetTrackIOStream ().",
+      "If the track is already playing, or paused, this will restart the\ntrack with the newly-specified parameters.",
+      "As there are several parameters, and more may be added in the future,\nthey are specified with an SDL_PropertiesID. The parameters have\nreasonable defaults, and specifying a 0 for options will\nchoose defaults for everything.",
+      "SDL_PropertiesID are discussed in SDL's documentation .",
+      "These are the supported properties:",
+      "MIX_PROP_PLAY_LOOPS_NUMBER :\nThe number of times to loop the track when it reaches the end. A value\nof 1 will loop to the start one time. Zero will not loop at all. A value\nof -1 requests infinite loops. If the input is not seekable and this\nvalue isn't zero, this function will report success but the track will\nstop at the point it should loop. Default 0.",
+      "MIX_PROP_PLAY_MAX_FRAME_NUMBER :\nMix at most to this sample frame position in the track. This will be\ntreated as if the input reach EOF at this point in the audio file. If\n-1, mix all available audio without a limit. Default -1.",
+      "MIX_PROP_PLAY_MAX_MILLISECONDS_NUMBER :\nThe same as using the MIX_PROP_PLAY_MAX_FRAME_NUMBER\nproperty, but the value is specified in milliseconds instead of sample\nframes. If both properties are specified, the sample frames value is\nfavored. Default -1.",
+      "MIX_PROP_PLAY_START_FRAME_NUMBER :\nStart mixing from this sample frame position in the track's input. A\nvalue <= 0 will begin from the start of the track's input. If the\ninput is not seekable and this value is > 0, this function will\nreport failure. Default 0.",
+      "MIX_PROP_PLAY_START_MILLISECOND_NUMBER :\nThe same as using the MIX_PROP_PLAY_START_FRAME_NUMBER\nproperty, but the value is specified in milliseconds instead of sample\nframes. If both properties are specified, the sample frames value is\nfavored. Default 0.",
+      "MIX_PROP_PLAY_LOOP_START_FRAME_NUMBER :\nIf the track is looping, this is the sample frame position that the\ntrack will loop back to; this lets one play an intro at the start of a\ntrack on the first iteration, but have a loop point somewhere in the\nmiddle thereafter. A value <= 0 will begin the loop from the start of\nthe track's input. Default 0.",
+      "MIX_PROP_PLAY_LOOP_START_MILLISECOND_NUMBER :\nThe same as using the MIX_PROP_PLAY_LOOP_START_FRAME_NUMBER\nproperty, but the value is specified in milliseconds instead of sample\nframes. If both properties are specified, the sample frames value is\nfavored. Default 0.",
+      "MIX_PROP_PLAY_FADE_IN_FRAMES_NUMBER :\nThe number of sample frames over which to fade in the newly-started\ntrack. The track will begin mixing silence and reach full volume\nsmoothly over this many sample frames. If the track loops before the\nfade-in is complete, it will continue to fade correctly from the loop\npoint. A value <= 0 will disable fade-in, so the track starts mixing\nat full volume. Default 0.",
+      "MIX_PROP_PLAY_FADE_IN_MILLISECONDS_NUMBER :\nThe same as using the MIX_PROP_PLAY_FADE_IN_FRAMES_NUMBER\nproperty, but the value is specified in milliseconds instead of sample\nframes. If both properties are specified, the sample frames value is\nfavored. Default 0.",
+      "MIX_PROP_PLAY_FADE_IN_START_GAIN_FLOAT :\nIf fading in, start fading from this volume level. 0.0f is silence and\n1.0f is full volume, every in between is a linear change in gain. The\nspecified value will be clamped between 0.0f and 1.0f. Default\n0.0f.",
+      "MIX_PROP_PLAY_APPEND_SILENCE_FRAMES_NUMBER :\nAt the end of mixing this track, after all loops are complete, append\nthis many sample frames of silence as if it were part of the audio file.\nThis allows for apps to implement effects in callbacks, like reverb,\nthat need to generate samples past the end of the stream's audio, or\nperhaps introduce a delay before starting a new sound on the track\nwithout having to manage it directly. A value <= 0 generates no\nsilence before stopping the track. Default 0.",
+      "MIX_PROP_PLAY_APPEND_SILENCE_MILLISECONDS_NUMBER :\nThe same as using the MIX_PROP_PLAY_APPEND_SILENCE_FRAMES_NUMBER\nproperty, but the value is specified in milliseconds instead of sample\nframes. If both properties are specified, the sample frames value is\nfavored. Default 0.",
+      "MIX_PROP_PLAY_HALT_WHEN_EXHAUSTED_BOOLEAN :\nIf true, when input is completely consumed for the track, the mixer will\nmark the track as stopped (and call any appropriate MIX_TrackStoppedCallback , etc);\nto play more, the track will need to be restarted. If false, the track\nwill just not contribute to the mix, but it will not be marked as\nstopped. There may be clever logic tricks this exposes generally, but\nthis property is specifically useful when the track's input is an\nSDL_AudioStream assigned via MIX_SetTrackAudioStream ().\nSetting this property to true can be useful when pushing a complete\npiece of audio to the stream that has a definite ending, as the track\nwill operate like any other audio was applied. Setting to false means as\nnew data is added to the stream, the mixer will start using it as soon\nas possible, which is useful when audio should play immediately as it\ndrips in: new VoIP packets, etc. Note that in this situation, if the\naudio runs out when needed, there will be gaps in the mixed\noutput, so try to buffer enough data to avoid this when possible. Note\nthat a track is not consider exhausted until all its loops and appended\nsilence have been mixed (and also, that loops don't mean anything when\nthe input is an AudioStream). Default true.",
+      "MIX_PROP_PLAY_START_ORDER_NUMBER :\nThis is a special-case property that most apps can ignore. For mod file\nformats, start mixing from a specific \"order\" index instead of the start\nof the file. A value < 0 will cause this property to be ignored. If\nthe decoder doesn't support this property, it will also be ignored. If\nthis property is not ignored, the MIX_PROP_PLAY_START_FRAME_NUMBER\nand MIX_PROP_PLAY_START_MILLISECOND_NUMBER\nproperties will be ignored instead. Default -1. Since SDL_mixer\n3.2.2.",
+      "If this function fails, mixing of this track will not start (or\nrestart, if it was already started)."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success, false on error; call SDL_GetError()\nfor details.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_PlayTrack",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_PlayTag",
+        "route": "#ref/sdl3-mixer/functions/mix-play-tag",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_PlayAudio",
+        "route": "#ref/sdl3-mixer/functions/mix-play-audio",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_StopTrack",
+        "route": "#ref/sdl3-mixer/functions/mix-stop-track",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_PauseTrack",
+        "route": "#ref/sdl3-mixer/functions/mix-pause-track",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_TrackPlaying",
+        "route": "#ref/sdl3-mixer/functions/mix-track-playing",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

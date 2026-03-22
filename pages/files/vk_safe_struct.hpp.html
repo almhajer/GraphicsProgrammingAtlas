@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_safe_struct.hpp - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_safe_struct.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <span>vk_safe_struct.hpp</span>
+      </nav>
+      <h1 class="page-title">📄 vk_safe_struct.hpp</h1>
+      <p class="page-description">ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.</p>
+      <div class="standalone-badges">
+        <span class="standalone-badge">ملفات vulkan/utility</span>
+        <span class="standalone-badge">utility</span>
+        <span class="standalone-badge"><span dir="ltr">vulkan/utility/vk_safe_struct.hpp</span></span>
+      </div>
+    </div>
+
+    <div class="standalone-grid">
+      <section class="standalone-card">
+        <h2>الهدف الفعلي للملف</h2>
+        <ul class="insight-list">
+          <li>هذا الملف أداة مساندة أكثر من كونه جزءاً من عقد API الرسمي؛ الغرض منه تسهيل النسخ، التحويل، dispatch، أو التعامل مع هياكل Vulkan المساعدة داخل الأدوات والطبقات.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>متى تستخدمه؟</h2>
+        <p>استخدم vk_safe_struct.hpp عندما تحتاج وظائف أو بنى مساعدة تدعم الطبقات أو الأدوات أو الشيفرات المساندة حول Vulkan.</p>
+      </section>
+      <section class="standalone-card">
+        <h2>مثال تضمين</h2>
+        <pre class="code-block" dir="ltr"><code class="language-cpp">#include &lt;vulkan/utility/vk_safe_struct.hpp&gt;</code></pre>
+      </section>
+      <section class="standalone-card">
+        <h2>الملفات المضمنة</h2>
+        <ul><li><a class="standalone-link" href="./vulkan.h.html"><code>vulkan/vulkan.h</code></a></li><li><code>algorithm</code></li><li><a class="standalone-link" href="./vk_safe_struct_utils.hpp.html"><code>vulkan/utility/vk_safe_struct_utils.hpp</code></a></li></ul>
+      </section>
+      <section class="standalone-card">
+        <h2>تركيب الملف</h2>
+        <ul class="insight-list">
+          <li>يستورد 3 ملفاً آخر قبل بناء تعريفاته الخاصة.</li><li>يستخدم 9 مؤشراً لدالة، ما يبرز دور الربط الديناميكي أو dispatch.</li><li>ملامحه C++ واضحة: 2 namespace، 1 class، و0 استعمالاً لـ inline تقريباً.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>ما الذي تقوله التعليقات نفسها؟</h2>
+        <ul class="insight-list">
+          
+            <li>
+              ** THIS FILE IS GENERATED - DO NOT EDIT *** See safe_struct_generator.py for modifications
+              
+            </li>
+          
+            <li>
+              Mapping of unknown stype codes to structure lengths. This should be set up by the application before vkCreateInstance() and not modified afterwards.
+              <span class="comment-context">std::vector&lt;std::pair&lt;uint32_t, uint32_t&gt;&gt;&amp; GetCustomStypeInfo();</span>
+            </li>
+          
+            <li>
+              Primarily intended for use by GPUAV when replacing shader module code with instrumented code
+              <span class="comment-context">template &lt;typename Container&gt;</span>
+            </li>
+          
+            <li>
+              Safe struct that spans NV and KHR VkRayTracingPipelineCreateInfo structures. It is a VkRayTracingPipelineCreateInfoKHR and supports construction from a VkRayTracingPipelineCreateInfoNV.
+              <span class="comment-context">class safe_VkRayTracingPipelineCreateInfoCommon : public safe_VkRayTracingPipelineCreateInfoKHR {</span>
+            </li>
+          
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="source-overview">
+      <h2>📚 أقسام المصدر</h2>
+      <p>هذا الملف كبير (24,231 سطر)، لذلك قُسِّم إلى صفحات أقسام ثابتة متتابعة حتى لا يعلق المتصفح. افتح القسم المطلوب ثم انتقل عبر السابق/التالي.</p>
+      <div class="source-toolbar">
+        <span class="source-stat">الأسطر: 24,231</span>
+        <span class="source-stat">الحجم: 1.42 MB</span>
+        <span class="source-stat">عدد الأقسام: 54</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      
+    <div class="chunk-grid">
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-1.html">
+          <strong>القسم 1 من 54 • الأسطر 1-450</strong>
+          <span>#pragma once</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-2.html">
+          <strong>القسم 2 من 54 • الأسطر 451-900</strong>
+          <span>safe_VkCommandBufferAllocateInfo&amp; operator=(const safe_VkCommandBufferAllocateInfo&amp; copy_src);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-3.html">
+          <strong>القسم 3 من 54 • الأسطر 901-1350</strong>
+          <span>~safe_VkPipelineRasterizationStateCreateInfo();</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-4.html">
+          <strong>القسم 4 من 54 • الأسطر 1351-1800</strong>
+          <span>safe_VkImageMemoryRequirementsInfo2(const VkImageMemoryRequirementsInfo2* in_struct, PNextCopyState* copy_state = {},</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-5.html">
+          <strong>القسم 5 من 54 • الأسطر 1801-2250</strong>
+          <span>~safe_VkExternalMemoryBufferCreateInfo();</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-6.html">
+          <strong>القسم 6 من 54 • الأسطر 2251-2700</strong>
+          <span>void* pNext{};</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-7.html">
+          <strong>القسم 7 من 54 • الأسطر 2701-3150</strong>
+          <span>uint64_t opaqueCaptureAddress;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-8.html">
+          <strong>القسم 8 من 54 • الأسطر 3151-3600</strong>
+          <span>~safe_VkSubpassDescription2();</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-9.html">
+          <strong>القسم 9 من 54 • الأسطر 3601-4050</strong>
+          <span>safe_VkMemoryBarrier2();</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-10.html">
+          <strong>القسم 10 من 54 • الأسطر 4051-4500</strong>
+          <span>VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures const* ptr() const {</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-11.html">
+          <strong>القسم 11 من 54 • الأسطر 4501-4950</strong>
+          <span>~safe_VkPipelineRenderingCreateInfo();</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-12.html">
+          <strong>القسم 12 من 54 • الأسطر 4951-5400</strong>
+          <span>VkMemoryToImageCopy* ptr() { return reinterpret_cast&lt;VkMemoryToImageCopy*&gt;(this); }</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-13.html">
+          <strong>القسم 13 من 54 • الأسطر 5401-5850</strong>
+          <span>safe_VkPipelineRasterizationLineStateCreateInfo();</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-14.html">
+          <strong>القسم 14 من 54 • الأسطر 5851-6300</strong>
+          <span>uint32_t profileCount;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-15.html">
+          <strong>القسم 15 من 54 • الأسطر 6301-6750</strong>
+          <span>safe_VkVideoEncodeH264SessionParametersGetInfoKHR();</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-16.html">
+          <strong>القسم 16 من 54 • الأسطر 6751-7200</strong>
+          <span>void initialize(const VkVideoEncodeH265RateControlLayerInfoKHR* in_struct, PNextCopyState* copy_state = {});</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-17.html">
+          <strong>القسم 17 من 54 • الأسطر 7201-7650</strong>
+          <span>const void* pNext{};</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-18.html">
+          <strong>القسم 18 من 54 • الأسطر 7651-8100</strong>
+          <span>bool copy_pnext = true);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-19.html">
+          <strong>القسم 19 من 54 • الأسطر 8101-8550</strong>
+          <span>safe_VkPresentIdKHR(const VkPresentIdKHR* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-20.html">
+          <strong>القسم 20 من 54 • الأسطر 8551-9000</strong>
+          <span>safe_VkPhysicalDevicePresentId2FeaturesKHR(const VkPhysicalDevicePresentId2FeaturesKHR* in_struct,</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-21.html">
+          <strong>القسم 21 من 54 • الأسطر 9001-9450</strong>
+          <span>safe_VkReleaseSwapchainImagesInfoKHR(const VkReleaseSwapchainImagesInfoKHR* in_struct, PNextCopyState* copy_state = {},</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-22.html">
+          <strong>القسم 22 من 54 • الأسطر 9451-9900</strong>
+          <span>uint32_t keyFramePeriod;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-23.html">
+          <strong>القسم 23 من 54 • الأسطر 9901-10350</strong>
+          <span>return reinterpret_cast&lt;VkVideoEncodeQuantizationMapCapabilitiesKHR const*&gt;(this);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-24.html">
+          <strong>القسم 24 من 54 • الأسطر 10351-10800</strong>
+          <span>return reinterpret_cast&lt;VkPhysicalDeviceVideoMaintenance2FeaturesKHR*&gt;(this);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-25.html">
+          <strong>القسم 25 من 54 • الأسطر 10801-11250</strong>
+          <span>uint32_t rasterizationStream;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-26.html">
+          <strong>القسم 26 من 54 • الأسطر 11251-11700</strong>
+          <span>VkImageUsageFlags supportedUsageFlags;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-27.html">
+          <strong>القسم 27 من 54 • الأسطر 11701-12150</strong>
+          <span>uint64_t androidHardwareBufferUsage;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-28.html">
+          <strong>القسم 28 من 54 • الأسطر 12151-12600</strong>
+          <span>uint32_t heapArrayStride;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-29.html">
+          <strong>القسم 29 من 54 • الأسطر 12601-13050</strong>
+          <span>void* pNext{};</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-30.html">
+          <strong>القسم 30 من 54 • الأسطر 13051-13500</strong>
+          <span>VkPipelineViewportCoarseSampleOrderStateCreateInfoNV const* ptr() const {</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-31.html">
+          <strong>القسم 31 من 54 • الأسطر 13501-13950</strong>
+          <span>uint32_t maxVertexAttribDivisor;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-32.html">
+          <strong>القسم 32 من 54 • الأسطر 13951-14400</strong>
+          <span>VkStructureType sType;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-33.html">
+          <strong>القسم 33 من 54 • الأسطر 14401-14850</strong>
+          <span>}</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-34.html">
+          <strong>القسم 34 من 54 • الأسطر 14851-15300</strong>
+          <span>VkBool32 shaderSharedFloat16AtomicAdd;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-35.html">
+          <strong>القسم 35 من 54 • الأسطر 15301-15750</strong>
+          <span>struct safe_VkPhysicalDeviceCustomBorderColorPropertiesEXT {</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-36.html">
+          <strong>القسم 36 من 54 • الأسطر 15751-16200</strong>
+          <span>VkExportMetalCommandQueueInfoEXT* ptr() { return reinterpret_cast&lt;VkExportMetalCommandQueueInfoEXT*&gt;(this); }</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-37.html">
+          <strong>القسم 37 من 54 • الأسطر 16201-16650</strong>
+          <span>};</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-38.html">
+          <strong>القسم 38 من 54 • الأسطر 16651-17100</strong>
+          <span>VkBool32 rasterizationOrderDepthAttachmentAccess;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-39.html">
+          <strong>القسم 39 من 54 • الأسطر 17101-17550</strong>
+          <span>PNextCopyState* copy_state = {}, bool copy_pnext = true);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-40.html">
+          <strong>القسم 40 من 54 • الأسطر 17551-18000</strong>
+          <span>bool copy_pnext = true);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-41.html">
+          <strong>القسم 41 من 54 • الأسطر 18001-18450</strong>
+          <span>void initialize(const VkCopyMemoryToMicromapInfoEXT* in_struct, PNextCopyState* copy_state = {});</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-42.html">
+          <strong>القسم 42 من 54 • الأسطر 18451-18900</strong>
+          <span>struct safe_VkDescriptorSetLayoutHostMappingInfoVALVE {</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-43.html">
+          <strong>القسم 43 من 54 • الأسطر 18901-19350</strong>
+          <span>return reinterpret_cast&lt;VkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT*&gt;(this);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-44.html">
+          <strong>القسم 44 من 54 • الأسطر 19351-19800</strong>
+          <span>safe_VkTensorCreateInfoARM(const VkTensorCreateInfoARM* in_struct, PNextCopyState* copy_state = {}, bool copy_pnext = true);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-45.html">
+          <strong>القسم 45 من 54 • الأسطر 19801-20250</strong>
+          <span>}</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-46.html">
+          <strong>القسم 46 من 54 • الأسطر 20251-20700</strong>
+          <span>VkStructureType sType;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-47.html">
+          <strong>القسم 47 من 54 • الأسطر 20701-21150</strong>
+          <span>struct safe_VkLatencySleepModeInfoNV {</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-48.html">
+          <strong>القسم 48 من 54 • الأسطر 21151-21600</strong>
+          <span>return reinterpret_cast&lt;VkDataGraphPipelineIdentifierCreateInfoARM*&gt;(this);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-49.html">
+          <strong>القسم 49 من 54 • الأسطر 21601-22050</strong>
+          <span>safe_VkImportScreenBufferInfoQNX(const VkImportScreenBufferInfoQNX* in_struct, PNextCopyState* copy_state = {},</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-50.html">
+          <strong>القسم 50 من 54 • الأسطر 22051-22500</strong>
+          <span>void initialize(const VkPhysicalDeviceClusterAccelerationStructureFeaturesNV* in_struct, PNextCopyState* copy_state = {});</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-51.html">
+          <strong>القسم 51 من 54 • الأسطر 22501-22950</strong>
+          <span>VkPipeline initialPipeline;</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-52.html">
+          <strong>القسم 52 من 54 • الأسطر 22951-23400</strong>
+          <span>safe_VkPhysicalDeviceHdrVividFeaturesHUAWEI(const safe_VkPhysicalDeviceHdrVividFeaturesHUAWEI&amp; copy_src);</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-53.html">
+          <strong>القسم 53 من 54 • الأسطر 23401-23850</strong>
+          <span>void initialize(const safe_VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT* copy_src, PNextCopyState* copy_state = {});</span>
+        </a>
+      
+        <a class="chunk-card" href="./vk_safe_struct.hpp--section-54.html">
+          <strong>القسم 54 من 54 • الأسطر 23851-24231</strong>
+          <span>safe_VkPhysicalDeviceAccelerationStructureFeaturesKHR(const VkPhysicalDeviceAccelerationStructureFeaturesKHR* in_struct,</span>
+        </a>
+      
+    </div>
+  
+    </section>
+    
+  </main>
+</body>
+</html>

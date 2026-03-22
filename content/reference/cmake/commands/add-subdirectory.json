@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "add_subdirectory",
+    "slug": "add-subdirectory",
+    "titleArabic": "يدخل CMakeLists.txt فرعيًا ويضيف أهدافه إلى نفس شجرة البناء",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/add-subdirectory",
+    "contentPath": "content/reference/cmake/commands/add-subdirectory.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يدخل CMakeLists.txt فرعيًا ويضيف أهدافه إلى نفس شجرة البناء",
+    "actualMeaningArabic": "هذا الأمر يطلب من CMake النزول إلى مجلد فرعي وقراءة CMakeLists.txt الموجود فيه أثناء نفس مرحلة configure، مع إنشاء scope دليل جديد لكنه يبقى جزءًا من الشجرة نفسها.",
+    "purposeArabic": "يستخدم لتقسيم المشروع إلى مجلدات منطقية مثل src وlib وtests بدل حشر كل الأهداف في ملف واحد.",
+    "whyUseArabic": "يسهّل التنظيم ويجعل كل جزء يعلن أهدافه ومتغيراته القريبة منه مع بقاء الربط ضمن شجرة واحدة.",
+    "carriedValueArabic": "يوسع build graph بإضافة أهداف ومتحولات من ملفات فرعية أثناء configure، ويغيّر current source/binary directories داخل ذلك النطاق.",
+    "sourceDescription": "هذا الأمر يطلب من CMake النزول إلى مجلد فرعي وقراءة CMakeLists.txt الموجود فيه أثناء نفس مرحلة configure، مع إنشاء scope دليل جديد لكنه يبقى جزءًا من الشجرة نفسها."
+  },
+  "signature": {
+    "raw": "add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL])",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "source_dir",
+        "type": "argument إلزامي",
+        "semanticKind": "argument",
+        "descriptionArabic": "يمثل قيمة فعلية يكتبها المستخدم في هذا الموضع داخل صياغة add_subdirectory، وليس كلمة ثابتة يقرأها CMake حرفيًا. هذا الوسيط جزء مطلوب من الاستدعاء، لذلك يجب على المستخدم كتابة قيمة حقيقية هنا بدل الاسم النمطي."
+      },
+      {
+        "name": "binary_dir",
+        "type": "argument اختياري",
+        "semanticKind": "argument",
+        "descriptionArabic": "يمثل قيمة فعلية يكتبها المستخدم في هذا الموضع داخل صياغة add_subdirectory، وليس كلمة ثابتة يقرأها CMake حرفيًا. وجود هذا الوسيط اختياري، لذلك تكتبه فقط عندما تحتاج السلوك أو التحديد الإضافي الذي يفعّله."
+      },
+      {
+        "name": "EXCLUDE_FROM_ALL",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "خيار يمنع الهدف أو المجلد من الدخول في البناء الافتراضي الشامل إلا إذا طلبته صراحة. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "غالباً يستدعى من الملف الجذري لتجميع مجلدات src وtests وexamples.",
+      "بعده يمكنك الربط بالأهداف الفرعية بالاسم نفسه لأن جميع الأهداف تعيش في شجرة واحدة."
+    ],
+    "notes": [
+      "ينشئ directory scope جديداً؛ لذلك بعض المتغيرات المحلية لا تتسرب إلا إذا خزنتها أو أعدتها صراحة.",
+      "يتفاعل مباشرة مع CMAKE_CURRENT_SOURCE_DIR وCMAKE_CURRENT_BINARY_DIR."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدمه للتنظيم البنيوي لا لنسخ منطق ضخم بين الملفات."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "add_subdirectory(src)\nadd_subdirectory(tests)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/add_subdirectory.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/add_subdirectory.html",
+    "related": [
+      {
+        "name": "CMAKE_CURRENT_SOURCE_DIR",
+        "route": "#ref/cmake/variables/cmake-current-source-dir",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "CMAKE_CURRENT_BINARY_DIR",
+        "route": "#ref/cmake/variables/cmake-current-binary-dir",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "directory scope and add_subdirectory",
+        "route": "#ref/cmake/concepts/directory-scope-and-add-subdirectory",
+        "libraryId": "cmake",
+        "kindId": "concepts"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

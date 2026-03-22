@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_SetTrackAudioStream",
+    "slug": "mix-set-track-audio-stream",
+    "titleArabic": "Set a MIX_Track 's input to an\nSDL_AudioStream",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-set-track-audio-stream",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-set-track-audio-stream.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Set a MIX_Track 's input to an\nSDL_AudioStream",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل MIX Set Track الصوت الدفق داخل SDL3_mixer، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل MIX Set Track الصوت الدفق داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success, false on error; call SDL_GetError()\nfor details. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Set a MIX_Track 's input to an\nSDL_AudioStream."
+  },
+  "signature": {
+    "raw": "bool MIX_SetTrackAudioStream(MIX_Track *track, SDL_AudioStream *stream);",
+    "returnType": "bool",
+    "parameters": [
+      "MIX_Track *track",
+      "SDL_AudioStream *stream"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "track",
+        "type": "MIX_Track *",
+        "descriptionArabic": "يمثل المعامل track من النوع MIX_Track * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the track on which to set a new audio input."
+      },
+      {
+        "name": "stream",
+        "type": "SDL_AudioStream *",
+        "descriptionArabic": "يمثل المعامل stream من النوع SDL_AudioStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the audio stream to use as the track's input."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Using an audio stream allows the application to generate any type of\naudio, in any format, possibly procedurally or on-demand, and mix in\nwith all other tracks.",
+      "When a track uses an audio stream, it will call\nSDL_GetAudioStreamData as it needs more audio to mix. The app can either\nbuffer data to the stream ahead of time, or set a callback on the stream\nto provide data as needed. Please refer to SDL's documentation for\ndetails.",
+      "A given audio stream may only be assigned to a single track at a\ntime; duplicate assignments won't return an error, but assigning a\nstream to multiple tracks will cause each track to read from the stream\narbitrarily, causing confusion and incorrect mixing.",
+      "Once a track has a valid input, it can start mixing sound by calling\n MIX_PlayTrack (), or possibly MIX_PlayTag ().",
+      "Calling this function with a NULL audio stream is legal, and removes\nany input from the track. If the track was currently playing, the next\ntime the mixer runs, it'll notice this and mark the track as stopped,\ncalling any assigned MIX_TrackStoppedCallback .",
+      "It is legal to change the input of a track while it's playing,\nhowever some states, like loop points, may cease to make sense with the\nnew audio. In such a case, one can call MIX_PlayTrack again to adjust\nparameters.",
+      "The provided audio stream must remain valid until the track no longer\nneeds it (either by changing the track's input or destroying the\ntrack)."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success, false on error; call SDL_GetError()\nfor details.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_SetTrackAudioStream",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_SetAudioStreamFormat",
+    "slug": "sdl-set-audio-stream-format",
+    "titleArabic": "Change the input and output formats of an audio stream",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-set-audio-stream-format",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-set-audio-stream-format.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Change the input and output formats of an audio stream",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Set الصوت الدفق Format داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Set الصوت الدفق Format داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Change the input and output formats of an audio stream."
+  },
+  "signature": {
+    "raw": "bool SDL_SetAudioStreamFormat(SDL_AudioStream *stream, const SDL_AudioSpec *src_spec, const SDL_AudioSpec *dst_spec);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AudioStream *stream",
+      "const SDL_AudioSpec *src_spec",
+      "const SDL_AudioSpec *dst_spec"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "SDL_AudioStream *",
+        "descriptionArabic": "يمثل المعامل stream من النوع SDL_AudioStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the stream the format is being changed."
+      },
+      {
+        "name": "src_spec",
+        "type": "const SDL_AudioSpec *",
+        "descriptionArabic": "يمثل المعامل src_spec من النوع const SDL_AudioSpec * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new format of the audio input; if NULL, it is not changed."
+      },
+      {
+        "name": "dst_spec",
+        "type": "const SDL_AudioSpec *",
+        "descriptionArabic": "يمثل المعامل dst_spec من النوع const SDL_AudioSpec * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new format of the audio output; if NULL, it is not changed."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Future calls to and SDL_GetAudioStreamAvailable\nand SDL_GetAudioStreamData\nwill reflect the new format, and future calls to SDL_PutAudioStreamData must\nprovide data in the new input formats.",
+      "Data that was previously queued in the stream will still be operated\non in the format that was current when it was added, which is to say you\ncan put the end of a sound file in one format to a stream, change\nformats for the next sound file, and start putting that new data while\nthe previous sound file is still queued, and everything will still play\nback correctly.",
+      "If a stream is bound to a device, then the format of the side of the\nstream bound to a device cannot be changed (src_spec for recording\ndevices, dst_spec for playback devices). Attempts to make a change to\nthis side will be ignored, but this will not report an error. The other\nside's format can be changed."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread, as it holds a\nstream-specific mutex while running.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_SetAudioStreamFormat",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_GetAudioStreamFormat",
+        "route": "#ref/sdl3-core/functions/sdl-get-audio-stream-format",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_SetAudioStreamFrequencyRatio",
+        "route": "#ref/sdl3-core/functions/sdl-set-audio-stream-frequency-ratio",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

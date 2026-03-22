@@ -1,0 +1,246 @@
+{
+  "schemaVersion": "2026-03-vulkan-semantic-overrides-1",
+  "entities": {
+    "functions/vk-queue-submit": {
+      "summary": {
+        "actualMeaningArabic": "(vkQueueSubmit) ينقل command buffers المسجلة إلى queue فعلية مع قواعد انتظار وإشارة واضحة. هذا هو الحد الفاصل بين وصف العمل في command buffer وبين بدء التنفيذ الحقيقي على GPU.",
+        "purposeArabic": "وُجد لأن Vulkan لا تعتبر التسجيل تنفيذًا. يجب أن توجد خطوة صريحة تجمع command buffers والمزامنة ثم تدفعها إلى `VkQueue`.",
+        "whyUseArabic": "يستخدمه المبرمج في كل `submission flow` تقريبًا: بعد acquire أو بعد تجهيز عمل نقل/حساب/رسم، يحدد ما الذي سينفذ ومتى يبدأ بعد semaphores الانتظار ومتى يمكن للخطوات التالية الاعتماد على اكتماله.",
+        "carriedValueArabic": "يعيد `VkResult` لحالة الاستدعاء، لكن القيمة الأهم عمليًا هي أن هذا النداء يغيّر حالة التنفيذ: command buffers الممررة لم تعد مجرد تسجيل، بل أصبحت batch قيد التنفيذ أو الانتظار على queue."
+      },
+      "details": {
+        "usage": [
+          "المعنى العملي للاستدعاء ليس مجرد \"إرسال أوامر\"؛ بل إعلان dependency batch كاملة: `pSubmits` تحدد من ننتظر، وما الذي ننفذه، وما semaphores التي ستُطلق بعد ذلك.",
+          "اختيار `queue` يجب أن يطابق قدرات `queue family`. إذا سجلت أوامر رسومية فلا يكفي أي queue عامة؛ يجب أن تكون queue صالحة لهذا النوع من العمل.",
+          "الحقل `pWaitDstStageMask` لا يصف المرحلة التي كُتب فيها المورد سابقًا، بل أول مرحلة في submit الحالية يجب أن تنتظر semaphore قبل أن تبدأ استهلاك المورد."
+        ],
+        "notes": [
+          "Fence هنا تربط CPU باكتمال الـ submit كله. إذا أردت ترتيبًا بين submits أو بين queue وpresent فغالبًا المقصود هو semaphores لا fences.",
+          "توسيع stage masks أكثر من اللازم قد يقلل التوازي، وتضييقها دون فهم access الحقيقي قد يخلق hazard غير مرئي إلا مع الـ validation أو كسلوك غير مستقر."
+        ]
+      }
+    },
+    "structures/vk-submit-info": {
+      "summary": {
+        "actualMeaningArabic": "(VkSubmitInfo) هو وصف batch submit واحدة سترسل إلى queue: semaphores الانتظار، مراحل بداية الاستهلاك، command buffers المراد تنفيذها، وsemaphores التي ستعلن اكتمال العمل بعدها.",
+        "purposeArabic": "وُجد حتى تبقى submit في Vulkan عقدًا صريحًا يربط `command recording` بالمزامنة وبالتنفيذ، بدل أن تكون call عامة بلا بنية واضحة.",
+        "whyUseArabic": "يستخدمه المبرمج عند كل submit تقليدية تقريبًا ليحدد شروط البداية والنهاية للـ batch على GPU، لا ليملأ \"struct مطلوبة\" فقط."
+      },
+      "details": {
+        "usage": [
+          "إذا غيرت `pWaitSemaphores` أو `pWaitDstStageMask` فأنت تغيّر نقطة السماح ببدء الاستهلاك داخل batch، لا مجرد بيانات وصفية.",
+          "كل عنصر في `pCommandBuffers` سيُنفذ بالترتيب داخل submit هذه وفق قواعد queue الحالية، لكن الاعتماديات الخارجية على resources يجب أن تكون ممثلة عبر semaphores أو barriers المناسبة."
+        ],
+        "notes": [
+          "عدد `waitSemaphoreCount` يجب أن يطابق عدد عناصر `pWaitDstStageMask` لأن كل semaphore انتظار تحتاج stage scope مقابلة لها.",
+          "Signal semaphores تمثل \"خرج\" batch هذه، ولذلك يعتمد عليها `vkQueuePresentKHR` أو submits لاحقة بدل أن تعتمد CPU على signal مباشر منها."
+        ]
+      }
+    },
+    "structures/vk-command-buffer-begin-info": {
+      "summary": {
+        "actualMeaningArabic": "(VkCommandBufferBeginInfo) يحدد contract بدء التسجيل: هل command buffer سيُستخدم مرة واحدة، هل قد يُعاد submit له بالتوازي، وهل هو secondary buffer يرث سياقًا من primary.",
+        "purposeArabic": "وُجد لأن `vkBeginCommandBuffer` يحتاج معرفة نمط الاستخدام المتوقع قبل أول أمر `vkCmd*`, وهذا يؤثر في صحة التسجيل وافتراضات الـ driver.",
+        "whyUseArabic": "يستخدمه المبرمج لتثبيت معنى التسجيل نفسه، خصوصًا عند الفصل بين primary وsecondary buffers أو عند تحسين نمط إعادة الاستخدام."
+      },
+      "details": {
+        "notes": [
+          "هذا العقد لا \"ينشئ\" command buffer ولا يخصصه؛ دوره فقط وصف جلسة التسجيل الحالية لهذا الـ buffer القائم أصلًا.",
+          "وجود `pInheritanceInfo` مهم فقط عندما يكون الـ command buffer ثانويًا ويحتاج معرفة سياق التنفيذ الذي سيرثه."
+        ]
+      }
+    },
+    "structures/vk-memory-allocate-info": {
+      "summary": {
+        "actualMeaningArabic": "(VkMemoryAllocateInfo) يصف تخصيص ذاكرة خام على مستوى `VkDevice`: كم حجم الذاكرة المطلوب، وأي memory type ستحدد خصائص الرؤية والأداء والربط اللاحق.",
+        "purposeArabic": "وُجد لأن Vulkan تفصل بين تعريف المورد (`VkBuffer` أو `VkImage`) وبين منح هذا المورد تخزينًا فعليًا يمكن للجهاز أو المضيف الوصول إليه.",
+        "whyUseArabic": "يستخدمه المبرمج عندما يقرر هل هذا التخصيص staging قابل للـ map، أم تخزين `device local` سريع للقراءة من GPU، أم مزيجًا آخر وفق خصائص الذاكرة المدعومة."
+      },
+      "details": {
+        "notes": [
+          "اختيار `memoryTypeIndex` ليس خطوة شكلية. هو ما يحدد إن كانت CPU تستطيع `map` الذاكرة، وإن كانت الكتابات تحتاج flush/invalidate، وإن كان التخزين أقرب لأداء الجهاز.",
+          "التخصيص هنا لا يصبح resource قابلة للاستخدام وحده؛ يجب ربطه بعد ذلك بbuffer أو image عبر bind مناسب."
+        ]
+      }
+    },
+    "structures/vk-image-memory-barrier": {
+      "summary": {
+        "actualMeaningArabic": "(VkImageMemoryBarrier) يصف dependency لصورة محددة تجمع بين ترتيب access وانتقال `image layout` وربما نقل الملكية بين queue families.",
+        "purposeArabic": "وُجد لأن الصورة في Vulkan لا يكفيها ترتيب قراءة/كتابة فقط؛ يجب أيضًا إعلان layout التي سيفهم بها المسار التالي الذاكرة نفسها.",
+        "whyUseArabic": "يستخدمه المبرمج عند الانتقال بين copy وsampling وcolor/depth attachment وpresent paths، أو عند نقل الصورة بين queues مختلفة."
+      },
+      "details": {
+        "usage": [
+          "المعنى الحقيقي للحاجز هنا هو: \"من أنتج هذه الصورة؟ ومن سيستهلكها بعد ذلك؟ وبأي layout؟\" لا مجرد \"زامن الصورة\".",
+          "إذا كان الانتقال من `TRANSFER_DST_OPTIMAL` إلى `SHADER_READ_ONLY_OPTIMAL` مثلًا، فهذا يعني أن الصورة انتهت كهدف نسخ وستصبح مورد قراءة للشيدر، ويجب أن يعكس access/stage masks هذا التغير."
+        ],
+        "notes": [
+          "الحاجز لا يعمل وحده: الـ `srcStageMask/dstStageMask` في أمر الحاجز نفسه هي ما يحدد scope الزمني للتزامن، بينما هذه البنية تحدد المورد وأنواع accesses/layout المعنية.",
+          "استخدام `oldLayout` أو `srcAccessMask` الخاطئ قد يمر أحيانًا بصريًا في بعض التعريفات، لكنه يبقى خطأ دلاليًا يظهر مع تغيّر العتاد أو الترتيب التنفيذي."
+        ]
+      }
+    },
+    "structures/vk-descriptor-set-layout-binding": {
+      "summary": {
+        "actualMeaningArabic": "(VkDescriptorSetLayoutBinding) يصف slot واحدًا داخل descriptor set layout: رقم binding، نوع المورد، عدد العناصر، والمراحل التي يحق لها رؤيته.",
+        "purposeArabic": "وُجد لأن Vulkan تريد contract صريحة بين الشيدر والموارد قبل أي تحديث أو bind فعلي.",
+        "whyUseArabic": "يستخدمه المبرمج عندما يحدد نموذج الربط الذي ستبنى عليه `VkPipelineLayout` وعمليات `vkUpdateDescriptorSets` و`vkCmdBindDescriptorSets`."
+      },
+      "details": {
+        "notes": [
+          "هذا العنصر لا يحمل الموارد نفسها، بل يصف شكل الفتحة التي ستدخل فيها الموارد لاحقًا.",
+          "الخطأ الشائع هو اعتبار `stageFlags` تلميحًا فقط، بينما هي جزء من contract التحقق بين layout والشيدر."
+        ]
+      }
+    },
+    "structures/vk-graphics-pipeline-create-info": {
+      "summary": {
+        "actualMeaningArabic": "(VkGraphicsPipelineCreateInfo) هو وصف الإنشاء الكامل للـ graphics pipeline: shaders، vertex input، التجميع، rasterization، multisampling، depth/stencil، blending، والـ layout وتوافق render pass أو dynamic rendering.",
+        "purposeArabic": "وُجد لأن Vulkan تنقل معظم حالة الرسم إلى مرحلة إنشاء صريحة يمكن التحقق منها وتجميعها مسبقًا بدل إعادة تفسيرها عند كل draw.",
+        "whyUseArabic": "يستخدمه المبرمج لبناء state رسومية صريحة وثابتة غالبًا، ثم يربطها لاحقًا بـ `vkCmdBindPipeline` قبل draw بدلاً من تغيير عشرات الإعدادات المبعثرة وقت التنفيذ."
+      },
+      "details": {
+        "notes": [
+          "هذا العقد لا \"ينفذ الرسم\"؛ بل يبني object سيحكم كيف سيُفسر الرسم لاحقًا من حيث stages والـ fixed-function state ونموذج الربط.",
+          "الحقول المرتبطة بـ render pass أو dynamic rendering تحدد compatibility حقيقية، لا مجرد metadata شكلية."
+        ]
+      }
+    },
+    "variables/vk-command-buffer": {
+      "summary": {
+        "actualMeaningArabic": "(VkCommandBuffer) هو سجل أوامر مؤجل: تجمع فيه أوامر الربط والرسم والنسخ الآن، لكن التنفيذ لا يبدأ حتى يدخل هذا الـ buffer في submit إلى `VkQueue`.",
+        "purposeArabic": "وُجد لأن Vulkan تفصل بين وصف العمل (`recording`) وبين تنفيذه (`submission`) لتسمح ببناء batches صريحة وقابلة لإعادة الاستخدام.",
+        "whyUseArabic": "يستخدمه المبرمج لتجميع أوامر frame أو pass أو batch نقل داخل وحدة قابلة للإرسال والمزامنة بدقة."
+      },
+      "details": {
+        "usage": [
+          "إذا كنت داخل `vkCmd*` فأنت تعدل محتوى command buffer فقط، لا تجبر GPU على التنفيذ فورًا.",
+          "عمر الـ command buffer مرتبط بـ command pool وسياسة reset الخاصة بها، لذلك فهم الملكية هنا أساسي لتجنب الأخطاء عند إعادة التسجيل."
+        ]
+      }
+    },
+    "variables/vk-device-memory": {
+      "summary": {
+        "actualMeaningArabic": "(VkDeviceMemory) هو تخصيص ذاكرة خام على مستوى الجهاز المنطقي، تربط به buffers أو images لتكتسب تخزينًا فعليًا. هو ليس موردًا رسوميًا بحد ذاته بل الوعاء الذي يمنح الموارد ذاكرة حقيقية.",
+        "purposeArabic": "وُجد لأن Vulkan تجعل إدارة الذاكرة explicit: التطبيق يختار type والرؤية والربط بدل أن يترك هذا للـ driver ضمنيًا لكل مورد.",
+        "whyUseArabic": "يستخدمه المبرمج عندما يريد التحكم في `host vs device visibility`, `coherency`, وحجم التخصيص وربط عدة موارد ضمن تخطيط ذاكرة واضح."
+      }
+    },
+    "variables/vk-descriptor-set": {
+      "summary": {
+        "actualMeaningArabic": "(VkDescriptorSet) هو الحزمة الفعلية للموارد المرتبطة بالشيدر وفق layout معروفة: buffers وimages وsamplers التي ستصبح مرئية أثناء التنفيذ عند bind هذه المجموعة.",
+        "purposeArabic": "وُجد لفصل \"شكل الربط\" (`VkDescriptorSetLayout`) عن \"القيم الفعلية المرتبطة الآن\" حتى يمكن إعادة استخدام layouts وتبديل الموارد بسهولة.",
+        "whyUseArabic": "يستخدمه المبرمج عند نقل الموارد الفعلية إلى الشيدر في draw/dispatch مع بقاء layout والـ pipeline contract ثابتين."
+      }
+    },
+    "variables/vk-queue": {
+      "summary": {
+        "actualMeaningArabic": "(VkQueue) هو مسار التنفيذ الفعلي داخل `queue family` محددة. عليه تُرسل command buffers الجاهزة، ومن خلاله تبدأ GPU العمل الحقيقي أو تنتقل الصورة إلى present path.",
+        "purposeArabic": "وُجد لأن Vulkan تفصل بين تسجيل العمل في `VkCommandBuffer` وبين وضعه على خط تنفيذ فعلي له قدرات ورسوميات أو حساب أو نقل.",
+        "whyUseArabic": "يستخدمه المبرمج عند `submission flow` وعند `present`, لذلك فهم العائلة التي تنتمي لها queue جزء من فهم ماذا يمكن أن تنفذ هذه queue أصلًا."
+      }
+    },
+    "variables/vk-pipeline": {
+      "summary": {
+        "actualMeaningArabic": "(VkPipeline) هو object الحالة التنفيذية الجاهزة: shaders، والـ fixed-function state، وربط layout المطلوب. بعد bind هذه الـ pipeline تصبح أوامر draw أو dispatch التالية مفسَّرة عبرها.",
+        "purposeArabic": "وُجد لأن Vulkan تثبت state الرسومية أو الحسابية مسبقًا بدل أن تفسرها من جديد عند كل أمر رسم.",
+        "whyUseArabic": "يستخدمه المبرمج عند الفصل بين `creation-time state` وبين `record-time binding`: تبني pipeline مرة أو مرات محدودة ثم تربطها مرارًا أثناء التسجيل."
+      }
+    },
+    "variables/vk-pipeline-layout": {
+      "summary": {
+        "actualMeaningArabic": "(VkPipelineLayout) هو العقد الذي يجمع descriptor set layouts وpush constant ranges التي ستفهمها pipeline والشيدر وقت التنفيذ.",
+        "purposeArabic": "وُجد لأن Vulkan تريد التحقق من نموذج الربط بين الموارد والشيدر مسبقًا، لا أثناء كل draw أو dispatch.",
+        "whyUseArabic": "يستخدمه المبرمج لأنه لا يمكن bind descriptor sets أو push constants بشكل صحيح دون layout متوافقة مع pipeline الحالية."
+      }
+    },
+    "functions/vk-queue-present-khr": {
+      "summary": {
+        "actualMeaningArabic": "(vkQueuePresentKHR) ينقل صورة swapchain من نطاق الرسم والتنفيذ إلى نطاق العرض على السطح بعد تحقق semaphores المطلوبة. هو لا يرسم الصورة، بل يسلمها لمسار الـ present.",
+        "purposeArabic": "وُجد لأن `present` في Vulkan خطوة منفصلة عن submit: لها ارتباط بالسطح والـ swapchain ومزامنة مختلفة عن تنفيذ أوامر الرسم نفسها.",
+        "whyUseArabic": "يستخدمه المبرمج في آخر دورة الإطار بعد اكتمال الرسم على صورة مكتسبة، حتى تُعرض هذه الصورة على النافذة بدل بقائها resource داخلية فقط."
+      },
+      "details": {
+        "usage": [
+          "المعنى العملي هنا هو تسليم صورة swapchain الجاهزة، لا انتظار GPU عامةً. لذلك semaphores الممررة يجب أن تمثل اكتمال الكتابة على الصورة نفسها قبل الـ present.",
+          "إذا أعاد الاستدعاء `OUT_OF_DATE` أو `SUBOPTIMAL` فهذا يعني أن عقد العرض نفسه تغير، وغالبًا يجب إعادة بناء swapchain أو مسارها التابع."
+        ]
+      }
+    },
+    "functions/vk-map-memory": {
+      "summary": {
+        "actualMeaningArabic": "(vkMapMemory) يفتح للـ CPU نافذة وصول إلى range من `VkDeviceMemory` قابلة للرؤية من host. هو لا ينسخ البيانات بنفسه، بل يعطيك pointer إلى الذاكرة المربوطة بهذا التخصيص.",
+        "purposeArabic": "وُجد لأن Vulkan تجعل التفاعل بين CPU وGPU على الذاكرة explicit: ترى الذاكرة عبر map عندما تدعم خصائص النوع ذلك، ثم تضبط flush/invalidate عند الحاجة.",
+        "whyUseArabic": "يستخدمه المبرمج لكتابة staging data أو uniform data أو لقراءة نتائج تُمكّنها خصائص الذاكرة، مع فهم واضح للفارق بين `host visible` و`host coherent`."
+      },
+      "details": {
+        "usage": [
+          "هذا الاستدعاء لا يعني أن GPU ستقرأ التغييرات مباشرة. إذا كانت الذاكرة non-coherent فقد تحتاج `vkFlushMappedMemoryRanges` بعد الكتابة أو `vkInvalidateMappedMemoryRanges` قبل القراءة.",
+          "المؤشر الخارج يمثل نفس range في التخصيص، لذلك إدارة offset/size الصحيحة هنا جزء من correctness وليس مجرد تفصيل ثانوي."
+        ]
+      }
+    },
+    "functions/vk-cmd-bind-pipeline": {
+      "summary": {
+        "actualMeaningArabic": "(vkCmdBindPipeline) يسجل pipeline التي ستفسر أوامر draw أو dispatch التالية ضمن bind point محدد. هو لا ينفذ الرسم وحده، بل يثبت حالة التنفيذ التي ستعمل بها الأوامر اللاحقة.",
+        "purposeArabic": "وُجد لأن state الأساسية في Vulkan لا تبقى ضمنية. يجب إعلان أي pipeline فعليًا مرتبط الآن داخل command buffer.",
+        "whyUseArabic": "يستخدمه المبرمج قبل draw أو dispatch مباشرةً أو عند تغيير المادة أو pass أو مسار التنفيذ، حتى تصبح أوامر التنفيذ التالية مفسَّرة بالشيدر والحالة الصحيحة."
+      }
+    },
+    "functions/vk-cmd-bind-descriptor-sets": {
+      "summary": {
+        "actualMeaningArabic": "(vkCmdBindDescriptorSets) يسجل descriptor sets الفعلية التي ستراها pipeline layout الحالية وقت التنفيذ، بما في ذلك dynamic offsets عندما تكون مطلوبة.",
+        "purposeArabic": "وُجد لأن الموارد التي يقرأها الشيدر يجب ربطها صراحةً لكل command buffer أو draw scope مناسب.",
+        "whyUseArabic": "يستخدمه المبرمج بعد bind pipeline وقبل أوامر draw/dispatch لربط buffers وimages وsamplers الصحيحة بالشيدر، لا لمجرد \"تمرير بيانات\" بشكل عام."
+      },
+      "details": {
+        "usage": [
+          "المعنى الحقيقي لهذا النداء هو ربط القيم الفعلية بعقد layout المعلن سابقًا. إذا اختلفت set layouts أو أنواع bindings فلن يكون الخطأ شكليًا بل mismatch في contract التنفيذ نفسها.",
+          "Dynamic offsets هنا لا تغيّر descriptor type، بل تغيّر بداية القراءة داخل buffer لحظة bind مع بقاء layout ثابتة."
+        ]
+      }
+    },
+    "functions/vk-create-graphics-pipelines": {
+      "summary": {
+        "actualMeaningArabic": "(vkCreateGraphicsPipelines) يبني pipelines رسومية جاهزة للربط من أوصاف creation-time state. الناتج ليس أمر draw، بل object يحدد كيف سيُفسر draw لاحقًا من حيث shaders والـ fixed-function state والـ layout.",
+        "purposeArabic": "وُجد لأن Vulkan تنقل جزءًا كبيرًا من التحقق والتجميع إلى مرحلة إنشاء صريحة بدل أن تتكرر هذه الكلفة أو الغموض عند كل draw.",
+        "whyUseArabic": "يستخدمه المبرمج عندما يحول وصف المواد أو passes إلى pipelines قابلة للربط السريع داخل command buffers، مع وضوح ما هو ثابت وقت الإنشاء وما هو dynamic وقت التسجيل."
+      }
+    },
+    "enums/vk-pipeline-stage-flag-bits": {
+      "summary": {
+        "actualMeaningArabic": "(VkPipelineStageFlagBits) يحدد مراحل التنفيذ التي تقع ضمن dependency أو wait scope. هو يجيب عن سؤال: في أي مرحلة يجب أن نعتبر العمل السابق مكتملًا أو نمنع العمل التالي من البدء؟",
+        "purposeArabic": "وُجد لأن التزامن في Vulkan يحتاج توصيفًا صريحًا لـ `pipeline stages` بدل حواجز عامة لا تحدد موضع الخطر في خط التنفيذ.",
+        "whyUseArabic": "يستخدمه المبرمج مع semaphores والحواجز لتحديد scope الزمني الصحيح للتزامن، بحيث لا يكون أوسع من اللازم ولا أضيق من الوصول الفعلي."
+      }
+    },
+    "enums/vk-access-flag-bits": {
+      "summary": {
+        "actualMeaningArabic": "(VkAccessFlagBits) يحدد نوع الوصول نفسه إلى الذاكرة: قراءة uniform، كتابة shader، قراءة transfer، كتابة color attachment، وغير ذلك. هو يجيب عن سؤال: ما الذي يحدث للذاكرة، لا أين يحدث فقط.",
+        "purposeArabic": "وُجد لأن Vulkan تفصل بين المرحلة (`pipeline stage`) وبين نوع access الفعلي حتى تعبر الحواجز عن الخطر الحقيقي بدقة.",
+        "whyUseArabic": "يستخدمه المبرمج عند بناء barriers أو synchronization contracts حتى يصرح بأي قراءات أو كتابات يجب أن تكتمل قبل السماح بالوصول التالي."
+      }
+    },
+    "enums/vk-descriptor-type": {
+      "summary": {
+        "actualMeaningArabic": "(VkDescriptorType) يحدد ما المورد الفعلي الذي يوجد داخل binding: sampler، combined image sampler، uniform/storage buffer، storage image، input attachment، وغيرها.",
+        "purposeArabic": "وُجد لأن الشيدر لا يحتاج رقم binding فقط؛ بل يحتاج contract صريحًا عن نوع المورد وطريقة تفسيره.",
+        "whyUseArabic": "يستخدمه المبرمج عند بناء layouts وعند updates للـ descriptor sets حتى يطابق ما يكتبه التطبيق ما يتوقعه الشيدر فعليًا."
+      }
+    },
+    "enums/vk-image-layout": {
+      "summary": {
+        "actualMeaningArabic": "(VkImageLayout) يحدد التفسير المتوقع لذاكرة الصورة في الخطوة التالية: هل ستُنسخ، تُقرأ من الشيدر، تُكتب كـ color attachment، تُستخدم كعمق، أم تُعرض على السطح.",
+        "purposeArabic": "وُجد لأن الصورة الواحدة في Vulkan قد تمر بمسارات متعددة، وكل مسار يتوقع contract مختلفة عن layout والـ accesses المسموح بها.",
+        "whyUseArabic": "يستخدمه المبرمج عند `image layout transitions` حتى يعلن بوضوح ماذا كانت الصورة قبل الحاجز وماذا ستصبح بعده، وهو جزء أساسي من correctness في أي مسار صور عملي."
+      }
+    },
+    "enums/vk-command-buffer-usage-flag-bits": {
+      "summary": {
+        "actualMeaningArabic": "(VkCommandBufferUsageFlagBits) يحدد افتراضات إعادة الاستخدام والتسجيل للـ command buffer: هل سيتsubmit مرة واحدة، وهل قد يُستخدم بالتوازي، وهل هو buffer ثانوي سيكمل render pass أو rendering context قائمًا.",
+        "purposeArabic": "وُجد لأن driver يحتاج معرفة contract التسجيل منذ البداية بدل ترك نمط الاستخدام ضمنيًا.",
+        "whyUseArabic": "يستخدمه المبرمج داخل `VkCommandBufferBeginInfo` لضبط سياسة التسجيل الصحيحة للـ buffer قبل أول أمر `vkCmd*`."
+      }
+    }
+  }
+}

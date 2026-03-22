@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_funcs.hpp • القسم 47 من 73 • الأسطر 20701-21150 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_funcs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_funcs.hpp.html">vulkan_funcs.hpp</a> /
+        <span>القسم 47 من 73 • الأسطر 20701-21150</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_funcs.hpp</h1>
+      <p class="page-description">القسم 47 من 73 • الأسطر 20701-21150</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-46.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-48.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_funcs.hpp</span>
+        <span class="source-stat">القسم: 47/73</span>
+        <span class="source-stat">الأسطر: 20701-21150</span>
+        <span class="source-stat">حجم الملف: 2.19 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    VULKAN_HPP_ASSERT( checkpointDataCount &lt;= checkpointData.size() );
+    if ( checkpointDataCount &lt; checkpointData.size() )
+    {
+      checkpointData.resize( checkpointDataCount );
+    }
+    return checkpointData;
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  //=== VK_KHR_timeline_semaphore ===
+
+  // wrapper function for command vkGetSemaphoreCounterValueKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSemaphoreCounterValueKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetSemaphoreCounterValueKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getSemaphoreCounterValueKHR( Semaphore        semaphore,
+                                                                                     uint64_t *       pValue,
+                                                                                     Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetSemaphoreCounterValueKHR( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkSemaphore&gt;( semaphore ), pValue ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetSemaphoreCounterValueKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSemaphoreCounterValueKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetSemaphoreCounterValueKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;uint64_t&gt;::type Device::getSemaphoreCounterValueKHR( Semaphore        semaphore,
+                                                                                                                       Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetSemaphoreCounterValueKHR &amp;&amp; &quot;Function &lt;vkGetSemaphoreCounterValueKHR&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+#  endif
+
+    uint64_t value;
+    Result   result = static_cast&lt;Result&gt;( d.vkGetSemaphoreCounterValueKHR( m_device, static_cast&lt;VkSemaphore&gt;( semaphore ), &amp;value ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getSemaphoreCounterValueKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( value ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkWaitSemaphoresKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkWaitSemaphoresKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkWaitSemaphoresKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::waitSemaphoresKHR( const SemaphoreWaitInfo * pWaitInfo,
+                                                                           uint64_t                  timeout,
+                                                                           Dispatch const &amp;          d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;(
+      d.vkWaitSemaphoresKHR( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkSemaphoreWaitInfo *&gt;( pWaitInfo ), timeout ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkWaitSemaphoresKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkWaitSemaphoresKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkWaitSemaphoresKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::waitSemaphoresKHR( const SemaphoreWaitInfo &amp; waitInfo, uint64_t timeout, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkWaitSemaphoresKHR &amp;&amp; &quot;Function &lt;vkWaitSemaphoresKHR&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;( d.vkWaitSemaphoresKHR( m_device, reinterpret_cast&lt;const VkSemaphoreWaitInfo *&gt;( &amp;waitInfo ), timeout ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::waitSemaphoresKHR&quot;, { Result::eSuccess, Result::eTimeout } );
+
+    return static_cast&lt;Result&gt;( result );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkSignalSemaphoreKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSignalSemaphoreKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSignalSemaphoreKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::signalSemaphoreKHR( const SemaphoreSignalInfo * pSignalInfo,
+                                                                            Dispatch const &amp;            d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkSignalSemaphoreKHR( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkSemaphoreSignalInfo *&gt;( pSignalInfo ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkSignalSemaphoreKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSignalSemaphoreKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSignalSemaphoreKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+                                          Device::signalSemaphoreKHR( const SemaphoreSignalInfo &amp; signalInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkSignalSemaphoreKHR &amp;&amp; &quot;Function &lt;vkSignalSemaphoreKHR&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;( d.vkSignalSemaphoreKHR( m_device, reinterpret_cast&lt;const VkSemaphoreSignalInfo *&gt;( &amp;signalInfo ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::signalSemaphoreKHR&quot; );
+
+    return detail::createResultValueType( result );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  //=== VK_EXT_present_timing ===
+
+#ifdef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkSetSwapchainPresentTimingQueueSizeEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetSwapchainPresentTimingQueueSizeEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSetSwapchainPresentTimingQueueSizeEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::setSwapchainPresentTimingQueueSizeEXT( SwapchainKHR     swapchain,
+                                                                                               uint32_t         size,
+                                                                                               Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;(
+      d.vkSetSwapchainPresentTimingQueueSizeEXT( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkSwapchainKHR&gt;( swapchain ), size ) );
+  }
+#else
+  // wrapper function for command vkSetSwapchainPresentTimingQueueSizeEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetSwapchainPresentTimingQueueSizeEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSetSwapchainPresentTimingQueueSizeEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::setSwapchainPresentTimingQueueSizeEXT( SwapchainKHR swapchain, uint32_t size, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkSetSwapchainPresentTimingQueueSizeEXT &amp;&amp; &quot;Function &lt;vkSetSwapchainPresentTimingQueueSizeEXT&gt; requires &lt;VK_EXT_present_timing&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;( d.vkSetSwapchainPresentTimingQueueSizeEXT( m_device, static_cast&lt;VkSwapchainKHR&gt;( swapchain ), size ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::setSwapchainPresentTimingQueueSizeEXT&quot;, { Result::eSuccess, Result::eNotReady } );
+
+    return static_cast&lt;Result&gt;( result );
+  }
+#endif /*VULKAN_HPP_DISABLE_ENHANCED_MODE*/
+
+  // wrapper function for command vkGetSwapchainTimingPropertiesEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSwapchainTimingPropertiesEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetSwapchainTimingPropertiesEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getSwapchainTimingPropertiesEXT( SwapchainKHR                   swapchain,
+                                                                                         SwapchainTimingPropertiesEXT * pSwapchainTimingProperties,
+                                                                                         uint64_t *                     pSwapchainTimingPropertiesCounter,
+                                                                                         Dispatch const &amp;               d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetSwapchainTimingPropertiesEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                     static_cast&lt;VkSwapchainKHR&gt;( swapchain ),
+                                                                     reinterpret_cast&lt;VkSwapchainTimingPropertiesEXT *&gt;( pSwapchainTimingProperties ),
+                                                                     pSwapchainTimingPropertiesCounter ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetSwapchainTimingPropertiesEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSwapchainTimingPropertiesEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetSwapchainTimingPropertiesEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::pair&lt;SwapchainTimingPropertiesEXT, uint64_t&gt;&gt;
+                                         Device::getSwapchainTimingPropertiesEXT( SwapchainKHR swapchain, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetSwapchainTimingPropertiesEXT &amp;&amp; &quot;Function &lt;vkGetSwapchainTimingPropertiesEXT&gt; requires &lt;VK_EXT_present_timing&gt;&quot; );
+#  endif
+
+    std::pair&lt;SwapchainTimingPropertiesEXT, uint64_t&gt; data_;
+    SwapchainTimingPropertiesEXT &amp;                    swapchainTimingProperties        = data_.first;
+    uint64_t &amp;                                        swapchainTimingPropertiesCounter = data_.second;
+    Result                                            result                           = static_cast&lt;Result&gt;( d.vkGetSwapchainTimingPropertiesEXT( m_device,
+                                                                              static_cast&lt;VkSwapchainKHR&gt;( swapchain ),
+                                                                              reinterpret_cast&lt;VkSwapchainTimingPropertiesEXT *&gt;( &amp;swapchainTimingProperties ),
+                                                                              &amp;swapchainTimingPropertiesCounter ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getSwapchainTimingPropertiesEXT&quot;, { Result::eSuccess, Result::eNotReady } );
+
+    return ResultValue&lt;std::pair&lt;SwapchainTimingPropertiesEXT, uint64_t&gt;&gt;( result, std::move( data_ ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetSwapchainTimeDomainPropertiesEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSwapchainTimeDomainPropertiesEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetSwapchainTimeDomainPropertiesEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getSwapchainTimeDomainPropertiesEXT( SwapchainKHR                       swapchain,
+                                                                                             SwapchainTimeDomainPropertiesEXT * pSwapchainTimeDomainProperties,
+                                                                                             uint64_t *                         pTimeDomainsCounter,
+                                                                                             Dispatch const &amp;                   d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;(
+      d.vkGetSwapchainTimeDomainPropertiesEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                               static_cast&lt;VkSwapchainKHR&gt;( swapchain ),
+                                               reinterpret_cast&lt;VkSwapchainTimeDomainPropertiesEXT *&gt;( pSwapchainTimeDomainProperties ),
+                                               pTimeDomainsCounter ) );
+  }
+
+  // wrapper function for command vkGetPastPresentationTimingEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPastPresentationTimingEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetPastPresentationTimingEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getPastPresentationTimingEXT( const PastPresentationTimingInfoEXT * pPastPresentationTimingInfo,
+                                                                                      PastPresentationTimingPropertiesEXT * pPastPresentationTimingProperties,
+                                                                                      Dispatch const &amp;                      d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;(
+      d.vkGetPastPresentationTimingEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                        reinterpret_cast&lt;const VkPastPresentationTimingInfoEXT *&gt;( pPastPresentationTimingInfo ),
+                                        reinterpret_cast&lt;VkPastPresentationTimingPropertiesEXT *&gt;( pPastPresentationTimingProperties ) ) );
+  }
+
+  //=== VK_INTEL_performance_query ===
+
+  // wrapper function for command vkInitializePerformanceApiINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkInitializePerformanceApiINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkInitializePerformanceApiINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::initializePerformanceApiINTEL( const InitializePerformanceApiInfoINTEL * pInitializeInfo,
+                                                                                       Dispatch const &amp;                          d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkInitializePerformanceApiINTEL( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                   reinterpret_cast&lt;const VkInitializePerformanceApiInfoINTEL *&gt;( pInitializeInfo ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkInitializePerformanceApiINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkInitializePerformanceApiINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkInitializePerformanceApiINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+    Device::initializePerformanceApiINTEL( const InitializePerformanceApiInfoINTEL &amp; initializeInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkInitializePerformanceApiINTEL &amp;&amp; &quot;Function &lt;vkInitializePerformanceApiINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+#  endif
+
+    Result result =
+      static_cast&lt;Result&gt;( d.vkInitializePerformanceApiINTEL( m_device, reinterpret_cast&lt;const VkInitializePerformanceApiInfoINTEL *&gt;( &amp;initializeInfo ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::initializePerformanceApiINTEL&quot; );
+
+    return detail::createResultValueType( result );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkUninitializePerformanceApiINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkUninitializePerformanceApiINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkUninitializePerformanceApiINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::uninitializePerformanceApiINTEL( Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkUninitializePerformanceApiINTEL( static_cast&lt;VkDevice&gt;( m_device ) );
+  }
+
+  // wrapper function for command vkCmdSetPerformanceMarkerINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceMarkerINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetPerformanceMarkerINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result CommandBuffer::setPerformanceMarkerINTEL( const PerformanceMarkerInfoINTEL * pMarkerInfo,
+                                                                                          Dispatch const &amp;                   d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCmdSetPerformanceMarkerINTEL( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                                  reinterpret_cast&lt;const VkPerformanceMarkerInfoINTEL *&gt;( pMarkerInfo ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdSetPerformanceMarkerINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceMarkerINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetPerformanceMarkerINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+                                          CommandBuffer::setPerformanceMarkerINTEL( const PerformanceMarkerInfoINTEL &amp; markerInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdSetPerformanceMarkerINTEL &amp;&amp; &quot;Function &lt;vkCmdSetPerformanceMarkerINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+#  endif
+
+    Result result =
+      static_cast&lt;Result&gt;( d.vkCmdSetPerformanceMarkerINTEL( m_commandBuffer, reinterpret_cast&lt;const VkPerformanceMarkerInfoINTEL *&gt;( &amp;markerInfo ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::CommandBuffer::setPerformanceMarkerINTEL&quot; );
+
+    return detail::createResultValueType( result );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdSetPerformanceStreamMarkerINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceStreamMarkerINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetPerformanceStreamMarkerINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result CommandBuffer::setPerformanceStreamMarkerINTEL( const PerformanceStreamMarkerInfoINTEL * pMarkerInfo,
+                                                                                                Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCmdSetPerformanceStreamMarkerINTEL( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                                        reinterpret_cast&lt;const VkPerformanceStreamMarkerInfoINTEL *&gt;( pMarkerInfo ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdSetPerformanceStreamMarkerINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceStreamMarkerINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetPerformanceStreamMarkerINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+    CommandBuffer::setPerformanceStreamMarkerINTEL( const PerformanceStreamMarkerInfoINTEL &amp; markerInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdSetPerformanceStreamMarkerINTEL &amp;&amp; &quot;Function &lt;vkCmdSetPerformanceStreamMarkerINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;(
+      d.vkCmdSetPerformanceStreamMarkerINTEL( m_commandBuffer, reinterpret_cast&lt;const VkPerformanceStreamMarkerInfoINTEL *&gt;( &amp;markerInfo ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::CommandBuffer::setPerformanceStreamMarkerINTEL&quot; );
+
+    return detail::createResultValueType( result );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdSetPerformanceOverrideINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceOverrideINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetPerformanceOverrideINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result CommandBuffer::setPerformanceOverrideINTEL( const PerformanceOverrideInfoINTEL * pOverrideInfo,
+                                                                                            Dispatch const &amp;                     d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCmdSetPerformanceOverrideINTEL( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                                    reinterpret_cast&lt;const VkPerformanceOverrideInfoINTEL *&gt;( pOverrideInfo ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdSetPerformanceOverrideINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceOverrideINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetPerformanceOverrideINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+    CommandBuffer::setPerformanceOverrideINTEL( const PerformanceOverrideInfoINTEL &amp; overrideInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdSetPerformanceOverrideINTEL &amp;&amp; &quot;Function &lt;vkCmdSetPerformanceOverrideINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+#  endif
+
+    Result result =
+      static_cast&lt;Result&gt;( d.vkCmdSetPerformanceOverrideINTEL( m_commandBuffer, reinterpret_cast&lt;const VkPerformanceOverrideInfoINTEL *&gt;( &amp;overrideInfo ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::CommandBuffer::setPerformanceOverrideINTEL&quot; );
+
+    return detail::createResultValueType( result );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkAcquirePerformanceConfigurationINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquirePerformanceConfigurationINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkAcquirePerformanceConfigurationINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::acquirePerformanceConfigurationINTEL( const PerformanceConfigurationAcquireInfoINTEL * pAcquireInfo,
+                                                                                              PerformanceConfigurationINTEL *                  pConfiguration,
+                                                                                              Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkAcquirePerformanceConfigurationINTEL( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                          reinterpret_cast&lt;const VkPerformanceConfigurationAcquireInfoINTEL *&gt;( pAcquireInfo ),
+                                                                          reinterpret_cast&lt;VkPerformanceConfigurationINTEL *&gt;( pConfiguration ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkAcquirePerformanceConfigurationINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquirePerformanceConfigurationINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkAcquirePerformanceConfigurationINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;PerformanceConfigurationINTEL&gt;::type
+                       Device::acquirePerformanceConfigurationINTEL( const PerformanceConfigurationAcquireInfoINTEL &amp; acquireInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkAcquirePerformanceConfigurationINTEL &amp;&amp; &quot;Function &lt;vkAcquirePerformanceConfigurationINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+#  endif
+
+    PerformanceConfigurationINTEL configuration;
+    Result                        result =
+      static_cast&lt;Result&gt;( d.vkAcquirePerformanceConfigurationINTEL( m_device,
+                                                                     reinterpret_cast&lt;const VkPerformanceConfigurationAcquireInfoINTEL *&gt;( &amp;acquireInfo ),
+                                                                     reinterpret_cast&lt;VkPerformanceConfigurationINTEL *&gt;( &amp;configuration ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::acquirePerformanceConfigurationINTEL&quot; );
+
+    return detail::createResultValueType( result, std::move( configuration ) );
+  }
+
+#  ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkAcquirePerformanceConfigurationINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquirePerformanceConfigurationINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkAcquirePerformanceConfigurationINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;UniqueHandle&lt;PerformanceConfigurationINTEL, Dispatch&gt;&gt;::type
+    Device::acquirePerformanceConfigurationINTELUnique( const PerformanceConfigurationAcquireInfoINTEL &amp; acquireInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkAcquirePerformanceConfigurationINTEL &amp;&amp; &quot;Function &lt;vkAcquirePerformanceConfigurationINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+#    endif
+
+    PerformanceConfigurationINTEL configuration;
+    Result                        result =
+      static_cast&lt;Result&gt;( d.vkAcquirePerformanceConfigurationINTEL( m_device,
+                                                                     reinterpret_cast&lt;const VkPerformanceConfigurationAcquireInfoINTEL *&gt;( &amp;acquireInfo ),
+                                                                     reinterpret_cast&lt;VkPerformanceConfigurationINTEL *&gt;( &amp;configuration ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::acquirePerformanceConfigurationINTELUnique&quot; );
+
+    return detail::createResultValueType(
+      result, UniqueHandle&lt;PerformanceConfigurationINTEL, Dispatch&gt;( configuration, detail::ObjectRelease&lt;Device, Dispatch&gt;( *this, d ) ) );
+  }
+#  endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+#ifdef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkReleasePerformanceConfigurationINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkReleasePerformanceConfigurationINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkReleasePerformanceConfigurationINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::releasePerformanceConfigurationINTEL( PerformanceConfigurationINTEL configuration,
+                                                                                              Dispatch const &amp;              d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;(
+      d.vkReleasePerformanceConfigurationINTEL( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkPerformanceConfigurationINTEL&gt;( configuration ) ) );
+  }
+#else
+  // wrapper function for command vkReleasePerformanceConfigurationINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkReleasePerformanceConfigurationINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkReleasePerformanceConfigurationINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+                                          Device::releasePerformanceConfigurationINTEL( PerformanceConfigurationINTEL configuration, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkReleasePerformanceConfigurationINTEL &amp;&amp; &quot;Function &lt;vkReleasePerformanceConfigurationINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;( d.vkReleasePerformanceConfigurationINTEL( m_device, static_cast&lt;VkPerformanceConfigurationINTEL&gt;( configuration ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::releasePerformanceConfigurationINTEL&quot; );
+
+    return detail::createResultValueType( result );
+  }
+#endif /*VULKAN_HPP_DISABLE_ENHANCED_MODE*/
+
+#ifdef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkReleasePerformanceConfigurationINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkReleasePerformanceConfigurationINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkReleasePerformanceConfigurationINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::release( PerformanceConfigurationINTEL configuration, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;(
+      d.vkReleasePerformanceConfigurationINTEL( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkPerformanceConfigurationINTEL&gt;( configuration ) ) );
+  }
+#else
+  // wrapper function for command vkReleasePerformanceConfigurationINTEL, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkReleasePerformanceConfigurationINTEL.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkReleasePerformanceConfigurationINTEL ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Device::release( PerformanceConfigurationINTEL configuration,
+                                                                                                                  Dispatch const &amp;              d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkReleasePerformanceConfigurationINTEL &amp;&amp; &quot;Function &lt;vkReleasePerformanceConfigurationINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;( d.vkReleasePerformanceConfigurationINTEL( m_device, static_cast&lt;VkPerformanceConfigurationINTEL&gt;( configuration ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::release&quot; );
+
+    return detail::createResultValueType( result );</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-46.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-48.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

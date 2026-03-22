@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "misc",
+    "displayName": "Misc",
+    "displayNameArabic": "عناصر أخرى",
+    "description": "أي نوع لا يندرج مباشرة تحت الأقسام القياسية الأخرى."
+  },
+  "identity": {
+    "name": "Fade وHover وProgress داخل نافذة أدوات",
+    "slug": "fade-hover-progress",
+    "titleArabic": "الأنيميشن هنا ليست خاصية خفية داخل Dear ImGui؛ التطبيق نفسه يحسب interpolation ثم يمرر القيم",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/misc/fade-hover-progress",
+    "contentPath": "content/reference/imgui/misc/fade-hover-progress.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "الأنيميشن هنا ليست خاصية خفية داخل Dear ImGui؛ التطبيق نفسه يحسب interpolation ثم يمرر القيم",
+    "actualMeaningArabic": "المعنى الحقيقي أن Dear ImGui تقرأ القيم الحالية فقط، بينما الزمن والتحويلات والتدرجات تبقى مسؤولية كاملة على التطبيق في كل Frame.",
+    "purposeArabic": "استخدم هذا النمط عندما تريد Fade لنافذة أو Hover أكثر وضوحاً أو Press flash أو Progress indicator أو Transition بسيط عند فتح عناصر الأدوات.",
+    "whyUseArabic": "يجعل أدواتك أقل جموداً وأكثر قابلية للقراءة البصرية من دون مغادرة أسلوب Dear ImGui المباشر أو بناء محرك Motion منفصل.",
+    "carriedValueArabic": "يحمل هذا العنصر معنى تنفيذياً أو دلالياً يقرأه النظام أو اللغة عند استخدامه داخل السياق الصحيح.",
+    "sourceDescription": "هذا المثال يوضح كيف تبنى الأنيميشن في Dear ImGui عبر تحديث قيم مثل alpha وscale وprogress وhover_mix بين الإطارات بدلاً من الاعتماد على نظام Animation عالي المستوى جاهز."
+  },
+  "signature": {
+    "raw": "",
+    "returnType": "",
+    "parameters": [],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [
+      "Fade واللون والحجم كلها قيم عددية عادية يحدثها التطبيق.",
+      "استخدام DeltaTime يجعل السلوك أكثر استقراراً بين الأجهزة المختلفة.",
+      "يمكن توسيع النمط نفسه ليشمل ظهور القوائم وفتح العناصر وتدرج المؤشرات."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+    "example": "alpha += (target_alpha - alpha) * io.DeltaTime * 8.0f;\nscale += (target_scale - scale) * io.DeltaTime * 8.0f;\nprogress = fmodf(progress + io.DeltaTime * 0.25f, 1.0f);\nhover_mix += ((hovered ? 1.0f : 0.0f) - hover_mix) * io.DeltaTime * 12.0f;"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::Button",
+        "route": "#ref/imgui/functions/im-gui-button",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::ProgressBar",
+        "route": "#ref/imgui/functions/im-gui-progress-bar",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::IsItemHovered",
+        "route": ""
+      },
+      {
+        "name": "ImGui::PushStyleColor",
+        "route": ""
+      },
+      {
+        "name": "ImGuiIO",
+        "route": "#ref/imgui/types/im-gui-io",
+        "libraryId": "imgui",
+        "kindId": "types"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/animation.json",
+    "category": "الأنيميشن بين الإطارات",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

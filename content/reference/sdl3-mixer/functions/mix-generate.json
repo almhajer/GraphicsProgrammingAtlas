@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_Generate",
+    "slug": "mix-generate",
+    "titleArabic": "Generate mixer output when not driving an audio device",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-generate",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-generate.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Generate mixer output when not driving an audio device",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل MIX Generate داخل SDL3_mixer، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل MIX Generate داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (int) Returns The number of bytes of mixed audio, discounting\nappended silence, on success, or -1 on failure; call SDL_GetError() for\nmore information. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Generate mixer output when not driving an audio device."
+  },
+  "signature": {
+    "raw": "int MIX_Generate(MIX_Mixer *mixer, void *buffer, int buflen);",
+    "returnType": "int",
+    "parameters": [
+      "MIX_Mixer *mixer",
+      "void *buffer",
+      "int buflen"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "mixer",
+        "type": "MIX_Mixer *",
+        "descriptionArabic": "يمثل المعامل mixer من النوع MIX_Mixer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the mixer for which to generate more audio."
+      },
+      {
+        "name": "buffer",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل buffer من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer to a buffer to store audio in."
+      },
+      {
+        "name": "buflen",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل buflen من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the number of bytes to store in buffer."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "SDL_mixer allows the creation of MIX_Mixer objects that are not connected to an\naudio device, by calling MIX_CreateMixer () instead of MIX_CreateMixerDevice (). Such\nmixers will not generate output until explicitly requested through this\nfunction.",
+      "The caller may request as much audio as desired, so long as\n buflen is a multiple of the sample frame size specified\nwhen creating the mixer (for example, if requesting stereo Sint16 audio,\nbuflen must be a multiple of 4: 2 bytes-per-channel times 2\nchannels).",
+      "The mixer will mix as quickly as possible; since it works in sample\nframes instead of time, it can potentially generate enormous amounts of\naudio in a small amount of time.",
+      "On success, this always fills buffer with\n buflen bytes of audio; if all playing tracks finish mixing,\nit will fill the remaining buffer with silence.",
+      "Each call to this function will pick up where it left off, playing\ntracks will continue to mix from the point the previous call completed,\netc. The mixer state can be changed between each call in any way\ndesired: tracks can be added, played, stopped, changed, removed, etc.\nEffectively this function does the same thing SDL_mixer does internally\nwhen the audio device needs more audio to play.",
+      "This function can not be used with mixers from MIX_CreateMixerDevice (); those\ngenerate audio as needed internally.",
+      "This function returns the number of bytes of real audio\nmixed, which might be less than buflen . While all\n buflen bytes of buffer will be initialized, if\navailable tracks to mix run out, the end of the buffer will be\ninitialized with silence; this silence will not be counted in the return\nvalue, so the caller has the option to identify how much of the buffer\nhas legimitate contents vs appended silence. As such, any value >= 0\nsignifies success. A return value of -1 means failure (out of memory,\ninvalid parameters, etc)."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(int) Returns The number of bytes of mixed audio, discounting\nappended silence, on success, or -1 on failure; call SDL_GetError() for\nmore information.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_Generate",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_CreateMixer",
+        "route": "#ref/sdl3-mixer/functions/mix-create-mixer",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

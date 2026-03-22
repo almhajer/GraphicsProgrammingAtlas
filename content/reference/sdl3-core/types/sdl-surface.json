@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "types",
+    "displayName": "Types",
+    "displayNameArabic": "الأنواع",
+    "description": "أنواع مجردة أو صريحة تحمل معنى دلالياً وتظهر في التواقيع والبنى."
+  },
+  "identity": {
+    "name": "SDL_Surface",
+    "slug": "sdl-surface",
+    "titleArabic": "A collection of pixels used in software blitting",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/types/sdl-surface",
+    "contentPath": "content/reference/sdl3-core/types/sdl-surface.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "A collection of pixels used in software blitting",
+    "actualMeaningArabic": "يمثل هذا النوع نوع SDL السطح، أي القيمة أو المقبض أو المؤشر الذي تتعامل معه بقية الواجهة في هذا السياق.",
+    "purposeArabic": "يستخدم هذا النوع عندما تحتاج القيمة أو المقبض أو المؤشر الذي يمثله داخل بقية الواجهة.",
+    "whyUseArabic": "القيمة الحقيقية هنا أنه يمثل نوع القيمة التي تتداولها بقية الواجهة بين الحقول والدوال.",
+    "carriedValueArabic": "يحمل هذا النوع القيمة الفعلية أو المقبض أو المؤشر الذي تمرره بقية الدوال والحقول في هذا المسار.",
+    "sourceDescription": "A collection of pixels used in software blitting."
+  },
+  "signature": {
+    "raw": "struct SDL_Surface\n{\n SDL_SurfaceFlags flags; /**< The flags of the surface, read-only */\n SDL_PixelFormat format; /**< The format of the surface, read-only */\n int w; /**< The width of the surface, read-only. */\n int h; /**< The height of the surface, read-only. */\n int pitch; /**< The distance in bytes between rows of pixels, read-only */\n void *pixels; /**< A pointer to the pixels of the surface, the pixels are writeable if non-NULL */\n\n int refcount; /**< Application reference count, used when freeing surface */\n\n void *reserved; /**< Reserved for internal use */\n};",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_surface.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Pixels are arranged in memory in rows, with the top row first. Each\nrow occupies an amount of memory given by the pitch (sometimes known as\nthe row stride in non-SDL APIs).",
+      "Within each row, pixels are arranged from left to right until the\nwidth is reached. Each pixel occupies a number of bits appropriate for\nits format, with most formats representing each pixel as one or more\nwhole bytes (in some indexed formats, instead multiple pixels are packed\ninto each byte), and a byte order given by the format. After encoding\nall pixels, any remaining bytes to reach the pitch are used as padding\nto reach a desired alignment, and have undefined contents.",
+      "When a surface holds YUV format data, the planes are assumed to be\ncontiguous without padding between them, e.g. a 32x32 surface in NV12\nformat with a pitch of 32 would consist of 32x32 bytes of Y plane\nfollowed by 32x16 bytes of UV plane.",
+      "When a surface holds MJPG format data, pixels points at the\ncompressed JPEG image and pitch is the length of that data."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_Surface",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_CreateSurface",
+        "route": "#ref/sdl3-core/functions/sdl-create-surface",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_DestroySurface",
+        "route": "#ref/sdl3-core/functions/sdl-destroy-surface",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Surface Creation and Simple\nDrawing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

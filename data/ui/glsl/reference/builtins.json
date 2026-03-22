@@ -1,0 +1,217 @@
+{
+  "key": "builtins",
+  "title": "المتغيرات المضمنة",
+  "icon": "symbol-variable",
+  "description": "",
+  "items": [
+    {
+      "name": "gl_Position",
+      "kind": "Built-in Output Variable",
+      "description": "الموضع المتجانس الذي يجب على Vertex Shader كتابته ليحدد مكان الـ Vertex بعد التحويل.",
+      "usage": "يكتب في Vertex Shader، ثم يستخدمه المسار الثابت من pipeline للقص والإسقاط وRasterization.",
+      "execution": "تقرأه المراحل الثابتة بعد انتهاء Vertex Shader لتحديد أين يقع الـ Primitive على الشاشة.",
+      "effect": "تغيير قيمته يغير موضع الشكل بالكامل على الشاشة.",
+      "vulkanBridge": "يؤثر مباشرة في المراحل الثابتة التي يوصف جزء منها عبر VkPipelineViewportStateCreateInfo وVkPipelineRasterizationStateCreateInfo.",
+      "example": "gl_Position = vec4(inPosition, 0.0, 1.0);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_VertexIndex",
+      "kind": "Built-in Input Variable",
+      "description": "فهرس الـ Vertex الحالي الذي تعالجه invocation الجارية من Vertex Shader.",
+      "usage": "يستخدم عندما تريد توليد البيانات داخل الشيدر نفسه أو فهرسة arrays ثابتة.",
+      "execution": "يملؤه نظام الإدخال من أمر الرسم مثل vkCmdDraw أو vkCmdDrawIndexed وفق شكل الاستدعاء.",
+      "effect": "يغير العنصر الذي سيقرأه الشيدر من المصفوفة أو المعادلة المستخدمة لحساب الموضع.",
+      "vulkanBridge": "يتأثر مباشرة ببارامترات vkCmdDraw وvkCmdDrawIndexed.",
+      "example": "gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_InstanceIndex",
+      "kind": "Built-in Input Variable",
+      "description": "فهرس النسخة الحالية في رسم instanced.",
+      "usage": "يستخدم عندما يحتاج الشيدر إلى اختيار بيانات مختلفة لكل Instance.",
+      "execution": "يملؤه نظام الإدخال وفق firstInstance وinstanceCount في أمر الرسم.",
+      "effect": "يبدل المورد أو التحويل أو اللون المستخدم لكل Instance.",
+      "vulkanBridge": "يرتبط ببارامترات instancing في vkCmdDraw وvkCmdDrawIndexed.",
+      "example": "uint instanceId = gl_InstanceIndex;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_FragCoord",
+      "kind": "Built-in Input Variable",
+      "description": "إحداثيات الـ Fragment الحالي داخل مساحة الإطار بعد Rasterization.",
+      "usage": "يستخدم في Fragment Shader عندما تحتاج إلى عمليات تعتمد على موقع البكسل.",
+      "execution": "يولده المسار الثابت بعد Rasterization لكل Fragment.",
+      "effect": "يسمح ببناء تأثيرات تعتمد على موضع الشاشة أو العمق أو الإحداثيات الفعلية.",
+      "vulkanBridge": "يعكس نتيجة Viewport وRasterization والاختبارات الثابتة قبل اللون النهائي.",
+      "example": "vec2 uv = gl_FragCoord.xy / resolution;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_FragDepth",
+      "kind": "Built-in Output Variable",
+      "description": "يسمح لـ Fragment Shader بكتابة قيمة عمق بديلة للـ Fragment الحالي.",
+      "usage": "يستخدم فقط عندما تحتاج إلى تعديل العمق الناتج يدوياً داخل Fragment Shader.",
+      "execution": "إذا كتب الشيدر هذه القيمة فستستخدمها اختبارات ومخازن العمق لاحقاً بدلاً من العمق الافتراضي.",
+      "effect": "يغير نتائج depth testing وترتيب الرؤية بين العناصر.",
+      "vulkanBridge": "أثره يظهر مع تكوينات العمق في VkPipelineDepthStencilStateCreateInfo.",
+      "example": "gl_FragDepth = 0.5;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_DrawID",
+      "kind": "Built-in Input Variable",
+      "description": "فهرس الاستدعاء الحالي داخل أوامر الرسم المتعددة مثل multi-draw، ويتيح للشيدر التمييز بين كل رسم وآخر داخل نفس الأمر.",
+      "usage": "يفيد عندما يعتمد الشيدر على arrays من البيانات ويريد اختيار عنصر مختلف لكل draw داخل استدعاء متعدد.",
+      "execution": "يملؤه نظام الرسم من ترتيب draw الحالية داخل الأمر الذي أطلق GPU.",
+      "effect": "يسمح باختيار بيانات أو transforms مختلفة لكل draw من دون إعادة تسجيل أوامر منفصلة بالضرورة.",
+      "vulkanBridge": "مفيد مع مسارات multi-draw عندما يربط التطبيق Buffers أو arrays ويحتاج الشيدر إلى معرفة رقم الرسم الحالي.",
+      "example": "uint drawId = gl_DrawID;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_BaseVertex",
+      "kind": "Built-in Input Variable",
+      "description": "قيمة base vertex المستخدمة مع الرسم المفهرس، وتضيف إزاحة إلى فهارس Vertex قبل الوصول إلى البيانات.",
+      "usage": "تستخدم عندما يريد الشيدر معرفة الإزاحة الأساسية المطبقة على الفهارس الحالية في أوامر الرسم المفهرس.",
+      "execution": "يملؤها نظام الإدخال من قيمة baseVertex القادمة من أمر الرسم المقابل.",
+      "effect": "تغيّر الـ Vertex الفعلي الذي يشير إليه كل Index عند القراءة من بيانات الإدخال.",
+      "vulkanBridge": "ترتبط مباشرة ببارامترات أوامر الرسم المفهرس مثل vkCmdDrawIndexed.",
+      "example": "int baseVertex = gl_BaseVertex;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_BaseInstance",
+      "kind": "Built-in Input Variable",
+      "description": "قيمة base instance التي تضيف إزاحة إلى numbering الخاص بالـ instances في أوامر الرسم instanced.",
+      "usage": "تفيد عندما يحتاج الشيدر فهم الفهرسة الفعلية للـ instances نسبة إلى بيانات التطبيق أو Buffers خاصة بكل instance.",
+      "execution": "تملؤها منصة الرسم من قيمة firstInstance أو ما يكافئها في أمر الرسم الحالي.",
+      "effect": "تبدل موقع القراءة من بيانات الـ instance وتؤثر في أي mapping يعتمد على instance numbering.",
+      "vulkanBridge": "مرتبطة مباشرة ببارامترات الرسم instanced في vkCmdDraw وvkCmdDrawIndexed.",
+      "example": "int baseInstance = gl_BaseInstance;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_ClipDistance",
+      "kind": "Built-in Interface Variable",
+      "description": "مصفوفة built-in تحمل مسافات clipping التي تكتبها المراحل المنتجة وتستخدمها المراحل الثابتة لقص الـ Primitive.",
+      "usage": "تستخدم عندما تريد تعريف clipping مخصص لكل Vertex عبر planes إضافية بدل الاعتماد فقط على المسارات الافتراضية.",
+      "execution": "تقرأها مراحل القص الثابتة بعد انتهاء معالجة الرؤوس أو المراحل الهندسية المناسبة.",
+      "effect": "تغيير قيمها قد يقص أجزاء من الـ Primitive أو يبقيها بحسب موضعها بالنسبة إلى مستويات القص.",
+      "vulkanBridge": "تفيد في المسارات الرسومية المتقدمة التي تريد تحكمًا هندسيًا إضافيًا قبل Rasterization.",
+      "example": "gl_ClipDistance[0] = dot(worldPos, clipPlane);",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_PointSize",
+      "kind": "Built-in Output Variable",
+      "description": "قيمة يكتبها الشيدر لتحديد حجم النقطة المرسومة عندما يكون Primitive من نوع point.",
+      "usage": "تستخدم في Vertex أو Geometry stages التي تنتج points وتريد التحكم بحجمها على الشاشة.",
+      "execution": "تقرأها المراحل الثابتة قبل Rasterization لتحديد مساحة النقطة الناتجة على framebuffer.",
+      "effect": "تغييرها يغير عدد الـ Fragments الناتجة عن رسم النقاط وحجمها البصري.",
+      "vulkanBridge": "يظهر أثرها في المسار الرسومي الثابت وفي إعدادات rasterization والنقطة داخل الـ pipeline.",
+      "example": "gl_PointSize = 8.0;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_FrontFacing",
+      "kind": "Built-in Input Variable",
+      "description": "متغير منطقي يبين داخل Fragment Shader هل الـ Fragment الحالي ناتج من وجه أمامي أم خلفي للـ Primitive.",
+      "usage": "يستخدم لتطبيق تظليل مختلف للوجوه الأمامية والخلفية أو لتبديل الـ normal أو اللون.",
+      "execution": "تحدده مرحلة Rasterization وفق ترتيب الرؤوس وإعدادات front face/cull mode قبل دخول Fragment Shader.",
+      "effect": "يسمح ببناء فروع مختلفة حسب اتجاه الوجه الحالي أثناء التظليل.",
+      "vulkanBridge": "يعتمد على إعدادات VkPipelineRasterizationStateCreateInfo مثل frontFace وcullMode.",
+      "example": "vec3 N = gl_FrontFacing ? normal : -normal;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_PointCoord",
+      "kind": "Built-in Input Variable",
+      "description": "إحداثيات داخلية داخل النقطة الحالية تتراوح عادة بين 0 و1 عبر مساحة point sprite.",
+      "usage": "تستخدم في Fragment Shader لرسم textures أو masks داخل النقاط الكبيرة.",
+      "execution": "يولدها المسار الثابت لكل Fragment من Fragments النقطة الواحدة.",
+      "effect": "تمكنك من التعامل مع النقطة كمساحة ثنائية الأبعاد داخل الشيدر بدل لون موحد فقط.",
+      "vulkanBridge": "يفيد في مسارات الرسم التي تستخدم points كبيرة أو point sprites ضمن pipeline الرسومي.",
+      "example": "vec2 spriteUv = gl_PointCoord;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_PrimitiveID",
+      "kind": "Built-in Input Variable",
+      "description": "فهرس الـ Primitive الحالي كما يراه الشيدر في المرحلة التي توفره.",
+      "usage": "يفيد عند الحاجة إلى اختيار بيانات أو ألوان أو debug output لكل Primitive بشكل مستقل.",
+      "execution": "يملؤه المسار الرسومي بحسب رقم البدائية الجاري معالجتها أو إخراجها.",
+      "effect": "يسمح بربط كل Primitive ببيانات مستقلة أو بمسار تظليل خاص دون الحاجة إلى attribute إضافي.",
+      "vulkanBridge": "يرتبط مباشرة بطريقة توليد البدائيات في أوامر الرسم وبنية البيانات التي يعتمد عليها التطبيق لكل Primitive.",
+      "example": "int primitiveId = gl_PrimitiveID;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_GlobalInvocationID",
+      "kind": "Built-in Input Variable",
+      "description": "فهرس ثلاثي الأبعاد يمثل موقع الـ invocation الحالي عالميًا داخل Dispatch compute بالكامل.",
+      "usage": "يستخدم في Compute Shader لتحديد أي عنصر من Buffer أو image يجب معالجته في هذه الـ invocation.",
+      "execution": "تحسبه المنصة من gl_WorkGroupID وgl_LocalInvocationID عند تنفيذ dispatch على GPU.",
+      "effect": "يحدد العنصر أو الـ texel أو الـ voxel الذي ستعمل عليه الـ invocation الحالية.",
+      "vulkanBridge": "يتأثر مباشرة بأبعاد vkCmdDispatch أو vkCmdDispatchIndirect وبـ layout(local_size_x, ...) داخل الشيدر.",
+      "example": "uvec3 gid = gl_GlobalInvocationID;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_LocalInvocationID",
+      "kind": "Built-in Input Variable",
+      "description": "فهرس ثلاثي الأبعاد يمثل موقع الـ invocation الحالي داخل Workgroup واحدة فقط.",
+      "usage": "يفيد عند فهرسة shared memory أو توزيع العمل المحلي داخل Workgroup.",
+      "execution": "تولده مرحلة dispatch من أبعاد local_size التي يعلنها الشيدر.",
+      "effect": "يحدد العنصر المحلي الذي ستعالجه الـ invocation ضمن المجموعة الحالية.",
+      "vulkanBridge": "مهم عند استخدام shared memory أو أي خوارزمية تعتمد على التعاون داخل Workgroup في Compute Shader.",
+      "example": "uvec3 lid = gl_LocalInvocationID;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_LocalInvocationIndex",
+      "kind": "Built-in Input Variable",
+      "description": "فهرس خطي وحيد يمثل ترتيب الـ invocation الحالي داخل Workgroup بعد تسطيح الأبعاد المحلية الثلاثية.",
+      "usage": "يستخدم عندما تحتاج رقمًا واحدًا لفهرسة shared arrays أو تبادل البيانات بين invocations داخل Workgroup.",
+      "execution": "يحسبه النظام من gl_LocalInvocationID وأبعاد local_size.",
+      "effect": "يبسط ربط البيانات المحلية بمصفوفة خطية بدل التعامل مع ثلاث قيم منفصلة.",
+      "vulkanBridge": "شائع في خوارزميات Compute التعاونية التي تستخدم shared memory داخل Workgroup واحدة.",
+      "example": "uint localIndex = gl_LocalInvocationIndex;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_WorkGroupID",
+      "kind": "Built-in Input Variable",
+      "description": "فهرس ثلاثي الأبعاد يحدد أي Workgroup من مجموعات dispatch تُنفذ حاليًا.",
+      "usage": "يستخدم لتقسيم المجال العام إلى مجموعات مستقلة أو لتحديد tile أو chunk العمل الحالي.",
+      "execution": "يملؤه نظام dispatch من أبعاد الأمر المرسل إلى GPU.",
+      "effect": "يمكنك من تقسيم البيانات إلى كتل ومعالجة كل كتلة داخل Workgroup مستقلة.",
+      "vulkanBridge": "يتحدد مباشرة من أبعاد vkCmdDispatch أو القيم المقروءة من vkCmdDispatchIndirect.",
+      "example": "uvec3 groupId = gl_WorkGroupID;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_NumWorkGroups",
+      "kind": "Built-in Input Variable",
+      "description": "عدد مجموعات العمل dispatch في كل بعد من أبعاد compute الثلاثية.",
+      "usage": "يفيد عندما يحتاج الشيدر معرفة الحجم الكلي لتقسيم العمل أو بناء شروط حدودية.",
+      "execution": "يحمله نظام dispatch من القيم التي أرسلها التطبيق إلى GPU.",
+      "effect": "يوفر الحد الكلي لمجال المجموعات، ما يساعد على كتابة منطق يعتمد على آخر مجموعة أو الحدود العامة.",
+      "vulkanBridge": "يعكس القيم المرسلة في vkCmdDispatch أو المخزنة في مخزن أمر غير مباشر.",
+      "example": "uvec3 dispatchSize = gl_NumWorkGroups;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_WorkGroupSize",
+      "kind": "Built-in Constant",
+      "description": "ثابت ثلاثي يعبّر عن local_size المعلن في الشيدر لكل بعد من أبعاد Workgroup.",
+      "usage": "يستخدم لفهم حجم المجموعة محليًا أو لبناء حسابات تعتمد على عدد invocations في كل Workgroup.",
+      "execution": "قيمته تكون معروفة عند الترجمة أو التخصص بحسب تعريف local_size داخل layout.",
+      "effect": "تحدد كثافة العمل داخل كل Workgroup، وبالتالي تؤثر في التوازي واستخدام shared memory والحدود المحلية.",
+      "vulkanBridge": "يرتبط بتوصيف الشيدر نفسه وبكيفية تقسيم التطبيق لأبعاد dispatch في Compute Pipeline.",
+      "example": "uvec3 localSize = gl_WorkGroupSize;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    }
+  ]
+}

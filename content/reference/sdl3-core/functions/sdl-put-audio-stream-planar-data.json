@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_PutAudioStreamPlanarData",
+    "slug": "sdl-put-audio-stream-planar-data",
+    "titleArabic": "إضافة data الدفق each channel separate array",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-put-audio-stream-planar-data",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-put-audio-stream-planar-data.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "إضافة data الدفق each channel separate array",
+    "actualMeaningArabic": "إضافة data الدفق each channel separate array.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى إضافة data الدفق each channel separate array داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Add data to the stream with each channel in a separate array."
+  },
+  "signature": {
+    "raw": "bool SDL_PutAudioStreamPlanarData(SDL_AudioStream *stream, const void * const *channel_buffers, int num_channels, int num_samples);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AudioStream *stream",
+      "const void * const *channel_buffers",
+      "int num_channels",
+      "int num_samples"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "SDL_AudioStream *",
+        "descriptionArabic": "يمثل المعامل stream من النوع SDL_AudioStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the stream the audio data is being added to."
+      },
+      {
+        "name": "channel_buffers",
+        "type": "const void * const *",
+        "descriptionArabic": "يمثل المعامل channel_buffers من النوع const void * const * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer to an array of arrays, one array per channel."
+      },
+      {
+        "name": "num_channels",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل num_channels من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the number of arrays in channel_buffers or -1."
+      },
+      {
+        "name": "num_samples",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل num_samples من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the number of samples per array to write to the\nstream."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.4.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This data must match the format/channels/samplerate specified in the\nlatest call to SDL_SetAudioStreamFormat , or\nthe format specified when creating the stream if it hasn't been\nchanged.",
+      "The data will be interleaved and queued. Note that SDL_AudioStream only operates on\ninterleaved data, so this is simply a convenience function for easily\nqueueing data from sources that provide separate arrays. There is no\nequivalent function to retrieve planar data.",
+      "The arrays in channel_buffers are ordered as they are to\nbe interleaved; the first array will be the first sample in the\ninterleaved data. Any individual array may be NULL; in this case,\nsilence will be interleaved for that channel.",
+      "num_channels specifies how many arrays are in\n channel_buffers . This can be used as a safety to prevent\noverflow, in case the stream format has changed elsewhere. If more\nchannels are specified than the current input spec, they are ignored. If\nless channels are specified, the missing arrays are treated as if they\nare NULL (silence is written to those channels). If the count is -1, SDL\nwill assume the array count matches the current input spec.",
+      "Note that num_samples is the number of samples per\narray . This can also be thought of as the number of sample\nframes to be queued. A value of 1 with stereo arrays will queue two\nsamples to the stream. This is different than SDL_PutAudioStreamData , which\nwants the size of a single array in bytes."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread, but if the stream\nhas a callback set, the caller might need to manage extra locking.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_PutAudioStreamPlanarData",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_ClearAudioStream",
+        "route": "#ref/sdl3-core/functions/sdl-clear-audio-stream",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_FlushAudioStream",
+        "route": "#ref/sdl3-core/functions/sdl-flush-audio-stream",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetAudioStreamData",
+        "route": "#ref/sdl3-core/functions/sdl-get-audio-stream-data",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetAudioStreamQueued",
+        "route": "#ref/sdl3-core/functions/sdl-get-audio-stream-queued",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

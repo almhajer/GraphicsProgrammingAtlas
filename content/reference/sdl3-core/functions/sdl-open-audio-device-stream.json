@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_OpenAudioDeviceStream",
+    "slug": "sdl-open-audio-device-stream",
+    "titleArabic": "Convenience function for straightforward audio init for the common\ncase",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-open-audio-device-stream",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-open-audio-device-stream.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Convenience function for straightforward audio init for the common\ncase",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Open الصوت الجهاز الدفق داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Open الصوت الجهاز الدفق داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_AudioStream *) Returns an\naudio stream on success, ready to use, or NULL on failure; call SDL_GetError () for more information. When\ndone with this stream, call SDL_DestroyAudioStream to free\nresources and close the device. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Convenience function for straightforward audio init for the common\ncase."
+  },
+  "signature": {
+    "raw": "SDL_AudioStream * SDL_OpenAudioDeviceStream(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec, SDL_AudioStreamCallback callback, void *userdata);",
+    "returnType": "SDL_AudioStream *",
+    "parameters": [
+      "SDL_AudioDeviceID devid",
+      "const SDL_AudioSpec *spec",
+      "SDL_AudioStreamCallback callback",
+      "void *userdata"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "devid",
+        "type": "SDL_AudioDeviceID",
+        "descriptionArabic": "يمثل المعامل devid من النوع SDL_AudioDeviceID القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an audio device to open, or SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK\nor SDL_AUDIO_DEVICE_DEFAULT_RECORDING ."
+      },
+      {
+        "name": "spec",
+        "type": "const SDL_AudioSpec *",
+        "descriptionArabic": "يمثل المعامل spec من النوع const SDL_AudioSpec * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the audio stream's data format. Can be NULL."
+      },
+      {
+        "name": "callback",
+        "type": "SDL_AudioStreamCallback",
+        "descriptionArabic": "يمثل المعامل callback من النوع SDL_AudioStreamCallback القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a callback where the app will provide new data for playback, or\nreceive new data for recording. Can be NULL, in which case the app will\nneed to call SDL_PutAudioStreamData or SDL_GetAudioStreamData as\nnecessary."
+      },
+      {
+        "name": "userdata",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل userdata من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "app-controlled pointer passed to callback. Can be NULL. Ignored if\ncallback is NULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "If all your app intends to do is provide a single source of PCM\naudio, this function allows you to do all your audio setup in a single\ncall.",
+      "This is also intended to be a clean means to migrate apps from\nSDL2.",
+      "This function will open an audio device, create a stream and bind it.\nUnlike other methods of setup, the audio device will be closed when this\nstream is destroyed, so the app can treat the returned SDL_AudioStream as the only object\nneeded to manage audio playback.",
+      "Also unlike other functions, the audio device begins paused. This is\nto map more closely to SDL2-style behavior, since there is no extra step\nhere to bind a stream to begin audio flowing. The audio device should be\nresumed with SDL_ResumeAudioStreamDevice ().",
+      "This function works with both playback and recording devices.",
+      "The spec parameter represents the app's side of the\naudio stream. That is, for recording audio, this will be the output\nformat, and for playing audio, this will be the input format. If spec is\nNULL, the system will choose the format, and the app can use SDL_GetAudioStreamFormat () to\nobtain this information later.",
+      "If you don't care about opening a specific audio device, you can (and\nprobably should ), use SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK\nfor playback and SDL_AUDIO_DEVICE_DEFAULT_RECORDING\nfor recording.",
+      "One can optionally provide a callback function; if NULL, the app is\nexpected to queue audio data for playback (or unqueue audio data if\ncapturing). Otherwise, the callback will begin to fire once the device\nis unpaused.",
+      "Destroying the returned stream with SDL_DestroyAudioStream will also\nclose the audio device associated with this stream."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_AudioStream *) Returns an\naudio stream on success, ready to use, or NULL on failure; call SDL_GetError () for more information. When\ndone with this stream, call SDL_DestroyAudioStream to free\nresources and close the device.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_OpenAudioDeviceStream",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_GetAudioStreamDevice",
+        "route": "#ref/sdl3-core/functions/sdl-get-audio-stream-device",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_ResumeAudioStreamDevice",
+        "route": "#ref/sdl3-core/functions/sdl-resume-audio-stream-device",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

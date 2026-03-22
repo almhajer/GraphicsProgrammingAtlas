@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "macros",
+    "displayName": "Macros",
+    "displayNameArabic": "الماكرو",
+    "description": "توسعات نصية أو قيم توليدية يطبقها المعالج المسبق قبل الترجمة."
+  },
+  "identity": {
+    "name": "SDL_ELF_NOTE_DLOPEN",
+    "slug": "sdl-elf-note-dlopen",
+    "titleArabic": "Add a note that your application has dynamic shared library\ndependencies",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/macros/sdl-elf-note-dlopen",
+    "contentPath": "content/reference/sdl3-core/macros/sdl-elf-note-dlopen.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Add a note that your application has dynamic shared library\ndependencies",
+    "actualMeaningArabic": "يمثل هذا الماكرو ماكرو SDL ELF NOTE DLOPEN، أي توسعاً نصياً أو قيمة توليدية تؤثر في الكود قبل الترجمة.",
+    "purposeArabic": "",
+    "whyUseArabic": "",
+    "carriedValueArabic": "الماكرو يوسع إلى #define SDL_ELF_NOTE_DLOPEN(feature, description, priority, ...) \\\n SDL_ELF_NOTE_INTERNAL( \\\n \"[{\\\"feature\\\":\\\"\" feature \\\n \"\\\",\\\"description\\\":\\\"\" description \\\n \"\\\",\\\"priority\\\":\\\"\" priority \\\n \"\\\",\\\"soname\\\":\" SDL_DLNOTE_JSON_ARRAY(__VA_ARGS__) \"}]\", \\\n SDL_DLNOTE_UNIQUE_NAME); أو إلى تعبير مشتق منه، والقيمة الحقيقية هنا هي المعنى الذي يضيفه هذا التوسع إلى الكود.",
+    "sourceDescription": "Add a note that your application has dynamic shared library\ndependencies."
+  },
+  "signature": {
+    "raw": "#define SDL_ELF_NOTE_DLOPEN(feature, description, priority, ...) \\\n SDL_ELF_NOTE_INTERNAL( \\\n \"[{\\\"feature\\\":\\\"\" feature \\\n \"\\\",\\\"description\\\":\\\"\" description \\\n \"\\\",\\\"priority\\\":\\\"\" priority \\\n \"\\\",\\\"soname\\\":\" SDL_DLNOTE_JSON_ARRAY(__VA_ARGS__) \"}]\", \\\n SDL_DLNOTE_UNIQUE_NAME);",
+    "returnType": "#define",
+    "parameters": [
+      "feature",
+      "description",
+      "priority",
+      "...) \\\n SDL_ELF_NOTE_INTERNAL( \\\n \"[{\\\"feature\\\":\\\"\" feature \\\n \"\\\"",
+      "\\\"description\\\":\\\"\" description \\\n \"\\\"",
+      "\\\"priority\\\":\\\"\" priority \\\n \"\\\"",
+      "\\\"soname\\\":\" SDL_DLNOTE_JSON_ARRAY(__VA_ARGS__) \"}]\"",
+      "\\\n SDL_DLNOTE_UNIQUE_NAME"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_dlopennote.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.4.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "You can do this by adding the following to the global scope:",
+      "SDL_ELF_NOTE_DLOPEN (\n \"png\" ,\n \"Support for loading PNG images using libpng (required for APNG)\" ,\n SDL_ELF_NOTE_DLOPEN_PRIORITY_RECOMMENDED ,\n \"libpng12.so.0\"\n )\n A trailing semicolon is not needed.",
+      "Or if you support multiple versions of a library, you can list\nthem:",
+      "// Our app supports SDL1, SDL2, and SDL3 by dynamically loading them\n SDL_ELF_NOTE_DLOPEN (\n \"SDL\" ,\n \"Create windows through SDL video backend\" ,\n SDL_ELF_NOTE_DLOPEN_PRIORITY_REQUIRED\n \"libSDL-1.2.so.0\" , \"libSDL2-2.0.so.0\" , \"libSDL3.so.0\"\n )\n This macro is not available for compilers that do not support\nvariadic macro's."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_ELF_NOTE_DLOPEN",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED",
+        "route": "#ref/sdl3-core/macros/sdl-elf-note-dlopen-priority-suggested",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_ELF_NOTE_DLOPEN_PRIORITY_RECOMMENDED",
+        "route": "#ref/sdl3-core/macros/sdl-elf-note-dlopen-priority-recommended",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_ELF_NOTE_DLOPEN_PRIORITY_REQUIRED",
+        "route": "#ref/sdl3-core/macros/sdl-elf-note-dlopen-priority-required",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Core Macros",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

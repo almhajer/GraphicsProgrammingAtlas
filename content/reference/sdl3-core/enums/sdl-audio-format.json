@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "enums",
+    "displayName": "Enums",
+    "displayNameArabic": "التعدادات",
+    "description": "مجالات اختيار مغلقة تحدد نمطاً أو حالة أو مساراً تنفيذياً."
+  },
+  "identity": {
+    "name": "SDL_AudioFormat",
+    "slug": "sdl-audio-format",
+    "titleArabic": "Audio format",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/enums/sdl-audio-format",
+    "contentPath": "content/reference/sdl3-core/enums/sdl-audio-format.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Audio format",
+    "actualMeaningArabic": "يمثل هذا التعداد تعداد SDL الصوت Format، أي المجال الذي تختار منه القيم التي تحدد السلوك أو الحالة المرتبطة به.",
+    "purposeArabic": "يستخدم هذا التعداد عندما يحتاج الحقل أو الاستدعاء اختياراً واضحاً من مجموعة قيم محددة.",
+    "whyUseArabic": "القيمة الحقيقية هنا أن كل اختيار يحدد فرعاً فعلياً من السلوك، لا مجرد تسمية شكلية.",
+    "carriedValueArabic": "يحمل هذا التعداد اختياراً صريحاً بين مسارات أو حالات أو أوضاع معرّفة سلفاً.",
+    "sourceDescription": "Audio format."
+  },
+  "signature": {
+    "raw": "typedef enum SDL_AudioFormat\n{\n SDL_AUDIO_UNKNOWN = 0x0000u, /**< تشير هذه القيمة إلى أن تنسيق الصوت غير محدد بعد، وتستخدمها SDL عندما لا تملك صيغة عينات صالحة يمكن الاعتماد عليها في هذا الموضع. */\n SDL_AUDIO_U8 = 0x0008u, /**< تشير هذه القيمة إلى عينات 8 بت غير موقعة داخل الحقل format في SDL_AudioSpec ومسارات الصوت، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n /* SDL_DEFINE_AUDIO_FORMAT(0, 0, 0, 8), */\n SDL_AUDIO_S8 = 0x8008u, /**< تشير هذه القيمة إلى عينات 8 بت موقعة داخل الحقل format في SDL_AudioSpec ومسارات الصوت، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n /* SDL_DEFINE_AUDIO_FORMAT(1, 0, 0, 8), */\n SDL_AUDIO_S16LE = 0x8010u, /**< تشير هذه القيمة إلى عينات 16 بت موقعة بترتيب بايتات صغير الطرفية داخل الحقل format في SDL_AudioSpec ومسارات الصوت، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n /* SDL_DEFINE_AUDIO_FORMAT(1, 0, 0, 16), */\n SDL_AUDIO_S16BE = 0x9010u, /**< تشير هذه القيمة إلى عينات 16 بت موقعة بترتيب بايتات كبير الطرفية داخل الحقل format في SDL_AudioSpec ومسارات الصوت، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n /* SDL_DEFINE_AUDIO_FORMAT(1, 1, 0, 16), */\n SDL_AUDIO_S32LE = 0x8020u, /**< تشير هذه القيمة إلى عينات 32 بت صحيحة بترتيب بايتات صغير الطرفية داخل الحقل format في SDL_AudioSpec ومسارات الصوت، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n /* SDL_DEFINE_AUDIO_FORMAT(1, 0, 0, 32), */\n SDL_AUDIO_S32BE = 0x9020u, /**< تشير هذه القيمة إلى عينات 32 بت صحيحة بترتيب بايتات كبير الطرفية داخل الحقل format في SDL_AudioSpec ومسارات الصوت، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n /* SDL_DEFINE_AUDIO_FORMAT(1, 1, 0, 32), */\n SDL_AUDIO_F32LE = 0x8120u, /**< تشير هذه القيمة إلى عينات 32 بت عائمة بترتيب بايتات صغير الطرفية داخل الحقل format في SDL_AudioSpec ومسارات الصوت، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n /* SDL_DEFINE_AUDIO_FORMAT(1, 0, 1, 32), */\n SDL_AUDIO_F32BE = 0x9120u, /**< تشير هذه القيمة إلى عينات 32 بت عائمة بترتيب بايتات كبير الطرفية داخل الحقل format في SDL_AudioSpec ومسارات الصوت، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n /* SDL_DEFINE_AUDIO_FORMAT(1, 1, 1, 32), */\n\n /* These represent the current system's byteorder. */\n #if SDL_BYTEORDER == SDL_LIL_ENDIAN\n SDL_AUDIO_S16 = SDL_AUDIO_S16LE, /**< تشير هذه القيمة إلى S16، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_AUDIO_S32 = SDL_AUDIO_S32LE, /**< تشير هذه القيمة إلى S32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_AUDIO_F32 = SDL_AUDIO_F32LE /**< تشير هذه القيمة إلى F32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n #else\n SDL_AUDIO_S16 = SDL_AUDIO_S16BE, /**< تشير هذه القيمة إلى S16، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_AUDIO_S32 = SDL_AUDIO_S32BE, /**< تشير هذه القيمة إلى S32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_AUDIO_F32 = SDL_AUDIO_F32BE /**< تشير هذه القيمة إلى F32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n #endif\n} SDL_AudioFormat;",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [
+      {
+        "name": "SDL_AUDIO_UNKNOWN",
+        "value": "0x0000u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن تنسيق الصوت غير محدد بعد، وتستخدمها SDL عندما لا تملك صيغة عينات صالحة يمكن الاعتماد عليها في هذا الموضع.",
+        "originalDescription": "تشير هذه القيمة إلى أن تنسيق الصوت غير محدد بعد، وتستخدمها SDL عندما لا تملك صيغة عينات صالحة يمكن الاعتماد عليها في هذا الموضع."
+      },
+      {
+        "name": "SDL_AUDIO_U8",
+        "value": "0x0008u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية غير موقعة بعرض 8 بت، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت.",
+        "originalDescription": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية غير موقعة بعرض 8 بت، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت."
+      },
+      {
+        "name": "SDL_AUDIO_S8",
+        "value": "0x8008u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية موقعة بعرض 8 بت، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت.",
+        "originalDescription": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية موقعة بعرض 8 بت، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت."
+      },
+      {
+        "name": "SDL_AUDIO_S16LE",
+        "value": "0x8010u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية موقعة بعرض 16 بت وبترتيب بايتات صغير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت.",
+        "originalDescription": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية موقعة بعرض 16 بت وبترتيب بايتات صغير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت."
+      },
+      {
+        "name": "SDL_AUDIO_S16BE",
+        "value": "0x9010u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية موقعة بعرض 16 بت وبترتيب بايتات كبير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت.",
+        "originalDescription": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية موقعة بعرض 16 بت وبترتيب بايتات كبير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت."
+      },
+      {
+        "name": "SDL_AUDIO_S32LE",
+        "value": "0x8020u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية صحيحة بعرض 32 بت وبترتيب بايتات صغير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت.",
+        "originalDescription": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية صحيحة بعرض 32 بت وبترتيب بايتات صغير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت."
+      },
+      {
+        "name": "SDL_AUDIO_S32BE",
+        "value": "0x9020u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية صحيحة بعرض 32 بت وبترتيب بايتات كبير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت.",
+        "originalDescription": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية صحيحة بعرض 32 بت وبترتيب بايتات كبير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت."
+      },
+      {
+        "name": "SDL_AUDIO_F32LE",
+        "value": "0x8120u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية عائمة بعرض 32 بت وبترتيب بايتات صغير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت.",
+        "originalDescription": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية عائمة بعرض 32 بت وبترتيب بايتات صغير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت."
+      },
+      {
+        "name": "SDL_AUDIO_F32BE",
+        "value": "0x9120u",
+        "descriptionArabic": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية عائمة بعرض 32 بت وبترتيب بايتات كبير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت.",
+        "originalDescription": "تشير هذه القيمة إلى أن SDL يفسر البيانات الصوتية على أنها عينات صوتية عائمة بعرض 32 بت وبترتيب بايتات كبير الطرفية، وتُستخدم عادة في الحقل format من SDL_AudioSpec وعند التحقق من توافق مسار الصوت."
+      },
+      {
+        "name": "SDL_AUDIO_S16",
+        "value": "SDL_AUDIO_S16LE",
+        "descriptionArabic": "تشير هذه القيمة إلى S16، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى S16، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_AUDIO_S32",
+        "value": "SDL_AUDIO_S32LE",
+        "descriptionArabic": "تشير هذه القيمة إلى S32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى S32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_AUDIO_F32",
+        "value": "SDL_AUDIO_F32LE",
+        "descriptionArabic": "تشير هذه القيمة إلى F32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى F32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_AUDIO_S16",
+        "value": "SDL_AUDIO_S16BE",
+        "descriptionArabic": "تشير هذه القيمة إلى S16، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى S16، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_AUDIO_S32",
+        "value": "SDL_AUDIO_S32BE",
+        "descriptionArabic": "تشير هذه القيمة إلى S32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى S32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_AUDIO_F32",
+        "value": "SDL_AUDIO_F32BE",
+        "descriptionArabic": "تشير هذه القيمة إلى F32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى F32، وتُستخدم داخل الحقل format في SDL_AudioSpec ومسارات الصوت ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      }
+    ],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_AudioFormat",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_AUDIO_BITSIZE",
+        "route": "#ref/sdl3-core/macros/sdl-audio-bitsize",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_AUDIO_BYTESIZE",
+        "route": "#ref/sdl3-core/macros/sdl-audio-bytesize",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_AUDIO_ISINT",
+        "route": "#ref/sdl3-core/macros/sdl-audio-isint",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_AUDIO_ISFLOAT",
+        "route": "#ref/sdl3-core/macros/sdl-audio-isfloat",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_AUDIO_ISBIGENDIAN",
+        "route": "#ref/sdl3-core/macros/sdl-audio-isbigendian",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_AUDIO_ISLITTLEENDIAN",
+        "route": "#ref/sdl3-core/macros/sdl-audio-islittleendian",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_AUDIO_ISSIGNED",
+        "route": "#ref/sdl3-core/macros/sdl-audio-issigned",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_AUDIO_ISUNSIGNED",
+        "route": "#ref/sdl3-core/macros/sdl-audio-isunsigned",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

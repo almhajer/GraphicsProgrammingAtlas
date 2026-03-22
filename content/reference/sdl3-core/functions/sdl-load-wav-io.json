@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_LoadWAV_IO",
+    "slug": "sdl-load-wav-io",
+    "titleArabic": "تحميل الصوت data WAVE الملف الذاكرة",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-load-wav-io",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-load-wav-io.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تحميل الصوت data WAVE الملف الذاكرة",
+    "actualMeaningArabic": "تحميل الصوت data WAVE الملف الذاكرة.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تحميل الصوت data WAVE الملف الذاكرة داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success. audio_buf will be filled\nwith a pointer to an allocated buffer containing the audio data, and\n audio_len is filled with the length of that audio buffer in\nbytes. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Load the audio data of a WAVE file into memory."
+  },
+  "signature": {
+    "raw": "bool SDL_LoadWAV_IO(SDL_IOStream *src, bool closeio, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_IOStream *src",
+      "bool closeio",
+      "SDL_AudioSpec *spec",
+      "Uint8 **audio_buf",
+      "Uint32 *audio_len"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "src",
+        "type": "SDL_IOStream *",
+        "descriptionArabic": "يمثل المعامل src من النوع SDL_IOStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the data source for the WAVE data."
+      },
+      {
+        "name": "closeio",
+        "type": "bool",
+        "descriptionArabic": "يمثل المعامل closeio من النوع bool القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "if true, calls SDL_CloseIO () on\n src before returning, even in the case of an error."
+      },
+      {
+        "name": "spec",
+        "type": "SDL_AudioSpec *",
+        "descriptionArabic": "يمثل المعامل spec من النوع SDL_AudioSpec * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer to an SDL_AudioSpec that\nwill be set to the WAVE data's format details on successful return."
+      },
+      {
+        "name": "audio_buf",
+        "type": "Uint8 **",
+        "descriptionArabic": "يمثل المعامل audio_buf من النوع Uint8 ** القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled with the audio data, allocated by the\nfunction."
+      },
+      {
+        "name": "audio_len",
+        "type": "Uint32 *",
+        "descriptionArabic": "يمثل المعامل audio_len من النوع Uint32 * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled with the length of the audio data buffer in\nbytes."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Loading a WAVE file requires src , spec ,\n audio_buf and audio_len to be valid pointers.\nThe entire data portion of the file is then loaded into memory and\ndecoded if necessary.",
+      "Supported formats are RIFF WAVE files with the formats PCM (8, 16,\n24, and 32 bits), IEEE Float (32 bits), Microsoft ADPCM and IMA ADPCM (4\nbits), and A-law and mu-law (8 bits). Other formats are currently\nunsupported and cause an error.",
+      "If this function succeeds, the return value is zero and the pointer\nto the audio data allocated by the function is written to\n audio_buf and its length in bytes to\n audio_len . The SDL_AudioSpec members freq ,\n channels , and format are set to the values of\nthe audio data in the buffer.",
+      "It's necessary to use SDL_free () to free\nthe audio data returned in audio_buf when it is no longer\nused.",
+      "Because of the underspecification of the .WAV format, there are many\nproblematic files in the wild that cause issues with strict decoders. To\nprovide compatibility with these files, this decoder is lenient in\nregards to the truncation of the file, the fact chunk, and the size of\nthe RIFF chunk. The hints SDL_HINT_WAVE_RIFF_CHUNK_SIZE ,\n SDL_HINT_WAVE_TRUNCATION ,\nand SDL_HINT_WAVE_FACT_CHUNK\ncan be used to tune the behavior of the loading process.",
+      "Any file that is invalid (due to truncation, corruption, or wrong\nvalues in the headers), too big, or unsupported causes an error.\nAdditionally, any critical I/O error from the data source will terminate\nthe loading process with an error. The function returns NULL on error\nand in all cases (with the exception of src being NULL), an\nappropriate error message will be set.",
+      "It is required that the data source supports seeking.",
+      "Example:",
+      "SDL_LoadWAV_IO ( SDL_IOFromFile ( \"sample.wav\" , \"rb\" ), true , & spec , & buf , & len );\n Note that the SDL_LoadWAV function\ndoes this same thing for you, but in a less messy way:"
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success. audio_buf will be filled\nwith a pointer to an allocated buffer containing the audio data, and\n audio_len is filled with the length of that audio buffer in\nbytes.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_LoadWAV_IO",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_free",
+        "route": "#ref/sdl3-core/functions/sdl-free",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_LoadWAV",
+        "route": "#ref/sdl3-core/functions/sdl-load-wav",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

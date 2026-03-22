@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="يحتوي على النواة الأساسية لواجهة Vulkan: الأنواع، الهياكل، التعدادات، وتصريحات الدوال العامة بعيداً عن ترويسات المنصات.">
+  <title>vulkan_core.h • القسم 49 من 57 • الأسطر 21601-22050 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_core.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_core.h.html">vulkan_core.h</a> /
+        <span>القسم 49 من 57 • الأسطر 21601-22050</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_core.h</h1>
+      <p class="page-description">القسم 49 من 57 • الأسطر 21601-22050</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-48.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-50.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_core.h</span>
+        <span class="source-stat">القسم: 49/57</span>
+        <span class="source-stat">الأسطر: 21601-22050</span>
+        <span class="source-stat">حجم الملف: 1.21 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>typedef struct VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           subpassMergeFeedback;
+} VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT;
+
+typedef struct VkRenderPassCreationControlEXT {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkBool32           disallowMerging;
+} VkRenderPassCreationControlEXT;
+
+typedef struct VkRenderPassCreationFeedbackInfoEXT {
+    uint32_t    postMergeSubpassCount;
+} VkRenderPassCreationFeedbackInfoEXT;
+
+typedef struct VkRenderPassCreationFeedbackCreateInfoEXT {
+    VkStructureType                         sType;
+    const void*                             pNext;
+    VkRenderPassCreationFeedbackInfoEXT*    pRenderPassFeedback;
+} VkRenderPassCreationFeedbackCreateInfoEXT;
+
+typedef struct VkRenderPassSubpassFeedbackInfoEXT {
+    VkSubpassMergeStatusEXT    subpassMergeStatus;
+    char                       description[VK_MAX_DESCRIPTION_SIZE];
+    uint32_t                   postMergeIndex;
+} VkRenderPassSubpassFeedbackInfoEXT;
+
+typedef struct VkRenderPassSubpassFeedbackCreateInfoEXT {
+    VkStructureType                        sType;
+    const void*                            pNext;
+    VkRenderPassSubpassFeedbackInfoEXT*    pSubpassFeedback;
+} VkRenderPassSubpassFeedbackCreateInfoEXT;
+
+
+
+// VK_LUNARG_direct_driver_loading is a preprocessor guard. Do not pass it to API calls.
+#define VK_LUNARG_direct_driver_loading 1
+#define VK_LUNARG_DIRECT_DRIVER_LOADING_SPEC_VERSION 1
+#define VK_LUNARG_DIRECT_DRIVER_LOADING_EXTENSION_NAME &quot;VK_LUNARG_direct_driver_loading&quot;
+
+typedef enum VkDirectDriverLoadingModeLUNARG {
+    VK_DIRECT_DRIVER_LOADING_MODE_EXCLUSIVE_LUNARG = 0,
+    VK_DIRECT_DRIVER_LOADING_MODE_INCLUSIVE_LUNARG = 1,
+    VK_DIRECT_DRIVER_LOADING_MODE_MAX_ENUM_LUNARG = 0x7FFFFFFF
+} VkDirectDriverLoadingModeLUNARG;
+typedef VkFlags VkDirectDriverLoadingFlagsLUNARG;
+typedef PFN_vkVoidFunction (VKAPI_PTR *PFN_vkGetInstanceProcAddrLUNARG)(
+    VkInstance                                  instance,
+    const char*                                 pName);
+
+typedef struct VkDirectDriverLoadingInfoLUNARG {
+    VkStructureType                     sType;
+    void*                               pNext;
+    VkDirectDriverLoadingFlagsLUNARG    flags;
+    PFN_vkGetInstanceProcAddrLUNARG     pfnGetInstanceProcAddr;
+} VkDirectDriverLoadingInfoLUNARG;
+
+typedef struct VkDirectDriverLoadingListLUNARG {
+    VkStructureType                           sType;
+    const void*                               pNext;
+    VkDirectDriverLoadingModeLUNARG           mode;
+    uint32_t                                  driverCount;
+    const VkDirectDriverLoadingInfoLUNARG*    pDrivers;
+} VkDirectDriverLoadingListLUNARG;
+
+
+
+// VK_ARM_tensors is a preprocessor guard. Do not pass it to API calls.
+#define VK_ARM_tensors 1
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkTensorViewARM)
+#define VK_ARM_TENSORS_SPEC_VERSION       1
+#define VK_ARM_TENSORS_EXTENSION_NAME     &quot;VK_ARM_tensors&quot;
+
+typedef enum VkTensorTilingARM {
+    VK_TENSOR_TILING_OPTIMAL_ARM = 0,
+    VK_TENSOR_TILING_LINEAR_ARM = 1,
+    VK_TENSOR_TILING_MAX_ENUM_ARM = 0x7FFFFFFF
+} VkTensorTilingARM;
+typedef VkFlags64 VkTensorCreateFlagsARM;
+
+// Flag bits for VkTensorCreateFlagBitsARM
+typedef VkFlags64 VkTensorCreateFlagBitsARM;
+static const VkTensorCreateFlagBitsARM VK_TENSOR_CREATE_MUTABLE_FORMAT_BIT_ARM = 0x00000001ULL;
+static const VkTensorCreateFlagBitsARM VK_TENSOR_CREATE_PROTECTED_BIT_ARM = 0x00000002ULL;
+static const VkTensorCreateFlagBitsARM VK_TENSOR_CREATE_DESCRIPTOR_HEAP_CAPTURE_REPLAY_BIT_ARM = 0x00000008ULL;
+static const VkTensorCreateFlagBitsARM VK_TENSOR_CREATE_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_ARM = 0x00000004ULL;
+
+typedef VkFlags64 VkTensorUsageFlagsARM;
+
+// Flag bits for VkTensorUsageFlagBitsARM
+typedef VkFlags64 VkTensorUsageFlagBitsARM;
+static const VkTensorUsageFlagBitsARM VK_TENSOR_USAGE_SHADER_BIT_ARM = 0x00000002ULL;
+static const VkTensorUsageFlagBitsARM VK_TENSOR_USAGE_TRANSFER_SRC_BIT_ARM = 0x00000004ULL;
+static const VkTensorUsageFlagBitsARM VK_TENSOR_USAGE_TRANSFER_DST_BIT_ARM = 0x00000008ULL;
+static const VkTensorUsageFlagBitsARM VK_TENSOR_USAGE_IMAGE_ALIASING_BIT_ARM = 0x00000010ULL;
+static const VkTensorUsageFlagBitsARM VK_TENSOR_USAGE_DATA_GRAPH_BIT_ARM = 0x00000020ULL;
+
+typedef struct VkTensorDescriptionARM {
+    VkStructureType          sType;
+    const void*              pNext;
+    VkTensorTilingARM        tiling;
+    VkFormat                 format;
+    uint32_t                 dimensionCount;
+    const int64_t*           pDimensions;
+    const int64_t*           pStrides;
+    VkTensorUsageFlagsARM    usage;
+} VkTensorDescriptionARM;
+
+typedef struct VkTensorCreateInfoARM {
+    VkStructureType                  sType;
+    const void*                      pNext;
+    VkTensorCreateFlagsARM           flags;
+    const VkTensorDescriptionARM*    pDescription;
+    VkSharingMode                    sharingMode;
+    uint32_t                         queueFamilyIndexCount;
+    const uint32_t*                  pQueueFamilyIndices;
+} VkTensorCreateInfoARM;
+
+typedef struct VkTensorMemoryRequirementsInfoARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkTensorARM        tensor;
+} VkTensorMemoryRequirementsInfoARM;
+
+typedef struct VkBindTensorMemoryInfoARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkTensorARM        tensor;
+    VkDeviceMemory     memory;
+    VkDeviceSize       memoryOffset;
+} VkBindTensorMemoryInfoARM;
+
+typedef struct VkWriteDescriptorSetTensorARM {
+    VkStructureType           sType;
+    const void*               pNext;
+    uint32_t                  tensorViewCount;
+    const VkTensorViewARM*    pTensorViews;
+} VkWriteDescriptorSetTensorARM;
+
+typedef struct VkTensorFormatPropertiesARM {
+    VkStructureType          sType;
+    void*                    pNext;
+    VkFormatFeatureFlags2    optimalTilingTensorFeatures;
+    VkFormatFeatureFlags2    linearTilingTensorFeatures;
+} VkTensorFormatPropertiesARM;
+
+typedef struct VkPhysicalDeviceTensorPropertiesARM {
+    VkStructureType       sType;
+    void*                 pNext;
+    uint32_t              maxTensorDimensionCount;
+    uint64_t              maxTensorElements;
+    uint64_t              maxPerDimensionTensorElements;
+    int64_t               maxTensorStride;
+    uint64_t              maxTensorSize;
+    uint32_t              maxTensorShaderAccessArrayLength;
+    uint32_t              maxTensorShaderAccessSize;
+    uint32_t              maxDescriptorSetStorageTensors;
+    uint32_t              maxPerStageDescriptorSetStorageTensors;
+    uint32_t              maxDescriptorSetUpdateAfterBindStorageTensors;
+    uint32_t              maxPerStageDescriptorUpdateAfterBindStorageTensors;
+    VkBool32              shaderStorageTensorArrayNonUniformIndexingNative;
+    VkShaderStageFlags    shaderTensorSupportedStages;
+} VkPhysicalDeviceTensorPropertiesARM;
+
+typedef struct VkTensorMemoryBarrierARM {
+    VkStructureType          sType;
+    const void*              pNext;
+    VkPipelineStageFlags2    srcStageMask;
+    VkAccessFlags2           srcAccessMask;
+    VkPipelineStageFlags2    dstStageMask;
+    VkAccessFlags2           dstAccessMask;
+    uint32_t                 srcQueueFamilyIndex;
+    uint32_t                 dstQueueFamilyIndex;
+    VkTensorARM              tensor;
+} VkTensorMemoryBarrierARM;
+
+typedef struct VkTensorDependencyInfoARM {
+    VkStructureType                    sType;
+    const void*                        pNext;
+    uint32_t                           tensorMemoryBarrierCount;
+    const VkTensorMemoryBarrierARM*    pTensorMemoryBarriers;
+} VkTensorDependencyInfoARM;
+
+typedef struct VkPhysicalDeviceTensorFeaturesARM {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           tensorNonPacked;
+    VkBool32           shaderTensorAccess;
+    VkBool32           shaderStorageTensorArrayDynamicIndexing;
+    VkBool32           shaderStorageTensorArrayNonUniformIndexing;
+    VkBool32           descriptorBindingStorageTensorUpdateAfterBind;
+    VkBool32           tensors;
+} VkPhysicalDeviceTensorFeaturesARM;
+
+typedef struct VkDeviceTensorMemoryRequirementsARM {
+    VkStructureType                 sType;
+    const void*                     pNext;
+    const VkTensorCreateInfoARM*    pCreateInfo;
+} VkDeviceTensorMemoryRequirementsARM;
+
+typedef struct VkTensorCopyARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           dimensionCount;
+    const uint64_t*    pSrcOffset;
+    const uint64_t*    pDstOffset;
+    const uint64_t*    pExtent;
+} VkTensorCopyARM;
+
+typedef struct VkCopyTensorInfoARM {
+    VkStructureType           sType;
+    const void*               pNext;
+    VkTensorARM               srcTensor;
+    VkTensorARM               dstTensor;
+    uint32_t                  regionCount;
+    const VkTensorCopyARM*    pRegions;
+} VkCopyTensorInfoARM;
+
+typedef struct VkMemoryDedicatedAllocateInfoTensorARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkTensorARM        tensor;
+} VkMemoryDedicatedAllocateInfoTensorARM;
+
+typedef struct VkPhysicalDeviceExternalTensorInfoARM {
+    VkStructureType                       sType;
+    const void*                           pNext;
+    VkTensorCreateFlagsARM                flags;
+    const VkTensorDescriptionARM*         pDescription;
+    VkExternalMemoryHandleTypeFlagBits    handleType;
+} VkPhysicalDeviceExternalTensorInfoARM;
+
+typedef struct VkExternalTensorPropertiesARM {
+    VkStructureType               sType;
+    const void*                   pNext;
+    VkExternalMemoryProperties    externalMemoryProperties;
+} VkExternalTensorPropertiesARM;
+
+typedef struct VkExternalMemoryTensorCreateInfoARM {
+    VkStructureType                    sType;
+    const void*                        pNext;
+    VkExternalMemoryHandleTypeFlags    handleTypes;
+} VkExternalMemoryTensorCreateInfoARM;
+
+typedef struct VkPhysicalDeviceDescriptorBufferTensorFeaturesARM {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           descriptorBufferTensorDescriptors;
+} VkPhysicalDeviceDescriptorBufferTensorFeaturesARM;
+
+typedef struct VkPhysicalDeviceDescriptorBufferTensorPropertiesARM {
+    VkStructureType    sType;
+    void*              pNext;
+    size_t             tensorCaptureReplayDescriptorDataSize;
+    size_t             tensorViewCaptureReplayDescriptorDataSize;
+    size_t             tensorDescriptorSize;
+} VkPhysicalDeviceDescriptorBufferTensorPropertiesARM;
+
+typedef struct VkDescriptorGetTensorInfoARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkTensorViewARM    tensorView;
+} VkDescriptorGetTensorInfoARM;
+
+typedef struct VkTensorCaptureDescriptorDataInfoARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkTensorARM        tensor;
+} VkTensorCaptureDescriptorDataInfoARM;
+
+typedef struct VkTensorViewCaptureDescriptorDataInfoARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkTensorViewARM    tensorView;
+} VkTensorViewCaptureDescriptorDataInfoARM;
+
+typedef struct VkFrameBoundaryTensorsARM {
+    VkStructureType       sType;
+    const void*           pNext;
+    uint32_t              tensorCount;
+    const VkTensorARM*    pTensors;
+} VkFrameBoundaryTensorsARM;
+
+typedef VkResult (VKAPI_PTR *PFN_vkCreateTensorARM)(VkDevice device, const VkTensorCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkTensorARM* pTensor);
+typedef void (VKAPI_PTR *PFN_vkDestroyTensorARM)(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks* pAllocator);
+typedef VkResult (VKAPI_PTR *PFN_vkCreateTensorViewARM)(VkDevice device, const VkTensorViewCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkTensorViewARM* pView);
+typedef void (VKAPI_PTR *PFN_vkDestroyTensorViewARM)(VkDevice device, VkTensorViewARM tensorView, const VkAllocationCallbacks* pAllocator);
+typedef void (VKAPI_PTR *PFN_vkGetTensorMemoryRequirementsARM)(VkDevice device, const VkTensorMemoryRequirementsInfoARM* pInfo, VkMemoryRequirements2* pMemoryRequirements);
+typedef VkResult (VKAPI_PTR *PFN_vkBindTensorMemoryARM)(VkDevice device, uint32_t bindInfoCount, const VkBindTensorMemoryInfoARM* pBindInfos);
+typedef void (VKAPI_PTR *PFN_vkGetDeviceTensorMemoryRequirementsARM)(VkDevice device, const VkDeviceTensorMemoryRequirementsARM* pInfo, VkMemoryRequirements2* pMemoryRequirements);
+typedef void (VKAPI_PTR *PFN_vkCmdCopyTensorARM)(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo);
+typedef void (VKAPI_PTR *PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM)(VkPhysicalDevice                             physicalDevice, const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo, VkExternalTensorPropertiesARM*               pExternalTensorProperties);
+typedef VkResult (VKAPI_PTR *PFN_vkGetTensorOpaqueCaptureDescriptorDataARM)(VkDevice                                    device, const VkTensorCaptureDescriptorDataInfoARM* pInfo, void*                                       pData);
+typedef VkResult (VKAPI_PTR *PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM)(VkDevice                                        device, const VkTensorViewCaptureDescriptorDataInfoARM* pInfo, void*                                           pData);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateTensorARM(
+    VkDevice                                    device,
+    const VkTensorCreateInfoARM*                pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkTensorARM*                                pTensor);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkDestroyTensorARM(
+    VkDevice                                    device,
+    VkTensorARM                                 tensor,
+    const VkAllocationCallbacks*                pAllocator);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateTensorViewARM(
+    VkDevice                                    device,
+    const VkTensorViewCreateInfoARM*            pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkTensorViewARM*                            pView);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkDestroyTensorViewARM(
+    VkDevice                                    device,
+    VkTensorViewARM                             tensorView,
+    const VkAllocationCallbacks*                pAllocator);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetTensorMemoryRequirementsARM(
+    VkDevice                                    device,
+    const VkTensorMemoryRequirementsInfoARM*    pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkBindTensorMemoryARM(
+    VkDevice                                    device,
+    uint32_t                                    bindInfoCount,
+    const VkBindTensorMemoryInfoARM*            pBindInfos);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetDeviceTensorMemoryRequirementsARM(
+    VkDevice                                    device,
+    const VkDeviceTensorMemoryRequirementsARM*  pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdCopyTensorARM(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyTensorInfoARM*                  pCopyTensorInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalTensorPropertiesARM(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo,
+    VkExternalTensorPropertiesARM*              pExternalTensorProperties);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetTensorOpaqueCaptureDescriptorDataARM(
+    VkDevice                                    device,
+    const VkTensorCaptureDescriptorDataInfoARM* pInfo,
+    void*                                       pData);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetTensorViewOpaqueCaptureDescriptorDataARM(
+    VkDevice                                    device,
+    const VkTensorViewCaptureDescriptorDataInfoARM* pInfo,
+    void*                                       pData);
+#endif
+#endif
+
+
+// VK_EXT_shader_module_identifier is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_shader_module_identifier 1
+#define VK_MAX_SHADER_MODULE_IDENTIFIER_SIZE_EXT 32U
+#define VK_EXT_SHADER_MODULE_IDENTIFIER_SPEC_VERSION 1
+#define VK_EXT_SHADER_MODULE_IDENTIFIER_EXTENSION_NAME &quot;VK_EXT_shader_module_identifier&quot;
+typedef struct VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           shaderModuleIdentifier;
+} VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT;
+
+typedef struct VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    uint8_t            shaderModuleIdentifierAlgorithmUUID[VK_UUID_SIZE];
+} VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT;
+
+typedef struct VkPipelineShaderStageModuleIdentifierCreateInfoEXT {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           identifierSize;
+    const uint8_t*     pIdentifier;
+} VkPipelineShaderStageModuleIdentifierCreateInfoEXT;
+
+typedef struct VkShaderModuleIdentifierEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    uint32_t           identifierSize;
+    uint8_t            identifier[VK_MAX_SHADER_MODULE_IDENTIFIER_SIZE_EXT];
+} VkShaderModuleIdentifierEXT;
+
+typedef void (VKAPI_PTR *PFN_vkGetShaderModuleIdentifierEXT)(VkDevice device, VkShaderModule shaderModule, VkShaderModuleIdentifierEXT* pIdentifier);
+typedef void (VKAPI_PTR *PFN_vkGetShaderModuleCreateInfoIdentifierEXT)(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, VkShaderModuleIdentifierEXT* pIdentifier);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetShaderModuleIdentifierEXT(
+    VkDevice                                    device,
+    VkShaderModule                              shaderModule,
+    VkShaderModuleIdentifierEXT*                pIdentifier);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetShaderModuleCreateInfoIdentifierEXT(
+    VkDevice                                    device,
+    const VkShaderModuleCreateInfo*             pCreateInfo,
+    VkShaderModuleIdentifierEXT*                pIdentifier);
+#endif
+#endif
+
+
+// VK_EXT_rasterization_order_attachment_access is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_rasterization_order_attachment_access 1
+#define VK_EXT_RASTERIZATION_ORDER_ATTACHMENT_ACCESS_SPEC_VERSION 1
+#define VK_EXT_RASTERIZATION_ORDER_ATTACHMENT_ACCESS_EXTENSION_NAME &quot;VK_EXT_rasterization_order_attachment_access&quot;
+
+
+// VK_NV_optical_flow is a preprocessor guard. Do not pass it to API calls.
+#define VK_NV_optical_flow 1
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkOpticalFlowSessionNV)
+#define VK_NV_OPTICAL_FLOW_SPEC_VERSION   1
+#define VK_NV_OPTICAL_FLOW_EXTENSION_NAME &quot;VK_NV_optical_flow&quot;
+
+typedef enum VkOpticalFlowPerformanceLevelNV {
+    VK_OPTICAL_FLOW_PERFORMANCE_LEVEL_UNKNOWN_NV = 0,
+    VK_OPTICAL_FLOW_PERFORMANCE_LEVEL_SLOW_NV = 1,
+    VK_OPTICAL_FLOW_PERFORMANCE_LEVEL_MEDIUM_NV = 2,
+    VK_OPTICAL_FLOW_PERFORMANCE_LEVEL_FAST_NV = 3,
+    VK_OPTICAL_FLOW_PERFORMANCE_LEVEL_MAX_ENUM_NV = 0x7FFFFFFF
+} VkOpticalFlowPerformanceLevelNV;
+
+typedef enum VkOpticalFlowSessionBindingPointNV {
+    VK_OPTICAL_FLOW_SESSION_BINDING_POINT_UNKNOWN_NV = 0,</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-48.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-50.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

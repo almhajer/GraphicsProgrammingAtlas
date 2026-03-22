@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "expressions",
+    "displayName": "Expressions",
+    "displayNameArabic": "التعبيرات",
+    "description": "تعبيرات تتأخر قراءتها إلى سياقات محددة مثل توليد خصائص target أو أوامر التثبيت والاختبار."
+  },
+  "identity": {
+    "name": "$<TARGET_FILE:tgt>",
+    "slug": "dollar-target-file-tgt",
+    "titleArabic": "تعبير مولد يُرجع المسار الكامل للملف الرئيسي الناتج عن target",
+    "aliases": [
+      "TARGET_FILE",
+      "target file path expression"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/expressions/dollar-target-file-tgt",
+    "contentPath": "content/reference/cmake/expressions/dollar-target-file-tgt.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تعبير مولد يُرجع المسار الكامل للملف الرئيسي الناتج عن target",
+    "actualMeaningArabic": "هذا التعبير يُرجع المسار الكامل للملف القابل للتنفيذ أو المكتبة الذي يولّده target المحدد.",
+    "purposeArabic": "يستخدم للحصول على مسار artifact الناتج دون معرفة امتداده أو موقعه المسبق.",
+    "whyUseArabic": "لأن المسار واسم الملف قد يختلفان بحسب منصة وبrefix وoutput_name، وهذا التعبير يلخص ذلك.",
+    "carriedValueArabic": "يُقيَّم في وقت generate ويعطي المسار النهائي الذي سيُكتب إليه الملف.",
+    "sourceDescription": "هذا التعبير يُرجع المسار الكامل للملف القابل للتنفيذ أو المكتبة الذي يولّده target المحدد."
+  },
+  "signature": {
+    "raw": "$<TARGET_FILE:tgt>",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "$<TARGET_FILE:tgt>",
+        "type": "Generator Expression",
+        "semanticKind": "expression",
+        "descriptionArabic": "هذه صيغة Generator Expression، أي أنها لا تُحسم فور قراءة الملف بل تُقيَّم في سياق لاحق مثل توليد الخصائص أو أوامر التثبيت أو الإعدادات المرتبطة بالهدف."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "مفيد في add_custom_command عندما تحتاج تمرير artifact كمدخل.",
+      "يمكن استخدامه في scripts أو اختبارات تحتاج المسار الحقيقي."
+    ],
+    "notes": [
+      "tgt يجب أن يكون target معروفاً في نفس المشروع.",
+      "يعطي الملف الرئيسي فقط؛ للمكتبات قد تحتاج TARGET_LINKER_FILE."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدمه بدل بناء المسار يدوياً من متغيرات متعددة."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "add_custom_command(TARGET calculator POST_BUILD\n  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:calculator> ${CMAKE_BINARY_DIR}/bin/\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#target-dependent-expressions",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#target-dependent-expressions",
+    "related": [
+      {
+        "name": "add_custom_command",
+        "route": "#ref/cmake/commands/add-custom-command",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "add_executable",
+        "route": "#ref/cmake/commands/add-executable",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Generator Expressions",
+        "route": "#ref/cmake/expressions/generator-expressions",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/expressions.json",
+    "category": "التعبيرات",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

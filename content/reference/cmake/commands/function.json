@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "function",
+    "slug": "function",
+    "titleArabic": "يعرّف كتلة أوامر قابلة لإعادة الاستخدام داخل نطاق محلي مستقل",
+    "aliases": [
+      "FUNCTION"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/function",
+    "contentPath": "content/reference/cmake/commands/function.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يعرّف كتلة أوامر قابلة لإعادة الاستخدام داخل نطاق محلي مستقل",
+    "actualMeaningArabic": "هذا الأمر يعرّف دالة CMake يمكن استدعاؤها لاحقًا، لكنها على عكس macro() تنفذ داخل scope محلي مستقل نسبيًا، لذلك تعد الخيار الأوضح عندما تريد إعادة استخدام منطق من دون تسريب كل متغيراته إلى المستدعي.",
+    "purposeArabic": "يستخدم لتجميع منطق متكرر أكثر انتظامًا مثل تجهيز هدف أو التحقق من مدخلات أو بناء رسائل وحسابات وسيطة قابلة لإعادة الاستخدام.",
+    "whyUseArabic": "لأن function() تعطيك حدودًا أوضح للمتغيرات، وتجعل set() وunset() داخل الجسم أكثر أمانًا ما لم تطلب صراحة نقل القيم عبر PARENT_SCOPE.",
+    "carriedValueArabic": "أثره يبدأ بتسجيل اسم جديد أثناء configure، ثم عند الاستدعاء يفتح CMake scope محليًا للجسم ويغلقه تلقائيًا عند endfunction().",
+    "sourceDescription": "هذا الأمر يعرّف دالة CMake يمكن استدعاؤها لاحقًا، لكنها على عكس macro() تنفذ داخل scope محلي مستقل نسبيًا، لذلك تعد الخيار الأوضح عندما تريد إعادة استخدام منطق من دون تسريب كل متغيراته إلى المستدعي."
+  },
+  "signature": {
+    "raw": "function(<name> [<arg>...])",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "<name>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسمًا يختاره المبرمج لهذا الهدف أو الاختبار أو الرسالة أو الكيان الذي يبنيه الأمر. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "[<arg>...]",
+        "type": "مجموعة اختيارية في الصياغة",
+        "semanticKind": "group",
+        "descriptionArabic": "هذه مجموعة اختيارية داخل صياغة function. الأقواس المربعة تعني أنك تستطيع حذف المجموعة كلها، وإذا استخدمتها فعليك كتابة عناصرها الفعلية بالترتيب الظاهر داخلها لا باعتبارها نصًا توضيحيًا فقط."
+      },
+      {
+        "name": "<arg>",
+        "type": "argument اختياري يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل وسيطًا مفردًا يمرره المبرمج للأمر أو للاختبار أو للأمر الخارجي. وجوده هنا اختياري لأنه يقع داخل جزء محاط بأقواس مربعة في التوقيع."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هي الخيار العملي عندما تريد كتلة قابلة لإعادة الاستخدام لكنك لا تريد أن تعبث متغيراتها بكل ما حولها.",
+      "إذا احتجت إرجاع قيمة للمستدعي فاستخدم set(... PARENT_SCOPE) أو قيمة cache أو غيّر التصميم ليعتمد على targets/خصائص أوضح."
+    ],
+    "notes": [
+      "الفرق العملي عن macro() ليس شكليًا: داخل function() تعيش المتغيرات في نطاق محلي، لذلك لا يتغير السياق الخارجي تلقائيًا.",
+      "هذا يجعلها أوضح في المشاريع الكبيرة التي تحتوي helper blocks كثيرة."
+    ],
+    "remarks": [],
+    "instructions": [
+      "ابدأ بها عندما يكون المطلوب منطقًا reusable أكثر من مجرد اختصار نصي بسيط."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "function(MyFunc FuncArgument)\n  message(STATUS \"Function says ${FuncArgument}\")\nendfunction()"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/function.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/function.html",
+    "related": [
+      {
+        "name": "endfunction",
+        "route": "#ref/cmake/commands/endfunction",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "macro",
+        "route": "#ref/cmake/commands/macro",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "set",
+        "route": "#ref/cmake/commands/set",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Core Variables, Flow, and Reusable Blocks",
+        "route": "#ref/cmake/examples/core-variables-flow-and-reusable-blocks",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

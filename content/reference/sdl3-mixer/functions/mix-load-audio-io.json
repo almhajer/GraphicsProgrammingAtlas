@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_LoadAudio_IO",
+    "slug": "mix-load-audio-io",
+    "titleArabic": "تحميل الصوت playback SDL_IOStream",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-load-audio-io",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-load-audio-io.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تحميل الصوت playback SDL_IOStream",
+    "actualMeaningArabic": "تحميل الصوت playback SDL_IOStream.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تحميل الصوت playback SDL_IOStream داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( MIX_Audio *) Returns an audio object\nthat can be used to make sound on a mixer, or NULL on failure; call\nSDL_GetError() for more information. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Load audio for playback from an SDL_IOStream."
+  },
+  "signature": {
+    "raw": "MIX_Audio * MIX_LoadAudio_IO(MIX_Mixer *mixer, SDL_IOStream *io, bool predecode, bool closeio);",
+    "returnType": "MIX_Audio *",
+    "parameters": [
+      "MIX_Mixer *mixer",
+      "SDL_IOStream *io",
+      "bool predecode",
+      "bool closeio"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "mixer",
+        "type": "MIX_Mixer *",
+        "descriptionArabic": "يمثل المعامل mixer من النوع MIX_Mixer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a mixer this audio is intended to be used with. May be NULL."
+      },
+      {
+        "name": "io",
+        "type": "SDL_IOStream *",
+        "descriptionArabic": "يمثل المعامل io من النوع SDL_IOStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the SDL_IOStream to load data from."
+      },
+      {
+        "name": "predecode",
+        "type": "bool",
+        "descriptionArabic": "يمثل المعامل predecode من النوع bool القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "if true, data will be fully uncompressed before returning."
+      },
+      {
+        "name": "closeio",
+        "type": "bool",
+        "descriptionArabic": "يمثل المعامل closeio من النوع bool القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "true if SDL_mixer should close io before returning\n(success or failure)."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "In normal usage, apps should load audio once, maybe at startup, then\nplay it multiple times.",
+      "When loading audio, it will be cached fully in RAM in its original\ndata format. Each time it plays, the data will be decoded. For example,\nan MP3 will be stored in memory in MP3 format and be decompressed on the\nfly during playback. This is a tradeoff between i/o overhead and memory\nusage.",
+      "If predecode is true, the data will be decompressed\nduring load and stored as raw PCM data. This might dramatically increase\nloading time and memory usage, but there will be no need to decompress\ndata during playback.",
+      "(One could also use MIX_SetTrackIOStream () to bypass\nloading the data into RAM upfront at all, but this offers still\ndifferent tradeoffs. The correct approach depends on the app's needs and\nemploying different approaches in different situations can make\nsense.)",
+      "MIX_Audio objects can be shared between\nmixers. This function takes a MIX_Mixer , to\nimply this is the most likely place it will be used and loading should\ntry to match its audio format, but the resulting audio can be used\nelsewhere. If mixer is NULL, SDL_mixer will set reasonable\ndefaults.",
+      "Once a MIX_Audio is created, it can be\nassigned to a MIX_Track with MIX_SetTrackAudio (), or played without\nany management with MIX_PlayAudio ().",
+      "When done with a MIX_Audio , it can be\nfreed with MIX_DestroyAudio ().",
+      "This function loads data from an SDL_IOStream. There is also a\nversion that loads from a path on the filesystem ( MIX_LoadAudio ()), and one that accepts\nproperties for ultimate control ( MIX_LoadAudioWithProperties ()).",
+      "The SDL_IOStream provided must be able to seek, or loading will fail.\nIf the stream can't seek (data is coming from an HTTP connection, etc),\nconsider caching the data to memory or disk first and creating a new\nstream to read from there."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( MIX_Audio *) Returns an audio object\nthat can be used to make sound on a mixer, or NULL on failure; call\nSDL_GetError() for more information.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_LoadAudio_IO",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_DestroyAudio",
+        "route": "#ref/sdl3-mixer/functions/mix-destroy-audio",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_SetTrackAudio",
+        "route": "#ref/sdl3-mixer/functions/mix-set-track-audio",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_LoadAudio",
+        "route": "#ref/sdl3-mixer/functions/mix-load-audio",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_LoadAudioWithProperties",
+        "route": "#ref/sdl3-mixer/functions/mix-load-audio-with-properties",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

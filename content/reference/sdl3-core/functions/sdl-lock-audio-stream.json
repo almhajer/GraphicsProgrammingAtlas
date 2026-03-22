@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_LockAudioStream",
+    "slug": "sdl-lock-audio-stream",
+    "titleArabic": "قفل الصوت الدفق serialized access",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-lock-audio-stream",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-lock-audio-stream.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "قفل الصوت الدفق serialized access",
+    "actualMeaningArabic": "قفل الصوت الدفق serialized access.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى قفل الصوت الدفق serialized access داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Lock an audio stream for serialized access."
+  },
+  "signature": {
+    "raw": "bool SDL_LockAudioStream(SDL_AudioStream *stream);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AudioStream *stream"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "SDL_AudioStream *",
+        "descriptionArabic": "يمثل المعامل stream من النوع SDL_AudioStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the audio stream to lock."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Each SDL_AudioStream has an\ninternal mutex it uses to protect its data structures from threading\nconflicts. This function allows an app to lock that mutex, which could\nbe useful if registering callbacks on this stream.",
+      "One does not need to lock a stream to use in it most cases, as the\nstream manages this lock internally. However, this lock is held during\ncallbacks, which may run from arbitrary threads at any time, so if an\napp needs to protect shared data during those callbacks, locking the\nstream guarantees that the callback is not running while the lock is\nheld.",
+      "As this is just a wrapper over SDL_LockMutex for an internal lock; it has\nall the same attributes (recursive locks are allowed, etc)."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_LockAudioStream",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_UnlockAudioStream",
+        "route": "#ref/sdl3-core/functions/sdl-unlock-audio-stream",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Audio Playback, Recording, and\nMixing",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

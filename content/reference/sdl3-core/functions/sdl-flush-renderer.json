@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_FlushRenderer",
+    "slug": "sdl-flush-renderer",
+    "titleArabic": "Force the rendering context to flush any pending commands and\nstate",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-flush-renderer",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-flush-renderer.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Force the rendering context to flush any pending commands and\nstate",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Flush العارض داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Flush العارض داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Force the rendering context to flush any pending commands and\nstate."
+  },
+  "signature": {
+    "raw": "bool SDL_FlushRenderer(SDL_Renderer *renderer);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_Renderer *renderer"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_render.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "renderer",
+        "type": "SDL_Renderer *",
+        "descriptionArabic": "يمثل المعامل renderer من النوع SDL_Renderer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the rendering context."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "You do not need to (and in fact, shouldn't) call this function unless\nyou are planning to call into OpenGL/Direct3D/Metal/whatever directly,\nin addition to using an SDL_Renderer .",
+      "This is for a very-specific case: if you are using SDL's render API,\nand you plan to make OpenGL/D3D/whatever calls in addition to SDL render\nAPI calls. If this applies, you should call this function between calls\nto SDL's render API and the low-level API you're using in\ncooperation.",
+      "In all other cases, you can ignore this function.",
+      "This call makes SDL flush any pending rendering work it was queueing\nup to do later in a single batch, and marks any internal cached state as\ninvalid, so it'll prepare all its state again later, from scratch.",
+      "This means you do not need to save state in your rendering code to\nprotect the SDL renderer. However, there lots of arbitrary pieces of\nDirect3D and OpenGL state that can confuse things; you should use your\nbest judgment and be prepared to make changes if specific state needs to\nbe protected."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_FlushRenderer",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "2D Accelerated Rendering",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

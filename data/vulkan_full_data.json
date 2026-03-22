@@ -1,0 +1,739 @@
+{
+  "meta": {
+    "version": "1.5",
+    "lastUpdated": "2026-03-10",
+    "description": "توثيق شامل لمكتبة Vulkan باللغة العربية - الدوال والأمثلة"
+  },
+  "functions": {
+    "A": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkAcquireNextImageKHR",
+          "category": "swapchain",
+          "description": "يكتسب فهرس الصورة التالية المتاحة من سلسلة التبديل للعرض عليها.",
+          "signature": "VkResult vkAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي المرتبط بسلسلة التبديل"},
+            {"name": "swapchain", "type": "VkSwapchainKHR", "description": "سلسلة التبديل"},
+            {"name": "timeout", "type": "uint64_t", "description": "مهلة الانتظار بالنانوثانية (UINT64_MAX للانتظار اللانهائي)"},
+            {"name": "semaphore", "type": "VkSemaphore", "description": "الإشارة المطلوبة للتحكم بالوصول"},
+            {"name": "fence", "type": "VkFence", "description": "السياج المطلوب للتحكم بالإكمال"},
+            {"name": "pImageIndex", "type": "uint32_t*", "description": "مؤشر إلى متغير سيحفظ فهرس الصورة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الحصول على فهرس الصورة بنجاح"},
+            {"value": "VK_TIMEOUT", "description": "انتهت المهلة قبل الحصول على صورة"},
+            {"value": "VK_NOT_READY", "description": "الصورة ليست جاهزة بعد"},
+            {"value": "VK_SUBOPTIMAL_KHR", "description": "سلسلة التبديل أصبحت دون المستوى المثالي"},
+            {"value": "VK_ERROR_OUT_OF_DATE_KHR", "description": "سلسلة التبديل أصبحت قديمة"}
+          ],
+          "example": "// الحصول على فهرس الصورة للعرض\nuint32_t imageIndex;\nVkSemaphore imageAvailableSemaphore;\n\n// إنشاء الإشارة\nVkSemaphoreCreateInfo semaphoreInfo = {};\nsemaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;\nvkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore);\n\n// اكتساب الصورة\nVkResult result = vkAcquireNextImageKHR(\n    device,\n    swapchain,\n    UINT64_MAX,\n    imageAvailableSemaphore,\n    VK_NULL_HANDLE,\n    &imageIndex\n);\n\nif (result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR) {\n    // يمكن استخدام imageIndex للرسم\n} else if (result == VK_ERROR_OUT_OF_DATE_KHR) {\n    // إعادة إنشاء سلسلة التبديل\n    recreateSwapchain();\n}"
+        },
+        {
+          "name": "vkAllocateCommandBuffers",
+          "category": "command_buffer",
+          "description": "يخصص مخازن أوامر جديدة للتسجيل.",
+          "signature": "VkResult vkAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "pAllocateInfo", "type": "const VkCommandBufferAllocateInfo*", "description": "معلومات التخصيص"},
+            {"name": "pCommandBuffers", "type": "VkCommandBuffer*", "description": "مصفوفة مخازن الأوامر المخصصة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم التخصيص بنجاح"}
+          ],
+          "example": "// تخصيص مخزن أوامر\nVkCommandBufferAllocateInfo allocInfo = {};\nallocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;\nallocInfo.commandPool = commandPool;\nallocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;\nallocInfo.commandBufferCount = 1;\n\nVkCommandBuffer commandBuffer;\nVkResult result = vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);\n\nif (result == VK_SUCCESS) {\n    // مخزن الأوامر جاهز للاستخدام\n}"
+        },
+        {
+          "name": "vkAllocateDescriptorSets",
+          "category": "descriptor",
+          "description": "يخصص مجموعات وصف جديدة.",
+          "signature": "VkResult vkAllocateDescriptorSets(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "pAllocateInfo", "type": "const VkDescriptorSetAllocateInfo*", "description": "معلومات التخصيص"},
+            {"name": "pDescriptorSets", "type": "VkDescriptorSet*", "description": "مصفوفة مجموعات الوصف المخصصة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم التخصيص بنجاح"},
+            {"value": "VK_ERROR_POOL_OUT_OF_MEMORY", "description": "نفد ذاكرة مجمع الوصف"}
+          ],
+          "example": "// تخصيص مجموعة وصف\nVkDescriptorSetAllocateInfo allocInfo = {};\nallocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;\nallocInfo.descriptorPool = descriptorPool;\nallocInfo.descriptorSetCount = 1;\nallocInfo.pSetLayouts = &descriptorSetLayout;\n\nVkDescriptorSet descriptorSet;\nVkResult result = vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet);\n\nif (result == VK_SUCCESS) {\n    // مجموعة الوصف جاهزة للتحديث\n}"
+        },
+        {
+          "name": "vkAllocateMemory",
+          "category": "memory",
+          "description": "يخصص ذاكرة من جهاز Vulkan.",
+          "signature": "VkResult vkAllocateMemory(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "pAllocateInfo", "type": "const VkMemoryAllocateInfo*", "description": "معلومات تخصيص الذاكرة"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة المخصص"},
+            {"name": "pMemory", "type": "VkDeviceMemory*", "description": "مؤشر إلى الذاكرة المخصصة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم التخصيص بنجاح"},
+            {"value": "VK_ERROR_OUT_OF_DEVICE_MEMORY", "description": "نفدت ذاكرة الجهاز"}
+          ],
+          "example": "// تخصيص ذاكرة للصورة\nVkMemoryRequirements memRequirements;\nvkGetImageMemoryRequirements(device, image, &memRequirements);\n\nVkMemoryAllocateInfo allocInfo = {};\nallocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;\nallocInfo.allocationSize = memRequirements.size;\nallocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);\n\nVkDeviceMemory memory;\nVkResult result = vkAllocateMemory(device, &allocInfo, nullptr, &memory);\n\nif (result == VK_SUCCESS) {\n    // ربط الذاكرة بالصورة\n    vkBindImageMemory(device, image, memory, 0);\n}"
+        }
+      ]
+    },
+    "B": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkBeginCommandBuffer",
+          "category": "command_buffer",
+          "description": "يبدأ تسجيل الأوامر في مخزن الأوامر.",
+          "signature": "VkResult vkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "pBeginInfo", "type": "const VkCommandBufferBeginInfo*", "description": "معلومات بدء التسجيل"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "بدأ التسجيل بنجاح"}
+          ],
+          "example": "// بدء تسجيل مخزن الأوامر\nVkCommandBufferBeginInfo beginInfo = {};\nbeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;\nbeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;\n\nVkResult result = vkBeginCommandBuffer(commandBuffer, &beginInfo);\n\nif (result == VK_SUCCESS) {\n    // يمكن الآن إضافة الأوامر\n    // ...\n    \n    // إنهاء التسجيل\n    vkEndCommandBuffer(commandBuffer);\n}"
+        },
+        {
+          "name": "vkBindBufferMemory",
+          "category": "memory",
+          "description": "يربط الذاكرة بمخزن البيانات.",
+          "signature": "VkResult vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "buffer", "type": "VkBuffer", "description": "مخزن البيانات"},
+            {"name": "memory", "type": "VkDeviceMemory", "description": "الذاكرة المراد ربطها"},
+            {"name": "memoryOffset", "type": "VkDeviceSize", "description": "إزاحة الذاكرة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الربط بنجاح"}
+          ],
+          "example": "// ربط الذاكرة بالمخزن\nVkMemoryRequirements memRequirements;\nvkGetBufferMemoryRequirements(device, buffer, &memRequirements);\n\nVkMemoryAllocateInfo allocInfo = {};\nallocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;\nallocInfo.allocationSize = memRequirements.size;\nallocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);\n\nVkDeviceMemory memory;\nvkAllocateMemory(device, &allocInfo, nullptr, &memory);\nvkBindBufferMemory(device, buffer, memory, 0);"
+        },
+        {
+          "name": "vkBindImageMemory",
+          "category": "memory",
+          "description": "يربط الذاكرة بصورة.",
+          "signature": "VkResult vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "image", "type": "VkImage", "description": "الصورة"},
+            {"name": "memory", "type": "VkDeviceMemory", "description": "الذاكرة المراد ربطها"},
+            {"name": "memoryOffset", "type": "VkDeviceSize", "description": "إزاحة الذاكرة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الربط بنجاح"}
+          ],
+          "example": "// ربط الذاكرة بالصورة\nVkMemoryRequirements memRequirements;\nvkGetImageMemoryRequirements(device, image, &memRequirements);\n\nVkMemoryAllocateInfo allocInfo = {};\nallocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;\nallocInfo.allocationSize = memRequirements.size;\nallocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);\n\nVkDeviceMemory memory;\nvkAllocateMemory(device, &allocInfo, nullptr, &memory);\nvkBindImageMemory(device, image, memory, 0);"
+        }
+      ]
+    },
+    "C": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkCmdBeginRenderPass",
+          "category": "render_pass",
+          "description": "يبدأ تمرير الرسم.",
+          "signature": "void vkCmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "pRenderPassBegin", "type": "const VkRenderPassBeginInfo*", "description": "معلومات بدء تمرير الرسم"},
+            {"name": "contents", "type": "VkSubpassContents", "description": "محتويات التمريرة"}
+          ],
+          "example": "// بدء تمرير الرسم\nVkRenderPassBeginInfo renderPassInfo = {};\nrenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;\nrenderPassInfo.renderPass = renderPass;\nrenderPassInfo.framebuffer = framebuffer;\nrenderPassInfo.renderArea.offset = {0, 0};\nrenderPassInfo.renderArea.extent = {width, height};\nrenderPassInfo.clearValueCount = 1;\nrenderPassInfo.pClearValues = &clearColor;\n\nvkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);\n\n// إضافة أوامر الرسم...\n\nvkCmdEndRenderPass(commandBuffer);"
+        },
+        {
+          "name": "vkCmdBindPipeline",
+          "category": "pipeline",
+          "description": "يربط خط أنابيب الرسم أو الحساب.",
+          "signature": "void vkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "pipelineBindPoint", "type": "VkPipelineBindPoint", "description": "نوع خط الأنابيب (رسوميات أو حساب)"},
+            {"name": "pipeline", "type": "VkPipeline", "description": "خط الأنابيب"}
+          ],
+          "example": "// ربط خط أنابيب الرسوميات\nvkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);\n\n// أو ربط خط أنابيب الحساب\nvkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, computePipeline);"
+        },
+        {
+          "name": "vkCmdBindVertexBuffers",
+          "category": "buffer",
+          "description": "يربط مخازن البيانات برؤوس الرسم.",
+          "signature": "void vkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "firstBinding", "type": "uint32_t", "description": "فهرس الربط الأول"},
+            {"name": "bindingCount", "type": "uint32_t", "description": "عدد المخازن"},
+            {"name": "pBuffers", "type": "const VkBuffer*", "description": "مصفوفة المخازن"},
+            {"name": "pOffsets", "type": "const VkDeviceSize*", "description": "مصفوفة الإزاحات"}
+          ],
+          "example": "// ربط مخزن رؤوس\nVkBuffer vertexBuffers[] = {vertexBuffer};\nVkDeviceSize offsets[] = {0};\nvkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);"
+        },
+        {
+          "name": "vkCmdBindIndexBuffer",
+          "category": "buffer",
+          "description": "يربط مخزن الفهارس.",
+          "signature": "void vkCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "buffer", "type": "VkBuffer", "description": "مخزن الفهارس"},
+            {"name": "offset", "type": "VkDeviceSize", "description": "إزاحة الفهرس"},
+            {"name": "indexType", "type": "VkIndexType", "description": "نوع الفهرس (uint16 أو uint32)"}
+          ],
+          "example": "// ربط مخزن الفهارس\nvkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);\n\n// رسم باستخدام الفهارس\nvkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);"
+        },
+        {
+          "name": "vkCmdDraw",
+          "category": "drawing",
+          "description": "يرسم مجموعة من الرؤوس.",
+          "signature": "void vkCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "vertexCount", "type": "uint32_t", "description": "عدد الرؤوس"},
+            {"name": "instanceCount", "type": "uint32_t", "description": "عدد النسخ"},
+            {"name": "firstVertex", "type": "uint32_t", "description": "فهرس الرأس الأول"},
+            {"name": "firstInstance", "type": "uint32_t", "description": "فهرس النسخة الأولى"}
+          ],
+          "example": "// رسم مثلث\nvkCmdDraw(commandBuffer, 3, 1, 0, 0);\n\n// رسم 100 نسخة من نفس الهندسة\nvkCmdDraw(commandBuffer, vertexCount, 100, 0, 0);"
+        },
+        {
+          "name": "vkCmdDrawIndexed",
+          "category": "drawing",
+          "description": "يرسم مجموعة من الرؤوس باستخدام الفهارس.",
+          "signature": "void vkCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "indexCount", "type": "uint32_t", "description": "عدد الفهارس"},
+            {"name": "instanceCount", "type": "uint32_t", "description": "عدد النسخ"},
+            {"name": "firstIndex", "type": "uint32_t", "description": "فهرس الفهرس الأول"},
+            {"name": "vertexOffset", "type": "int32_t", "description": "إزاحة الرؤوس"},
+            {"name": "firstInstance", "type": "uint32_t", "description": "فهرس النسخة الأولى"}
+          ],
+          "example": "// رسم مربع باستخدام الفهارس\nvkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertexBuffer, &offset);\nvkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);\nvkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);\n\nvkCmdDrawIndexed(commandBuffer, 6, 1, 0, 0, 0);"
+        },
+        {
+          "name": "vkCmdCopyBuffer",
+          "category": "buffer",
+          "description": "ينسخ محتويات مخزن إلى آخر.",
+          "signature": "void vkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "srcBuffer", "type": "VkBuffer", "description": "المخزن المصدر"},
+            {"name": "dstBuffer", "type": "VkBuffer", "description": "المخزن الوجهة"},
+            {"name": "regionCount", "type": "uint32_t", "description": "عدد المناطق"},
+            {"name": "pRegions", "type": "const VkBufferCopy*", "description": "مناطق النسخ"}
+          ],
+          "example": "// نسخ المخزن\nVkBufferCopy copyRegion = {};\ncopyRegion.srcOffset = 0;\ncopyRegion.dstOffset = 0;\ncopyRegion.size = size;\n\nvkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);"
+        },
+        {
+          "name": "vkCmdCopyImage",
+          "category": "image",
+          "description": "ينسخ محتويات صورة إلى أخرى.",
+          "signature": "void vkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "srcImage", "type": "VkImage", "description": "الصورة المصدر"},
+            {"name": "srcImageLayout", "type": "VkImageLayout", "description": "تخطيط الصورة المصدر"},
+            {"name": "dstImage", "type": "VkImage", "description": "الصورة الوجهة"},
+            {"name": "dstImageLayout", "type": "VkImageLayout", "description": "تخطيط الصورة الوجهة"},
+            {"name": "regionCount", "type": "uint32_t", "description": "عدد المناطق"},
+            {"name": "pRegions", "type": "const VkImageCopy*", "description": "مناطق النسخ"}
+          ],
+          "example": "// نسخ الصورة\nVkImageCopy copyRegion = {};\ncopyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;\ncopyRegion.srcSubresource.mipLevel = 0;\ncopyRegion.srcSubresource.baseArrayLayer = 0;\ncopyRegion.srcSubresource.layerCount = 1;\ncopyRegion.srcOffset = {0, 0, 0};\ncopyRegion.dstSubresource = copyRegion.srcSubresource;\ncopyRegion.dstOffset = {0, 0, 0};\ncopyRegion.extent = {width, height, 1};\n\nvkCmdCopyImage(commandBuffer, srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,\n              dstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);"
+        },
+        {
+          "name": "vkCmdPipelineBarrier",
+          "category": "synchronization",
+          "description": "ينشئ حاجزاً بين مراحلة خط الأنابيب.",
+          "signature": "void vkCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "srcStageMask", "type": "VkPipelineStageFlags", "description": "مرحلة المصدر"},
+            {"name": "dstStageMask", "type": "VkPipelineStageFlags", "description": "مرحلة الوجهة"},
+            {"name": "dependencyFlags", "type": "VkDependencyFlags", "description": "علامات التبعية"},
+            {"name": "memoryBarrierCount", "type": "uint32_t", "description": "عدد حواجز الذاكرة"},
+            {"name": "pMemoryBarriers", "type": "const VkMemoryBarrier*", "description": "حاجز الذاكرة"},
+            {"name": "bufferMemoryBarrierCount", "type": "uint32_t", "description": "عدد حواجز مخازن الذاكرة"},
+            {"name": "pBufferMemoryBarriers", "type": "const VkBufferMemoryBarrier*", "description": "حاجز مخازن الذاكرة"},
+            {"name": "imageMemoryBarrierCount", "type": "uint32_t", "description": "عدد حواجز صور الذاكرة"},
+            {"name": "pImageMemoryBarriers", "type": "const VkImageMemoryBarrier*", "description": "حاجز صور الذاكرة"}
+          ],
+          "example": "// حاجز لتغيير تخطيط الصورة\nVkImageMemoryBarrier barrier = {};\nbarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;\nbarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;\nbarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;\nbarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;\nbarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;\nbarrier.image = image;\nbarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;\nbarrier.subresourceRange.baseMipLevel = 0;\nbarrier.subresourceRange.levelCount = 1;\nbarrier.subresourceRange.baseArrayLayer = 0;\nbarrier.subresourceRange.layerCount = 1;\nbarrier.srcAccessMask = 0;\nbarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;\n\nvkCmdPipelineBarrier(\n    commandBuffer,\n    VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,\n    VK_PIPELINE_STAGE_TRANSFER_BIT,\n    0, 0, nullptr, 0, nullptr, 1, &barrier\n);"
+        },
+        {
+          "name": "vkCmdDispatch",
+          "category": "compute",
+          "description": "ينفذ مجموعة من المجموعات الحسابية.",
+          "signature": "void vkCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"},
+            {"name": "groupCountX", "type": "uint32_t", "description": "عدد المجموعات في المحور X"},
+            {"name": "groupCountY", "type": "uint32_t", "description": "عدد المجموعات في المحور Y"},
+            {"name": "groupCountZ", "type": "uint32_t", "description": "عدد المجموعات في المحور Z"}
+          ],
+          "example": "// تنفيذ التظليل الحسابي\nvkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, computePipeline);\nvkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);\n\n// تنفيذ 64x64x1 مجموعة\nvkCmdDispatch(commandBuffer, 64, 64, 1);"
+        },
+        {
+          "name": "vkCreateInstance",
+          "category": "instance",
+          "description": "ينشئ كائن المثيل الذي يمثل اتصال التطبيق بمكتبة Vulkan.",
+          "signature": "VkResult vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance)",
+          "parameters": [
+            {"name": "pCreateInfo", "type": "const VkInstanceCreateInfo*", "description": "معلومات إنشاء المثيل"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة المخصص"},
+            {"name": "pInstance", "type": "VkInstance*", "description": "مؤشر إلى المثيل المنشأ"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الإنشاء بنجاح"},
+            {"value": "VK_ERROR_OUT_OF_HOST_MEMORY", "description": "نفدت ذاكرة المضيف"},
+            {"value": "VK_ERROR_OUT_OF_DEVICE_MEMORY", "description": "نفدت ذاكرة الجهاز"},
+            {"value": "VK_ERROR_INITIALIZATION_FAILED", "description": "فشلت التهيئة"},
+            {"value": "VK_ERROR_LAYER_NOT_PRESENT", "description": "الطبقة غير موجودة"},
+            {"value": "VK_ERROR_EXTENSION_NOT_PRESENT", "description": "الإضافة غير موجودة"},
+            {"value": "VK_ERROR_INCOMPATIBLE_DRIVER", "description": "السائق غير متوافق"}
+          ],
+          "example": "// إنشاء مثيل Vulkan\nVkApplicationInfo appInfo = {};\nappInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;\nappInfo.pApplicationName = \"تطبيقي الأول\";\nappInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);\nappInfo.pEngineName = \"No Engine\";\nappInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);\nappInfo.apiVersion = VK_API_VERSION_1_0;\n\nVkInstanceCreateInfo createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;\ncreateInfo.pApplicationInfo = &appInfo;\n\n// تفعيل الطبقات (اختياري)\nconst char* validationLayers[] = {\"VK_LAYER_KHRONOS_validation\"};\n#ifdef NDEBUG\ncreateInfo.enabledLayerCount = 0;\n#else\ncreateInfo.enabledLayerCount = 1;\ncreateInfo.ppEnabledLayerNames = validationLayers;\n#endif\n\nVkInstance instance;\nVkResult result = vkCreateInstance(&createInfo, nullptr, &instance);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء المثيل!\");\n}"
+        },
+        {
+          "name": "vkCreateDevice",
+          "category": "device",
+          "description": "ينشئ جهازاً منطقياً للتفاعل مع الجهاز الفيزيائي.",
+          "signature": "VkResult vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice)",
+          "parameters": [
+            {"name": "physicalDevice", "type": "VkPhysicalDevice", "description": "الجهاز الفيزيائي"},
+            {"name": "pCreateInfo", "type": "const VkDeviceCreateInfo*", "description": "معلومات إنشاء الجهاز"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"},
+            {"name": "pDevice", "type": "VkDevice*", "description": "مؤشر إلى الجهاز المنشأ"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الإنشاء بنجاح"}
+          ],
+          "example": "// إنشاء الجهاز المنطقي\nVkDeviceQueueCreateInfo queueCreateInfo = {};\nqueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;\nqueueCreateInfo.queueFamilyIndex = queueFamilyIndex;\nqueueCreateInfo.queueCount = 1;\nfloat queuePriority = 1.0f;\nqueueCreateInfo.pQueuePriorities = &queuePriority;\n\nVkDeviceCreateInfo deviceCreateInfo = {};\ndeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;\ndeviceCreateInfo.queueCreateInfoCount = 1;\ndeviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;\ndeviceCreateInfo.enabledExtensionCount = 0;\n\n// تفعيل ميزات الجهاز\nVkPhysicalDeviceFeatures deviceFeatures = {};\ndeviceFeatures.samplerAnisotropy = VK_TRUE;\ndeviceCreateInfo.pEnabledFeatures = &deviceFeatures;\n\nVkDevice device;\nVkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device);\n\nif (result == VK_SUCCESS) {\n    // الحصول على طابور الرسم\n    vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);\n}"
+        },
+        {
+          "name": "vkCreateSwapchainKHR",
+          "category": "swapchain",
+          "description": "ينشئ سلسلة تبديل للعرض.",
+          "signature": "VkResult vkCreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "pCreateInfo", "type": "const VkSwapchainCreateInfoKHR*", "description": "معلومات الإنشاء"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"},
+            {"name": "pSwapchain", "type": "VkSwapchainKHR*", "description": "مؤشر إلى السلسلة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الإنشاء بنجاح"}
+          ],
+          "example": "// إنشاء سلسلة التبديل\nVkSwapchainCreateInfoKHR createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;\ncreateInfo.surface = surface;\ncreateInfo.minImageCount = imageCount;\ncreateInfo.imageFormat = surfaceFormat.format;\ncreateInfo.imageColorSpace = surfaceFormat.colorSpace;\ncreateInfo.imageExtent = extent;\ncreateInfo.imageArrayLayers = 1;\ncreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;\ncreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;\ncreateInfo.preTransform = swapChainSupport.capabilities.currentTransform;\ncreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;\ncreateInfo.presentMode = presentMode;\ncreateInfo.clipped = VK_TRUE;\ncreateInfo.oldSwapchain = VK_NULL_HANDLE;\n\nVkSwapchainKHR swapchain;\nVkResult result = vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain);"
+        },
+        {
+          "name": "vkCreateGraphicsPipelines",
+          "category": "pipeline",
+          "description": "ينشئ خطوط أنابيب الرسوميات.",
+          "signature": "VkResult vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "pipelineCache", "type": "VkPipelineCache", "description": "ذاكرة التخزين المؤقت"},
+            {"name": "createInfoCount", "type": "uint32_t", "description": "عدد خطوط الأنابيب"},
+            {"name": "pCreateInfos", "type": "const VkGraphicsPipelineCreateInfo*", "description": "معلومات الإنشاء"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"},
+            {"name": "pPipelines", "type": "VkPipeline*", "description": "مصفوفة خطوط الأنابيب"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الإنشاء بنجاح"}
+          ],
+          "example": "// إنشاء خط أنابيب الرسوميات\nVkGraphicsPipelineCreateInfo pipelineInfo = {};\npipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;\npipelineInfo.stageCount = 2;\npipelineInfo.pStages = shaderStages;\npipelineInfo.pVertexInputState = &vertexInputInfo;\npipelineInfo.pInputAssemblyState = &inputAssembly;\npipelineInfo.pViewportState = &viewportState;\npipelineInfo.pRasterizationState = &rasterizer;\npipelineInfo.pMultisampleState = &multisampling;\npipelineInfo.pColorBlendState = &colorBlending;\npipelineInfo.pDepthStencilState = &depthStencil;\npipelineInfo.layout = pipelineLayout;\npipelineInfo.renderPass = renderPass;\npipelineInfo.subpass = 0;\n\nVkPipeline graphicsPipeline;\nVkResult result = vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline);"
+        },
+        {
+          "name": "vkCreateShaderModule",
+          "category": "shader",
+          "description": "ينشئ وحدة تظليل.",
+          "signature": "VkResult vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "pCreateInfo", "type": "const VkShaderModuleCreateInfo*", "description": "معلومات الإنشاء"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"},
+            {"name": "pShaderModule", "type": "VkShaderModule*", "description": "مؤشر إلى الوحدة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الإنشاء بنجاح"}
+          ],
+          "example": "// إنشاء وحدة التظليل\nstd::vector<char> vertShaderCode = readShaderFile(\"shaders/vert.spv\");\nstd::vector<char> fragShaderCode = readShaderFile(\"shaders/frag.spv\");\n\nVkShaderModuleCreateInfo createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;\ncreateInfo.codeSize = vertShaderCode.size();\ncreateInfo.pCode = reinterpret_cast<const uint32_t*>(vertShaderCode.data());\n\nVkShaderModule vertShaderModule;\nvkCreateShaderModule(device, &createInfo, nullptr, &vertShaderModule);\n\n// نفس الشيء للـ fragment shader\ncreateInfo.codeSize = fragShaderCode.size();\ncreateInfo.pCode = reinterpret_cast<const uint32_t*>(fragShaderCode.data());\n\nVkShaderModule fragShaderModule;\nvkCreateShaderModule(device, &createInfo, nullptr, &fragShaderModule);"
+        },
+        {
+          "name": "vkCreateRenderPass",
+          "category": "render_pass",
+          "description": "ينشئ تمريرة رسم.",
+          "signature": "VkResult vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "pCreateInfo", "type": "const VkRenderPassCreateInfo*", "description": "معلومات الإنشاء"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"},
+            {"name": "pRenderPass", "type": "VkRenderPass*", "description": "مؤشر إلى تمريرة الرسم"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الإنشاء بنجاح"}
+          ],
+          "example": "// إنشاء تمريرة الرسم\nVkAttachmentDescription colorAttachment = {};\ncolorAttachment.format = swapChainImageFormat;\ncolorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;\ncolorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;\ncolorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;\ncolorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;\ncolorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;\ncolorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;\ncolorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;\n\nVkAttachmentReference colorAttachmentRef = {};\ncolorAttachmentRef.attachment = 0;\ncolorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;\n\nVkSubpassDescription subpass = {};\nsubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;\nsubpass.colorAttachmentCount = 1;\nsubpass.pColorAttachments = &colorAttachmentRef;\n\nVkRenderPassCreateInfo renderPassInfo = {};\nrenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;\nrenderPassInfo.attachmentCount = 1;\nrenderPassInfo.pAttachments = &colorAttachment;\nrenderPassInfo.subpassCount = 1;\nrenderPassInfo.pSubpasses = &subpass;\n\nVkRenderPass renderPass;\nvkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass);"
+        },
+        {
+          "name": "vkCreateFramebuffer",
+          "category": "framebuffer",
+          "description": "ينشئ مخزن إطار.",
+          "signature": "VkResult vkCreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز المنطقي"},
+            {"name": "pCreateInfo", "type": "const VkFramebufferCreateInfo*", "description": "معلومات الإنشاء"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"},
+            {"name": "pFramebuffer", "type": "VkFramebuffer*", "description": "مؤشر إلى مخزن الإطار"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الإنشاء بنجاح"}
+          ],
+          "example": "// إنشاء مخزن الإطار\nVkImageView attachments[] = {colorImageView, depthImageView};\n\nVkFramebufferCreateInfo framebufferInfo = {};\nframebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;\nframebufferInfo.renderPass = renderPass;\nframebufferInfo.attachmentCount = 1;\nframebufferInfo.pAttachments = attachments;\nframebufferInfo.width = swapChainExtent.width;\nframebufferInfo.height = swapChainExtent.height;\nframebufferInfo.layers = 1;\n\nVkFramebuffer framebuffer;\nvkCreateFramebuffer(device, &framebufferInfo, nullptr, &framebuffer);"
+        }
+      ]
+    },
+    "D": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkDestroyInstance",
+          "category": "instance",
+          "description": "يدمر المثيل ويحرر الموارد.",
+          "signature": "void vkDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator)",
+          "parameters": [
+            {"name": "instance", "type": "VkInstance", "description": "المثيل"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"}
+          ],
+          "example": "// تدمير المثيل\nvkDestroyInstance(instance, nullptr);"
+        },
+        {
+          "name": "vkDestroyDevice",
+          "category": "device",
+          "description": "يدمر الجهاز المنطقي.",
+          "signature": "void vkDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"}
+          ],
+          "example": "// تدمير الجهاز\nvkDestroyDevice(device, nullptr);"
+        },
+        {
+          "name": "vkDestroySwapchainKHR",
+          "category": "swapchain",
+          "description": "يدمر سلسلة التبديل.",
+          "signature": "void vkDestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "swapchain", "type": "VkSwapchainKHR", "description": "سلسلة التبديل"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"}
+          ],
+          "example": "// تدمير سلسلة التبديل\nvkDestroySwapchainKHR(device, swapchain, nullptr);"
+        },
+        {
+          "name": "vkDestroyPipeline",
+          "category": "pipeline",
+          "description": "يدمر خط الأنابيب.",
+          "signature": "void vkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "pipeline", "type": "VkPipeline", "description": "خط الأنابيب"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"}
+          ],
+          "example": "// تدمير خط الأنابيب\nvkDestroyPipeline(device, graphicsPipeline, nullptr);"
+        },
+        {
+          "name": "vkDestroyShaderModule",
+          "category": "shader",
+          "description": "يدمر وحدة التظليل.",
+          "signature": "void vkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "shaderModule", "type": "VkShaderModule", "description": "وحدة التظليل"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"}
+          ],
+          "example": "// تدمير وحدات التظليل\nvkDestroyShaderModule(device, vertShaderModule, nullptr);\nvkDestroyShaderModule(device, fragShaderModule, nullptr);"
+        },
+        {
+          "name": "vkDestroySemaphore",
+          "category": "synchronization",
+          "description": "يدمر الإشارة.",
+          "signature": "void vkDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "semaphore", "type": "VkSemaphore", "description": "الإشارة"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"}
+          ],
+          "example": "// تدمير الإشارة\nvkDestroySemaphore(device, semaphore, nullptr);"
+        },
+        {
+          "name": "vkDestroyFence",
+          "category": "synchronization",
+          "description": "يدمر السياج.",
+          "signature": "void vkDestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "fence", "type": "VkFence", "description": "السياج"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"}
+          ],
+          "example": "// تدمير السياج\nvkDestroyFence(device, fence, nullptr);"
+        },
+        {
+          "name": "vkDeviceWaitIdle",
+          "category": "synchronization",
+          "description": "ينتظر حتى يكتمل جميع العمليات على الجهاز.",
+          "signature": "VkResult vkDeviceWaitIdle(VkDevice device)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "اكتملت جميع العمليات"}
+          ],
+          "example": "// انتظار اكتمال جميع العمليات\nvkDeviceWaitIdle(device);"
+        }
+      ]
+    },
+    "E": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkEndCommandBuffer",
+          "category": "command_buffer",
+          "description": "ينهي تسجيل الأوامر في مخزن الأوامر.",
+          "signature": "VkResult vkEndCommandBuffer(VkCommandBuffer commandBuffer)",
+          "parameters": [
+            {"name": "commandBuffer", "type": "VkCommandBuffer", "description": "مخزن الأوامر"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "انتهى التسجيل بنجاح"}
+          ],
+          "example": "// إنهاء تسجيل مخزن الأوامر\nVkResult result = vkEndCommandBuffer(commandBuffer);\n\nif (result == VK_SUCCESS) {\n    // مخزن الأوامر جاهز للتقديم\n}"
+        },
+        {
+          "name": "vkEnumeratePhysicalDevices",
+          "category": "physical_device",
+          "description": "يعدد الأجهزة الفيزيائية المتاحة.",
+          "signature": "VkResult vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices)",
+          "parameters": [
+            {"name": "instance", "type": "VkInstance", "description": "المثيل"},
+            {"name": "pPhysicalDeviceCount", "type": "uint32_t*", "description": "عدد الأجهزة"},
+            {"name": "pPhysicalDevices", "type": "VkPhysicalDevice*", "description": "مصفوفة الأجهزة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم التعداد بنجاح"}
+          ],
+          "example": "// تعداد الأجهزة الفيزيائية\nuint32_t deviceCount = 0;\nvkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);\n\nif (deviceCount == 0) {\n    throw std::runtime_error(\"لم يتم العثور على جهاز يدعم Vulkan!\");\n}\n\nstd::vector<VkPhysicalDevice> devices(deviceCount);\nvkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());\n\n// اختيار الجهاز الأول\nVkPhysicalDevice physicalDevice = devices[0];"
+        }
+      ]
+    },
+    "F": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkFreeMemory",
+          "category": "memory",
+          "description": "يحرر الذاكرة المخصصة.",
+          "signature": "void vkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "memory", "type": "VkDeviceMemory", "description": "الذاكرة"},
+            {"name": "pAllocator", "type": "const VkAllocationCallbacks*", "description": "مخصص الذاكرة"}
+          ],
+          "example": "// تحرير الذاكرة\nvkFreeMemory(device, memory, nullptr);"
+        },
+        {
+          "name": "vkFreeCommandBuffers",
+          "category": "command_buffer",
+          "description": "يحرر مخازن الأوامر المخصصة.",
+          "signature": "void vkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "commandPool", "type": "VkCommandPool", "description": "مجمع الأوامر"},
+            {"name": "commandBufferCount", "type": "uint32_t", "description": "عدد مخازن الأوامر"},
+            {"name": "pCommandBuffers", "type": "const VkCommandBuffer*", "description": "مخازن الأوامر"}
+          ],
+          "example": "// تحرير مخازن الأوامر\nvkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);"
+        },
+        {
+          "name": "vkFlushMappedMemoryRanges",
+          "category": "memory",
+          "description": "يكتب البيانات المعينة إلى الذاكرة.",
+          "signature": "VkResult vkFlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "memoryRangeCount", "type": "uint32_t", "description": "عدد النطاقات"},
+            {"name": "pMemoryRanges", "type": "const VkMappedMemoryRange*", "description": "نطاقات الذاكرة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم الكتابة بنجاح"}
+          ],
+          "example": "// كتابة البيانات\nVkMappedMemoryRange memoryRange = {};\nmemoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;\nmemoryRange.memory = memory;\nmemoryRange.offset = 0;\nmemoryRange.size = VK_WHOLE_SIZE;\n\nvkFlushMappedMemoryRanges(device, 1, &memoryRange);"
+        }
+      ]
+    },
+    "G": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkGetDeviceQueue",
+          "category": "device",
+          "description": "يحصل على طابور من الجهاز.",
+          "signature": "void vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "queueFamilyIndex", "type": "uint32_t", "description": "فهرس عائلة الطابور"},
+            {"name": "queueIndex", "type": "uint32_t", "description": "فهرس الطابور"},
+            {"name": "pQueue", "type": "VkQueue*", "description": "مؤشر إلى الطابور"}
+          ],
+          "example": "// الحصول على طابور الرسم\nvkGetDeviceQueue(device, queueFamilyIndex, 0, &graphicsQueue);"
+        },
+        {
+          "name": "vkGetPhysicalDeviceProperties",
+          "category": "physical_device",
+          "description": "يحصل على خصائص الجهاز الفيزيائي.",
+          "signature": "void vkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties)",
+          "parameters": [
+            {"name": "physicalDevice", "type": "VkPhysicalDevice", "description": "الجهاز الفيزيائي"},
+            {"name": "pProperties", "type": "VkPhysicalDeviceProperties*", "description": "مؤشر إلى الخصائص"}
+          ],
+          "example": "// الحصول على خصائص الجهاز\nVkPhysicalDeviceProperties deviceProperties;\nvkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);\n\nstd::cout << \"Device: \" << deviceProperties.deviceName << std::endl;\nstd::cout << \"API Version: \" << deviceProperties.apiVersion << std::endl;"
+        },
+        {
+          "name": "vkGetPhysicalDeviceQueueFamilyProperties",
+          "category": "physical_device",
+          "description": "يحصل على خصائص عائلات الطوابير.",
+          "signature": "void vkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties)",
+          "parameters": [
+            {"name": "physicalDevice", "type": "VkPhysicalDevice", "description": "الجهاز الفيزيائي"},
+            {"name": "pQueueFamilyPropertyCount", "type": "uint32_t*", "description": "عدد العائلات"},
+            {"name": "pQueueFamilyProperties", "type": "VkQueueFamilyProperties*", "description": "مصفوفة الخصائص"}
+          ],
+          "example": "// الحصول على عائلات الطوابير\nuint32_t queueFamilyCount = 0;\nvkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);\n\nstd::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);\nvkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());"
+        }
+      ]
+    },
+    "M": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkMapMemory",
+          "category": "memory",
+          "description": "يسرد الذاكرة للوصول المباشر.",
+          "signature": "VkResult vkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "memory", "type": "VkDeviceMemory", "description": "الذاكرة"},
+            {"name": "offset", "type": "VkDeviceSize", "description": "الإزاحة"},
+            {"name": "size", "type": "VkDeviceSize", "description": "الحجم"},
+            {"name": "flags", "type": "VkMemoryMapFlags", "description": "العلامات"},
+            {"name": "ppData", "type": "void**", "description": "مؤشر إلى البيانات"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم التخطيط بنجاح"}
+          ],
+          "example": "// تخطيط الذاكرة\nvoid* data;\nVkResult result = vkMapMemory(device, memory, 0, VK_WHOLE_SIZE, 0, &data);\n\nif (result == VK_SUCCESS) {\n    // نسخ البيانات\n    memcpy(data, vertexData, dataSize);\n    \n    // إلغاء تخطيط الذاكرة\n    vkUnmapMemory(device, memory);\n}"
+        },
+        {
+          "name": "vkUnmapMemory",
+          "category": "memory",
+          "description": "يلغي تخطيط الذاكرة.",
+          "signature": "void vkUnmapMemory(VkDevice device, VkDeviceMemory memory)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "memory", "type": "VkDeviceMemory", "description": "الذاكرة"}
+          ],
+          "example": "// إلغاء تخطيط الذاكرة\nvkUnmapMemory(device, memory);"
+        }
+      ]
+    },
+    "Q": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkQueueSubmit",
+          "category": "queue",
+          "description": "يقدم أوامر للتنفيذ على طابور.",
+          "signature": "VkResult vkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)",
+          "parameters": [
+            {"name": "queue", "type": "VkQueue", "description": "الطابور"},
+            {"name": "submitCount", "type": "uint32_t", "description": "عدد التقديمات"},
+            {"name": "pSubmits", "type": "const VkSubmitInfo*", "description": "معلومات التقديم"},
+            {"name": "fence", "type": "VkFence", "description": "السياج"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم التقديم بنجاح"}
+          ],
+          "example": "// تقديم الأوامر\nVkSubmitInfo submitInfo = {};\nsubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;\nsubmitInfo.waitSemaphoreCount = 1;\nsubmitInfo.pWaitSemaphores = &imageAvailableSemaphore;\nsubmitInfo.pWaitDstStageMask = &waitStage;\nsubmitInfo.commandBufferCount = 1;\nsubmitInfo.pCommandBuffers = &commandBuffer;\nsubmitInfo.signalSemaphoreCount = 1;\nsubmitInfo.pSignalSemaphores = &renderFinishedSemaphore;\n\nvkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);"
+        },
+        {
+          "name": "vkQueuePresentKHR",
+          "category": "queue",
+          "description": "يعرض الصورة على الشاشة.",
+          "signature": "VkResult vkQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)",
+          "parameters": [
+            {"name": "queue", "type": "VkQueue", "description": "الطابور"},
+            {"name": "pPresentInfo", "type": "const VkPresentInfoKHR*", "description": "معلومات العرض"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "تم العرض بنجاح"},
+            {"value": "VK_ERROR_OUT_OF_DATE_KHR", "description": "سلسلة التبديل قديمة"},
+            {"value": "VK_SUBOPTIMAL_KHR", "description": "سلسلة التبديل دون المستوى المثالي"}
+          ],
+          "example": "// عرض الصورة\nVkPresentInfoKHR presentInfo = {};\npresentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;\npresentInfo.waitSemaphoreCount = 1;\npresentInfo.pWaitSemaphores = &renderFinishedSemaphore;\npresentInfo.swapchainCount = 1;\npresentInfo.pSwapchains = &swapchain;\npresentInfo.pImageIndices = &imageIndex;\n\nVkResult result = vkQueuePresentKHR(presentQueue, &presentInfo);\n\nif (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {\n    recreateSwapchain();\n}"
+        },
+        {
+          "name": "vkQueueWaitIdle",
+          "category": "queue",
+          "description": "ينتظر حتى يكتمل جميع العمليات في الطابور.",
+          "signature": "VkResult vkQueueWaitIdle(VkQueue queue)",
+          "parameters": [
+            {"name": "queue", "type": "VkQueue", "description": "الطابور"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "اكتملت جميع العمليات"}
+          ],
+          "example": "// انتظار اكتمال الطابور\nvkQueueWaitIdle(graphicsQueue);"
+        }
+      ]
+    },
+    "W": {
+      "title": "الدوال",
+      "items": [
+        {
+          "name": "vkWaitForFences",
+          "category": "synchronization",
+          "description": "ينتظر حتى تكتمل السياجات.",
+          "signature": "VkResult vkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFences* pFences, VkBool32 waitAll, uint64_t timeout)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "fenceCount", "type": "uint32_t", "description": "عدد السياجات"},
+            {"name": "pFences", "type": "const VkFence*", "description": "مصفوفة السياجات"},
+            {"name": "waitAll", "type": "VkBool32", "description": "انتظار الكل أم أي واحد"},
+            {"name": "timeout", "type": "uint64_t", "description": "المهلة"}
+          ],
+          "returnValues": [
+            {"value": "VK_SUCCESS", "description": "اكتملت السياجات"},
+            {"value": "VK_TIMEOUT", "description": "انتهت المهلة"}
+          ],
+          "example": "// انتظار السياج\nVkFence fences[] = {inFlightFence};\nvkWaitForFences(device, 1, fences, VK_TRUE, UINT64_MAX);\n\n// إعادة تعيين السياج\nvkResetFences(device, 1, fences);"
+        },
+        {
+          "name": "vkResetFences",
+          "category": "synchronization",
+          "description": "يعيد تعيين السياجات.",
+          "signature": "void vkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences)",
+          "parameters": [
+            {"name": "device", "type": "VkDevice", "description": "الجهاز"},
+            {"name": "fenceCount", "type": "uint32_t", "description": "عدد السياجات"},
+            {"name": "pFences", "type": "const VkFence*", "description": "مصفوفة السياجات"}
+          ],
+          "example": "// إعادة تعيين السياج\nvkResetFences(device, 1, &inFlightFence);"
+        }
+      ]
+    }
+  }
+}

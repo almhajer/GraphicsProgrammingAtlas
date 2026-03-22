@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_AcquireGPUSwapchainTexture",
+    "slug": "sdl-acquire-gpu-swapchain-texture",
+    "titleArabic": "الحصول على الخامة use presentation",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-acquire-gpu-swapchain-texture",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-acquire-gpu-swapchain-texture.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "الحصول على الخامة use presentation",
+    "actualMeaningArabic": "الحصول على الخامة use presentation.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى الحصول على الخامة use presentation داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success, false on error; call SDL_GetError () for more information. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Acquire a texture to use in presentation."
+  },
+  "signature": {
+    "raw": "bool SDL_AcquireGPUSwapchainTexture(\n SDL_GPUCommandBuffer *command_buffer,\n SDL_Window *window,\n SDL_GPUTexture **swapchain_texture,\n Uint32 *swapchain_texture_width,\n Uint32 *swapchain_texture_height);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_GPUCommandBuffer *command_buffer",
+      "SDL_Window *window",
+      "SDL_GPUTexture **swapchain_texture",
+      "Uint32 *swapchain_texture_width",
+      "Uint32 *swapchain_texture_height"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_gpu.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "command_buffer",
+        "type": "SDL_GPUCommandBuffer *",
+        "descriptionArabic": "يمثل المعامل command_buffer من النوع SDL_GPUCommandBuffer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a command buffer."
+      },
+      {
+        "name": "window",
+        "type": "SDL_Window *",
+        "descriptionArabic": "يمثل المعامل window من النوع SDL_Window * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a window that has been claimed."
+      },
+      {
+        "name": "swapchain_texture",
+        "type": "SDL_GPUTexture **",
+        "descriptionArabic": "يمثل المعامل swapchain_texture من النوع SDL_GPUTexture ** القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled in with a swapchain texture handle."
+      },
+      {
+        "name": "swapchain_texture_width",
+        "type": "Uint32 *",
+        "descriptionArabic": "يمثل المعامل swapchain_texture_width من النوع Uint32 * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled in with the swapchain texture width, may be\nNULL."
+      },
+      {
+        "name": "swapchain_texture_height",
+        "type": "Uint32 *",
+        "descriptionArabic": "يمثل المعامل swapchain_texture_height من النوع Uint32 * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled in with the swapchain texture height, may be\nNULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "When a swapchain texture is acquired on a command buffer, it will\nautomatically be submitted for presentation when the command buffer is\nsubmitted. The swapchain texture should only be referenced by the\ncommand buffer used to acquire it.",
+      "This function will fill the swapchain texture handle with NULL if too\nmany frames are in flight. This is not an error. This NULL pointer\nshould not be passed back into SDL. Instead, it should be considered as\nan indication to wait until the swapchain is available.",
+      "If you use this function, it is possible to create a situation where\nmany command buffers are allocated while the rendering context waits for\nthe GPU to catch up, which will cause memory usage to grow. You should\nuse SDL_WaitAndAcquireGPUSwapchainTexture ()\nunless you know what you are doing with timing.",
+      "The swapchain texture is managed by the implementation and must not\nbe freed by the user. You MUST NOT call this function from any thread\nother than the one that created the window."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success, false on error; call SDL_GetError () for more information.",
+    "threadSafety": "This function should only be called from the thread that created the\nwindow.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_AcquireGPUSwapchainTexture",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_ClaimWindowForGPUDevice",
+        "route": "#ref/sdl3-core/functions/sdl-claim-window-for-gpu-device",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_SubmitGPUCommandBuffer",
+        "route": "#ref/sdl3-core/functions/sdl-submit-gpu-command-buffer",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_SubmitGPUCommandBufferAndAcquireFence",
+        "route": "#ref/sdl3-core/functions/sdl-submit-gpu-command-buffer-and-acquire-fence",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_CancelGPUCommandBuffer",
+        "route": "#ref/sdl3-core/functions/sdl-cancel-gpu-command-buffer",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetWindowSizeInPixels",
+        "route": "#ref/sdl3-core/functions/sdl-get-window-size-in-pixels",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_WaitForGPUSwapchain",
+        "route": "#ref/sdl3-core/functions/sdl-wait-for-gpu-swapchain",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_WaitAndAcquireGPUSwapchainTexture",
+        "route": "#ref/sdl3-core/functions/sdl-wait-and-acquire-gpu-swapchain-texture",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_SetGPUAllowedFramesInFlight",
+        "route": "#ref/sdl3-core/functions/sdl-set-gpu-allowed-frames-in-flight",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "3D Rendering and GPU Compute",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

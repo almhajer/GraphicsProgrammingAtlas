@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_sparse_range_map.hpp • القسم 4 من 5 • الأسطر 1351-1800 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_sparse_range_map.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vk_sparse_range_map.hpp.html">vk_sparse_range_map.hpp</a> /
+        <span>القسم 4 من 5 • الأسطر 1351-1800</span>
+      </nav>
+      <h1 class="page-title">📄 vk_sparse_range_map.hpp</h1>
+      <p class="page-description">القسم 4 من 5 • الأسطر 1351-1800</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-3.html">القسم السابق</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-5.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vk_sparse_range_map.hpp</span>
+        <span class="source-stat">القسم: 4/5</span>
+        <span class="source-stat">الأسطر: 1351-1800</span>
+        <span class="source-stat">حجم الملف: 87.8 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>        }
+    }
+    inline void rerange(const SmallRange &amp;range, const SmallRange &amp;range_value) {
+        for (auto i = range.begin; i &lt; range.end; ++i) {
+            ranges_[i] = range_value;
+        }
+    }
+
+    // for resize right need both begin and end...
+    void resize_value_right(const SmallRange &amp;current_range, index_type new_begin) {
+        // Use move semantics for (potentially) heavyweight mapped_type&#39;s
+        assert(current_range.begin != new_begin);
+        // Move second from it&#39;s current location and update the first at the same time
+        construct_value(static_cast&lt;SmallIndex&gt;(new_begin),
+                        std::make_pair(key_type(new_begin, current_range.end), std::move(get_value(current_range.begin)-&gt;second)));
+        destruct_value(current_range.begin);
+    }
+
+    // Now we can walk a range and rewrite it cleaning up any live contents
+    void clear_and_set_range(SmallIndex rewrite_begin, SmallIndex rewrite_end, const SmallRange &amp;new_range) {
+        for (auto i = rewrite_begin; i &lt; rewrite_end; ++i) {
+            auto &amp;range = ranges_[i];
+            if (i == range.begin) {
+                destruct_value(i);
+            }
+            range = new_range;
+        }
+    }
+
+    SmallIndex next_range(SmallIndex current) const {
+        SmallIndex next = ranges_[current].end;
+        // If the next range is invalid, skip to the next range, which *must* be (or be end)
+        if ((next &lt; limit_) &amp;&amp; ranges_[next].invalid()) {
+            // For invalid ranges, begin is the beginning of the next range
+            next = ranges_[next].begin;
+            assert(next == limit_ || ranges_[next].valid());
+        }
+        return next;
+    }
+
+    SmallIndex prev_range(SmallIndex current) const {
+        if (current == 0) {
+            return 0;
+        }
+
+        auto prev = current - 1;
+        if (ranges_[prev].valid()) {
+            // For valid ranges, the range denoted by begin (as that&#39;s where the backing store keeps values
+            prev = ranges_[prev].begin;
+        } else if (prev != 0) {
+            // Invalid but not off the front, we can recur (only once) from the end of the prev range to get the answer
+            // For invalid ranges this is the end of the previous range
+            prev = prev_range(ranges_[prev].end);
+        }
+        return prev;
+    }
+
+    friend iterator;
+    friend const_iterator;
+    // Stores range boundaries only
+    //     open ranges, stored as inverted, invalid range (begining of next, end of prev]
+    //     inuse(begin, end) for all entries  on (begin, end]
+    // Used for placement new of T for each range begin.
+    struct alignas(alignof(value_type)) BackingStore {
+        uint8_t data[sizeof(value_type)];
+    };
+
+    SmallIndex size_;
+    SmallIndex limit_;
+    std::array&lt;SmallRange, N&gt; ranges_;
+    std::array&lt;BackingStore, N&gt; backing_store_;
+    std::array&lt;bool, N&gt; in_use_;
+};
+
+// Forward index iterator, tracking an index value and the appropos lower bound
+// returns an index_type, lower_bound pair.  Supports ++,  offset, and seek affecting the index,
+// lower bound updates as needed. As the index may specify a range for which no entry exist, dereferenced
+// iterator includes an &quot;valid&quot; field, true IFF the lower_bound is not end() and contains [index, index +1)
+//
+// Must be explicitly invalidated when the underlying map is changed.
+template &lt;typename Map&gt;
+class cached_lower_bound_impl {
+    using plain_map_type = typename std::remove_const&lt;Map&gt;::type;  // Allow instatiation with const or non-const Map
+  public:
+    using iterator = const_correct_iterator&lt;Map&gt;;
+    using key_type = typename plain_map_type::key_type;
+    using mapped_type = typename plain_map_type::mapped_type;
+    // Both sides of the return pair are const&#39;d because we&#39;re returning references/pointers to the *internal* state
+    // and we don&#39;t want and caller altering internal state.
+    using index_type = typename Map::index_type;
+    struct value_type {
+        const index_type &amp;index;
+        const iterator &amp;lower_bound;
+        const bool &amp;valid;
+        value_type(const index_type &amp;index_, const iterator &amp;lower_bound_, bool &amp;valid_)
+            : index(index_), lower_bound(lower_bound_), valid(valid_) {}
+    };
+
+  private:
+    Map *const map_;
+    const iterator end_;
+    value_type pos_;
+
+    index_type index_;
+    iterator lower_bound_;
+    bool valid_;
+
+    bool is_valid() const { return includes(index_); }
+
+    // Allow reuse of a type with const semantics
+    void set_value(const index_type &amp;index, const iterator &amp;it) {
+        assert(it == lower_bound(index));
+        index_ = index;
+        lower_bound_ = it;
+        valid_ = is_valid();
+    }
+
+    void update(const index_type &amp;index) {
+        assert(lower_bound_ == lower_bound(index));
+        index_ = index;
+        valid_ = is_valid();
+    }
+
+    inline iterator lower_bound(const index_type &amp;index) { return map_-&gt;lower_bound(key_type(index, index + 1)); }
+    inline bool at_end(const iterator &amp;it) const { return it == end_; }
+
+    bool is_lower_than(const index_type &amp;index, const iterator &amp;it) { return at_end(it) || (index &lt; it-&gt;first.end); }
+
+  public:
+    // The cached lower bound knows the parent map, and thus can tell us this...
+    inline bool at_end() const { return at_end(lower_bound_); }
+    // includes(index) is a convenience function to test if the index would be in the currently cached lower bound
+    bool includes(const index_type &amp;index) const { return !at_end() &amp;&amp; lower_bound_-&gt;first.includes(index); }
+
+    // The return is const because we are sharing the internal state directly.
+    const value_type &amp;operator*() const { return pos_; }
+    const value_type *operator-&gt;() const { return &amp;pos_; }
+
+    // Advance the cached location by 1
+    cached_lower_bound_impl &amp;operator++() {
+        const index_type next = index_ + 1;
+        if (is_lower_than(next, lower_bound_)) {
+            update(next);
+        } else {
+            // if we&#39;re past pos_-&gt;second, next *must* be the new lower bound.
+            // NOTE: that next can&#39;t be past end, so lower_bound_ isn&#39;t end.
+            auto next_it = lower_bound_;
+            ++next_it;
+            set_value(next, next_it);
+
+            // However we *must* not be past next.
+            assert(is_lower_than(next, next_it));
+        }
+
+        return *this;
+    }
+
+    // seek(index) updates lower_bound for index, updating lower_bound_ as needed.
+    cached_lower_bound_impl &amp;seek(const index_type &amp;seek_to) {
+        // Optimize seeking to  forward
+        if (index_ == seek_to) {
+            // seek to self is a NOOP.  To reset lower bound after a map change, use invalidate
+        } else if (index_ &lt; seek_to) {
+            // See if the current or next ranges are the appropriate lower_bound... should be a common use case
+            if (is_lower_than(seek_to, lower_bound_)) {
+                // lower_bound_ is still the correct lower bound
+                update(seek_to);
+            } else {
+                // Look to see if the next range is the new lower_bound (and we aren&#39;t at end)
+                auto next_it = lower_bound_;
+                ++next_it;
+                if (is_lower_than(seek_to, next_it)) {
+                    // next_it is the correct new lower bound
+                    set_value(seek_to, next_it);
+                } else {
+                    // We don&#39;t know where we are...  and we aren&#39;t going to walk the tree looking for seek_to.
+                    set_value(seek_to, lower_bound(seek_to));
+                }
+            }
+        } else {
+            // General case... this is += so we&#39;re not implmenting optimized negative offset logic
+            set_value(seek_to, lower_bound(seek_to));
+        }
+        return *this;
+    }
+
+    // Advance the cached location by offset.
+    cached_lower_bound_impl &amp;offset(const index_type &amp;offset) {
+        const index_type next = index_ + offset;
+        return seek(next);
+    }
+
+    // invalidate() resets the the lower_bound_ cache, needed after insert/erase/overwrite/split operations
+    // Pass index by value in case we are invalidating to index_ and set_value does a modify-in-place on index_
+    cached_lower_bound_impl &amp;invalidate(index_type index) {
+        set_value(index, lower_bound(index));
+        return *this;
+    }
+
+    // For times when the application knows what it&#39;s done to the underlying map... (with assert in set_value)
+    cached_lower_bound_impl &amp;invalidate(const iterator &amp;hint, index_type index) {
+        set_value(index, hint);
+        return *this;
+    }
+
+    cached_lower_bound_impl &amp;invalidate() { return invalidate(index_); }
+
+    // Allow a hint for a *valid* lower bound for current index
+    // TODO: if the fail-over becomes a hot-spot, the hint logic could be far more clever (looking at previous/next...)
+    cached_lower_bound_impl &amp;invalidate(const iterator &amp;hint) {
+        if ((hint != end_) &amp;&amp; hint-&gt;first.includes(index_)) {
+            auto index = index_;  // by copy set modifies in place
+            set_value(index, hint);
+        } else {
+            invalidate();
+        }
+        return *this;
+    }
+
+    // The offset in index type to the next change (the end of the current range, or the transition from invalid to
+    // valid.  If invalid and at_end, returns index_type(0)
+    index_type distance_to_edge() {
+        if (valid_) {
+            // Distance to edge of
+            return lower_bound_-&gt;first.end - index_;
+        } else if (at_end()) {
+            return index_type(0);
+        } else {
+            return lower_bound_-&gt;first.begin - index_;
+        }
+    }
+
+    Map &amp;map() { return *map_; }
+    const Map &amp;map() const { return *map_; }
+
+    // Default constructed object reports valid (correctly) as false, but otherwise will fail (assert) under nearly any use.
+    cached_lower_bound_impl()
+        : map_(nullptr), end_(), pos_(index_, lower_bound_, valid_), index_(0), lower_bound_(), valid_(false) {}
+    cached_lower_bound_impl(Map &amp;map, const index_type &amp;index)
+        : map_(&amp;map),
+          end_(map.end()),
+          pos_(index_, lower_bound_, valid_),
+          index_(index),
+          lower_bound_(lower_bound(index)),
+          valid_(is_valid()) {}
+};
+
+template &lt;typename CachedLowerBound, typename MappedType = typename CachedLowerBound::mapped_type&gt;
+const MappedType &amp;evaluate(const CachedLowerBound &amp;clb, const MappedType &amp;default_value) {
+    if (clb-&gt;valid) {
+        return clb-&gt;lower_bound-&gt;second;
+    }
+    return default_value;
+}
+
+// Split a range into pieces bound by the intersection of the iterator&#39;s range and the supplied range
+template &lt;typename Iterator, typename Map, typename Range&gt;
+Iterator split(Iterator in, Map &amp;map, const Range &amp;range) {
+    assert(in != map.end());  // Not designed for use with invalid iterators...
+    const auto in_range = in-&gt;first;
+    const auto split_range = in_range &amp; range;
+
+    if (split_range.empty()) return map.end();
+
+    auto pos = in;
+    if (split_range.begin != in_range.begin) {
+        pos = map.split(pos, split_range.begin, split_op_keep_both());
+        ++pos;
+    }
+    if (split_range.end != in_range.end) {
+        pos = map.split(pos, split_range.end, split_op_keep_both());
+    }
+    return pos;
+}
+
+// Apply an operation over a range map, infilling where content is absent, updating where content is present.
+// The passed pos must *either* be strictly less than range or *is* lower_bound (which may be end)
+// Trims to range boundaries.
+// infill op doesn&#39;t have to alter map, but mustn&#39;t invalidate iterators passed to it. (i.e. no erasure)
+// infill data (default mapped value or other initial value) is contained with ops.
+// update allows existing ranges to be updated (merged, whatever) based on data contained in ops.  All iterators
+// passed to update are already trimmed to fit within range.
+template &lt;typename RangeMap, typename InfillUpdateOps, typename Iterator = typename RangeMap::iterator&gt;
+Iterator infill_update_range(RangeMap &amp;map, Iterator pos, const typename RangeMap::key_type &amp;range, const InfillUpdateOps &amp;ops) {
+    using KeyType = typename RangeMap::key_type;
+    using IndexType = typename RangeMap::index_type;
+
+    const auto end = map.end();
+    assert((pos == end) || (pos == map.lower_bound(range)) || pos-&gt;first.strictly_less(range));
+
+    if (range.empty()) return pos;
+    if (pos == end) {
+        // Only pass pos == end for range tail after last entry
+        assert(end == map.lower_bound(range));
+    } else if (pos-&gt;first.strictly_less(range)) {
+        // pos isn&#39;t lower_bound for range (it&#39;s less than range), however, if range is monotonically increasing it&#39;s likely
+        // the next entry in the map will be the lower bound.
+
+        // If the new (pos + 1) *isn&#39;t* stricly_less and pos is,
+        // (pos + 1) must be the lower_bound, otherwise we have to look for it O(log n)
+        ++pos;
+        if ((pos != end) &amp;&amp; pos-&gt;first.strictly_less(range)) {
+            pos = map.lower_bound(range);
+        }
+        assert(pos == map.lower_bound(range));
+    }
+
+    if ((pos != end) &amp;&amp; (range.begin &gt; pos-&gt;first.begin)) {
+        // lower bound starts before the range, trim and advance
+        pos = map.split(pos, range.begin, split_op_keep_both());
+        ++pos;
+    }
+
+    IndexType current_begin = range.begin;
+    while ((pos != end) &amp;&amp; (current_begin &lt; range.end)) {
+        // The current_begin is either pointing to the next existing value to update or the beginning of a gap to infill
+        assert(pos-&gt;first.begin &gt;= current_begin);
+
+        if (current_begin &lt; pos-&gt;first.begin) {
+            // We have a gap to infill (we supply pos for (&quot;insert in front of&quot; calls)
+            ops.infill(map, pos, KeyType(current_begin, std::min(range.end, pos-&gt;first.begin)));
+            // Advance current begin, but *not* pos as it&#39;s the next valid value. (infill shall not invalidate pos)
+            current_begin = pos-&gt;first.begin;
+        } else {
+            // We need to run the update operation on the valid portion of the current value
+            if (pos-&gt;first.end &gt; range.end) {
+                // If this entry overlaps end-of-range we need to trim it to the range
+                pos = map.split(pos, range.end, split_op_keep_both());
+            }
+
+            // We have a valid fully contained range, merge with it
+            ops.update(pos);
+
+            // Advance the current location and map entry
+            current_begin = pos-&gt;first.end;
+            ++pos;
+        }
+    }
+
+    // Fill to the end as needed
+    if (current_begin &lt; range.end) {
+        ops.infill(map, pos, KeyType(current_begin, range.end));
+    }
+
+    return pos;
+}
+
+template &lt;typename RangeMap, typename InfillUpdateOps&gt;
+void infill_update_range(RangeMap &amp;map, const typename RangeMap::key_type &amp;range, const InfillUpdateOps &amp;ops) {
+    if (range.empty()) return;
+    auto pos = map.lower_bound(range);
+    infill_update_range(map, pos, range, ops);
+}
+
+template &lt;typename RangeMap, typename RangeGen, typename InfillUpdateOps&gt;
+void infill_update_rangegen(RangeMap &amp;map, RangeGen &amp;range_gen, const InfillUpdateOps &amp;ops) {
+    auto pos = map.lower_bound(*range_gen);
+    for (; range_gen-&gt;non_empty(); ++range_gen) {
+        pos = infill_update_range(map, pos, *range_gen, ops);
+    }
+}
+
+// Parallel iterator
+// Traverse to range maps over the the same range, but without assumptions of aligned ranges.
+// ++ increments to the next point where on of the two maps changes range, giving a range over which the two
+// maps do not transition ranges
+template &lt;typename MapA, typename MapB = MapA, typename KeyType = typename MapA::key_type&gt;
+class parallel_iterator {
+  public:
+    using key_type = KeyType;
+    using index_type = typename key_type::index_type;
+
+    // The traits keep the iterator/const_interator consistent with the constness of the map.
+    using map_type_A = MapA;
+    using plain_map_type_A = typename std::remove_const&lt;MapA&gt;::type;  // Allow instatiation with const or non-const Map
+    using key_type_A = typename plain_map_type_A::key_type;
+    using index_type_A = typename plain_map_type_A::index_type;
+    using iterator_A = const_correct_iterator&lt;map_type_A&gt;;
+    using lower_bound_A = cached_lower_bound_impl&lt;map_type_A&gt;;
+
+    using map_type_B = MapB;
+    using plain_map_type_B = typename std::remove_const&lt;MapB&gt;::type;
+    using key_type_B = typename plain_map_type_B::key_type;
+    using index_type_B = typename plain_map_type_B::index_type;
+    using iterator_B = const_correct_iterator&lt;map_type_B&gt;;
+    using lower_bound_B = cached_lower_bound_impl&lt;map_type_B&gt;;
+
+    // This is the value we&#39;ll always be returning, but the referenced object will be updated by the operations
+    struct value_type {
+        const key_type &amp;range;
+        const lower_bound_A &amp;pos_A;
+        const lower_bound_B &amp;pos_B;
+        value_type(const key_type &amp;range_, const lower_bound_A &amp;pos_A_, const lower_bound_B &amp;pos_B_)
+            : range(range_), pos_A(pos_A_), pos_B(pos_B_) {}
+    };
+
+  private:
+    lower_bound_A pos_A_;
+    lower_bound_B pos_B_;
+    key_type range_;
+    value_type pos_;
+    index_type compute_delta() {
+        auto delta_A = pos_A_.distance_to_edge();
+        auto delta_B = pos_B_.distance_to_edge();
+        index_type delta_min;
+
+        // If either A or B are at end, there distance is *0*, so shouldn&#39;t be considered in the &quot;distance to edge&quot;
+        if (delta_A == 0) {  // lower A is at end
+            delta_min = static_cast&lt;index_type&gt;(delta_B);
+        } else if (delta_B == 0) {  // lower B is at end
+            delta_min = static_cast&lt;index_type&gt;(delta_A);
+        } else {
+            // Neither are at end, use the nearest edge, s.t. over this range A and B are both constant
+            delta_min = std::min(static_cast&lt;index_type&gt;(delta_A), static_cast&lt;index_type&gt;(delta_B));
+        }
+        return delta_min;
+    }
+
+  public:
+    // Default constructed object will report range empty (for end checks), but otherwise is unsafe to use
+    parallel_iterator() : pos_A_(), pos_B_(), range_(), pos_(range_, pos_A_, pos_B_) {}
+    parallel_iterator(map_type_A &amp;map_A, map_type_B &amp;map_B, index_type index)
+        : pos_A_(map_A, static_cast&lt;index_type_A&gt;(index)),
+          pos_B_(map_B, static_cast&lt;index_type_B&gt;(index)),
+          range_(index, index + compute_delta()),
+          pos_(range_, pos_A_, pos_B_) {}
+
+    // Advance to the next spot one of the two maps changes
+    parallel_iterator &amp;operator++() {
+        const auto start = range_.end;         // we computed this the last time we set range
+        const auto delta = range_.distance();  // we computed this the last time we set range
+        assert(delta != 0);                    // Trying to increment past end
+
+        pos_A_.offset(static_cast&lt;index_type_A&gt;(delta));
+        pos_B_.offset(static_cast&lt;index_type_B&gt;(delta));
+
+        range_ = key_type(start, start + compute_delta());  // find the next boundary (must be after offset)
+        assert(pos_A_-&gt;index == start);
+        assert(pos_B_-&gt;index == start);
+
+        return *this;
+    }
+
+    // Seeks to a specific index in both maps reseting range.  Cannot guarantee range.begin is on edge boundary,
+    /// but range.end will be.  Lower bound objects assumed to invalidate their cached lower bounds on seek.
+    parallel_iterator &amp;seek(const index_type &amp;index) {
+        pos_A_.seek(static_cast&lt;index_type_A&gt;(index));
+        pos_B_.seek(static_cast&lt;index_type_B&gt;(index));
+        range_ = key_type(index, index + compute_delta());
+        assert(pos_A_-&gt;index == index);</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-3.html">القسم السابق</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-5.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

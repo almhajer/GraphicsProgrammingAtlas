@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "ImGui::GetDrawData",
+    "slug": "im-gui-get-draw-data",
+    "titleArabic": "تعيد بيانات الرسم الجاهزة بعد Render لتمريرها إلى renderer backend",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/functions/im-gui-get-draw-data",
+    "contentPath": "content/reference/imgui/functions/im-gui-get-draw-data.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تعيد بيانات الرسم الجاهزة بعد Render لتمريرها إلى renderer backend",
+    "actualMeaningArabic": "هذه الدالة لا تنشئ رسماً جديداً بنفسها، بل تكشف النتيجة النهائية التي جمعها قلب Dear ImGui في شكل ImDrawData حتى يقرأها backend الرسومي ويحوّلها إلى استدعاءات OpenGL أو Vulkan أو غيرهما.",
+    "purposeArabic": "استخدمها بعد ImGui::Render مباشرة عندما تكون داخل renderer backend أو قبل استدعاء دالة مثل ImGui_ImplOpenGL3_RenderDrawData أو ImGui_ImplVulkan_RenderDrawData.",
+    "whyUseArabic": "تفصل بين مرحلة بناء الواجهة ومرحلة تنفيذ الرسم الفعلي، وهذا يسمح لـ Dear ImGui أن تبقى مستقلة عن واجهة الرسم بينما يبقى backend مسؤولاً عن تنفيذ أوامر الرسم المناسبة.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه تعيد مؤشراً إلى بنية ImDrawData التي تحتوي أوامر الرسم النهائية للإطار الحالي. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "تعطيك حزمة أوامر الرسم النهائية التي جهزتها Dear ImGui للإطار الحالي بعد اكتمال بناء الواجهة."
+  },
+  "signature": {
+    "raw": "ImDrawData* ImGui::GetDrawData()",
+    "returnType": "ImDrawData*",
+    "parameters": [],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [
+      "القيمة المعادة غالباً مؤشر صالح فقط حتى بداية دورة Dear ImGui التالية.",
+      "معظم التطبيقات لا ترسم ImDrawData يدوياً، بل تسلمها إلى backend جاهز مثل ImGui_ImplOpenGL3_RenderDrawData."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استدعها فقط بعد ImGui::Render في الإطار نفسه.",
+      "مرر النتيجة مباشرة إلى renderer backend بدل الاحتفاظ بها لوقت لاحق.",
+      "عامل ImDrawData كبيانات نهائية للرسم فقط، لا كمكان تضيف إليه widgets جديدة."
+    ],
+    "lifecycle": [
+      "يبني التطبيق الواجهة أولاً عبر NewFrame وBegin وبقية العناصر.",
+      "عند ImGui::Render تجمع Dear ImGui قوائم الرسم النهائية للإطار الحالي.",
+      "بعدها فقط يصبح GetDrawData مصدراً صحيحاً لبيانات الرسم التي سيستهلكها backend."
+    ],
+    "returns": "تعيد مؤشراً إلى بنية ImDrawData التي تحتوي أوامر الرسم النهائية للإطار الحالي.",
+    "threadSafety": "يجب استخدامها من نفس الخيط الذي يملك سياق Dear ImGui الحالي، لأن ImDrawData المعادة مرتبطة بحالة ذلك السياق في الإطار الجاري.",
+    "example": "ImGui::Render();\nImDrawData* draw_data = ImGui::GetDrawData();\nImGui_ImplOpenGL3_RenderDrawData(draw_data);"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::Render",
+        "route": "#ref/imgui/functions/im-gui-render",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImDrawData",
+        "route": "#ref/imgui/types/im-draw-data",
+        "libraryId": "imgui",
+        "kindId": "types"
+      },
+      {
+        "name": "ImDrawList",
+        "route": "#ref/imgui/types/im-draw-list",
+        "libraryId": "imgui",
+        "kindId": "types"
+      },
+      {
+        "name": "Platform Backend و Renderer Backend",
+        "route": "#ref/imgui/misc/platform-backend-renderer-backend",
+        "libraryId": "imgui",
+        "kindId": "misc"
+      },
+      {
+        "name": "ImGui + OpenGL",
+        "route": "#ref/imgui/misc/im-gui-open-gl",
+        "libraryId": "imgui",
+        "kindId": "misc"
+      },
+      {
+        "name": "ImGui + Vulkan",
+        "route": "#ref/imgui/misc/im-gui-vulkan",
+        "libraryId": "imgui",
+        "kindId": "misc"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/functions.json",
+    "category": "الدوال",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

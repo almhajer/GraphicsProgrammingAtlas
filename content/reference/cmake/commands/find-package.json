@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "find_package",
+    "slug": "find-package",
+    "titleArabic": "يبحث عن dependency ويحمّل targets أو معلومات الاستعمال الخاصة بها",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/find-package",
+    "contentPath": "content/reference/cmake/commands/find-package.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يبحث عن dependency ويحمّل targets أو معلومات الاستعمال الخاصة بها",
+    "actualMeaningArabic": "هذا الأمر يطلب من CMake العثور على حزمة خارجية عبر package config أو Find module، ثم استيراد targets أو متغيرات تجعلها قابلة للربط والاستعمال داخل المشروع الحالي.",
+    "purposeArabic": "يستخدم عندما يعتمد مشروعك على مكتبات خارجية مثل ZLIB أو fmt أو SDL3 بدلاً من بنائها يدوياً داخل نفس الشجرة.",
+    "whyUseArabic": "يعطيك طريقة موحدة ومحمولة لاكتشاف الاعتماديات وتوصيلها مع targets بدلاً من hard-coded paths، كما يحدد هل سيقرأ Config files التي تصدرها الحزمة نفسها أم سيلجأ إلى module mode.",
+    "carriedValueArabic": "يؤثر أثناء configure لأنه قد يحمّل ملفات package config أو modules ويعرّف imported targets أو متغيرات تملي كيف تبني الأهداف اللاحقة، كما قد يطبق version matching قبل أن يعتبر الحزمة صالحة.",
+    "sourceDescription": "هذا الأمر يطلب من CMake العثور على حزمة خارجية عبر package config أو Find module، ثم استيراد targets أو متغيرات تجعلها قابلة للربط والاستعمال داخل المشروع الحالي."
+  },
+  "signature": {
+    "raw": "find_package(<PackageName> [version] [REQUIRED] [COMPONENTS <components>...])",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "<PackageName>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسم الحزمة التي يكتبها المستخدم فعليًا مثل ZLIB أو SDL3 أو fmt داخل هذا الموضع. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "version",
+        "type": "argument اختياري",
+        "semanticKind": "argument",
+        "descriptionArabic": "يمثل رقم إصدار أو حد توافق يكتبه المستخدم فعليًا مثل 3.26 أو 1.2.0، وليس كلمة مفتاحية ثابتة من كلمات CMake. وجود هذا الوسيط اختياري، لذلك تكتبه فقط عندما تحتاج السلوك أو التحديد الإضافي الذي يفعّله."
+      },
+      {
+        "name": "REQUIRED",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "خيار يعني أن العنصر الحالي ليس اختياريًا. أثره العملي أن غيابه يفشل configure بدل ترك النتيجة في حالة جزئية أو قابلة للتجاوز. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      },
+      {
+        "name": "[COMPONENTS <components>...]",
+        "type": "مجموعة اختيارية في الصياغة",
+        "semanticKind": "group",
+        "descriptionArabic": "هذه مجموعة اختيارية في find_package(). إذا كتبتها فابدأ بالكلمة COMPONENTS ثم اكتب أسماء المكونات التي تريدها فعليًا مثل Widgets أو Tools. وجودها يقيّد الاكتشاف بالمكوّنات المطلوبة بدل الحزمة كلها."
+      },
+      {
+        "name": "COMPONENTS",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "كلمة مفتاحية تعلن أن العناصر التالية تمثل مكونات فرعية. أثرها العملي أنها تقيد النتيجة بالمكونات المطلوبة فقط بدل تحميل الحزمة كلها أو اعتبار أي جزء منها كافيًا. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      },
+      {
+        "name": "<components>",
+        "type": "argument اختياري يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل قائمة المكونات الفرعية التي يطلبها المبرمج من الحزمة أو من خطوة التثبيت. وجوده هنا اختياري لأنه يقع داخل جزء محاط بأقواس مربعة في التوقيع."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "في المشاريع الحديثة يفضّل استخدام imported targets التي توفرها الحزمة ثم ربطها عبر target_link_libraries().",
+      "قد يتأثر مسار البحث بمتغيرات أو سياسات مثل CMP0074.",
+      "إذا مررت CONFIG أو كتبت find_package(MyLib CONFIG REQUIRED) فأنت تطلب صراحةً مسار package config files بدل الاكتفاء بوحدة Find*.cmake عامة."
+    ],
+    "notes": [
+      "وضع ملفات الإعداد (Config mode) يبحث عن ملفات package التي تصدرها الحزمة نفسها مثل MyLibConfig.cmake وMyLibConfigVersion.cmake، أما وضع الوحدات (module mode) فيعتمد على وحدات Find*.cmake.",
+      "استخدم REQUIRED عندما يكون غياب الاعتمادية خطأً حقيقياً يمنع configure، واستخدم COMPONENTS عندما تريد أجزاء محددة من الحزمة لا الحزمة كلها."
+    ],
+    "remarks": [],
+    "instructions": [
+      "لا تربط include paths وlibs يدوياً إذا كانت الحزمة تصدر targets جاهزة."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "find_package(ZLIB REQUIRED)\ntarget_link_libraries(calculator PRIVATE ZLIB::ZLIB)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/find_package.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/find_package.html",
+    "related": [
+      {
+        "name": "FindPackageHandleStandardArgs",
+        "route": "#ref/cmake/modules/findpackagehandlestandardargs",
+        "libraryId": "cmake",
+        "kindId": "modules"
+      },
+      {
+        "name": "CMP0074",
+        "route": "#ref/cmake/policies/cmp0074",
+        "libraryId": "cmake",
+        "kindId": "policies"
+      },
+      {
+        "name": "target_link_libraries",
+        "route": "#ref/cmake/commands/target-link-libraries",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Finding Dependencies",
+        "route": "#ref/cmake/examples/finding-dependencies",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      },
+      {
+        "name": "package config files and Config mode",
+        "route": "#ref/cmake/concepts/package-config-files-and-config-mode",
+        "libraryId": "cmake",
+        "kindId": "concepts"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

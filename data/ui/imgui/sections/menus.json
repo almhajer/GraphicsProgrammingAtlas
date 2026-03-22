@@ -1,0 +1,160 @@
+{
+  "key": "menus",
+  "title": "القوائم والتنقل",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "menus",
+      "sectionTitle": "القوائم والتنقل",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::BeginMenuBar",
+        "ImGui::BeginMenu",
+        "ImGui::MenuItem",
+        "ImGui::Selectable",
+        "ImGui::BeginPopupContextItem"
+      ],
+      "instructions": [],
+      "notes": [
+        "شريط القوائم هنا ليس مثالاً بسيطاً؛ بل يجمع أوامر عامة وقوائم فرعية وحالات Enable/Disable واضحة.",
+        "القائمة السياقية مرتبطة بعنصر داخل النافذة، لا بالشريط العلوي.",
+        "يمكن استخدام النمط نفسه لقوائم أدوات المطور أو إعدادات المشروع أو أوامر المحرر."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يعرض المثال MenuBar حقيقية فيها File/Edit/View وأدوات مطور، مع Submenu للاستيراد، وMenuItem مع حالة Disable، وقائمة Context Menu خاصة بعنصر داخل قائمة الموارد.",
+        "code": "if (ImGui::BeginMenuBar()) {\n    if (ImGui::BeginMenu(\"File\")) {\n        if (ImGui::BeginMenu(\"Import\")) {\n            ImGui::MenuItem(\"FBX\");\n            ImGui::MenuItem(\"glTF\");\n            ImGui::EndMenu();\n        }\n        ImGui::MenuItem(\"Save\", \"Ctrl+S\", false, can_save);\n        ImGui::EndMenu();\n    }\n    if (ImGui::BeginMenu(\"View\")) {\n        ImGui::MenuItem(\"Scene Panel\", nullptr, &show_scene);\n        ImGui::MenuItem(\"Properties\", nullptr, &show_props);\n        ImGui::EndMenu();\n    }\n    ImGui::EndMenuBar();\n}",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawMenuExample() {\n    static bool show_scene = true;\n    static bool show_props = true;\n    static bool show_console = false;\n    static bool can_save = false;\n    static int selected_action = -1;\n\n    ImGui::Begin(\"Editor Shell\", nullptr, ImGuiWindowFlags_MenuBar);\n    if (ImGui::BeginMenuBar()) {\n        if (ImGui::BeginMenu(\"File\")) {\n            if (ImGui::BeginMenu(\"Import\")) {\n                if (ImGui::MenuItem(\"FBX\")) { selected_action = 0; }\n                if (ImGui::MenuItem(\"glTF\")) { selected_action = 1; }\n                if (ImGui::MenuItem(\"Texture Folder\")) { selected_action = 2; }\n                ImGui::EndMenu();\n            }\n            ImGui::Separator();\n            ImGui::MenuItem(\"Save\", \"Ctrl+S\", false, can_save);\n            if (ImGui::MenuItem(\"Save As\")) { selected_action = 3; }\n            if (ImGui::MenuItem(\"Exit\")) { selected_action = 4; }\n            ImGui::EndMenu();\n        }\n        if (ImGui::BeginMenu(\"Edit\")) {\n            ImGui::MenuItem(\"Undo\", \"Ctrl+Z\");\n            ImGui::MenuItem(\"Redo\", \"Ctrl+Y\", false, false);\n            ImGui::MenuItem(\"Duplicate\", \"Ctrl+D\");\n            ImGui::EndMenu();\n        }\n        if (ImGui::BeginMenu(\"View\")) {\n            ImGui::MenuItem(\"Scene Panel\", nullptr, &show_scene);\n            ImGui::MenuItem(\"Properties\", nullptr, &show_props);\n            ImGui::MenuItem(\"Console\", nullptr, &show_console);\n            ImGui::EndMenu();\n        }\n        if (ImGui::BeginMenu(\"Developer\")) {\n            ImGui::MenuItem(\"Show Metrics\");\n            ImGui::MenuItem(\"Reload Shaders\");\n            ImGui::EndMenu();\n        }\n        ImGui::EndMenuBar();\n    }\n\n    ImGui::Selectable(\"Player.mesh\");\n    if (ImGui::BeginPopupContextItem(\"asset_context\")) {\n        if (ImGui::MenuItem(\"Focus\")) { selected_action = 5; }\n        if (ImGui::MenuItem(\"Rename\")) { selected_action = 6; }\n        if (ImGui::MenuItem(\"Delete\", nullptr, false, false)) { selected_action = 7; }\n        ImGui::EndPopup();\n    }\n\n    ImGui::Text(\"آخر إجراء: %d\", selected_action);\n    ImGui::Text(\"الحالات: Scene=%s / Properties=%s / Console=%s\", show_scene ? \"On\" : \"Off\", show_props ? \"On\" : \"Off\", show_console ? \"On\" : \"Off\");\n    ImGui::End();\n}",
+        "explanation": "المثال يبني MenuBar غنية بالفعل، ويظهر Submenu ضمن File، ويستخدم MenuItem مع toggle states، ثم يضيف Context Menu لعنصر محدد داخل النافذة نفسها.",
+        "expectedResult": "يرى المستخدم شريط قوائم واضحاً ومنظماً مع فروع فرعية وأوامر عامة، إضافة إلى قائمة سياقية تظهر عند استهداف العنصر المناسب داخل النافذة.",
+        "importantNote": "القوائم في Dear ImGui تصبح أوضح عندما ترتبط بحالة فعلية في التطبيق مثل can_save أو show_scene أو selected_action، لا عندما تبقى مجرد أوامر صورية بلا أثر."
+      },
+      "guiRepresentation": {
+        "title": "Editor Shell",
+        "mockup": "MenuBar -> File / Edit / View / Developer\nSubmenu -> File > Import > FBX\nMenuItem Disabled -> Save\nContext Menu -> Focus / Rename / Delete",
+        "explanation": "الصورة هنا منظمة لتظهر الشريط العلوي والفروع الفرعية والقائمة السياقية بوضوح يشبه المحررات الحقيقية."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "MenuBar وقوائم فرعية وقائمة سياقية",
+      "shortTooltip": "مثال مستقل غني يضم MenuBar أساسية وFile/Edit/View وقوائم فرعية وMenuItem مفعلة/معطلة وContext Menu.",
+      "description": "يجمع هذا المثال أغلب ما يحتاجه المستخدم في القوائم داخل واجهة أدوات: MenuBar أساسية، قوائم File وEdit وView، قوائم فرعية Submenu، عناصر MenuItem مع حالات مفعلة ومعطلة، وقائمة سياقية مرتبطة بعنصر داخل النافذة.",
+      "officialArabicDescription": "بدلاً من الاكتفاء بقائمة صغيرة من عنصرين، يعرض المثال شريط قوائم فعلياً يشبه المحررات، مع تنظيم للأوامر العامة والإعدادات وأدوات المطور.",
+      "realMeaning": "القوائم في Dear ImGui هي طبقة تنظيم منطقية للأوامر، وليست مجرد سطور نصية؛ فهي تجمع الأفعال في موضع معروف وتسمح بإظهار فروع فرعية وسياق تفاعلي أوضح.",
+      "whenToUse": "استخدم هذا النمط عندما تبني Editor shell أو Tool window أو نافذة أدوات مطور تحتاج أوامر عامة وإعدادات وقائمة سياقية على عناصرها.",
+      "practicalBenefit": "يسهل الوصول إلى الأوامر ويجعل الشريط العلوي والقوائم الفرعية مألوفة للمستخدم، كما يوضح الحالات المفعلة والمعطلة والأوامر المرتبطة بسياق العنصر الحالي.",
+      "misuseImpact": "إذا وضعت كل الأوامر في قائمة واحدة مسطحة أو تجاهلت الحالة المفعلة والمعطلة، فستصبح الواجهة مزدحمة وغير دقيقة في تمثيل ما يمكن تنفيذه فعلاً."
+    },
+    {
+      "sectionKey": "menus",
+      "sectionTitle": "القوائم والتنقل",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGuiConfigFlags_DockingEnable",
+        "ImGui::DockSpaceOverViewport",
+        "ImGui::BeginMainMenuBar",
+        "ImGui::MenuItem",
+        "ImGui::Selectable"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال مناسب جداً لأدوات المحرر، لأنه يجمع القوائم واللوحات والتنقل في مسار واحد.",
+        "القائمة View هنا ليست نظرية؛ فهي تتحكم فعلياً في ظهور اللوحات داخل مساحة العمل.",
+        "يمكن إضافة Viewports متعددة أو Layout presets فوق الهيكل نفسه لاحقاً."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يفعل التطبيق Docking، ثم يبني Main Menu Bar وDockSpaceOverViewport، وبعدها يفتح لوحات قابلة للتثبيت مثل Scene وHierarchy وInspector وConsole.",
+        "code": "io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\nImGui::DockSpaceOverViewport();\nif (ImGui::BeginMainMenuBar()) {\n    if (ImGui::BeginMenu(\"View\")) {\n        ImGui::MenuItem(\"Hierarchy\", nullptr, &show_hierarchy);\n        ImGui::EndMenu();\n    }\n    ImGui::EndMainMenuBar();\n}",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawDockingWorkspaceExample() {\n    static bool show_hierarchy = true;\n    static bool show_inspector = true;\n    static bool show_console = true;\n    static bool show_scene = true;\n    static int selected_entity = 0;\n    static float inspector_position[3] = {0.0f, 0.0f, 0.0f};\n    static float inspector_tint[4] = {0.85f, 0.73f, 0.28f, 1.0f};\n\n    ImGuiIO& io = ImGui::GetIO();\n    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    ImGui::DockSpaceOverViewport();\n\n    if (ImGui::BeginMainMenuBar()) {\n        if (ImGui::BeginMenu(\"File\")) {\n            ImGui::MenuItem(\"New Scene\");\n            ImGui::MenuItem(\"Save\", \"Ctrl+S\");\n            ImGui::MenuItem(\"Exit\");\n            ImGui::EndMenu();\n        }\n        if (ImGui::BeginMenu(\"View\")) {\n            ImGui::MenuItem(\"Scene\", nullptr, &show_scene);\n            ImGui::MenuItem(\"Hierarchy\", nullptr, &show_hierarchy);\n            ImGui::MenuItem(\"Inspector\", nullptr, &show_inspector);\n            ImGui::MenuItem(\"Console\", nullptr, &show_console);\n            ImGui::EndMenu();\n        }\n        if (ImGui::BeginMenu(\"Developer\")) {\n            ImGui::MenuItem(\"Metrics\");\n            ImGui::MenuItem(\"Reload Assets\");\n            ImGui::EndMenu();\n        }\n        ImGui::EndMainMenuBar();\n    }\n\n    if (show_scene) {\n        ImGui::Begin(\"Scene\");\n        ImGui::Text(\"Viewport placeholder\");\n        ImGui::Button(\"Play\", ImVec2(82.0f, 0.0f));\n        ImGui::SameLine();\n        ImGui::Button(\"Pause\", ImVec2(82.0f, 0.0f));\n        ImGui::End();\n    }\n\n    if (show_hierarchy) {\n        ImGui::Begin(\"Hierarchy\");\n        if (ImGui::Selectable(\"Player\", selected_entity == 0)) selected_entity = 0;\n        if (ImGui::Selectable(\"Key Light\", selected_entity == 1)) selected_entity = 1;\n        if (ImGui::Selectable(\"Ground\", selected_entity == 2)) selected_entity = 2;\n        ImGui::End();\n    }\n\n    if (show_inspector) {\n        ImGui::Begin(\"Inspector\");\n        ImGui::Text(\"Selected entity: %d\", selected_entity);\n        ImGui::DragFloat3(\"Position\", inspector_position);\n        ImGui::ColorEdit4(\"Tint\", inspector_tint);\n        ImGui::End();\n    }\n\n    if (show_console) {\n        ImGui::Begin(\"Console\");\n        ImGui::Text(\"[Info] Scene loaded.\");\n        ImGui::Text(\"[Warn] Shadow atlas resized.\");\n        ImGui::End();\n    }\n}",
+        "explanation": "المثال يوضح أن القوائم هنا تقود Workspace كاملة، لا نافذة واحدة فقط. كل MenuItem تغير ظهور لوحة أو وظيفة رئيسية داخل هيكل محرر قابل للتثبيت.",
+        "expectedResult": "يرى المستخدم مساحة عمل Dear ImGui فيها شريط قوائم علوي ولوحات متعددة مثل Scene وHierarchy وInspector وConsole يمكن تنظيمها كواجهة محرر حقيقية.",
+        "importantNote": "Docking يحتاج تفعيل ImGuiConfigFlags_DockingEnable وربط اللوحات بحالة واضحة حتى يكون مفيداً فعلاً لا مجرد مساحة فارغة قابلة للتثبيت."
+      },
+      "guiRepresentation": {
+        "title": "Docking Workspace",
+        "mockup": "Main Menu -> File / View / Developer\nDockSpace -> Scene + Hierarchy + Inspector + Console\nView Menu -> إظهار/إخفاء اللوحات\nالنتيجة -> مساحة عمل محرر كاملة",
+        "explanation": "الصورة تعرض Workspace كاملة بدلاً من نافذة مفردة، حتى يظهر معنى Menu + Docking في سياق عملي حقيقي."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "مساحة عمل Docking مع MenuBar ولوحات Scene وInspector وConsole",
+      "shortTooltip": "مثال مستقل يوضح Editor workspace حقيقية مع DockSpace وشريط قوائم ولوحات متعددة داخل Dear ImGui.",
+      "description": "ينقل هذا المثال القوائم من مستوى النافذة المفردة إلى مستوى مساحة عمل كاملة: شريط قوائم علوي، DockSpace، ولوحات قابلة للتثبيت مثل Scene وHierarchy وInspector وConsole.",
+      "officialArabicDescription": "الفكرة هنا أن القوائم ليست معزولة عن بنية المحرر؛ فهي تقود Workspace كاملة، وتتحكم في ظهور اللوحات، وتتكامل مع Docking ونافذة العرض الرئيسة.",
+      "realMeaning": "المعنى الحقيقي أن Dear ImGui يمكن أن تكون غلاف محرر كامل إذا فعّلت Docking وربطت MenuBar بحالة اللوحات وأجزاء مساحة العمل.",
+      "whenToUse": "استخدم هذا النمط عندما تبني level editor أو material editor أو tool shell يحتاج panels متعددة قابلة للتثبيت وشريط أوامر علوي واضح.",
+      "practicalBenefit": "يعطي المستخدم بنية مألوفة تشبه المحررات الاحترافية، ويجعل القوائم واللوحات جزءاً من Workflow واحد بدلاً من نوافذ متفرقة غير مترابطة.",
+      "misuseImpact": "إذا فعّلت Docking بلا تنظيم للحالة أو بلا قوائم تضبط ظهور اللوحات ستصبح مساحة العمل واسعة لكنها مبهمة وغير منضبطة للمستخدم."
+    },
+    {
+      "sectionKey": "menus",
+      "sectionTitle": "القوائم والتنقل",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::BeginMenuBar",
+        "ImGui::BeginMenu",
+        "ImGui::MenuItem",
+        "ImGui::Image",
+        "ImGui::SameLine"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي طلب القوائم مع قوائم فرعية ثم قوائم أعمق مع صور.",
+        "يمكن تطبيقه على الأصول والثيمات والمواد والقوالب داخل المحررات.",
+        "الصور المصغرة تجعل المسار الهرمي أسهل للمستخدم من قائمة نصية خالصة."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يفتح المستخدم MenuBar ثم Assets ثم Vehicles ثم Sports، وفي المستوى الأخير تظهر صور مصغرة لعناصر مثل Coupe وRoadster مع اختيار مباشر.",
+        "code": "if (ImGui::BeginMenu(\"Assets\")) {\n    if (ImGui::BeginMenu(\"Vehicles\")) {\n        if (ImGui::BeginMenu(\"Sports\")) {\n            ImGui::Image(thumbnail_id, ImVec2(48.0f, 32.0f));\n            ImGui::SameLine();\n            ImGui::MenuItem(\"Roadster\");\n            ImGui::EndMenu();\n        }\n        ImGui::EndMenu();\n    }\n    ImGui::EndMenu();\n}",
+        "fullCode": "#include <imgui.h>\n#include <stdint.h>\n\nvoid DrawNestedMediaMenusExample() {\n    static int selected_vehicle = 0;\n    static ImTextureID thumbs[] = {\n        (ImTextureID)(intptr_t)11,\n        (ImTextureID)(intptr_t)12,\n        (ImTextureID)(intptr_t)13\n    };\n    static const char* names[] = {\"Roadster\", \"Coupe\", \"Track GT\"};\n\n    ImGui::Begin(\"Media Menus\", nullptr, ImGuiWindowFlags_MenuBar);\n    if (ImGui::BeginMenuBar()) {\n        if (ImGui::BeginMenu(\"Assets\")) {\n            if (ImGui::BeginMenu(\"Vehicles\")) {\n                if (ImGui::BeginMenu(\"Sports\")) {\n                    for (int i = 0; i < 3; ++i) {\n                        ImGui::PushID(i);\n                        ImGui::Image(thumbs[i], ImVec2(48.0f, 32.0f));\n                        ImGui::SameLine();\n                        if (ImGui::MenuItem(names[i], nullptr, selected_vehicle == i)) {\n                            selected_vehicle = i;\n                        }\n                        ImGui::PopID();\n                    }\n                    ImGui::EndMenu();\n                }\n                if (ImGui::BeginMenu(\"Utility\")) {\n                    ImGui::MenuItem(\"Pickup\");\n                    ImGui::MenuItem(\"Support Van\");\n                    ImGui::EndMenu();\n                }\n                ImGui::EndMenu();\n            }\n            if (ImGui::BeginMenu(\"Themes\")) {\n                if (ImGui::BeginMenu(\"Studio\")) {\n                    ImGui::MenuItem(\"Cobalt\");\n                    ImGui::MenuItem(\"Amber\");\n                    ImGui::EndMenu();\n                }\n                ImGui::EndMenu();\n            }\n            ImGui::EndMenu();\n        }\n        ImGui::EndMenuBar();\n    }\n\n    ImGui::Text(\"Selected vehicle: %s\", names[selected_vehicle]);\n    ImGui::Text(\"Last path: Assets > Vehicles > Sports\");\n    ImGui::End();\n}",
+        "explanation": "المثال يوضح أكثر من مستوى للقوائم، ثم يضيف صورة مصغرة عند المستوى النهائي حتى يشعر المستخدم أنه يختار أصلاً بصرياً حقيقياً لا اسماً مجرداً فقط.",
+        "expectedResult": "يرى المستخدم شريط قوائم احترافياً بمستويات فرعية متعددة، ومع الوصول إلى المستوى الأخير تظهر اختيارات مع صور مصغرة يمكن اختيارها مباشرة.",
+        "importantNote": "لكي تظهر الصور فعلياً في التطبيق يجب أن تكون ImTextureID جاهزة من محركك أو backend الرسم المستخدم."
+      },
+      "guiRepresentation": {
+        "title": "Nested Media Menus",
+        "mockup": "Assets -> Vehicles -> Sports -> [thumb] Roadster\nAssets -> Vehicles -> Sports -> [thumb] Coupe\nAssets -> Themes -> Studio -> Cobalt",
+        "explanation": "الصورة تركز على التدرج الهرمي للقوائم مع إبراز أن المستوى الأخير يحمل صوراً مصغرة لا نصوصاً فقط."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "قوائم متداخلة ثلاثية مع صور مصغرة",
+      "shortTooltip": "مثال مستقل يوضح Menu -> Submenu -> Submenu أعمق مع صور مصغرة لعناصر الاختيار داخل Dear ImGui.",
+      "description": "يبني هذا المثال شريط قوائم احترافياً يتضمن مستويات متداخلة متعددة من القوائم، مع بطاقات أو صور مصغرة داخل المسار النهائي للاختيار.",
+      "realMeaning": "القائمة المتداخلة هنا ليست مجرد شجرة نصوص؛ هي Workflow كامل يتدرج من قسم عام إلى قسم فرعي إلى عنصر نهائي مدعوم بمعاينة بصرية صغيرة.",
+      "whenToUse": "استخدمه في أدوات الاستيراد، واختيار القوالب، والثيمات، والمواد، والقوائم الاحترافية التي تحتاج أكثر من مستوى مع معاينة بصرية.",
+      "practicalBenefit": "يجعل القوائم الهرمية العميقة أوضح وأسهل تصفحاً عندما تُعرض الخيارات النهائية مع صور أو thumbnails بدلاً من أسماء فقط.",
+      "misuseImpact": "إذا استخدمت أكثر من مستوى من القوائم من دون تنظيم أو من دون تمييز بصري للعنصر النهائي فسيتحول المسار إلى سلسلة نصوص طويلة يصعب تتبعها."
+    }
+  ]
+}

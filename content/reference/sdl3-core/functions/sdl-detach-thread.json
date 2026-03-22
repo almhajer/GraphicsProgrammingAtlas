@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_DetachThread",
+    "slug": "sdl-detach-thread",
+    "titleArabic": "Let a thread clean up on exit without intervention",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-detach-thread",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-detach-thread.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Let a thread clean up on exit without intervention",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Detach الخيط داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Detach الخيط داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه void وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Let a thread clean up on exit without intervention."
+  },
+  "signature": {
+    "raw": "void SDL_DetachThread(SDL_Thread *thread);",
+    "returnType": "void",
+    "parameters": [
+      "SDL_Thread *thread"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_thread.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "thread",
+        "type": "SDL_Thread *",
+        "descriptionArabic": "يمثل المعامل thread من النوع SDL_Thread * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the SDL_Thread pointer that was\nreturned from the SDL_CreateThread ()\ncall that started this thread."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "A thread may be \"detached\" to signify that it should not remain until\nanother thread has called SDL_WaitThread () on it. Detaching a\nthread is useful for long-running threads that nothing needs to\nsynchronize with or further manage. When a detached thread is done, it\nsimply goes away.",
+      "There is no way to recover the return code of a detached thread. If\nyou need this, don't detach the thread and instead use SDL_WaitThread ().",
+      "Once a thread is detached, you should usually assume the SDL_Thread isn't safe to reference again, as\nit will become invalid immediately upon the detached thread's exit,\ninstead of remaining until someone has called SDL_WaitThread () to finally clean it up.\nAs such, don't detach the same thread more than once.",
+      "If a thread has already exited when passed to SDL_DetachThread (), it will stop\nwaiting for a call to SDL_WaitThread ()\nand clean up immediately. It is not safe to detach a thread that might\nbe used with SDL_WaitThread ().",
+      "You may not call SDL_WaitThread ()\non a thread that has been detached. Use either that function or this\none, but not both, or behavior is undefined.",
+      "It is safe to pass NULL to this function; it is a no-op."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_DetachThread",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_CreateThread",
+        "route": "#ref/sdl3-core/functions/sdl-create-thread",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_WaitThread",
+        "route": "#ref/sdl3-core/functions/sdl-wait-thread",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Thread Management",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

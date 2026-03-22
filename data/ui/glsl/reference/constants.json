@@ -1,0 +1,96 @@
+{
+  "key": "constants",
+  "title": "الثوابت والماكرو المضمنة",
+  "icon": "symbol-constant",
+  "description": "",
+  "items": [
+    {
+      "name": "true",
+      "kind": "Boolean Literal",
+      "description": "قيمة منطقية ثابتة تمثل المسار الصحيح داخل تعبيرات GLSL.",
+      "usage": "تستخدم في الشروط وتهيئة المتغيرات المنطقية وتمرير معاملات منطقية إلى الدوال.",
+      "execution": "لا تحتاج موردًا من التطبيق؛ المترجم يضعها مباشرة كثابت منطقي داخل الشيدر أو يستخدمها لتبسيط الفروع أثناء الترجمة.",
+      "effect": "اختيارها يفعّل الفرع أو الشرط الذي يعتمد عليها، وقد يسمح للمترجم بإزالة مسارات كاملة إذا كانت القيمة ثابتة وقت الترجمة.",
+      "vulkanBridge": "لا يقابلها كيان Vulkan مستقل، لكن أثرها يظهر في SPIR-V الناتج وفي التدفق المنطقي الذي سينفذه GPU.",
+      "example": "const bool useTexture = true;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "false",
+      "kind": "Boolean Literal",
+      "description": "قيمة منطقية ثابتة تمثل المسار غير الصحيح داخل تعبيرات GLSL.",
+      "usage": "تستخدم لإيقاف سلوك معيّن أو تهيئة الأعلام المنطقية داخل الشيدر.",
+      "execution": "تُضمَّن كثابت منطقي في الشيدر، وقد تسمح للمترجم بحذف مسارات غير قابلة للوصول.",
+      "effect": "تجعل الشرط أو المسار المرتبط بها غير مفعّل أثناء التنفيذ أو حتى غير موجود في الكود الناتج إذا كان ثابتًا تمامًا.",
+      "vulkanBridge": "أثرها غير مباشر عبر SPIR-V الناتج، لكنها لا تحتاج أي ربط أو مورد Vulkan مستقل.",
+      "example": "bool enableFog = false;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "__LINE__",
+      "kind": "Predefined Macro",
+      "description": "Macro معرف مسبقًا يوسّعه الـ preprocessor إلى رقم السطر الحالي داخل ملف الشيدر.",
+      "usage": "يفيد في الرسائل التشخيصية أو بناء معرفات محلية أو تتبع المواضع أثناء التطوير.",
+      "execution": "لا يُنفذ أثناء runtime؛ بل يستبدله الـ preprocessor بقيمة عددية قبل أن يبدأ المترجم تحليل الشيدر.",
+      "effect": "يمنحك رقمًا ثابتًا يعكس موضع النص بعد التوسيع الحالي، ما يساعد في تتبع الأخطاء أو تمييز الأسطر داخل الرسائل.",
+      "vulkanBridge": "يظهر أثره قبل توليد SPIR-V، لذلك يفيد في أدوات الترجمة والتشخيص أكثر من تأثيره في كائنات Vulkan نفسها.",
+      "example": "#define TRACE_LINE __LINE__",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "__FILE__",
+      "kind": "Predefined Macro",
+      "description": "Macro معرف مسبقًا يوسّعه الـ preprocessor إلى رقم الملف أو معرفه الداخلي ضمن عملية الترجمة الحالية.",
+      "usage": "يستخدم مع __LINE__ لبناء رسائل تشخيصية تساعد على تتبع أصل الكود أو الكتلة التي حدث فيها الخطأ.",
+      "execution": "يُستبدل نصيًا قبل الترجمة، لذلك لا يوجد كمتغير runtime داخل GPU.",
+      "effect": "يسهّل ربط رسائل الترجمة أو debug instrumentation بالملف الذي خرجت منه الأسطر المترجمة.",
+      "vulkanBridge": "يفيد في سلاسل بناء الشيدر وأدوات الترجمة قبل إنشاء Shader Module، لا في مسار التنفيذ داخل Vulkan نفسه.",
+      "example": "#define TRACE_FILE __FILE__",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "__VERSION__",
+      "kind": "Predefined Macro",
+      "description": "Macro معرف مسبقًا يوسّعه الـ preprocessor إلى رقم نسخة اللغة التي يحددها سطر #version الحالي.",
+      "usage": "يستخدم لبناء فروع ترجمة شرطية تعتمد على نسخة GLSL المتاحة داخل الشيدر نفسه.",
+      "execution": "يُستبدل بقيمة عددية قبل تحليل الشيدر، لذلك يغير المسار المترجم ولا يعمل كدالة أو متغير runtime.",
+      "effect": "يسمح بإبقاء ملف واحد يدعم أكثر من نسخة من GLSL عبر شروط preprocessing مختلفة.",
+      "vulkanBridge": "يفيد عند بناء Shader Variants تستهدف مترجمات أو مسارات Vulkan مختلفة مع الحفاظ على مصدر واحد.",
+      "example": "#if __VERSION__ >= 460\n#define HAS_SUBGROUPS 1\n#endif",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_MaxClipDistances",
+      "kind": "Implementation-defined Constant",
+      "description": "ثابت يحدد الحد الأقصى لعدد مسافات القص التي يمكن للشيدر استخدامها في المصفوفة gl_ClipDistance.",
+      "usage": "يستعمل عند تعريف أحجام المصفوفات أو فحص الحدود التي يسمح بها التطبيق داخل الشيدر.",
+      "execution": "يقرأه المترجم كحد ثابت يحدد إن كان الوصول إلى gl_ClipDistance أو حجمها ضمن الحدود المسموحة.",
+      "effect": "إذا بنيت الشيدر على عدد أكبر من هذا الحد فسيفشل الترجمة أو يصبح السلوك غير صالح.",
+      "vulkanBridge": "يؤثر في التوافق بين الشيدر وقدرات الجهاز، خاصة إذا كان التطبيق يعتمد على clip distances ضمن pipeline الرسومي.",
+      "example": "float clipData[gl_MaxClipDistances];",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_MaxVertexAttribs",
+      "kind": "Implementation-defined Constant",
+      "description": "ثابت يحدد الحد الأقصى لعدد سمات Vertex التي يمكن تعريفها أو استهلاكها عبر واجهة الإدخال الرأسي.",
+      "usage": "يفيد عند تصميم عدد المداخل المعلنة في Vertex Shader أو أثناء بناء مسارات تولد أو تصف attributes كثيرة.",
+      "execution": "يستخدمه المترجم كحد أعلى مسموح، فإذا تجاوزته الواجهة المعلنة يصبح الشيدر غير صالح.",
+      "effect": "يضع سقفًا لعدد قنوات الإدخال التي يمكن أن يطابقها التطبيق مع Vertex Buffers.",
+      "vulkanBridge": "له صلة مباشرة بقدرة التطبيق على توصيف VkVertexInputAttributeDescription بعدد كبير من attributes داخل pipeline الرسم.",
+      "example": "const int maxAttribs = gl_MaxVertexAttribs;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "gl_MaxVertexUniformComponents",
+      "kind": "Implementation-defined Constant",
+      "description": "ثابت يحدد الحد الأقصى لعدد مركبات uniform التي يمكن أن يستهلكها Vertex Shader ضمن حدود البيئة الحالية.",
+      "usage": "يفيد عند تقييم حجم البيانات الثابتة التي يستطيع الشيدر الوصول إليها مباشرة في مرحلة الرؤوس.",
+      "execution": "يحدد حدود الترجمة والربط عندما يحاول الشيدر استهلاك uniform data أكثر من المسموح.",
+      "effect": "إذا تجاوزت هذا الحد بتصميم الواجهة أو الثوابت قد تفشل الترجمة أو الربط.",
+      "vulkanBridge": "يساعد في فهم لماذا تنتقل بعض البيانات الكبيرة إلى Buffers أو storage resources بدل الاعتماد على واجهات أصغر أو أقدم.",
+      "example": "const int maxVertexUniforms = gl_MaxVertexUniformComponents;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    }
+  ]
+}

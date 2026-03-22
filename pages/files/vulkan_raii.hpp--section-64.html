@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 64 من 64 • الأسطر 28351-28566 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 64 من 64 • الأسطر 28351-28566</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 64 من 64 • الأسطر 28351-28566</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-63.html">القسم السابق</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم لاحق</span>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 64/64</span>
+        <span class="source-stat">الأسطر: 28351-28566</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>#  if defined( VK_USE_PLATFORM_OHOS )
+    //=== VK_OHOS_surface ===
+
+    // wrapper function for command vkCreateSurfaceOHOS, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSurfaceOHOS.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;SurfaceKHR&gt;::type
+                         Instance::createSurfaceOHOS( SurfaceCreateInfoOHOS const &amp;       createInfo,
+                                   Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateSurfaceOHOS &amp;&amp; &quot;Function &lt;vkCreateSurfaceOHOS&gt; requires &lt;VK_OHOS_surface&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::SurfaceKHR surface;
+      Result                           result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateSurfaceOHOS( static_cast&lt;VkInstance&gt;( m_instance ),
+                                                                                 reinterpret_cast&lt;const VkSurfaceCreateInfoOHOS *&gt;( &amp;createInfo ),
+                                                                                 reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                                 reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Instance::createSurfaceOHOS&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, SurfaceKHR( *this, *reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ), allocator ) );
+    }
+#  endif /*VK_USE_PLATFORM_OHOS*/
+
+    //=== VK_NV_cooperative_matrix2 ===
+
+    // wrapper function for command vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;CooperativeMatrixFlexibleDimensionsPropertiesNV&gt;&gt;::type
+                         PhysicalDevice::getCooperativeMatrixFlexibleDimensionsPropertiesNV() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV&gt; requires &lt;VK_NV_cooperative_matrix2&gt;&quot; );
+
+      std::vector&lt;CooperativeMatrixFlexibleDimensionsPropertiesNV&gt; properties;
+      uint32_t                                                     propertyCount;
+      Result                                                       result;
+      do
+      {
+        result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
+          static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;propertyCount, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+        {
+          properties.resize( propertyCount );
+          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
+            static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+            &amp;propertyCount,
+            reinterpret_cast&lt;VkCooperativeMatrixFlexibleDimensionsPropertiesNV *&gt;( properties.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result,
+                                                 VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::getCooperativeMatrixFlexibleDimensionsPropertiesNV&quot; );
+      VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+      if ( propertyCount &lt; properties.size() )
+      {
+        properties.resize( propertyCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( properties ) );
+    }
+
+#  if defined( VK_USE_PLATFORM_METAL_EXT )
+    //=== VK_EXT_external_memory_metal ===
+
+    // wrapper function for command vkGetMemoryMetalHandleEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetMemoryMetalHandleEXT.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;void *&gt;::type
+                         Device::getMemoryMetalHandleEXT( const MemoryGetMetalHandleInfoEXT &amp; getMetalHandleInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetMemoryMetalHandleEXT &amp;&amp; &quot;Function &lt;vkGetMemoryMetalHandleEXT&gt; requires &lt;VK_EXT_external_memory_metal&gt;&quot; );
+
+      void * handle;
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetMemoryMetalHandleEXT(
+        static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkMemoryGetMetalHandleInfoEXT *&gt;( &amp;getMetalHandleInfo ), &amp;handle ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::getMemoryMetalHandleEXT&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( handle ) );
+    }
+
+    // wrapper function for command vkGetMemoryMetalHandlePropertiesEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetMemoryMetalHandlePropertiesEXT.html
+    template &lt;typename HandleType&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;MemoryMetalHandlePropertiesEXT&gt;::type
+                         Device::getMemoryMetalHandlePropertiesEXT( ExternalMemoryHandleTypeFlagBits handleType, HandleType const &amp; handle ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetMemoryMetalHandlePropertiesEXT &amp;&amp;
+                         &quot;Function &lt;vkGetMemoryMetalHandlePropertiesEXT&gt; requires &lt;VK_EXT_external_memory_metal&gt;&quot; );
+
+      MemoryMetalHandlePropertiesEXT memoryMetalHandleProperties;
+      Result                         result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetMemoryMetalHandlePropertiesEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                              static_cast&lt;VkExternalMemoryHandleTypeFlagBits&gt;( handleType ),
+                                                              reinterpret_cast&lt;const void *&gt;( &amp;handle ),
+                                                              reinterpret_cast&lt;VkMemoryMetalHandlePropertiesEXT *&gt;( &amp;memoryMetalHandleProperties ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::getMemoryMetalHandlePropertiesEXT&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( memoryMetalHandleProperties ) );
+    }
+#  endif /*VK_USE_PLATFORM_METAL_EXT*/
+
+    //=== VK_ARM_performance_counters_by_region ===
+
+    // wrapper function for command vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE
+      typename ResultValueType&lt;std::pair&lt;std::vector&lt;PerformanceCounterARM&gt;, std::vector&lt;PerformanceCounterDescriptionARM&gt;&gt;&gt;::type
+      PhysicalDevice::enumerateQueueFamilyPerformanceCountersByRegionARM( uint32_t queueFamilyIndex ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM &amp;&amp;
+                         &quot;Function &lt;vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM&gt; requires &lt;VK_ARM_performance_counters_by_region&gt;&quot; );
+
+      std::pair&lt;std::vector&lt;PerformanceCounterARM&gt;, std::vector&lt;PerformanceCounterDescriptionARM&gt;&gt; data_;
+      std::vector&lt;PerformanceCounterARM&gt; &amp;                                                         counters            = data_.first;
+      std::vector&lt;PerformanceCounterDescriptionARM&gt; &amp;                                              counterDescriptions = data_.second;
+      uint32_t                                                                                     counterCount;
+      Result                                                                                       result;
+      do
+      {
+        result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+          static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), queueFamilyIndex, &amp;counterCount, nullptr, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; counterCount )
+        {
+          counters.resize( counterCount );
+          counterDescriptions.resize( counterCount );
+          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+            static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+            queueFamilyIndex,
+            &amp;counterCount,
+            reinterpret_cast&lt;VkPerformanceCounterARM *&gt;( counters.data() ),
+            reinterpret_cast&lt;VkPerformanceCounterDescriptionARM *&gt;( counterDescriptions.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result,
+                                                 VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::enumerateQueueFamilyPerformanceCountersByRegionARM&quot; );
+      VULKAN_HPP_ASSERT( counterCount &lt;= counters.size() );
+      if ( counterCount &lt; counters.size() )
+      {
+        counters.resize( counterCount );
+        counterDescriptions.resize( counterCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( data_ ) );
+    }
+
+    //=== VK_EXT_fragment_density_map_offset ===
+
+    // wrapper function for command vkCmdEndRendering2EXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndRendering2EXT.html
+    VULKAN_HPP_INLINE void CommandBuffer::endRendering2EXT( Optional&lt;const RenderingEndInfoKHR&gt; renderingEndInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdEndRendering2EXT &amp;&amp;
+                         &quot;Function &lt;vkCmdEndRendering2EXT&gt; requires &lt;VK_EXT_fragment_density_map_offset&gt; or &lt;VK_KHR_maintenance10&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdEndRendering2EXT( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                              reinterpret_cast&lt;const VkRenderingEndInfoKHR *&gt;( renderingEndInfo.get() ) );
+    }
+
+    //=== VK_EXT_custom_resolve ===
+
+    // wrapper function for command vkCmdBeginCustomResolveEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginCustomResolveEXT.html
+    VULKAN_HPP_INLINE void CommandBuffer::beginCustomResolveEXT( Optional&lt;const BeginCustomResolveInfoEXT&gt; beginCustomResolveInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdBeginCustomResolveEXT &amp;&amp; &quot;Function &lt;vkCmdBeginCustomResolveEXT&gt; requires &lt;VK_EXT_custom_resolve&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdBeginCustomResolveEXT( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                   reinterpret_cast&lt;const VkBeginCustomResolveInfoEXT *&gt;( beginCustomResolveInfo.get() ) );
+    }
+
+    //=== VK_KHR_maintenance10 ===
+
+    // wrapper function for command vkCmdEndRendering2KHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndRendering2KHR.html
+    VULKAN_HPP_INLINE void CommandBuffer::endRendering2KHR( Optional&lt;const RenderingEndInfoKHR&gt; renderingEndInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdEndRendering2KHR &amp;&amp;
+                         &quot;Function &lt;vkCmdEndRendering2KHR&gt; requires &lt;VK_EXT_fragment_density_map_offset&gt; or &lt;VK_KHR_maintenance10&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdEndRendering2KHR( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                              reinterpret_cast&lt;const VkRenderingEndInfoKHR *&gt;( renderingEndInfo.get() ) );
+    }
+
+    //=== VK_NV_compute_occupancy_priority ===
+
+    // wrapper function for command vkCmdSetComputeOccupancyPriorityNV, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetComputeOccupancyPriorityNV.html
+    VULKAN_HPP_INLINE void CommandBuffer::setComputeOccupancyPriorityNV( const ComputeOccupancyPriorityParametersNV &amp; parameters ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdSetComputeOccupancyPriorityNV &amp;&amp;
+                         &quot;Function &lt;vkCmdSetComputeOccupancyPriorityNV&gt; requires &lt;VK_NV_compute_occupancy_priority&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdSetComputeOccupancyPriorityNV( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                           reinterpret_cast&lt;const VkComputeOccupancyPriorityParametersNV *&gt;( &amp;parameters ) );
+    }
+
+    //====================
+    //=== RAII Helpers ===
+    //====================
+
+    template &lt;typename RAIIType&gt;
+    std::vector&lt;typename RAIIType::CppType&gt; filterCppTypes( std::vector&lt;RAIIType&gt; const &amp; raiiTypes )
+    {
+      std::vector&lt;typename RAIIType::CppType&gt; cppTypes( raiiTypes.size() );
+      std::transform( raiiTypes.begin(), raiiTypes.end(), cppTypes.begin(), []( RAIIType const &amp; d ) { return *d; } );
+      return cppTypes;
+    }
+
+    template &lt;typename RAIIType, class UnaryPredicate&gt;
+    std::vector&lt;typename RAIIType::CppType&gt; filterCppTypes( std::vector&lt;RAIIType&gt; const &amp; raiiTypes, UnaryPredicate p )
+    {
+      std::vector&lt;typename RAIIType::CppType&gt; cppTypes;
+      for ( auto const &amp; t : raiiTypes )
+      {
+        if ( p( t ) )
+        {
+          cppTypes.push_back( *t );
+        }
+      }
+      return cppTypes;
+    }
+
+  }  // namespace VULKAN_HPP_RAII_NAMESPACE
+}  // namespace VULKAN_HPP_NAMESPACE
+#endif
+#endif
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-63.html">القسم السابق</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم لاحق</span>
+    </div>
+  
+  </main>
+</body>
+</html>

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_SetTrackOutputChannelMap",
+    "slug": "mix-set-track-output-channel-map",
+    "titleArabic": "ضبط current الإخراج channel map track",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-set-track-output-channel-map",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-set-track-output-channel-map.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "ضبط current الإخراج channel map track",
+    "actualMeaningArabic": "ضبط current الإخراج channel map track.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى ضبط current الإخراج channel map track داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Set the current output channel map of a track."
+  },
+  "signature": {
+    "raw": "bool MIX_SetTrackOutputChannelMap(MIX_Track *track, const int *chmap, int count);",
+    "returnType": "bool",
+    "parameters": [
+      "MIX_Track *track",
+      "const int *chmap",
+      "int count"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "track",
+        "type": "MIX_Track *",
+        "descriptionArabic": "يمثل المعامل track من النوع MIX_Track * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the track to change."
+      },
+      {
+        "name": "chmap",
+        "type": "const int *",
+        "descriptionArabic": "يمثل المعامل chmap من النوع const int * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new channel map, NULL to reset to default."
+      },
+      {
+        "name": "count",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل count من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "The number of channels in the map."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Channel maps are optional; most things do not need them, instead\npassing data in the order that SDL expects.",
+      "The output channel map reorders track data after transformations and\nbefore it is mixed into a mixer group. This can be useful for reversing\nstereo channels, for example.",
+      "Each item in the array represents an input channel, and its value is\nthe channel that it should be remapped to. To reverse a stereo signal's\nleft and right values, you'd have an array of { 1, 0 } . It\nis legal to remap multiple channels to the same thing, so\n { 1, 1 } would duplicate the right channel to both channels\nof a stereo signal. An element in the channel map set to -1 instead of a\nvalid channel will mute that channel, setting it to a silence value.",
+      "You cannot change the number of channels through a channel map, just\nreorder/mute them.",
+      "Tracks default to no remapping applied. Passing a NULL channel map is\nlegal, and turns off remapping.",
+      "SDL_mixer will copy the channel map; the caller does not have to save\nthis array after this call."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_SetTrackOutputChannelMap",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

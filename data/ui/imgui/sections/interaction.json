@@ -1,0 +1,110 @@
+{
+  "key": "interaction",
+  "title": "الاستهداف والتحقق داخل الواجهة",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "interaction",
+      "sectionTitle": "الاستهداف والتحقق داخل الواجهة",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Button",
+        "ImGui::Selectable",
+        "ImGui::SetTooltip",
+        "ImGui::IsItemHovered",
+        "ImGui::IsMouseHoveringRect"
+      ],
+      "instructions": [],
+      "notes": [
+        "الزر والبطاقة والمنطقة العامة ثلاثة أنواع مختلفة من الاستهداف داخل الواجهة.",
+        "هذه الحالات تقرأ من Dear ImGui أثناء الإطار الحالي فقط، ثم يعرض التطبيق معناها للمستخدم.",
+        "يمكن استخدام النمط نفسه لإبراز Drop zones أو Tooltips أو Highlights."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "لا يوجد هنا تصادم فيزيائي. يوجد عنصر واجهة، ومنطقة استهداف، ومؤشر ماوس. التطبيق يتحقق من التحويم والدخول والخروج ويعرض حالة واضحة للمستخدم.",
+        "code": "ImGui::Button(\"Compile Shader\", ImVec2(180.0f, 44.0f));\nbool button_hovered = ImGui::IsItemHovered();\n\nImVec2 min = ImGui::GetCursorScreenPos();\nImVec2 max = ImVec2(min.x + 300.0f, min.y + 120.0f);\nImGui::InvisibleButton(\"hover_zone\", ImVec2(300.0f, 120.0f));\nbool pointer_inside_zone = ImGui::IsMouseHoveringRect(min, max);",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawUiTargetingExample() {\n    static bool was_inside_zone = false;\n    static bool selected_card = false;\n\n    ImGui::Begin(\"UI Targeting\");\n    ImGui::Text(\"هذا المثال يخص الاستهداف داخل الواجهة، لا التصادم الفيزيائي.\");\n    ImGui::Separator();\n\n    ImGui::Button(\"Compile Shader\", ImVec2(180.0f, 44.0f));\n    const bool button_hovered = ImGui::IsItemHovered();\n\n    selected_card = ImGui::Selectable(\"Result Card\", selected_card, 0, ImVec2(220.0f, 30.0f));\n    const bool card_hovered = ImGui::IsItemHovered();\n\n    ImGui::Spacing();\n    ImGui::Text(\"منطقة استهداف عامة:\");\n    ImVec2 rect_min = ImGui::GetCursorScreenPos();\n    ImVec2 rect_size = ImVec2(300.0f, 120.0f);\n    ImVec2 rect_max = ImVec2(rect_min.x + rect_size.x, rect_min.y + rect_size.y);\n    ImGui::InvisibleButton(\"hover_zone\", rect_size);\n    const bool pointer_inside_zone = ImGui::IsMouseHoveringRect(rect_min, rect_max);\n\n    if (pointer_inside_zone && !was_inside_zone) {\n        ImGui::SetTooltip(\"دخل المؤشر منطقة الاستهداف.\");\n    }\n    if (!pointer_inside_zone && was_inside_zone) {\n        ImGui::SetTooltip(\"غادر المؤشر منطقة الاستهداف.\");\n    }\n    was_inside_zone = pointer_inside_zone;\n\n    ImGui::Separator();\n    ImGui::Text(\"Hover فوق الزر: %s\", button_hovered ? \"نعم\" : \"لا\");\n    ImGui::Text(\"Hover فوق البطاقة: %s\", card_hovered ? \"نعم\" : \"لا\");\n    ImGui::Text(\"المؤشر داخل المنطقة: %s\", pointer_inside_zone ? \"نعم\" : \"لا\");\n    ImGui::Text(\"العنصر المحدد: %s\", selected_card ? \"Result Card\" : \"لا يوجد\");\n    ImGui::End();\n}",
+        "explanation": "المثال يوضح ثلاثة مستويات مختلفة: تحويم فوق عنصر بعينه، استهداف منطقة عامة، وتحديد عنصر واجهة. كلها حالات UI، وليست تصادماً فيزيائياً داخل عالم ثلاثي الأبعاد.",
+        "expectedResult": "يعرض المثال حالات واضحة مثل دخول/خروج المؤشر من المنطقة، وتحويمه فوق زر أو بطاقة، وتحديد العنصر النشط داخل النافذة.",
+        "importantNote": "استخدم هذه المصطلحات في المشروع بوصفها UI targeting أو hover detection أو drop-zone overlap، لا بوصفها physics collision."
+      },
+      "guiRepresentation": {
+        "title": "UI Targeting",
+        "mockup": "Hover -> Compile Shader\nTarget Zone -> Inside / Outside\nSelectable -> Result Card\nالمعنى -> استهداف واجهة لا تصادم فيزيائي",
+        "explanation": "الصورة تجمع حالات التحويم والاستهداف والتحديد في نافذة واحدة حتى يظل الفرق واضحاً للقارئ."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "التحويم والاستهداف وليس التصادم الفيزيائي",
+      "shortTooltip": "مثال مستقل يشرح كيف نتحقق من التحويم والاستهداف داخل UI من دون خلطه مع التصادم الفيزيائي.",
+      "description": "يعرض هذا المثال أن ما يشبه التصادم في Dear ImGui هو غالباً تحقق من تحويم المؤشر أو دخوله منطقة إسقاط أو استهداف عنصر، وليس نظام فيزياء أو تصادم مجسمات كما في محركات الألعاب.",
+      "officialArabicDescription": "يستخدم المثال IsItemHovered و IsMouseHoveringRect و Selectable لإظهار كيف يقرأ التطبيق حالة المؤشر بالنسبة لعناصر الواجهة أو مناطقها.",
+      "realMeaning": "المعنى الحقيقي هنا أن Dear ImGui تعطيك معلومات عن علاقة المؤشر بعناصر الواجهة الحالية، ثم يقرر التطبيق هل يعتبر ذلك استهدافاً أو تداخلاً أو حالة تفعيل منطقية.",
+      "whenToUse": "استخدم هذا النمط عندما تريد Tooltip أو Highlight أو Drop zone أو Target reticle أو Status text يعتمد على وجود المؤشر داخل مستطيل واجهة معين.",
+      "practicalBenefit": "يمنع الخلط بين منطق واجهة المستخدم ومنطق التصادم الفيزيائي، ويجعل سلوك التحويم والاستهداف مفهوماً وقابلاً للتتبع داخل أدوات التحرير.",
+      "misuseImpact": "إذا بنيت منطقك على أنه تصادم فيزيائي حقيقي فقد تخلط بين إحداثيات العالم وإحداثيات الواجهة، وتنتج قرارات تفاعل غير صحيحة."
+    },
+    {
+      "sectionKey": "interaction",
+      "sectionTitle": "الاستهداف والتحقق داخل الواجهة",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::InvisibleButton",
+        "ImGui::IsItemHovered",
+        "ImGui::IsMouseDragging",
+        "ImGui::GetMousePos",
+        "ImDrawList"
+      ],
+      "instructions": [],
+      "notes": [
+        "Viewport هنا مساحة UI يملكها ImGui، وليست بالضرورة كائن رسم ثلاثي الأبعاد بذاته.",
+        "يمكن أن يقود هذا التحديد لاحقاً إلى ray picking أو تحديث الـ inspector، لكنه يبدأ كحالة UI داخلية واضحة.",
+        "رسم المستطيل عبر ImDrawList يوضح كيف ينعكس التفاعل مباشرة في نفس الإطار."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "المصدر هنا هو Viewport target نفسه. التطبيق يراقب Hover وبداية السحب ونهاية السحب ثم يقرر أي عنصر أصبح محدداً بعد انتهاء Selection Rectangle.",
+        "code": "ImGui::InvisibleButton(\"scene_viewport\", ImVec2(420.0f, 260.0f));\nbool viewport_hovered = ImGui::IsItemHovered();\nif (viewport_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {\n    selection_start = ImGui::GetMousePos();\n}\nif (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {\n    selection_end = ImGui::GetMousePos();\n}",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawViewportSelectionExample() {\n    static bool selecting = false;\n    static ImVec2 selection_start(0.0f, 0.0f);\n    static ImVec2 selection_end(0.0f, 0.0f);\n    static int selected_object = -1;\n    static const char* object_names[] = {\n        \"Crate\", \"Light\", \"Camera\", \"Player\"\n    };\n\n    ImGui::Begin(\"Scene View\");\n    ImGui::Text(\"هذا المثال يوضح الاستهداف داخل Viewport، لا تصادماً فيزيائياً.\");\n    ImGui::Separator();\n\n    ImVec2 viewport_min = ImGui::GetCursorScreenPos();\n    ImVec2 viewport_size(420.0f, 260.0f);\n    ImVec2 viewport_max(viewport_min.x + viewport_size.x, viewport_min.y + viewport_size.y);\n    ImGui::InvisibleButton(\"scene_viewport\", viewport_size, ImGuiButtonFlags_MouseButtonLeft);\n\n    const bool viewport_hovered = ImGui::IsItemHovered();\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n    draw_list->AddRectFilled(viewport_min, viewport_max, IM_COL32(18, 28, 42, 255), 12.0f);\n    draw_list->AddRect(viewport_min, viewport_max, IM_COL32(88, 124, 164, 255), 12.0f, 0, 2.0f);\n    draw_list->AddRectFilled(ImVec2(viewport_min.x + 78.0f, viewport_min.y + 86.0f), ImVec2(viewport_min.x + 138.0f, viewport_min.y + 146.0f), IM_COL32(84, 161, 255, 255), 10.0f);\n    draw_list->AddRectFilled(ImVec2(viewport_min.x + 232.0f, viewport_min.y + 112.0f), ImVec2(viewport_min.x + 292.0f, viewport_min.y + 164.0f), IM_COL32(255, 203, 109, 255), 10.0f);\n\n    if (viewport_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {\n        selecting = true;\n        selection_start = ImGui::GetMousePos();\n        selection_end = selection_start;\n    }\n\n    if (selecting && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {\n        selection_end = ImGui::GetMousePos();\n    }\n\n    if (selecting && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {\n        selecting = false;\n        selected_object = 0;\n    }\n\n    if (selecting) {\n        draw_list->AddRectFilled(selection_start, selection_end, IM_COL32(89, 171, 255, 32));\n        draw_list->AddRect(selection_start, selection_end, IM_COL32(118, 191, 255, 255), 0.0f, 0, 2.0f);\n    }\n\n    ImGui::Separator();\n    ImGui::Text(\"Viewport hovered: %s\", viewport_hovered ? \"Yes\" : \"No\");\n    ImGui::Text(\"Selecting: %s\", selecting ? \"Yes\" : \"No\");\n    ImGui::Text(\"Selected object: %s\", selected_object >= 0 ? object_names[selected_object] : \"None\");\n    ImGui::End();\n}",
+        "explanation": "يبدأ التحديد من Viewport نفسها عبر InvisibleButton. بعد ذلك يقرأ التطبيق موضع الفأرة أثناء السحب، ويرسم مستطيل التحديد من ImDrawList، ثم يربط النتيجة بحالة الاختيار.",
+        "expectedResult": "تظهر مساحة Viewport يمكن الدخول إليها بالمؤشر، وعند السحب داخلها يظهر Selection Rectangle ثم تتحدث حالة العنصر المحدد داخل النافذة.",
+        "importantNote": "هذا المثال يصف UI selection rectangle وViewport targeting. إذا أردت اختيار كائنات العالم فعلياً فستربط هذه الحالة لاحقاً بمسار picking منفصل."
+      },
+      "guiRepresentation": {
+        "title": "Scene View",
+        "mockup": "Viewport -> Hovered\nDrag Rectangle -> Selecting\nSelected Object -> Crate\nالمعنى -> استهداف داخل الواجهة",
+        "explanation": "الصورة تبين Viewport كمساحة واجهة تفاعلية لها Hover وحالة Selection Rectangle واضحة."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "استهداف Viewport ومستطيل تحديد داخل المحرر",
+      "shortTooltip": "مثال مستقل يوضح كيف يتحقق التطبيق من Hover وDrag Selection داخل Viewport UI من دون خلطه مع تصادم العالم.",
+      "description": "يركز هذا المثال على Viewport داخل أداة تحرير: هناك مساحة عرض، ومؤشر يدخلها أو يغادرها، ومستطيل تحديد يسحب فوقها، وعنصر يصبح Selected بعد نهاية السحب.",
+      "officialArabicDescription": "المثال يوضح أن Dear ImGui تستطيع وصف الاستهداف داخل مساحة Viewport نفسها عبر InvisibleButton و IsItemHovered و IsMouseDragging ومواضع الفأرة، من دون أن يعني ذلك وجود تصادم فيزيائي داخل المشهد.",
+      "realMeaning": "المعنى الحقيقي أن التطبيق يفسر تداخل المؤشر مع Viewport ومع مستطيل التحديد كحالة UI targeting، ثم يربطها بمنطق اختيار العناصر أو تحديث الـ inspector.",
+      "whenToUse": "استخدمه عندما تبني Scene View أو Texture View أو مستوى تحرير يحتاج تحديد العناصر أو سحب Selection Rectangle داخل واجهة الأدوات.",
+      "practicalBenefit": "يجعل Viewport جزءاً تفاعلياً فعلياً داخل Dear ImGui بدل أن يكون مجرد صورة ثابتة، ويعطي المستخدم سلوكاً قريباً من المحررات الحقيقية.",
+      "misuseImpact": "إذا خلطت بين مواضع Viewport ومواضع العالم أو اعتبرت التحديد تصادماً فيزيائياً ستنتج قرارات اختيار غير دقيقة أو مضللة للمستخدم."
+    }
+  ]
+}

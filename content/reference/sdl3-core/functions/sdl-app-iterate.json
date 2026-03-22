@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_AppIterate",
+    "slug": "sdl-app-iterate",
+    "titleArabic": "App-implemented iteration entry point for SDL_MAIN_USE_CALLBACKS apps",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-app-iterate",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-app-iterate.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "App-implemented iteration entry point for SDL_MAIN_USE_CALLBACKS apps",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL App Iterate داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL App Iterate داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_AppResult ) Returns SDL_APP_FAILURE to terminate with an\nerror, SDL_APP_SUCCESS to terminate\nwith success, SDL_APP_CONTINUE to\ncontinue. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "App-implemented iteration entry point for SDL_MAIN_USE_CALLBACKS apps."
+  },
+  "signature": {
+    "raw": "SDL_AppResult SDL_AppIterate(void *appstate);",
+    "returnType": "SDL_AppResult",
+    "parameters": [
+      "void *appstate"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_main.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "appstate",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل appstate من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an optional pointer, provided by the app in SDL_AppInit ."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Apps implement this function when using SDL_MAIN_USE_CALLBACKS . If using\na standard \"main\" function, you should not supply this.",
+      "This function is called repeatedly by SDL after SDL_AppInit returns SDL_APP_CONTINUE . The function should\noperate as a single iteration the program's primary loop; it should\nupdate whatever state it needs and draw a new frame of video,\nusually.",
+      "On some platforms, this function will be called at the refresh rate\nof the display (which might change during the life of your app!). There\nare no promises made about what frequency this function might run at.\nYou should use SDL's timer functions if you need to see how much time\nhas passed since the last iteration.",
+      "There is no need to process the SDL event queue during this function;\nSDL will send events as they arrive in SDL_AppEvent , and in most cases the event\nqueue will be empty when this function runs anyhow.",
+      "This function should not go into an infinite mainloop; it should do\none iteration of whatever the program does and return.",
+      "The appstate parameter is an optional pointer provided\nby the app during SDL_AppInit (). If the\napp never provided a pointer, this will be NULL.",
+      "If this function returns SDL_APP_CONTINUE , the app will continue\nnormal operation, receiving repeated calls to SDL_AppIterate and SDL_AppEvent for the life of the program.\nIf this function returns SDL_APP_FAILURE , SDL will call SDL_AppQuit and terminate the process with\nan exit code that reports an error to the platform. If it returns SDL_APP_SUCCESS , SDL calls SDL_AppQuit and terminates with an exit code\nthat reports success to the platform.",
+      "This function is called by SDL on the main thread."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_AppResult ) Returns SDL_APP_FAILURE to terminate with an\nerror, SDL_APP_SUCCESS to terminate\nwith success, SDL_APP_CONTINUE to\ncontinue.",
+    "threadSafety": "This function may get called concurrently with SDL_AppEvent () for events not pushed on the\nmain thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_AppIterate",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_AppInit",
+        "route": "#ref/sdl3-core/functions/sdl-app-init",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_AppEvent",
+        "route": "#ref/sdl3-core/functions/sdl-app-event",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Application entry points",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

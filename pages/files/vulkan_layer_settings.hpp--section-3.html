@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_layer_settings.hpp • القسم 3 من 4 • الأسطر 901-1350 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_layer_settings.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_layer_settings.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_layer_settings.hpp.html">vulkan_layer_settings.hpp</a> /
+        <span>القسم 3 من 4 • الأسطر 901-1350</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_layer_settings.hpp</h1>
+      <p class="page-description">القسم 3 من 4 • الأسطر 901-1350</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_layer_settings.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_layer_settings.hpp--section-2.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_layer_settings.hpp--section-4.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_layer_settings.hpp</span>
+        <span class="source-stat">القسم: 3/4</span>
+        <span class="source-stat">الأسطر: 901-1350</span>
+        <span class="source-stat">حجم الملف: 94.4 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>	// - VkBool32 gpuav_shader_instrumentation = VK_TRUE;
+	VkBool32 gpuav_validate_ray_query = VK_TRUE;
+
+	// Out of bounds vertex attribute fetching
+	// ------------------------------------------
+	// gpuav_vertex_attribute_fetch_oob (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate that no vertex attribute fetching is out of bonds
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_shader_instrumentation = VK_TRUE;
+	VkBool32 gpuav_vertex_attribute_fetch_oob = VK_TRUE;
+
+	// Shader Sanitizer
+	// ------------------------------------------
+	// gpuav_shader_sanitizer (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Things invalid to do in SPIR-V but don&#39;t have a dedicated check (example:
+	// dividing an int by zero, reaching OpUnreachable, invalid casting,
+	// overflow/undeflow). When in safe mode, will modify the invalid usage.
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_shader_instrumentation = VK_TRUE;
+	VkBool32 gpuav_shader_sanitizer = VK_TRUE;
+
+	// Buffer content validation
+	// ------------------------------------------
+	// gpuav_buffers_validation (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate buffers containing parameters used in indirect Vulkan commands, or
+	// used in copy commands
+	// This setting has sub-settings:
+	// - VkBool32 gpuav_indirect_draws_buffers = VK_TRUE;
+	// - VkBool32 gpuav_indirect_dispatches_buffers = VK_TRUE;
+	// - VkBool32 gpuav_indirect_trace_rays_buffers = VK_TRUE;
+	// - VkBool32 gpuav_buffer_copies = VK_TRUE;
+	// - VkBool32 gpuav_copy_memory_indirect = VK_TRUE;
+	// - VkBool32 gpuav_index_buffers = VK_TRUE;
+	// - VkBool32 gpuav_acceleration_structures_builds = VK_TRUE;
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	VkBool32 gpuav_buffers_validation = VK_TRUE;
+
+	// Indirect draws parameters
+	// ------------------------------------------
+	// gpuav_indirect_draws_buffers (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate buffers containing draw parameters used in indirect draw commands.
+	// Includes vkCmdDrawMeshTasks* calls as well
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_buffers_validation = VK_TRUE;
+	VkBool32 gpuav_indirect_draws_buffers = VK_TRUE;
+
+	// Indirect dispatches parameters
+	// ------------------------------------------
+	// gpuav_indirect_dispatches_buffers (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate buffers containing dispatch parameters used in indirect dispatch
+	// commands
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_buffers_validation = VK_TRUE;
+	VkBool32 gpuav_indirect_dispatches_buffers = VK_TRUE;
+
+	// Indirect trace rays parameters
+	// ------------------------------------------
+	// gpuav_indirect_trace_rays_buffers (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate buffers containing ray tracing parameters used in indirect ray
+	// tracing commands
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_buffers_validation = VK_TRUE;
+	VkBool32 gpuav_indirect_trace_rays_buffers = VK_TRUE;
+
+	// Buffer copies
+	// ------------------------------------------
+	// gpuav_buffer_copies (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate copies involving a VkBuffer. Right now only validates copy buffer to
+	// image.
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_buffers_validation = VK_TRUE;
+	VkBool32 gpuav_buffer_copies = VK_TRUE;
+
+	// VK_KHR_copy_memory_indirect
+	// ------------------------------------------
+	// gpuav_copy_memory_indirect (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate VK_KHR_copy_memory_indirect.
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_buffers_validation = VK_TRUE;
+	VkBool32 gpuav_copy_memory_indirect = VK_TRUE;
+
+	// Index buffers
+	// ------------------------------------------
+	// gpuav_index_buffers (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate that indexed draws do not fetch indices outside of the bounds of the
+	// index buffer.
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_buffers_validation = VK_TRUE;
+	VkBool32 gpuav_index_buffers = VK_TRUE;
+
+	// Acceleration structures builds
+	// ------------------------------------------
+	// gpuav_acceleration_structures_builds (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Validate acceleration structures references in TLAS build commands.
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	// - VkBool32 gpuav_buffers_validation = VK_TRUE;
+	VkBool32 gpuav_acceleration_structures_builds = VK_TRUE;
+
+	// Disable all of GPU-AV
+	// ------------------------------------------
+	// gpuav_debug_disable_all (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Acts as a VkValidationFeatureDisableEXT to override the
+	// VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT passed by the user
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	VkBool32 gpuav_debug_disable_all = VK_FALSE;
+
+	// Validate instrumented shaders
+	// ------------------------------------------
+	// gpuav_debug_validate_instrumented_shaders (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Run spirv-val after doing shader instrumentation
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	VkBool32 gpuav_debug_validate_instrumented_shaders = VK_FALSE;
+
+	// Dump instrumented shaders
+	// ------------------------------------------
+	// gpuav_debug_dump_instrumented_shaders (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Will dump the instrumented shaders (before and after) to working directory
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	VkBool32 gpuav_debug_dump_instrumented_shaders = VK_FALSE;
+
+	// Limit how many time a pass can instrument the SPIR-V
+	// ------------------------------------------
+	// gpuav_debug_max_instrumentations_count (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Zero is same as unlimited
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	int32_t gpuav_debug_max_instrumentations_count = 0;
+
+	// Print SPIR-V instrumentation info
+	// ------------------------------------------
+	// gpuav_debug_print_instrumentation_info (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Prints verbose information about the instrumentation of the SPIR-V
+	// This setting requires ALL of the following values:
+	// - VkBool32 gpuav_enable = VK_TRUE;
+	VkBool32 gpuav_debug_print_instrumentation_info = VK_FALSE;
+
+	// Best Practices
+	// ------------------------------------------
+	// validate_best_practices (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Outputs warnings related to common misuse of the API, but which are not
+	// explicitly prohibited by the specification.
+	// For more information about the feature: https://vulkan.lunarg.com/doc/sdk/1.4.341.0/mac/best_practices.html
+	// This setting has sub-settings:
+	// - VkBool32 validate_best_practices_arm = VK_FALSE;
+	// - VkBool32 validate_best_practices_amd = VK_FALSE;
+	// - VkBool32 validate_best_practices_img = VK_FALSE;
+	// - VkBool32 validate_best_practices_nvidia = VK_FALSE;
+	VkBool32 validate_best_practices = VK_FALSE;
+
+	// ARM-specific best practices
+	// ------------------------------------------
+	// validate_best_practices_arm (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Outputs warnings for spec-conforming but non-ideal code on ARM GPUs.
+	// This setting requires ALL of the following values:
+	// - VkBool32 validate_best_practices = VK_TRUE;
+	VkBool32 validate_best_practices_arm = VK_FALSE;
+
+	// AMD-specific best practices
+	// ------------------------------------------
+	// validate_best_practices_amd (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Outputs warnings for spec-conforming but non-ideal code on AMD GPUs.
+	// This setting requires ALL of the following values:
+	// - VkBool32 validate_best_practices = VK_TRUE;
+	VkBool32 validate_best_practices_amd = VK_FALSE;
+
+	// IMG-specific best practices
+	// ------------------------------------------
+	// validate_best_practices_img (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Outputs warnings for spec-conforming but non-ideal code on Imagination GPUs.
+	// This setting requires ALL of the following values:
+	// - VkBool32 validate_best_practices = VK_TRUE;
+	VkBool32 validate_best_practices_img = VK_FALSE;
+
+	// NVIDIA-specific best practices
+	// ------------------------------------------
+	// validate_best_practices_nvidia (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Outputs warnings for spec-conforming but non-ideal code on NVIDIA GPUs.
+	// This setting requires ALL of the following values:
+	// - VkBool32 validate_best_practices = VK_TRUE;
+	VkBool32 validate_best_practices_nvidia = VK_FALSE;
+
+	// Debug Action
+	// ------------------------------------------
+	// debug_action (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Specifies what action is to be taken when a layer reports information
+	// This setting can list multiple values using the &quot;,&quot; (comma) separator.
+	std::vector&lt;std::string&gt; debug_action = {VL_VALIDATION_DEBUG_ACTION_VK_DBG_LAYER_ACTION_LOG_MSG, VL_VALIDATION_DEBUG_ACTION_VK_DBG_LAYER_ACTION_DEBUG_OUTPUT};
+
+	// Log Filename
+	// ------------------------------------------
+	// log_filename (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Specifies the output filename
+	std::string log_filename = &quot;stdout&quot;;
+
+	// Message Severity
+	// ------------------------------------------
+	// report_flags (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Comma-delineated list of options specifying the types of messages to be
+	// reported
+	// This setting can list multiple values using the &quot;,&quot; (comma) separator.
+	std::vector&lt;std::string&gt; report_flags = {VL_VALIDATION_REPORT_FLAGS_ERROR};
+
+	// Limit Duplicated Messages
+	// ------------------------------------------
+	// enable_message_limit (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Enable limiting of duplicate messages.
+	// This setting has sub-settings:
+	// - int32_t duplicate_message_limit = 10;
+	VkBool32 enable_message_limit = VK_TRUE;
+
+	// Max Duplicated Messages
+	// ------------------------------------------
+	// duplicate_message_limit (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Maximum number of times any single validation message should be reported.
+	// This setting requires ALL of the following values:
+	// - VkBool32 enable_message_limit = VK_TRUE;
+	int32_t duplicate_message_limit = 10;
+
+	// Mute Message VUIDs
+	// ------------------------------------------
+	// message_id_filter (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// List of VUIDs and VUID identifiers which are to be IGNORED by the validation
+	// layer
+	// This setting can list multiple values using the &quot;,&quot; (comma) separator.
+	std::vector&lt;std::string&gt; message_id_filter = {};
+
+	// JSON
+	// ------------------------------------------
+	// message_format_json (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Display Validation as JSON (VkDebugUtilsMessengerCallbackDataEXT::pMessage
+	// will contain JSON)
+	VkBool32 message_format_json = VK_FALSE;
+
+	// Display Application Name
+	// ------------------------------------------
+	// message_format_display_application_name (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS, ANDROID)
+	// Useful when running multiple instances to know which instance the message is
+	// from.
+	VkBool32 message_format_display_application_name = VK_FALSE;
+
+private:
+	friend struct LayerSettings;
+
+	std::vector&lt;const char*&gt; gpuav_shaders_to_instrument_info;
+	std::vector&lt;const char*&gt; debug_action_info;
+	std::vector&lt;const char*&gt; report_flags_info;
+	std::vector&lt;const char*&gt; message_id_filter_info;
+	void init() {
+		this-&gt;gpuav_shaders_to_instrument_info.resize(this-&gt;gpuav_shaders_to_instrument.size());
+		for (std::size_t i = 0, n = gpuav_shaders_to_instrument_info.size(); i &lt; n; ++i) {
+			this-&gt;gpuav_shaders_to_instrument_info[i] = this-&gt;gpuav_shaders_to_instrument[i].c_str();
+		}
+		this-&gt;debug_action_info.resize(this-&gt;debug_action.size());
+		for (std::size_t i = 0, n = debug_action_info.size(); i &lt; n; ++i) {
+			this-&gt;debug_action_info[i] = this-&gt;debug_action[i].c_str();
+		}
+		this-&gt;report_flags_info.resize(this-&gt;report_flags.size());
+		for (std::size_t i = 0, n = report_flags_info.size(); i &lt; n; ++i) {
+			this-&gt;report_flags_info[i] = this-&gt;report_flags[i].c_str();
+		}
+		this-&gt;message_id_filter_info.resize(this-&gt;message_id_filter.size());
+		for (std::size_t i = 0, n = message_id_filter_info.size(); i &lt; n; ++i) {
+			this-&gt;message_id_filter_info[i] = this-&gt;message_id_filter[i].c_str();
+		}
+	}
+};
+
+// Possible values for VK_LAYER_KHRONOS_profiles layer simulate_capabilities setting:
+static const char* VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_API_VERSION_BIT = &quot;SIMULATE_API_VERSION_BIT&quot;;
+static const char* VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_FEATURES_BIT = &quot;SIMULATE_FEATURES_BIT&quot;;
+static const char* VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_PROPERTIES_BIT = &quot;SIMULATE_PROPERTIES_BIT&quot;;
+static const char* VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_EXTENSIONS_BIT = &quot;SIMULATE_EXTENSIONS_BIT&quot;;
+static const char* VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_FORMATS_BIT = &quot;SIMULATE_FORMATS_BIT&quot;;
+static const char* VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_VIDEO_CAPABILITIES_BIT = &quot;SIMULATE_VIDEO_CAPABILITIES_BIT&quot;;
+static const char* VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_VIDEO_FORMATS_BIT = &quot;SIMULATE_VIDEO_FORMATS_BIT&quot;;
+
+// Possible values for `VK_LAYER_KHRONOS_profiles` layer `default_feature_values` setting:
+static const char* VL_PROFILES_DEFAULT_FEATURE_VALUES_DEFAULT_FEATURE_VALUES_DEVICE = &quot;DEFAULT_FEATURE_VALUES_DEVICE&quot;;
+static const char* VL_PROFILES_DEFAULT_FEATURE_VALUES_DEFAULT_FEATURE_VALUES_FALSE = &quot;DEFAULT_FEATURE_VALUES_FALSE&quot;;
+
+// Possible values for `VK_LAYER_KHRONOS_profiles` layer `unknown_feature_values` setting:
+static const char* VL_PROFILES_UNKNOWN_FEATURE_VALUES_UNKNOWN_FEATURE_VALUES_UNCHANGED = &quot;UNKNOWN_FEATURE_VALUES_UNCHANGED&quot;;
+static const char* VL_PROFILES_UNKNOWN_FEATURE_VALUES_UNKNOWN_FEATURE_VALUES_DEVICE = &quot;UNKNOWN_FEATURE_VALUES_DEVICE&quot;;
+
+// Possible values for VK_LAYER_KHRONOS_profiles layer debug_actions setting:
+static const char* VL_PROFILES_DEBUG_ACTIONS_DEBUG_ACTION_STDOUT_BIT = &quot;DEBUG_ACTION_STDOUT_BIT&quot;;
+static const char* VL_PROFILES_DEBUG_ACTIONS_DEBUG_ACTION_OUTPUT_BIT = &quot;DEBUG_ACTION_OUTPUT_BIT&quot;;
+static const char* VL_PROFILES_DEBUG_ACTIONS_DEBUG_ACTION_FILE_BIT = &quot;DEBUG_ACTION_FILE_BIT&quot;;
+static const char* VL_PROFILES_DEBUG_ACTIONS_DEBUG_ACTION_BREAKPOINT_BIT = &quot;DEBUG_ACTION_BREAKPOINT_BIT&quot;;
+
+// Possible values for VK_LAYER_KHRONOS_profiles layer debug_reports setting:
+static const char* VL_PROFILES_DEBUG_REPORTS_DEBUG_REPORT_NOTIFICATION_BIT = &quot;DEBUG_REPORT_NOTIFICATION_BIT&quot;;
+static const char* VL_PROFILES_DEBUG_REPORTS_DEBUG_REPORT_WARNING_BIT = &quot;DEBUG_REPORT_WARNING_BIT&quot;;
+static const char* VL_PROFILES_DEBUG_REPORTS_DEBUG_REPORT_ERROR_BIT = &quot;DEBUG_REPORT_ERROR_BIT&quot;;
+static const char* VL_PROFILES_DEBUG_REPORTS_DEBUG_REPORT_DEBUG_BIT = &quot;DEBUG_REPORT_DEBUG_BIT&quot;;
+
+//Khronos Profiles layer
+// ==========================================
+// VK_LAYER_KHRONOS_profiles - 1.4.341 (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+/*
+The Khronos Profiles layer helps test across a wide range of hardware capabilities without requiring a physical copy of every device.
+*/
+// For more information about the layer: https://vulkan.lunarg.com/doc/sdk/latest/windows/profiles_layer.html
+struct ProfilesSettingData {
+	static const uint32_t VERSION = VK_MAKE_API_VERSION(1, 4, 341, 0);
+
+	// Emulate a Vulkan Profile
+	// ------------------------------------------
+	// profile_emulation (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Emulate a Vulkan Profile on the Developer System
+	// This setting has sub-settings:
+	// - std::string profile_dirs = &quot;&quot;;
+	// - std::string profile_name = &quot;${VP_DEFAULT}&quot;;
+	// - VkBool32 profile_validation = VK_FALSE;
+	VkBool32 profile_emulation = VK_TRUE;
+
+	// Loading Directory
+	// ------------------------------------------
+	// profile_dirs (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Select the location all the profiles.
+	// This setting requires ALL of the following values:
+	// - VkBool32 profile_emulation = VK_TRUE;
+	std::string profile_dirs = &quot;&quot;;
+
+	// Name
+	// ------------------------------------------
+	// profile_name (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Name of the profile specified by the profile file to use.
+	// This setting requires ALL of the following values:
+	// - VkBool32 profile_emulation = VK_TRUE;
+	std::string profile_name = &quot;${VP_DEFAULT}&quot;;
+
+	// Schema Validation
+	// ------------------------------------------
+	// profile_validation (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Validate the profile files against the Vulkan SDK profile schema if the file
+	// is found.
+	// This setting requires ALL of the following values:
+	// - VkBool32 profile_emulation = VK_TRUE;
+	VkBool32 profile_validation = VK_FALSE;
+
+	// Simulate Profile Capabilities
+	// ------------------------------------------
+	// simulate_capabilities (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Control of the simulated capabilities of the Vulkan physical device from the
+	// selected Vulkan Profile.
+	// This setting can list multiple values using the &quot;,&quot; (comma) separator.
+	std::vector&lt;std::string&gt; simulate_capabilities = {VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_API_VERSION_BIT, VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_FEATURES_BIT, VL_PROFILES_SIMULATE_CAPABILITIES_SIMULATE_PROPERTIES_BIT};
+
+	// Unspecified Features
+	// ------------------------------------------
+	// default_feature_values (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Feature values when not specified in the select Vulkan profiles.
+	std::string default_feature_values = VL_PROFILES_DEFAULT_FEATURE_VALUES_DEFAULT_FEATURE_VALUES_DEVICE;
+
+	// Unknown Features
+	// ------------------------------------------
+	// unknown_feature_values (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Feature values when unrecongnized by Vulkan profiles.
+	std::string unknown_feature_values = VL_PROFILES_UNKNOWN_FEATURE_VALUES_UNKNOWN_FEATURE_VALUES_UNCHANGED;
+
+	// Emulate VK_KHR_portability_subset
+	// ------------------------------------------
+	// emulate_portability (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Emulate the VK_KHR_portability_subset extension on the device.
+	// This setting has sub-settings:
+	// - VkBool32 constantAlphaColorBlendFactors = VK_FALSE;
+	// - VkBool32 events = VK_FALSE;
+	// - VkBool32 imageViewFormatReinterpretation = VK_FALSE;
+	// - VkBool32 imageViewFormatSwizzle = VK_FALSE;
+	// - VkBool32 imageView2DOn3DImage = VK_FALSE;
+	// - VkBool32 multisampleArrayImage = VK_FALSE;
+	// - VkBool32 mutableComparisonSamplers = VK_FALSE;
+	// - VkBool32 pointPolygons = VK_FALSE;
+	// - VkBool32 samplerMipLodBias = VK_FALSE;
+	// - VkBool32 separateStencilMaskRef = VK_FALSE;
+	// - VkBool32 shaderSampleRateInterpolationFunctions = VK_FALSE;
+	// - VkBool32 tessellationIsolines = VK_FALSE;
+	// - VkBool32 triangleFans = VK_FALSE;
+	// - VkBool32 vertexAttributeAccessBeyondStride = VK_FALSE;
+	VkBool32 emulate_portability = VK_TRUE;
+
+	// constantAlphaColorBlendFactors
+	// ------------------------------------------
+	// constantAlphaColorBlendFactors (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Indicates whether this implementation supports constant alpha Blend Factors
+	// used as source or destination color Blending.
+	// This setting requires ALL of the following values:
+	// - VkBool32 emulate_portability = VK_TRUE;
+	VkBool32 constantAlphaColorBlendFactors = VK_FALSE;
+
+	// events
+	// ------------------------------------------
+	// events (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Indicates whether this implementation supports synchronization using Events
+	// This setting requires ALL of the following values:
+	// - VkBool32 emulate_portability = VK_TRUE;
+	VkBool32 events = VK_FALSE;
+
+	// imageViewFormatReinterpretation
+	// ------------------------------------------
+	// imageViewFormatReinterpretation (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Indicates whether this implementation supports a VkImageView being created
+	// with a texel format containing a different number of components, or a
+	// different number of bits in each component, than the texel format of the
+	// underlying VkImage.
+	// This setting requires ALL of the following values:
+	// - VkBool32 emulate_portability = VK_TRUE;
+	VkBool32 imageViewFormatReinterpretation = VK_FALSE;
+
+	// imageViewFormatSwizzle
+	// ------------------------------------------
+	// imageViewFormatSwizzle (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Indicates whether this implementation supports remapping format components
+	// using VkImageViewCreateInfo::components.
+	// This setting requires ALL of the following values:
+	// - VkBool32 emulate_portability = VK_TRUE;
+	VkBool32 imageViewFormatSwizzle = VK_FALSE;
+
+	// imageView2DOn3DImage
+	// ------------------------------------------
+	// imageView2DOn3DImage (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Indicates whether this implementation supports a VkImage being created with
+	// the VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT flag set, permitting a 2D or 2D
+	// array image view to be created on a 3D VkImage.
+	// This setting requires ALL of the following values:
+	// - VkBool32 emulate_portability = VK_TRUE;
+	VkBool32 imageView2DOn3DImage = VK_FALSE;
+
+	// multisampleArrayImage
+	// ------------------------------------------
+	// multisampleArrayImage (WINDOWS_X86, WINDOWS_ARM, LINUX, MACOS)
+	// Indicates whether this implementation supports a VkImage being created as a 2D
+	// array with multiple samples per texel.
+	// This setting requires ALL of the following values:
+	// - VkBool32 emulate_portability = VK_TRUE;
+	VkBool32 multisampleArrayImage = VK_FALSE;</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_layer_settings.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_layer_settings.hpp--section-2.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_layer_settings.hpp--section-4.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

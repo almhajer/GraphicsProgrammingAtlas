@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-19T04:41:58.003Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "expressions",
+    "displayName": "Expressions",
+    "displayNameArabic": "التعبيرات",
+    "description": "تعبيرات تتأخر قراءتها إلى سياقات محددة مثل توليد خصائص target أو أوامر التثبيت والاختبار."
+  },
+  "identity": {
+    "name": "Generator Expressions",
+    "slug": "generator-expressions",
+    "titleArabic": "تعابير مؤجلة التقييم تُقرأ في سياقات محددة مثل خصائص targets والتثبيت والاختبار",
+    "aliases": [
+      "$<...>",
+      "generator expressions"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/expressions/generator-expressions",
+    "contentPath": "content/reference/cmake/expressions/generator-expressions.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تعابير مؤجلة التقييم تُقرأ في سياقات محددة مثل خصائص targets والتثبيت والاختبار",
+    "actualMeaningArabic": "Generator Expressions ليست أوامر configure عادية، بل تراكيب من الشكل $<...> يؤجل CMake تقييمها حتى سياق generate أو حتى وقت استهلاك خاصية معينة.",
+    "purposeArabic": "تستخدم لتمييز الإعدادات بحسب التشكيلة أو اللغة أو نوع المستهلك أو مرحلة BUILD_INTERFACE وINSTALL_INTERFACE.",
+    "whyUseArabic": "لأنك تحتاج أحياناً أن يختلف include path أو compile definition أو link item بين Debug وRelease أو بين build tree وinstall tree دون نسخ targets منفصلة.",
+    "carriedValueArabic": "لا تظهر قيمتها فور قراءة الملف، بل عندما يوسّع CMake الخاصية أو الأمر الذي يحتويها في السياق المناسب.",
+    "sourceDescription": "Generator Expressions ليست أوامر configure عادية، بل تراكيب من الشكل $<...> يؤجل CMake تقييمها حتى سياق generate أو حتى وقت استهلاك خاصية معينة."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "شائعة جداً داخل target_include_directories وtarget_compile_definitions وخصائص التصدير.",
+      "تُعد جزءاً من مرحلة generate أكثر من configure لأنها لا تُحسم عادةً في لحظة كتابة السطر."
+    ],
+    "notes": [
+      "أشهر أمثلتها $<CONFIG:Debug> و$<BUILD_INTERFACE:...> و$<INSTALL_INTERFACE:...>.",
+      "القيمة نفسها قد تختلف باختلاف target المستهلك أو التشكيلة أو مرحلة التصدير."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدمها عندما يكون الشرط متعلقًا بالسياق الذي سيُولَّد له البناء أو يُستهلك منه، لا عندما يكون قرار configure ثابتًا مرة واحدة."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "target_include_directories(calclib\n  PUBLIC\n    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n    $<INSTALL_INTERFACE:include>\n)\n\ntarget_compile_definitions(calculator\n  PRIVATE $<$<CONFIG:Debug>:CALC_DEBUG_BUILD>\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html",
+    "related": [
+      {
+        "name": "target_include_directories",
+        "route": "#ref/cmake/commands/target-include-directories",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "target_compile_definitions",
+        "route": "#ref/cmake/commands/target-compile-definitions",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "CMAKE_BUILD_TYPE",
+        "route": "#ref/cmake/variables/cmake-build-type",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "INTERFACE_INCLUDE_DIRECTORIES",
+        "route": "#ref/cmake/properties/interface-include-directories",
+        "libraryId": "cmake",
+        "kindId": "properties"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/expressions.json",
+    "category": "التعبيرات",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

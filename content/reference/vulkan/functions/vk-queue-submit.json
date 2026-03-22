@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "vulkan",
+    "displayName": "Vulkan",
+    "displayNameArabic": "فولكان",
+    "description": "طبقة المرجع العربية لعناصر Vulkan منخفضة المستوى: الدوال والبنى والتعدادات والثوابت والأنواع."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "vkQueueSubmit",
+    "slug": "vk-queue-submit",
+    "titleArabic": "مرتبطة بإرسال الأوامر أو انتظارها أو تقديم النتائج عبر طوابير Vulkan",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/vulkan/functions/vk-queue-submit",
+    "contentPath": "content/reference/vulkan/functions/vk-queue-submit.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "مرتبطة بإرسال الأوامر أو انتظارها أو تقديم النتائج عبر طوابير Vulkan",
+    "actualMeaningArabic": "دالة مرتبطة بإرسال الأوامر أو انتظارها أو تقديم النتائج عبر طوابير Vulkan",
+    "purposeArabic": "المعنى الأساسي لهذه الدالة: دالة مرتبطة بإرسال الأوامر أو انتظارها أو تقديم النتائج عبر طوابير Vulkan.",
+    "whyUseArabic": "قبل الاستدعاء جهّز المعاملات الأساسية بالشكل الصحيح، وأهمها: queue: يمثل المقبض VkQueue الذي يحدد الطابور الذي سيستقبل هذا العمل أو هذه المزامنة عند التنفيذ، submitCount: عدد التقديمات، pSubmits: معلومات التقديم، fence: السياج.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه VkResult وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "الوصف الرسمي: دالة مرتبطة بإرسال الأوامر أو انتظارها أو تقديم النتائج عبر طوابير Vulkan"
+  },
+  "signature": {
+    "raw": "VkResult vkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)",
+    "returnType": "VkResult",
+    "parameters": [
+      "VkQueue queue",
+      "uint32_t submitCount",
+      "const VkSubmitInfo* pSubmits",
+      "VkFence fence"
+    ],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "queue",
+        "type": "VkQueue",
+        "descriptionArabic": "يمثل المقبض VkQueue الذي يحدد الطابور الذي سيستقبل هذا العمل أو هذه المزامنة عند التنفيذ.",
+        "originalDescription": "يمثل المقبض VkQueue الذي يحدد الطابور الذي سيستقبل هذا العمل أو هذه المزامنة عند التنفيذ."
+      },
+      {
+        "name": "submitCount",
+        "type": "uint32_t",
+        "descriptionArabic": "عدد التقديمات.",
+        "originalDescription": "عدد التقديمات."
+      },
+      {
+        "name": "pSubmits",
+        "type": "const VkSubmitInfo*",
+        "descriptionArabic": "معلومات التقديم.",
+        "originalDescription": "معلومات التقديم."
+      },
+      {
+        "name": "fence",
+        "type": "VkFence",
+        "descriptionArabic": "السياج.",
+        "originalDescription": "السياج."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "المعنى الأساسي لهذه الدالة: دالة مرتبطة بإرسال الأوامر أو انتظارها أو تقديم النتائج عبر طوابير Vulkan.",
+      "قبل الاستدعاء جهّز المعاملات الأساسية بالشكل الصحيح، وأهمها: queue: يمثل المقبض VkQueue الذي يحدد الطابور الذي سيستقبل هذا العمل أو هذه المزامنة عند التنفيذ، submitCount: عدد التقديمات، pSubmits: معلومات التقديم، fence: السياج.",
+      "تعيد الدالة VkResult لتوضح هل اكتملت العملية بنجاح أو أعادت نتائج جزئية أو فشلت، لذلك تعتمد عليها في تحديد الخطوة التالية في الكود."
+    ],
+    "notes": [
+      "يمكن إرسال عدة مخازن أوامر دفعة واحدة.",
+      "Semaphores تُستخدم لمزامنة العمليات بين الطوابير.",
+      "السياج يُستخدم لمزامنة CPU مع GPU."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// تقديم الأوامر\nVkSubmitInfo submitInfo = {};\nsubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;\nsubmitInfo.waitSemaphoreCount = 1;\nsubmitInfo.pWaitSemaphores = &imageAvailableSemaphore;\nsubmitInfo.pWaitDstStageMask = &waitStage;\nsubmitInfo.commandBufferCount = 1;\nsubmitInfo.pCommandBuffers = &commandBuffer;\nsubmitInfo.signalSemaphoreCount = 1;\nsubmitInfo.pSignalSemaphores = &renderFinishedSemaphore;\n\nvkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);"
+  },
+  "links": {
+    "officialUrl": "https://docs.vulkan.org/refpages/latest/refpages/source/vkQueueSubmit.html",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "vkQueueWaitIdle",
+        "route": "#ref/vulkan/functions/vk-queue-wait-idle",
+        "libraryId": "vulkan",
+        "kindId": "functions"
+      },
+      {
+        "name": "vkCreateSemaphore",
+        "route": "#ref/vulkan/functions/vk-create-semaphore",
+        "libraryId": "vulkan",
+        "kindId": "functions"
+      },
+      {
+        "name": "vkCreateFence",
+        "route": "#ref/vulkan/functions/vk-create-fence",
+        "libraryId": "vulkan",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/vulkan_site_data.json",
+    "category": "الطوابير",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

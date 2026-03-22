@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_funcs.hpp • القسم 46 من 73 • الأسطر 20251-20700 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_funcs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_funcs.hpp.html">vulkan_funcs.hpp</a> /
+        <span>القسم 46 من 73 • الأسطر 20251-20700</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_funcs.hpp</h1>
+      <p class="page-description">القسم 46 من 73 • الأسطر 20251-20700</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-45.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-47.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_funcs.hpp</span>
+        <span class="source-stat">القسم: 46/73</span>
+        <span class="source-stat">الأسطر: 20251-20700</span>
+        <span class="source-stat">حجم الملف: 2.19 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdWriteBufferMarkerAMD( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                 static_cast&lt;VkPipelineStageFlagBits&gt;( pipelineStage ),
+                                 static_cast&lt;VkBuffer&gt;( dstBuffer ),
+                                 static_cast&lt;VkDeviceSize&gt;( dstOffset ),
+                                 marker );
+  }
+
+  // wrapper function for command vkCmdWriteBufferMarker2AMD, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWriteBufferMarker2AMD.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdWriteBufferMarker2AMD ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::writeBufferMarker2AMD(
+    PipelineStageFlags2 stage, Buffer dstBuffer, DeviceSize dstOffset, uint32_t marker, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdWriteBufferMarker2AMD( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                  static_cast&lt;VkPipelineStageFlags2&gt;( stage ),
+                                  static_cast&lt;VkBuffer&gt;( dstBuffer ),
+                                  static_cast&lt;VkDeviceSize&gt;( dstOffset ),
+                                  marker );
+  }
+
+  //=== VK_EXT_calibrated_timestamps ===
+
+  // wrapper function for command vkGetPhysicalDeviceCalibrateableTimeDomainsEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceCalibrateableTimeDomainsEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetPhysicalDeviceCalibrateableTimeDomainsEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result PhysicalDevice::getCalibrateableTimeDomainsEXT( uint32_t *       pTimeDomainCount,
+                                                                                                TimeDomainKHR *  pTimeDomains,
+                                                                                                Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(
+      static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), pTimeDomainCount, reinterpret_cast&lt;VkTimeDomainKHR *&gt;( pTimeDomains ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetPhysicalDeviceCalibrateableTimeDomainsEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceCalibrateableTimeDomainsEXT.html
+  template &lt;typename TimeDomainKHRAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename TimeDomainKHRAllocator::value_type, TimeDomainKHR&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetPhysicalDeviceCalibrateableTimeDomainsEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;TimeDomainKHR, TimeDomainKHRAllocator&gt;&gt;::type
+                       PhysicalDevice::getCalibrateableTimeDomainsEXT( Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT &amp;&amp;
+                       &quot;Function &lt;vkGetPhysicalDeviceCalibrateableTimeDomainsEXT&gt; requires &lt;VK_EXT_calibrated_timestamps&gt; or &lt;VK_KHR_calibrated_timestamps&gt;&quot; );
+#  endif
+
+    std::vector&lt;TimeDomainKHR, TimeDomainKHRAllocator&gt; timeDomains;
+    uint32_t                                           timeDomainCount;
+    Result                                             result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT( m_physicalDevice, &amp;timeDomainCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; timeDomainCount )
+      {
+        timeDomains.resize( timeDomainCount );
+        result = static_cast&lt;Result&gt;(
+          d.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT( m_physicalDevice, &amp;timeDomainCount, reinterpret_cast&lt;VkTimeDomainKHR *&gt;( timeDomains.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getCalibrateableTimeDomainsEXT&quot; );
+    VULKAN_HPP_ASSERT( timeDomainCount &lt;= timeDomains.size() );
+    if ( timeDomainCount &lt; timeDomains.size() )
+    {
+      timeDomains.resize( timeDomainCount );
+    }
+    return detail::createResultValueType( result, std::move( timeDomains ) );
+  }
+
+  // wrapper function for command vkGetPhysicalDeviceCalibrateableTimeDomainsEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceCalibrateableTimeDomainsEXT.html
+  template &lt;typename TimeDomainKHRAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename TimeDomainKHRAllocator::value_type, TimeDomainKHR&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetPhysicalDeviceCalibrateableTimeDomainsEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;TimeDomainKHR, TimeDomainKHRAllocator&gt;&gt;::type
+                       PhysicalDevice::getCalibrateableTimeDomainsEXT( TimeDomainKHRAllocator const &amp; timeDomainKHRAllocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT &amp;&amp;
+                       &quot;Function &lt;vkGetPhysicalDeviceCalibrateableTimeDomainsEXT&gt; requires &lt;VK_EXT_calibrated_timestamps&gt; or &lt;VK_KHR_calibrated_timestamps&gt;&quot; );
+#  endif
+
+    std::vector&lt;TimeDomainKHR, TimeDomainKHRAllocator&gt; timeDomains( timeDomainKHRAllocator );
+    uint32_t                                           timeDomainCount;
+    Result                                             result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT( m_physicalDevice, &amp;timeDomainCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; timeDomainCount )
+      {
+        timeDomains.resize( timeDomainCount );
+        result = static_cast&lt;Result&gt;(
+          d.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT( m_physicalDevice, &amp;timeDomainCount, reinterpret_cast&lt;VkTimeDomainKHR *&gt;( timeDomains.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getCalibrateableTimeDomainsEXT&quot; );
+    VULKAN_HPP_ASSERT( timeDomainCount &lt;= timeDomains.size() );
+    if ( timeDomainCount &lt; timeDomains.size() )
+    {
+      timeDomains.resize( timeDomainCount );
+    }
+    return detail::createResultValueType( result, std::move( timeDomains ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetCalibratedTimestampsEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetCalibratedTimestampsEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetCalibratedTimestampsEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getCalibratedTimestampsEXT( uint32_t                           timestampCount,
+                                                                                    const CalibratedTimestampInfoKHR * pTimestampInfos,
+                                                                                    uint64_t *                         pTimestamps,
+                                                                                    uint64_t *                         pMaxDeviation,
+                                                                                    Dispatch const &amp;                   d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetCalibratedTimestampsEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                timestampCount,
+                                                                reinterpret_cast&lt;const VkCalibratedTimestampInfoKHR *&gt;( pTimestampInfos ),
+                                                                pTimestamps,
+                                                                pMaxDeviation ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetCalibratedTimestampsEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetCalibratedTimestampsEXT.html
+  template &lt;typename Uint64_tAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename Uint64_tAllocator::value_type, uint64_t&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetCalibratedTimestampsEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::pair&lt;std::vector&lt;uint64_t, Uint64_tAllocator&gt;, uint64_t&gt;&gt;::type
+                       Device::getCalibratedTimestampsEXT( ArrayProxy&lt;const CalibratedTimestampInfoKHR&gt; const &amp; timestampInfos, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetCalibratedTimestampsEXT &amp;&amp;
+                       &quot;Function &lt;vkGetCalibratedTimestampsEXT&gt; requires &lt;VK_EXT_calibrated_timestamps&gt; or &lt;VK_KHR_calibrated_timestamps&gt;&quot; );
+#  endif
+
+    std::pair&lt;std::vector&lt;uint64_t, Uint64_tAllocator&gt;, uint64_t&gt; data_(
+      std::piecewise_construct, std::forward_as_tuple( timestampInfos.size() ), std::forward_as_tuple( 0 ) );
+    std::vector&lt;uint64_t, Uint64_tAllocator&gt; &amp; timestamps   = data_.first;
+    uint64_t &amp;                                 maxDeviation = data_.second;
+    Result                                     result       = static_cast&lt;Result&gt;( d.vkGetCalibratedTimestampsEXT(
+      m_device, timestampInfos.size(), reinterpret_cast&lt;const VkCalibratedTimestampInfoKHR *&gt;( timestampInfos.data() ), timestamps.data(), &amp;maxDeviation ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getCalibratedTimestampsEXT&quot; );
+
+    return detail::createResultValueType( result, std::move( data_ ) );
+  }
+
+  // wrapper function for command vkGetCalibratedTimestampsEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetCalibratedTimestampsEXT.html
+  template &lt;typename Uint64_tAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename Uint64_tAllocator::value_type, uint64_t&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetCalibratedTimestampsEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::pair&lt;std::vector&lt;uint64_t, Uint64_tAllocator&gt;, uint64_t&gt;&gt;::type
+                       Device::getCalibratedTimestampsEXT( ArrayProxy&lt;const CalibratedTimestampInfoKHR&gt; const &amp; timestampInfos,
+                                        Uint64_tAllocator const &amp;                            uint64_tAllocator,
+                                        Dispatch const &amp;                                     d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetCalibratedTimestampsEXT &amp;&amp;
+                       &quot;Function &lt;vkGetCalibratedTimestampsEXT&gt; requires &lt;VK_EXT_calibrated_timestamps&gt; or &lt;VK_KHR_calibrated_timestamps&gt;&quot; );
+#  endif
+
+    std::pair&lt;std::vector&lt;uint64_t, Uint64_tAllocator&gt;, uint64_t&gt; data_(
+      std::piecewise_construct, std::forward_as_tuple( timestampInfos.size(), uint64_tAllocator ), std::forward_as_tuple( 0 ) );
+    std::vector&lt;uint64_t, Uint64_tAllocator&gt; &amp; timestamps   = data_.first;
+    uint64_t &amp;                                 maxDeviation = data_.second;
+    Result                                     result       = static_cast&lt;Result&gt;( d.vkGetCalibratedTimestampsEXT(
+      m_device, timestampInfos.size(), reinterpret_cast&lt;const VkCalibratedTimestampInfoKHR *&gt;( timestampInfos.data() ), timestamps.data(), &amp;maxDeviation ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getCalibratedTimestampsEXT&quot; );
+
+    return detail::createResultValueType( result, std::move( data_ ) );
+  }
+
+  // wrapper function for command vkGetCalibratedTimestampsEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetCalibratedTimestampsEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetCalibratedTimestampsEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::pair&lt;uint64_t, uint64_t&gt;&gt;::type
+                       Device::getCalibratedTimestampEXT( const CalibratedTimestampInfoKHR &amp; timestampInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetCalibratedTimestampsEXT &amp;&amp;
+                       &quot;Function &lt;vkGetCalibratedTimestampsEXT&gt; requires &lt;VK_EXT_calibrated_timestamps&gt; or &lt;VK_KHR_calibrated_timestamps&gt;&quot; );
+#  endif
+
+    std::pair&lt;uint64_t, uint64_t&gt; data_;
+    uint64_t &amp;                    timestamp    = data_.first;
+    uint64_t &amp;                    maxDeviation = data_.second;
+    Result                        result       = static_cast&lt;Result&gt;(
+      d.vkGetCalibratedTimestampsEXT( m_device, 1, reinterpret_cast&lt;const VkCalibratedTimestampInfoKHR *&gt;( &amp;timestampInfo ), &amp;timestamp, &amp;maxDeviation ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getCalibratedTimestampEXT&quot; );
+
+    return detail::createResultValueType( result, std::move( data_ ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  //=== VK_NV_mesh_shader ===
+
+  // wrapper function for command vkCmdDrawMeshTasksNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawMeshTasksNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdDrawMeshTasksNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::drawMeshTasksNV( uint32_t taskCount, uint32_t firstTask, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdDrawMeshTasksNV( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), taskCount, firstTask );
+  }
+
+  // wrapper function for command vkCmdDrawMeshTasksIndirectNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawMeshTasksIndirectNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdDrawMeshTasksIndirectNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::drawMeshTasksIndirectNV(
+    Buffer buffer, DeviceSize offset, uint32_t drawCount, uint32_t stride, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdDrawMeshTasksIndirectNV(
+      static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkBuffer&gt;( buffer ), static_cast&lt;VkDeviceSize&gt;( offset ), drawCount, stride );
+  }
+
+  // wrapper function for command vkCmdDrawMeshTasksIndirectCountNV, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawMeshTasksIndirectCountNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdDrawMeshTasksIndirectCountNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::drawMeshTasksIndirectCountNV( Buffer           buffer,
+                                                                      DeviceSize       offset,
+                                                                      Buffer           countBuffer,
+                                                                      DeviceSize       countBufferOffset,
+                                                                      uint32_t         maxDrawCount,
+                                                                      uint32_t         stride,
+                                                                      Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdDrawMeshTasksIndirectCountNV( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                         static_cast&lt;VkBuffer&gt;( buffer ),
+                                         static_cast&lt;VkDeviceSize&gt;( offset ),
+                                         static_cast&lt;VkBuffer&gt;( countBuffer ),
+                                         static_cast&lt;VkDeviceSize&gt;( countBufferOffset ),
+                                         maxDrawCount,
+                                         stride );
+  }
+
+  //=== VK_NV_scissor_exclusive ===
+
+  // wrapper function for command vkCmdSetExclusiveScissorEnableNV, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetExclusiveScissorEnableNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetExclusiveScissorEnableNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setExclusiveScissorEnableNV( uint32_t         firstExclusiveScissor,
+                                                                     uint32_t         exclusiveScissorCount,
+                                                                     const Bool32 *   pExclusiveScissorEnables,
+                                                                     Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetExclusiveScissorEnableNV( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                        firstExclusiveScissor,
+                                        exclusiveScissorCount,
+                                        reinterpret_cast&lt;const VkBool32 *&gt;( pExclusiveScissorEnables ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdSetExclusiveScissorEnableNV, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetExclusiveScissorEnableNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetExclusiveScissorEnableNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setExclusiveScissorEnableNV( uint32_t                         firstExclusiveScissor,
+                                                                     ArrayProxy&lt;const Bool32&gt; const &amp; exclusiveScissorEnables,
+                                                                     Dispatch const &amp;                 d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdSetExclusiveScissorEnableNV &amp;&amp; &quot;Function &lt;vkCmdSetExclusiveScissorEnableNV&gt; requires &lt;VK_NV_scissor_exclusive&gt;&quot; );
+#  endif
+
+    d.vkCmdSetExclusiveScissorEnableNV(
+      m_commandBuffer, firstExclusiveScissor, exclusiveScissorEnables.size(), reinterpret_cast&lt;const VkBool32 *&gt;( exclusiveScissorEnables.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdSetExclusiveScissorNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetExclusiveScissorNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetExclusiveScissorNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setExclusiveScissorNV( uint32_t         firstExclusiveScissor,
+                                                               uint32_t         exclusiveScissorCount,
+                                                               const Rect2D *   pExclusiveScissors,
+                                                               Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetExclusiveScissorNV(
+      static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), firstExclusiveScissor, exclusiveScissorCount, reinterpret_cast&lt;const VkRect2D *&gt;( pExclusiveScissors ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdSetExclusiveScissorNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetExclusiveScissorNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetExclusiveScissorNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setExclusiveScissorNV( uint32_t                         firstExclusiveScissor,
+                                                               ArrayProxy&lt;const Rect2D&gt; const &amp; exclusiveScissors,
+                                                               Dispatch const &amp;                 d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdSetExclusiveScissorNV &amp;&amp; &quot;Function &lt;vkCmdSetExclusiveScissorNV&gt; requires &lt;VK_NV_scissor_exclusive&gt;&quot; );
+#  endif
+
+    d.vkCmdSetExclusiveScissorNV(
+      m_commandBuffer, firstExclusiveScissor, exclusiveScissors.size(), reinterpret_cast&lt;const VkRect2D *&gt;( exclusiveScissors.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  //=== VK_NV_device_diagnostic_checkpoints ===
+
+  // wrapper function for command vkCmdSetCheckpointNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetCheckpointNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetCheckpointNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setCheckpointNV( const void * pCheckpointMarker, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetCheckpointNV( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), pCheckpointMarker );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdSetCheckpointNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetCheckpointNV.html
+  template &lt;typename CheckpointMarkerType, typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetCheckpointNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setCheckpointNV( CheckpointMarkerType const &amp; checkpointMarker, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdSetCheckpointNV &amp;&amp; &quot;Function &lt;vkCmdSetCheckpointNV&gt; requires &lt;VK_NV_device_diagnostic_checkpoints&gt;&quot; );
+#  endif
+
+    d.vkCmdSetCheckpointNV( m_commandBuffer, reinterpret_cast&lt;const void *&gt;( &amp;checkpointMarker ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetQueueCheckpointDataNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointDataNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointDataNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void
+    Queue::getCheckpointDataNV( uint32_t * pCheckpointDataCount, CheckpointDataNV * pCheckpointData, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkGetQueueCheckpointDataNV( static_cast&lt;VkQueue&gt;( m_queue ), pCheckpointDataCount, reinterpret_cast&lt;VkCheckpointDataNV *&gt;( pCheckpointData ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetQueueCheckpointDataNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointDataNV.html
+  template &lt;typename CheckpointDataNVAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename CheckpointDataNVAllocator::value_type, CheckpointDataNV&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointDataNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;CheckpointDataNV, CheckpointDataNVAllocator&gt; Queue::getCheckpointDataNV( Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetQueueCheckpointDataNV &amp;&amp; &quot;Function &lt;vkGetQueueCheckpointDataNV&gt; requires &lt;VK_NV_device_diagnostic_checkpoints&gt;&quot; );
+#  endif
+
+    std::vector&lt;CheckpointDataNV, CheckpointDataNVAllocator&gt; checkpointData;
+    uint32_t                                                 checkpointDataCount;
+    d.vkGetQueueCheckpointDataNV( m_queue, &amp;checkpointDataCount, nullptr );
+    checkpointData.resize( checkpointDataCount );
+    d.vkGetQueueCheckpointDataNV( m_queue, &amp;checkpointDataCount, reinterpret_cast&lt;VkCheckpointDataNV *&gt;( checkpointData.data() ) );
+
+    VULKAN_HPP_ASSERT( checkpointDataCount &lt;= checkpointData.size() );
+    if ( checkpointDataCount &lt; checkpointData.size() )
+    {
+      checkpointData.resize( checkpointDataCount );
+    }
+    return checkpointData;
+  }
+
+  // wrapper function for command vkGetQueueCheckpointDataNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointDataNV.html
+  template &lt;typename CheckpointDataNVAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename CheckpointDataNVAllocator::value_type, CheckpointDataNV&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointDataNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;CheckpointDataNV, CheckpointDataNVAllocator&gt;
+                                         Queue::getCheckpointDataNV( CheckpointDataNVAllocator const &amp; checkpointDataNVAllocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetQueueCheckpointDataNV &amp;&amp; &quot;Function &lt;vkGetQueueCheckpointDataNV&gt; requires &lt;VK_NV_device_diagnostic_checkpoints&gt;&quot; );
+#  endif
+
+    std::vector&lt;CheckpointDataNV, CheckpointDataNVAllocator&gt; checkpointData( checkpointDataNVAllocator );
+    uint32_t                                                 checkpointDataCount;
+    d.vkGetQueueCheckpointDataNV( m_queue, &amp;checkpointDataCount, nullptr );
+    checkpointData.resize( checkpointDataCount );
+    d.vkGetQueueCheckpointDataNV( m_queue, &amp;checkpointDataCount, reinterpret_cast&lt;VkCheckpointDataNV *&gt;( checkpointData.data() ) );
+
+    VULKAN_HPP_ASSERT( checkpointDataCount &lt;= checkpointData.size() );
+    if ( checkpointDataCount &lt; checkpointData.size() )
+    {
+      checkpointData.resize( checkpointDataCount );
+    }
+    return checkpointData;
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetQueueCheckpointData2NV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointData2NV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointData2NV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void
+    Queue::getCheckpointData2NV( uint32_t * pCheckpointDataCount, CheckpointData2NV * pCheckpointData, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkGetQueueCheckpointData2NV( static_cast&lt;VkQueue&gt;( m_queue ), pCheckpointDataCount, reinterpret_cast&lt;VkCheckpointData2NV *&gt;( pCheckpointData ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetQueueCheckpointData2NV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointData2NV.html
+  template &lt;typename CheckpointData2NVAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename CheckpointData2NVAllocator::value_type, CheckpointData2NV&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointData2NV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;CheckpointData2NV, CheckpointData2NVAllocator&gt; Queue::getCheckpointData2NV( Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetQueueCheckpointData2NV &amp;&amp; &quot;Function &lt;vkGetQueueCheckpointData2NV&gt; requires &lt;VK_NV_device_diagnostic_checkpoints&gt;&quot; );
+#  endif
+
+    std::vector&lt;CheckpointData2NV, CheckpointData2NVAllocator&gt; checkpointData;
+    uint32_t                                                   checkpointDataCount;
+    d.vkGetQueueCheckpointData2NV( m_queue, &amp;checkpointDataCount, nullptr );
+    checkpointData.resize( checkpointDataCount );
+    d.vkGetQueueCheckpointData2NV( m_queue, &amp;checkpointDataCount, reinterpret_cast&lt;VkCheckpointData2NV *&gt;( checkpointData.data() ) );
+
+    VULKAN_HPP_ASSERT( checkpointDataCount &lt;= checkpointData.size() );
+    if ( checkpointDataCount &lt; checkpointData.size() )
+    {
+      checkpointData.resize( checkpointDataCount );
+    }
+    return checkpointData;
+  }
+
+  // wrapper function for command vkGetQueueCheckpointData2NV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueueCheckpointData2NV.html
+  template &lt;typename CheckpointData2NVAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename CheckpointData2NVAllocator::value_type, CheckpointData2NV&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetQueueCheckpointData2NV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;CheckpointData2NV, CheckpointData2NVAllocator&gt;
+                                         Queue::getCheckpointData2NV( CheckpointData2NVAllocator const &amp; checkpointData2NVAllocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetQueueCheckpointData2NV &amp;&amp; &quot;Function &lt;vkGetQueueCheckpointData2NV&gt; requires &lt;VK_NV_device_diagnostic_checkpoints&gt;&quot; );
+#  endif
+
+    std::vector&lt;CheckpointData2NV, CheckpointData2NVAllocator&gt; checkpointData( checkpointData2NVAllocator );
+    uint32_t                                                   checkpointDataCount;
+    d.vkGetQueueCheckpointData2NV( m_queue, &amp;checkpointDataCount, nullptr );
+    checkpointData.resize( checkpointDataCount );
+    d.vkGetQueueCheckpointData2NV( m_queue, &amp;checkpointDataCount, reinterpret_cast&lt;VkCheckpointData2NV *&gt;( checkpointData.data() ) );
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-45.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-47.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

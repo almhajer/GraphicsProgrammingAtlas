@@ -1,0 +1,888 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "enums",
+    "displayName": "Enums",
+    "displayNameArabic": "التعدادات",
+    "description": "مجالات اختيار مغلقة تحدد نمطاً أو حالة أو مساراً تنفيذياً."
+  },
+  "identity": {
+    "name": "SDL_EventType",
+    "slug": "sdl-event-type",
+    "titleArabic": "The types of events that can be delivered",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/enums/sdl-event-type",
+    "contentPath": "content/reference/sdl3-core/enums/sdl-event-type.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "The types of events that can be delivered",
+    "actualMeaningArabic": "يمثل هذا التعداد تعداد SDL الحدث النوع، أي المجال الذي تختار منه القيم التي تحدد السلوك أو الحالة المرتبطة به.",
+    "purposeArabic": "يستخدم هذا التعداد عندما يحتاج الحقل أو الاستدعاء اختياراً واضحاً من مجموعة قيم محددة.",
+    "whyUseArabic": "القيمة الحقيقية هنا أن كل اختيار يحدد فرعاً فعلياً من السلوك، لا مجرد تسمية شكلية.",
+    "carriedValueArabic": "يحمل هذا التعداد اختياراً صريحاً بين مسارات أو حالات أو أوضاع معرّفة سلفاً.",
+    "sourceDescription": "The types of events that can be delivered."
+  },
+  "signature": {
+    "raw": "typedef enum SDL_EventType\n{\n SDL_EVENT_FIRST = 0, /**< تشير هذه القيمة إلى رمز حدث محجوز داخل SDL_EventType للمحافظة على التوافق، ولا يفترض بالتطبيق التعامل معه كحدث فعلي. */\n\n /* Application events */\n SDL_EVENT_QUIT = 0x100, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يطلب المستخدم إنهاء التطبيق، وعند ظهورها يبدأ مسار الإغلاق المعتاد. */\n\n /* These application events have special meaning on iOS and Android, see README-ios.md and README-android.md for details */\n SDL_EVENT_TERMINATING, /**< The application is being terminated by the OS. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationWillTerminate()\n Called on Android in onDestroy()\n */\n SDL_EVENT_LOW_MEMORY, /**< The application is low on memory, free memory if possible. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationDidReceiveMemoryWarning()\n Called on Android in onTrimMemory()\n */\n SDL_EVENT_WILL_ENTER_BACKGROUND, /**< The application is about to enter the background. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationWillResignActive()\n Called on Android in onPause()\n */\n SDL_EVENT_DID_ENTER_BACKGROUND, /**< The application did enter the background and may not get CPU for some time. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationDidEnterBackground()\n Called on Android in onPause()\n */\n SDL_EVENT_WILL_ENTER_FOREGROUND, /**< The application is about to enter the foreground. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationWillEnterForeground()\n Called on Android in onResume()\n */\n SDL_EVENT_DID_ENTER_FOREGROUND, /**< The application is now interactive. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationDidBecomeActive()\n Called on Android in onResume()\n */\n\n SDL_EVENT_LOCALE_CHANGED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير تفضيلات اللغة أو الإعدادات المحلية للمستخدم، وعندها يستطيع التطبيق تحديث النصوص أو التنسيق المعتمد. */\n\n SDL_EVENT_SYSTEM_THEME_CHANGED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير سمة النظام، وعند ظهورها يستطيع التطبيق تحديث الألوان أو الأصول المتوافقة مع السمة الجديدة. */\n\n /* Display events */\n /* 0x150 was SDL_DISPLAYEVENT, reserve the number for sdl2-compat */\n SDL_EVENT_DISPLAY_ORIENTATION = 0x151, /**< تشير هذه القيمة إلى DISPLAY ORIENTATION داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_DISPLAY_ADDED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتشف SDL إضافة شاشة جديدة إلى النظام، وعند ظهورها يستطيع التطبيق إعادة تعداد الشاشات المتاحة. */\n SDL_EVENT_DISPLAY_REMOVED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تختفي شاشة من النظام، وعند ظهورها يجب تحديث الموارد أو القوائم المرتبطة بهذه الشاشة. */\n SDL_EVENT_DISPLAY_MOVED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير موضع الشاشة داخل ترتيب الشاشات، وعند ظهورها يستطيع التطبيق إعادة حساب المواضع المعتمدة على الشاشات. */\n SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير وضع سطح المكتب للشاشة، وعند ظهورها يمكن للتطبيق إعادة قراءة خصائص العرض الحالية. */\n SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED, /**< تشير هذه القيمة إلى DISPLAY CURRENT MODE CHANGED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير مقياس المحتوى للشاشة، وعند ظهورها يستطيع التطبيق تعديل التحجيم أو حسابات الواجهة. */\n SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير الحدود القابلة للاستخدام للشاشة، وعند ظهورها يمكن للتطبيق تحديث مناطق العرض المسموح بها. */\n SDL_EVENT_DISPLAY_FIRST = SDL_EVENT_DISPLAY_ORIENTATION, /**< تشير هذه القيمة إلى DISPLAY FIRST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DISPLAY_LAST = SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED, /**< تشير هذه القيمة إلى DISPLAY LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Window events */\n /* 0x200 was SDL_WINDOWEVENT, reserve the number for sdl2-compat */\n /* 0x201 was SDL_SYSWMEVENT, reserve the number for sdl2-compat */\n SDL_EVENT_WINDOW_SHOWN = 0x202, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تصبح النافذة معروضة، وعند ظهورها يفهم التطبيق أن النافذة دخلت حالة الإظهار. */\n SDL_EVENT_WINDOW_HIDDEN, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تُخفى النافذة، وعند ظهورها يفهم التطبيق أن حالة الإظهار تغيرت إلى الإخفاء. */\n SDL_EVENT_WINDOW_EXPOSED, /**< Window has been exposed and should be redrawn, and can be redrawn directly from event watchers for this event.\n data1 is 1 for live-resize expose events, 0 otherwise. */\n SDL_EVENT_WINDOW_MOVED, /**< تشير هذه القيمة إلى WINDOW MOVED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_RESIZED, /**< تشير هذه القيمة إلى WINDOW RESIZED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED, /**< تشير هذه القيمة إلى WINDOW PIXEL SIZE CHANGED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_METAL_VIEW_RESIZED, /**< تشير هذه القيمة إلى WINDOW METAL VIEW RESIZED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_MINIMIZED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة حالة التصغير، وعند ظهورها يستطيع التطبيق تقليل العمل الرسومي أو إيقافه مؤقتًا. */\n SDL_EVENT_WINDOW_MAXIMIZED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة حالة التكبير، وعند ظهورها يمكن للتطبيق إعادة حساب التخطيط أو مساحة الرسم. */\n SDL_EVENT_WINDOW_RESTORED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تعود النافذة إلى حجمها وموضعها الطبيعيين، وعند ظهورها يستطيع التطبيق استئناف التخطيط المعتاد. */\n SDL_EVENT_WINDOW_MOUSE_ENTER, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتسب النافذة تركيز الفأرة، وعند ظهورها يفهم التطبيق أن إدخال الفأرة أصبح موجَّهًا إليها. */\n SDL_EVENT_WINDOW_MOUSE_LEAVE, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تفقد النافذة تركيز الفأرة، وعند ظهورها يستطيع التطبيق إيقاف التفاعلات المعتمدة على هذا التركيز. */\n SDL_EVENT_WINDOW_FOCUS_GAINED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتسب النافذة تركيز لوحة المفاتيح، وعند ظهورها تصبح مدخلات المفاتيح موجَّهة إليها. */\n SDL_EVENT_WINDOW_FOCUS_LOST, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تفقد النافذة تركيز لوحة المفاتيح، وعند ظهورها يجب ألا يفترض التطبيق استمرار استقبال المفاتيح منها. */\n SDL_EVENT_WINDOW_CLOSE_REQUESTED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يطلب مدير النوافذ إغلاق النافذة، وعند ظهورها يبدأ التطبيق عادة مسار الإنهاء أو طلب التأكيد. */\n SDL_EVENT_WINDOW_HIT_TEST, /**< تشير هذه القيمة إلى WINDOW HIT TEST داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_ICCPROF_CHANGED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير ملف ICC الخاص بالشاشة التي تعرض النافذة، وعند ظهورها يمكن للتطبيق تحديث إدارة الألوان. */\n SDL_EVENT_WINDOW_DISPLAY_CHANGED, /**< تشير هذه القيمة إلى WINDOW DISPLAY CHANGED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير مقياس عرض النافذة، وعند ظهورها يجب تحديث التحجيم أو الأصول الرسومية عند الحاجة. */\n SDL_EVENT_WINDOW_SAFE_AREA_CHANGED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير المنطقة الآمنة للنافذة، وعند ظهورها يستطيع التطبيق إعادة ضبط عناصر الواجهة لتفادي المناطق المحجوبة. */\n SDL_EVENT_WINDOW_OCCLUDED, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تصبح النافذة محجوبة عن الرؤية، وعند ظهورها قد يختار التطبيق تقليل العمل غير الضروري. */\n SDL_EVENT_WINDOW_ENTER_FULLSCREEN, /**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة وضع ملء الشاشة، وعند ظهورها يستطيع التطبيق تحديث التخطيط أو الموارد المرتبطة بهذا الوضع. */\n SDL_EVENT_WINDOW_LEAVE_FULLSCREEN, /**< تشير هذه القيمة إلى WINDOW LEAVE FULLSCREEN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_WINDOW_DESTROYED, /**< The window with the associated ID is being or has been destroyed. If this message is being handled\n in an event watcher, the window handle is still valid and can still be used to retrieve any properties\n associated with the window. Otherwise, the handle has already been destroyed and all resources\n associated with it are invalid */\n SDL_EVENT_WINDOW_HDR_STATE_CHANGED, /**< تشير هذه القيمة إلى WINDOW HDR STATE CHANGED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_WINDOW_FIRST = SDL_EVENT_WINDOW_SHOWN, /**< تشير هذه القيمة إلى WINDOW FIRST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_WINDOW_LAST = SDL_EVENT_WINDOW_HDR_STATE_CHANGED, /**< تشير هذه القيمة إلى WINDOW LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Keyboard events */\n SDL_EVENT_KEY_DOWN = 0x300, /**< تشير هذه القيمة إلى KEY DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_KEY_UP, /**< تشير هذه القيمة إلى KEY UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_TEXT_EDITING, /**< تشير هذه القيمة إلى TEXT EDITING، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_TEXT_INPUT, /**< تشير هذه القيمة إلى TEXT INPUT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_KEYMAP_CHANGED, /**< Keymap changed due to a system event such as an\n input language or keyboard layout change. */\n SDL_EVENT_KEYBOARD_ADDED, /**< تشير هذه القيمة إلى KEYBOARD ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_KEYBOARD_REMOVED, /**< تشير هذه القيمة إلى KEYBOARD REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_TEXT_EDITING_CANDIDATES, /**< تشير هذه القيمة إلى TEXT EDITING CANDIDATES، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_SCREEN_KEYBOARD_SHOWN, /**< تشير هذه القيمة إلى SCREEN KEYBOARD SHOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_SCREEN_KEYBOARD_HIDDEN, /**< تشير هذه القيمة إلى SCREEN KEYBOARD HIDDEN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Mouse events */\n SDL_EVENT_MOUSE_MOTION = 0x400, /**< تشير هذه القيمة إلى MOUSE MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_BUTTON_DOWN, /**< تشير هذه القيمة إلى MOUSE BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_BUTTON_UP, /**< تشير هذه القيمة إلى MOUSE BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_WHEEL, /**< تشير هذه القيمة إلى MOUSE WHEEL، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_ADDED, /**< تشير هذه القيمة إلى MOUSE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_REMOVED, /**< تشير هذه القيمة إلى MOUSE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Joystick events */\n SDL_EVENT_JOYSTICK_AXIS_MOTION = 0x600, /**< تشير هذه القيمة إلى JOYSTICK AXIS MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_BALL_MOTION, /**< تشير هذه القيمة إلى JOYSTICK BALL MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_HAT_MOTION, /**< تشير هذه القيمة إلى JOYSTICK HAT MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_BUTTON_DOWN, /**< تشير هذه القيمة إلى JOYSTICK BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_BUTTON_UP, /**< تشير هذه القيمة إلى JOYSTICK BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_ADDED, /**< تشير هذه القيمة إلى JOYSTICK ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_REMOVED, /**< تشير هذه القيمة إلى JOYSTICK REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_BATTERY_UPDATED, /**< تشير هذه القيمة إلى JOYSTICK BATTERY UPDATED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_UPDATE_COMPLETE, /**< تشير هذه القيمة إلى JOYSTICK UPDATE COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Gamepad events */\n SDL_EVENT_GAMEPAD_AXIS_MOTION = 0x650, /**< تشير هذه القيمة إلى GAMEPAD AXIS MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_BUTTON_DOWN, /**< تشير هذه القيمة إلى GAMEPAD BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_BUTTON_UP, /**< تشير هذه القيمة إلى GAMEPAD BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_ADDED, /**< تشير هذه القيمة إلى GAMEPAD ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_REMOVED, /**< تشير هذه القيمة إلى GAMEPAD REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_REMAPPED, /**< تشير هذه القيمة إلى GAMEPAD REMAPPED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN, /**< تشير هذه القيمة إلى GAMEPAD TOUCHPAD DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION, /**< تشير هذه القيمة إلى GAMEPAD TOUCHPAD MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_TOUCHPAD_UP, /**< تشير هذه القيمة إلى GAMEPAD TOUCHPAD UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_SENSOR_UPDATE, /**< تشير هذه القيمة إلى GAMEPAD SENSOR UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_UPDATE_COMPLETE, /**< تشير هذه القيمة إلى GAMEPAD UPDATE COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED, /**< تشير هذه القيمة إلى GAMEPAD STEAM HANDLE UPDATED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Touch events */\n SDL_EVENT_FINGER_DOWN = 0x700, /**< تشير هذه القيمة إلى FINGER DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_FINGER_UP, /**< تشير هذه القيمة إلى FINGER UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_FINGER_MOTION, /**< تشير هذه القيمة إلى FINGER MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_FINGER_CANCELED, /**< تشير هذه القيمة إلى FINGER CANCELED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Pinch events */\n SDL_EVENT_PINCH_BEGIN = 0x710, /**< تشير هذه القيمة إلى PINCH BEGIN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PINCH_UPDATE, /**< تشير هذه القيمة إلى PINCH UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PINCH_END, /**< تشير هذه القيمة إلى PINCH END، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* 0x800, 0x801, and 0x802 were the Gesture events from SDL2. Do not reuse these values! sdl2-compat needs them! */\n\n /* Clipboard events */\n SDL_EVENT_CLIPBOARD_UPDATE = 0x900, /**< تشير هذه القيمة إلى CLIPBOARD UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Drag and drop events */\n SDL_EVENT_DROP_FILE = 0x1000, /**< تشير هذه القيمة إلى DROP FILE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DROP_TEXT, /**< تشير هذه القيمة إلى DROP TEXT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DROP_BEGIN, /**< تشير هذه القيمة إلى DROP BEGIN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DROP_COMPLETE, /**< تشير هذه القيمة إلى DROP COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DROP_POSITION, /**< تشير هذه القيمة إلى DROP POSITION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Audio hotplug events */\n SDL_EVENT_AUDIO_DEVICE_ADDED = 0x1100, /**< تشير هذه القيمة إلى AUDIO DEVICE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_AUDIO_DEVICE_REMOVED, /**< تشير هذه القيمة إلى AUDIO DEVICE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED, /**< تشير هذه القيمة إلى AUDIO DEVICE FORMAT CHANGED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Sensor events */\n SDL_EVENT_SENSOR_UPDATE = 0x1200, /**< تشير هذه القيمة إلى SENSOR UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Pressure-sensitive pen events */\n SDL_EVENT_PEN_PROXIMITY_IN = 0x1300, /**< تشير هذه القيمة إلى PEN PROXIMITY IN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_PROXIMITY_OUT, /**< تشير هذه القيمة إلى PEN PROXIMITY OUT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_DOWN, /**< تشير هذه القيمة إلى PEN DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_UP, /**< تشير هذه القيمة إلى PEN UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_BUTTON_DOWN, /**< تشير هذه القيمة إلى PEN BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_BUTTON_UP, /**< تشير هذه القيمة إلى PEN BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_MOTION, /**< تشير هذه القيمة إلى PEN MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_AXIS, /**< تشير هذه القيمة إلى PEN AXIS، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Camera hotplug events */\n SDL_EVENT_CAMERA_DEVICE_ADDED = 0x1400, /**< تشير هذه القيمة إلى CAMERA DEVICE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_CAMERA_DEVICE_REMOVED, /**< تشير هذه القيمة إلى CAMERA DEVICE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_CAMERA_DEVICE_APPROVED, /**< تشير هذه القيمة إلى CAMERA DEVICE APPROVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_CAMERA_DEVICE_DENIED, /**< تشير هذه القيمة إلى CAMERA DEVICE DENIED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Render events */\n SDL_EVENT_RENDER_TARGETS_RESET = 0x2000, /**< تشير هذه القيمة إلى RENDER TARGETS RESET، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_RENDER_DEVICE_RESET, /**< تشير هذه القيمة إلى RENDER DEVICE RESET، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_RENDER_DEVICE_LOST, /**< تشير هذه القيمة إلى RENDER DEVICE LOST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Reserved events for private platforms */\n SDL_EVENT_PRIVATE0 = 0x4000, /**< تشير هذه القيمة إلى PRIVATE0، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PRIVATE1, /**< تشير هذه القيمة إلى PRIVATE1، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PRIVATE2, /**< تشير هذه القيمة إلى PRIVATE2، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PRIVATE3, /**< تشير هذه القيمة إلى PRIVATE3، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Internal events */\n SDL_EVENT_POLL_SENTINEL = 0x7F00, /**< تشير هذه القيمة إلى POLL SENTINEL، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /** Events SDL_EVENT_USER through SDL_EVENT_LAST are for your use,\n * and should be allocated with SDL_RegisterEvents()\n */\n SDL_EVENT_USER = 0x8000, /**< تشير هذه القيمة إلى USER، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /**\n * This last event is only for bounding internal arrays\n */\n SDL_EVENT_LAST = 0xFFFF, /**< تشير هذه القيمة إلى LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* This just makes sure the enum is the size of Uint32 */\n SDL_EVENT_ENUM_PADDING = 0x7FFFFFFF /**< تشير هذه القيمة إلى ENUM PADDING، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n} SDL_EventType;",
+    "returnType": "SDL_EVENT_TERMINATING, /**< The application is being terminated by the OS. This event must be handled in a callback set with",
+    "parameters": [
+      ").\n Called on iOS in applicationWillTerminate()\n Called on Android in onDestroy()\n */\n SDL_EVENT_LOW_MEMORY",
+      "/**< The application is low on memory",
+      "free memory if possible. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationDidReceiveMemoryWarning()\n Called on Android in onTrimMemory()\n */\n SDL_EVENT_WILL_ENTER_BACKGROUND",
+      "/**< The application is about to enter the background. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationWillResignActive()\n Called on Android in onPause()\n */\n SDL_EVENT_DID_ENTER_BACKGROUND",
+      "/**< The application did enter the background and may not get CPU for some time. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationDidEnterBackground()\n Called on Android in onPause()\n */\n SDL_EVENT_WILL_ENTER_FOREGROUND",
+      "/**< The application is about to enter the foreground. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationWillEnterForeground()\n Called on Android in onResume()\n */\n SDL_EVENT_DID_ENTER_FOREGROUND",
+      "/**< The application is now interactive. This event must be handled in a callback set with SDL_AddEventWatch().\n Called on iOS in applicationDidBecomeActive()\n Called on Android in onResume()\n */\n\n SDL_EVENT_LOCALE_CHANGED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير تفضيلات اللغة أو الإعدادات المحلية للمستخدم، وعندها يستطيع التطبيق تحديث النصوص أو التنسيق المعتمد. */\n\n SDL_EVENT_SYSTEM_THEME_CHANGED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير سمة النظام، وعند ظهورها يستطيع التطبيق تحديث الألوان أو الأصول المتوافقة مع السمة الجديدة. */\n\n /* Display events */\n /* 0x150 was SDL_DISPLAYEVENT",
+      "reserve the number for sdl2-compat */\n SDL_EVENT_DISPLAY_ORIENTATION = 0x151",
+      "/**< تشير هذه القيمة إلى DISPLAY ORIENTATION داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_DISPLAY_ADDED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتشف SDL إضافة شاشة جديدة إلى النظام، وعند ظهورها يستطيع التطبيق إعادة تعداد الشاشات المتاحة. */\n SDL_EVENT_DISPLAY_REMOVED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تختفي شاشة من النظام، وعند ظهورها يجب تحديث الموارد أو القوائم المرتبطة بهذه الشاشة. */\n SDL_EVENT_DISPLAY_MOVED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير موضع الشاشة داخل ترتيب الشاشات، وعند ظهورها يستطيع التطبيق إعادة حساب المواضع المعتمدة على الشاشات. */\n SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير وضع سطح المكتب للشاشة، وعند ظهورها يمكن للتطبيق إعادة قراءة خصائص العرض الحالية. */\n SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED",
+      "/**< تشير هذه القيمة إلى DISPLAY CURRENT MODE CHANGED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير مقياس المحتوى للشاشة، وعند ظهورها يستطيع التطبيق تعديل التحجيم أو حسابات الواجهة. */\n SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير الحدود القابلة للاستخدام للشاشة، وعند ظهورها يمكن للتطبيق تحديث مناطق العرض المسموح بها. */\n SDL_EVENT_DISPLAY_FIRST = SDL_EVENT_DISPLAY_ORIENTATION",
+      "/**< تشير هذه القيمة إلى DISPLAY FIRST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DISPLAY_LAST = SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED",
+      "/**< تشير هذه القيمة إلى DISPLAY LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Window events */\n /* 0x200 was SDL_WINDOWEVENT",
+      "reserve the number for sdl2-compat */\n /* 0x201 was SDL_SYSWMEVENT",
+      "reserve the number for sdl2-compat */\n SDL_EVENT_WINDOW_SHOWN = 0x202",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تصبح النافذة معروضة، وعند ظهورها يفهم التطبيق أن النافذة دخلت حالة الإظهار. */\n SDL_EVENT_WINDOW_HIDDEN",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تُخفى النافذة، وعند ظهورها يفهم التطبيق أن حالة الإظهار تغيرت إلى الإخفاء. */\n SDL_EVENT_WINDOW_EXPOSED",
+      "/**< Window has been exposed and should be redrawn",
+      "and can be redrawn directly from event watchers for this event.\n data1 is 1 for live-resize expose events",
+      "0 otherwise. */\n SDL_EVENT_WINDOW_MOVED",
+      "/**< تشير هذه القيمة إلى WINDOW MOVED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_RESIZED",
+      "/**< تشير هذه القيمة إلى WINDOW RESIZED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED",
+      "/**< تشير هذه القيمة إلى WINDOW PIXEL SIZE CHANGED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_METAL_VIEW_RESIZED",
+      "/**< تشير هذه القيمة إلى WINDOW METAL VIEW RESIZED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_MINIMIZED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة حالة التصغير، وعند ظهورها يستطيع التطبيق تقليل العمل الرسومي أو إيقافه مؤقتًا. */\n SDL_EVENT_WINDOW_MAXIMIZED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة حالة التكبير، وعند ظهورها يمكن للتطبيق إعادة حساب التخطيط أو مساحة الرسم. */\n SDL_EVENT_WINDOW_RESTORED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تعود النافذة إلى حجمها وموضعها الطبيعيين، وعند ظهورها يستطيع التطبيق استئناف التخطيط المعتاد. */\n SDL_EVENT_WINDOW_MOUSE_ENTER",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتسب النافذة تركيز الفأرة، وعند ظهورها يفهم التطبيق أن إدخال الفأرة أصبح موجَّهًا إليها. */\n SDL_EVENT_WINDOW_MOUSE_LEAVE",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تفقد النافذة تركيز الفأرة، وعند ظهورها يستطيع التطبيق إيقاف التفاعلات المعتمدة على هذا التركيز. */\n SDL_EVENT_WINDOW_FOCUS_GAINED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتسب النافذة تركيز لوحة المفاتيح، وعند ظهورها تصبح مدخلات المفاتيح موجَّهة إليها. */\n SDL_EVENT_WINDOW_FOCUS_LOST",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تفقد النافذة تركيز لوحة المفاتيح، وعند ظهورها يجب ألا يفترض التطبيق استمرار استقبال المفاتيح منها. */\n SDL_EVENT_WINDOW_CLOSE_REQUESTED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يطلب مدير النوافذ إغلاق النافذة، وعند ظهورها يبدأ التطبيق عادة مسار الإنهاء أو طلب التأكيد. */\n SDL_EVENT_WINDOW_HIT_TEST",
+      "/**< تشير هذه القيمة إلى WINDOW HIT TEST داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_ICCPROF_CHANGED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير ملف ICC الخاص بالشاشة التي تعرض النافذة، وعند ظهورها يمكن للتطبيق تحديث إدارة الألوان. */\n SDL_EVENT_WINDOW_DISPLAY_CHANGED",
+      "/**< تشير هذه القيمة إلى WINDOW DISPLAY CHANGED داخل الحقل type داخل SDL_Event، ويقرأها SDL لاختيار هذا السلوك أو هذه الحالة. */\n SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير مقياس عرض النافذة، وعند ظهورها يجب تحديث التحجيم أو الأصول الرسومية عند الحاجة. */\n SDL_EVENT_WINDOW_SAFE_AREA_CHANGED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير المنطقة الآمنة للنافذة، وعند ظهورها يستطيع التطبيق إعادة ضبط عناصر الواجهة لتفادي المناطق المحجوبة. */\n SDL_EVENT_WINDOW_OCCLUDED",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تصبح النافذة محجوبة عن الرؤية، وعند ظهورها قد يختار التطبيق تقليل العمل غير الضروري. */\n SDL_EVENT_WINDOW_ENTER_FULLSCREEN",
+      "/**< تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة وضع ملء الشاشة، وعند ظهورها يستطيع التطبيق تحديث التخطيط أو الموارد المرتبطة بهذا الوضع. */\n SDL_EVENT_WINDOW_LEAVE_FULLSCREEN",
+      "/**< تشير هذه القيمة إلى WINDOW LEAVE FULLSCREEN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_WINDOW_DESTROYED",
+      "/**< The window with the associated ID is being or has been destroyed. If this message is being handled\n in an event watcher",
+      "the window handle is still valid and can still be used to retrieve any properties\n associated with the window. Otherwise",
+      "the handle has already been destroyed and all resources\n associated with it are invalid */\n SDL_EVENT_WINDOW_HDR_STATE_CHANGED",
+      "/**< تشير هذه القيمة إلى WINDOW HDR STATE CHANGED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_WINDOW_FIRST = SDL_EVENT_WINDOW_SHOWN",
+      "/**< تشير هذه القيمة إلى WINDOW FIRST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_WINDOW_LAST = SDL_EVENT_WINDOW_HDR_STATE_CHANGED",
+      "/**< تشير هذه القيمة إلى WINDOW LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Keyboard events */\n SDL_EVENT_KEY_DOWN = 0x300",
+      "/**< تشير هذه القيمة إلى KEY DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_KEY_UP",
+      "/**< تشير هذه القيمة إلى KEY UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_TEXT_EDITING",
+      "/**< تشير هذه القيمة إلى TEXT EDITING، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_TEXT_INPUT",
+      "/**< تشير هذه القيمة إلى TEXT INPUT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_KEYMAP_CHANGED",
+      "/**< Keymap changed due to a system event such as an\n input language or keyboard layout change. */\n SDL_EVENT_KEYBOARD_ADDED",
+      "/**< تشير هذه القيمة إلى KEYBOARD ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_KEYBOARD_REMOVED",
+      "/**< تشير هذه القيمة إلى KEYBOARD REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_TEXT_EDITING_CANDIDATES",
+      "/**< تشير هذه القيمة إلى TEXT EDITING CANDIDATES، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_SCREEN_KEYBOARD_SHOWN",
+      "/**< تشير هذه القيمة إلى SCREEN KEYBOARD SHOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_SCREEN_KEYBOARD_HIDDEN",
+      "/**< تشير هذه القيمة إلى SCREEN KEYBOARD HIDDEN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Mouse events */\n SDL_EVENT_MOUSE_MOTION = 0x400",
+      "/**< تشير هذه القيمة إلى MOUSE MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_BUTTON_DOWN",
+      "/**< تشير هذه القيمة إلى MOUSE BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_BUTTON_UP",
+      "/**< تشير هذه القيمة إلى MOUSE BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_WHEEL",
+      "/**< تشير هذه القيمة إلى MOUSE WHEEL، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_ADDED",
+      "/**< تشير هذه القيمة إلى MOUSE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_MOUSE_REMOVED",
+      "/**< تشير هذه القيمة إلى MOUSE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Joystick events */\n SDL_EVENT_JOYSTICK_AXIS_MOTION = 0x600",
+      "/**< تشير هذه القيمة إلى JOYSTICK AXIS MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_BALL_MOTION",
+      "/**< تشير هذه القيمة إلى JOYSTICK BALL MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_HAT_MOTION",
+      "/**< تشير هذه القيمة إلى JOYSTICK HAT MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_BUTTON_DOWN",
+      "/**< تشير هذه القيمة إلى JOYSTICK BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_BUTTON_UP",
+      "/**< تشير هذه القيمة إلى JOYSTICK BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_ADDED",
+      "/**< تشير هذه القيمة إلى JOYSTICK ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_REMOVED",
+      "/**< تشير هذه القيمة إلى JOYSTICK REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_BATTERY_UPDATED",
+      "/**< تشير هذه القيمة إلى JOYSTICK BATTERY UPDATED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_JOYSTICK_UPDATE_COMPLETE",
+      "/**< تشير هذه القيمة إلى JOYSTICK UPDATE COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Gamepad events */\n SDL_EVENT_GAMEPAD_AXIS_MOTION = 0x650",
+      "/**< تشير هذه القيمة إلى GAMEPAD AXIS MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_BUTTON_DOWN",
+      "/**< تشير هذه القيمة إلى GAMEPAD BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_BUTTON_UP",
+      "/**< تشير هذه القيمة إلى GAMEPAD BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_ADDED",
+      "/**< تشير هذه القيمة إلى GAMEPAD ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_REMOVED",
+      "/**< تشير هذه القيمة إلى GAMEPAD REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_REMAPPED",
+      "/**< تشير هذه القيمة إلى GAMEPAD REMAPPED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN",
+      "/**< تشير هذه القيمة إلى GAMEPAD TOUCHPAD DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION",
+      "/**< تشير هذه القيمة إلى GAMEPAD TOUCHPAD MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_TOUCHPAD_UP",
+      "/**< تشير هذه القيمة إلى GAMEPAD TOUCHPAD UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_SENSOR_UPDATE",
+      "/**< تشير هذه القيمة إلى GAMEPAD SENSOR UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_UPDATE_COMPLETE",
+      "/**< تشير هذه القيمة إلى GAMEPAD UPDATE COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED",
+      "/**< تشير هذه القيمة إلى GAMEPAD STEAM HANDLE UPDATED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Touch events */\n SDL_EVENT_FINGER_DOWN = 0x700",
+      "/**< تشير هذه القيمة إلى FINGER DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_FINGER_UP",
+      "/**< تشير هذه القيمة إلى FINGER UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_FINGER_MOTION",
+      "/**< تشير هذه القيمة إلى FINGER MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_FINGER_CANCELED",
+      "/**< تشير هذه القيمة إلى FINGER CANCELED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Pinch events */\n SDL_EVENT_PINCH_BEGIN = 0x710",
+      "/**< تشير هذه القيمة إلى PINCH BEGIN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PINCH_UPDATE",
+      "/**< تشير هذه القيمة إلى PINCH UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PINCH_END",
+      "/**< تشير هذه القيمة إلى PINCH END، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* 0x800",
+      "0x801",
+      "and 0x802 were the Gesture events from SDL2. Do not reuse these values! sdl2-compat needs them! */\n\n /* Clipboard events */\n SDL_EVENT_CLIPBOARD_UPDATE = 0x900",
+      "/**< تشير هذه القيمة إلى CLIPBOARD UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Drag and drop events */\n SDL_EVENT_DROP_FILE = 0x1000",
+      "/**< تشير هذه القيمة إلى DROP FILE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DROP_TEXT",
+      "/**< تشير هذه القيمة إلى DROP TEXT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DROP_BEGIN",
+      "/**< تشير هذه القيمة إلى DROP BEGIN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DROP_COMPLETE",
+      "/**< تشير هذه القيمة إلى DROP COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_DROP_POSITION",
+      "/**< تشير هذه القيمة إلى DROP POSITION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Audio hotplug events */\n SDL_EVENT_AUDIO_DEVICE_ADDED = 0x1100",
+      "/**< تشير هذه القيمة إلى AUDIO DEVICE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_AUDIO_DEVICE_REMOVED",
+      "/**< تشير هذه القيمة إلى AUDIO DEVICE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED",
+      "/**< تشير هذه القيمة إلى AUDIO DEVICE FORMAT CHANGED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Sensor events */\n SDL_EVENT_SENSOR_UPDATE = 0x1200",
+      "/**< تشير هذه القيمة إلى SENSOR UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Pressure-sensitive pen events */\n SDL_EVENT_PEN_PROXIMITY_IN = 0x1300",
+      "/**< تشير هذه القيمة إلى PEN PROXIMITY IN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_PROXIMITY_OUT",
+      "/**< تشير هذه القيمة إلى PEN PROXIMITY OUT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_DOWN",
+      "/**< تشير هذه القيمة إلى PEN DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_UP",
+      "/**< تشير هذه القيمة إلى PEN UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_BUTTON_DOWN",
+      "/**< تشير هذه القيمة إلى PEN BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_BUTTON_UP",
+      "/**< تشير هذه القيمة إلى PEN BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_MOTION",
+      "/**< تشير هذه القيمة إلى PEN MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PEN_AXIS",
+      "/**< تشير هذه القيمة إلى PEN AXIS، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Camera hotplug events */\n SDL_EVENT_CAMERA_DEVICE_ADDED = 0x1400",
+      "/**< تشير هذه القيمة إلى CAMERA DEVICE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_CAMERA_DEVICE_REMOVED",
+      "/**< تشير هذه القيمة إلى CAMERA DEVICE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_CAMERA_DEVICE_APPROVED",
+      "/**< تشير هذه القيمة إلى CAMERA DEVICE APPROVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_CAMERA_DEVICE_DENIED",
+      "/**< تشير هذه القيمة إلى CAMERA DEVICE DENIED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Render events */\n SDL_EVENT_RENDER_TARGETS_RESET = 0x2000",
+      "/**< تشير هذه القيمة إلى RENDER TARGETS RESET، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_RENDER_DEVICE_RESET",
+      "/**< تشير هذه القيمة إلى RENDER DEVICE RESET، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_RENDER_DEVICE_LOST",
+      "/**< تشير هذه القيمة إلى RENDER DEVICE LOST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Reserved events for private platforms */\n SDL_EVENT_PRIVATE0 = 0x4000",
+      "/**< تشير هذه القيمة إلى PRIVATE0، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PRIVATE1",
+      "/**< تشير هذه القيمة إلى PRIVATE1، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PRIVATE2",
+      "/**< تشير هذه القيمة إلى PRIVATE2، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n SDL_EVENT_PRIVATE3",
+      "/**< تشير هذه القيمة إلى PRIVATE3، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /* Internal events */\n SDL_EVENT_POLL_SENTINEL = 0x7F00",
+      "/**< تشير هذه القيمة إلى POLL SENTINEL، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة. */\n\n /** Events SDL_EVENT_USER through SDL_EVENT_LAST are for your use",
+      "* and should be allocated with SDL_RegisterEvents("
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_events.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [
+      {
+        "name": "SDL_EVENT_FIRST",
+        "value": "0",
+        "descriptionArabic": "تشير هذه القيمة إلى رمز حدث محجوز داخل SDL_EventType للمحافظة على التوافق، ولا يفترض بالتطبيق التعامل معه كحدث فعلي.",
+        "originalDescription": "تشير هذه القيمة إلى رمز حدث محجوز داخل SDL_EventType للمحافظة على التوافق، ولا يفترض بالتطبيق التعامل معه كحدث فعلي."
+      },
+      {
+        "name": "SDL_EVENT_QUIT",
+        "value": "0x100",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يطلب المستخدم إنهاء التطبيق، وعند ظهورها يبدأ مسار الإغلاق المعتاد.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يطلب المستخدم إنهاء التطبيق، وعند ظهورها يبدأ مسار الإغلاق المعتاد."
+      },
+      {
+        "name": "SDL_EVENT_LOCALE_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير تفضيلات اللغة أو الإعدادات المحلية للمستخدم، وعندها يستطيع التطبيق تحديث النصوص أو التنسيق المعتمد.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير تفضيلات اللغة أو الإعدادات المحلية للمستخدم، وعندها يستطيع التطبيق تحديث النصوص أو التنسيق المعتمد."
+      },
+      {
+        "name": "SDL_EVENT_SYSTEM_THEME_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير سمة النظام، وعند ظهورها يستطيع التطبيق تحديث الألوان أو الأصول المتوافقة مع السمة الجديدة.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير سمة النظام، وعند ظهورها يستطيع التطبيق تحديث الألوان أو الأصول المتوافقة مع السمة الجديدة."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_ORIENTATION",
+        "value": "0x151",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير اتجاه الشاشة، وتضع SDL الاتجاه الجديد في data1 حتى يتمكن التطبيق من تعديل العرض وفق الوضع الفعلي.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير اتجاه الشاشة، وتضع SDL الاتجاه الجديد في data1 حتى يتمكن التطبيق من تعديل العرض وفق الوضع الفعلي."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_ADDED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتشف SDL إضافة شاشة جديدة إلى النظام، وعند ظهورها يستطيع التطبيق إعادة تعداد الشاشات المتاحة.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتشف SDL إضافة شاشة جديدة إلى النظام، وعند ظهورها يستطيع التطبيق إعادة تعداد الشاشات المتاحة."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_REMOVED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تختفي شاشة من النظام، وعند ظهورها يجب تحديث الموارد أو القوائم المرتبطة بهذه الشاشة.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تختفي شاشة من النظام، وعند ظهورها يجب تحديث الموارد أو القوائم المرتبطة بهذه الشاشة."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_MOVED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير موضع الشاشة داخل ترتيب الشاشات، وعند ظهورها يستطيع التطبيق إعادة حساب المواضع المعتمدة على الشاشات.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير موضع الشاشة داخل ترتيب الشاشات، وعند ظهورها يستطيع التطبيق إعادة حساب المواضع المعتمدة على الشاشات."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير وضع سطح المكتب للشاشة، وعند ظهورها يمكن للتطبيق إعادة قراءة خصائص العرض الحالية.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير وضع سطح المكتب للشاشة، وعند ظهورها يمكن للتطبيق إعادة قراءة خصائص العرض الحالية."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير وضع العرض الحالي للشاشة، وعند ظهورها يجب على التطبيق تحديث ما يعتمد على الدقة أو التردد.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير وضع العرض الحالي للشاشة، وعند ظهورها يجب على التطبيق تحديث ما يعتمد على الدقة أو التردد."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير مقياس المحتوى للشاشة، وعند ظهورها يستطيع التطبيق تعديل التحجيم أو حسابات الواجهة.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير مقياس المحتوى للشاشة، وعند ظهورها يستطيع التطبيق تعديل التحجيم أو حسابات الواجهة."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير الحدود القابلة للاستخدام للشاشة، وعند ظهورها يمكن للتطبيق تحديث مناطق العرض المسموح بها.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير الحدود القابلة للاستخدام للشاشة، وعند ظهورها يمكن للتطبيق تحديث مناطق العرض المسموح بها."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_FIRST",
+        "value": "SDL_EVENT_DISPLAY_ORIENTATION",
+        "descriptionArabic": "تشير هذه القيمة إلى DISPLAY FIRST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى DISPLAY FIRST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_DISPLAY_LAST",
+        "value": "SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED",
+        "descriptionArabic": "تشير هذه القيمة إلى DISPLAY LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى DISPLAY LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_SHOWN",
+        "value": "0x202",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تصبح النافذة معروضة، وعند ظهورها يفهم التطبيق أن النافذة دخلت حالة الإظهار.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تصبح النافذة معروضة، وعند ظهورها يفهم التطبيق أن النافذة دخلت حالة الإظهار."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_HIDDEN",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تُخفى النافذة، وعند ظهورها يفهم التطبيق أن حالة الإظهار تغيرت إلى الإخفاء.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تُخفى النافذة، وعند ظهورها يفهم التطبيق أن حالة الإظهار تغيرت إلى الإخفاء."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_MOVED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تنتقل النافذة إلى الموضع الجديد المحدد في data1 وdata2، وعند ظهورها يستطيع التطبيق تحديث ما يعتمد على الإحداثيات.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تنتقل النافذة إلى الموضع الجديد المحدد في data1 وdata2، وعند ظهورها يستطيع التطبيق تحديث ما يعتمد على الإحداثيات."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_RESIZED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير حجم النافذة إلى الأبعاد الموجودة في data1 وdata2، وعند ظهورها يجب تحديث ما يعتمد على مساحة الرسم.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير حجم النافذة إلى الأبعاد الموجودة في data1 وdata2، وعند ظهورها يجب تحديث ما يعتمد على مساحة الرسم."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير الحجم البكسلي الفعلي للنافذة إلى data1 وdata2، وعند ظهورها يجب إعادة ضبط الموارد الحساسة للكثافة البكسلية.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير الحجم البكسلي الفعلي للنافذة إلى data1 وdata2، وعند ظهورها يجب إعادة ضبط الموارد الحساسة للكثافة البكسلية."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_METAL_VIEW_RESIZED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير الحجم البكسلي لعرض Metal المرتبط بالنافذة، وعند ظهورها يجب تحديث الموارد التي تعتمد على أبعاد هذا العرض.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير الحجم البكسلي لعرض Metal المرتبط بالنافذة، وعند ظهورها يجب تحديث الموارد التي تعتمد على أبعاد هذا العرض."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_MINIMIZED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة حالة التصغير، وعند ظهورها يستطيع التطبيق تقليل العمل الرسومي أو إيقافه مؤقتًا.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة حالة التصغير، وعند ظهورها يستطيع التطبيق تقليل العمل الرسومي أو إيقافه مؤقتًا."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_MAXIMIZED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة حالة التكبير، وعند ظهورها يمكن للتطبيق إعادة حساب التخطيط أو مساحة الرسم.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة حالة التكبير، وعند ظهورها يمكن للتطبيق إعادة حساب التخطيط أو مساحة الرسم."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_RESTORED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تعود النافذة إلى حجمها وموضعها الطبيعيين، وعند ظهورها يستطيع التطبيق استئناف التخطيط المعتاد.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تعود النافذة إلى حجمها وموضعها الطبيعيين، وعند ظهورها يستطيع التطبيق استئناف التخطيط المعتاد."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_MOUSE_ENTER",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتسب النافذة تركيز الفأرة، وعند ظهورها يفهم التطبيق أن إدخال الفأرة أصبح موجَّهًا إليها.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتسب النافذة تركيز الفأرة، وعند ظهورها يفهم التطبيق أن إدخال الفأرة أصبح موجَّهًا إليها."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_MOUSE_LEAVE",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تفقد النافذة تركيز الفأرة، وعند ظهورها يستطيع التطبيق إيقاف التفاعلات المعتمدة على هذا التركيز.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تفقد النافذة تركيز الفأرة، وعند ظهورها يستطيع التطبيق إيقاف التفاعلات المعتمدة على هذا التركيز."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_FOCUS_GAINED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتسب النافذة تركيز لوحة المفاتيح، وعند ظهورها تصبح مدخلات المفاتيح موجَّهة إليها.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تكتسب النافذة تركيز لوحة المفاتيح، وعند ظهورها تصبح مدخلات المفاتيح موجَّهة إليها."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_FOCUS_LOST",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تفقد النافذة تركيز لوحة المفاتيح، وعند ظهورها يجب ألا يفترض التطبيق استمرار استقبال المفاتيح منها.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تفقد النافذة تركيز لوحة المفاتيح، وعند ظهورها يجب ألا يفترض التطبيق استمرار استقبال المفاتيح منها."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_CLOSE_REQUESTED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يطلب مدير النوافذ إغلاق النافذة، وعند ظهورها يبدأ التطبيق عادة مسار الإنهاء أو طلب التأكيد.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يطلب مدير النوافذ إغلاق النافذة، وعند ظهورها يبدأ التطبيق عادة مسار الإنهاء أو طلب التأكيد."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_HIT_TEST",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يعيد اختبار مناطق النافذة قيمة غير SDL_HITTEST_NORMAL، وعند ظهورها يفهم التطبيق أن التفاعل أصاب منطقة خاصة مثل الحواف أو منطقة السحب.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يعيد اختبار مناطق النافذة قيمة غير SDL_HITTEST_NORMAL، وعند ظهورها يفهم التطبيق أن التفاعل أصاب منطقة خاصة مثل الحواف أو منطقة السحب."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_ICCPROF_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير ملف ICC الخاص بالشاشة التي تعرض النافذة، وعند ظهورها يمكن للتطبيق تحديث إدارة الألوان.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير ملف ICC الخاص بالشاشة التي تعرض النافذة، وعند ظهورها يمكن للتطبيق تحديث إدارة الألوان."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_DISPLAY_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تنتقل النافذة إلى شاشة أخرى يحددها data1، وعند ظهورها يستطيع التطبيق تحديث ما يعتمد على الشاشة الحالية.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تنتقل النافذة إلى شاشة أخرى يحددها data1، وعند ظهورها يستطيع التطبيق تحديث ما يعتمد على الشاشة الحالية."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير مقياس عرض النافذة، وعند ظهورها يجب تحديث التحجيم أو الأصول الرسومية عند الحاجة.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما يتغير مقياس عرض النافذة، وعند ظهورها يجب تحديث التحجيم أو الأصول الرسومية عند الحاجة."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_SAFE_AREA_CHANGED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير المنطقة الآمنة للنافذة، وعند ظهورها يستطيع التطبيق إعادة ضبط عناصر الواجهة لتفادي المناطق المحجوبة.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تتغير المنطقة الآمنة للنافذة، وعند ظهورها يستطيع التطبيق إعادة ضبط عناصر الواجهة لتفادي المناطق المحجوبة."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_OCCLUDED",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تصبح النافذة محجوبة عن الرؤية، وعند ظهورها قد يختار التطبيق تقليل العمل غير الضروري.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تصبح النافذة محجوبة عن الرؤية، وعند ظهورها قد يختار التطبيق تقليل العمل غير الضروري."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_ENTER_FULLSCREEN",
+        "value": "",
+        "descriptionArabic": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة وضع ملء الشاشة، وعند ظهورها يستطيع التطبيق تحديث التخطيط أو الموارد المرتبطة بهذا الوضع.",
+        "originalDescription": "تعاد هذه القيمة في الحقل type من SDL_Event عندما تدخل النافذة وضع ملء الشاشة، وعند ظهورها يستطيع التطبيق تحديث التخطيط أو الموارد المرتبطة بهذا الوضع."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_LEAVE_FULLSCREEN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى WINDOW LEAVE FULLSCREEN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى WINDOW LEAVE FULLSCREEN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_HDR_STATE_CHANGED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى WINDOW HDR STATE CHANGED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى WINDOW HDR STATE CHANGED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_FIRST",
+        "value": "SDL_EVENT_WINDOW_SHOWN",
+        "descriptionArabic": "تشير هذه القيمة إلى WINDOW FIRST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى WINDOW FIRST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_WINDOW_LAST",
+        "value": "SDL_EVENT_WINDOW_HDR_STATE_CHANGED",
+        "descriptionArabic": "تشير هذه القيمة إلى WINDOW LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى WINDOW LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_KEY_DOWN",
+        "value": "0x300",
+        "descriptionArabic": "تشير هذه القيمة إلى KEY DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى KEY DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_KEY_UP",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى KEY UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى KEY UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_TEXT_EDITING",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى TEXT EDITING، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى TEXT EDITING، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_TEXT_INPUT",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى TEXT INPUT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى TEXT INPUT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_KEYBOARD_ADDED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى KEYBOARD ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى KEYBOARD ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_KEYBOARD_REMOVED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى KEYBOARD REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى KEYBOARD REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_TEXT_EDITING_CANDIDATES",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى TEXT EDITING CANDIDATES، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى TEXT EDITING CANDIDATES، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_SCREEN_KEYBOARD_SHOWN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى SCREEN KEYBOARD SHOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى SCREEN KEYBOARD SHOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_SCREEN_KEYBOARD_HIDDEN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى SCREEN KEYBOARD HIDDEN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى SCREEN KEYBOARD HIDDEN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_MOUSE_MOTION",
+        "value": "0x400",
+        "descriptionArabic": "تشير هذه القيمة إلى MOUSE MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى MOUSE MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_MOUSE_BUTTON_DOWN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى MOUSE BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى MOUSE BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_MOUSE_BUTTON_UP",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى MOUSE BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى MOUSE BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_MOUSE_WHEEL",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى MOUSE WHEEL، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى MOUSE WHEEL، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_MOUSE_ADDED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى MOUSE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى MOUSE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_MOUSE_REMOVED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى MOUSE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى MOUSE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_AXIS_MOTION",
+        "value": "0x600",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK AXIS MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK AXIS MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_BALL_MOTION",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK BALL MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK BALL MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_HAT_MOTION",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK HAT MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK HAT MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_BUTTON_DOWN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_BUTTON_UP",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_ADDED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_REMOVED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_BATTERY_UPDATED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK BATTERY UPDATED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK BATTERY UPDATED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_JOYSTICK_UPDATE_COMPLETE",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى JOYSTICK UPDATE COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى JOYSTICK UPDATE COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_AXIS_MOTION",
+        "value": "0x650",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD AXIS MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD AXIS MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_BUTTON_DOWN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_BUTTON_UP",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_ADDED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_REMOVED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_REMAPPED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD REMAPPED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD REMAPPED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD TOUCHPAD DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD TOUCHPAD DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD TOUCHPAD MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD TOUCHPAD MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_TOUCHPAD_UP",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD TOUCHPAD UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD TOUCHPAD UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_SENSOR_UPDATE",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD SENSOR UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD SENSOR UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_UPDATE_COMPLETE",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD UPDATE COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD UPDATE COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى GAMEPAD STEAM HANDLE UPDATED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى GAMEPAD STEAM HANDLE UPDATED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_FINGER_DOWN",
+        "value": "0x700",
+        "descriptionArabic": "تشير هذه القيمة إلى FINGER DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى FINGER DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_FINGER_UP",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى FINGER UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى FINGER UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_FINGER_MOTION",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى FINGER MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى FINGER MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_FINGER_CANCELED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى FINGER CANCELED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى FINGER CANCELED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PINCH_BEGIN",
+        "value": "0x710",
+        "descriptionArabic": "تشير هذه القيمة إلى PINCH BEGIN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PINCH BEGIN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PINCH_UPDATE",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PINCH UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PINCH UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PINCH_END",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PINCH END، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PINCH END، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_CLIPBOARD_UPDATE",
+        "value": "0x900",
+        "descriptionArabic": "تشير هذه القيمة إلى CLIPBOARD UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى CLIPBOARD UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_DROP_FILE",
+        "value": "0x1000",
+        "descriptionArabic": "تشير هذه القيمة إلى DROP FILE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى DROP FILE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_DROP_TEXT",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى DROP TEXT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى DROP TEXT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_DROP_BEGIN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى DROP BEGIN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى DROP BEGIN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_DROP_COMPLETE",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى DROP COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى DROP COMPLETE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_DROP_POSITION",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى DROP POSITION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى DROP POSITION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_AUDIO_DEVICE_ADDED",
+        "value": "0x1100",
+        "descriptionArabic": "تشير هذه القيمة إلى AUDIO DEVICE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى AUDIO DEVICE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_AUDIO_DEVICE_REMOVED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى AUDIO DEVICE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى AUDIO DEVICE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى AUDIO DEVICE FORMAT CHANGED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى AUDIO DEVICE FORMAT CHANGED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_SENSOR_UPDATE",
+        "value": "0x1200",
+        "descriptionArabic": "تشير هذه القيمة إلى SENSOR UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى SENSOR UPDATE، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PEN_PROXIMITY_IN",
+        "value": "0x1300",
+        "descriptionArabic": "تشير هذه القيمة إلى PEN PROXIMITY IN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PEN PROXIMITY IN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PEN_PROXIMITY_OUT",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PEN PROXIMITY OUT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PEN PROXIMITY OUT، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PEN_DOWN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PEN DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PEN DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PEN_UP",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PEN UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PEN UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PEN_BUTTON_DOWN",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PEN BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PEN BUTTON DOWN، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PEN_BUTTON_UP",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PEN BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PEN BUTTON UP، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PEN_MOTION",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PEN MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PEN MOTION، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PEN_AXIS",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PEN AXIS، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PEN AXIS، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_CAMERA_DEVICE_ADDED",
+        "value": "0x1400",
+        "descriptionArabic": "تشير هذه القيمة إلى CAMERA DEVICE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى CAMERA DEVICE ADDED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_CAMERA_DEVICE_REMOVED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى CAMERA DEVICE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى CAMERA DEVICE REMOVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_CAMERA_DEVICE_APPROVED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى CAMERA DEVICE APPROVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى CAMERA DEVICE APPROVED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_CAMERA_DEVICE_DENIED",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى CAMERA DEVICE DENIED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى CAMERA DEVICE DENIED، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_RENDER_TARGETS_RESET",
+        "value": "0x2000",
+        "descriptionArabic": "تشير هذه القيمة إلى RENDER TARGETS RESET، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى RENDER TARGETS RESET، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_RENDER_DEVICE_RESET",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى RENDER DEVICE RESET، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى RENDER DEVICE RESET، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_RENDER_DEVICE_LOST",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى RENDER DEVICE LOST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى RENDER DEVICE LOST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PRIVATE0",
+        "value": "0x4000",
+        "descriptionArabic": "تشير هذه القيمة إلى PRIVATE0، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PRIVATE0، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PRIVATE1",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PRIVATE1، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PRIVATE1، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PRIVATE2",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PRIVATE2، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PRIVATE2، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_PRIVATE3",
+        "value": "",
+        "descriptionArabic": "تشير هذه القيمة إلى PRIVATE3، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى PRIVATE3، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_POLL_SENTINEL",
+        "value": "0x7F00",
+        "descriptionArabic": "تشير هذه القيمة إلى POLL SENTINEL، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى POLL SENTINEL، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_USER",
+        "value": "0x8000",
+        "descriptionArabic": "تشير هذه القيمة إلى USER، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى USER، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_LAST",
+        "value": "0xFFFF",
+        "descriptionArabic": "تشير هذه القيمة إلى LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى LAST، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      },
+      {
+        "name": "SDL_EVENT_ENUM_PADDING",
+        "value": "0x7FFFFFFF",
+        "descriptionArabic": "تشير هذه القيمة إلى ENUM PADDING، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة.",
+        "originalDescription": "تشير هذه القيمة إلى ENUM PADDING، وتُستخدم داخل الحقل type داخل SDL_Event ليعرف SDL هذا الاختيار أو هذه الحالة عند القراءة أو المقارنة."
+      }
+    ],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_EventType",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Event Handling",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

@@ -1,0 +1,413 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="مرجع عربي تقني لـ Vulkan وCMake وSDL3 وGLSLang وDear ImGui مع دروس وأمثلة وروابط داخلية">
+    <meta name="keywords" content="Vulkan, CMake, SDL3, GLSL, Dear ImGui, رسوميات, برمجة, C++, عربي, توثيق">
+    <meta name="author" content="Arabic Vulkan Documentation">
+
+    <title>ا. المرجع العربي للبرمجة</title>
+
+    <!-- الأنماط -->
+    <link rel="stylesheet" href="css/main.css?v=20260322phase442a">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+</head>
+<body>
+    <!-- زر القائمة للموبايل -->
+    <button class="menu-toggle" aria-label="فتح القائمة">☰</button>
+
+    <!-- القائمة الجانبية -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="brand-link" onclick="showHomePage(); return false;" aria-label="العودة إلى الصفحة الرئيسية">
+                <img src="assets/logo.png?v=20260315phase14h" alt="ا. المرجع العربي للبرمجة" class="brand-logo-image">
+            </a>
+        </div>
+
+        <!-- البحث -->
+        <div class="search-container">
+            <div class="search-input-shell">
+                <span class="search-input-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <circle cx="11" cy="11" r="6.5"></circle>
+                        <path d="M16 16 L21 21"></path>
+                    </svg>
+                </span>
+                <input type="text" id="search-input" class="search-input" placeholder="ابحث هنا" autocomplete="off">
+                <button type="button" id="search-clear-btn" class="search-clear-btn" aria-label="مسح نص البحث" title="مسح البحث" onclick="clearSearchInput(); return false;" hidden>×</button>
+            </div>
+            <div class="search-autocomplete" id="search-autocomplete" style="display: none;" aria-label="اقتراحات البحث"></div>
+            <div class="search-filters" id="search-filters" aria-label="تحديد قسم البحث">
+                <button type="button" class="filter-btn active" data-filter="all" onclick="setSearchFilter('all')">الكل</button>
+                <button type="button" class="filter-btn" data-filter="vulkan" onclick="setSearchFilter('vulkan')">فولكان</button>
+                <button type="button" class="filter-btn" data-filter="cmake" onclick="setSearchFilter('cmake')">CMake</button>
+                <button type="button" class="filter-btn" data-filter="sdl3" onclick="setSearchFilter('sdl3')">SDL3</button>
+                <button type="button" class="filter-btn" data-filter="imgui" onclick="setSearchFilter('imgui')">Dear ImGui</button>
+                <button type="button" class="filter-btn" data-filter="glsl" onclick="setSearchFilter('glsl')">GLSL</button>
+                <button type="button" class="filter-btn" data-filter="tutorials" onclick="setSearchFilter('tutorials')">الدروس</button>
+                <button type="button" class="filter-btn" data-filter="files" onclick="setSearchFilter('files')">الملفات</button>
+            </div>
+            <div class="search-filters search-subfilters" id="search-subfilters" aria-label="تحديد المجال الفرعي للبحث" style="display: none;"></div>
+        </div>
+
+        <section class="recent-visited-panel" id="recentVisitedPanel" aria-label="العناصر التي تمت زيارتها مؤخرًا">
+            <div class="recent-visited-header">
+                <div class="recent-visited-title-wrap">
+                    <span class="recent-visited-icon" aria-hidden="true">↺</span>
+                    <span class="recent-visited-title">زُرت مؤخرًا</span>
+                </div>
+                <button type="button" class="recent-visited-clear-btn" id="recentVisitedClearBtn" onclick="clearRecentVisits()">تنظيف</button>
+            </div>
+            <div class="recent-visited-list" id="recentVisitedList"></div>
+        </section>
+
+        <button
+            type="button"
+            class="sidebar-smart-scroll-btn"
+            id="sidebarSmartScrollButton"
+            aria-label="انزل إلى أسفل القائمة">
+            <span class="sidebar-smart-scroll-icon" aria-hidden="true">↓</span>
+        </button>
+        <button
+            type="button"
+            class="sidebar-close-open-btn"
+            id="sidebarCloseOpenButton"
+            aria-label="إغلاق الفروع المفتوحة"
+            title="إغلاق الفروع المفتوحة">
+            ×
+        </button>
+        <div class="sidebar-jump-menu" id="sidebarJumpMenu" aria-label="اختصارات المكتبات الرئيسية"></div>
+
+        <section id="cmake-cluster" class="nav-cluster nav-cluster-glsl collapsed" aria-label="CMake">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('cmake-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/file.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>CMake</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="cmake-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر CMake">...</span>
+                    <span class="nav-super-header-note">البناء والتهيئة والتثبيت</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="cmake-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="vulkan-cluster" class="nav-cluster nav-cluster-vulkan collapsed" aria-label="Vulkan | فولكان">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('vulkan-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/command.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>Vulkan | فولكان</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="vulkan-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر Vulkan">...</span>
+                    <span class="nav-super-header-note">المرجع والدروس والملفات</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+
+            <div class="nav-items nav-cluster-items">
+                <div class="nav-item" data-nav-type="vulkan-index" data-nav-name="vulkan" data-tooltip="يفتح فهرس Vulkan المعياري المحلي المبني على طبقة المرجع الجديدة." tabindex="0" role="button">
+                    <span><img src="assets/material-icon-theme/command.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"></span>
+                    <span>فهرس Vulkan</span>
+                </div>
+            </div>
+
+            <!-- قائمة الدوال -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('functions-list')">
+                    <h3><img src="assets/material-icon-theme/function.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الدوال <span id="vulkan-functions-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="functions-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الماكرو -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('macros-list')">
+                    <h3><img src="assets/material-icon-theme/macro.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الماكرو <span id="vulkan-macros-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="macros-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الثوابت -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('constants-list')">
+                    <h3><img src="assets/material-icon-theme/constant.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الثوابت <span id="vulkan-constants-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="constants-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الهياكل -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('structures-list')">
+                    <h3><img src="assets/material-icon-theme/structure.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الهياكل <span id="vulkan-structures-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="structures-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة التعدادات -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('enums-list')">
+                    <h3><img src="assets/material-icon-theme/enum.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> التعدادات <span id="vulkan-enums-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="enums-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة المتغيرات والأنواع الخاصة -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('variables-list')">
+                    <h3><img src="assets/material-icon-theme/variable.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> المتغيرات <span id="vulkan-variables-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="variables-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الدروس -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('tutorials-list')">
+                    <h3><img src="assets/material-icon-theme/tutorial.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الدروس <span id="vulkan-tutorials-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="tutorials-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الملفات -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('files-list')">
+                    <h3><img src="assets/material-icon-theme/file.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الملفات <span id="vulkan-files-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="files-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة أمثلة فولكان -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('examples-list')">
+                    <h3><img src="assets/material-icon-theme/command.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> أمثلة فولكان <span id="vulkan-examples-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="examples-list" class="nav-items"></div>
+            </div>
+        </section>
+
+        <section id="sdl3-core-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-core-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-core-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3">...</span>
+                    <span class="nav-super-header-note">النواة الأساسية</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-core-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="sdl3-image-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3_image">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-image-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3_image</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-image-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3_image">...</span>
+                    <span class="nav-super-header-note">ملحق الصور</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-image-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="sdl3-mixer-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3_mixer">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-mixer-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3_mixer</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-mixer-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3_mixer">...</span>
+                    <span class="nav-super-header-note">ملحق الصوت</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-mixer-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="sdl3-ttf-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3_ttf">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-ttf-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3_ttf</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-ttf-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3_ttf">...</span>
+                    <span class="nav-super-header-note">ملحق الخطوط</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-ttf-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="glsl-cluster" class="nav-cluster nav-cluster-glsl collapsed" aria-label="GLSLang">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('glsl-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/glsl.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>GLSLang</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="glsl-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر GLSL">...</span>
+                    <span class="nav-super-header-note">مرجع لغة التظليل</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="glsl-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="imgui-cluster" class="nav-cluster nav-cluster-imgui collapsed" aria-label="Dear ImGui">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('imgui-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/imgui.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>Dear ImGui</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="imgui-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر Dear ImGui">...</span>
+                    <span class="nav-super-header-note">مرجع الواجهة الفورية</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="imgui-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="game-ui-cluster" class="nav-cluster nav-cluster-imgui collapsed" aria-label="واجهات الألعاب">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('game-ui-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/tutorial.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>واجهات الألعاب</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="game-ui-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر واجهات الألعاب">...</span>
+                    <span class="nav-super-header-note">عناصر HUD و UI و أدوات المحرر</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="game-ui-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+    </aside>
+
+    <div
+        class="sidebar-resizer"
+        id="sidebarResizer"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="مقبض تغيير عرض القائمة الرئيسية"
+        title="اسحب لتكبير أو تصغير عرض القائمة الرئيسية">
+        <span class="sidebar-resizer-handle" aria-hidden="true"></span>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content" id="mainContent">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px; color: var(--text-muted);">جاري تحميل التوثيق...</p>
+        </div>
+    </main>
+
+    <button
+        type="button"
+        class="page-smart-scroll-btn"
+        id="pageSmartScrollButton"
+        aria-label="انزل إلى أسفل الصفحة">
+        <span class="page-smart-scroll-icon" aria-hidden="true">↓</span>
+    </button>
+
+    <script>
+        window.__showBootstrapScriptError = function (source) {
+            var content = document.getElementById('mainContent');
+            if (!content) return;
+            content.innerHTML = '<div class="page-header"><h1>تعذر تحميل ملفات الواجهة</h1><p>فشل تحميل: <code>' + source + '</code></p></div>';
+        };
+    </script>
+
+    <!-- سكريبت التطبيق -->
+    <script src="data/split/core.js?v=20260313phase5c" onerror="window.__showBootstrapScriptError('data/split/core.js')"></script>
+    <script src="js/modules/content-catalogs.js?v=20260315phase14a" onerror="window.__showBootstrapScriptError('js/modules/content-catalogs.js')"></script>
+    <script src="js/modules/reference-templates.js?v=20260322phase400a" onerror="window.__showBootstrapScriptError('js/modules/reference-templates.js')"></script>
+    <script src="js/modules/vulkan-patterns.js?v=20260315phase15e" onerror="window.__showBootstrapScriptError('js/modules/vulkan-patterns.js')"></script>
+    <script src="js/modules/shared-patterns.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/shared-patterns.js')"></script>
+    <script src="js/modules/ui-blocks.js?v=20260322phase426a" onerror="window.__showBootstrapScriptError('js/modules/ui-blocks.js')"></script>
+    <script src="js/modules/example-routes.js?v=20260322phase426a" onerror="window.__showBootstrapScriptError('js/modules/example-routes.js')"></script>
+    <script src="js/modules/sidebar-navigation.js?v=20260322phase410a" onerror="window.__showBootstrapScriptError('js/modules/sidebar-navigation.js')"></script>
+    <script src="js/modules/sidebar-blocks.js?v=20260321phase298a" onerror="window.__showBootstrapScriptError('js/modules/sidebar-blocks.js')"></script>
+    <script src="js/modules/glsl-section.js?v=20260315phase15h" onerror="window.__showBootstrapScriptError('js/modules/glsl-section.js')"></script>
+    <script src="js/modules/game-ui-section.js?v=20260321phase343a" onerror="window.__showBootstrapScriptError('js/modules/game-ui-section.js')"></script>
+    <script src="js/modules/imgui-section.js?v=20260322phase425a" onerror="window.__showBootstrapScriptError('js/modules/imgui-section.js')"></script>
+    <script src="js/modules/sdl3-section.js?v=20260322phase425a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-section.js')"></script>
+    <script src="js/modules/search-engine.js?v=20260322phase409a" onerror="window.__showBootstrapScriptError('js/modules/search-engine.js')"></script>
+    <script src="js/modules/home-page.js?v=20260321phase370a" onerror="window.__showBootstrapScriptError('js/modules/home-page.js')"></script>
+    <script src="js/modules/reference-runtime.js?v=20260322phase426a" onerror="window.__showBootstrapScriptError('js/modules/reference-runtime.js')"></script>
+    <script src="js/modules/index-pages.js?v=20260322phase410a" onerror="window.__showBootstrapScriptError('js/modules/index-pages.js')"></script>
+    <script src="js/modules/vulkan-value-pages.js?v=20260322phase432a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-value-pages.js')"></script>
+    <script src="js/modules/vulkan-reference-pages.js?v=20260322phase432a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-reference-pages.js')"></script>
+    <script src="js/modules/general-detail-pages.js?v=20260322phase427a" onerror="window.__showBootstrapScriptError('js/modules/general-detail-pages.js')"></script>
+    <script src="js/modules/cpp-reference-utils.js?v=20260316phase20a" onerror="window.__showBootstrapScriptError('js/modules/cpp-reference-utils.js')"></script>
+    <script src="js/modules/app-bootstrap-config.js?v=20260321phase364a" onerror="window.__showBootstrapScriptError('js/modules/app-bootstrap-config.js')"></script>
+    <script src="js/modules/app-runtime-agents.js?v=20260318phase87a" onerror="window.__showBootstrapScriptError('js/modules/app-runtime-agents.js')"></script>
+    <script src="js/modules/app-text-loader.js?v=20260318phase87a" onerror="window.__showBootstrapScriptError('js/modules/app-text-loader.js')"></script>
+    <script src="js/modules/app-segment-registry.js?v=20260321phase301a" onerror="window.__showBootstrapScriptError('js/modules/app-segment-registry.js')"></script>
+    <script src="js/modules/app-data-runtime.js?v=20260321phase318a" onerror="window.__showBootstrapScriptError('js/modules/app-data-runtime.js')"></script>
+    <script src="js/modules/sdl3-package-data-runtime.js?v=20260321phase319a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-package-data-runtime.js')"></script>
+    <script src="js/modules/app-load-runtime.js?v=20260321phase320a" onerror="window.__showBootstrapScriptError('js/modules/app-load-runtime.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers.js?v=20260322phase420a" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-2.js?v=20260321phase348a" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-2.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-3.js?v=20260322phase442a" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-3.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-4.js?v=20260322phase430a" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-4.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-5.js?v=20260322phase400a" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-5.js')"></script>
+    <script src="js/modules/tutorial-support.js?v=20260316phase20a" onerror="window.__showBootstrapScriptError('js/modules/tutorial-support.js')"></script>
+    <script src="js/modules/file-source-viewer.js?v=20260316phase20a" onerror="window.__showBootstrapScriptError('js/modules/file-source-viewer.js')"></script>
+    <script src="js/modules/project-reference-runtime.js?v=20260322phase442a" onerror="window.__showBootstrapScriptError('js/modules/project-reference-runtime.js')"></script>
+    <script src="js/modules/cmake-semantic-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/cmake-semantic-runtime.js')"></script>
+    <script src="js/modules/tooltip-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/tooltip-runtime.js')"></script>
+    <script src="js/modules/cpp-glfw-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/cpp-glfw-runtime.js')"></script>
+    <script src="js/modules/vulkan-enum-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-enum-runtime.js')"></script>
+    <script src="js/modules/sdl3-code-runtime.js?v=20260321phase335a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-code-runtime.js')"></script>
+    <script src="js/modules/sdl3-related-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-related-runtime.js')"></script>
+    <script src="js/modules/tutorial-fallback-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/tutorial-fallback-runtime.js')"></script>
+    <script src="js/modules/sdl3-example-groups-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-example-groups-runtime.js')"></script>
+    <script src="js/modules/sdl3-ready-example-preview-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-ready-example-preview-runtime.js')"></script>
+    <script src="js/modules/sdl3-ready-example-page-runtime.js?v=20260321phase335a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-ready-example-page-runtime.js')"></script>
+    <script src="js/modules/vulkan-example-preview-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-example-preview-runtime.js')"></script>
+    <script src="js/modules/vulkan-ready-example-preview-runtime.js?v=20260321phase304a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-ready-example-preview-runtime.js')"></script>
+    <script src="js/modules/vulkan-ready-example-page-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-ready-example-page-runtime.js')"></script>
+    <script src="js/modules/vulkan-home-runtime.js?v=20260322phase393a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-home-runtime.js')"></script>
+    <script src="js/modules/cmake-home-runtime.js?v=20260321phase314a" onerror="window.__showBootstrapScriptError('js/modules/cmake-home-runtime.js')"></script>
+    <script src="js/modules/glsl-home-runtime.js?v=20260321phase306a" onerror="window.__showBootstrapScriptError('js/modules/glsl-home-runtime.js')"></script>
+    <script src="js/modules/sdl3-home-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-home-runtime.js')"></script>
+    <script src="js/modules/home-shell-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/home-shell-runtime.js')"></script>
+    <script src="js/modules/tree-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/tree-runtime.js')"></script>
+    <script src="js/modules/category-lookup-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/category-lookup-runtime.js')"></script>
+    <script src="js/modules/vulkan-sidebar-runtime.js?v=20260322phase410a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-sidebar-runtime.js')"></script>
+    <script src="js/modules/vulkan-constants-runtime.js?v=20260321phase317a" onerror="window.__showBootstrapScriptError('js/modules/vulkan-constants-runtime.js')"></script>
+    <script src="js/modules/sdl3-example-preview-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-example-preview-runtime.js')"></script>
+    <script src="js/modules/imgui-example-preview-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/imgui-example-preview-runtime.js')"></script>
+    <script src="js/modules/sdl3-parameter-render-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-parameter-render-runtime.js')"></script>
+    <script src="js/modules/sdl3-entity-render-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-entity-render-runtime.js')"></script>
+    <script src="js/modules/sdl3-detail-runtime.js?v=20260321phase293a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-detail-runtime.js')"></script>
+    <script src="js/modules/sdl3-nav-runtime.js?v=20260321phase298a" onerror="window.__showBootstrapScriptError('js/modules/sdl3-nav-runtime.js')"></script>
+    <script src="js/modules/glsl-page-runtime.js?v=20260322phase425a" onerror="window.__showBootstrapScriptError('js/modules/glsl-page-runtime.js')"></script>
+    <script src="js/modules/glsl-example-runtime.js?v=20260321phase303a" onerror="window.__showBootstrapScriptError('js/modules/glsl-example-runtime.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-7.js?v=20260322phase442a" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-7.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-6.js?v=20260322phase427a" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-6.js')"></script>
+    <script src="js/app.js?v=20260322phase411a" onerror="window.__showBootstrapScriptError('js/app.js')"></script>
+</body>
+</html>

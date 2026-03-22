@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_CopyFile",
+    "slug": "sdl-copy-file",
+    "titleArabic": "Copy a file",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-copy-file",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-copy-file.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Copy a file",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Copy الملف داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Copy الملف داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Copy a file."
+  },
+  "signature": {
+    "raw": "bool SDL_CopyFile(const char *oldpath, const char *newpath);",
+    "returnType": "bool",
+    "parameters": [
+      "const char *oldpath",
+      "const char *newpath"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_filesystem.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "oldpath",
+        "type": "const char *",
+        "descriptionArabic": "يمثل المعامل oldpath من النوع const char * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the old path."
+      },
+      {
+        "name": "newpath",
+        "type": "const char *",
+        "descriptionArabic": "يمثل المعامل newpath من النوع const char * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new path."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "If the file at newpath already exists, it will be\noverwritten with the contents of the file at oldpath .",
+      "This function will block until the copy is complete, which might be a\nsignificant time for large files on slow disks. On some platforms, the\ncopy can be handed off to the OS itself, but on others SDL might just\nopen both paths, and read from one and write to the other.",
+      "Note that this is not an atomic operation! If something tries to read\nfrom newpath while the copy is in progress, it will see an\nincomplete copy of the data, and if the calling thread terminates (or\nthe power goes out) during the copy, newpath 's previous\ncontents will be gone, replaced with an incomplete copy of the data. To\navoid this risk, it is recommended that the app copy to a temporary file\nin the same directory as newpath , and if the copy is\nsuccessful, use SDL_RenamePath () to\nreplace newpath with the temporary file. This will ensure\nthat reads of newpath will either see a complete copy of\nthe data, or it will see the pre-copy state of newpath .",
+      "This function attempts to synchronize the newly-copied data to disk\nbefore returning, if the platform allows it, so that the renaming trick\nwill not have a problem in a system crash or power failure, where the\nfile could be renamed but the contents never made it from the system\nfile cache to the physical disk.",
+      "If the copy fails for any reason, the state of newpath\nis undefined. It might be half a copy, it might be the untouched data of\nwhat was already there, or it might be a zero-byte file, etc."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread, but this operation\nis not atomic, so the app might need to protect access to specific paths\nfrom other threads if appropriate.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_CopyFile",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Filesystem Access",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

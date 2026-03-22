@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_handles.hpp • القسم 24 من 51 • الأسطر 10351-10800 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_handles.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_handles.hpp.html">vulkan_handles.hpp</a> /
+        <span>القسم 24 من 51 • الأسطر 10351-10800</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_handles.hpp</h1>
+      <p class="page-description">القسم 24 من 51 • الأسطر 10351-10800</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-23.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-25.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_handles.hpp</span>
+        <span class="source-stat">القسم: 24/51</span>
+        <span class="source-stat">الأسطر: 10351-10800</span>
+        <span class="source-stat">حجم الملف: 1.59 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    Sampler &amp; operator=( Sampler &amp;&amp; rhs ) = default;
+#else
+    Sampler( Sampler &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_sampler( exchange( rhs.m_sampler, {} ) ) {}
+
+    Sampler &amp; operator=( Sampler &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_sampler = exchange( rhs.m_sampler, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR Sampler( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT Sampler( VkSampler sampler ) VULKAN_HPP_NOEXCEPT : m_sampler( sampler ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    Sampler &amp; operator=( VkSampler sampler ) VULKAN_HPP_NOEXCEPT
+    {
+      m_sampler = sampler;
+      return *this;
+    }
+#endif
+
+    Sampler &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_sampler = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkSampler() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_sampler;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_sampler != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_sampler == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkSampler m_sampler = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eSampler&gt;
+  {
+    using Type = Sampler;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eSampler&gt;
+  {
+    using Type = Sampler;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkSampler, VK_NULL_HANDLE&gt;
+  {
+    using Type = Sampler;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;Sampler&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkSamplerYcbcrConversion, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkSamplerYcbcrConversion.html
+  class SamplerYcbcrConversion
+  {
+  public:
+    using CType      = VkSamplerYcbcrConversion;
+    using NativeType = VkSamplerYcbcrConversion;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eSamplerYcbcrConversion;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eSamplerYcbcrConversion;
+
+  public:
+    SamplerYcbcrConversion() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    SamplerYcbcrConversion( SamplerYcbcrConversion const &amp; rhs )             = default;
+    SamplerYcbcrConversion &amp; operator=( SamplerYcbcrConversion const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    SamplerYcbcrConversion( SamplerYcbcrConversion &amp;&amp; rhs )             = default;
+    SamplerYcbcrConversion &amp; operator=( SamplerYcbcrConversion &amp;&amp; rhs ) = default;
+#else
+    SamplerYcbcrConversion( SamplerYcbcrConversion &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_samplerYcbcrConversion( exchange( rhs.m_samplerYcbcrConversion, {} ) ) {}
+
+    SamplerYcbcrConversion &amp; operator=( SamplerYcbcrConversion &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_samplerYcbcrConversion = exchange( rhs.m_samplerYcbcrConversion, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR SamplerYcbcrConversion( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT SamplerYcbcrConversion( VkSamplerYcbcrConversion samplerYcbcrConversion ) VULKAN_HPP_NOEXCEPT
+      : m_samplerYcbcrConversion( samplerYcbcrConversion )
+    {
+    }
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    SamplerYcbcrConversion &amp; operator=( VkSamplerYcbcrConversion samplerYcbcrConversion ) VULKAN_HPP_NOEXCEPT
+    {
+      m_samplerYcbcrConversion = samplerYcbcrConversion;
+      return *this;
+    }
+#endif
+
+    SamplerYcbcrConversion &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_samplerYcbcrConversion = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkSamplerYcbcrConversion() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_samplerYcbcrConversion;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_samplerYcbcrConversion != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_samplerYcbcrConversion == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkSamplerYcbcrConversion m_samplerYcbcrConversion = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eSamplerYcbcrConversion&gt;
+  {
+    using Type = SamplerYcbcrConversion;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eSamplerYcbcrConversion&gt;
+  {
+    using Type = SamplerYcbcrConversion;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkSamplerYcbcrConversion, VK_NULL_HANDLE&gt;
+  {
+    using Type = SamplerYcbcrConversion;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;SamplerYcbcrConversion&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  using SamplerYcbcrConversionKHR = SamplerYcbcrConversion;
+
+  // wrapper class for handle VkShaderModule, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkShaderModule.html
+  class ShaderModule
+  {
+  public:
+    using CType      = VkShaderModule;
+    using NativeType = VkShaderModule;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eShaderModule;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eShaderModule;
+
+  public:
+    ShaderModule() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    ShaderModule( ShaderModule const &amp; rhs )             = default;
+    ShaderModule &amp; operator=( ShaderModule const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    ShaderModule( ShaderModule &amp;&amp; rhs )             = default;
+    ShaderModule &amp; operator=( ShaderModule &amp;&amp; rhs ) = default;
+#else
+    ShaderModule( ShaderModule &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_shaderModule( exchange( rhs.m_shaderModule, {} ) ) {}
+
+    ShaderModule &amp; operator=( ShaderModule &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_shaderModule = exchange( rhs.m_shaderModule, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR ShaderModule( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT ShaderModule( VkShaderModule shaderModule ) VULKAN_HPP_NOEXCEPT : m_shaderModule( shaderModule ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    ShaderModule &amp; operator=( VkShaderModule shaderModule ) VULKAN_HPP_NOEXCEPT
+    {
+      m_shaderModule = shaderModule;
+      return *this;
+    }
+#endif
+
+    ShaderModule &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_shaderModule = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkShaderModule() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_shaderModule;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_shaderModule != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_shaderModule == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkShaderModule m_shaderModule = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eShaderModule&gt;
+  {
+    using Type = ShaderModule;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eShaderModule&gt;
+  {
+    using Type = ShaderModule;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkShaderModule, VK_NULL_HANDLE&gt;
+  {
+    using Type = ShaderModule;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;ShaderModule&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkTensorARM, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkTensorARM.html
+  class TensorARM
+  {
+  public:
+    using CType      = VkTensorARM;
+    using NativeType = VkTensorARM;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eTensorARM;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+  public:
+    TensorARM() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    TensorARM( TensorARM const &amp; rhs )             = default;
+    TensorARM &amp; operator=( TensorARM const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    TensorARM( TensorARM &amp;&amp; rhs )             = default;
+    TensorARM &amp; operator=( TensorARM &amp;&amp; rhs ) = default;
+#else
+    TensorARM( TensorARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_tensorARM( exchange( rhs.m_tensorARM, {} ) ) {}
+
+    TensorARM &amp; operator=( TensorARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_tensorARM = exchange( rhs.m_tensorARM, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR TensorARM( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT TensorARM( VkTensorARM tensorARM ) VULKAN_HPP_NOEXCEPT : m_tensorARM( tensorARM ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    TensorARM &amp; operator=( VkTensorARM tensorARM ) VULKAN_HPP_NOEXCEPT
+    {
+      m_tensorARM = tensorARM;
+      return *this;
+    }
+#endif
+
+    TensorARM &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_tensorARM = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkTensorARM() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_tensorARM;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_tensorARM != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_tensorARM == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkTensorARM m_tensorARM = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eTensorARM&gt;
+  {
+    using Type = TensorARM;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkTensorARM, VK_NULL_HANDLE&gt;
+  {
+    using Type = TensorARM;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;TensorARM&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkTensorViewARM, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkTensorViewARM.html
+  class TensorViewARM
+  {
+  public:
+    using CType      = VkTensorViewARM;
+    using NativeType = VkTensorViewARM;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eTensorViewARM;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+  public:
+    TensorViewARM() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    TensorViewARM( TensorViewARM const &amp; rhs )             = default;
+    TensorViewARM &amp; operator=( TensorViewARM const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    TensorViewARM( TensorViewARM &amp;&amp; rhs )             = default;
+    TensorViewARM &amp; operator=( TensorViewARM &amp;&amp; rhs ) = default;
+#else
+    TensorViewARM( TensorViewARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_tensorViewARM( exchange( rhs.m_tensorViewARM, {} ) ) {}
+
+    TensorViewARM &amp; operator=( TensorViewARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_tensorViewARM = exchange( rhs.m_tensorViewARM, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR TensorViewARM( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT TensorViewARM( VkTensorViewARM tensorViewARM ) VULKAN_HPP_NOEXCEPT : m_tensorViewARM( tensorViewARM ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    TensorViewARM &amp; operator=( VkTensorViewARM tensorViewARM ) VULKAN_HPP_NOEXCEPT
+    {
+      m_tensorViewARM = tensorViewARM;
+      return *this;
+    }
+#endif
+
+    TensorViewARM &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_tensorViewARM = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkTensorViewARM() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_tensorViewARM;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_tensorViewARM != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_tensorViewARM == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkTensorViewARM m_tensorViewARM = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eTensorViewARM&gt;
+  {
+    using Type = TensorViewARM;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkTensorViewARM, VK_NULL_HANDLE&gt;
+  {
+    using Type = TensorViewARM;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;TensorViewARM&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkValidationCacheEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkValidationCacheEXT.html
+  class ValidationCacheEXT
+  {
+  public:
+    using CType      = VkValidationCacheEXT;
+    using NativeType = VkValidationCacheEXT;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eValidationCacheEXT;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eValidationCacheEXT;
+
+  public:
+    ValidationCacheEXT() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    ValidationCacheEXT( ValidationCacheEXT const &amp; rhs )             = default;
+    ValidationCacheEXT &amp; operator=( ValidationCacheEXT const &amp; rhs ) = default;</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-23.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-25.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>
