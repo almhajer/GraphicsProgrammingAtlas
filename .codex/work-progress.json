@@ -1,6 +1,6 @@
 {
-  "last_stable_checkpoint": "lazy-noncritical-media",
-  "phase": "lazy-noncritical-media",
+  "last_stable_checkpoint": "remove-on-demand-runtimes-from-boot",
+  "phase": "remove-on-demand-runtimes-from-boot",
   "done": [
     "إصلاح خطأ JSON في reference-guides-stdlib-string.json",
     "إضافة 1035 عنصر جديد إلى home.json (1166→2201)",
@@ -266,9 +266,10 @@
     "إعادة تسمية ملف الترخيص من licnce.md إلى licence.md مع الإبقاء على نفس المحتوى",
     "إضافة README.md عربي يشرح فكرة الموقع وهدفه وأقسامه وطريقة تشغيله ونشره بشكل واضح ومباشر",
     "تخفيف بطء الإقلاع في الواجهة عبر تحويل حزمة السكربتات الخارجية في index.html إلى تحميل deferred للحفاظ على ترتيب التنفيذ مع إزالة الحظر عن الرسم الأولي للصفحة",
-    "تقليل الضغط الشبكي والرسم في الصفحات التعليمية عبر تحويل GIFs خط الأنابيب وiframe الفيديو غير الحرج إلى lazy loading بدل eager"
+    "تقليل الضغط الشبكي والرسم في الصفحات التعليمية عبر تحويل GIFs خط الأنابيب وiframe الفيديو غير الحرج إلى lazy loading بدل eager",
+    "إخراج عدة runtime files من التحميل الأولي في index.html مثل reference-runtime وindex-pages وgeneral-detail-pages وtutorial-support والاعتماد بدلًا من ذلك على ensureUiSegment لتحميلها عند الطلب فقط"
   ],
-  "next": "إذا بقي البطء ملحوظًا بعد defer السكربتات وlazy media، فالخطوة التالية تكون فصل ملفات JS الثقيلة نفسها مثل content-catalogs وبعض heavy helpers عن الإقلاع المباشر ونقلها إلى تحميل عند الطلب عبر appDataRuntime.",
+  "next": "إذا بقي البطء ملحوظًا بعد تقليص حزمة الإقلاع، فالخطوة التالية تكون جرد الملفات الثقيلة المتبقية خارج آلية segments مثل content-catalogs وبعض heavy helpers وتحويل ما يمكن منها إلى طبقة تحميل عند الطلب أيضًا.",
   "read_next": [
     "js/modules/sdl3-section.js",
     "js/modules/sidebar-navigation.js",
@@ -282,6 +283,7 @@
     "README.md",
     ".codex/work-progress.json",
     "js/modules/app-load-runtime.js",
+    "js/modules/app-segment-registry.js",
     "js/modules/app-heavy-reference-helpers.js",
     "js/modules/tutorial-support.js",
     "content/reference/manifest.json",
@@ -320,6 +322,7 @@
     "js/modules/sidebar-navigation.js",
     "js/modules/app-heavy-reference-helpers-6.js",
     "js/modules/app-heavy-reference-helpers-7.js",
+    "js/modules/app-segment-registry.js",
     "css/main.css",
     "data/ui/sdl3/meta.json",
     "data/ui/sdl3/audio.json",
@@ -417,7 +420,8 @@
     "التحقق من وجود ملف licence.md في جذر المشروع بعد إعادة التسمية مع بقاء المحتوى كما هو",
     "التحقق من وجود README.md في جذر المشروع واحتوائه على شرح هدف الموقع وبنيته وتشغيله المحلي",
     "التحقق النصي من إضافة defer إلى جميع السكربتات الخارجية في index.html مع بقاء ترتيبها كما هو",
-    "التحقق النصي من اختفاء loading=\"eager\" من صور GIF التعليمية وiframe الفيديو غير الحرج"
+    "التحقق النصي من اختفاء loading=\"eager\" من صور GIF التعليمية وiframe الفيديو غير الحرج",
+    "التحقق من إزالة عدة runtime files المؤجلة من index.html مع بقاء tutorialSupportRuntime قابلًا للتحميل عند الطلب عبر app-segment-registry.js"
   ],
   "issues": [
     "1078 دالة حرة std::X بدون محتوى — أكبر فجوة حاليًا (std::memmove, std::strcpy, std::strlen, إلخ)",

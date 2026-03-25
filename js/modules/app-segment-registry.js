@@ -17,7 +17,7 @@
     vulkanReferencePagesRuntime: {path: 'js/modules/vulkan-reference-pages.js', format: 'script'},
     generalDetailPagesRuntime: {path: 'js/modules/general-detail-pages.js', format: 'script'},
     cppReferenceUtilsRuntime: {path: 'js/modules/cpp-reference-utils.js', format: 'script'},
-    tutorialSupportRuntime: {path: 'js/modules/tutorial-support.js?v=20260326phase577a', format: 'script'},
+    tutorialSupportRuntime: {path: 'js/modules/tutorial-support.js?v=0.0.1', format: 'script'},
     fileSourceViewerRuntime: {path: 'js/modules/file-source-viewer.js', format: 'script'},
     heavyHelper4Runtime: {path: 'js/modules/app-heavy-reference-helpers-4-runtime.js?v=20260326phase577a', format: 'script'},
     tutorials: {path: 'data/ui/tutorials/index.json', format: 'json'},
