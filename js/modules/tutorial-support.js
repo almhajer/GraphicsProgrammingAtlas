@@ -354,7 +354,7 @@
                 data-src="${embedUrl}"
                 src=""
                 title="${api.escapeAttribute(videoConfig.title)}"
-                loading="eager"
+                loading="lazy"
                 referrerpolicy="strict-origin-when-cross-origin"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen></iframe>

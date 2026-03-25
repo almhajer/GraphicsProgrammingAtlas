@@ -175,7 +175,7 @@ function renderPipelineStagesDiagram() {
 
       <div class="pipeline-gif-hero">
         <figure class="pipeline-gif-card pipeline-gif-card-hero">
-          <img src="assets/pipeline_gifs/pipeline_line.gif?v=20260311dw" alt="رسم متحرك يوضح انتقال البيانات عبر خط Graphics Pipeline كاملًا من Vertex Input حتى Color Output" loading="eager">
+          <img src="assets/pipeline_gifs/pipeline_line.gif?v=20260311dw" alt="رسم متحرك يوضح انتقال البيانات عبر خط Graphics Pipeline كاملًا من Vertex Input حتى Color Output" loading="lazy" decoding="async">
           <figcaption>
             <strong>الخط الكامل للمراحل</strong>
             <span>تتحرك النبضة الصفراء من قراءة بيانات <code>Vertex</code>، ثم تمر بمرحلة تجميع البدائيات والشيدر والرستر، حتى تصل إلى كتابة اللون النهائي داخل المرفق اللوني.</span>
@@ -185,7 +185,7 @@ function renderPipelineStagesDiagram() {
 
       <div class="pipeline-gif-gallery">
         <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_vertex_input.gif?v=20260311dw" alt="رسم متحرك يوضح انتقال بيانات Vertex من Buffer إلى بداية خط الأنابيب" loading="eager">
+          <img src="assets/pipeline_gifs/stage_vertex_input.gif?v=20260311dw" alt="رسم متحرك يوضح انتقال بيانات Vertex من Buffer إلى بداية خط الأنابيب" loading="lazy" decoding="async">
           <figcaption>
             <strong>Vertex Input</strong>
             <span>توضح الحركة كيف يقرأ Vulkan صفات كل <code>Vertex</code> من <code>Vertex Buffer</code> قبل أن تُرسل إلى المراحل الحسابية التالية.</span>
@@ -193,7 +193,7 @@ function renderPipelineStagesDiagram() {
         </figure>
 
         <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_input_assembly.gif?v=20260311dw" alt="رسم متحرك يوضح تجميع الرؤوس إلى Primitive داخل Input Assembly" loading="eager">
+          <img src="assets/pipeline_gifs/stage_input_assembly.gif?v=20260311dw" alt="رسم متحرك يوضح تجميع الرؤوس إلى Primitive داخل Input Assembly" loading="lazy" decoding="async">
           <figcaption>
             <strong>Input Assembly</strong>
             <span>يبين كيف تُجمع الرؤوس إلى <code>Primitive</code> واحدة أو أكثر حسب قيمة <code>topology</code> مثل <code>triangle list</code>.</span>
@@ -201,7 +201,7 @@ function renderPipelineStagesDiagram() {
         </figure>
 
         <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_vertex_shader.gif?v=20260311dw" alt="رسم متحرك يوضح تعديل مواضع الرؤوس داخل Vertex Shader" loading="eager">
+          <img src="assets/pipeline_gifs/stage_vertex_shader.gif?v=20260311dw" alt="رسم متحرك يوضح تعديل مواضع الرؤوس داخل Vertex Shader" loading="lazy" decoding="async">
           <figcaption>
             <strong>Vertex Shader</strong>
             <span>تُظهر اللقطة أن كل <code>Vertex</code> يدخل الشيدر منفردًا، ثم يخرج بموضع جديد وقيم تمرر لاحقًا إلى باقي المراحل.</span>
@@ -209,7 +209,7 @@ function renderPipelineStagesDiagram() {
         </figure>
 
         <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_rasterization.gif?v=20260311dw" alt="رسم متحرك يوضح تحول Primitive إلى Fragments داخل مرحلة Rasterization" loading="eager">
+          <img src="assets/pipeline_gifs/stage_rasterization.gif?v=20260311dw" alt="رسم متحرك يوضح تحول Primitive إلى Fragments داخل مرحلة Rasterization" loading="lazy" decoding="async">
           <figcaption>
             <strong>Rasterization</strong>
             <span>توضح الشبكة كيف تتحول البدائية من شكل هندسي مستمر إلى <code>Fragments</code> موزعة على شبكة البكسلات داخل <code>Viewport</code>.</span>
@@ -217,7 +217,7 @@ function renderPipelineStagesDiagram() {
         </figure>
 
         <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_fragment_shader.gif?v=20260311dw" alt="رسم متحرك يوضح معالجة Fragments وإنتاج اللون داخل Fragment Shader" loading="eager">
+          <img src="assets/pipeline_gifs/stage_fragment_shader.gif?v=20260311dw" alt="رسم متحرك يوضح معالجة Fragments وإنتاج اللون داخل Fragment Shader" loading="lazy" decoding="async">
           <figcaption>
             <strong>Fragment Shader</strong>
             <span>يبين كيف يعالج الشيدر كل <code>Fragment</code> على حدة ليحسب اللون أو العمق أو يقرر رفض هذا الجزء قبل الإخراج.</span>
@@ -225,7 +225,7 @@ function renderPipelineStagesDiagram() {
         </figure>
 
         <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_color_output.gif?v=20260311dw" alt="رسم متحرك يوضح كتابة الألوان النهائية إلى Color Attachment" loading="eager">
+          <img src="assets/pipeline_gifs/stage_color_output.gif?v=20260311dw" alt="رسم متحرك يوضح كتابة الألوان النهائية إلى Color Attachment" loading="lazy" decoding="async">
           <figcaption>
             <strong>Color Output</strong>
             <span>توضح الأشرطة الملونة كيف يُدمج خرج <code>Fragment Shader</code> ثم يُكتب إلى <code>Color Attachment</code> داخل صورة الإطار.</span>

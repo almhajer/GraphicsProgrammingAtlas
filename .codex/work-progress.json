@@ -1,6 +1,6 @@
 {
-  "last_stable_checkpoint": "defer-initial-script-bundle",
-  "phase": "defer-initial-script-bundle",
+  "last_stable_checkpoint": "lazy-noncritical-media",
+  "phase": "lazy-noncritical-media",
   "done": [
     "إصلاح خطأ JSON في reference-guides-stdlib-string.json",
     "إضافة 1035 عنصر جديد إلى home.json (1166→2201)",
@@ -265,9 +265,10 @@
     "إضافة ملف licnce.md بصياغة محافظة توضح أن المشروع لا يملك ترخيصًا مفتوحًا معلنًا بعد وأن جميع الحقوق محفوظة إلى حين اعتماد ترخيص صريح",
     "إعادة تسمية ملف الترخيص من licnce.md إلى licence.md مع الإبقاء على نفس المحتوى",
     "إضافة README.md عربي يشرح فكرة الموقع وهدفه وأقسامه وطريقة تشغيله ونشره بشكل واضح ومباشر",
-    "تخفيف بطء الإقلاع في الواجهة عبر تحويل حزمة السكربتات الخارجية في index.html إلى تحميل deferred للحفاظ على ترتيب التنفيذ مع إزالة الحظر عن الرسم الأولي للصفحة"
+    "تخفيف بطء الإقلاع في الواجهة عبر تحويل حزمة السكربتات الخارجية في index.html إلى تحميل deferred للحفاظ على ترتيب التنفيذ مع إزالة الحظر عن الرسم الأولي للصفحة",
+    "تقليل الضغط الشبكي والرسم في الصفحات التعليمية عبر تحويل GIFs خط الأنابيب وiframe الفيديو غير الحرج إلى lazy loading بدل eager"
   ],
-  "next": "إذا بقي البطء ملحوظًا بعد هذا التحسين، فالخطوة التالية تكون جرد أكبر الملفات المحملة أوليًا مثل content-catalogs وapp-heavy-reference-helpers ونقل غير الضروري منها إلى تحميل عند الطلب بدل الإقلاع المباشر.",
+  "next": "إذا بقي البطء ملحوظًا بعد defer السكربتات وlazy media، فالخطوة التالية تكون فصل ملفات JS الثقيلة نفسها مثل content-catalogs وبعض heavy helpers عن الإقلاع المباشر ونقلها إلى تحميل عند الطلب عبر appDataRuntime.",
   "read_next": [
     "js/modules/sdl3-section.js",
     "js/modules/sidebar-navigation.js",
@@ -281,6 +282,8 @@
     "README.md",
     ".codex/work-progress.json",
     "js/modules/app-load-runtime.js",
+    "js/modules/app-heavy-reference-helpers.js",
+    "js/modules/tutorial-support.js",
     "content/reference/manifest.json",
     "content/reference/sdl3-audio/index.json",
     "js/modules/content-catalogs.js",
@@ -323,6 +326,8 @@
     "README.txt",
     "README.md",
     "licence.md",
+    "js/modules/app-heavy-reference-helpers.js",
+    "js/modules/tutorial-support.js",
     "penAI Compatible.agent.md",
     "z.ai.agent.md",
     "content/reference/ffmpeg/examples/**/*.json (إصلاح تلف كود: \\n حرفية → أسطر حقيقية، حرف n زائد من بدايات الأسطر، تصحيح navfilter_graph_free)",
@@ -411,7 +416,8 @@
     "التحقق من أن جميع معلمات ?v= داخل index.html أصبحت 0.0.1 دون أي قيمة إصدار أخرى",
     "التحقق من وجود ملف licence.md في جذر المشروع بعد إعادة التسمية مع بقاء المحتوى كما هو",
     "التحقق من وجود README.md في جذر المشروع واحتوائه على شرح هدف الموقع وبنيته وتشغيله المحلي",
-    "التحقق النصي من إضافة defer إلى جميع السكربتات الخارجية في index.html مع بقاء ترتيبها كما هو"
+    "التحقق النصي من إضافة defer إلى جميع السكربتات الخارجية في index.html مع بقاء ترتيبها كما هو",
+    "التحقق النصي من اختفاء loading=\"eager\" من صور GIF التعليمية وiframe الفيديو غير الحرج"
   ],
   "issues": [
     "1078 دالة حرة std::X بدون محتوى — أكبر فجوة حاليًا (std::memmove, std::strcpy, std::strlen, إلخ)",
