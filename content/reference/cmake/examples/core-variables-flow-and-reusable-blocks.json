@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة صغيرة تربط أوامر CMake الأساسية بمسار عملي كامل داخل CMakeLists.txt وملفات البناء المرافقة."
+  },
+  "identity": {
+    "name": "Core Variables, Flow, and Reusable Blocks",
+    "slug": "core-variables-flow-and-reusable-blocks",
+    "titleArabic": "الأوامر الأساسية في CMakeLists.txt: متغيرات ورسائل وقوائم وحلقات وكتل قابلة لإعادة الاستخدام",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/examples/core-variables-flow-and-reusable-blocks",
+    "contentPath": "content/reference/cmake/examples/core-variables-flow-and-reusable-blocks.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "الأوامر الأساسية في CMakeLists.txt: متغيرات ورسائل وقوائم وحلقات وكتل قابلة لإعادة الاستخدام",
+    "actualMeaningArabic": "هذا المثال يجمع الأوامر الأساسية التي يراها المبتدئ مبكرًا في CMakeLists.txt: set() لتجهيز القيم، message() لعرضها، list() لبناء قائمة، foreach()/endforeach() للمرور عليها، include() لجلب ملف مساعد، macro()/endmacro() وfunction()/endfunction() لتجميع منطق يعاد استعماله، وunset() لتنظيف القيم المؤقتة.",
+    "purposeArabic": "يعطي القارئ صورة عملية متماسكة لكيفية ظهور هذه الأوامر داخل ملف واحد قبل الانتقال إلى الأهداف والمكتبات والتثبيت.",
+    "whyUseArabic": "لأن كثيرًا من سقوط الفهم في CMake لا يأتي من الأوامر الكبيرة فقط، بل من عدم فهم الأوامر الصغيرة التي تشكل النسيج اليومي للملف نفسه.",
+    "carriedValueArabic": "يوضح هذا المثال أن هذه الأوامر كلها تعمل في Configure time: بعضها يغيّر القيم المرئية، وبعضها ينظم الكتل، وبعضها يعيد استخدام منطق صغير داخل نفس المشروع.",
+    "sourceDescription": "هذا المثال يجمع الأوامر الأساسية التي يراها المبتدئ مبكرًا في CMakeLists.txt: set() لتجهيز القيم، message() لعرضها، list() لبناء قائمة، foreach()/endforeach() للمرور عليها، include() لجلب ملف مساعد، macro()/endmacro() وfunction()/endfunction() لتجميع منطق يعاد استعماله، وunset() لتنظيف القيم المؤقتة."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يناسب القراءة المبكرة قبل التوسع إلى target_* وfind_package() لأنك ترى فيه لغة CMake الأساسية نفسها.",
+      "يمكن تشغيل فكرته على ملف CMakeLists.txt صغير لفهم كيف تتحرك القيم من set() إلى message() ثم إلى list() وforeach().",
+      "لاحظ هنا الفرق بين ${var} و${stooges} كتوسعات متغيرات عادية، وبين ${CMAKE_CURRENT_SOURCE_DIR} كمتغير مدمج مرتبط بالدليل الحالي، وبين $ENV{HOME} كقراءة من بيئة النظام."
+    ],
+    "notes": [
+      "المثال يوضح فرق النطاق سريعًا: function() أكثر عزلاً من macro()، وunset() يتأثر بالنطاق الذي تعمل فيه.",
+      "include() هنا ليس مشروعًا فرعيًا جديدًا، بل إدراج مباشر لملف أو وحدة أثناء configure.",
+      "${CMAKE_CURRENT_SOURCE_DIR} يُقيَّم من directory scope الحالي، بينما $ENV{HOME} يُقرأ من بيئة العملية التي شغّلت CMake في تلك اللحظة."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "set(var \"World!\")\nmessage(STATUS \"Hello ${var}\")\n\nset(stooges \"Larry\" \"Moe\")\nlist(APPEND stooges \"Curly\")\nmessage(STATUS \"Stooges contains: ${stooges}\")\nmessage(STATUS \"This dir: ${CMAKE_CURRENT_SOURCE_DIR}\")\nmessage(STATUS \"Home from env: $ENV{HOME}\")\n\nforeach(stooge IN LISTS stooges)\n  message(STATUS \"Stooge: ${stooge}\")\nendforeach()\n\ninclude(cmake/helpers.cmake)\n\nmacro(MyMacro MacroArgument)\n  message(STATUS \"Macro sees ${MacroArgument}\")\nendmacro()\n\nfunction(MyFunc FuncArgument)\n  message(STATUS \"Function sees ${FuncArgument}\")\nendfunction()\n\nunset(var)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      {
+        "name": "set",
+        "route": "#ref/cmake/commands/set",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "message",
+        "route": "#ref/cmake/commands/message",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "list",
+        "route": "#ref/cmake/commands/list",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "foreach",
+        "route": "#ref/cmake/commands/foreach",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "endforeach",
+        "route": "#ref/cmake/commands/endforeach",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "include",
+        "route": "#ref/cmake/commands/include",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "macro",
+        "route": "#ref/cmake/commands/macro",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "endmacro",
+        "route": "#ref/cmake/commands/endmacro",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "function",
+        "route": "#ref/cmake/commands/function",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "endfunction",
+        "route": "#ref/cmake/commands/endfunction",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "unset",
+        "route": "#ref/cmake/commands/unset",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/examples.json",
+    "category": "الأمثلة",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

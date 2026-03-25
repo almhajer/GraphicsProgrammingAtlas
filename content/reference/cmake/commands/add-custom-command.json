@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "add_custom_command",
+    "slug": "add-custom-command",
+    "titleArabic": "يضيف خطوة build مخصصة تولد ملفات أو تربط أمراً بحدث بناء",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/add-custom-command",
+    "contentPath": "content/reference/cmake/commands/add-custom-command.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يضيف خطوة build مخصصة تولد ملفات أو تربط أمراً بحدث بناء",
+    "actualMeaningArabic": "هذا الأمر يضيف قاعدة build مخصصة تنفذ أمراً خارجياً لإنتاج ملفات أو لتوسيع سلوك هدف موجود، ويربط هذه القاعدة بمدخلات ومخرجات معروفة.",
+    "purposeArabic": "يستخدم عندما تحتاج code generation أو preprocessing أو تحويل ملفات كجزء من build نفسه لا من configure فقط.",
+    "whyUseArabic": "يجعل الملفات المولدة جزءًا من build graph مع dependencies واضحة بدلاً من سكربت يدوي منفصل قد يخرج عن التزامن.",
+    "carriedValueArabic": "يضيف edge جديدة في build graph تتبع مخرجات وأوامر ومدخلات، لذلك يؤثر فعلياً في ما يعاد بناؤه ومتى.",
+    "sourceDescription": "هذا الأمر يضيف قاعدة build مخصصة تنفذ أمراً خارجياً لإنتاج ملفات أو لتوسيع سلوك هدف موجود، ويربط هذه القاعدة بمدخلات ومخرجات معروفة."
+  },
+  "signature": {
+    "raw": "add_custom_command(OUTPUT <output>... COMMAND <command> [ARGS] [DEPENDS <depends>...] ...)",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "OUTPUT",
+        "type": "كلمة مفتاحية ثابتة في الصياغة",
+        "semanticKind": "keyword",
+        "descriptionArabic": "كلمة مفتاحية تعلن الملفات التي سيولدها هذا الأمر فعليًا حتى يدخلها CMake في الرسم البنائي. وجود هذه الكلمة هنا جزء مباشر من الصياغة التي يتوقعها CMake في هذا الموضع."
+      },
+      {
+        "name": "<output>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل الملف الناتج أو المسار الذي سيكتبه الأمر داخل شجرة البناء أو التثبيت بحسب السياق. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "COMMAND",
+        "type": "كلمة مفتاحية ثابتة في الصياغة",
+        "semanticKind": "keyword",
+        "descriptionArabic": "كلمة مفتاحية تبدأ أمرًا أو استدعاءً خارجيًا سيدخل في مسار التوليد أو البناء أو الاختبار. وجود هذه الكلمة هنا جزء مباشر من الصياغة التي يتوقعها CMake في هذا الموضع."
+      },
+      {
+        "name": "<command>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل الأمر الخارجي أو الاستدعاء الذي سينفذه CMake في هذا الموضع. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "ARGS",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "كلمة مفتاحية قديمة أو مساعدة تشير إلى أن العناصر التالية هي وسائط تمرر إلى الأمر الخارجي. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      },
+      {
+        "name": "[DEPENDS <depends>...]",
+        "type": "مجموعة اختيارية في الصياغة",
+        "semanticKind": "group",
+        "descriptionArabic": "هذه مجموعة اختيارية داخل صياغة add_custom_command. الأقواس المربعة تعني أنك تستطيع حذف المجموعة كلها، وإذا استخدمتها فعليك كتابة عناصرها الفعلية بالترتيب الظاهر داخلها لا باعتبارها نصًا توضيحيًا فقط."
+      },
+      {
+        "name": "DEPENDS",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "كلمة مفتاحية تعلن الملفات أو الأهداف أو النواتج التي يجب أن يعتمد عليها هذا السطر قبل تنفيذه. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      },
+      {
+        "name": "<depends>",
+        "type": "argument اختياري يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل ملفات أو نواتج أو أهدافًا يعتمد عليها الأمر قبل التنفيذ. وجوده هنا اختياري لأنه يقع داخل جزء محاط بأقواس مربعة في التوقيع."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "استعمله عندما يعتمد target على ملف يولده code generator أو أداة تحويل.",
+      "فرق بينه وبين configure_file(): الأول build-time والثاني configure-time غالباً."
+    ],
+    "notes": [
+      "الدقة في OUTPUT وDEPENDS مهمة حتى يفهم generator متى يعيد تشغيل الخطوة.",
+      "يمكن ربطه مع add_custom_target() أو استخدام المخرجات ضمن add_executable()/add_library()."
+    ],
+    "remarks": [],
+    "instructions": [
+      "فكر في الملفات الناتجة كعناصر رسمية في build graph وليست side effects مجهولة."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "add_custom_command(\n  OUTPUT generated_version.cpp\n  COMMAND version-tool > generated_version.cpp\n  DEPENDS version-tool\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/add_custom_command.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/add_custom_command.html",
+    "related": [
+      {
+        "name": "configure_file",
+        "route": "#ref/cmake/commands/configure-file",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "add_executable",
+        "route": "#ref/cmake/commands/add-executable",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "build-executable",
+        "route": ""
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

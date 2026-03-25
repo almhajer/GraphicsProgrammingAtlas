@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "set",
+    "slug": "set",
+    "titleArabic": "يسند قيمة إلى متغير CMake أو إلى cache أو إلى نطاق أعلى بحسب الصيغة",
+    "aliases": [
+      "SET"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/set",
+    "contentPath": "content/reference/cmake/commands/set.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يسند قيمة إلى متغير CMake أو إلى cache أو إلى نطاق أعلى بحسب الصيغة",
+    "actualMeaningArabic": "هذا الأمر هو أداة الإسناد الأساسية في CMake: به تنشئ متغيرًا جديدًا أو تحدّث قيمته، ويمكنك أيضًا عبره تخزين قيمة داخل cache أو دفعها إلى نطاق أعلى بدل إبقائها محلية.",
+    "purposeArabic": "يستخدم لتجهيز القيم التي ستقرأها الأوامر اللاحقة مثل message() وfind_package() وtarget_*، أو لتثبيت إعدادات طويلة العمر داخل build directory.",
+    "whyUseArabic": "لأن معظم قرارات CMake العملية تمر عبر قيم محفوظة في متغيرات: مسارات، خيارات، قوائم، وإشارات تتحكم في الفروع الشرطية أو في سلوك الأهداف.",
+    "carriedValueArabic": "أثره يظهر أثناء configure فورًا: أي سطر لاحق يقرأ المتغير سيرى القيمة الجديدة، وإذا استعملت CACHE أو PARENT_SCOPE فأنت تغيّر أيضًا مكان بقاء هذه القيمة ومن يمكنه رؤيتها لاحقًا.",
+    "sourceDescription": "هذا الأمر هو أداة الإسناد الأساسية في CMake: به تنشئ متغيرًا جديدًا أو تحدّث قيمته، ويمكنك أيضًا عبره تخزين قيمة داخل cache أو دفعها إلى نطاق أعلى بدل إبقائها محلية."
+  },
+  "signature": {
+    "raw": "set(<variable> <value>... [CACHE <type> <docstring> [FORCE]] [PARENT_SCOPE])",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "CACHE",
+        "type": "كلمة مفتاحية",
+        "semanticKind": "keyword",
+        "descriptionArabic": "تنقل الإسناد من متغير محلي عادي إلى cache entry محفوظة داخل build directory وتبقى بين تشغيلات configure."
+      },
+      {
+        "name": "<type>",
+        "type": "نوع قيمة cache",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يحدد نوع قيمة الـ cache مثل STRING أو BOOL أو PATH حتى تفهم الأدوات وواجهات CMake كيف تعرض هذه القيمة وتفسرها."
+      },
+      {
+        "name": "<docstring>",
+        "type": "وصف يظهر للمستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "هو الوصف الذي يراه المستخدم أو الأداة عندما تعرض cache entry، لذلك من الأفضل أن يشرح الهدف الحقيقي من المتغير لا اسمه فقط."
+      },
+      {
+        "name": "FORCE",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "يجبر CMake على إعادة كتابة cache entry حتى لو كانت لها قيمة موجودة مسبقًا، لذلك يجب استخدامه بحذر حتى لا تسلب المستخدم خياره."
+      },
+      {
+        "name": "PARENT_SCOPE",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "يدفع القيمة إلى النطاق الأب بدل إبقائها داخل الدليل أو الدالة الحالية، وهو مفيد عندما تريد إرجاع نتيجة من function() أو من ملف فرعي."
+      },
+      {
+        "name": "<variable>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسم متغير يكتبه المبرمج أو يقرأه الأمر داخل مرحلة التهيئة. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "<value>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل القيمة التي ستُسند إلى متغير أو خاصية أو خيار في هذا الموضع من الصياغة. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "[CACHE <type> <docstring> [FORCE]",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "هذه كلمة مفتاحية داخل صياغة set تغيّر كيف يفسر CMake العناصر التالية في هذا الموضع. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "أبسط صورة له هي set(var \"World!\")، أي تجهيز قيمة يقرؤها سطر لاحق في الملف نفسه.",
+      "إذا مررت أكثر من قيمة فغالبًا يعاملها CMake كقائمة مفصولة بفواصل منقوطة يمكن أن تقرأها list() وforeach().",
+      "عندما ترى ${var} أو ${stooges} لاحقًا فهذه ليست أسماء جديدة، بل توسعة للقيمة الحالية التي حفظها set() تحت ذلك الاسم."
+    ],
+    "notes": [
+      "set() لا يطبع شيئًا ولا يبني هدفًا؛ هو فقط يغيّر ما ستراه الأوامر التالية عند قراءة اسم المتغير.",
+      "عند استخدام CACHE فأنت تبني واجهة إعداد للمشروع، أما PARENT_SCOPE فيتعامل مع انتقال القيم بين النطاقات أثناء configure.",
+      "إذا خزنت قيمة مشتقة من $ENV{HOME} عبر set(... CACHE ...) فالمخزن هو النص الناتج الآن، لا مرجع حي يعود إلى البيئة كل مرة."
+    ],
+    "remarks": [],
+    "instructions": [
+      "اختر اسمًا واضحًا يشرح الغرض من المتغير، لأن الاسم نفسه يصبح جزءًا من قراءة المشروع لاحقًا.",
+      "لا تستخدم FORCE على cache إلا إذا كنت واثقًا أن المشروع يجب أن يطغى على اختيار المستخدم."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "set(var \"World!\")"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/set.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/set.html",
+    "related": [
+      {
+        "name": "unset",
+        "route": "#ref/cmake/commands/unset",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "message",
+        "route": "#ref/cmake/commands/message",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "cache variables",
+        "route": "#ref/cmake/concepts/cache-variables",
+        "libraryId": "cmake",
+        "kindId": "concepts"
+      },
+      {
+        "name": "Core Variables, Flow, and Reusable Blocks",
+        "route": "#ref/cmake/examples/core-variables-flow-and-reusable-blocks",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

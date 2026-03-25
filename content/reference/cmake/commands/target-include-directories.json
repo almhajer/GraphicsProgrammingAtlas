@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "target_include_directories",
+    "slug": "target-include-directories",
+    "titleArabic": "يضيف مسارات include إلى target وينشرها حسب النطاق",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/target-include-directories",
+    "contentPath": "content/reference/cmake/commands/target-include-directories.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يضيف مسارات include إلى target وينشرها حسب النطاق",
+    "actualMeaningArabic": "هذا الأمر يضبط أين يبحث المصرّف عن الترويسات لهذا الهدف، وما إذا كانت هذه المسارات داخلية فقط أو جزءًا من واجهة الاستعمال المنقولة للمستهلكين.",
+    "purposeArabic": "يستخدم عندما تحتاج المكتبة أو التطبيق إلى ملفات header من مجلدات محلية أو من dependency معينة.",
+    "whyUseArabic": "يمنع كتابة include paths بشكل عام على مستوى المشروع كله، ويقربها من target الذي يحتاجها فعلاً.",
+    "carriedValueArabic": "يملأ INCLUDE_DIRECTORIES أو INTERFACE_INCLUDE_DIRECTORIES للهدف، وبالتالي يغير أوامر الترجمة الفعلية ويحدد ما يرثه المستهلكون.",
+    "sourceDescription": "هذا الأمر يضبط أين يبحث المصرّف عن الترويسات لهذا الهدف، وما إذا كانت هذه المسارات داخلية فقط أو جزءًا من واجهة الاستعمال المنقولة للمستهلكين."
+  },
+  "signature": {
+    "raw": "target_include_directories(<target> [SYSTEM] <PRIVATE|PUBLIC|INTERFACE> <dir>...)",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "<target>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسم هدف موجود داخل الرسم البنائي ليُطبَّق عليه الأمر أو تُقرأ خصائصه. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "SYSTEM",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "خيار يعلّم بعض المسارات أو الترويسات على أنها نظامية بحيث يعاملها المصرّف أو CMake بطريقة أقل إزعاجًا للتحذيرات. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      },
+      {
+        "name": "<PRIVATE|PUBLIC|INTERFACE>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل قيمة يكتبها المبرمج في هذا الموضع من الصياغة، وليست كلمة ثابتة من كلمات CMake نفسها. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "<dir>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل مجلدًا يكتبه المبرمج ليحدد أين تُنسخ الملفات أو من أين تُقرأ أو أي مسار يعمل عليه الأمر. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "PUBLIC مناسب عندما تكون headers المكتبة نفسها جزءًا من واجهتها العامة.",
+      "PRIVATE مناسب لمسارات implementation-only لا يجب أن يرثها من يربط المكتبة."
+    ],
+    "notes": [
+      "يتكامل مع target_link_libraries() لأن usage requirements تنتقل عبر target الواجهة.",
+      "يستخدم كثيرًا مع BUILD_INTERFACE وINSTALL_INTERFACE داخل generator expressions."
+    ],
+    "remarks": [],
+    "instructions": [
+      "اربط المسارات بالهدف الذي يستهلكها بدل استخدام include_directories() العامة في المشاريع الحديثة."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "target_include_directories(calclib\n  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/target_include_directories.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/target_include_directories.html",
+    "related": [
+      {
+        "name": "INTERFACE_INCLUDE_DIRECTORIES",
+        "route": "#ref/cmake/properties/interface-include-directories",
+        "libraryId": "cmake",
+        "kindId": "properties"
+      },
+      {
+        "name": "target_link_libraries",
+        "route": "#ref/cmake/commands/target-link-libraries",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Generator Expressions",
+        "route": "#ref/cmake/expressions/generator-expressions",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "concepts",
+    "displayName": "Concepts",
+    "displayNameArabic": "المفاهيم",
+    "description": "مفاهيم تشغيلية تشرح كيف يفكر CMake في التهيئة والتوليد والبناء، وفي الأهداف ونطاقات الأدلة والمتغيرات المخزنة."
+  },
+  "identity": {
+    "name": "directory scope and add_subdirectory",
+    "slug": "directory-scope-and-add-subdirectory",
+    "titleArabic": "نطاق الدليل مع الإدراج الفرعي (Directory Scope و add_subdirectory)",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/concepts/directory-scope-and-add-subdirectory",
+    "contentPath": "content/reference/cmake/concepts/directory-scope-and-add-subdirectory.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "نطاق الدليل مع الإدراج الفرعي (Directory Scope و add_subdirectory)",
+    "actualMeaningArabic": "عندما يستدعي المشروع add_subdirectory() ينشئ CMake نطاق دليل (Directory Scope) جديدًا. داخل هذا النطاق تُقرأ المتغيرات المحلية والمسارات والأوامر نسبةً إلى ذلك المجلد، مع بقاء الأهداف جزءًا من الشجرة الكبرى نفسها. وهذا يختلف عن include() الذي يقرأ ملفًا مساعدًا في نفس التدفق من دون فتح directory scope جديد.",
+    "purposeArabic": "يفسر هذا المفهوم لماذا تتغير قيم CMAKE_CURRENT_SOURCE_DIR وCMAKE_CURRENT_BINARY_DIR، ولماذا لا تنتقل بعض المتغيرات المحلية تلقائيًا بين ملفات CMakeLists.txt المختلفة، ولماذا يختلف أثر set()/unset() بين add_subdirectory() وfunction() وmacro().",
+    "whyUseArabic": "بدون فهمه يصعب التفريق بين تنظيم المشروع على شكل مجلدات، وبين إدراج ملف مساعد، وبين نشر القيم أو الواجهات بطريقة صحيحة عبر الأهداف أو عبر الذاكرة الدائمة للمشروع.",
+    "carriedValueArabic": "أثره العملي يظهر في مرحلة التهيئة: فهو يحدد حدود تأثير المتغيرات والمسارات والأوامر داخل كل مجلد فرعي، ويمنع الخلط بين القيم المحلية والقيم التي يجب نشرها صراحة، ويشرح لماذا تبدو بعض رسائل message() أو قيم set() مختلفة بعد الانتقال بين النطاقات.",
+    "sourceDescription": "عندما يستدعي المشروع add_subdirectory() ينشئ CMake نطاق دليل (Directory Scope) جديدًا. داخل هذا النطاق تُقرأ المتغيرات المحلية والمسارات والأوامر نسبةً إلى ذلك المجلد، مع بقاء الأهداف جزءًا من الشجرة الكبرى نفسها. وهذا يختلف عن include() الذي يقرأ ملفًا مساعدًا في نفس التدفق من دون فتح directory scope جديد."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "استعمل add_subdirectory للتقسيم البنيوي، واستعمل الأهداف أو الذاكرة الدائمة أو الدوال المساعدة لنقل ما يجب نقله فقط.",
+      "استعمل include() عندما تريد منطقًا مساعدًا في نفس السياق، واستعمل function() عندما تريد منطقًا reusable مع scope محلي، وmacro() عندما تقبل العمل داخل نطاق المستدعي نفسه.",
+      "إذا أردت مشاركة واجهة مكتبة فالقناة الأنسب غالبًا هي الهدف نفسه، لا متغيرات متناثرة على مستوى الأدلة."
+    ],
+    "notes": [
+      "نطاق الدليل (Directory Scope) لا يعني عزلة كاملة؛ فالأهداف تظل مرئية عادة داخل الشجرة نفسها.",
+      "المتغيرات المدمجة الحالية مثل CMAKE_CURRENT_SOURCE_DIR تكشف هذا المفهوم عمليًا بسرعة.",
+      "إذا رأيت set() أو unset() أو message() داخل ملف فرعي فالسؤال المهم ليس السطر نفسه فقط، بل في أي scope ينفذ هذا السطر.",
+      "عندما تظهر الصيغة ${CMAKE_CURRENT_SOURCE_DIR} فهي توسعة متغير مدمج تُقيَّم لحظة قراءة السطر، لذلك تتغير نتيجتها عند الانتقال بين الأدلة الفرعية."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "# CMakeLists.txt الجذري\nadd_subdirectory(src)\n\n# src/CMakeLists.txt\nmessage(STATUS \"Now in ${CMAKE_CURRENT_SOURCE_DIR}\")"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      {
+        "name": "add_subdirectory",
+        "route": "#ref/cmake/commands/add-subdirectory",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "include",
+        "route": "#ref/cmake/commands/include",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "function",
+        "route": "#ref/cmake/commands/function",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "macro",
+        "route": "#ref/cmake/commands/macro",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "set",
+        "route": "#ref/cmake/commands/set",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "message",
+        "route": "#ref/cmake/commands/message",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "CMAKE_CURRENT_SOURCE_DIR",
+        "route": "#ref/cmake/variables/cmake-current-source-dir",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "CMAKE_CURRENT_BINARY_DIR",
+        "route": "#ref/cmake/variables/cmake-current-binary-dir",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/concepts.json",
+    "category": "المفاهيم",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

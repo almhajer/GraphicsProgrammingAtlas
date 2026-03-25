@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "concepts",
+    "displayName": "Concepts",
+    "displayNameArabic": "المفاهيم",
+    "description": "مفاهيم تشغيلية تشرح كيف يفكر CMake في التهيئة والتوليد والبناء، وفي الأهداف ونطاقات الأدلة والمتغيرات المخزنة."
+  },
+  "identity": {
+    "name": "package config files and Config mode",
+    "slug": "package-config-files-and-config-mode",
+    "titleArabic": "ملفات package config ووضع ملفات الإعداد (Package Config Files and Config Mode)",
+    "aliases": [
+      "config",
+      "Config mode",
+      "package config",
+      "MyLibConfig.cmake",
+      "MyLibConfigVersion.cmake"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/concepts/package-config-files-and-config-mode",
+    "contentPath": "content/reference/cmake/concepts/package-config-files-and-config-mode.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "ملفات package config ووضع ملفات الإعداد (Package Config Files and Config Mode)",
+    "actualMeaningArabic": "هذا المفهوم يشرح أن بعض الحزم لا تُكتشف عبر Find module عام فقط، بل عبر ملفات إعداد تصدرها الحزمة نفسها مثل MyLibConfig.cmake وMyLibConfigVersion.cmake. عندها يدخل find_package في وضع ملفات الإعداد (Config mode) ويقرأ metadata الواجهة والإصدار من هذه الملفات مباشرة.",
+    "purposeArabic": "يستخدم لشرح ما الذي يحدث بعد install/export عندما تريد أن تصبح المكتبة dependency قابلة للاستهلاك المعياري من مشروع آخر.",
+    "whyUseArabic": "من دون هذا المفهوم تبدو أسماء الملفات Config.cmake وConfigVersion.cmake مجرد artefacts غامضة، بينما هي في الحقيقة الجسر بين package step وfind_package() وversion matching.",
+    "carriedValueArabic": "أثره العملي يظهر بين install/package step وconfigure في المشروع المستهلك: المشروع المصدِّر يولد هذه الملفات أثناء التهيئة والتثبيت، ثم المشروع المستهلك يقرأها لاحقًا أثناء find_package ليحصل على imported targets ويفحص توافق الإصدار.",
+    "sourceDescription": "هذا المفهوم يشرح أن بعض الحزم لا تُكتشف عبر Find module عام فقط، بل عبر ملفات إعداد تصدرها الحزمة نفسها مثل MyLibConfig.cmake وMyLibConfigVersion.cmake. عندها يدخل find_package في وضع ملفات الإعداد (Config mode) ويقرأ metadata الواجهة والإصدار من هذه الملفات مباشرة."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "عندما تستخدم CMakePackageConfigHelpers فأنت غالبًا تبني ملفات Config وConfigVersion كي يعمل find_package(MyLib CONFIG) بصورة صحيحة.",
+      "ملف MyLibConfig.cmake يعرّف imported targets ومسارات الواجهة، بينما MyLibConfigVersion.cmake يقرر هل الإصدار المطلوب مقبول أم لا."
+    ],
+    "notes": [
+      "هذا المسار يخص Config mode أكثر من module mode، لذلك تكون الحزمة نفسها هي مصدر الحقيقة بدل Find*.cmake عام.",
+      "version matching ليس زينة شكلية: قيمة مثل SameMajorVersion تغيّر فعليًا قرار القبول أو الرفض عند الاستهلاك.",
+      "وجود ملفات package config الجيدة يجعل الاستهلاك downstream أنظف من تمرير include paths وlibs يدويًا."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "include(CMakePackageConfigHelpers)\nwrite_basic_package_version_file(\n  MyLibConfigVersion.cmake\n  VERSION ${PROJECT_VERSION}\n  COMPATIBILITY SameMajorVersion\n)\n\nfind_package(MyLib CONFIG REQUIRED)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-packages.7.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/manual/cmake-packages.7.html",
+    "related": [
+      {
+        "name": "find_package",
+        "route": "#ref/cmake/commands/find-package",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "CMakePackageConfigHelpers",
+        "route": "#ref/cmake/modules/cmakepackageconfighelpers",
+        "libraryId": "cmake",
+        "kindId": "modules"
+      },
+      {
+        "name": "install",
+        "route": "#ref/cmake/commands/install",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Installing and Exporting",
+        "route": "#ref/cmake/examples/installing-and-exporting",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/concepts.json",
+    "category": "المفاهيم",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

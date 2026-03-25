@@ -322,12 +322,63 @@
     return '';
   }
 
+  function parseSiteUsageCardBullet(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return null;
+    const html = renderSiteUsageInlineHtml(raw);
+    if (!html || html.indexOf('<a ') === -1) {
+      return null;
+    }
+
+    const tpl = document.createElement('template');
+    tpl.innerHTML = html;
+    const link = tpl.content.querySelector('a');
+    if (!link) {
+      return null;
+    }
+
+    const href = String(link.getAttribute('href') || '').trim();
+    const label = /\/publishers\//i.test(href) ? 'صفحة الناشر' : 'إضافة VS Code';
+    const titleHtml = link.outerHTML;
+    const trailingText = tpl.innerHTML.replace(titleHtml, '').trim().replace(/^[:：]\s*/, '');
+
+    return {
+      href,
+      label,
+      titleHtml,
+      descriptionHtml: trailingText
+    };
+  }
+
+  function renderSiteUsageLinkCards(items) {
+    if (!items || !items.length) return '';
+    let h = '<ul class="site-usage-guide-list">';
+    for (let i = 0; i < items.length; i++) {
+      const parsed = parseSiteUsageCardBullet(items[i]);
+      if (parsed) {
+        h += '<li class="site-usage-link-card">'
+          + '<div class="site-usage-link-card-meta"><span class="site-usage-link-card-badge">' + _esc(parsed.label) + '</span></div>'
+          + '<div class="site-usage-link-card-title">' + parsed.titleHtml + '</div>'
+          + (parsed.descriptionHtml ? '<div class="site-usage-link-card-description">' + parsed.descriptionHtml + '</div>' : '')
+          + '</li>';
+      } else {
+        h += '<li class="site-usage-link-card">'
+          + '<div class="site-usage-link-card-description">' + renderSiteUsageInlineHtml(items[i]) + '</div>'
+          + '</li>';
+      }
+    }
+    return h + '</ul>';
+  }
+
   function renderSiteUsageGuideSection(section) {
     const extraClass = getSiteUsageSectionClass(section.title);
+    const isLinkCardSection = extraClass === 'site-usage-section-support' || extraClass === 'site-usage-section-extensions';
     return '<section class="home-section' + (extraClass ? ' ' + extraClass : '') + '">'
       + '<h2>' + renderSiteUsageInlineHtml(section.title) + '</h2>'
       + '<div class="content-card prose-card">'
-      + renderTutorialListFallback(section.bullets, !!section.ordered)
+      + (isLinkCardSection
+        ? renderSiteUsageLinkCards(section.bullets)
+        : renderTutorialListFallback(section.bullets, !!section.ordered))
       + '</div></section>';
   }
 

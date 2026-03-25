@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "expressions",
+    "displayName": "Expressions",
+    "displayNameArabic": "التعبيرات",
+    "description": "تعبيرات تتأخر قراءتها إلى سياقات محددة مثل توليد خصائص target أو أوامر التثبيت والاختبار."
+  },
+  "identity": {
+    "name": "$<CONFIG:cfg>",
+    "slug": "dollar-config-cfg",
+    "titleArabic": "تعبير مولد يتحقق مما إذا كانت تشكيلة البناء الحالية مطابقة للقيمة المحددة",
+    "aliases": [
+      "CONFIG generator expression",
+      "$<CONFIG>"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/expressions/dollar-config-cfg",
+    "contentPath": "content/reference/cmake/expressions/dollar-config-cfg.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تعبير مولد يتحقق مما إذا كانت تشكيلة البناء الحالية مطابقة للقيمة المحددة",
+    "actualMeaningArabic": "هذا التعبير يرجع 1 إذا كانت تشكيلة البناء الحالية تساوي cfg، وإلا يرجع 0. يستخدم لتغيير السلوك بحسب Debug أو Release أو تشكيلة مخصصة.",
+    "purposeArabic": "يستخدم لتفعيل تعريفات أو مسارات أو خيارات مختلفة بين Debug وRelease وRelWithDebInfo.",
+    "whyUseArabic": "لأن بعض الإعدادات يجب أن تختلف باختلاف نوع البناء دون إنشاء targets منفصلة.",
+    "carriedValueArabic": "يُقيَّم في مرحلة generate أو وقت الاستهلاك، ويعتمد على التشكيلة الفعلية التي يبنيها generator.",
+    "sourceDescription": "هذا التعبير يرجع 1 إذا كانت تشكيلة البناء الحالية تساوي cfg، وإلا يرجع 0. يستخدم لتغيير السلوك بحسب Debug أو Release أو تشكيلة مخصصة."
+  },
+  "signature": {
+    "raw": "$<CONFIG:cfg>",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "$<CONFIG:cfg>",
+        "type": "Generator Expression",
+        "semanticKind": "expression",
+        "descriptionArabic": "هذه صيغة Generator Expression، أي أنها لا تُحسم فور قراءة الملف بل تُقيَّم في سياق لاحق مثل توليد الخصائص أو أوامر التثبيت أو الإعدادات المرتبطة بالهدف."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "شائع داخل $<$<CONFIG:Debug>:...> لتفعيل تعريف في Debug فقط.",
+      "يمكن دمجه مع IF عبر $<IF:$<CONFIG:Debug>,a,b> لاختيار قيمة حسب التشكيلة."
+    ],
+    "notes": [
+      "القيمة cfg حساسة لحالة الأحرف مع بعض generators.",
+      "لا يعمل كما هو متوقع مع multi-config generators مثل Visual Studio إلا داخل السياق المناسب."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدمه عندما تحتاج سلوكاً مختلفاً حسب التشكيلة، لا حسب متغير CMAKE_BUILD_TYPE فقط."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "target_compile_definitions(calculator\n  PRIVATE $<$<CONFIG:Debug>:CALC_DEBUG_BUILD>\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#configuration-expressions",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#configuration-expressions",
+    "related": [
+      {
+        "name": "CMAKE_BUILD_TYPE",
+        "route": "#ref/cmake/variables/cmake-build-type",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "target_compile_definitions",
+        "route": "#ref/cmake/commands/target-compile-definitions",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Generator Expressions",
+        "route": "#ref/cmake/expressions/generator-expressions",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/expressions.json",
+    "category": "التعبيرات",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

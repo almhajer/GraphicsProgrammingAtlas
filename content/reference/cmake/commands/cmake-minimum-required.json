@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "cmake_minimum_required",
+    "slug": "cmake-minimum-required",
+    "titleArabic": "يثبت أقل إصدار CMake يجب أن يفهم الملف قبل متابعة التهيئة",
+    "aliases": [
+      "CMAKE_MINIMUM_REQUIRED"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/cmake-minimum-required",
+    "contentPath": "content/reference/cmake/commands/cmake-minimum-required.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يثبت أقل إصدار CMake يجب أن يفهم الملف قبل متابعة التهيئة",
+    "actualMeaningArabic": "هذا الأمر يعلن الحد الأدنى من إصدار CMake الذي يعتمد عليه المشروع، ويضبط أيضاً نطاق السياسات المتوقع قبل أن يبدأ تفسير بقية الملف.",
+    "purposeArabic": "يوضع في أعلى CMakeLists.txt حتى لا تُفسَّر الأوامر والميزات الجديدة وفق سلوك أقدم من المطلوب.",
+    "whyUseArabic": "يمنع تشغيل المشروع على إصدار أقدم لا يفهم الصياغة أو السياسات التي تعتمد عليها، ويجعل التوافق المتوقع واضحاً منذ أول سطر.",
+    "carriedValueArabic": "يؤثر مباشرة في مرحلة configure لأنه يحدد نسخة السلوك والقواعد التي سيبني عليها CMake بقية الشجرة.",
+    "sourceDescription": "هذا الأمر يعلن الحد الأدنى من إصدار CMake الذي يعتمد عليه المشروع، ويضبط أيضاً نطاق السياسات المتوقع قبل أن يبدأ تفسير بقية الملف."
+  },
+  "signature": {
+    "raw": "cmake_minimum_required(VERSION <min>[...<policy_max>] [FATAL_ERROR])",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "VERSION",
+        "type": "كلمة مفتاحية ثابتة في الصياغة",
+        "semanticKind": "keyword",
+        "descriptionArabic": "كلمة مفتاحية تعلن أن القيم التالية تمثل رقم إصدار أو حد توافق. وجودها يغير السلوك العملي لأن CMake سيملأ متغيرات إصدار أو يفرض حدًا أدنى أو يكتب metadata إصدار بحسب الأمر الذي يحملها. وجود هذه الكلمة هنا جزء مباشر من الصياغة التي يتوقعها CMake في هذا الموضع."
+      },
+      {
+        "name": "<min>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل الحد الأدنى من الإصدار أو القيمة المقبولة في هذا الموضع. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "[...<policy_max>]",
+        "type": "مجموعة اختيارية في الصياغة",
+        "semanticKind": "group",
+        "descriptionArabic": "هذه مجموعة اختيارية داخل صياغة cmake_minimum_required. الأقواس المربعة تعني أنك تستطيع حذف المجموعة كلها، وإذا استخدمتها فعليك كتابة عناصرها الفعلية بالترتيب الظاهر داخلها لا باعتبارها نصًا توضيحيًا فقط."
+      },
+      {
+        "name": "<policy_max>",
+        "type": "argument اختياري يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل الحد الأعلى لنطاق السياسات الذي تريد تثبيته مع الحد الأدنى للإصدار. وجوده هنا اختياري لأنه يقع داخل جزء محاط بأقواس مربعة في التوقيع."
+      },
+      {
+        "name": "FATAL_ERROR",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "خيار يجعل الخطأ قاتلًا: ليس مجرد وسم شكلي، بل يعني أن CMake سيوقف التهيئة فورًا بدل متابعة configure مع تحذير أو رسالة عادية. هذا الجزء اختياري، لذلك يمرره المبرمج فقط عندما يحتاج السلوك الذي تفعّله هذه الكلمة."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "ضعه قبل project() في الملف الجذري حتى تثبت نسخة التفسير قبل إعلان المشروع.",
+      "الكلمة المفتاحية VERSION هنا تعني أن الرقم التالي ليس تعليقاً شكلياً، بل حدًا أدنى فعليًا يغيّر ما يعده CMake سلوكًا مقبولًا داخل بقية الملف."
+    ],
+    "notes": [
+      "ليس أمراً يبني target بحد ذاته، لكنه يحدد الأرضية التي ستُقرأ عليها كل أوامر المشروع.",
+      "يتقاطع عملياً مع السياسات لأن بعض السلوكيات تتغير بحسب الإصدار الأدنى المعلن."
+    ],
+    "remarks": [],
+    "instructions": [
+      "ابدأ به في أول الملف ثم اتبعه مباشرة بـ project()."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "cmake_minimum_required(VERSION 3.26)\nproject(Calc LANGUAGES CXX)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/cmake_minimum_required.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/cmake_minimum_required.html",
+    "related": [
+      {
+        "name": "project",
+        "route": "#ref/cmake/commands/project",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "CMP0048",
+        "route": "#ref/cmake/policies/cmp0048",
+        "libraryId": "cmake",
+        "kindId": "policies"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

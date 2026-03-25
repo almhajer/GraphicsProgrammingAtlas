@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "unset",
+    "slug": "unset",
+    "titleArabic": "يزيل متغير CMake أو cache entry حتى يتوقف السياق الحالي عن رؤيتها",
+    "aliases": [
+      "UNSET"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/unset",
+    "contentPath": "content/reference/cmake/commands/unset.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يزيل متغير CMake أو cache entry حتى يتوقف السياق الحالي عن رؤيتها",
+    "actualMeaningArabic": "هذا الأمر يعاكس set(): به تحذف تعريف متغير عادي أو cache entry، فيتوقف CMake عن رؤية هذه القيمة في النطاق الحالي أو في الذاكرة الدائمة بحسب الصيغة المستخدمة.",
+    "purposeArabic": "يستخدم عندما تريد تنظيف قيمة مؤقتة، أو السماح لقيمة من نطاق أعلى أن تظهر من جديد، أو إزالة cache entry حتى يعاد اكتشافها أو اختيارها لاحقًا.",
+    "whyUseArabic": "لأن بعض القيم يجب أن تكون مرحلية فقط، وتركها بلا إزالة قد يجعل شروطًا لاحقة أو ملفات مدرجة ترى حالة قديمة لم تعد مقصودة.",
+    "carriedValueArabic": "أثره فوري أثناء configure: أي سطر لاحق يعتمد على وجود المتغير سيقرأ الآن أنه غير معرّف أو سيرجع إلى قيمة أخرى ظاهرة من نطاق أعلى أو من cache بعد إزالة المحلي.",
+    "sourceDescription": "هذا الأمر يعاكس set(): به تحذف تعريف متغير عادي أو cache entry، فيتوقف CMake عن رؤية هذه القيمة في النطاق الحالي أو في الذاكرة الدائمة بحسب الصيغة المستخدمة."
+  },
+  "signature": {
+    "raw": "unset(<variable> [CACHE])",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "CACHE",
+        "type": "كلمة مفتاحية",
+        "semanticKind": "keyword",
+        "descriptionArabic": "تعني أن الحذف يطال cache entry المخزنة في build directory لا المتغير المحلي العادي فقط."
+      },
+      {
+        "name": "<variable>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسم متغير يكتبه المبرمج أو يقرأه الأمر داخل مرحلة التهيئة. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "unset(var) يحذف المتغير العادي في النطاق الحالي، وهو المثال المباشر بعد set(var ...).",
+      "unset(<variable> CACHE) مفيد عندما تريد أن تترك CMake يعيد اكتشاف قيمة مخزنة أو أن تزيل إعدادًا طويل العمر من مجلد البناء."
+    ],
+    "notes": [
+      "إذا كان هناك متغير بالاسم نفسه في نطاق أعلى فقد يظهر بعد unset() المحلي، لذلك معنى الحذف هنا مرتبط بالنطاق لا بإزالة كل شيء مطلقًا.",
+      "لهذا السبب يكون الفرق بين function() وmacro() مهمًا: حذف المتغير داخل macro() قد يصيب النطاق المستدعي مباشرة."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدمه عندما يكون المقصود فعلاً إزالة القيمة لا مجرد تغييرها، لأن حذفها قد يكشف قيمة أخرى من scope أب أو من cache."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "unset(var)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/unset.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/unset.html",
+    "related": [
+      {
+        "name": "set",
+        "route": "#ref/cmake/commands/set",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "function",
+        "route": "#ref/cmake/commands/function",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "macro",
+        "route": "#ref/cmake/commands/macro",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "cache variables",
+        "route": "#ref/cmake/concepts/cache-variables",
+        "libraryId": "cmake",
+        "kindId": "concepts"
+      },
+      {
+        "name": "Core Variables, Flow, and Reusable Blocks",
+        "route": "#ref/cmake/examples/core-variables-flow-and-reusable-blocks",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

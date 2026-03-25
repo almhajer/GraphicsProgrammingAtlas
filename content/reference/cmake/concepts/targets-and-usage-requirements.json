@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "concepts",
+    "displayName": "Concepts",
+    "displayNameArabic": "المفاهيم",
+    "description": "مفاهيم تشغيلية تشرح كيف يفكر CMake في التهيئة والتوليد والبناء، وفي الأهداف ونطاقات الأدلة والمتغيرات المخزنة."
+  },
+  "identity": {
+    "name": "targets and usage requirements",
+    "slug": "targets-and-usage-requirements",
+    "titleArabic": "الأهداف ومتطلبات الاستعمال المنقولة (Targets and Usage Requirements)",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/cmake/concepts/targets-and-usage-requirements",
+    "contentPath": "content/reference/cmake/concepts/targets-and-usage-requirements.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "الأهداف ومتطلبات الاستعمال المنقولة (Targets and Usage Requirements)",
+    "actualMeaningArabic": "بدل التفكير في أعلام الترجمة ومسارات الترويسات بوصفها قوائم عامة مبعثرة، ينظم CMake المشروع حول أهداف (Targets) تحمل خصائصها ومتطلبات استعمالها التي يمكن أن تنتقل إلى الأهداف المستهلكة عند الربط.",
+    "purposeArabic": "هذا المفهوم يشرح لماذا تعتمد المشاريع الحديثة على أوامر مثل target_link_libraries وtarget_include_directories وtarget_compile_definitions بدل الإعدادات العامة على مستوى المشروع كله.",
+    "whyUseArabic": "لأنه يبني شجرة اعتماديات واضحة تنقل ما يحتاجه الهدف المستهلك تلقائيًا وبحدود صريحة، بدل الاعتماد على متغيرات عامة أو مسارات يدوية متناثرة.",
+    "carriedValueArabic": "أثره العملي يظهر مباشرة في رسم البناء: كل هدف يعلن ما يحتاجه داخليًا، وما الذي يجب أن ينتقل إلى من يربطه لاحقًا، وبذلك يصبح سلوك الربط والترجمة أوضح وأكثر استقرارًا.",
+    "sourceDescription": "بدل التفكير في أعلام الترجمة ومسارات الترويسات بوصفها قوائم عامة مبعثرة، ينظم CMake المشروع حول أهداف (Targets) تحمل خصائصها ومتطلبات استعمالها التي يمكن أن تنتقل إلى الأهداف المستهلكة عند الربط."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "فكر دائماً: ما الذي يحتاجه الهدف لنفسه؟ وما الذي يجب أن ينتقل إلى من يربطه؟",
+      "إذا كان الشيء يجب أن ينتقل إلى المستهلك فغالبًا ستستخدم النطاق العام أو الواجهي (PUBLIC أو INTERFACE).",
+      "إذا كتبت set(CMAKE_CXX_STANDARD 20) فأنت تضبط default عام للأهداف الجديدة، أما CXX_STANDARD فهي خاصية target تلتصق بهدف بعينه عندما تحتاج قرارًا أدق."
+    ],
+    "notes": [
+      "هذا المفهوم هو جوهر الخطوات المتقدمة في الدليل الرسمي عندما يبدأ المشروع بنشر واجهته بدل الاكتفاء ببناء ملف تنفيذي بسيط.",
+      "يجعل التصدير والبحث اللاحق عن الحزم أسهل، لأن الواجهة تكون مرتبطة بالهدف نفسه منذ البداية.",
+      "لهذا يكون الفرق بين متغير عام مثل CMAKE_CXX_STANDARD وبين خاصية هدف مثل CXX_STANDARD فرقًا بنيويًا لا مجرد فرق تسمية."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "add_library(calclib STATIC calculator.cpp)\ntarget_include_directories(calclib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)\nadd_executable(calculator main.cpp)\ntarget_link_libraries(calculator PRIVATE calclib)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      {
+        "name": "target_link_libraries",
+        "route": "#ref/cmake/commands/target-link-libraries",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "target_include_directories",
+        "route": "#ref/cmake/commands/target-include-directories",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "INTERFACE_INCLUDE_DIRECTORIES",
+        "route": "#ref/cmake/properties/interface-include-directories",
+        "libraryId": "cmake",
+        "kindId": "properties"
+      },
+      {
+        "name": "PUBLIC/PRIVATE/INTERFACE",
+        "route": "#ref/cmake/concepts/public-private-interface",
+        "libraryId": "cmake",
+        "kindId": "concepts"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/concepts.json",
+    "category": "المفاهيم",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

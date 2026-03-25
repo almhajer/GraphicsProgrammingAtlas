@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "expressions",
+    "displayName": "Expressions",
+    "displayNameArabic": "التعبيرات",
+    "description": "تعبيرات تتأخر قراءتها إلى سياقات محددة مثل توليد خصائص target أو أوامر التثبيت والاختبار."
+  },
+  "identity": {
+    "name": "$<IF:cond,true_val,false_val>",
+    "slug": "dollar-if-cond-true-val-false-val",
+    "titleArabic": "تعبير مولد شرطي يختار قيمة حسب نتيجة شرط آخر",
+    "aliases": [
+      "IF generator expression",
+      "$<IF>"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/expressions/dollar-if-cond-true-val-false-val",
+    "contentPath": "content/reference/cmake/expressions/dollar-if-cond-true-val-false-val.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تعبير مولد شرطي يختار قيمة حسب نتيجة شرط آخر",
+    "actualMeaningArabic": "هذا التعبير يُقيّم cond فإذا كان صحيحاً يُرجع true_val وإلا يُرجع false_val.",
+    "purposeArabic": "يستخدم لاختيار قيم مختلفة داخل generator expression واحد بدل تكرار السطر كاملاً.",
+    "whyUseArabic": "يجعل التعبيرات المركبة أكثر إيجازاً ويقلل تكرار المنطق الشرطي.",
+    "carriedValueArabic": "يُقيَّم في وقت generate ويعتمد على قيمة cond في تلك اللحظة.",
+    "sourceDescription": "هذا التعبير يُقيّم cond فإذا كان صحيحاً يُرجع true_val وإلا يُرجع false_val."
+  },
+  "signature": {
+    "raw": "$<IF:condition,true_value,false_value>",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "$<IF:condition,true_value,false_value>",
+        "type": "Generator Expression",
+        "semanticKind": "expression",
+        "descriptionArabic": "هذه صيغة Generator Expression، أي أنها لا تُحسم فور قراءة الملف بل تُقيَّم في سياق لاحق مثل توليد الخصائص أو أوامر التثبيت أو الإعدادات المرتبطة بالهدف."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "شائع مع CONFIG أو PLATFORM_ID لاختيار قيمة مختلفة.",
+      "يمكن تداخله مع تعبيرات أخرى."
+    ],
+    "notes": [
+      "جميع الفروع تُقيَّم لغرض التحقق من الصحة حتى لو لم تُستخدم.",
+      "cond يجب أن يُرجع 1 أو 0."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدمه لتبسيط المنطق الشرطي داخل target_* commands."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "target_compile_definitions(calculator PRIVATE\n  $<IF:$<CONFIG:Debug>,DEBUG_MODE,RELEASE_MODE>\n)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions",
+    "related": [
+      {
+        "name": "$<CONFIG:cfg>",
+        "route": "#ref/cmake/expressions/dollar-config-cfg",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      },
+      {
+        "name": "$<AND:...>",
+        "route": ""
+      },
+      {
+        "name": "$<OR:...>",
+        "route": ""
+      },
+      {
+        "name": "Generator Expressions",
+        "route": "#ref/cmake/expressions/generator-expressions",
+        "libraryId": "cmake",
+        "kindId": "expressions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/expressions.json",
+    "category": "التعبيرات",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "variables",
+    "displayName": "Variables",
+    "displayNameArabic": "المتغيرات",
+    "description": "متغيرات عادية أو Cache أو مدمجة تحدد المسارات والخيارات والقيم التي تقرأها مرحلة configure أو generate."
+  },
+  "identity": {
+    "name": "CMAKE_BINARY_DIR",
+    "slug": "cmake-binary-dir",
+    "titleArabic": "يشير إلى مجلد البناء الجذري الذي حدده المستخدم عند استدعاء CMake",
+    "aliases": [
+      "${CMAKE_BINARY_DIR}"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/variables/cmake-binary-dir",
+    "contentPath": "content/reference/cmake/variables/cmake-binary-dir.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يشير إلى مجلد البناء الجذري الذي حدده المستخدم عند استدعاء CMake",
+    "actualMeaningArabic": "هذا متغير مدمج يمثل المسار الأعلى في build tree الذي حدده المستخدم عبر خيار -B أو ما يعادله. وهو ثابت عبر كل مراحل configure مهما دخلت في add_subdirectory() مختلفة، لأنه مرتبط بجذر البناء لا بالدليل الجاري.",
+    "purposeArabic": "يستخدم للوصول إلى مجلد البناء الجذري من أي مكان داخل CMakeLists.txt، سواء كنت في الدليل الجذري أو في subdirectory عميقة.",
+    "whyUseArabic": "يفيد عندما تحتاج مساراً ثابتاً يشير إلى جذر البناء لوضع ملفات مولدة مشتركة أو لقراءة artefacts كتبتها مراحل سابقة، دون الاعتماد على الدليل الحالي الذي قد يتغير مع add_subdirectory().",
+    "carriedValueArabic": "لا يبني target بحد ذاته، لكنه يوجّه أين تُكتب أو تُقرأ الملفات على مستوى build tree الكامل، لذلك يؤثر في مكان الملفات المولدة والنواتج الوسيطة.",
+    "sourceDescription": "هذا متغير مدمج يمثل المسار الأعلى في build tree الذي حدده المستخدم عبر خيار -B أو ما يعادله. وهو ثابت عبر كل مراحل configure مهما دخلت في add_subdirectory() مختلفة، لأنه مرتبط بجذر البناء لا بالدليل الجاري."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "استخدمه عندما تحتاج مسار بناء جذرية من داخل subdirectory لا تعرف فيها بالضبط أين يقع build tree.",
+      "يقترن غالباً مع CMAKE_SOURCE_DIR في الأوامر التي تحتاج مساراً مطلقاً لشجرة المصدر وشجرة البناء معاً.",
+      "في subprojects قد يختلف عن PROJECT_BINARY_DIR لأن CMAKE_BINARY_DIR يبقى خاصاً بالبناء الأعلى بينما PROJECT_BINARY_DIR يتبع آخر project() فعّال."
+    ],
+    "notes": [
+      "هو متغير built-in ثابت ضمن configure الحالي ولا يتغير مع add_subdirectory()، على عكس CMAKE_CURRENT_BINARY_DIR الذي يتغير.",
+      "يُحدد عادةً عبر cmake -S . -B build حيث يكون build هو القيمة الفعلية لهذا المتغير.",
+      "الأقواس ${...} هنا تعني توسعة قيمة المتغير المدمج في لحظة قراءة السطر أثناء configure."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/generated)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/variable/CMAKE_BINARY_DIR.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/variable/CMAKE_BINARY_DIR.html",
+    "related": [
+      {
+        "name": "CMAKE_CURRENT_BINARY_DIR",
+        "route": "#ref/cmake/variables/cmake-current-binary-dir",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "PROJECT_BINARY_DIR",
+        "route": "#ref/cmake/variables/project-binary-dir",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      },
+      {
+        "name": "CMAKE_SOURCE_DIR",
+        "route": ""
+      },
+      {
+        "name": "CMAKE_CURRENT_SOURCE_DIR",
+        "route": "#ref/cmake/variables/cmake-current-source-dir",
+        "libraryId": "cmake",
+        "kindId": "variables"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/variables.json",
+    "category": "المتغيرات",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "include",
+    "slug": "include",
+    "titleArabic": "يقرأ ملف CMake آخر أو وحدة جاهزة في نفس موضع التنفيذ أثناء configure",
+    "aliases": [
+      "INCLUDE"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/include",
+    "contentPath": "content/reference/cmake/commands/include.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يقرأ ملف CMake آخر أو وحدة جاهزة في نفس موضع التنفيذ أثناء configure",
+    "actualMeaningArabic": "هذا الأمر يطلب من CMake إدراج ملف .cmake أو وحدة module جاهزة وقراءة أوامرها الآن في نفس تدفق configure، لذلك فهو يشبه استدعاء مصدر إضافي لا فتح مشروع فرعي جديد.",
+    "purposeArabic": "يستخدم لفصل المنطق المساعد مثل التحذيرات أو الاختبارات أو إعدادات التثبيت في ملفات مستقلة قابلة لإعادة الاستخدام.",
+    "whyUseArabic": "لأنه يسمح بتنظيم الملف الجذري وتجنب التكرار، من دون أن يحول المسار إلى directory scope جديد مثل add_subdirectory().",
+    "carriedValueArabic": "أثره فوري أثناء configure: الأوامر داخل الملف المدرج تنفذ الآن، ويمكنها تعريف دوال أو ماكروز أو متغيرات تؤثر مباشرة في بقية الملف.",
+    "sourceDescription": "هذا الأمر يطلب من CMake إدراج ملف .cmake أو وحدة module جاهزة وقراءة أوامرها الآن في نفس تدفق configure، لذلك فهو يشبه استدعاء مصدر إضافي لا فتح مشروع فرعي جديد."
+  },
+  "signature": {
+    "raw": "include(<file|module> [OPTIONAL] [RESULT_VARIABLE <variable>] [NO_POLICY_SCOPE])",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "OPTIONAL",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "يمنع فشل configure إذا لم يُعثر على الملف أو الوحدة، ويستخدم عندما يكون الإدراج إضافيًا لا إلزاميًا."
+      },
+      {
+        "name": "RESULT_VARIABLE",
+        "type": "كلمة مفتاحية",
+        "semanticKind": "keyword",
+        "descriptionArabic": "تطلب من CMake كتابة نتيجة العثور على الملف أو الوحدة داخل متغير تستطيع فحصه لاحقًا بدل الاعتماد على النجاح الضمني فقط."
+      },
+      {
+        "name": "NO_POLICY_SCOPE",
+        "type": "خيار اختياري",
+        "semanticKind": "keyword",
+        "descriptionArabic": "يعطّل إنشاء policy scope مستقل للملف المدرج، لذلك يجب استخدامه فقط عندما تكون واعيًا لتأثير السياسات بين الملف الحالي والملف المدرج."
+      },
+      {
+        "name": "<file|module>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل قيمة يكتبها المبرمج في هذا الموضع من الصياغة، وليست كلمة ثابتة من كلمات CMake نفسها. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "[RESULT_VARIABLE <variable>]",
+        "type": "مجموعة اختيارية في الصياغة",
+        "semanticKind": "group",
+        "descriptionArabic": "هذه مجموعة اختيارية داخل صياغة include. الأقواس المربعة تعني أنك تستطيع حذف المجموعة كلها، وإذا استخدمتها فعليك كتابة عناصرها الفعلية بالترتيب الظاهر داخلها لا باعتبارها نصًا توضيحيًا فقط."
+      },
+      {
+        "name": "<variable>",
+        "type": "argument اختياري يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل اسم متغير يكتبه المبرمج أو يقرأه الأمر داخل مرحلة التهيئة. وجوده هنا اختياري لأنه يقع داخل جزء محاط بأقواس مربعة في التوقيع."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يمكن أن يدرج وحدة رسمية مثل include(CTest) أو ملفًا محليًا مثل include(cmake/Warnings.cmake).",
+      "بعد include() تصبح function() أو macro() المعرفة داخل الملف المدرج متاحة في بقية السياق الحالي."
+    ],
+    "notes": [
+      "على عكس add_subdirectory() لا ينشئ include() directory scope جديدًا ولا يضيف CMakeLists.txt فرعيًا إلى شجرة الأهداف.",
+      "لهذا السبب يفضَّل للمنطق المساعد وإعادة الاستخدام، لا لتقسيم المشروع إلى أهداف ومجلدات فرعية."
+    ],
+    "remarks": [],
+    "instructions": [
+      "استخدم include() عندما تريد استيراد منطق مساعد، واستخدم add_subdirectory() عندما تريد قراءة جزء بنيوي من المشروع نفسه."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "include(CTest)"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/include.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/include.html",
+    "related": [
+      {
+        "name": "function",
+        "route": "#ref/cmake/commands/function",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "macro",
+        "route": "#ref/cmake/commands/macro",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "CTest",
+        "route": "#ref/cmake/modules/ctest",
+        "libraryId": "cmake",
+        "kindId": "modules"
+      },
+      {
+        "name": "directory scope and add_subdirectory",
+        "route": "#ref/cmake/concepts/directory-scope-and-add-subdirectory",
+        "libraryId": "cmake",
+        "kindId": "concepts"
+      },
+      {
+        "name": "Core Variables, Flow, and Reusable Blocks",
+        "route": "#ref/cmake/examples/core-variables-flow-and-reusable-blocks",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

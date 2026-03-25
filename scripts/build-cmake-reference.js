@@ -9,6 +9,7 @@ const schemaVersion = '2026-03-reference-architecture-1';
 const sourceRoot = path.join(rootDir, 'data', 'ui', 'cmake');
 const outputRoot = path.join(rootDir, 'content', 'reference', libraryId);
 const manifestPath = path.join(rootDir, 'content', 'reference', 'manifest.json');
+const officialLinksOutputPath = path.join(outputRoot, 'official-links.json');
 const searchOutputPath = path.join(rootDir, 'data', 'ui', 'cmake-search.json');
 
 const LIBRARY_META = {
@@ -810,6 +811,17 @@ function buildSearchPayload(entriesByKind, generatedAt) {
   };
 }
 
+function buildOfficialLinksPayload(generatedAt) {
+  return {
+    schemaVersion,
+    generatedAt,
+    sourceName: 'CMake Official Documentation',
+    sourceLabelArabic: 'المرجع الرسمي لـ CMake',
+    entities: {},
+    links: []
+  };
+}
+
 function main() {
   const generatedAt = new Date().toISOString();
   const entriesByKind = {};
@@ -849,6 +861,7 @@ function main() {
   });
 
   updateManifest(libraryIndex, generatedAt);
+  writeJson(officialLinksOutputPath, buildOfficialLinksPayload(generatedAt));
   writeJson(searchOutputPath, buildSearchPayload(entriesByKind, generatedAt));
 }
 

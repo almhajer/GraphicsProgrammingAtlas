@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const {execFileSync} = require('child_process');
 
 const rootDir = path.resolve(__dirname, '..');
 const outputRoot = path.join(rootDir, 'content', 'reference');
@@ -1477,6 +1478,9 @@ function buildGroupedEntries(entries) {
 }
 
 function buildOutput(entities) {
+  const existingManifest = fs.existsSync(manifestPath)
+    ? readJson(manifestPath)
+    : null;
   const manifest = {
     schemaVersion,
     generatedAt: new Date().toISOString(),
@@ -1547,6 +1551,45 @@ function buildOutput(entities) {
     });
   }
 
+  const generatedLibraryIds = new Set(manifest.libraries.map((library) => library.id));
+  (existingManifest?.libraries || []).forEach((library) => {
+    if (!generatedLibraryIds.has(library?.id)) {
+      manifest.libraries.push(library);
+    }
+  });
+
+  fs.readdirSync(outputRoot, {withFileTypes: true})
+    .filter((entry) => entry.isDirectory())
+    .forEach((entry) => {
+      const libraryId = entry.name;
+      if (generatedLibraryIds.has(libraryId)) {
+        return;
+      }
+      const libraryIndexPath = path.join(outputRoot, libraryId, 'index.json');
+      if (!fs.existsSync(libraryIndexPath)) {
+        return;
+      }
+      try {
+        const libraryIndex = readJson(libraryIndexPath);
+        const library = libraryIndex?.library;
+        if (!library?.id || generatedLibraryIds.has(library.id)) {
+          return;
+        }
+        manifest.libraries.push({
+          ...library,
+          totalCount: Number(libraryIndex?.totalCount) || 0,
+          path: buildLibraryIndexPath(library.id),
+          route: buildReferenceHash(library.id),
+          kinds: Array.isArray(libraryIndex?.kinds) ? libraryIndex.kinds : []
+        });
+        generatedLibraryIds.add(library.id);
+      } catch (error) {
+        console.warn(`Failed to preserve reference manifest entry for ${libraryId}:`, error.message);
+      }
+    });
+
+  manifest.libraries.sort((a, b) => String(a?.displayName || a?.id || '').localeCompare(String(b?.displayName || b?.id || ''), 'en'));
+
   writeJson(manifestPath, manifest);
 }
 
@@ -1557,7 +1600,6 @@ function writeEntities(entities) {
 }
 
 function main() {
-  fs.rmSync(outputRoot, {recursive: true, force: true});
   ensureDir(outputRoot);
 
   const entities = [
@@ -1576,6 +1618,10 @@ function main() {
 
   writeEntities(entities);
   buildOutput(entities);
+  execFileSync(process.execPath, [path.join(__dirname, 'build-cmake-reference.js')], {
+    cwd: rootDir,
+    stdio: 'inherit'
+  });
 
   console.log(JSON.stringify({
     outputRoot: path.relative(rootDir, outputRoot),

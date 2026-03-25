@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:20:25.874Z",
+  "library": {
+    "id": "cmake",
+    "displayName": "CMake",
+    "displayNameArabic": "CMake",
+    "description": "مرجع عربي عملي لأوامر CMake ومتغيراته وخصائصه ووحداته وسياساته ومسار العمل من التهيئة إلى التوليد ثم البناء."
+  },
+  "kind": {
+    "id": "commands",
+    "displayName": "Commands",
+    "displayNameArabic": "الأوامر",
+    "description": "تعليمات CMake التنفيذية التي تبني الرسم البياني للبناء أو تعدل خصائص الأهداف والمتغيرات."
+  },
+  "identity": {
+    "name": "foreach",
+    "slug": "foreach",
+    "titleArabic": "يكرر كتلة أوامر على كل عنصر في قائمة أو على قيم تعددها بنفسك",
+    "aliases": [
+      "FOREACH"
+    ]
+  },
+  "route": {
+    "hash": "#ref/cmake/commands/foreach",
+    "contentPath": "content/reference/cmake/commands/foreach.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يكرر كتلة أوامر على كل عنصر في قائمة أو على قيم تعددها بنفسك",
+    "actualMeaningArabic": "هذا الأمر يفتح حلقة configure-time يعيد فيها CMake تفسير الكتلة الداخلية لكل عنصر يمر عليه، سواء جئت بالعناصر من قائمة متغيرات أو كتبتها صراحة في الاستدعاء.",
+    "purposeArabic": "يستخدم عندما تحتاج تنفيذ نفس الخطوات على عدة عناصر مثل ملفات أو أسماء اختبارات أو تعريفات متشابهة بدل نسخ السطور يدويًا.",
+    "whyUseArabic": "لأنه يحافظ على ملف CMakeLists.txt أقصر وأوضح، ويجعل من السهل إضافة عنصر جديد إلى القائمة بدل تكرار نفس الأوامر أكثر من مرة.",
+    "carriedValueArabic": "أثره يظهر أثناء configure مباشرة: CMake يمر على العناصر واحدة واحدة، ويحدد قيمة متغير الحلقة، ثم يفسر الأوامر داخل الكتلة لكل دورة.",
+    "sourceDescription": "هذا الأمر يفتح حلقة configure-time يعيد فيها CMake تفسير الكتلة الداخلية لكل عنصر يمر عليه، سواء جئت بالعناصر من قائمة متغيرات أو كتبتها صراحة في الاستدعاء."
+  },
+  "signature": {
+    "raw": "foreach(<loop_var> IN LISTS <lists>)",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "IN",
+        "type": "كلمة مفتاحية",
+        "semanticKind": "keyword",
+        "descriptionArabic": "تخبر CMake أن العناصر التالية ليست قيماً مفردة مكتوبة مباشرة، بل صياغة تحدد مصدر العناصر وطريقة قراءتها."
+      },
+      {
+        "name": "LISTS",
+        "type": "كلمة مفتاحية",
+        "semanticKind": "keyword",
+        "descriptionArabic": "تعني أن الأسماء التالية هي أسماء متغيرات تحمل قوائم، وسيقرأ CMake عناصرها الحقيقية قبل تنفيذ جسم الحلقة."
+      },
+      {
+        "name": "<loop_var>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل قيمة يكتبها المبرمج في هذا الموضع من الصياغة، وليست كلمة ثابتة من كلمات CMake نفسها. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      },
+      {
+        "name": "<lists>",
+        "type": "argument إلزامي يكتبه المستخدم",
+        "semanticKind": "placeholder",
+        "descriptionArabic": "يمثل قيمة يكتبها المبرمج في هذا الموضع من الصياغة، وليست كلمة ثابتة من كلمات CMake نفسها. وجوده هنا جزء مطلوب من الشكل الأساسي للاستدعاء ما لم توضّح الصفحة غير ذلك."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "foreach(stooge IN LISTS stooges) هو المثال الأبسط: كلمة الربط (IN) تعلن طريقة القراءة، وكلمة القوائم (LISTS) تعني أن المصدر هو محتوى المتغير stooges لا الاسم الخام نفسه.",
+      "يفيد في توليد رسائل أو تعريف خصائص أو إضافة اختبارات متشابهة على مجموعة عناصر."
+    ],
+    "notes": [
+      "لا يعمل وحده؛ جسم الحلقة يمتد حتى endforeach() الذي يغلق هذه الكتلة صراحة.",
+      "إذا احتجت عزلًا أنظف للمتغيرات المساعدة فربط الحلقة داخل function() قد يكون أوضح من macro()."
+    ],
+    "remarks": [],
+    "instructions": [
+      "اختر اسم متغير حلقة يعكس العنصر الحالي فعلاً حتى يبقى الجسم سهل القراءة.",
+      "عندما تأتي العناصر من متغير قائمة استخدم الصياغة IN LISTS بدل توسعة النص يدويًا داخل الاستدعاء، لأن ذلك يوضح المصدر والأثر التنفيذي للحلقة."
+    ],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "foreach(stooge IN LISTS stooges)\n  message(STATUS \"Stooge: ${stooge}\")\nendforeach()"
+  },
+  "links": {
+    "officialUrl": "https://cmake.org/cmake/help/latest/command/foreach.html",
+    "sourceUrl": "https://cmake.org/cmake/help/latest/command/foreach.html",
+    "related": [
+      {
+        "name": "list",
+        "route": "#ref/cmake/commands/list",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "endforeach",
+        "route": "#ref/cmake/commands/endforeach",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "message",
+        "route": "#ref/cmake/commands/message",
+        "libraryId": "cmake",
+        "kindId": "commands"
+      },
+      {
+        "name": "Core Variables, Flow, and Reusable Blocks",
+        "route": "#ref/cmake/examples/core-variables-flow-and-reusable-blocks",
+        "libraryId": "cmake",
+        "kindId": "examples"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/cmake/commands.json",
+    "category": "الأوامر",
+    "packageKey": "",
+    "packageName": "CMake"
+  }
+}

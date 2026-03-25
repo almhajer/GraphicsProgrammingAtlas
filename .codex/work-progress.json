@@ -1,6 +1,6 @@
 {
-  "last_stable_checkpoint": "use-glsl-manifest-counts-for-warmup",
-  "phase": "use-glsl-manifest-counts-for-warmup",
+  "last_stable_checkpoint": "enhance-arabic-language-extensions-section-cards",
+  "phase": "enhance-arabic-language-extensions-section-cards",
   "done": [
     "إصلاح خطأ JSON في reference-guides-stdlib-string.json",
     "إضافة 1035 عنصر جديد إلى home.json (1166→2201)",
@@ -270,9 +270,16 @@
     "إخراج عدة runtime files من التحميل الأولي في index.html مثل reference-runtime وindex-pages وgeneral-detail-pages وtutorial-support والاعتماد بدلًا من ذلك على ensureUiSegment لتحميلها عند الطلب فقط",
     "إزالة preload المبكر لبيانات C++ من bootApplication والاكتفاء بتحميلها عند أول فتح فعلي لقسم C++ أو عند المسارات التي تطلبها",
     "إيقاف بناء قوائم Vulkan الجانبية كاملة أثناء الإقلاع والاكتفاء بالعدادات والحاويات، بحيث تُملأ القوائم عند أول توسعة فعلية فقط",
-    "تقليل طلبات warmup الجانبية لـ GLSL عبر إضافة count لكل قسم في manifest واستخدامه مباشرة بدل جلب ملفات الأقسام الثمانية لحساب العدّاد"
+    "تقليل طلبات warmup الجانبية لـ GLSL عبر إضافة count لكل قسم في manifest واستخدامه مباشرة بدل جلب ملفات الأقسام الثمانية لحساب العدّاد",
+    "إصلاح 404 في مسار #ref/cmake/commands عبر إعادة توليد مرجع CMake المعياري داخل content/reference/cmake وربط build-canonical-reference.js به مع الحفاظ على مكتبات مرجعية موجودة مسبقًا مثل FFmpeg داخل manifest",
+    "إضافة content/reference/cmake/official-links.json بصيغة enrichment متوافقة لإزالة تحذير التحميل المفقود عند فتح صفحات CMake التفصيلية",
+    "تعطيل scroll anchoring داخل حاوية الشريط الجانبي عبر overflow-anchor: none لتقليل تحذير Chrome الناتج من إعادة تشكيل القائمة مع تعديلات تمرير متتابعة بلا مسافة فعلية",
+    "تصحيح عرض قسم \"إضافات من حساب Arabic-language\" في دليل الاستخدام عبر تحويل كل عنصر إلى بطاقة كاملة تضم الرابط والوصف داخل نفس الحاوية بدل بقاء الوصف خارج البطاقة",
+    "إضافة fallback بصري للبنية القديمة في قسم \"إضافات من حساب Arabic-language\" ورفع versions لملفي css/main.css وhome-page.js إلى 0.0.2 لضمان تجاوز الكاش الذي كان يعرض الشكل المكسور الظاهر في الصورة",
+    "توسيع فقرة \"ما الذي ستجده داخل الموقع؟\" لإضافة المكتبات والحزم التي كانت ناقصة من الوصف مثل C++ وFFmpeg وSDL3Audio وSDL3_image وSDL3_mixer وSDL3_ttf",
+    "تحسين قسم \"إضافات من حساب Arabic-language\" بإضافة شارات نوع صغيرة داخل البطاقات تميز بين إضافات VS Code وصفحة الناشر، مع رفع versions لملفي css/main.css وhome-page.js إلى 0.0.3"
   ],
-  "next": "إذا بقي البطء ملحوظًا بعد تقليص warmup الخاص بـ GLSL، فالخطوة التالية تكون تطبيق الفكرة نفسها على أي manifests أخرى ما زالت تتطلب fetchات فرعية لحساب العدادات أو نقل بعض home runtimes إلى on-demand.",
+  "next": "إذا احتاج قسم الدليل مزيدًا من الصقل، فالخطوة التالية هي إضافة أيقونات خارجية خفيفة أو أزرار فعل صغيرة داخل بطاقات روابط الدعم والإضافات مع الحفاظ على الشكل الداكن الحالي.",
   "read_next": [
     "js/modules/sdl3-section.js",
     "js/modules/sidebar-navigation.js",
@@ -303,7 +310,17 @@
     "js/modules/app-heavy-reference-helpers-4.js",
     "index.html",
     "scripts/build-sdl3-audio-package.js",
-    "scripts/build-canonical-reference.js"
+    "scripts/build-canonical-reference.js",
+    "scripts/build-cmake-reference.js",
+    "js/modules/reference-runtime.js",
+    "content/reference/cmake/index.json",
+    "content/reference/cmake/commands/index.json",
+    "content/reference/cmake/official-links.json",
+    "data/ui/cmake/commands.json",
+    "css/layout.css",
+    "js/modules/home-page.js",
+    "css/main.css",
+    "data/ui/app-text.json"
   ],
   "changed": [
     "scripts/build-sdl3-audio-package.js",
@@ -344,7 +361,16 @@
     "penAI Compatible.agent.md",
     "z.ai.agent.md",
     "content/reference/ffmpeg/examples/**/*.json (إصلاح تلف كود: \\n حرفية → أسطر حقيقية، حرف n زائد من بدايات الأسطر، تصحيح navfilter_graph_free)",
-    ".codex/work-progress.json"
+    ".codex/work-progress.json",
+    "scripts/build-canonical-reference.js",
+    "content/reference/manifest.json",
+    "content/reference/cmake/**/*.json",
+    "data/ui/cmake-search.json",
+    "scripts/build-cmake-reference.js",
+    "css/layout.css",
+    "js/modules/home-page.js",
+    "css/main.css",
+    "index.html"
   ],
   "tested": [
     "python3 scripts/generate_ffmpeg_examples.py (generated examples 25)",
@@ -434,7 +460,22 @@
     "التحقق من إزالة عدة runtime files المؤجلة من index.html مع بقاء tutorialSupportRuntime قابلًا للتحميل عند الطلب عبر app-segment-registry.js",
     "التحقق النصي من اختفاء ensureUiSegment('cppReferenceData') وensureUiSegment('cppHome') وpopulateCppList() من مسار bootApplication المباشر",
     "التحقق النصي من أن populateSidebar في vulkan-sidebar-runtime لم يعد يبني قوائم functions/macros/constants/structures/variables/enums عند الإقلاع",
-    "التحقق من أن warmupSidebarClusterCounts في app-load-runtime أصبح يستخدم count من glsl manifest بدل fetchJsonData لكل ملف قسم فرعي"
+    "التحقق من أن warmupSidebarClusterCounts في app-load-runtime أصبح يستخدم count من glsl manifest بدل fetchJsonData لكل ملف قسم فرعي",
+    "node --check scripts/build-canonical-reference.js",
+    "node --check scripts/build-cmake-reference.js",
+    "node scripts/build-canonical-reference.js أعاد توليد content/reference/cmake وربط manifest دون حذف FFmpeg",
+    "python3 json.load نجح لملفي content/reference/cmake/commands/index.json وcontent/reference/manifest.json بعد الإصلاح",
+    "التحقق من وجود cmake=81 وffmpeg=109 داخل content/reference/manifest.json بعد إعادة التوليد",
+    "node scripts/build-cmake-reference.js أعاد توليد content/reference/cmake/official-links.json",
+    "python3 json.load نجح لملف content/reference/cmake/official-links.json مع entities={} وlinks=[]",
+    "التحقق النصي من وجود overflow-anchor: none داخل css/layout.css على حاوية .sidebar",
+    "node --check js/modules/home-page.js",
+    "التحقق النصي من وجود parseSiteUsageCardBullet وsite-usage-link-card داخل js/modules/home-page.js وcss/main.css",
+    "التحقق النصي من رفع css/main.css وjs/modules/home-page.js في index.html إلى ?v=0.0.2",
+    "التحقق النصي من وجود fallback selector للبنية القديمة: .site-usage-guide-list > li > a داخل css/main.css",
+    "python3 json.load نجح لملف data/ui/app-text.json بعد تحديث فقرة \"ما الذي ستجده داخل الموقع؟\"",
+    "التحقق النصي من وجود شارة site-usage-link-card-badge داخل css/main.css وhome-page.js",
+    "التحقق النصي من رفع css/main.css وjs/modules/home-page.js في index.html إلى ?v=0.0.3"
   ],
   "issues": [
     "1078 دالة حرة std::X بدون محتوى — أكبر فجوة حاليًا (std::memmove, std::strcpy, std::strlen, إلخ)",
