@@ -291,8 +291,7 @@
         setSidebarClusterCount('cmake-cluster', cmakeTotal);
 
         const glslReferenceSections = Array.isArray(glslManifest?.reference?.sections) ? glslManifest.reference.sections : [];
-        const glslReferencePayloads = await Promise.all(glslReferenceSections.map((section) => fetchJsonData(section.path)));
-        const glslReferenceTotal = glslReferencePayloads.reduce((total, payload) => total + ((payload?.items || []).length), 0);
+        const glslReferenceTotal = glslReferenceSections.reduce((total, section) => total + (Number(section?.count) || 0), 0);
         const glslExamplesTotal = Number(glslManifest?.examples?.count) || 0;
         setSidebarClusterCount('glsl-cluster', glslReferenceTotal + glslExamplesTotal);
 

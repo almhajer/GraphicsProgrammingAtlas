@@ -590,32 +590,6 @@
 
     function populateSidebar() {
       ensureVulkanSidebarSections();
-      if (Object.keys(vulkanData.commands || {}).length > 0) {
-        populateFunctionsList();
-      }
-      if (Object.keys(vulkanData.macros || {}).length > 0) {
-        populateMacrosList();
-      }
-      populateConstantsList();
-      if (Object.keys(vulkanData.structures || {}).length > 0) {
-        populateStructuresList();
-      }
-      populateVariablesList();
-      if (Object.keys(vulkanData.enums || {}).length > 0) {
-        populateEnumsList();
-      }
-      if (uiSegmentLoaded.glsl) {
-        populateGlslList();
-      }
-      if (uiSegmentLoaded.sdl3) {
-        populateSdl3List();
-      }
-      if (uiSegmentLoaded.tutorials) {
-        populateTutorialsList();
-      }
-      if (uiSegmentLoaded.files) {
-        populateFilesList();
-      }
       if (typeof updateVulkanSidebarSectionCounts === 'function') {
         updateVulkanSidebarSectionCounts();
       }

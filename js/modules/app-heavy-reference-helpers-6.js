@@ -2068,9 +2068,6 @@ async function bootApplication() {
       ensureAllSdl3PackageData
     });
     await ensureHeavyHelper4RuntimeLoaded();
-    await ensureUiSegment('cppReferenceData');
-    await ensureUiSegment('cppHome');
-    populateCppList();
     refreshDynamicSearchSubFilterConfig();
     initTooltipSystem();
     initSidebarNavigation();
