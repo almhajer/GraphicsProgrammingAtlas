@@ -1,0 +1,257 @@
+{
+  "key": "movement",
+  "title": "الحركة وتحديث الموضع",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "movement",
+      "sectionTitle": "الحركة وتحديث الموضع",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Button",
+        "ImGui::SetNextWindowPos",
+        "ImGui::SetCursorScreenPos",
+        "ImGui::GetTime",
+        "ImGuiIO"
+      ],
+      "instructions": [],
+      "notes": [
+        "الإحداثيات تحفظ في متغيرات ثابتة أو في كائن حالة يملكه التطبيق.",
+        "التحديث الزمني يستخدم io.DeltaTime لا عدداً ثابتاً لكل إطار.",
+        "الرسم لا يحدث الحركة من تلقاء نفسه؛ هو فقط يعرض آخر قيمة وصل إليها التطبيق."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يحفظ التطبيق panel_x وmarker_x وtarget_panel_x كحالة دائمة. في كل Frame يحدثها باستخدام DeltaTime، ثم يمرر المواضع الجديدة إلى SetNextWindowPos وSetCursorScreenPos.",
+        "code": "ImGuiIO& io = ImGui::GetIO();\npanel_x += (target_panel_x - panel_x) * io.DeltaTime * 10.0f;\nmarker_x += io.DeltaTime * 140.0f;\nImGui::SetNextWindowPos(ImVec2(panel_x, 90.0f));\nImGui::SetCursorScreenPos(ImVec2(track_min.x + marker_x, track_min.y));",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawMovementExample() {\n    static bool panel_visible = true;\n    static float panel_x = 780.0f;\n    static float marker_x = 0.0f;\n    static float marker_direction = 1.0f;\n\n    ImGuiIO& io = ImGui::GetIO();\n    const float target_panel_x = panel_visible ? 620.0f : 860.0f;\n    panel_x += (target_panel_x - panel_x) * io.DeltaTime * 10.0f;\n\n    marker_x += marker_direction * io.DeltaTime * 140.0f;\n    if (marker_x > 220.0f) {\n        marker_x = 220.0f;\n        marker_direction = -1.0f;\n    }\n    if (marker_x < 0.0f) {\n        marker_x = 0.0f;\n        marker_direction = 1.0f;\n    }\n\n    ImGui::Begin(\"Motion Controls\");\n    if (ImGui::Button(panel_visible ? \"Hide Panel\" : \"Show Panel\")) {\n        panel_visible = !panel_visible;\n    }\n    ImGui::Text(\"marker_x: %.1f\", marker_x);\n    ImGui::Text(\"panel_x: %.1f\", panel_x);\n\n    ImVec2 track_min = ImGui::GetCursorScreenPos();\n    ImGui::InvisibleButton(\"motion_track\", ImVec2(260.0f, 36.0f));\n    ImGui::SetCursorScreenPos(ImVec2(track_min.x + marker_x, track_min.y));\n    ImGui::Button(\"##moving_marker\", ImVec2(28.0f, 36.0f));\n    ImGui::End();\n\n    ImGui::SetNextWindowPos(ImVec2(panel_x, 90.0f));\n    ImGui::SetNextWindowSize(ImVec2(220.0f, 180.0f));\n    ImGui::Begin(\"Sliding Panel\", nullptr, ImGuiWindowFlags_NoResize);\n    ImGui::Text(\"هذه اللوحة تنزلق بين موضعين.\");\n    ImGui::Text(\"الحالة محفوظة في panel_x.\");\n    ImGui::End();\n}",
+        "explanation": "يحدث التطبيق الإحداثيات أولاً من DeltaTime، ثم يستخدمها أثناء الرسم. لذلك ترى الحركة ناعمة ما دامت الحالة محفوظة والقيم تحدث مرة واحدة في كل Frame.",
+        "expectedResult": "يتحرك مؤشر صغير ذهاباً وإياباً فوق مسار أفقي، وتنزلق لوحة جانبية إلى الداخل أو الخارج عند الضغط على الزر داخل نافذة التحكم.",
+        "importantNote": "الحركة في Dear ImGui هي نتيجة مباشرة لتحديث القيم بين الإطارات. إذا توقف تحديث القيمة توقف العنصر فوراً لأن الواجهة تعيد البناء من الصفر كل مرة."
+      },
+      "guiRepresentation": {
+        "title": "Motion Controls",
+        "mockup": "marker_x -> يتغير كل Frame\nSliding Panel -> تدخل وتخرج\nالحالة -> panel_x / marker_x\nالرسم -> يعتمد على الموضع الحالي",
+        "explanation": "الصورة تركز على فكرة الحركة نفسها: الحالة تتغير بين الإطارات، والواجهة ترسم الموضع الجديد مباشرة."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "تحريك مؤشر ولوحة بين الإطارات",
+      "shortTooltip": "مثال مستقل يوضح تحديث الإحداثيات في كل Frame لتحريك مؤشر بصري ولوحة جانبية داخل Dear ImGui.",
+      "description": "يجمع هذا المثال بين حركة عنصر صغير داخل نافذة أدوات وحركة لوحة خصائص تنزلق بين موضعين، مع شرح أين تحفظ الحالة وكيف ينعكس ذلك على الرسم في كل إطار.",
+      "officialArabicDescription": "الحركة هنا لا تأتي من نظام Animation جاهز في Dear ImGui؛ التطبيق نفسه يحدث القيم مثل marker_x وpanel_x في كل Frame ثم تستخدمها الواجهة أثناء البناء.",
+      "realMeaning": "المعنى الحقيقي هو أن الموضع في Dear ImGui ليس قيمة تتذكرها الواجهة وحدها، بل حالة يملكها التطبيق ويعيد تمريرها كل إطار إلى SetNextWindowPos أو SetCursorScreenPos أو عناصر الرسم.",
+      "whenToUse": "استخدم هذا النمط عندما تريد مؤشراً يتحرك فوق نافذة، أو لوحة تنزلق للداخل والخارج، أو نصاً أو أيقونة تنتقل بين موضعين داخل UI.",
+      "practicalBenefit": "يعطيك حركة مفهومة وبسيطة داخل أدوات التحرير من دون انتظار نظام Motion خارجي؛ كل شيء يعتمد على قيمك أنت وعلى DeltaTime الحالي.",
+      "misuseImpact": "إذا لم تحفظ الحالة بين الإطارات أو حدثت الإحداثيات في موضع غير ثابت من الحلقة، فستظهر الحركة متقطعة أو ستقفز العناصر بين مواضع غير متوقعة."
+    },
+    {
+      "sectionKey": "movement",
+      "sectionTitle": "الحركة وتحديث الموضع",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::SetNextWindowPos",
+        "ImGui::InvisibleButton",
+        "ImDrawList",
+        "ImGuiIO",
+        "ImVec2"
+      ],
+      "instructions": [],
+      "notes": [
+        "يمكن حفظ هذه الحالة داخل static locals أو داخل بنية EditorState عامة.",
+        "ImDrawList مفيد لحركة المؤشرات والعلامات داخل مساحة غير معتمدة على Widgets جاهزة.",
+        "عندما تحتاج حركة ناعمة استخدم DeltaTime وابتعد عن الزيادات الثابتة لكل إطار."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يحفظ التطبيق موضع اللوحة في panel_pos وموضع العلامة في marker_pos، ثم يحدثهما وفق DeltaTime ويستخدمهما داخل SetNextWindowPos وImDrawList.",
+        "code": "panel_pos.x += panel_velocity.x * io.DeltaTime;\nmarker_pos.x += marker_velocity.x * io.DeltaTime;\nImGui::SetNextWindowPos(panel_pos);\ndraw_list->AddCircleFilled(marker_pos, 9.0f, IM_COL32(255, 206, 108, 255));",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawFloatingMovementExample() {\n    static ImVec2 panel_pos(720.0f, 86.0f);\n    static ImVec2 panel_velocity(-46.0f, 0.0f);\n    static ImVec2 marker_pos(160.0f, 170.0f);\n    static ImVec2 marker_velocity(128.0f, 56.0f);\n\n    ImGuiIO& io = ImGui::GetIO();\n\n    panel_pos.x += panel_velocity.x * io.DeltaTime;\n    if (panel_pos.x < 620.0f || panel_pos.x > 820.0f) {\n        panel_velocity.x = -panel_velocity.x;\n    }\n\n    marker_pos.x += marker_velocity.x * io.DeltaTime;\n    marker_pos.y += marker_velocity.y * io.DeltaTime;\n    if (marker_pos.x < 128.0f || marker_pos.x > 356.0f) marker_velocity.x = -marker_velocity.x;\n    if (marker_pos.y < 138.0f || marker_pos.y > 252.0f) marker_velocity.y = -marker_velocity.y;\n\n    ImGui::Begin(\"Motion Workspace\");\n    ImGui::Text(\"الحركة هنا مبنية على قيم محفوظة بين الإطارات.\");\n    ImGui::Text(\"panel_pos = (%.1f, %.1f)\", panel_pos.x, panel_pos.y);\n    ImGui::Text(\"marker_pos = (%.1f, %.1f)\", marker_pos.x, marker_pos.y);\n\n    ImVec2 canvas_min = ImGui::GetCursorScreenPos();\n    ImVec2 canvas_size(360.0f, 180.0f);\n    ImVec2 canvas_max(canvas_min.x + canvas_size.x, canvas_min.y + canvas_size.y);\n    ImGui::InvisibleButton(\"movement_canvas\", canvas_size);\n\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n    draw_list->AddRectFilled(canvas_min, canvas_max, IM_COL32(17, 26, 38, 255), 12.0f);\n    draw_list->AddRect(canvas_min, canvas_max, IM_COL32(73, 104, 137, 255), 12.0f, 0, 2.0f);\n    draw_list->AddLine(ImVec2(canvas_min.x + 20.0f, canvas_min.y + 150.0f), ImVec2(canvas_max.x - 20.0f, canvas_min.y + 150.0f), IM_COL32(77, 108, 141, 255), 3.0f);\n    draw_list->AddCircleFilled(marker_pos, 9.0f, IM_COL32(255, 206, 108, 255));\n    draw_list->AddCircle(marker_pos, 18.0f, IM_COL32(111, 186, 255, 255), 0, 2.0f);\n    ImGui::End();\n\n    ImGui::SetNextWindowPos(panel_pos);\n    ImGui::SetNextWindowSize(ImVec2(220.0f, 120.0f));\n    ImGui::Begin(\"Floating Info\", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);\n    ImGui::Text(\"هذه اللوحة تتحرك أفقياً.\");\n    ImGui::Text(\"الموضع محفوظ في panel_pos.\");\n    ImGui::End();\n}",
+        "explanation": "المثال يوضح حركتين منفصلتين في آن واحد: Marker يتحرك داخل Canvas عبر ImDrawList، ولوحة عائمة تتحرك عبر SetNextWindowPos. الحالتان كلتاهما محفوظتان داخل التطبيق.",
+        "expectedResult": "يرى المستخدم Canvas فيها Marker متحرك ذهاباً وإياباً، وبجوارها لوحة معلومات صغيرة تتحرك أفقياً داخل واجهة Dear ImGui.",
+        "importantNote": "حتى عندما يتحرك العنصر بصرياً داخل ImGui، فالحركة الحقيقية تبقى مجرد أرقام تحدثها أنت ثم تعيد تمريرها أثناء البناء."
+      },
+      "guiRepresentation": {
+        "title": "Motion Workspace",
+        "mockup": "Marker -> يتحرك داخل Canvas\nFloating Info -> تتحرك أفقياً\nالحالة -> panel_pos + marker_pos\nالرسم -> يتبع القيم الحالية",
+        "explanation": "الصورة توضح وجود عنصرين متحركين مستقلين، مع حالة محفوظة لكل واحد منهما."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "لوحة عائمة وMarker يتحركان باستمرار داخل مساحة أدوات",
+      "shortTooltip": "مثال مستقل يوضح تحريك نافذة صغيرة ومؤشر بصري داخل Canvas مع حفظ الحالة بين الإطارات.",
+      "description": "هذا المثال يوسع فكرة الحركة داخل Dear ImGui إلى أكثر من عنصر واحد: Marker يتحرك داخل مساحة مصغرة، ولوحة صغيرة تطفو على مسار مختلف، مع شرح واضح لمكان تخزين الحالة.",
+      "officialArabicDescription": "الحركة هنا ليست تأثيراً بصرياً جاهزاً، بل تحديث مباشر لقيم panel_pos وmarker_pos وvelocity في كل Frame ثم استخدام هذه القيم أثناء SetNextWindowPos والرسم المخصص.",
+      "realMeaning": "المعنى الحقيقي أن Dear ImGui لا تملك Timeline للحركة، وإنما تقرأ آخر موضع تحفظه أنت في التطبيق لكل عنصر متحرك أو نافذة عائمة أو مؤشر بصري.",
+      "whenToUse": "استخدمه في minimap markers وtooltips العائمة ولوحات المراقبة الصغيرة أو أي موضع يتغير بمرور الوقت داخل واجهة أدوات.",
+      "practicalBenefit": "يعطيك مثالاً عملياً على تحريك أكثر من عنصر UI في الوقت نفسه مع بقاء منطق الحالة واضحاً وسهل التعديل.",
+      "misuseImpact": "إذا وزعت تحديث المواضع بين أكثر من موضع في الكود أو لم تحفظها في حالة مستقرة فستظهر الحركة متقطعة أو غير قابلة للتنبؤ."
+    },
+    {
+      "sectionKey": "movement",
+      "sectionTitle": "الحركة وتحديث الموضع",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImDrawList",
+        "ImGui::GetTime",
+        "ImGui::Text",
+        "ImVec2"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي طلب إنشاء ساعة داخل ImGui.",
+        "يعتمد الرسم على ImDrawList لذلك يمكن تغيير المظهر أو الألوان بسهولة.",
+        "يمكن توظيف الفكرة نفسها لبناء عدادات RPM أو مؤشرات طاقة أو timers."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يقرأ التطبيق الزمن الحالي، يحسب زوايا عقارب الساعات والدقائق والثواني، ثم يرسمها داخل Canvas صغيرة ويعرض القراءة الرقمية أسفلها.",
+        "code": "float t = ImGui::GetTime();\ndraw_list->AddCircle(center, radius, IM_COL32(...));\ndraw_list->AddLine(center, second_hand, IM_COL32(...), 2.0f);\nImGui::Text(\"12:34:56\");",
+        "fullCode": "#include <imgui.h>\n#include <cmath>\n\nvoid DrawClockWidgetExample() {\n    ImGui::Begin(\"Clock Widget\");\n    ImGui::Text(\"ساعة تناظرية ورقمية داخل الواجهة.\");\n\n    ImVec2 canvas_min = ImGui::GetCursorScreenPos();\n    ImVec2 canvas_size(260.0f, 220.0f);\n    ImGui::InvisibleButton(\"clock_canvas\", canvas_size);\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n\n    ImVec2 center(canvas_min.x + 130.0f, canvas_min.y + 96.0f);\n    const float radius = 68.0f;\n    const float t = (float)ImGui::GetTime();\n    const float seconds = fmodf(t, 60.0f);\n    const float minutes = fmodf(t / 60.0f, 60.0f);\n    const float hours = fmodf(t / 3600.0f, 12.0f);\n\n    draw_list->AddRectFilled(canvas_min, ImVec2(canvas_min.x + canvas_size.x, canvas_min.y + canvas_size.y), IM_COL32(18, 27, 39, 255), 14.0f);\n    draw_list->AddCircle(center, radius, IM_COL32(86, 120, 160, 255), 0, 3.0f);\n\n    for (int i = 0; i < 12; ++i) {\n        const float angle = -IM_PI / 2.0f + (IM_PI * 2.0f * i) / 12.0f;\n        ImVec2 p1(center.x + cosf(angle) * (radius - 8.0f), center.y + sinf(angle) * (radius - 8.0f));\n        ImVec2 p2(center.x + cosf(angle) * radius, center.y + sinf(angle) * radius);\n        draw_list->AddLine(p1, p2, IM_COL32(225, 233, 244, 255), 2.0f);\n    }\n\n    const float second_angle = -IM_PI / 2.0f + (seconds / 60.0f) * IM_PI * 2.0f;\n    const float minute_angle = -IM_PI / 2.0f + (minutes / 60.0f) * IM_PI * 2.0f;\n    const float hour_angle = -IM_PI / 2.0f + (hours / 12.0f) * IM_PI * 2.0f;\n\n    ImVec2 second_hand(center.x + cosf(second_angle) * (radius - 12.0f), center.y + sinf(second_angle) * (radius - 12.0f));\n    ImVec2 minute_hand(center.x + cosf(minute_angle) * (radius - 20.0f), center.y + sinf(minute_angle) * (radius - 20.0f));\n    ImVec2 hour_hand(center.x + cosf(hour_angle) * (radius - 30.0f), center.y + sinf(hour_angle) * (radius - 30.0f));\n\n    draw_list->AddLine(center, hour_hand, IM_COL32(255, 214, 116, 255), 5.0f);\n    draw_list->AddLine(center, minute_hand, IM_COL32(116, 191, 255, 255), 4.0f);\n    draw_list->AddLine(center, second_hand, IM_COL32(255, 116, 116, 255), 2.0f);\n    draw_list->AddCircleFilled(center, 5.0f, IM_COL32(243, 247, 252, 255));\n\n    ImGui::Text(\"h=%.1f  m=%.1f  s=%.1f\", hours, minutes, seconds);\n    ImGui::End();\n}",
+        "explanation": "يربط المثال بين الزمن وقيم الزوايا ثم يحولها إلى عقارب مرسومة داخل Canvas. هكذا تصبح الساعة عنصراً مخصصاً داخل Dear ImGui لا مجرد نص رقمي.",
+        "expectedResult": "تظهر ساعة تناظرية واضحة مع عقارب متحركة وقراءة رقمية أسفلها تتغير باستمرار أثناء تشغيل الواجهة.",
+        "importantNote": "يمكنك استبدال ImGui::GetTime بزمن منطقي من التطبيق إذا كنت تريد الساعة مرتبطة بمحاكاة أو لعبتك لا بزمن الواجهة فقط."
+      },
+      "guiRepresentation": {
+        "title": "Clock Widget",
+        "mockup": "Analog Clock -> hour / minute / second hands\nDigital Readout -> h / m / s\nالمعنى -> ساعة مرسومة داخل الواجهة",
+        "explanation": "الصورة تعرض الساعة كأداة مرئية كاملة، بعقارب وقراءة رقمية داخل نفس النافذة."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "ساعة تناظرية ورقمية داخل نافذة أدوات",
+      "shortTooltip": "مثال مستقل يوضح إنشاء ساعة مرسومة بـ ImDrawList مع عقارب وحالة رقمية داخل Dear ImGui.",
+      "description": "يشرح هذا المثال كيف يبني التطبيق ساعة واضحة داخل نافذة Dear ImGui عبر رسم دائرة وعقارب وتحديث الزمن بين الإطارات ثم عرض القراءة الرقمية أسفلها.",
+      "realMeaning": "الساعة هنا ليست Widget جاهزة من Dear ImGui؛ التطبيق هو من يحسب الزوايا والوقت الحالي ثم يمرر النتيجة إلى ImDrawList والنصوص في كل Frame.",
+      "whenToUse": "استخدمه في لوحات المراقبة وواجهات المحاكاة والنوافذ التي تحتاج مؤشراً زمنياً بصرياً أو ساعة داخلية للمشهد.",
+      "practicalBenefit": "يبين كيف تتحول الحسابات الزمنية إلى عنصر مرئي مخصص داخل الواجهة، وهو نمط مفيد لبناء عدادات ومؤشرات وأدوات قياس.",
+      "misuseImpact": "إذا خلطت بين الزمن المنطقي وزمن النظام أو لم تحدث الزوايا باستمرار فستقف الساعة أو تقفز بعنف بين الإطارات."
+    },
+    {
+      "sectionKey": "movement",
+      "sectionTitle": "الحركة وتحديث الموضع",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::SliderFloat",
+        "ImDrawList",
+        "ImGuiIO",
+        "ImVec2"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي طلب تحريك سيارة والحركة الدائرية معاً.",
+        "يمكن تحويل السيارة لاحقاً إلى أيقونة أو صورة أو مجسم مصغر بحسب المشروع.",
+        "فكرة المدار نفسها صالحة للرادار والخرائط المصغرة والمخططات الزمنية."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يحفظ التطبيق angle وspeed، ثم يحدث angle كل Frame، ويحسب موضع السيارة من cos/sin حول مركز ثابت داخل Canvas.",
+        "code": "angle += speed * io.DeltaTime;\ncar_pos.x = center.x + cosf(angle) * radius;\ncar_pos.y = center.y + sinf(angle) * radius;",
+        "fullCode": "#include <imgui.h>\n#include <cmath>\n\nvoid DrawCircularCarExample() {\n    static float angle = 0.0f;\n    static float speed = 1.25f;\n\n    ImGuiIO& io = ImGui::GetIO();\n    angle += speed * io.DeltaTime;\n\n    ImGui::Begin(\"Car Path\");\n    ImGui::SliderFloat(\"Speed\", &speed, 0.2f, 3.5f);\n\n    ImVec2 canvas_min = ImGui::GetCursorScreenPos();\n    ImVec2 canvas_size(340.0f, 240.0f);\n    ImGui::InvisibleButton(\"car_canvas\", canvas_size);\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n\n    ImVec2 center(canvas_min.x + 170.0f, canvas_min.y + 118.0f);\n    const float radius = 78.0f;\n    ImVec2 car_pos(center.x + cosf(angle) * radius, center.y + sinf(angle) * radius);\n\n    draw_list->AddRectFilled(canvas_min, ImVec2(canvas_min.x + canvas_size.x, canvas_min.y + canvas_size.y), IM_COL32(17, 25, 36, 255), 14.0f);\n    draw_list->AddCircle(center, radius, IM_COL32(78, 108, 140, 255), 0, 4.0f);\n    draw_list->AddCircle(center, radius + 14.0f, IM_COL32(40, 62, 86, 255), 0, 1.0f);\n\n    ImVec2 car_min(car_pos.x - 16.0f, car_pos.y - 10.0f);\n    ImVec2 car_max(car_pos.x + 16.0f, car_pos.y + 10.0f);\n    draw_list->AddRectFilled(car_min, car_max, IM_COL32(255, 198, 104, 255), 6.0f);\n    draw_list->AddCircleFilled(ImVec2(car_pos.x - 10.0f, car_pos.y + 10.0f), 4.0f, IM_COL32(29, 32, 37, 255));\n    draw_list->AddCircleFilled(ImVec2(car_pos.x + 10.0f, car_pos.y + 10.0f), 4.0f, IM_COL32(29, 32, 37, 255));\n\n    ImGui::Text(\"Angle: %.2f\", angle);\n    ImGui::Text(\"Car Pos: %.1f, %.1f\", car_pos.x, car_pos.y);\n    ImGui::End();\n}",
+        "explanation": "المثال يربط السرعة والزمن بزاوية المدار، ثم يحول الزاوية إلى موضع سيارة واضحة داخل Canvas. وهكذا يغطي الحركة الدائرية وتحريك سيارة في مثال واحد.",
+        "expectedResult": "تظهر سيارة صغيرة تدور باستمرار على مسار دائري داخل الواجهة، ويمكن زيادة السرعة أو تقليلها مباشرة من Slider.",
+        "importantNote": "هذا المثال يغطي طلب الحركة الدائرية وتحريك سيارة داخل ImGui كعنصر واجهة مرسوم، وليس كفيزياء عالم كامل."
+      },
+      "guiRepresentation": {
+        "title": "Car Path",
+        "mockup": "Circular Track -> path\nCar -> moves around center\nSpeed -> adjustable\nالمعنى -> حركة دائرية واضحة",
+        "explanation": "الصورة تعرض السيارة والمسار الدائري كتمثيل بصري مباشر للحركة المدارية داخل أدوات الواجهة."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "سيارة تتحرك على مسار دائري",
+      "shortTooltip": "مثال مستقل يوضح تحريك سيارة داخل Canvas على مسار دائري مع قراءة الزاوية والسرعة.",
+      "description": "يجمع هذا المثال بين الحركة الدائرية وتحريك عنصر مرئي واضح يشبه سيارة صغيرة أو Marker داخل مسار دائري، مع إمكانية تغيير السرعة من الواجهة.",
+      "realMeaning": "الحركة الدائرية هنا لا تأتي من نظام فيزياء أو scene graph؛ التطبيق يحسب الزاوية والموضع من sin/cos ويعيد رسم السيارة في موضعها الجديد كل Frame.",
+      "whenToUse": "استخدمه لواجهات الملاحة، أو لوحات المحاكاة، أو أدوات التدريب، أو عندما تريد شرح الحركة المدارية أو المسارات الدائرية داخل UI.",
+      "practicalBenefit": "يغطي مثالاً واضحاً للحركة الدائرية مع عنصر مفهوم بصرياً، ويصلح كأساس لمؤشرات رادار أو مسارات مركبات أو أدوات تخطيط مسار.",
+      "misuseImpact": "إذا حدثت الزاوية بلا DeltaTime أو حسبت الموضع من إحداثيات متغيرة غير ثابتة فسيصبح المسار غير دائري أو تتذبذب السيارة بشكل غير متوقع."
+    },
+    {
+      "sectionKey": "movement",
+      "sectionTitle": "الحركة وتحديث الموضع",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImDrawList",
+        "ImGui::GetTime",
+        "ImGui::Text",
+        "ImVec2"
+      ],
+      "instructions": [],
+      "notes": [
+        "يمكن استبدال المكعب بأي shape أو gizmo أو أداة معاينة أخرى.",
+        "هذا النمط مفيد للمعاينات السريعة والـ helpers داخل المحررات.",
+        "يعتمد المثال على ImDrawList والحسابات لا على backend 3D داخلي من Dear ImGui."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يخزن التطبيق رؤوس المجسم في فضاء محلي، ثم يحدث زاوية الدوران ويحسب إسقاطاً منظورياً لكل نقطة، وبعدها يرسم الحواف الناتجة داخل Canvas.",
+        "code": "rotated.x = p.x * cosf(angle) - p.z * sinf(angle);\nprojected.x = center.x + rotated.x * perspective;\ndraw_list->AddLine(projected_a, projected_b, IM_COL32(...), 2.0f);",
+        "fullCode": "#include <imgui.h>\n#include <cmath>\n\nstruct WirePoint3 {\n    float x, y, z;\n};\n\nvoid DrawWireframePreviewExample() {\n    static float angle = 0.0f;\n    angle += ImGui::GetIO().DeltaTime * 1.2f;\n\n    static const WirePoint3 cube[8] = {\n        {-1.0f, -1.0f, -1.0f}, { 1.0f, -1.0f, -1.0f},\n        { 1.0f,  1.0f, -1.0f}, {-1.0f,  1.0f, -1.0f},\n        {-1.0f, -1.0f,  1.0f}, { 1.0f, -1.0f,  1.0f},\n        { 1.0f,  1.0f,  1.0f}, {-1.0f,  1.0f,  1.0f}\n    };\n    static const int edges[12][2] = {\n        {0,1},{1,2},{2,3},{3,0},\n        {4,5},{5,6},{6,7},{7,4},\n        {0,4},{1,5},{2,6},{3,7}\n    };\n\n    ImGui::Begin(\"Wireframe 3D\");\n    ImGui::Text(\"معاينة 3D مبسطة داخل نافذة أدوات.\");\n\n    ImVec2 canvas_min = ImGui::GetCursorScreenPos();\n    ImVec2 canvas_size(360.0f, 250.0f);\n    ImVec2 center(canvas_min.x + 180.0f, canvas_min.y + 126.0f);\n    ImGui::InvisibleButton(\"wire_canvas\", canvas_size);\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n    draw_list->AddRectFilled(canvas_min, ImVec2(canvas_min.x + canvas_size.x, canvas_min.y + canvas_size.y), IM_COL32(16, 23, 34, 255), 14.0f);\n\n    ImVec2 projected[8];\n    for (int i = 0; i < 8; ++i) {\n        WirePoint3 p = cube[i];\n        float rx = p.x * cosf(angle) - p.z * sinf(angle);\n        float rz = p.x * sinf(angle) + p.z * cosf(angle);\n        float ry = p.y * cosf(angle * 0.6f) - rz * sinf(angle * 0.6f);\n        float depth = 3.8f + rz;\n        float perspective = 74.0f / depth;\n        projected[i] = ImVec2(center.x + rx * perspective * 34.0f, center.y + ry * perspective * 34.0f);\n    }\n\n    for (int i = 0; i < 12; ++i) {\n        draw_list->AddLine(projected[edges[i][0]], projected[edges[i][1]], IM_COL32(105, 181, 255, 255), 2.2f);\n    }\n\n    ImGui::Text(\"Rotation: %.2f\", angle);\n    ImGui::Text(\"النتيجة: مجسم سلكي متحرك داخل نافذة ImGui.\");\n    ImGui::End();\n}",
+        "explanation": "المثال يحسب الإسقاط بنفسه ثم يرسم الخطوط فقط. لذلك هو مثال مناسب لشرح معاينة 3D داخل ImGui من غير الادعاء بأن الواجهة أصبحت بديلاً عن Renderer ثلاثي الأبعاد.",
+        "expectedResult": "تظهر داخل النافذة معاينة wireframe لمكعب أو مجسم بسيط يدور بمرور الوقت فوق خلفية Canvas داكنة.",
+        "importantNote": "هذا المثال يغطي طلب الرسم ثلاثي الأبعاد داخل ImGui بوصفه معاينة سلكية داخل الواجهة، لا محرك عرض كامل."
+      },
+      "guiRepresentation": {
+        "title": "Wireframe 3D",
+        "mockup": "Canvas -> projected 3D cube\nRotation -> changes every frame\nMeaning -> 3D preview inside ImGui",
+        "explanation": "الصورة تبين مجسماً سلكياً داخل نافذة أدوات، وهو أقرب إلى معاينة داخل Inspector أو Tool panel."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "معاينة مجسم سلكي ثلاثي الأبعاد داخل نافذة ImGui",
+      "shortTooltip": "مثال مستقل يوضح رسم Wireframe 3D مبسط داخل نافذة Dear ImGui عبر إسقاط نقاط المجسم على Canvas.",
+      "description": "يعرض هذا المثال شكلاً ثلاثي الأبعاد مبسطاً داخل الواجهة نفسها: مجسم سلكي يدور مع الزمن ويعرض إسقاطه داخل Canvas باستخدام ImDrawList.",
+      "realMeaning": "Dear ImGui ليست محرك 3D بحد ذاتها، لكن التطبيق يستطيع رسم معاينات ثلاثية الأبعاد مبسطة أو أدوات wireframe داخل النوافذ عبر حساب الإسقاط بنفسه ثم رسم الخطوط الناتجة.",
+      "whenToUse": "استخدمه في أدوات المعاينة، أو Gizmo بسيطة، أو لوحات التدريب البصري، أو عندما تريد توضيح شكل مجسم داخل نافذة أدوات من دون فتح Viewport كبير.",
+      "practicalBenefit": "يوضح الفرق بين Dear ImGui كواجهة وبين المشهد نفسه، وفي الوقت نفسه يبين أن الواجهة تستطيع احتواء معاينات هندسية مفيدة داخل الـ inspector أو tool panel.",
+      "misuseImpact": "إذا قُدم هذا المثال على أنه مسار 3D كامل من Dear ImGui فسيكون ذلك مضللاً؛ هو معاينة سلكية مبنية يدوياً، لا Renderer ثلاثي الأبعاد كاملاً."
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "referenceGuides": {
+    "cpp-type-system": {
+      "fullProjectNoteArabic": "نظام الأنواع في C++ هو الأساس الذي يُبنى عليه كل شيء آخر في اللغة. كل متغير، كل دالة، كل تعبير يملك نوعًا، والمُصرِّف يستخدم هذه الأنواع لتحديد مقدار الذاكرة المطلوب، وما العمليات المسموحة، وكيف يُترجم الكود إلى تعليمات الآلة. فهم النظام يعني فهم لماذا يُسمح بشيء ولماذا يُرفض آخر، ولماذا يحدث سلوك غير متوقع أحيانًا. الأنواع في C++ ليست مجرد تصنيفات أكاديمية — هي قرارات حقيقية تُؤثر على الأداء والصحة والسلامة.",
+      "projectStepsArabic": [
+        {
+          "titleArabic": "لماذا نظام الأنواع مهم فعلًا؟",
+          "contentArabic": "نظام الأنواع ليس مجرد قواعد نحوية — هو أداة حماية. المُصرِّف يرفض إسناد float لمؤشر char لأن النوعين مختلفان، وهذا يمنع خطأ ذاكرة قد يكون صعب التتبع. كذلك، حجم النوع يُحدد مقدار الذاكرة: int غالبًا 4 بايت وdouble غالبًا 8 بايت. وعند التحويل بين الأنواع، المُصرِّف يُنشئ تعليمات مختلفة: تحويل int لـ double يحتاج تحويل رقمي حقيقي، بينما static_cast بين مؤشرات لا يُغيّر القيمة في الذاكرة أصلًا. فهم النظام يجعلك تُدرك ما يحدث خلف الكود."
+        },
+        {
+          "titleArabic": "التصنيف الكبير: ثلاث فئات",
+          "contentArabic": "الأنواع الأساسية (fundamental types): الأعداد الصحيحة (int, char, bool...) والعشرية (float, double...) وvoid وnullptr_t. هي الأنواع المبنية في اللغة نفسها. الأنواع المركبة (compound types): المؤشرات (int*)، المراجع (int&)، المصفوفات (int[10])، والدوال (بصفتها أنواع). تُبنى من الأنواع الأساسية. الأنواع المعرفة من المستخدم (user-defined types): struct وclass وunion وenum. هي أنواع تُنشئها أنت بتركيب أنواع أخرى داخلها."
+        },
+        {
+          "titleArabic": "مُعدِّلات الأنواع: signed, unsigned, short, long",
+          "contentArabic": "هذه المُعدِّلات تُغيّر نطاق الأنواع الصحيحة دون إنشاء أنواع جديدة حقيقية. unsigned يُضاعف نطاق الموجب على حساب حذف السالب. short يُضيق النطاق لتوفير الذاكرة. long يُوسّعه. يمكن دمجها: unsigned long long. لكن تذكر: حجم هذه الأنواع يعتمد على المنصة (implementation-defined) باستثناء int8_t وuint8_t التي تضمن حجمًا دقيقًا عبر <cstdint>."
+        },
+        {
+          "titleArabic": "const وconstexpr: ثبات وقت التشغيل vs ثبات وقت الترجمة",
+          "contentArabic": "const تعني 'لا تُغيّر هذه القيمة بعد التهيئة' — لكن القيمة نفسها قد لا تكون معروفة إلا وقت التشغيل. constexpr تعني 'هذه القيمة معروفة وقت الترجمة ويمكن استخدامها في أماكن تحتاج قيم ثابتة الترجمة'. مثال: const int size = readFile(); — صحيح لكن size غير معروف وقت الترجمة. constexpr int size = 100; — معروف وقت الترجمة ويمكن استخدامه كحجم مصفوفة: int arr[size]. في C++ الحديثة، فضّل constexpr حين تستطيع لأنه يُتيح للمُصرِّف التحسينات ويمنع الأخطاء المبكرة."
+        },
+        {
+          "titleArabic": "auto: لماذا وماذا يفعل فعلًا؟",
+          "contentArabic": "auto لا يجعل المتغير 'بدون نوع' — هو يطلب من المُصرِّف أن يستنتج النوع من القيمة المُسندة. auto x = 42; // x هو int. auto y = 3.14; // y هو double. الفائدة الحقيقية: تبسيط الأنواع الطويلة مثل أسماء المكررات (std::unordered_map<string, vector<int>>::iterator)، وتقليل الأخطاء عند تغيير نوع المُرجع. لكن auto يُسقط المراجع وconst: auto x = expr; ينسخ دائمًا. استخدم const auto& للقراءة وauto&& للكتابة أو perfect forwarding."
+        },
+        {
+          "titleArabic": "decltype: ما نوع هذا التعبير فعلًا؟",
+          "contentArabic": "decltype(expr) يُرجع النوع الدقيق لتعبير دون تقييمه. الفرق عن auto: auto يُسقط المراجع وconst، بينما decltype يحافظ عليها. decltype(x) مع متغير عادي يُرجع نوعه كما هو. decltype((x)) مع أقواس إضافية يُرجع مرجعًا دائمًا (lvalue reference). هذا مهم في القوالب عندما تحتاج نوع الإرجاع الدقيق أو نوع معامل. decltype يستخدم كثيرًا مع trailing return type وauto."
+        },
+        {
+          "titleArabic": "المؤشرات: أكثر من مجرد عناوين",
+          "contentArabic": "المؤشر يخزن عنوان ذاكرة كائن آخر. int* p; تعني 'p يخزن عنوان int'. حجم المؤشر نفسه ثابت (4 أو 8 بايت حسب المنصة) بغض النظر عن نوع المُشار إليه — النوع يُخبر المُصرِّف كيف يُفسّر الذاكرة عند الوصول. nullptr هو القيمة الفارغة للمؤشرات (C++11) — استخدمه بدل 0 أو NULL لأنه لا يُخلط مع الأعداد الصحيحة في التحميل الزائد. المؤشرات الخام خطيرة: قد تشير لذاكرة محررة (dangling) أو nullptr. فضّل المؤشرات الذكية (unique_ptr, shared_ptr) في الملكية، واقصر الخام على المؤشرات غير المالكة."
+        },
+        {
+          "titleArabic": "المراجع: أسماء بديلة لا عناوين منفصلة",
+          "contentArabic": "المرجع (reference) ليس كائنًا مستقلًا — هو اسم بديل لكائن موجود. int& ref = x; يعني ref وx يشيران لنفس المكان في الذاكرة. لا يمكن جعل المرجع يشير لكائن آخر لاحقًا. الفرق عن المؤشر: المرجع لا يمكن أن يكون فارغًا (لا nullptr)، لا يحتاج dereference (*)، ويجب يُهيأ فورًا. lvalue reference (int&) يرتبط بكائنات لها عنوان. rvalue reference (int&&) يرتبط بقيم مؤقتة (مثل 42 أو نتيجة دالة) — وهو أساس move semantics الذي يُجنّب النسخ غير الضروري."
+        },
+        {
+          "titleArabic": "الأسماء البديلة للأنواع: typedef vs using",
+          "contentArabic": "typedef وusing يُنشئان اسمًا بديلًا لنوع موجود. typedef int Score; وusing Score = int; يفعلان نفس الشيء. لكن using أقوى: يدعم القوالب (template aliases) بينما typedef لا يدعمها بوضوح. using Vec3 = std::array<float, 3>; أنظف من typedef. في C++ الحديثة، فضّل using دائمًا لأنه أكثر قابلية للقراءة ويدعم كل حالات typedef وأكثر."
+        },
+        {
+          "titleArabic": "enum وenum class: لماذا class أفضل؟",
+          "contentArabic": "enum العادي يُعرّف أسماء في النطاق المحيط مما قد يُسبب تضارب الأسماء. enum class (C++11) يُغلق الأسماء داخل النوع: Color::Red بدل Red. كذلك، enum class لا يتحول تلقائيًا لعدد صحيح — هذا يمنع أخطاء مثل مقارنة enum من نوع مع enum من نوع آخر. استخدم enum class بالافتراضي. حدد النوع الأساسي إذا احتجت: enum class Flags : uint32_t. استخدم enum العادي فقط عند الحاجة للتحويل التلقائي لعدد صحيح (نادرًا)."
+        },
+        {
+          "titleArabic": "التحويلات بين الأنواع: متى آمنة ومتى خطرة؟",
+          "contentArabic": "التحويل الضمني: يحدث تلقائيًا مثل int لـ double (آمن، لا فقدان بيانات) أو double لـ int (خطير، يقطع الكسر). المُصرِّف قد يُحذّر أو يسمح حسب السياق. static_cast: تحويل صريح آمن للتحويلات المعروفة مثل double لـ int أو void* لـ int*. dynamic_cast: للتحويل بين أنواع في وراثة polymorphic — يفشل مع المؤشرات (nullptr) ويُرمي مع المراجع. reinterpret_cast: إعادة تفسير البايتات — خطير جدًا، يُستخدم في التعامل منخفض المستوى فقط. const_cast: إزالة أو إضافة const — خطير إذا أزلت const من كائن فعليًا const ثم عدّلته (سلوك غير معرّف). القاعدة: استخدم أضيق تحويل ممكن."
+        }
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حجم كل نوع أساسي — لا تفترض!",
+          "code": "#include <iostream>\n#include <cstdint>\n\nint main() {\n    // هذه الأحجام شائعة لكنها ليست مضمونة من المعيار!\n    std::cout << \"char: \" << sizeof(char) << \" byte\\n\";    // دائمًا 1\n    std::cout << \"short: \" << sizeof(short) << \" bytes\\n\";   // غالبًا 2\n    std::cout << \"int: \" << sizeof(int) << \" bytes\\n\";       // غالبًا 4\n    std::cout << \"long: \" << sizeof(long) << \" bytes\\n\";      // 4 أو 8 حسب المنصة!\n    std::cout << \"long long: \" << sizeof(long long) << \" bytes\\n\"; // غالبًا 8\n    std::cout << \"float: \" << sizeof(float) << \" bytes\\n\";   // غالبًا 4\n    std::cout << \"double: \" << sizeof(double) << \" bytes\\n\"; // غالبًا 8\n    std::cout << \"pointer: \" << sizeof(void*) << \" bytes\\n\"; // 4 أو 8 حسب 32/64-bit\n\n    // للأحجام الدقيقة: استخدم <cstdint>\n    static_assert(sizeof(int8_t) == 1);\n    static_assert(sizeof(int32_t) == 4);\n    static_assert(sizeof(int64_t) == 8);\n    return 0;\n}",
+          "explanationArabic": "sizeof يُرجع الحجم بالبايتات. char دائمًا 1 بايت بالتعريف. الباقي يعتمد على المنصة والمُصرِّف. long هو 4 بايت على ويندوز 64-bit لكن 8 بايت على لينكس 64-bit! هذا سبب عدم الاعتماد على long للبيانات المهيكلة عبر الشبكة. استخدم int32_t/int64_t من <cstdint> حين تحتاج حجمًا دقيقًا.",
+          "relatedTokens": [
+            "int8_t",
+            "int32_t",
+            "int64_t",
+            "size_t",
+            "sizeof"
+          ]
+        },
+        {
+          "titleArabic": "const vs constexpr — الفرق العملي",
+          "code": "#include <iostream>\n\n// constexpr: القيمة معروفة وقت الترجمة\n// يمكن استخدامها كحجم مصفوفة ثابت\nconstexpr int BUFFER_SIZE = 256;\nchar buffer[BUFFER_SIZE]; // صحيح — المُصرِّف يعرف الحجم\n\n// const: القيمة ثابتة بعد التهيئة لكن قد لا تُعرف إلا وقت التشغيل\n// لا يمكن استخدامها كحجم مصفوفة ثابت (في المعيار القديم)\nint computeSize() { return 128; }\nconst int runtimeSize = computeSize();\n// char buf2[runtimeSize]; // خطأ في C++11 — الحجم غير ثابت الترجمة\n\n// constexpr دالة: تُقيَّم وقت الترجمة إن أمكن\nconstexpr int square(int x) { return x * x; }\nconstexpr int s = square(5); // تُقيَّم وقت الترجمة = 25\nint arr[square(3)]; // مصفوفة بحجم 9 — صحيح\n\nint main() {\n    // constexpr مع الإدخال: تتراجع للتقييم وقت التشغيل\n    int val;\n    std::cin >> val;\n    // لا يمكن أن يكون constexpr لأن val غير معروف وقت الترجمة\n    const int result = square(val);\n    return result;\n}",
+          "explanationArabic": "الفرق الجوهري: const تعني 'لا تُغيّرني بعد التهيئة' وconstexpr تعني 'يمكن حسابي وقت الترجمة'. const يمكن أن يأخذ قيمة من دالة عادية، لكن constexpr يتطلب أن تكون القيمة قابلة للحساب وقت الترجمة. في C++ الحديثة، استخدم constexpr بالافتراضي لأنه يفتح إمكانيات الترجمة (مثل أحجام المصفوفات) ويُحسّن الأداء.",
+          "relatedTokens": [
+            "const",
+            "constexpr",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "auto يُسقط المراجع وconst — هذا الفخ!",
+          "code": "#include <iostream>\n#include <string>\n\nint main() {\n    const std::string name = \"hello\";\n\n    // ❌ auto يُسقط const وينسخ القيمة\n    auto a = name; // a هو std::string (نسخة مستقلة، ليست const)\n    a = \"changed\"; // مسموح — لأن a ليست const!\n\n    // ❌ auto يُسقط المرجع أيضًا\n    std::string& ref = const_cast<std::string&>(name);\n    auto b = ref; // b هي نسخة، ليست مرجعًا\n\n    // ✅ const auto& يحافظ على const ويمنع النسخ\n    const auto& c = name; // c هو const std::string& — لا نسخ، لا تعديل\n    // c = \"changed\"; // خطأ — const!\n\n    // ✅ auto& يحافظ على المرجع لكن يتطلب أن الأصل ليس const\n    auto& d = const_cast<std::string&>(name); // d هو std::string&\n    d = \"modified\"; // يُعدّل name!\n\n    return 0;\n}",
+          "explanationArabic": "هذا من أخطر فخاخ auto: auto x = expr دائمًا يُنشئ نسخة جديدة بإسقاط const والمراجع. هذا يعني أن تعديل x لا يُؤثر على الأصل حتى لو كان الأصل مرجعًا. القاعدة: للقراءة استخدم const auto& (لا نسخ، لا تعديل). للكتابة استخدم auto& (مرجع، يُعدّل الأصل). للقيم البسيطة (int, double) استخدم auto مباشرة (النسخ رخيصة).",
+          "relatedTokens": [
+            "auto",
+            "const",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "decltype يحافظ على النوع الدقيق",
+          "code": "#include <iostream>\n#include <type_traits>\n\nint main() {\n    int x = 42;\n    const int& cref = x;\n\n    // auto يُسقط المرجع وconst\n    auto a = cref; // a هو int (نسخة، لا مرجع، لا const)\n    static_assert(std::is_same_v<decltype(a), int>);\n\n    // decltype يحافظ على النوع الدقيق\n    decltype(cref) b = x; // b هو const int& — نفس نوع cref بالضبط\n    static_assert(std::is_same_v<decltype(b), const int&>);\n\n    // decltype مع أقواس يُرجع مرجعًا دائمًا\n    decltype((x)) c = x; // c هو int& — الأقواس تُغيّر النتيجة!\n    static_assert(std::is_same_v<decltype((x)), int&>);\n\n    // decltype(x) بدون أقواس يُرجع النوع كما هو\n    static_assert(std::is_same_v<decltype(x), int>);\n\n    return 0;\n}",
+          "explanationArabic": "decltype(x) بدون أقواس يُرجع نوع المتغير المُعلن. decltype((x)) مع أقواس يُرجع مرجعًا لأن التعبير (x) هو lvalue. هذا الفرق الدقيق مهم في القوالب وtrailing return types. decltype هو الأداة الصحيحة حين تحتاج النوع الدقيق دون أي تحويل أو إسقاط.",
+          "relatedTokens": [
+            "decltype",
+            "auto",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "المؤشرات الخام: فخ الدلاء المعلقة",
+          "code": "#include <iostream>\n\nint* createValue() {\n    int local = 42;\n    return &local; // ❌ خطأ فادح! local تُدمّر عند خروج الدالة\n    // المؤشر المُرجع يشير لذاكرة لم تعد صالحة (dangling pointer)\n}\n\nint main() {\n    int* ptr = createValue();\n    // ptr يُشير لذاكرة لم تعد لبرنامجك — استخدامها سلوك غير معرّف\n    // قد يطبع 42 أو أي قيمة عشوائية أو ينهي البرنامج\n    // std::cout << *ptr << '\\n'; // خطير!\n\n    // ✅ الحل الصحيح: أعد القيمة لا المؤشر\n    // أو استخدم المؤشرات الذكية\n    return 0;\n}",
+          "explanationArabic": "المؤشر المعلق (dangling pointer) من أخطر الأخطاء في C++ لأنه لا يُسبب خطأ ترجمة — ينتج سلوكًا غير معرّف قد 'يعمل' أحيانًا مما يُعطي وهمًا بالصحة. لا تُرجع مؤشرًا لمتغير محلي. استخدم القيمة المباشرة أو unique_ptr أو المراجع عندما يكون الكائن مضمون البقاء.",
+          "relatedTokens": [
+            "nullptr",
+            "int",
+            "std::unique_ptr"
+          ]
+        },
+        {
+          "titleArabic": "nullptr vs 0 vs NULL — لماذا nullptr أفضل",
+          "code": "#include <iostream>\n\nvoid process(int value) {\n    std::cout << \"int: \" << value << '\\n';\n}\n\nvoid process(int* ptr) {\n    if (ptr) std::cout << \"pointer: \" << *ptr << '\\n';\n    else std::cout << \"null pointer\\n\";\n}\n\nint main() {\n    // 0 هو int — يُستدعى النسخة int دائمًا!\n    process(0);          // يطبع \"int: 0\" — ليس ما تريد مع المؤشرات\n\n    // NULL قد يكون 0 أو ((void*)0) — سلوك غير مضمون مع التحميل الزائد\n    process(NULL);       // قد يُستدعى int أو pointer حسب التعريف\n\n    // nullptr له نوعه الخاص nullptr_t — لا يُخلط مع int\n    process(nullptr);    // دائمًا يُستدعى النسخة int* — هذا ما تريده\n\n    return 0;\n}",
+          "explanationArabic": "0 وNULL هما أعداد صحيحة في الجوهر — يمكن أن يُمررا لـ int بدل int* عند التحميل الزائد. nullptr له نوع nullptr_t الخاص الذي لا يتحول لـ int أبدًا. هذا يُمنع الأخطاء الصامتة في التحميل الزائد. استخدم nullptr دائمًا بدل 0 أو NULL مع المؤشرات.",
+          "relatedTokens": [
+            "nullptr",
+            "nullptr_t",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "lvalue reference vs rvalue reference — أساس move semantics",
+          "code": "#include <iostream>\n#include <string>\n#include <utility>\n\n// lvalue reference: يرتبط بكائن له اسم وعنوان في الذاكرة\nvoid readOnly(const std::string& s) {\n    // s مرجع لـ const — لا نسخ، لا تعديل\n    std::cout << \"قراءة: \" << s << '\\n';\n}\n\n// rvalue reference: يرتبط بقيمة مؤقتة (مثل نتيجة دالة أو حرفي)\nvoid takeOwnership(std::string&& s) {\n    // s مرجع لقيمة مؤقتة — يمكن 'سرقة' محتواها\n    std::string owned = std::move(s); // نقل لا نسخ\n    std::cout << \"ملكية: \" << owned << '\\n';\n}\n\nint main() {\n    std::string data = \"hello world\";\n\n    // data هي lvalue — تُمرر لـ const std::string&\n    readOnly(data);\n    readOnly(\"temporary\"); // النص الحرفي مؤقت — يُقبل أيضًا\n\n    // std::move(data) تُحوّل data لـ rvalue reference\n    takeOwnership(std::move(data));\n    // بعد النقل: data قد تكون فارغة أو في حالة غير محددة\n    // لا تستخدم data بعد move!\n\n    return 0;\n}",
+          "explanationArabic": "lvalue reference (T&) يرتبط بأشياء لها عنوان دائم. rvalue reference (T&&) يرتبط بأشياء مؤقتة على وشك الزوال. هذا التمييز هو أساس move semantics: عندما تعرف أن المصدر مؤقت ولا يُحتاج لاحقًا، تُنقل موارده بدل نسخها. std::move لا يُنقل شيئًا فعلًا — هو فقط يُحوّل lvalue لـ rvalue reference لتفعيل التحميل الزائد المناسب.",
+          "relatedTokens": [
+            "std::move",
+            "std::string",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "enum class vs enum — لماذا class أفضل",
+          "code": "#include <iostream>\n\n// ❌ enum عادي: الأسماء تُلوّث النطاق المحيط\nenum Color { Red, Green, Blue };\nenum TrafficLight { Red, Yellow, Green }; // خطأ! Red وGreen مُعرّفة مسبقًا\n\n// ✅ enum class: الأسماء محمية داخل النوع\nenum class Color2 { Red, Green, Blue };\nenum class TrafficLight2 { Red, Yellow, Green }; // صحيح — لا تضارب\n\nint main() {\n    // enum عادي: الأسماء متاحة مباشرة — قد تتعارض\n    Color c = Green; // أي Green؟ Color أم لو كان موجودًا آخر؟\n\n    // enum class: يجب تحديد النوع صراحة — واضح ومحمي\n    Color2 c2 = Color2::Green; // لا التباس\n\n    // enum class لا يتحول تلقائيًا لـ int\n    // int n = c2; // ❌ خطأ — لا تحويل ضمني\n    int n = static_cast<int>(c2); // ✅ تحويل صريح — نية واضحة\n\n    // مقارنة بين أنواع مختلفة ممنوعة تلقائيًا\n    // if (c2 == TrafficLight2::Red) {} // ❌ خطأ — أنواع مختلفة\n\n    return static_cast<int>(c2);\n}",
+          "explanationArabic": "enum class يحل مشكلتين: تضارب الأسماء (لأن الأسماء محمية) والتحويلات غير المقصودة (لأنه لا يتحول تلقائيًا لـ int). مع enum عادي، يمكنك مقارنة Color::Red مع TrafficLight::Red بلا خطأ رغم أنهما أنواع مختلفة منطقيًا! enum class يمنع هذا. استخدم enum class دائمًا إلا إذا كنت تحتاج التحويل التلقائي لـ int لسبب محدد.",
+          "relatedTokens": [
+            "enum",
+            "static_cast",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "using vs typedef — لماذا using أفضل",
+          "code": "#include <iostream>\n#include <vector>\n#include <map>\n#include <array>\n\n// typedef: صعب القراءة مع القوالب\ntypedef std::map<std::string, std::vector<int>> ScoreMap_Old;\n\n// using: نفس الشيء لكن أوضح بكثير\nusing ScoreMap = std::map<std::string, std::vector<int>>;\n\n// using يدعم القوالب — typedef لا يدعمها بوضوح\ntemplate<typename T>\nusing Vec = std::vector<T>; // قالب اسم بديل\n\nVec<int> numbers = {1, 2, 3}; // std::vector<int>\nVec<double> decimals = {1.5, 2.5}; // std::vector<double>\n\n// typedef لا يستطيع فعل ذلك بسهولة\n\nint main() {\n    ScoreMap scores;\n    scores[\"Alice\"] = {90, 85, 92};\n    scores[\"Bob\"] = {78, 88};\n\n    // using أوضح عند القراءة: اقرأ من اليمين لليسار\n    // using ScoreMap = map<string, vector<int>>\n    // 'ScoreMap هو map من string لـ vector من int'\n\n    return scores.size() > 0 ? 1 : 0;\n}",
+          "explanationArabic": "using يفعل كل ما يفعله typedef بصراحة أكثر. الميزة الكبرى: دعم القوالب. مع typedef، يجب كتابة نمط غريب باستخدام struct واضح. مع using، template using تعمل مباشرة. هذا يُبسط الأكواد التي تستخدم أنواعًا معقدة مثل حاويات الحاويات أو المكررات. في C++ الحديثة، لا تستخدم typedef أبدًا.",
+          "relatedTokens": [
+            "std::vector",
+            "std::map",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "التحويلات الأربعة: أيّها تستخدم ومتى؟",
+          "code": "#include <iostream>\n\nstruct Base { virtual ~Base() = default; int x = 1; };\nstruct Derived : Base { int y = 2; };\n\nint main() {\n    // 1. static_cast: تحويلات آمنة ومعروفة وقت الترجمة\n    double d = 3.7;\n    int n = static_cast<int>(d); // 3 — يقطع الكسر، واضح ومقصود\n    Base* b = static_cast<Base*>(new Derived()); // تحويل لأعلى في الوراثة — آمن\n\n    // 2. dynamic_cast: تحويل بين أنواع في وراثة polymorphic\n    Base* base = new Derived();\n    Derived* derived = dynamic_cast<Derived*>(base); // آمن — يفحص وقت التشغيل\n    if (derived) {\n        // التحويل نجح — يمكن الوصول لـ y\n    }\n    Base* wrong = new Base();\n    Derived* fail = dynamic_cast<Derived*>(wrong); // يُرجع nullptr — التحويل فشل\n\n    // 3. reinterpret_cast: إعادة تفسير البايتات — خطير جدًا!\n    int value = 42;\n    char* bytes = reinterpret_cast<char*>(&value);\n    // bytes تُفسّر ذاكرة value كـ char — مفيد لمعالجة البايتات\n    // لكن لا تستخدمه للتحويلات العادية!\n\n    // 4. const_cast: إزالة أو إضافة const — خطير إذا أزلت const من كائن فعليًا\n    const int& cref = value;\n    int& mutable_ref = const_cast<int&>(cref);\n    mutable_ref = 99; // يعمل هنا لأن value الأصلي ليس const\n    // لكن لو كان cref يشير لكائن const فعليًا — سلوك غير معرّف!\n\n    delete base;\n    delete wrong;\n    return 0;\n}",
+          "explanationArabic": "استخدم أضيق تحويل ممكن: static_cast للأمور العادية، dynamic_cast للوراثة المتعددة، reinterpret_cast فقط لمعالجة البايتات منخفضة المستوى، و const_cast نادرًا جدًا. القاعدة الذهبية: إذا احتجت reinterpret_cast أو const_cast، أعد النظر في التصميم — غالبًا هناك طريقة أفضل.",
+          "relatedTokens": [
+            "static_cast",
+            "dynamic_cast",
+            "reinterpret_cast",
+            "const_cast"
+          ]
+        },
+        {
+          "titleArabic": "التحويل الضمني الخفي — فخ فقدان البيانات",
+          "code": "#include <iostream>\n#include <cstdint>\n\nint main() {\n    // تحويل ضمني من double لـ int — يقطع الكسر صامتًا!\n    double pi = 3.14159;\n    int approx = pi; // 3 — المُصرِّف قد يُحذّر لكنه يسمح\n\n    // تحويل ضمني من أكبر لـ أصغر — قد يفقد بيانات!\n    int32_t big = 3000000000; // أكبر من INT32_MAX (2147483647)\n    // int16_t small = big; // خطأ — قد يحذّر لكنه يسمح في بعض الأماكن\n\n    // تحويل ضمني من unsigned لـ signed — سلوك معرّف لكن قد يُفاجئ\n    uint32_t u = 4000000000u;\n    int32_t s = u; // قيمة سالبة! لأن البت الأعلى هو 1\n    // s = -294967296 — ليس 4000000000!\n\n    // ✅ استخدم static_cast صريحًا لإظهار النية\n    int explicit_approx = static_cast<int>(pi); // واضح: أنا أعرف أنني أقطع الكسر\n\n    // ✅ مع المُصرِّف الحديث: استخدم -Wconversion لرؤية كل التحويلات الضمنية\n    return s < 0 ? 1 : 0;\n}",
+          "explanationArabic": "التحويلات الضمنية تحدث صامتًا وقد تُفقد بيانات دون أن تشعر. double لـ int يقطع الكسر. unsigned لـ signed قد يُحوّل رقمًا كبيرًا لسالب. المُصرِّف قد يُحذّر لكنه لا يمنع. استخدم static_cast صريحًا دائمًا عند التحويل بين أنواع مختلفة — هذا يُوضح للقارئ أنك تعلم ما يحدث ولا يتغير 'بالصدفة'. فعّل تحذيرات المُصرِّف (-Wall -Wextra -Wconversion) لاكتشاف هذه الحالات.",
+          "relatedTokens": [
+            "static_cast",
+            "int32_t",
+            "uint32_t",
+            "double"
+          ]
+        },
+        {
+          "titleArabic": "trailing return type وdecltype مع الدوال",
+          "code": "#include <iostream>\n#include <type_traits>\n\n// النمط القديم: نوع الإرجاع قبل اسم الدالة\n// مشكلة: لا يمكن استخدام المُعاملات في نوع الإرجاع\n// template<typename A, typename B>\n// ??? add(A a, B b) { return a + b; } // ما نوع الإرجاع؟\n\n// النمط الحديث: trailing return type مع auto وdecltype\ntemplate<typename A, typename B>\nauto add(A a, B b) -> decltype(a + b) {\n    return a + b;\n} // نوع الإرجاع = decltype(a + b) — يُحدد تلقائيًا\n\n// في C++14: auto يكفي (المُصرِّف يستنتج نوع الإرجاع)\ntemplate<typename A, typename B>\nauto multiply(A a, B b) {\n    return a * b;\n}\n\nint main() {\n    auto x = add(3, 4);       // int\n    auto y = add(3.5, 2);     // double\n    auto z = multiply(3, 2.5); // double\n    return static_cast<int>(x + y + z); // 12\n}",
+          "explanationArabic": "trailing return type (-> نوع بعد المعاملات) يسمح باستخدام decltype على المُعاملات لتحديد نوع الإرجاع. هذا ضروري في القوالب حيث لا تعرف نوع a+b مسبقًا. في C++14 فما فوق، auto يكفي لأن المُصرِّف يستنتج نوع الإرجاع من return. لكن trailing return type لا يزال مفيدًا عندما تريد التحكم الدقيق بالنوع.",
+          "relatedTokens": [
+            "auto",
+            "decltype"
+          ]
+        },
+        {
+          "titleArabic": "const correctness — لماذا يهم في كل مكان",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n\n// const في المعامل: الدالة لا تُعدّل المعامل — هذا وعد للمُستدعي\nvoid print(const std::string& s) {\n    // s = \"modified\"; // خطأ — const يمنع التعديل\n    std::cout << s << '\\n';\n}\n\n// const في نهاية دالة عضو: الدالة لا تُعدّل أعضاء الكائن\nstruct Rectangle {\n    float width, height;\n\n    float area() const { // const يعني: هذه الدالة لا تُغيّر width أو height\n        return width * height;\n    }\n\n    void scale(float factor) { // بدون const — لأنها تُعدّل الأعضاء\n        width *= factor;\n        height *= factor;\n    }\n};\n\nint main() {\n    // const كائن: لا يمكن استدعاء دوال غير const عليه\n    const Rectangle r{10.0f, 5.0f};\n    float a = r.area(); // ✅ — area() const\n    // r.scale(2.0f); // ❌ — scale() ليست const\n\n    // مرجع const في حلقة: لا نسخ + لا تعديل\n    const std::vector<int> data = {1, 2, 3, 4, 5};\n    for (const auto& item : data) { // const auto& — أفضل ممارسة\n        // item = 99; // خطأ — const\n    }\n\n    return static_cast<int>(a);\n}",
+          "explanationArabic": "const correctness ليس شكليًا — هو أداة حماية حقيقية. const في المعامل يمنع الدالة من تعديل ما تمُرَّر لها بالمرجع. const في نهاية دالة عضو يسمح باستدعائها على كائنات const. بدون هذا، لا تستطيع استدعاء أي دالة على كائن const! القاعدة: اجعل كل شيء const بالافتراضي وأزل const فقط عند الحاجة الفعلية للتعديل.",
+          "relatedTokens": [
+            "const",
+            "std::string",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: التحويل بين أنواع مؤشرات غير متوافقة",
+          "code": "#include <iostream>\n\nint main() {\n    int x = 42;\n    double d = 3.14;\n\n    // ❌ لا يوجد تحويل ضمني بين مؤشرات أنواع مختلفة\n    // double* dp = &x; // خطأ ترجمة — int* لا يتحول لـ double*\n\n    // ❌ static_cast بين مؤشرات أنواع غير متوافقة ممنوع\n    // double* dp2 = static_cast<double*>(&x); // خطأ ترجمة\n\n    // ⚠️ reinterpret_cast يُجبر التحويل — لكنه خطير!\n    double* dp3 = reinterpret_cast<double*>(&x);\n    // dp3 يُفسّر ذاكرة int كـ double — القيمة لا معنى لها\n    // std::cout << *dp3; // قيمة عشوائية\n\n    // ✅ الطريقة الصحيحة: حوّل القيمة لا المؤشر\n    double safe = static_cast<double>(x); // 42.0 — تحويل صحيح\n    double* safe_ptr = &safe;\n    // *safe_ptr = 42.0 — صحيح ومتوقع\n\n    return static_cast<int>(safe);\n}",
+          "explanationArabic": "المؤشرات لا تتحول ضمنيًا بين أنواع مختلفة لأن هذا سيُفسّر الذاكرة بشكل خاطئ. int في الذاكرة لا يبدو مثل double — له تمثيل ثنائي مختلف. reinterpret_cast يُجبر التحويل لكنه لا يُغيّر البايتات — فقط يُغيّر كيف يُفسّرها المُصرِّف. هذا مفيد فقط في حالات نادرة جدًا مثل معالجة بروتوكولات شبكة منخفضة المستوى.",
+          "relatedTokens": [
+            "reinterpret_cast",
+            "static_cast",
+            "int",
+            "double"
+          ]
+        }
+      ],
+      "followUps": [
+        "auto",
+        "decltype",
+        "const",
+        "constexpr",
+        "nullptr",
+        "static_cast",
+        "dynamic_cast",
+        "enum",
+        "std::move",
+        "std::unique_ptr",
+        "int32_t",
+        "int64_t",
+        "size_t",
+        "bool",
+        "float",
+        "double",
+        "char",
+        "std::enable_if",
+        "std::is_same_v",
+        "std::conditional_t",
+        "std::underlying_type_t"
+      ]
+    }
+  }
+}

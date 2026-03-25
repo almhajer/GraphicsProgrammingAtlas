@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 27 من 64 • الأسطر 11701-12150 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 27 من 64 • الأسطر 11701-12150</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 27 من 64 • الأسطر 11701-12150</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-26.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-28.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 27/64</span>
+        <span class="source-stat">الأسطر: 11701-12150</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_opticalFlowSessionNV )
+        {
+          getDispatcher()-&gt;vkDestroyOpticalFlowSessionNV( static_cast&lt;VkDevice&gt;( m_device ),
+                                                          static_cast&lt;VkOpticalFlowSessionNV&gt;( m_opticalFlowSessionNV ),
+                                                          reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device               = nullptr;
+        m_opticalFlowSessionNV = nullptr;
+        m_allocator            = nullptr;
+        m_dispatcher           = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::OpticalFlowSessionNV release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_opticalFlowSessionNV, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( OpticalFlowSessionNV &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_opticalFlowSessionNV, rhs.m_opticalFlowSessionNV );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_NV_optical_flow ===
+
+      // wrapper function for command vkBindOpticalFlowSessionImageNV, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindOpticalFlowSessionImageNV.html
+      typename ResultValueType&lt;void&gt;::type
+        bindImage( OpticalFlowSessionBindingPointNV bindingPoint, VULKAN_HPP_NAMESPACE::ImageView view, ImageLayout layout ) const;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device               m_device               = {};
+      VULKAN_HPP_NAMESPACE::OpticalFlowSessionNV m_opticalFlowSessionNV = {};
+      const AllocationCallbacks *                m_allocator            = {};
+      detail::DeviceDispatcher const *           m_dispatcher           = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;OpticalFlowSessionNV&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkPerformanceConfigurationINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPerformanceConfigurationINTEL.html
+    class PerformanceConfigurationINTEL
+    {
+    public:
+      using CType   = VkPerformanceConfigurationINTEL;
+      using CppType = VULKAN_HPP_NAMESPACE::PerformanceConfigurationINTEL;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::ePerformanceConfigurationINTEL;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      PerformanceConfigurationINTEL( Device const &amp; device, PerformanceConfigurationAcquireInfoINTEL const &amp; acquireInfo )
+      {
+        *this = device.acquirePerformanceConfigurationINTEL( acquireInfo );
+      }
+#  endif
+
+      PerformanceConfigurationINTEL( Device const &amp; device, VkPerformanceConfigurationINTEL configuration )
+        : m_device( device ), m_performanceConfigurationINTEL( configuration ), m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      PerformanceConfigurationINTEL( std::nullptr_t ) {}
+
+      ~PerformanceConfigurationINTEL()
+      {
+        clear();
+      }
+
+      PerformanceConfigurationINTEL()                                        = delete;
+      PerformanceConfigurationINTEL( PerformanceConfigurationINTEL const &amp; ) = delete;
+
+      PerformanceConfigurationINTEL( PerformanceConfigurationINTEL &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_performanceConfigurationINTEL( exchange( rhs.m_performanceConfigurationINTEL, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      PerformanceConfigurationINTEL &amp; operator=( PerformanceConfigurationINTEL const &amp; ) = delete;
+
+      PerformanceConfigurationINTEL &amp; operator=( PerformanceConfigurationINTEL &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_performanceConfigurationINTEL, rhs.m_performanceConfigurationINTEL );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::PerformanceConfigurationINTEL const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_performanceConfigurationINTEL;
+      }
+
+      VULKAN_HPP_NAMESPACE::PerformanceConfigurationINTEL const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_performanceConfigurationINTEL );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::PerformanceConfigurationINTEL() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_performanceConfigurationINTEL;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_performanceConfigurationINTEL )
+        {
+          getDispatcher()-&gt;vkReleasePerformanceConfigurationINTEL( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                   static_cast&lt;VkPerformanceConfigurationINTEL&gt;( m_performanceConfigurationINTEL ) );
+        }
+        m_device                        = nullptr;
+        m_performanceConfigurationINTEL = nullptr;
+        m_dispatcher                    = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::PerformanceConfigurationINTEL release()
+      {
+        m_device     = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_performanceConfigurationINTEL, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( PerformanceConfigurationINTEL &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_performanceConfigurationINTEL, rhs.m_performanceConfigurationINTEL );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device                        m_device                        = {};
+      VULKAN_HPP_NAMESPACE::PerformanceConfigurationINTEL m_performanceConfigurationINTEL = {};
+      detail::DeviceDispatcher const *                    m_dispatcher                    = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;PerformanceConfigurationINTEL&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkPipelineCache, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineCache.html
+    class PipelineCache
+    {
+    public:
+      using CType   = VkPipelineCache;
+      using CppType = VULKAN_HPP_NAMESPACE::PipelineCache;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::ePipelineCache;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::ePipelineCache;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      PipelineCache( Device const &amp; device, PipelineCacheCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createPipelineCache( createInfo, allocator );
+      }
+#  endif
+
+      PipelineCache( Device const &amp; device, VkPipelineCache pipelineCache, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_pipelineCache( pipelineCache )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      PipelineCache( std::nullptr_t ) {}
+
+      ~PipelineCache()
+      {
+        clear();
+      }
+
+      PipelineCache()                        = delete;
+      PipelineCache( PipelineCache const &amp; ) = delete;
+
+      PipelineCache( PipelineCache &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_pipelineCache( exchange( rhs.m_pipelineCache, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      PipelineCache &amp; operator=( PipelineCache const &amp; ) = delete;
+
+      PipelineCache &amp; operator=( PipelineCache &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_pipelineCache, rhs.m_pipelineCache );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::PipelineCache const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_pipelineCache;
+      }
+
+      VULKAN_HPP_NAMESPACE::PipelineCache const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_pipelineCache );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::PipelineCache() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_pipelineCache;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_pipelineCache )
+        {
+          getDispatcher()-&gt;vkDestroyPipelineCache( static_cast&lt;VkDevice&gt;( m_device ),
+                                                   static_cast&lt;VkPipelineCache&gt;( m_pipelineCache ),
+                                                   reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device        = nullptr;
+        m_pipelineCache = nullptr;
+        m_allocator     = nullptr;
+        m_dispatcher    = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::PipelineCache release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_pipelineCache, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( PipelineCache &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_pipelineCache, rhs.m_pipelineCache );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_VERSION_1_0 ===
+
+      // wrapper function for command vkGetPipelineCacheData, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPipelineCacheData.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;std::vector&lt;uint8_t&gt;&gt;::type getData() const;
+
+      // wrapper function for command vkMergePipelineCaches, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkMergePipelineCaches.html
+      typename ResultValueType&lt;void&gt;::type merge( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::PipelineCache&gt; const &amp; srcCaches ) const;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device        m_device        = {};
+      VULKAN_HPP_NAMESPACE::PipelineCache m_pipelineCache = {};
+      const AllocationCallbacks *         m_allocator     = {};
+      detail::DeviceDispatcher const *    m_dispatcher    = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;PipelineCache&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkPipeline, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipeline.html
+    class Pipeline
+    {
+    public:
+      using CType   = VkPipeline;
+      using CppType = VULKAN_HPP_NAMESPACE::Pipeline;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::ePipeline;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::ePipeline;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Pipeline( Device const &amp;                        device,
+                Optional&lt;const PipelineCache&gt; const &amp; pipelineCache,
+                ComputePipelineCreateInfo const &amp;     createInfo,
+                Optional&lt;const AllocationCallbacks&gt;   allocator = nullptr )
+      {
+        *this = device.createComputePipeline( pipelineCache, createInfo, allocator );
+      }
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Pipeline( Device const &amp;                               device,
+                Optional&lt;const DeferredOperationKHR&gt; const &amp; deferredOperation,
+                Optional&lt;const PipelineCache&gt; const &amp;        pipelineCache,
+                DataGraphPipelineCreateInfoARM const &amp;       createInfo,
+                Optional&lt;const AllocationCallbacks&gt;          allocator = nullptr )
+      {
+        *this = device.createDataGraphPipelineARM( deferredOperation, pipelineCache, createInfo, allocator );
+      }
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+#    if defined( VK_ENABLE_BETA_EXTENSIONS )
+      Pipeline( Device const &amp;                               device,
+                Optional&lt;const PipelineCache&gt; const &amp;        pipelineCache,
+                ExecutionGraphPipelineCreateInfoAMDX const &amp; createInfo,
+                Optional&lt;const AllocationCallbacks&gt;          allocator = nullptr )
+      {
+        *this = device.createExecutionGraphPipelineAMDX( pipelineCache, createInfo, allocator );
+      }
+#    endif /*VK_ENABLE_BETA_EXTENSIONS*/
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Pipeline( Device const &amp;                        device,
+                Optional&lt;const PipelineCache&gt; const &amp; pipelineCache,
+                GraphicsPipelineCreateInfo const &amp;    createInfo,
+                Optional&lt;const AllocationCallbacks&gt;   allocator = nullptr )
+      {
+        *this = device.createGraphicsPipeline( pipelineCache, createInfo, allocator );
+      }
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Pipeline( Device const &amp;                               device,
+                Optional&lt;const DeferredOperationKHR&gt; const &amp; deferredOperation,
+                Optional&lt;const PipelineCache&gt; const &amp;        pipelineCache,
+                RayTracingPipelineCreateInfoKHR const &amp;      createInfo,
+                Optional&lt;const AllocationCallbacks&gt;          allocator = nullptr )
+      {
+        *this = device.createRayTracingPipelineKHR( deferredOperation, pipelineCache, createInfo, allocator );
+      }
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Pipeline( Device const &amp;                         device,
+                Optional&lt;const PipelineCache&gt; const &amp;  pipelineCache,
+                RayTracingPipelineCreateInfoNV const &amp; createInfo,
+                Optional&lt;const AllocationCallbacks&gt;    allocator = nullptr )
+      {
+        *this = device.createRayTracingPipelineNV( pipelineCache, createInfo, allocator );
+      }
+#  endif
+
+      Pipeline( Device const &amp; device, VkPipeline pipeline, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr, Result successCode = Result::eSuccess )
+        : m_device( device )
+        , m_pipeline( pipeline )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_constructorSuccessCode( successCode )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      Pipeline( std::nullptr_t ) {}
+
+      ~Pipeline()
+      {
+        clear();
+      }
+
+      Pipeline()                   = delete;
+      Pipeline( Pipeline const &amp; ) = delete;
+
+      Pipeline( Pipeline &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_pipeline( exchange( rhs.m_pipeline, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_constructorSuccessCode( exchange( rhs.m_constructorSuccessCode, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      Pipeline &amp; operator=( Pipeline const &amp; ) = delete;
+
+      Pipeline &amp; operator=( Pipeline &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_pipeline, rhs.m_pipeline );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_constructorSuccessCode, rhs.m_constructorSuccessCode );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::Pipeline const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_pipeline;
+      }
+
+      VULKAN_HPP_NAMESPACE::Pipeline const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_pipeline );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::Pipeline() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_pipeline;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-26.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-28.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

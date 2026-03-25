@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "example",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "encode_video.c",
+    "slug": "encode-video.c",
+    "titleArabic": "encode_video.c",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/example/encode-video.c",
+    "contentPath": "content/reference/ffmpeg/examples/encode-video.c.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يبين كيف تنتقل الصورة الخام إلى packet فيديو مضغوطة.",
+    "actualMeaningArabic": "يبين كيف تنتقل الصورة الخام إلى packet فيديو مضغوطة.",
+    "purposeArabic": "يبين كيف تنتقل الصورة الخام إلى packet فيديو مضغوطة.",
+    "whyUseArabic": "يبين كيف تنتقل الصورة الخام إلى packet فيديو مضغوطة.",
+    "carriedValueArabic": "يبين كيف تنتقل الصورة الخام إلى packet فيديو مضغوطة.",
+    "sourceDescription": "يبين كيف تنتقل الصورة الخام إلى packet فيديو مضغوطة."
+  },
+  "signature": {
+    "raw": "// encode_video.c - ترميز فيديو باستخدام libx264\n#include <libavcodec/avcodec.h>\n#include <libavutil/opt.h>\n#include <libavutil/imgutils.h>\n#include <stdio.h>\n\nint main(void) {\n    const AVCodec *codec = avcodec_find_encoder_by_name(\"libx264\");\n    if (!codec) {\n        fprintf(stderr, \"libx264 غير متوفر\\n\");\n        return 1;\n    }\n\n    AVCodecContext *ctx = avcodec_alloc_context3(codec);\n    ctx->width = 1280;\n    ctx->height = 720;\n    ctx->time_base = (AVRational){1, 25};\n    ctx->framerate = (AVRational){25, 1};\n    ctx->pix_fmt = AV_PIX_FMT_YUV420P;\nn    ctx->gop_size = 12;\n    ctx->max_b_frames = 2;\n    avcodec_open2(ctx, codec, NULL);\n\n    AVFrame *frame = av_frame_alloc();\nn    frame->width = 1280;\n    frame->height = 720;\n    frame->format = AV_PIX_FMT_YUV420P;\nn    av_frame_get_buffer(frame, 0);\n\n    // ملء frame بلون أخضر\n    memset(frame->data[0], 0, frame->width * frame->height);\n    memset(frame->data[1], 128, frame->width * frame->height / 4);\n    memset(frame->data[2], 255, frame->width * frame->height / 4);\n\n    AVPacket *pkt = av_packet_alloc();\n    int frame_count = 0;\n\n    for (int i = 0; i < 250; i++) {\n        frame->pts = frame_count++;\n        int ret = avcodec_send_frame(ctx, frame);\n        while (ret >= 0) {\n            ret = avcodec_receive_packet(ctx, pkt);\n            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) break;\n            printf(\"encoded: size=%d pts=%ld dts=%ld\\n\", pkt->size, pkt->pts, pkt->dts);\n            av_packet_unref(pkt);\n        }\n    }\n\n    av_packet_free(&pkt);\n    av_frame_free(&frame);\n    avcodec_free_context(&ctx);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// encode_video.c - ترميز فيديو باستخدام libx264\n#include <libavcodec/avcodec.h>\n#include <libavutil/opt.h>\n#include <libavutil/imgutils.h>\n#include <stdio.h>\n\nint main(void) {\n    const AVCodec *codec = avcodec_find_encoder_by_name(\"libx264\");\n    if (!codec) {\n        fprintf(stderr, \"libx264 غير متوفر\n\");\n        return 1;\n    }\n\n    AVCodecContext *ctx = avcodec_alloc_context3(codec);\n    ctx->width = 1280;\n    ctx->height = 720;\n    ctx->time_base = (AVRational){1, 25};\n    ctx->framerate = (AVRational){25, 1};\n    ctx->pix_fmt = AV_PIX_FMT_YUV420P;\n    ctx->gop_size = 12;\n    ctx->max_b_frames = 2;\n    avcodec_open2(ctx, codec, NULL);\n\n    AVFrame *frame = av_frame_alloc();\n    frame->width = 1280;\n    frame->height = 720;\n    frame->format = AV_PIX_FMT_YUV420P;\n    av_frame_get_buffer(frame, 0);\n\n    // ملء frame بلون أخضر\n    memset(frame->data[0], 0, frame->width * frame->height);\n    memset(frame->data[1], 128, frame->width * frame->height / 4);\n    memset(frame->data[2], 255, frame->width * frame->height / 4);\n\n    AVPacket *pkt = av_packet_alloc();\n    int frame_count = 0;\n\n    for (int i = 0; i < 250; i++) {\n        frame->pts = frame_count++;\n        int ret = avcodec_send_frame(ctx, frame);\n        while (ret >= 0) {\n            ret = avcodec_receive_packet(ctx, pkt);\n            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) break;\n            printf(\"encoded: size=%d pts=%ld dts=%ld\n\", pkt->size, pkt->pts, pkt->dts);\n            av_packet_unref(pkt);\n        }\n    }\n\n    av_packet_free(&pkt);\n    av_frame_free(&frame);\n    avcodec_free_context(&ctx);\n    return 0;\n}"
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/encode_video.c.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "FFmpeg",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

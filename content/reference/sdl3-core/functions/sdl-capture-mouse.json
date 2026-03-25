@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_CaptureMouse",
+    "slug": "sdl-capture-mouse",
+    "titleArabic": "Capture the mouse and to track input outside an SDL window",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-capture-mouse",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-capture-mouse.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Capture the mouse and to track input outside an SDL window",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Capture الفأرة داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Capture الفأرة داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Capture the mouse and to track input outside an SDL window."
+  },
+  "signature": {
+    "raw": "bool SDL_CaptureMouse(bool enabled);",
+    "returnType": "bool",
+    "parameters": [
+      "bool enabled"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_mouse.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "enabled",
+        "type": "bool",
+        "descriptionArabic": "يمثل المعامل enabled من النوع bool القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "true to enable capturing, false to disable."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Capturing enables your app to obtain mouse events globally, instead\nof just within your window. Not all video targets support this function.\nWhen capturing is enabled, the current window will get all mouse events,\nbut unlike relative mode, no change is made to the cursor and it is not\nrestrained to your window.",
+      "This function may also deny mouse input to other windows--both those\nin your application and others on the system--so you should use this\nfunction sparingly, and in small bursts. For example, you might want to\ntrack the mouse while the user is dragging something, until the user\nreleases a mouse button. It is not recommended that you capture the\nmouse for long periods of time, such as the entire time your app is\nrunning. For that, you should probably use SDL_SetWindowRelativeMouseMode ()\nor SDL_SetWindowMouseGrab (),\ndepending on your goals.",
+      "While captured, mouse events still report coordinates relative to the\ncurrent (foreground) window, but those coordinates may be outside the\nbounds of the window (including negative values). Capturing is only\nallowed for the foreground window. If the window loses focus while\ncapturing, the capture will be disabled automatically.",
+      "While capturing is enabled, the current window will have the SDL_WINDOW_MOUSE_CAPTURE\nflag set.",
+      "Please note that SDL will attempt to \"auto capture\" the mouse while\nthe user is pressing a button; this is to try and make mouse behavior\nmore consistent between platforms, and deal with the common case of a\nuser dragging the mouse outside of the window. This means that if you\nare calling SDL_CaptureMouse () only\nto deal with this situation, you do not have to (although it is safe to\ndo so). If this causes problems for your app, you can disable auto\ncapture by setting the SDL_HINT_MOUSE_AUTO_CAPTURE\nhint to zero."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_CaptureMouse",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_GetGlobalMouseState",
+        "route": "#ref/sdl3-core/functions/sdl-get-global-mouse-state",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Mouse Support",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

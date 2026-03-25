@@ -1,0 +1,220 @@
+{
+  "referenceGuides": {
+    "cpp-date": {
+      "fullProjectNoteArabic": "التعامل مع التواريخ والوقت في C++ يعني القدرة على معرفة الوقت الحالي، وتخزين اللحظات الزمنية، وتنسيقها للعرض، وحساب الفروق بينها. هذا ليس ترفًا — بل هو أساس أي برنامج حقيقي: ختم السجلات بالوقت، حفظ تاريخ إنشاء ملف، حساب مدة تنفيذ عملية، عرض الوقت في واجهة المستخدم، وتنظيم البيانات زمنيًا. C++ توفر نظامين لهذا الغرض: `<ctime>` وهو إرث من C بسيط وسريع للعمليات الأساسية، و`<chrono>` وهو النظام الحديث الذي يوفر أنواعًا آمنة ودقيقة وقابلة للتركيب.",
+      "projectStepsArabic": [
+        {
+          "titleArabic": "النظامان: <ctime> أم <chrono>؟",
+          "contentArabic": "المبتدئ غالبًا يصطدم بسؤال: أيهما أستخدم؟ الإجابة المختصرة: استخدم <ctime> عندما تريد طباعة تاريخ أو تاريخ بسرعة وبساطة، واستخدم <chrono> عندما تحتاج دقة عالية أو قياس أداء أو أمان أنواع. عمليًا، كثير من البرامج تستخدم الاثنين معًا: <chrono> للقياس و<ctime> للتنسيق. لا تختار واحدًا وتتخلى عن الآخر — افهم مجال كل منهما."
+        },
+        {
+          "titleArabic": "time_t والـ epoch: ما الذي تحسب منه الثواني؟",
+          "contentArabic": "كل الطوابع الزمنية في <ctime> تُحسب كعدد ثوانٍ منذ لحظة مرجعية تسمى epoch — عادة 1 يناير 1970 الساعة 00:00:00 بتوقيت UTC. time_t هو مجرد صندوق خام يحمل هذا الرقم. لا تعرف حجمه بالضبط (قد يكون 32 أو 64 بت) ولا تجري عليه عمليات حسابية معقدة. وظيفته أن تمرره بين الدوال: time تعطيك time_t، localtime تحوله لـ tm، ctime تحوله لنص."
+        },
+        {
+          "titleArabic": "بنية tm: الانزياحات الغريبة التي يجب أن تعرفها",
+          "contentArabic": "tm هي بنية تُفكّك الطابع الزمني إلى أجزاء يفهمها الإنسان: سنة، شهر، يوم، ساعة، دقيقة، ثانية. لكنها تحمل إرث C القديم: tm_year يُحسب منذ 1900 (فأضف 1900)، وtm_month يبدأ من صفر (فأضف 1)، بينما tm_mday يبدأ من 1 بشكل طبيعي. هذه الانزياحات مصدر أخطاء صامتة شائعة — لا تُظهر خطأ في الترجمة لكن تُخرج تاريخًا خاطئًا."
+        },
+        {
+          "titleArabic": "localtime vs gmtime: توقيت المستخدم أم توقيت موحد؟",
+          "contentArabic": "localtime تُطبق منطقة زمنية النظام تلقائيًا — مفيدة لعرض الوقت على المستخدم. gmtime تُعطيك UTC الخالص — مفيدة للسجلات والبيانات الدولية حيث يجب أن يكون الوقت موحدًا بغض النظر عن مكان الخادم. تحذير مهم: كلاهما تُرجع مؤشرًا لذاكرة ثابتة مشتركة، فاستدعاؤها مرتين يُبطِل النتيجة الأولى. انسخ البنية فورًا إذا احتجت حفظها."
+        },
+        {
+          "titleArabic": "تنسيق الوقت: strftime هي الأقوى",
+          "contentArabic": "asctime و ctime يُعطيان صيغة ثابتة سريعة. لكن strftime تُعطيك تحكمًا كاملًا: اختر السنة فقط، أو الوقت فقط، أو صيغة ISO 8601، أو اسم ملف آمن. كل محدد (%) يُستبدل بمكون زمني. مثال: %Y-%m-%d %H:%M:%S تعطي 2025-03-25 03:53:00. إذا كنت تحتاج صيغة واحدة مخصصة، فstrftime هي الخيار."
+        },
+        {
+          "titleArabic": "العمليات الزمنية: difftime و mktime و chrono",
+          "contentArabic": "difftime تحسب الفرق بين time_tين بالثواني. mktime تحول tm إلى time_t (العكس من localtime) وتُصلح القيم غير الصالحة تلقائيًا (مثل يوم 32 يناير). chrono تُضيف طبقة أعمق: duration لتمثيل فترات بدقة متنوعة (نانوثانية إلى ساعات)، وtime_point لتمثيل لحظات، وساعات مختلفة لاستخدامات مختلفة."
+        }
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "الحصول على التاريخ والوقت الحاليين — أبسط طريقة",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    // time() تُرجع عدد الثواني منذ epoch (1 يناير 1970)\n    // nullptr لأننا لا نحتاج تخزين القيمة في متغير إضافي\n    std::time_t now = std::time(nullptr);\n\n    // ctime تحول time_t مباشرة إلى نص مقروء بالتوقيت المحلي\n    // هي اختصار لـ: localtime ثم asctime\n    std::cout << \"التاريخ والوقت: \" << std::ctime(&now);\n\n    return 0;\n}",
+          "explanationArabic": "هذا أبسط شكل للحصول على التاريخ: سطران فقط. time تعطيك الطابع الزمني الخام، وctime تحوله لنص مثل \"Tue Mar 25 03:53:00 2025\\n\". لاحظ أن ctime تُضيف سطرًا جديدًا تلقائيًا. هذا يكفي للطباعة السريعة لكنك لا تتحكم في صيغة الناتج.",
+          "relatedTokens": [
+            "std::time",
+            "std::ctime",
+            "std::time_t"
+          ]
+        },
+        {
+          "titleArabic": "تفكيك الوقت إلى مكونات مع localtime و tm",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    std::time_t now = std::time(nullptr);\n\n    // localtime تحول time_t إلى بنية tm بالتوقيت المحلي\n    // تحذر: تُرجع مؤشرًا لذاكرة ثابتة — لا تحتفظ به بعد استدعاء آخر\n    std::tm* local = std::localtime(&now);\n\n    // الانزياحات من إرث C: السنة منذ 1900، الشهر يبدأ من صفر\n    std::cout << \"السنة: \" << (local->tm_year + 1900) << '\\n';\n    std::cout << \"الشهر: \" << (local->tm_mon + 1) << '\\n';\n    std::cout << \"اليوم: \" << local->tm_mday << '\\n';  // يبدأ من 1 — بدون انزياح\n    std::cout << \"الساعة: \" << local->tm_hour << '\\n';\n    std::cout << \"الدقيقة: \" << local->tm_min << '\\n';\n    std::cout << \"الثانية: \" << local->tm_sec << '\\n';\n    std::cout << \"يوم الأسبوع: \" << local->tm_wday << \" (0=أحد)\" << '\\n';\n    std::cout << \"يوم السنة: \" << local->tm_yday << \" (0=يناير 1)\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "localtime هي الجسر بين الطابع الزمني الخام والمكونات البشرية. الانزياحات (tm_year+1900 و tm_mon+1) من أشهر مصادر الأخطاء في C++ — لو نسيت الإضافة ستحصل على سنة 125 وشهر 2 بدل 2025 و3. tm_wday و tm_yday مفيدان لحسابات مثل 'هل اليوم عطلة؟' أو 'كم يوم بقى من السنة؟'.",
+          "relatedTokens": [
+            "std::time_t",
+            "std::tm",
+            "std::localtime",
+            "std::time"
+          ]
+        },
+        {
+          "titleArabic": "تنسيق التاريخ بالصيغة التي تريدها مع strftime",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    std::time_t now = std::time(nullptr);\n    std::tm* local = std::localtime(&now);\n    char buf[128];\n\n    // صيغة ISO 8601: الأنسب للملفات والسجلات والفرز\n    std::strftime(buf, sizeof(buf), \"%Y-%m-%d %H:%M:%S\", local);\n    std::cout << \"ISO: \" << buf << '\\n';\n\n    // صيغة ودية: مناسبة لعرض المستخدم\n    std::strftime(buf, sizeof(buf), \"%A %d %B %Y - %I:%M %p\", local);\n    std::cout << \"ودية: \" << buf << '\\n';\n\n    // صيغة اسم ملف آمن: لا تحتوي مسافات أو أحرف خاصة\n    std::strftime(buf, sizeof(buf), \"log_%Y%m%d_%H%M%S.txt\", local);\n    std::cout << \"ملف: \" << buf << '\\n';\n\n    // التاريخ فقط بدون وقت\n    std::strftime(buf, sizeof(buf), \"%Y/%m/%d\", local);\n    std::cout << \"تاريخ: \" << buf << '\\n';\n\n    // الوقت فقط بدون تاريخ\n    std::strftime(buf, sizeof(buf), \"%H:%M:%S\", local);\n    std::cout << \"وقت: \" << buf << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "strftime هي الأداة الأكثر مرونة لتنسيق الوقت. كل محدد (%) يُستبدل بمكون: %Y سنة كاملة، %m شهر باثنين، %d يوم باثنين، %H ساعة 24، %I ساعة 12، %M دقيقة، %S ثانية، %A اسم اليوم، %B اسم الشهر، %p AM/PM. المعلمة الثانية (sizeof) هي حجم المخزن — إذا كان الناتج أطول تُقطع دون خطأ.",
+          "relatedTokens": [
+            "std::strftime",
+            "std::tm",
+            "std::localtime"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين localtime و gmtime — توقيت محلي أم عالمي",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    std::time_t now = std::time(nullptr);\n\n    // localtime: توقيت النظام المحلي (مثل الرياض +3)\n    std::tm* local = std::localtime(&now);\n\n    // gmtime: توقيت UTC — دائمًا نفسه بغض النظر عن الموقع\n    std::tm* utc = std::gmtime(&now);\n\n    // تحذير: لا تستخدم local بعد gmtime لأنهما يشيران لنفس الذاكرة!\n    // لذلك طبعنا local قبل gmtime هنا\n\n    char local_buf[80], utc_buf[80];\n    std::strftime(local_buf, sizeof(local_buf), \"%Y-%m-%d %H:%M:%S\", local);\n    std::strftime(utc_buf, sizeof(utc_buf), \"%Y-%m-%d %H:%M:%S\", utc);\n\n    std::cout << \"محلي: \" << local_buf << '\\n';\n    std::cout << \"UTC:   \" << utc_buf << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "localtime vs gmtime ليستا مجرد نسختين مختلفتين. localtime تطبق منطقة زمنية النظام وقد تُضيف ساعات للتوقيت الصيفي، بينما gmtime تُعطيك UTC الخالص. اختر gmtime للسجلات الموحدة والبيانات الدولية، وlocaltime للعرض على المستخدم. ملاحظة مهمة: هنا طبعنا local قبل gmtime لأن كلاهما يستخدم نفس المخزن الثابت — لو عكسنا الترتيب لتعطلت قيمة local.",
+          "relatedTokens": [
+            "std::localtime",
+            "std::gmtime",
+            "std::time_t",
+            "std::tm"
+          ]
+        },
+        {
+          "titleArabic": "حساب الفرق بين تاريخين مع difftime",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    // لحظتان زمنيتان: الآن وساعة لاحقًا\n    std::time_t now = std::time(nullptr);\n    std::time_t later = now + 3600; // +3600 ثانية = ساعة واحدة\n\n    // difftime تُرجع الفرق بالثواني كعدد عشري\n    double diff = std::difftime(later, now);\n\n    std::cout << \"الفرق: \" << diff << \" ثانية\" << '\\n';\n    std::cout << \"الفرق: \" << (diff / 60) << \" دقيقة\" << '\\n';\n    std::cout << \"الفرق: \" << (diff / 3600) << \" ساعة\" << '\\n';\n\n    // استخدام عملي: حساب عمر ملف بالأيام\n    std::time_t file_time = now - (7 * 24 * 3600); // ملف من أسبوع\n    double age_days = std::difftime(now, file_time) / (24 * 3600);\n    std::cout << \"عمر الملف: \" << age_days << \" يوم\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "difftime تحل مشكلة مهمة: لا تطرح time_t مباشرة لأنك لا تعرف إن كان النوع مُوقّعًا أو لا على كل المنصات. difftime تُرجع double دائمًا مما يضمن صحة النتيجة. الفرق بالثواني يُحوّل بسهولة لدقائق أو ساعات أو أيام بالقسمة. هذا أنسب من chrono للحسابات البسيطة بالثواني.",
+          "relatedTokens": [
+            "std::difftime",
+            "std::time_t",
+            "std::time"
+          ]
+        },
+        {
+          "titleArabic": "mktime: تحويل tm إلى time_t مع تصحيح تلقائي",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    std::tm target{};\n\n    // بناء تاريخ يدويًا — انتبه للانزياحات!\n    target.tm_year = 2025 - 1900;  // السنة منذ 1900\n    target.tm_mon  = 2;             // مارس = 2 (يناير = 0)\n    target.tm_mday = 1;             // اليوم يبدأ من 1 طبيعيًا\n    target.tm_hour = 10;\n    target.tm_min  = 30;\n    target.tm_sec  = 0;\n    target.tm_isdst = -1;           // دع النظام يقرر التوقيت الصيفي\n\n    // mktime تحول tm إلى time_t وتُصلح القيم غير الصالحة تلقائيًا\n    std::time_t result = std::mktime(&target);\n\n    if (result != (std::time_t)-1) {\n        std::cout << \"تم التحويل بنجاح\" << '\\n';\n\n        // الآن يمكننا استخدام strftime أو difftime مع هذا التاريخ\n        char buf[80];\n        std::strftime(buf, sizeof(buf), \"%Y-%m-%d %H:%M:%S\", &target);\n        std::cout << \"التاريخ: \" << buf << '\\n';\n    }\n\n    return 0;\n}",
+          "explanationArabic": "mktime هي العكس من localtime: تأخذ tm وتُرجع time_t. لكنها تفعل شيئًا قويًا: تُصلح القيم غير الصالحة تلقائيًا. مثال: لو وضعت tm_mday = 32، فإن mktime ستحوّله لـ 1 أو 2 من الشهر التالي وتُعدّل باقي الحقول. tm_isdst = -1 يعني 'دع النظام يكتشف إن كان التوقيت الصيفي فعالًا'. هذا مفيد جدًا لحسابات مثل 'بعد 30 يوم من الآن'.",
+          "relatedTokens": [
+            "std::mktime",
+            "std::tm",
+            "std::time_t",
+            "std::strftime"
+          ]
+        },
+        {
+          "titleArabic": "mktime تُصلح التواريخ غير الصالحة تلقائيًا",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    std::tm date{};\n    date.tm_year = 2025 - 1900;\n    date.tm_mon  = 0;   // يناير\n    date.tm_mday = 32;   // ❌ يناير ليس فيه 32 يوم!\n    date.tm_hour = 10;\n    date.tm_isdst = -1;\n\n    // mktime ستصحح هذا تلقائيًا إلى 1 فبراير\n    std::mktime(&date);\n\n    char buf[80];\n    std::strftime(buf, sizeof(buf), \"%Y-%m-%d\", &date);\n    std::cout << \"بعد التصحيح: \" << buf << '\\n';\n    // الناتج: 2025-02-01\n\n    // استخدام عملي: إضافة أيام لتاريخ\n    std::tm future{};\n    future.tm_year = 2025 - 1900;\n    future.tm_mon  = 2;  // مارس\n    future.tm_mday = 25 + 10;  // أضف 10 أيام\n    future.tm_isdst = -1;\n\n    std::mktime(&future);\n    std::strftime(buf, sizeof(buf), \"%Y-%m-%d\", &future);\n    std::cout << \"بعد 10 أيام: \" << buf << '\\n';\n    // الناتج: 2025-04-04 (انتقل تلقائيًا لأبريل)\n\n    return 0;\n}",
+          "explanationArabic": "هذا من أقوى أشياء mktime التي قلّ من يعرفها: التصحيح التلقائي يعني أنك لا تحتاج حساب يدوي لعدد أيام كل شهر أو للسنين الكبيسة. فقط أضف الأيام على tm_mday واستدعِ mktime وستحصل على التاريخ الصحيح. هذا يُبسّط حسابات مثل 'بعد 90 يوم من تاريخ كذا' إلى سطرين بدل دوال معقدة.",
+          "relatedTokens": [
+            "std::mktime",
+            "std::tm"
+          ]
+        },
+        {
+          "titleArabic": "system_clock: الطريقة الحديثة للحصول على الوقت",
+          "code": "#include <chrono>\n#include <ctime>\n#include <iostream>\n\nint main() {\n    // chrono تعطيك time_point بدقة عالية\n    auto now_chrono = std::chrono::system_clock::now();\n\n    // تحويل time_point إلى time_t للتعامل مع دوال <ctime>\n    std::time_t now_time = std::chrono::system_clock::to_time_t(now_chrono);\n\n    // الآن يمكنك استخدام أي دالة <ctime> عادية\n    std::tm* local = std::localtime(&now_time);\n    char buf[80];\n    std::strftime(buf, sizeof(buf), \"%Y-%m-%d %H:%M:%S\", local);\n    std::cout << \"عبر chrono + ctime: \" << buf << '\\n';\n\n    // العكس: تحويل time_t إلى time_point\n    std::time_t some_time = std::time(nullptr);\n    auto some_point = std::chrono::system_clock::from_time_t(some_time);\n\n    return 0;\n}",
+          "explanationArabic": "system_clock هي الجسر بين عالمي chrono وctime. to_time_t تحول time_point إلى time_t لاستخدامه مع strftime و localtime. from_time_t تفعل العكس. هذا النمط شائع في الكود الحديث: استخدم chrono كنقطة بداية ثم حوّل لـ ctime عند التنسيق. في C++20 أصبحت chrono تملك تنسيقًا خاصًا بها لكن to_time_t لا يزال الأوسع توافقًا.",
+          "relatedTokens": [
+            "std::chrono::system_clock",
+            "std::time_t",
+            "std::localtime",
+            "std::strftime"
+          ]
+        },
+        {
+          "titleArabic": "قياس مدة تنفيذ عملية — clock من <ctime>",
+          "code": "#include <ctime>\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nint main() {\n    std::vector<int> data(100000);\n    for (auto& v : data) v = rand();\n\n    // clock تقيس وقت المعالج (CPU time) لا وقت الجدار\n    std::clock_t start = std::clock();\n    std::sort(data.begin(), data.end());\n    std::clock_t end = std::clock();\n\n    // CLOCKS_PER_SEC يُحوّل من ticks إلى ثوانٍ\n    double seconds = double(end - start) / CLOCKS_PER_SEC;\n    std::cout << \"الترتيب استهلك: \" << seconds << \" ثانية CPU\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "clock تقيس وقت المعالج الفعلي لا الوقت الحقيقي — إذا توقف البرنامج لينتظر إدخالًا، لا يُحتسب. القسمة على CLOCKS_PER_SEC ضرورية لأن وحدة clock() تختلف بين المنصات. هذا أبسط من chrono للقياسات التقريبية، لكن chrono أدق وأكثر مرونة للقياسات الدقيقة.",
+          "relatedTokens": [
+            "std::clock",
+            "std::chrono::steady_clock"
+          ]
+        },
+        {
+          "titleArabic": "قياس مدة تنفيذ عملية — steady_clock من <chrono>",
+          "code": "#include <chrono>\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nint main() {\n    std::vector<int> data(100000);\n    for (auto& v : data) v = rand();\n\n    // steady_clock لا تُعدَّل للخلف أبدًا — الأنسب للقياس\n    auto start = std::chrono::steady_clock::now();\n    std::sort(data.begin(), data.end());\n    auto end = std::chrono::steady_clock::now();\n\n    // الطرح بين نقطتين زمنيتين يُنتج duration\n    auto duration_ns = end - start;\n\n    // تحويل للوحدة المناسبة للعرض\n    auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(duration_ns);\n    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration_ns);\n\n    std::cout << \"بالنانوثانية: \" << duration_ns.count() << \" ns\" << '\\n';\n    std::cout << \"بالميكروثانية: \" << duration_us.count() << \" us\" << '\\n';\n    std::cout << \"بالملي ثانية: \" << duration_ms.count() << \" ms\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "steady_clock هي الخيار الحديث لقياس الأداء لأنها مضمونة ألا تُرجع للخلف حتى لو غيّر المستخدم ساعة النظام. الطرح بين time_pointين يُنتج duration بأدق وحدة متاحة. duration_cast تُحوّل للوحدة المطلوبة مع التقريب. هذا النمط هو المعيار الحالي لقياس الأداء في C++.",
+          "relatedTokens": [
+            "std::chrono::steady_clock",
+            "std::chrono::duration",
+            "std::chrono::time_point"
+          ]
+        },
+        {
+          "titleArabic": "clock vs steady_clock — متى تستخدم أيهما؟",
+          "code": "#include <ctime>\n#include <chrono>\n#include <iostream>\n#include <thread>\n\nint main() {\n    // === المقارنة: clock تقيس CPU time فقط ===\n    std::clock_t cpu_start = std::clock();\n\n    // sleep لا يستهلك CPU — clock لن تحسبه\n    std::this_thread::sleep_for(std::chrono::milliseconds(100));\n\n    std::clock_t cpu_end = std::clock();\n    double cpu_time = double(cpu_end - cpu_start) / CLOCKS_PER_SEC;\n    std::cout << \"clock (CPU): \" << cpu_time << \" ثانية\" << '\\n';\n    // ستكون قريبة من صفر رغم الانتظار 100ms!\n\n    // === المقارنة: steady_clock تقيس وقت الجدار الفعلي ===\n    auto wall_start = std::chrono::steady_clock::now();\n    std::this_thread::sleep_for(std::chrono::milliseconds(100));\n    auto wall_end = std::chrono::steady_clock::now();\n\n    auto wall_ms = std::chrono::duration_cast<std::chrono::milliseconds>(wall_end - wall_start);\n    std::cout << \"steady_clock (wall): \" << wall_ms.count() << \" ms\" << '\\n';\n    // ستكون ~100ms — الوقت الفعلي الذي مر\n\n    return 0;\n}",
+          "explanationArabic": "هذا المثال يوضح الفرق الجوهري بوضوح: clock لا تحتسب وقت الانتظار لأنها تقيس ما يستهلكه المعالج فعلًا. steady_clock تقيس الوقت الحقيقي الذي يمر. إذا كنت تقيس أداء خوارزمية خالصة، فclock أنسب لأنها تستبعد عوامل خارجية. إذا كنت تقيس مدة من البداية للنهاية بما فيها الانتظار، فsteady_clock هي الصحيحة.",
+          "relatedTokens": [
+            "std::clock",
+            "std::chrono::steady_clock",
+            "std::chrono::duration"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استدعاء localtime مرتين يُبطِل النتيجة الأولى",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    std::time_t t1 = std::time(nullptr);\n    std::time_t t2 = t1 + 3600; // ساعة لاحقًا\n\n    // ❌ خطأ: كلا المؤشرين يشيران لنفس الذاكرة الثابتة\n    // std::tm* a = std::localtime(&t1);\n    // std::tm* b = std::localtime(&t2); // يكتب فوق نتيجة t1!\n    // الآن a و b كلاهما يُظهران t2\n\n    // ✅ صحيح: انسخ البنية الأولى قبل الاستدعاء الثاني\n    std::tm* a = std::localtime(&t1);\n    std::tm copy_a = *a; // نسخ عميق — الآن copy_a مستقلة\n    std::tm* b = std::localtime(&t2);\n\n    char buf1[80], buf2[80];\n    std::strftime(buf1, sizeof(buf1), \"%H:%M:%S\", &copy_a);\n    std::strftime(buf2, sizeof(buf2), \"%H:%M:%S\", b);\n\n    std::cout << \"الأولى: \" << buf1 << '\\n';\n    std::cout << \"الثانية: \" << buf2 << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "هذا من أشهر الأخطاء الصامتة في <ctime>: localtime و gmtime يستخدمان مخزنًا ثابتًا داخليًا واحدًا. كل استدعاء جديد يكتب فوق النتيجة السابقة. النسخ بـ *a يأخذ نسخة عميقة من البنية فتصبح مستقلة. على POSIX يوجد localtime_r (النسخة الآمنة) وعلى Windows يوجد localtime_s — لكن النسخ اليدوي يعمل على كل المنصات.",
+          "relatedTokens": [
+            "std::localtime",
+            "std::tm",
+            "std::time_t"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان انزياح السنة والشهر في tm",
+          "code": "#include <ctime>\n#include <iostream>\n\nint main() {\n    std::time_t now = std::time(nullptr);\n    std::tm* local = std::localtime(&now);\n\n    // ❌ خطأ صامت: يطبع سنة خاطئة وشهر خاطئ\n    // std::cout << local->tm_year << '\\n';  // يطبع 125 بدل 2025!\n    // std::cout << local->tm_mon << '\\n';   // يطبع 2 بدل 3!\n\n    // ✅ صحيح: أضف الانزياحات دائمًا\n    std::cout << \"السنة: \" << (local->tm_year + 1900) << '\\n';  // 2025\n    std::cout << \"الشهر: \" << (local->tm_mon + 1) << '\\n';      // 3 (مارس)\n\n    // نفس الشيء عند بناء tm يدويًا مع mktime:\n    std::tm target{};\n    // ❌ target.tm_year = 2025;  // خطأ! يعني سنة 3925\n    // ✅ target.tm_year = 2025 - 1900;  // صحيح\n    // ❌ target.tm_mon = 3;  // خطأ! يعني أبريل\n    // ✅ target.tm_mon = 2;   // صحيح (مارس)\n\n    return 0;\n}",
+          "explanationArabic": "هذا الخطأ لا يُنتج رسالة خطأ ولا استثناء — يُخرج أرقامًا تبدو معقولة لكنها خاطئة. tm_year = 125 قد يبدو غريبًا فيسمع المبرمج المشكلة، لكن tm_mon = 2 قد يبدو صحيحًا (مارس فعلاً الشهر الثالث) فيظن المبرمج أنه يعمل. القاعدة الذهبية: tm_year دائمًا +1900، وtm_mon دائمًا +1 عند القراءة و-1 عند الكتابة.",
+          "relatedTokens": [
+            "std::tm",
+            "std::localtime",
+            "std::mktime"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام system_clock لقياس الأداء",
+          "code": "#include <chrono>\n#include <iostream>\n\nint main() {\n    // ❌ system_clock قد تقفز للخلف إذا غيّر المستخدم ساعة النظام\n    // أو حدثت مزامنة NTP أثناء القياس\n    // auto start = std::chrono::system_clock::now();\n    // ... عملية ...\n    // auto end = std::chrono::system_clock::now();\n    // الناتج قد يكون سلبيًا! أو أكبر بكثير من الواقع\n\n    // ✅ steady_clock مضمونة أنها لا تُرجع للخلف أبدًا\n    auto start = std::chrono::steady_clock::now();\n    volatile int dummy = 0;\n    for (int i = 0; i < 1000000; ++i) ++dummy;\n    auto end = std::chrono::steady_clock::now();\n\n    auto us = std::chrono::duration_cast<std::chrono::microseconds>(end - start);\n    std::cout << \"المدة: \" << us.count() << \" ميكروثانية\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "system_clock تمثل وقت الجدار الحقيقي — هي متأثرة بكل تغيير في ساعة النظام. إذا حدثت مزامنة NTP أثناء قياسك، قد تجد أن end أصغر من start فتكون المدة سالبة! steady_clock مصممة خصيصًا لقياس المدة: تتقدم فقط ولا تُتأثر بضبط الوقت. القاعدة: قياس أداء = steady_clock دائمًا.",
+          "relatedTokens": [
+            "std::chrono::steady_clock",
+            "std::chrono::system_clock",
+            "std::chrono::duration"
+          ]
+        },
+        {
+          "titleArabic": "خلق سجل بختم زمني UTC موحد",
+          "code": "#include <ctime>\n#include <iostream>\n\nvoid log_event(const char* message) {\n    std::time_t now = std::time(nullptr);\n\n    // gmtime لأن السجل يجب أن يكون موحدًا عالميًا\n    // خادم في الرياض وخادم في نيويورك يُنتجان نفس الختم لنفس الحدث\n    std::tm* utc = std::gmtime(&now);\n\n    char buf[128];\n    std::strftime(buf, sizeof(buf), \"[%Y-%m-%d %H:%M:%S UTC] %s\", utc);\n    std::cout << buf << '\\n';\n}\n\nint main() {\n    log_event(\"بدء تشغيل الخادم\");\n    log_event(\"اتصال عميل جديد\");\n    log_event(\"معالجة طلب\");\n\n    return 0;\n}",
+          "explanationArabic": "هذا نمط واقعي يُستخدم في كل خوادم حقيقية. gmtime تضمن أن السجل موحد بغض النظر عن مكان الخادم أو منطقته الزمنية. عند تحليل السجلات لاحقًا، يمكنك مقارنة الأوقات مباشرة دون تحويلات. %s في strftime يُدرج النص الممرر كمَعلمة رابعة. هذا أنظف من تجميع النص يدويًا.",
+          "relatedTokens": [
+            "std::gmtime",
+            "std::time",
+            "std::strftime",
+            "std::tm"
+          ]
+        },
+        {
+          "titleArabic": "ملخص: أي دالة لكل حالة",
+          "code": "#include <ctime>\n#include <chrono>\n#include <iostream>\n\nint main() {\n    std::time_t now = std::time(nullptr);\n    std::tm* local = std::localtime(&now);\n    char buf[128];\n\n    // 1. طباعة سريعة: ctime\n    std::cout << \"سريع: \" << std::ctime(&now);\n\n    // 2. صيغة مخصصة: strftime\n    std::strftime(buf, sizeof(buf), \"%Y-%m-%d\", local);\n    std::cout << \"مخصص: \" << buf << '\\n';\n\n    // 3. فرق بين تاريخين: difftime\n    double diff = std::difftime(now + 3600, now);\n    std::cout << \"فرق: \" << diff << \" ثانية\" << '\\n';\n\n    // 4. بناء تاريخ من أرقام: mktime\n    std::tm target{};\n    target.tm_year = 2025 - 1900;\n    target.tm_mon = 11; // ديسمبر\n    target.tm_mday = 31;\n    target.tm_isdst = -1;\n    std::time_t target_t = std::mktime(&target);\n\n    // 5. قياس أداء: steady_clock (لا تستخدم clock إلا لـ CPU time)\n    auto t1 = std::chrono::steady_clock::now();\n    volatile int x = 0;\n    for (int i = 0; i < 1000; ++i) ++x;\n    auto t2 = std::chrono::steady_clock::now();\n    auto ms = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1);\n    std::cout << \"أداء: \" << ms.count() << \" us\" << '\\n';\n\n    // 6. تاريخ/وقت حقيقي مع chrono: system_clock\n    auto chrono_now = std::chrono::system_clock::now();\n    auto tt = std::chrono::system_clock::to_time_t(chrono_now);\n    std::cout << \"chrono: \" << std::ctime(&tt);\n\n    return 0;\n}",
+          "explanationArabic": "هذا الملخص العملي يوضح الحالة الأنسب لكل أداة: ctime للطباعة السريعة، strftime للتنسيق المخصص، difftime للفروق، mktime لبناء التواريخ، steady_clock لقياس الأداء، system_clock للحصول على التاريخ الحقيقي. لا توجد أداة واحدة تفعل كل شيء — فهم مجال كل واحدة يُسهّل الاختيار.",
+          "relatedTokens": [
+            "std::ctime",
+            "std::strftime",
+            "std::difftime",
+            "std::mktime",
+            "std::chrono::steady_clock",
+            "std::chrono::system_clock",
+            "std::time",
+            "std::localtime"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::time_t",
+        "std::tm",
+        "std::time",
+        "std::localtime",
+        "std::gmtime",
+        "std::strftime",
+        "std::asctime",
+        "std::ctime",
+        "std::clock",
+        "std::difftime",
+        "std::mktime",
+        "std::chrono::system_clock",
+        "std::chrono::steady_clock",
+        "std::chrono::duration",
+        "std::chrono::time_point"
+      ]
+    }
+  }
+}

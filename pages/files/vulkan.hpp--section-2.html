@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan.hpp • القسم 2 من 58 • الأسطر 451-900 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan.hpp.html">vulkan.hpp</a> /
+        <span>القسم 2 من 58 • الأسطر 451-900</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan.hpp</h1>
+      <p class="page-description">القسم 2 من 58 • الأسطر 451-900</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-1.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-3.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan.hpp</span>
+        <span class="source-stat">القسم: 2/58</span>
+        <span class="source-stat">الأسطر: 451-900</span>
+        <span class="source-stat">حجم الملف: 1.05 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>      : m_count( C )
+      , m_ptr( ptr )
+    {
+    }
+
+    template &lt;std::size_t C&gt;
+    ArrayProxyNoTemporaries( T ( &amp;&amp;ptr )[C] ) = delete;
+
+    // Any l-value reference with a .data() return type implicitly convertible to T*, and a .size() return type implicitly convertible to size_t.
+    template &lt;typename V,
+              typename std::enable_if&lt;!std::is_convertible&lt;decltype( std::declval&lt;V&gt;().begin() ), T *&gt;::value &amp;&amp;
+                                        std::is_convertible&lt;decltype( std::declval&lt;V&gt;().data() ), T *&gt;::value &amp;&amp;
+                                        std::is_convertible&lt;decltype( std::declval&lt;V&gt;().size() ), std::size_t&gt;::value &amp;&amp; std::is_lvalue_reference&lt;V&gt;::value,
+                                      int&gt;::type = 0&gt;
+    ArrayProxyNoTemporaries( V &amp;&amp; v ) VULKAN_HPP_NOEXCEPT
+      : m_count( static_cast&lt;uint32_t&gt;( v.size() ) )
+      , m_ptr( v.data() )
+    {
+    }
+
+    // Any l-value reference with a .begin() return type implicitly convertible to T*, and a .size() return type implicitly convertible to size_t.
+    template &lt;typename V,
+              typename std::enable_if&lt;std::is_convertible&lt;decltype( std::declval&lt;V&gt;().begin() ), T *&gt;::value &amp;&amp;
+                                        std::is_convertible&lt;decltype( std::declval&lt;V&gt;().size() ), std::size_t&gt;::value &amp;&amp; std::is_lvalue_reference&lt;V&gt;::value,
+                                      int&gt;::type = 0&gt;
+    ArrayProxyNoTemporaries( V &amp;&amp; v ) VULKAN_HPP_NOEXCEPT
+      : m_count( static_cast&lt;uint32_t&gt;( v.size() ) )
+      , m_ptr( v.begin() )
+    {
+    }
+
+    const T * begin() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_ptr;
+    }
+
+    const T * end() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_ptr + m_count;
+    }
+
+    const T &amp; front() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( m_count &amp;&amp; m_ptr );
+      return *m_ptr;
+    }
+
+    const T &amp; back() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( m_count &amp;&amp; m_ptr );
+      return *( m_ptr + m_count - 1 );
+    }
+
+    bool empty() const VULKAN_HPP_NOEXCEPT
+    {
+      return ( m_count == 0 );
+    }
+
+    uint32_t size() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_count;
+    }
+
+    T * data() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_ptr;
+    }
+
+  private:
+    uint32_t m_count;
+    T *      m_ptr;
+  };
+
+  template &lt;typename T&gt;
+  class StridedArrayProxy : protected ArrayProxy&lt;T&gt;
+  {
+  public:
+    using ArrayProxy&lt;T&gt;::ArrayProxy;
+
+    StridedArrayProxy( uint32_t count, T const * ptr, uint32_t stride ) VULKAN_HPP_NOEXCEPT
+      : ArrayProxy&lt;T&gt;( count, ptr )
+      , m_stride( stride )
+    {
+      VULKAN_HPP_ASSERT( sizeof( T ) &lt;= stride );
+    }
+
+    using ArrayProxy&lt;T&gt;::begin;
+
+    const T * end() const VULKAN_HPP_NOEXCEPT
+    {
+      return reinterpret_cast&lt;T const *&gt;( static_cast&lt;uint8_t const *&gt;( begin() ) + size() * m_stride );
+    }
+
+    using ArrayProxy&lt;T&gt;::front;
+
+    const T &amp; back() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( begin() &amp;&amp; size() );
+      return *reinterpret_cast&lt;T const *&gt;( static_cast&lt;uint8_t const *&gt;( begin() ) + ( size() - 1 ) * m_stride );
+    }
+
+    using ArrayProxy&lt;T&gt;::empty;
+    using ArrayProxy&lt;T&gt;::size;
+    using ArrayProxy&lt;T&gt;::data;
+
+    uint32_t stride() const
+    {
+      return m_stride;
+    }
+
+  private:
+    uint32_t m_stride = sizeof( T );
+  };
+
+  template &lt;typename RefType&gt;
+  class Optional
+  {
+  public:
+    Optional( RefType &amp; reference ) VULKAN_HPP_NOEXCEPT
+    {
+      m_ptr = &amp;reference;
+    }
+
+    Optional( RefType * ptr ) VULKAN_HPP_NOEXCEPT
+    {
+      m_ptr = ptr;
+    }
+
+    Optional( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_ptr = nullptr;
+    }
+
+    operator RefType *() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_ptr;
+    }
+
+    RefType const * operator-&gt;() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_ptr;
+    }
+
+    RefType const * get() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_ptr;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return !!m_ptr;
+    }
+
+  private:
+    RefType * m_ptr;
+  };
+
+  template &lt;typename X, typename Y&gt;
+  struct StructExtends
+  {
+    enum
+    {
+      value = false
+    };
+  };
+
+  template &lt;typename Type, class...&gt;
+  struct IsPartOfStructureChain
+  {
+    static const bool valid = false;
+  };
+
+  template &lt;typename Type, typename Head, typename... Tail&gt;
+  struct IsPartOfStructureChain&lt;Type, Head, Tail...&gt;
+  {
+    static const bool valid = std::is_same&lt;Type, Head&gt;::value || IsPartOfStructureChain&lt;Type, Tail...&gt;::valid;
+  };
+
+  template &lt;size_t Index, typename T, typename... ChainElements&gt;
+  struct StructureChainContains
+  {
+    static const bool value = std::is_same&lt;T, typename std::tuple_element&lt;Index, std::tuple&lt;ChainElements...&gt;&gt;::type&gt;::value ||
+                              StructureChainContains&lt;Index - 1, T, ChainElements...&gt;::value;
+  };
+
+  template &lt;typename T, typename... ChainElements&gt;
+  struct StructureChainContains&lt;0, T, ChainElements...&gt;
+  {
+    static const bool value = std::is_same&lt;T, typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type&gt;::value;
+  };
+
+  template &lt;size_t Index, typename... ChainElements&gt;
+  struct StructureChainValidation
+  {
+    using TestType          = typename std::tuple_element&lt;Index, std::tuple&lt;ChainElements...&gt;&gt;::type;
+    static const bool valid = StructExtends&lt;TestType, typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type&gt;::value &amp;&amp;
+                              ( TestType::allowDuplicate || !StructureChainContains&lt;Index - 1, TestType, ChainElements...&gt;::value ) &amp;&amp;
+                              StructureChainValidation&lt;Index - 1, ChainElements...&gt;::valid;
+  };
+
+  template &lt;typename... ChainElements&gt;
+  struct StructureChainValidation&lt;0, ChainElements...&gt;
+  {
+    static const bool valid = true;
+  };
+
+  template &lt;typename... ChainElements&gt;
+  class StructureChain : public std::tuple&lt;ChainElements...&gt;
+  {
+    // Note: StructureChain has no move constructor or move assignment operator, as it is not supposed to contain movable containers.
+    //       In order to get a copy-operation on a move-operations, those functions are neither deleted nor defaulted.
+  public:
+    StructureChain() VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_STATIC_ASSERT( StructureChainValidation&lt;sizeof...( ChainElements ) - 1, ChainElements...&gt;::valid, &quot;The structure chain is not valid!&quot; );
+      link&lt;sizeof...( ChainElements ) - 1&gt;();
+    }
+
+    StructureChain( StructureChain const &amp; rhs ) VULKAN_HPP_NOEXCEPT : std::tuple&lt;ChainElements...&gt;( rhs )
+    {
+      VULKAN_HPP_STATIC_ASSERT( StructureChainValidation&lt;sizeof...( ChainElements ) - 1, ChainElements...&gt;::valid, &quot;The structure chain is not valid!&quot; );
+      link( &amp;std::get&lt;0&gt;( *this ),
+            &amp;std::get&lt;0&gt;( rhs ),
+            reinterpret_cast&lt;VkBaseOutStructure *&gt;( &amp;std::get&lt;0&gt;( *this ) ),
+            reinterpret_cast&lt;VkBaseInStructure const *&gt;( &amp;std::get&lt;0&gt;( rhs ) ) );
+    }
+
+    StructureChain( ChainElements const &amp;... elems ) VULKAN_HPP_NOEXCEPT : std::tuple&lt;ChainElements...&gt;( elems... )
+    {
+      VULKAN_HPP_STATIC_ASSERT( StructureChainValidation&lt;sizeof...( ChainElements ) - 1, ChainElements...&gt;::valid, &quot;The structure chain is not valid!&quot; );
+      link&lt;sizeof...( ChainElements ) - 1&gt;();
+    }
+
+    StructureChain &amp; operator=( StructureChain const &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      std::tuple&lt;ChainElements...&gt;::operator=( rhs );
+      link( &amp;std::get&lt;0&gt;( *this ),
+            &amp;std::get&lt;0&gt;( rhs ),
+            reinterpret_cast&lt;VkBaseOutStructure *&gt;( &amp;std::get&lt;0&gt;( *this ) ),
+            reinterpret_cast&lt;VkBaseInStructure const *&gt;( &amp;std::get&lt;0&gt;( rhs ) ) );
+      return *this;
+    }
+
+    template &lt;typename T = typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type, size_t Which = 0&gt;
+      VULKAN_HPP_NODISCARD T &amp; get() &amp; VULKAN_HPP_NOEXCEPT
+    {
+      return std::get&lt;ChainElementIndex&lt;0, T, Which, void, ChainElements...&gt;::value&gt;( static_cast&lt;std::tuple&lt;ChainElements...&gt; &amp;&gt;( *this ) );
+    }
+
+    template &lt;typename T = typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type, size_t Which = 0&gt;
+    VULKAN_HPP_NODISCARD T const &amp; get() const &amp; VULKAN_HPP_NOEXCEPT
+    {
+      return std::get&lt;ChainElementIndex&lt;0, T, Which, void, ChainElements...&gt;::value&gt;( static_cast&lt;std::tuple&lt;ChainElements...&gt; const &amp;&gt;( *this ) );
+    }
+
+    template &lt;typename T = typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type, size_t Which = 0&gt;
+      VULKAN_HPP_NODISCARD T &amp;&amp; get() &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      return std::move( std::get&lt;ChainElementIndex&lt;0, T, Which, void, ChainElements...&gt;::value&gt;( static_cast&lt;std::tuple&lt;ChainElements...&gt; &amp;&gt;( *this ) ) );
+    }
+
+    template &lt;typename T0, typename T1, typename... Ts&gt;
+      VULKAN_HPP_NODISCARD std::tuple&lt;T0 &amp;, T1 &amp;, Ts &amp;...&gt; get() &amp; VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( get&lt;T0&gt;(), get&lt;T1&gt;(), get&lt;Ts&gt;()... );
+    }
+
+    template &lt;typename T0, typename T1, typename... Ts&gt;
+    VULKAN_HPP_NODISCARD std::tuple&lt;T0 const &amp;, T1 const &amp;, Ts const &amp;...&gt; get() const &amp; VULKAN_HPP_NOEXCEPT
+    {
+      return std::tie( get&lt;T0&gt;(), get&lt;T1&gt;(), get&lt;Ts&gt;()... );
+    }
+
+    template &lt;typename T0, typename T1, typename... Ts&gt;
+      VULKAN_HPP_NODISCARD std::tuple&lt;T0 &amp;&amp;, T1 &amp;&amp;, Ts &amp;&amp;...&gt; get() &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      return std::forward_as_tuple( std::move( get&lt;T0&gt;() ), std::move( get&lt;T1&gt;() ), std::move( get&lt;Ts&gt;() )... );
+    }
+
+    template &lt;typename T0, typename T1, typename... Ts&gt;
+    VULKAN_HPP_NODISCARD std::tuple&lt;T0 const &amp;&amp;, T1 const &amp;&amp;, Ts const &amp;&amp;...&gt; get() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+    {
+      return std::forward_as_tuple( std::move( get&lt;T0&gt;() ), std::move( get&lt;T1&gt;() ), std::move( get&lt;Ts&gt;() )... );
+    }
+
+    // assign a complete structure to the StructureChain without modifying the chaining
+    template &lt;typename T = typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type, size_t Which = 0&gt;
+    StructureChain &amp; assign( const T &amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      T &amp;  lhs   = get&lt;T, Which&gt;();
+      auto pNext = lhs.pNext;
+      lhs        = rhs;
+      lhs.pNext  = pNext;
+      return *this;
+    }
+
+    template &lt;typename ClassType, size_t Which = 0&gt;
+    VULKAN_HPP_NODISCARD
+      typename std::enable_if&lt;std::is_same&lt;ClassType, typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type&gt;::value &amp;&amp; ( Which == 0 ), bool&gt;::type
+      isLinked() const VULKAN_HPP_NOEXCEPT
+    {
+      return true;
+    }
+
+    template &lt;typename ClassType, size_t Which = 0&gt;
+    VULKAN_HPP_NODISCARD
+      typename std::enable_if&lt;!std::is_same&lt;ClassType, typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type&gt;::value || ( Which != 0 ), bool&gt;::type
+      isLinked() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_STATIC_ASSERT( IsPartOfStructureChain&lt;ClassType, ChainElements...&gt;::valid, &quot;Can&#39;t unlink Structure that&#39;s not part of this StructureChain!&quot; );
+      return isLinked( reinterpret_cast&lt;VkBaseInStructure const *&gt;( &amp;get&lt;ClassType, Which&gt;() ) );
+    }
+
+    template &lt;typename ClassType, size_t Which = 0&gt;
+    typename std::enable_if&lt;!std::is_same&lt;ClassType, typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type&gt;::value || ( Which != 0 ), void&gt;::type
+      relink() VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_STATIC_ASSERT( IsPartOfStructureChain&lt;ClassType, ChainElements...&gt;::valid, &quot;Can&#39;t relink Structure that&#39;s not part of this StructureChain!&quot; );
+      auto pNext = reinterpret_cast&lt;VkBaseInStructure *&gt;( &amp;get&lt;ClassType, Which&gt;() );
+      VULKAN_HPP_ASSERT( !isLinked( pNext ) );
+      auto &amp; headElement = std::get&lt;0&gt;( static_cast&lt;std::tuple&lt;ChainElements...&gt; &amp;&gt;( *this ) );
+      pNext-&gt;pNext       = reinterpret_cast&lt;VkBaseInStructure const *&gt;( headElement.pNext );
+      headElement.pNext  = pNext;
+    }
+
+    template &lt;typename ClassType, size_t Which = 0&gt;
+    typename std::enable_if&lt;!std::is_same&lt;ClassType, typename std::tuple_element&lt;0, std::tuple&lt;ChainElements...&gt;&gt;::type&gt;::value || ( Which != 0 ), void&gt;::type
+      unlink() VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_STATIC_ASSERT( IsPartOfStructureChain&lt;ClassType, ChainElements...&gt;::valid, &quot;Can&#39;t unlink Structure that&#39;s not part of this StructureChain!&quot; );
+      unlink( reinterpret_cast&lt;VkBaseOutStructure const *&gt;( &amp;get&lt;ClassType, Which&gt;() ) );
+    }
+
+  private:
+    template &lt;int Index, typename T, int Which, typename, class First, class... Types&gt;
+    struct ChainElementIndex : ChainElementIndex&lt;Index + 1, T, Which, void, Types...&gt;
+    {
+    };
+
+    template &lt;int Index, typename T, int Which, class First, class... Types&gt;
+    struct ChainElementIndex&lt;Index, T, Which, typename std::enable_if&lt;!std::is_same&lt;T, First&gt;::value, void&gt;::type, First, Types...&gt;
+      : ChainElementIndex&lt;Index + 1, T, Which, void, Types...&gt;
+    {
+    };
+
+    template &lt;int Index, typename T, int Which, class First, class... Types&gt;
+    struct ChainElementIndex&lt;Index, T, Which, typename std::enable_if&lt;std::is_same&lt;T, First&gt;::value, void&gt;::type, First, Types...&gt;
+      : ChainElementIndex&lt;Index + 1, T, Which - 1, void, Types...&gt;
+    {
+    };
+
+    template &lt;int Index, typename T, class First, class... Types&gt;
+    struct ChainElementIndex&lt;Index, T, 0, typename std::enable_if&lt;std::is_same&lt;T, First&gt;::value, void&gt;::type, First, Types...&gt;
+      : std::integral_constant&lt;int, Index&gt;
+    {
+    };
+
+    VULKAN_HPP_NODISCARD bool isLinked( VkBaseInStructure const * pNext ) const VULKAN_HPP_NOEXCEPT
+    {
+      VkBaseInStructure const * elementPtr =
+        reinterpret_cast&lt;VkBaseInStructure const *&gt;( &amp;std::get&lt;0&gt;( static_cast&lt;std::tuple&lt;ChainElements...&gt; const &amp;&gt;( *this ) ) );
+      while ( elementPtr )
+      {
+        if ( elementPtr-&gt;pNext == pNext )
+        {
+          return true;
+        }
+        elementPtr = elementPtr-&gt;pNext;
+      }
+      return false;
+    }
+
+    template &lt;size_t Index&gt;
+    typename std::enable_if&lt;Index != 0, void&gt;::type link() VULKAN_HPP_NOEXCEPT
+    {
+      auto &amp; x = std::get&lt;Index - 1&gt;( static_cast&lt;std::tuple&lt;ChainElements...&gt; &amp;&gt;( *this ) );
+      x.pNext  = &amp;std::get&lt;Index&gt;( static_cast&lt;std::tuple&lt;ChainElements...&gt; &amp;&gt;( *this ) );
+      link&lt;Index - 1&gt;();
+    }
+
+    template &lt;size_t Index&gt;
+    typename std::enable_if&lt;Index == 0, void&gt;::type link() VULKAN_HPP_NOEXCEPT
+    {
+    }
+
+    void link( void * dstBase, void const * srcBase, VkBaseOutStructure * dst, VkBaseInStructure const * src )
+    {
+      while ( src-&gt;pNext )
+      {
+        std::ptrdiff_t offset = reinterpret_cast&lt;char const *&gt;( src-&gt;pNext ) - reinterpret_cast&lt;char const *&gt;( srcBase );
+        dst-&gt;pNext            = reinterpret_cast&lt;VkBaseOutStructure *&gt;( reinterpret_cast&lt;char *&gt;( dstBase ) + offset );
+        dst                   = dst-&gt;pNext;
+        src                   = src-&gt;pNext;
+      }
+      dst-&gt;pNext = nullptr;
+    }
+
+    void unlink( VkBaseOutStructure const * pNext ) VULKAN_HPP_NOEXCEPT
+    {
+      VkBaseOutStructure * elementPtr = reinterpret_cast&lt;VkBaseOutStructure *&gt;( &amp;std::get&lt;0&gt;( static_cast&lt;std::tuple&lt;ChainElements...&gt; &amp;&gt;( *this ) ) );
+      while ( elementPtr &amp;&amp; ( elementPtr-&gt;pNext != pNext ) )
+      {
+        elementPtr = elementPtr-&gt;pNext;
+      }
+      if ( elementPtr )
+      {
+        elementPtr-&gt;pNext = pNext-&gt;pNext;
+      }
+      else
+      {
+        VULKAN_HPP_ASSERT( false );  // fires, if the ClassType member has already been unlinked !
+      }
+    }
+  };
+
+  // interupt the VULKAN_HPP_NAMESPACE for a moment to add specializations of std::tuple_size and std::tuple_element for the StructureChain!
+}
+
+namespace std
+{
+  template &lt;typename... Elements&gt;
+  struct tuple_size&lt;VULKAN_HPP_NAMESPACE::StructureChain&lt;Elements...&gt;&gt;
+  {
+    static constexpr size_t value = std::tuple_size&lt;std::tuple&lt;Elements...&gt;&gt;::value;
+  };
+
+  template &lt;std::size_t Index, typename... Elements&gt;
+  struct tuple_element&lt;Index, VULKAN_HPP_NAMESPACE::StructureChain&lt;Elements...&gt;&gt;
+  {
+    using type = typename std::tuple_element&lt;Index, std::tuple&lt;Elements...&gt;&gt;::type;
+  };
+}  // namespace std
+
+namespace VULKAN_HPP_NAMESPACE
+{
+
+#  if !defined( VULKAN_HPP_NO_SMART_HANDLE )
+  template &lt;typename Type, typename Dispatch&gt;
+  class UniqueHandleTraits;
+
+  template &lt;typename Type, typename Dispatch&gt;
+  class UniqueHandle : public UniqueHandleTraits&lt;Type, Dispatch&gt;::deleter
+  {
+  private:
+    using Deleter = typename UniqueHandleTraits&lt;Type, Dispatch&gt;::deleter;
+
+  public:
+    using element_type = Type;
+
+    UniqueHandle() : Deleter(), m_value() {}</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-1.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-3.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

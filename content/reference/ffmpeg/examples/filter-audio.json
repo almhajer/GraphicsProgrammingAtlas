@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "filter_audio.c",
+    "slug": "filter-audio",
+    "titleArabic": "تمرير صوت خام عبر filter graph مباشر",
+    "aliases": [
+      "filter_audio",
+      "filter_audio"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/filter-audio",
+    "contentPath": "content/reference/ffmpeg/examples/filter-audio.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تمرير صوت خام عبر filter graph مباشر",
+    "actualMeaningArabic": "يبين بناء graph صوتي وإدخال frames صوتية خامة إليها مباشرة.",
+    "purposeArabic": "يبين بناء graph صوتي وإدخال frames صوتية خامة إليها مباشرة.",
+    "whyUseArabic": "يبين بناء graph صوتي وإدخال frames صوتية خامة إليها مباشرة.",
+    "carriedValueArabic": "يبين بناء graph صوتي وإدخال frames صوتية خامة إليها مباشرة.",
+    "sourceDescription": "يبين بناء graph صوتي وإدخال frames صوتية خامة إليها مباشرة."
+  },
+  "signature": {
+    "raw": "// filter_audio.c - بناء graph فلاتر صوتي وتطبيقها على frames\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n#include <stdio.h>\n\nint main(void) {\n    // بناء graph: abuffer -> volume -> aformat -> abuffersink\n    AVFilterGraph *graph = avfilter_graph_alloc();\n    int ret = avfilter_graph_parse_ptr(graph,\n        \"abuffer=time_base=1/44100:sample_rate=44100:channel_layout=stereo\"\n        \"[volume=1.5]\"\n        \"[aformat=sample_fmts=flt:sample_rate=44100]\"\n        \"[abuffersink]\",\n        NULL);\n    if (ret < 0) {\n        fprintf(stderr, \"فشل بناء graph\\n\");\n        return 1;\n    }\n    avfilter_graph_config(graph, NULL);\n\n    // الآن يمكنك تمرير frames عبر الـ graph\n    // av_buffersrc_add_frame() -> av_buffersink_get_frame()\n    printf(\"Graph جاهز: abuffer -> volume -> aformat -> abuffersink\\n\");\n\n    avfilter_graph_free(&graph);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "libavfilter تعالج الوسائط كـ graph من العقد المتصلة، كل عقدة هي فلتر.",
+      "abuffer هو مصدر الإطارات، abuffersink هو المستقبل، وما بينهما هو سلسلة الفلاتر."
+    ],
+    "notes": [
+      "libavfilter تعالج الوسائط كـ graph من العقد المتصلة، كل عقدة هي فلتر.",
+      "abuffer هو مصدر الإطارات، abuffersink هو المستقبل، وما بينهما هو سلسلة الفلاتر."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// filter_audio.c - بناء graph فلاتر صوتي وتطبيقها على frames\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n#include <stdio.h>\n\nint main(void) {\n    // بناء graph: abuffer -> volume -> aformat -> abuffersink\n    AVFilterGraph *graph = avfilter_graph_alloc();\n    int ret = avfilter_graph_parse_ptr(graph,\n        \"abuffer=time_base=1/44100:sample_rate=44100:channel_layout=stereo\"\n        \"[volume=1.5]\"\n        \"[aformat=sample_fmts=flt:sample_rate=44100]\"\n        \"[abuffersink]\",\n        NULL);\n    if (ret < 0) {\n        fprintf(stderr, \"فشل بناء graph\n\");\n        return 1;\n    }\n    avfilter_graph_config(graph, NULL);\n\n    // الآن يمكنك تمرير frames عبر الـ graph\n    // av_buffersrc_add_frame() -> av_buffersink_get_frame()\n    printf(\"Graph جاهز: abuffer -> volume -> aformat -> abuffersink\n\");\n\n    avfilter_graph_free(&graph);\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "تمرير صوت خام عبر filter graph مباشر",
+        "code": "// filter_audio.c - تطبيق فلاتر صوتية باستخدام libavfilter\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n\nint main() {\n    const AVFilter *src = avfilter_get_by_name(\"abuffer\");\n    const AVFilter *sink = avfilter_get_by_name(\"abuffersink\");\n    const AVFilter *volume = avfilter_get_by_name(\"volume\");\n    AVFilterGraph *graph = avfilter_graph_alloc();\n\n    // بناء graph: abuffer -> volume -> abuffersink\n    // volume=2.0 يضاعف مستوى الصوت\n    avfilter_graph_parse_ptr(graph,\n        \"abuffer=time_base=1/44100:sample_rate=44100:channel_layout=stereo[volume=2.0]abuffersink\",\n        NULL);\n    avfilter_graph_config(graph, NULL);\n\n    // تمرير frames عبر الـ graph\n    // av_buffersrc_add_frame() -> av_buffersink_get_frame()\n    avfilter_graph_free(&graph);\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/filter_audio_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "الفلاتر والمعالجة",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

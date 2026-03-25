@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="يحتوي على النواة الأساسية لواجهة Vulkan: الأنواع، الهياكل، التعدادات، وتصريحات الدوال العامة بعيداً عن ترويسات المنصات.">
+  <title>vulkan_core.h • القسم 51 من 57 • الأسطر 22501-22950 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_core.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_core.h.html">vulkan_core.h</a> /
+        <span>القسم 51 من 57 • الأسطر 22501-22950</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_core.h</h1>
+      <p class="page-description">القسم 51 من 57 • الأسطر 22501-22950</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-50.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-52.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_core.h</span>
+        <span class="source-stat">القسم: 51/57</span>
+        <span class="source-stat">الأسطر: 22501-22950</span>
+        <span class="source-stat">حجم الملف: 1.21 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    VK_COOPERATIVE_VECTOR_MATRIX_LAYOUT_COLUMN_MAJOR_NV = 1,
+    VK_COOPERATIVE_VECTOR_MATRIX_LAYOUT_INFERENCING_OPTIMAL_NV = 2,
+    VK_COOPERATIVE_VECTOR_MATRIX_LAYOUT_TRAINING_OPTIMAL_NV = 3,
+    VK_COOPERATIVE_VECTOR_MATRIX_LAYOUT_MAX_ENUM_NV = 0x7FFFFFFF
+} VkCooperativeVectorMatrixLayoutNV;
+typedef struct VkPhysicalDeviceCooperativeVectorPropertiesNV {
+    VkStructureType       sType;
+    void*                 pNext;
+    VkShaderStageFlags    cooperativeVectorSupportedStages;
+    VkBool32              cooperativeVectorTrainingFloat16Accumulation;
+    VkBool32              cooperativeVectorTrainingFloat32Accumulation;
+    uint32_t              maxCooperativeVectorComponents;
+} VkPhysicalDeviceCooperativeVectorPropertiesNV;
+
+typedef struct VkPhysicalDeviceCooperativeVectorFeaturesNV {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           cooperativeVector;
+    VkBool32           cooperativeVectorTraining;
+} VkPhysicalDeviceCooperativeVectorFeaturesNV;
+
+typedef struct VkCooperativeVectorPropertiesNV {
+    VkStructureType       sType;
+    void*                 pNext;
+    VkComponentTypeKHR    inputType;
+    VkComponentTypeKHR    inputInterpretation;
+    VkComponentTypeKHR    matrixInterpretation;
+    VkComponentTypeKHR    biasInterpretation;
+    VkComponentTypeKHR    resultType;
+    VkBool32              transpose;
+} VkCooperativeVectorPropertiesNV;
+
+typedef struct VkConvertCooperativeVectorMatrixInfoNV {
+    VkStructureType                      sType;
+    const void*                          pNext;
+    size_t                               srcSize;
+    VkDeviceOrHostAddressConstKHR        srcData;
+    size_t*                              pDstSize;
+    VkDeviceOrHostAddressKHR             dstData;
+    VkComponentTypeKHR                   srcComponentType;
+    VkComponentTypeKHR                   dstComponentType;
+    uint32_t                             numRows;
+    uint32_t                             numColumns;
+    VkCooperativeVectorMatrixLayoutNV    srcLayout;
+    size_t                               srcStride;
+    VkCooperativeVectorMatrixLayoutNV    dstLayout;
+    size_t                               dstStride;
+} VkConvertCooperativeVectorMatrixInfoNV;
+
+typedef VkResult (VKAPI_PTR *PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV)(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeVectorPropertiesNV* pProperties);
+typedef VkResult (VKAPI_PTR *PFN_vkConvertCooperativeVectorMatrixNV)(VkDevice device, const VkConvertCooperativeVectorMatrixInfoNV* pInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdConvertCooperativeVectorMatrixNV)(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeVectorPropertiesNV(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pPropertyCount,
+    VkCooperativeVectorPropertiesNV*            pProperties);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkConvertCooperativeVectorMatrixNV(
+    VkDevice                                    device,
+    const VkConvertCooperativeVectorMatrixInfoNV* pInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdConvertCooperativeVectorMatrixNV(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    infoCount,
+    const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
+#endif
+#endif
+
+
+// VK_NV_extended_sparse_address_space is a preprocessor guard. Do not pass it to API calls.
+#define VK_NV_extended_sparse_address_space 1
+#define VK_NV_EXTENDED_SPARSE_ADDRESS_SPACE_SPEC_VERSION 1
+#define VK_NV_EXTENDED_SPARSE_ADDRESS_SPACE_EXTENSION_NAME &quot;VK_NV_extended_sparse_address_space&quot;
+typedef struct VkPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           extendedSparseAddressSpace;
+} VkPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV;
+
+typedef struct VkPhysicalDeviceExtendedSparseAddressSpacePropertiesNV {
+    VkStructureType       sType;
+    void*                 pNext;
+    VkDeviceSize          extendedSparseAddressSpaceSize;
+    VkImageUsageFlags     extendedSparseImageUsageFlags;
+    VkBufferUsageFlags    extendedSparseBufferUsageFlags;
+} VkPhysicalDeviceExtendedSparseAddressSpacePropertiesNV;
+
+
+
+// VK_EXT_mutable_descriptor_type is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_mutable_descriptor_type 1
+#define VK_EXT_MUTABLE_DESCRIPTOR_TYPE_SPEC_VERSION 1
+#define VK_EXT_MUTABLE_DESCRIPTOR_TYPE_EXTENSION_NAME &quot;VK_EXT_mutable_descriptor_type&quot;
+
+
+// VK_EXT_legacy_vertex_attributes is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_legacy_vertex_attributes 1
+#define VK_EXT_LEGACY_VERTEX_ATTRIBUTES_SPEC_VERSION 1
+#define VK_EXT_LEGACY_VERTEX_ATTRIBUTES_EXTENSION_NAME &quot;VK_EXT_legacy_vertex_attributes&quot;
+typedef struct VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           legacyVertexAttributes;
+} VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT;
+
+typedef struct VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           nativeUnalignedPerformance;
+} VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT;
+
+
+
+// VK_EXT_layer_settings is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_layer_settings 1
+#define VK_EXT_LAYER_SETTINGS_SPEC_VERSION 2
+#define VK_EXT_LAYER_SETTINGS_EXTENSION_NAME &quot;VK_EXT_layer_settings&quot;
+
+typedef enum VkLayerSettingTypeEXT {
+    VK_LAYER_SETTING_TYPE_BOOL32_EXT = 0,
+    VK_LAYER_SETTING_TYPE_INT32_EXT = 1,
+    VK_LAYER_SETTING_TYPE_INT64_EXT = 2,
+    VK_LAYER_SETTING_TYPE_UINT32_EXT = 3,
+    VK_LAYER_SETTING_TYPE_UINT64_EXT = 4,
+    VK_LAYER_SETTING_TYPE_FLOAT32_EXT = 5,
+    VK_LAYER_SETTING_TYPE_FLOAT64_EXT = 6,
+    VK_LAYER_SETTING_TYPE_STRING_EXT = 7,
+    VK_LAYER_SETTING_TYPE_MAX_ENUM_EXT = 0x7FFFFFFF
+} VkLayerSettingTypeEXT;
+typedef struct VkLayerSettingEXT {
+    const char*              pLayerName;
+    const char*              pSettingName;
+    VkLayerSettingTypeEXT    type;
+    uint32_t                 valueCount;
+    const void*              pValues;
+} VkLayerSettingEXT;
+
+typedef struct VkLayerSettingsCreateInfoEXT {
+    VkStructureType             sType;
+    const void*                 pNext;
+    uint32_t                    settingCount;
+    const VkLayerSettingEXT*    pSettings;
+} VkLayerSettingsCreateInfoEXT;
+
+
+
+// VK_ARM_shader_core_builtins is a preprocessor guard. Do not pass it to API calls.
+#define VK_ARM_shader_core_builtins 1
+#define VK_ARM_SHADER_CORE_BUILTINS_SPEC_VERSION 2
+#define VK_ARM_SHADER_CORE_BUILTINS_EXTENSION_NAME &quot;VK_ARM_shader_core_builtins&quot;
+typedef struct VkPhysicalDeviceShaderCoreBuiltinsFeaturesARM {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           shaderCoreBuiltins;
+} VkPhysicalDeviceShaderCoreBuiltinsFeaturesARM;
+
+typedef struct VkPhysicalDeviceShaderCoreBuiltinsPropertiesARM {
+    VkStructureType    sType;
+    void*              pNext;
+    uint64_t           shaderCoreMask;
+    uint32_t           shaderCoreCount;
+    uint32_t           shaderWarpsPerCore;
+} VkPhysicalDeviceShaderCoreBuiltinsPropertiesARM;
+
+
+
+// VK_EXT_pipeline_library_group_handles is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_pipeline_library_group_handles 1
+#define VK_EXT_PIPELINE_LIBRARY_GROUP_HANDLES_SPEC_VERSION 1
+#define VK_EXT_PIPELINE_LIBRARY_GROUP_HANDLES_EXTENSION_NAME &quot;VK_EXT_pipeline_library_group_handles&quot;
+typedef struct VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           pipelineLibraryGroupHandles;
+} VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT;
+
+
+
+// VK_EXT_dynamic_rendering_unused_attachments is a preprocessor guard. Do not pass it to API calls.
+#define VK_EXT_dynamic_rendering_unused_attachments 1
+#define VK_EXT_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_SPEC_VERSION 1
+#define VK_EXT_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_EXTENSION_NAME &quot;VK_EXT_dynamic_rendering_unused_attachments&quot;
+typedef struct VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           dynamicRenderingUnusedAttachments;
+} VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT;
+
+
+
+// VK_NV_low_latency2 is a preprocessor guard. Do not pass it to API calls.
+#define VK_NV_low_latency2 1
+#define VK_NV_LOW_LATENCY_2_SPEC_VERSION  2
+#define VK_NV_LOW_LATENCY_2_EXTENSION_NAME &quot;VK_NV_low_latency2&quot;
+
+typedef enum VkLatencyMarkerNV {
+    VK_LATENCY_MARKER_SIMULATION_START_NV = 0,
+    VK_LATENCY_MARKER_SIMULATION_END_NV = 1,
+    VK_LATENCY_MARKER_RENDERSUBMIT_START_NV = 2,
+    VK_LATENCY_MARKER_RENDERSUBMIT_END_NV = 3,
+    VK_LATENCY_MARKER_PRESENT_START_NV = 4,
+    VK_LATENCY_MARKER_PRESENT_END_NV = 5,
+    VK_LATENCY_MARKER_INPUT_SAMPLE_NV = 6,
+    VK_LATENCY_MARKER_TRIGGER_FLASH_NV = 7,
+    VK_LATENCY_MARKER_OUT_OF_BAND_RENDERSUBMIT_START_NV = 8,
+    VK_LATENCY_MARKER_OUT_OF_BAND_RENDERSUBMIT_END_NV = 9,
+    VK_LATENCY_MARKER_OUT_OF_BAND_PRESENT_START_NV = 10,
+    VK_LATENCY_MARKER_OUT_OF_BAND_PRESENT_END_NV = 11,
+    VK_LATENCY_MARKER_MAX_ENUM_NV = 0x7FFFFFFF
+} VkLatencyMarkerNV;
+
+typedef enum VkOutOfBandQueueTypeNV {
+    VK_OUT_OF_BAND_QUEUE_TYPE_RENDER_NV = 0,
+    VK_OUT_OF_BAND_QUEUE_TYPE_PRESENT_NV = 1,
+    VK_OUT_OF_BAND_QUEUE_TYPE_MAX_ENUM_NV = 0x7FFFFFFF
+} VkOutOfBandQueueTypeNV;
+typedef struct VkLatencySleepModeInfoNV {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkBool32           lowLatencyMode;
+    VkBool32           lowLatencyBoost;
+    uint32_t           minimumIntervalUs;
+} VkLatencySleepModeInfoNV;
+
+typedef struct VkLatencySleepInfoNV {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkSemaphore        signalSemaphore;
+    uint64_t           value;
+} VkLatencySleepInfoNV;
+
+typedef struct VkSetLatencyMarkerInfoNV {
+    VkStructureType      sType;
+    const void*          pNext;
+    uint64_t             presentID;
+    VkLatencyMarkerNV    marker;
+} VkSetLatencyMarkerInfoNV;
+
+typedef struct VkLatencyTimingsFrameReportNV {
+    VkStructureType    sType;
+    void*              pNext;
+    uint64_t           presentID;
+    uint64_t           inputSampleTimeUs;
+    uint64_t           simStartTimeUs;
+    uint64_t           simEndTimeUs;
+    uint64_t           renderSubmitStartTimeUs;
+    uint64_t           renderSubmitEndTimeUs;
+    uint64_t           presentStartTimeUs;
+    uint64_t           presentEndTimeUs;
+    uint64_t           driverStartTimeUs;
+    uint64_t           driverEndTimeUs;
+    uint64_t           osRenderQueueStartTimeUs;
+    uint64_t           osRenderQueueEndTimeUs;
+    uint64_t           gpuRenderStartTimeUs;
+    uint64_t           gpuRenderEndTimeUs;
+} VkLatencyTimingsFrameReportNV;
+
+typedef struct VkGetLatencyMarkerInfoNV {
+    VkStructureType                   sType;
+    const void*                       pNext;
+    uint32_t                          timingCount;
+    VkLatencyTimingsFrameReportNV*    pTimings;
+} VkGetLatencyMarkerInfoNV;
+
+typedef struct VkLatencySubmissionPresentIdNV {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint64_t           presentID;
+} VkLatencySubmissionPresentIdNV;
+
+typedef struct VkSwapchainLatencyCreateInfoNV {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkBool32           latencyModeEnable;
+} VkSwapchainLatencyCreateInfoNV;
+
+typedef struct VkOutOfBandQueueTypeInfoNV {
+    VkStructureType           sType;
+    const void*               pNext;
+    VkOutOfBandQueueTypeNV    queueType;
+} VkOutOfBandQueueTypeInfoNV;
+
+typedef struct VkLatencySurfaceCapabilitiesNV {
+    VkStructureType      sType;
+    const void*          pNext;
+    uint32_t             presentModeCount;
+    VkPresentModeKHR*    pPresentModes;
+} VkLatencySurfaceCapabilitiesNV;
+
+typedef VkResult (VKAPI_PTR *PFN_vkSetLatencySleepModeNV)(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepModeInfoNV* pSleepModeInfo);
+typedef VkResult (VKAPI_PTR *PFN_vkLatencySleepNV)(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepInfoNV* pSleepInfo);
+typedef void (VKAPI_PTR *PFN_vkSetLatencyMarkerNV)(VkDevice device, VkSwapchainKHR swapchain, const VkSetLatencyMarkerInfoNV* pLatencyMarkerInfo);
+typedef void (VKAPI_PTR *PFN_vkGetLatencyTimingsNV)(VkDevice device, VkSwapchainKHR swapchain, VkGetLatencyMarkerInfoNV* pLatencyMarkerInfo);
+typedef void (VKAPI_PTR *PFN_vkQueueNotifyOutOfBandNV)(VkQueue queue, const VkOutOfBandQueueTypeInfoNV* pQueueTypeInfo);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkSetLatencySleepModeNV(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    const VkLatencySleepModeInfoNV*             pSleepModeInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkLatencySleepNV(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    const VkLatencySleepInfoNV*                 pSleepInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkSetLatencyMarkerNV(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    const VkSetLatencyMarkerInfoNV*             pLatencyMarkerInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetLatencyTimingsNV(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    VkGetLatencyMarkerInfoNV*                   pLatencyMarkerInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkQueueNotifyOutOfBandNV(
+    VkQueue                                     queue,
+    const VkOutOfBandQueueTypeInfoNV*           pQueueTypeInfo);
+#endif
+#endif
+
+
+// VK_ARM_data_graph is a preprocessor guard. Do not pass it to API calls.
+#define VK_ARM_data_graph 1
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkDataGraphPipelineSessionARM)
+#define VK_MAX_PHYSICAL_DEVICE_DATA_GRAPH_OPERATION_SET_NAME_SIZE_ARM 128U
+#define VK_ARM_DATA_GRAPH_SPEC_VERSION    1
+#define VK_ARM_DATA_GRAPH_EXTENSION_NAME  &quot;VK_ARM_data_graph&quot;
+
+typedef enum VkDataGraphPipelineSessionBindPointARM {
+    VK_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_TRANSIENT_ARM = 0,
+    VK_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_MAX_ENUM_ARM = 0x7FFFFFFF
+} VkDataGraphPipelineSessionBindPointARM;
+
+typedef enum VkDataGraphPipelineSessionBindPointTypeARM {
+    VK_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_TYPE_MEMORY_ARM = 0,
+    VK_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_TYPE_MAX_ENUM_ARM = 0x7FFFFFFF
+} VkDataGraphPipelineSessionBindPointTypeARM;
+
+typedef enum VkDataGraphPipelinePropertyARM {
+    VK_DATA_GRAPH_PIPELINE_PROPERTY_CREATION_LOG_ARM = 0,
+    VK_DATA_GRAPH_PIPELINE_PROPERTY_IDENTIFIER_ARM = 1,
+    VK_DATA_GRAPH_PIPELINE_PROPERTY_MAX_ENUM_ARM = 0x7FFFFFFF
+} VkDataGraphPipelinePropertyARM;
+
+typedef enum VkPhysicalDeviceDataGraphProcessingEngineTypeARM {
+    VK_PHYSICAL_DEVICE_DATA_GRAPH_PROCESSING_ENGINE_TYPE_DEFAULT_ARM = 0,
+    VK_PHYSICAL_DEVICE_DATA_GRAPH_PROCESSING_ENGINE_TYPE_NEURAL_QCOM = 1000629000,
+    VK_PHYSICAL_DEVICE_DATA_GRAPH_PROCESSING_ENGINE_TYPE_COMPUTE_QCOM = 1000629001,
+    VK_PHYSICAL_DEVICE_DATA_GRAPH_PROCESSING_ENGINE_TYPE_MAX_ENUM_ARM = 0x7FFFFFFF
+} VkPhysicalDeviceDataGraphProcessingEngineTypeARM;
+
+typedef enum VkPhysicalDeviceDataGraphOperationTypeARM {
+    VK_PHYSICAL_DEVICE_DATA_GRAPH_OPERATION_TYPE_SPIRV_EXTENDED_INSTRUCTION_SET_ARM = 0,
+    VK_PHYSICAL_DEVICE_DATA_GRAPH_OPERATION_TYPE_NEURAL_MODEL_QCOM = 1000629000,
+    VK_PHYSICAL_DEVICE_DATA_GRAPH_OPERATION_TYPE_BUILTIN_MODEL_QCOM = 1000629001,
+    VK_PHYSICAL_DEVICE_DATA_GRAPH_OPERATION_TYPE_MAX_ENUM_ARM = 0x7FFFFFFF
+} VkPhysicalDeviceDataGraphOperationTypeARM;
+typedef VkFlags64 VkDataGraphPipelineSessionCreateFlagsARM;
+
+// Flag bits for VkDataGraphPipelineSessionCreateFlagBitsARM
+typedef VkFlags64 VkDataGraphPipelineSessionCreateFlagBitsARM;
+static const VkDataGraphPipelineSessionCreateFlagBitsARM VK_DATA_GRAPH_PIPELINE_SESSION_CREATE_PROTECTED_BIT_ARM = 0x00000001ULL;
+
+typedef VkFlags64 VkDataGraphPipelineDispatchFlagsARM;
+
+// Flag bits for VkDataGraphPipelineDispatchFlagBitsARM
+typedef VkFlags64 VkDataGraphPipelineDispatchFlagBitsARM;
+
+typedef struct VkPhysicalDeviceDataGraphFeaturesARM {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           dataGraph;
+    VkBool32           dataGraphUpdateAfterBind;
+    VkBool32           dataGraphSpecializationConstants;
+    VkBool32           dataGraphDescriptorBuffer;
+    VkBool32           dataGraphShaderModule;
+} VkPhysicalDeviceDataGraphFeaturesARM;
+
+typedef struct VkDataGraphPipelineConstantARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           id;
+    const void*        pConstantData;
+} VkDataGraphPipelineConstantARM;
+
+typedef struct VkDataGraphPipelineResourceInfoARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           descriptorSet;
+    uint32_t           binding;
+    uint32_t           arrayElement;
+} VkDataGraphPipelineResourceInfoARM;
+
+typedef struct VkDataGraphPipelineCompilerControlCreateInfoARM {
+    VkStructureType    sType;
+    const void*        pNext;
+    const char*        pVendorOptions;
+} VkDataGraphPipelineCompilerControlCreateInfoARM;
+
+typedef struct VkDataGraphPipelineCreateInfoARM {
+    VkStructureType                              sType;
+    const void*                                  pNext;
+    VkPipelineCreateFlags2KHR                    flags;
+    VkPipelineLayout                             layout;
+    uint32_t                                     resourceInfoCount;
+    const VkDataGraphPipelineResourceInfoARM*    pResourceInfos;
+} VkDataGraphPipelineCreateInfoARM;
+
+typedef struct VkDataGraphPipelineShaderModuleCreateInfoARM {
+    VkStructureType                          sType;
+    const void*                              pNext;
+    VkShaderModule                           module;
+    const char*                              pName;
+    const VkSpecializationInfo*              pSpecializationInfo;
+    uint32_t                                 constantCount;
+    const VkDataGraphPipelineConstantARM*    pConstants;
+} VkDataGraphPipelineShaderModuleCreateInfoARM;
+
+typedef struct VkDataGraphPipelineSessionCreateInfoARM {
+    VkStructureType                             sType;
+    const void*                                 pNext;
+    VkDataGraphPipelineSessionCreateFlagsARM    flags;
+    VkPipeline                                  dataGraphPipeline;
+} VkDataGraphPipelineSessionCreateInfoARM;
+
+typedef struct VkDataGraphPipelineSessionBindPointRequirementsInfoARM {
+    VkStructureType                  sType;
+    const void*                      pNext;
+    VkDataGraphPipelineSessionARM    session;
+} VkDataGraphPipelineSessionBindPointRequirementsInfoARM;
+
+typedef struct VkDataGraphPipelineSessionBindPointRequirementARM {</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-50.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-52.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

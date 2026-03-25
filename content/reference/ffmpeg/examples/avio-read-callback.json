@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "avio_read_callback.c",
+    "slug": "avio-read-callback",
+    "titleArabic": "قراءة مصدر مخصص عبر callback بدل ملف مباشر",
+    "aliases": [
+      "avio_read_callback",
+      "avio_read_callback"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/avio-read-callback",
+    "contentPath": "content/reference/ffmpeg/examples/avio-read-callback.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "قراءة مصدر مخصص عبر callback بدل ملف مباشر",
+    "actualMeaningArabic": "يبين كيف تربط FFmpeg بمصدر بيانات مخصص في الذاكرة أو الشبكة عبر callback.",
+    "purposeArabic": "يبين كيف تربط FFmpeg بمصدر بيانات مخصص في الذاكرة أو الشبكة عبر callback.",
+    "whyUseArabic": "يبين كيف تربط FFmpeg بمصدر بيانات مخصص في الذاكرة أو الشبكة عبر callback.",
+    "carriedValueArabic": "يبين كيف تربط FFmpeg بمصدر بيانات مخصص في الذاكرة أو الشبكة عبر callback.",
+    "sourceDescription": "يبين كيف تربط FFmpeg بمصدر بيانات مخصص في الذاكرة أو الشبكة عبر callback."
+  },
+  "signature": {
+    "raw": "// avio_read_callback.c - قراءة من مصدر مخصص عبر callback\n#include <libavformat/avformat.h>\n#include <libavformat/avio.h>\n#include <string.h>\n\n// هذه الدالة تُستدعى تلقائيًا عندما يحتاج FFmpeg لقراءة بيانات\nstatic int read_callback(void *opaque, uint8_t *buf, int buf_size) {\n    // opaque هو المؤشر الذي تمرره لـ avio_alloc_context\n    FILE *fp = (FILE *)opaque;\n    return (int)fread(buf, 1, buf_size, fp);\n}\n\nint main(int argc, char **argv) {\n    if (argc < 2) {\n        fprintf(stderr, \"الاستخدام: %s <ملف>\\n\", argv[0]);\n        return 1;\n    }\n\n    FILE *fp = fopen(argv[1], \"rb\");\n    if (!fp) {\n        fprintf(stderr, \"فشل فتح الملف\\n\");\n        return 1;\n    }\n\n    // إنشاء AVFormatContext مع مصدر مخصص\n    AVFormatContext *fmt_ctx = avformat_alloc_context();\n    AVIOContext *avio = avio_alloc_context(\n        NULL, 4096, 0,\n        fp,              // opaque: مؤشر الملف\n        read_callback,   // دالة القراءة\n        NULL,            // write_packet\n        NULL             // seek\n    );\n    fmt_ctx->pb = avio;\n    fmt_ctx->flags |= AVFMT_FLAG_CUSTOM_IO;\n\n    // الآن FFmpeg يقرأ من callback بدل ملف مباشر\n    if (avformat_open_input(&fmt_ctx, NULL, NULL, NULL) < 0) {\n        fprintf(stderr, \"فشل فتح المدخل\\n\");\n        return 1;\n    }\n\n    avformat_find_stream_info(fmt_ctx, NULL);\n    printf(\"نجح: فتح ملف عبر callback\\n\");\n\n    avformat_close_input(&fmt_ctx);\n    fclose(fp);\n    avio_context_free(&avio);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "AVIO هي طبقة الإدخال/الإخراج في FFmpeg. يمكنك تخصيصها لقراءة من أي مصدر.",
+      "مفيد عند قراءة بيانات مشفّرة أو من شبكة أو من ذاكرة مشتركة."
+    ],
+    "notes": [
+      "AVIO هي طبقة الإدخال/الإخراج في FFmpeg. يمكنك تخصيصها لقراءة من أي مصدر.",
+      "مفيد عند قراءة بيانات مشفّرة أو من شبكة أو من ذاكرة مشتركة."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// avio_read_callback.c - قراءة من مصدر مخصص عبر callback\n#include <libavformat/avformat.h>\n#include <libavformat/avio.h>\n#include <string.h>\n\n// هذه الدالة تُستدعى تلقائيًا عندما يحتاج FFmpeg لقراءة بيانات\nstatic int read_callback(void *opaque, uint8_t *buf, int buf_size) {\n    // opaque هو المؤشر الذي تمرره لـ avio_alloc_context\n    FILE *fp = (FILE *)opaque;\n    return (int)fread(buf, 1, buf_size, fp);\n}\n\nint main(int argc, char **argv) {\n    if (argc < 2) {\n        fprintf(stderr, \"الاستخدام: %s <ملف>\n\", argv[0]);\n        return 1;\n    }\n\n    FILE *fp = fopen(argv[1], \"rb\");\n    if (!fp) {\n        fprintf(stderr, \"فشل فتح الملف\n\");\n        return 1;\n    }\n\n    // إنشاء AVFormatContext مع مصدر مخصص\n    AVFormatContext *fmt_ctx = avformat_alloc_context();\n    AVIOContext *avio = avio_alloc_context(\n        NULL, 4096, 0,\n        fp,              // opaque: مؤشر الملف\n        read_callback,   // دالة القراءة\n        NULL,            // write_packet\n        NULL             // seek\n    );\n    fmt_ctx->pb = avio;\n    fmt_ctx->flags |= AVFMT_FLAG_CUSTOM_IO;\n\n    // الآن FFmpeg يقرأ من callback بدل ملف مباشر\n    if (avformat_open_input(&fmt_ctx, NULL, NULL, NULL) < 0) {\n        fprintf(stderr, \"فشل فتح المدخل\n\");\n        return 1;\n    }\n\n    avformat_find_stream_info(fmt_ctx, NULL);\n    printf(\"نجح: فتح ملف عبر callback\n\");\n\n    avformat_close_input(&fmt_ctx);\n    fclose(fp);\n    avio_context_free(&avio);\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "قراءة مصدر مخصص عبر callback بدل ملف مباشر",
+        "code": "// avio_read_callback.c - قراءة من مصدر مخصص عبر callback\n#include <libavformat/avformat.h>\n#include <libavformat/avio.h>\n\nstatic int read_packet(void *opaque, uint8_t *buf, int buf_size) {\n    // قراءة buf_size بايت من مصدرك المخصص\n    // مثلاً: من ذاكرة، شبكة، أو ملف مشفّر\n    return custom_read(opaque, buf, buf_size);\n}\n\nint main() {\n    AVFormatContext *fmt_ctx = avformat_alloc_context();\n    AVIOContext *avio = avio_alloc_context(\n        NULL, 4096, 0, NULL, read_packet, NULL, NULL\n    );\n    fmt_ctx->pb = avio;\n    fmt_ctx->flags |= AVFMT_FLAG_CUSTOM_IO;\n    avformat_open_input(&fmt_ctx, NULL, NULL, NULL);\n    // الآن fmt_ctx يقرأ من callback بدل ملف\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/avio_read_callback_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "AVIO والشبكات والملفات",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "glslang",
+    "displayName": "GLSLang",
+    "displayNameArabic": "GLSLang",
+    "description": "مرجع عربي لعناصر GLSL وGLSLang من التوجيهات حتى الدوال والعناصر المضمنة."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "memoryBarrierImage",
+    "slug": "memory-barrier-image",
+    "titleArabic": "تفرض ترتيبًا لوصولات image load/store الصادرة من الـ invocation الحالية قبل التعليمات التالية",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/glslang/functions/memory-barrier-image",
+    "contentPath": "content/reference/glslang/functions/memory-barrier-image.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تفرض ترتيبًا لوصولات image load/store الصادرة من الـ invocation الحالية قبل التعليمات التالية",
+    "actualMeaningArabic": "تفرض ترتيبًا لوصولات image load/store الصادرة من الـ invocation الحالية قبل التعليمات التالية.",
+    "purposeArabic": "تستخدم عندما تعتمد قراءة أو كتابة image لاحقة على نتيجة كتابة image سابقة داخل نفس السياق المنطقي.",
+    "whyUseArabic": "تساعد على جعل الكتابات السابقة إلى الصور مرئية بالترتيب المطلوب قبل متابعة العمل.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء ليست نصاً أو تعريفاً فقط، بل الأثر الذي يحدثه على الحالة أو المورد المستهدف.",
+    "sourceDescription": "تفرض ترتيبًا لوصولات image load/store الصادرة من الـ invocation الحالية قبل التعليمات التالية."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "تستخدم عندما تعتمد قراءة أو كتابة image لاحقة على نتيجة كتابة image سابقة داخل نفس السياق المنطقي."
+    ],
+    "notes": [
+      "تؤثر على عمليات الذاكرة المرتبطة بموارد image فقط.",
+      "تساعد على جعل الكتابات السابقة إلى الصور مرئية بالترتيب المطلوب قبل متابعة العمل.",
+      "مفيدة مع storage images داخل Compute أو المسارات التي تستخدم image load/store بدل sampling التقليدي."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "#version 460\nlayout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;\nlayout(set = 0, binding = 0, rgba8) uniform coherent image2D outputImage;\n\nvoid main() {\n ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);\n imageStore(outputImage, pixel, vec4(0.0, 0.7, 1.0, 1.0));\n memoryBarrierImage();\n}"
+  },
+  "links": {
+    "officialUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/glsl/reference/functions.json",
+    "category": "الدوال المضمنة",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

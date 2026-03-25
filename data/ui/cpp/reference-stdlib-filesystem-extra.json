@@ -1,0 +1,229 @@
+{
+  "referenceData": {
+    "std::filesystem::copy": {
+      "title": "std::filesystem::copy",
+      "type": "دالة نسخ",
+      "description": "ينسخ ملفًا أو مجلدًا من مسار لآخر. يدعم نسخ المجلدات بشكل متكرر عبر copy_options::recursive. يمكن التحكم بسلوك النسخ عند وجود الملف الهدف (skip, overwrite, update). يعمل على الملفات والمجلدات حسب نوع المصدر.",
+      "usage": "نسخ ملف أو مجلد كامل مع التحكم بسلوك التعارض. أضف copy_options::recursive لنسخ شجرة مجلدات كاملة.",
+      "example": "std::filesystem::copy(\"src.txt\", \"dst.txt\", std::filesystem::copy_options::overwrite_existing);",
+      "includeHeader": "#include <filesystem>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ ملف بسيط",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    try {\n        fs::copy(\"input.txt\", \"backup.txt\");\n        std::cout << \"تم النسخ بنجاح\" << '\\n';\n    } catch (const fs::filesystem_error& e) {\n        std::cerr << \"خطأ: \" << e.what() << '\\n';\n    }\n}",
+          "explanationArabic": "copy ينسخ الملف من المسار الأول للثاني. إذا كان الهدف موجودًا يرمي استثناء. التحقق بـ try/catch ضروري لأن عمليات الملفات قد تفشل لعدة أسباب."
+        },
+        {
+          "titleArabic": "نسخ مجلد بالكامل مع الخيارات",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    using opt = fs::copy_options;\n\n    // نسخ مجلد كامل مع استبدال الملفات الموجودة\n    fs::copy(\n        \"project/src\",\n        \"project/backup\",\n        opt::recursive | opt::overwrite_existing\n    );\n\n    // خيارات أخرى:\n    // opt::skip_existing      — تخطي الملفات الموجودة\n    // opt::update_existing    — استبدال إذا كان المصدر أحدث\n    // opt::copy_symlinks      — نسخ الروابط كروابط\n    // opt::directories_only   — نسخ المجلدات فقط بدون ملفات\n}",
+          "explanationArabic": "recursive ينسخ كل المحتويات بما فيها المجلدات الفرعية. overwrite_existing يستبدل الملفات الموجودة. يمكن دمج عدة خيارات بـ |. هذا أنمط أساسي لعمل نسخ احتياطي."
+        },
+        {
+          "titleArabic": "الفرق بين copy و copy_file",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    // copy: يعمل على ملفات ومجلدات\n    // copy_file: يعمل على ملفات فقط (أبسط وأوضح)\n\n    // copy_file يرمي خطأ إذا الهدف موجود\n    fs::copy_file(\"a.txt\", \"b.txt\");\n\n    // copy مع overwrite_existing يستبدل بدون خطأ\n    fs::copy(\"a.txt\", \"b.txt\", fs::copy_options::overwrite_existing);\n\n    // copy ينسخ مجلدات، copy_file لا يستطيع\n    // fs::copy_file(\"mydir\", \"backup\"); // ❌ خطأ\n    fs::copy(\"mydir\", \"backup\", fs::copy_options::recursive); // ✅\n}",
+          "explanationArabic": "copy_file مخصص للملفات فقط وواضح في القصد. copy أكثر مرونة ويعمل على المجلدات أيضًا. استخدم copy_file عند التعامل مع ملف واحد واضح."
+        }
+      ],
+      "related": [
+        "std::filesystem::copy_file",
+        "std::filesystem::remove",
+        "std::filesystem::rename"
+      ]
+    },
+    "std::filesystem::copy_file": {
+      "title": "std::filesystem::copy_file",
+      "type": "دالة نسخ ملف",
+      "description": "ينسخ محتوى ملف واحد إلى ملف آخر. يرمي خطأ إذا كان الملف الهدف موجودًا، إلا إذا استُخدمت copy_options. أبسط وأوضح من copy عند التعامل مع ملف واحد فقط.",
+      "usage": "نسخ ملف واحد. أضف copy_options::overwrite_existing للسماح بالاستبدال.",
+      "example": "bool ok = std::filesystem::copy_file(\"src.txt\", \"dst.txt\");",
+      "includeHeader": "#include <filesystem>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ ملف مع التحقق",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    bool success = fs::copy_file(\"data.bin\", \"data_backup.bin\");\n    if (success) {\n        std::cout << \"تم النسخ\" << '\\n';\n    } else {\n        std::cerr << \"فشل النسخ (ربما الملف الهدف موجود)\" << '\\n';\n    }\n}",
+          "explanationArabic": "copy_file يُرجع bool يُشير للنجاح أو الفشل. الافتراضي يفشل إذا الهدف موجود. هذا التصرف الآمن يمنع الكتابة فوق ملفات مهمة بالخطأ."
+        },
+        {
+          "titleArabic": "نسخ مع استبدال إذا كان المصدر أحدث",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    // ينسخ فقط إذا كان المصدر أحدث من الهدف\n    bool updated = fs::copy_file(\n        \"config.new\",\n        \"config.json\",\n        fs::copy_options::update_existing\n    );\n    if (updated) {\n        std::cout << \"تم التحديث\" << '\\n';\n    } else {\n        std::cout << \"الملف الحالي أحدث أو بنفس العمر\" << '\\n';\n    }\n}",
+          "explanationArabic": "update_existing ينسخ فقط إذا كان الملف المصدر أحدث من الهدف. مفيد لتحديث الإعدادات أو البيانات — يمنع النسخ غير الضروري ويحافظ على أحدث نسخة."
+        },
+        {
+          "titleArabic": "نسخ ملف كبير مع معالجة الأخطاء",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    try {\n        auto size_before = fs::file_size(\"video.mp4\");\n        fs::copy_file(\"video.mp4\", \"video_copy.mp4\",\n                      fs::copy_options::overwrite_existing);\n        auto size_after = fs::file_size(\"video_copy.mp4\");\n\n        std::cout << \"الحجم الأصلي: \" << size_before << \" بايت\" << '\\n';\n        std::cout << \"حجم النسخة: \" << size_after << \" بايت\" << '\\n';\n        std::cout << \"مطابق: \" << (size_before == size_after ? \"نعم\" : \"لا\") << '\\n';\n    } catch (const fs::filesystem_error& e) {\n        std::cerr << \"خطأ: \" << e.what() << '\\n';\n    }\n}",
+          "explanationArabic": "file_size يتحقق من حجم الملف قبل وبعد النسخ. try/catch يلتقط أخطاء مثل عدم وجود الملف أو نفاد المساحة. هذا النمط يضمن سلامة النسخ."
+        }
+      ],
+      "related": [
+        "std::filesystem::copy",
+        "std::filesystem::file_size",
+        "std::filesystem::remove"
+      ]
+    },
+    "std::filesystem::last_write_time": {
+      "title": "std::filesystem::last_write_time",
+      "type": "دالة وقت الملف",
+      "description": "يُرجع أو يُعدّل وقت آخر تعديل للملف أو المجلد. النوع المُرجع هو file_time_type (نقطة زمنية من chrono). يمكن استخدامه لمعرفة متى غُيّر الملف آخر مرة أو لتحديث هذا الوقت.",
+      "usage": "معرفة متى غُيّر ملف آخر مرة، مقارنة أوقات ملفات، تحديث وقت التعديل.",
+      "example": "auto time = std::filesystem::last_write_time(\"file.txt\");",
+      "includeHeader": "#include <filesystem>",
+      "usageExamples": [
+        {
+          "titleArabic": "عرض وقت آخر تعديل",
+          "code": "#include <iostream>\n#include <filesystem>\n#include <chrono>\n#include <iomanip>\n#include <ctime>\nnamespace fs = std::filesystem;\n\nint main() {\n    auto ftime = fs::last_write_time(\"main.cpp\");\n\n    // تحويل file_time_type لـ time_t\n    auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(\n        ftime - fs::file_time_type::clock::now() + std::chrono::system_clock::now());\n    std::time_t cftime = std::chrono::system_clock::to_time_t(sctp);\n\n    std::cout << \"آخر تعديل: \" << std::put_time(std::localtime(&cftime), \"%Y-%m-%d %H:%M:%S\") << '\\n';\n}",
+          "explanationArabic": "last_write_time يُرجع file_time_type. تحويله لـ time_t يتطلب خطوات chrono. C++20 يُبسّط هذا بـ clock_cast. النتيجة تُعرض بالتنسيق المطلوب."
+        },
+        {
+          "titleArabic": "إيجاد أحدث ملف في مجلد",
+          "code": "#include <iostream>\n#include <filesystem>\n#include <string>\nnamespace fs = std::filesystem;\n\nint main() {\n    fs::path newest;\n    fs::file_time_type latest_time;\n\n    for (const auto& entry : fs::directory_iterator(\".\")) {\n        auto ftime = fs::last_write_time(entry.path());\n        if (newest.empty() || ftime > latest_time) {\n            newest = entry.path();\n            latest_time = ftime;\n        }\n    }\n    std::cout << \"أحدث ملف: \" << newest.filename() << '\\n';\n}",
+          "explanationArabic": "مقارنة file_time_type تعمل مباشرة مع عوامل > و<. هذا يسمح بإيجاد أحدث أو أقدم ملف بسهولة. مفيد لسجلات التدوير أو تنظيف الملفات القديمة."
+        },
+        {
+          "titleArabic": "تغيير وقت التعديل",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    // حفظ الوقت الأصلي\n    auto original_time = fs::last_write_time(\"data.txt\");\n\n    // تغيير وقت التعديل للوقت الحالي\n    fs::last_write_time(\"data.txt\", fs::file_time_type::clock::now());\n    std::cout << \"تم تحديث وقت التعديل\" << '\\n';\n\n    // إعادة الوقت الأصلي\n    fs::last_write_time(\"data.txt\", original_time);\n    std::cout << \"تم استعادة الوقت الأصلي\" << '\\n';\n}",
+          "explanationArabic": "last_write_time(path, new_time) يُعدّل وقت التعديل. مفيد لبرامج النسخ الاحتياطي التي تريد الحفاظ على الأوقات الأصلية. clock::now() يعطي الوقت الحالي."
+        }
+      ],
+      "related": [
+        "std::filesystem::file_size",
+        "std::filesystem::status",
+        "std::chrono::system_clock"
+      ]
+    },
+    "std::filesystem::hard_link_count": {
+      "title": "std::filesystem::hard_link_count",
+      "type": "دالة معلومات ملف",
+      "description": "يُرجع عدد الروابط الصلبة (hard links) للملف. كل ملف في أنظمة Unix/Linux له عدد روابط صلبة. عند حذف ملف، يُحذف فعليًا فقط عندما يصل العدد لصفر. المجلدات تبدأ بعدد أعلى (عادةً 2 لـ . و..).",
+      "usage": "معرفة عدد الروابط الصلبة، التحقق مما إذا كان الملف لا يزال مرتبطًا من عدة أماكن.",
+      "example": "auto count = std::filesystem::hard_link_count(\"file.txt\");",
+      "includeHeader": "#include <filesystem>",
+      "usageExamples": [
+        {
+          "titleArabic": "عدد الروابط الصلبة لملف",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    // إنشاء ملف عادي\n    std::ofstream(\"original.txt\");\n\n    std::cout << \"قبل: \" << fs::hard_link_count(\"original.txt\") << '\\n'; // 1\n\n    // إنشاء رابط صلب\n    fs::create_hard_link(\"original.txt\", \"link.txt\");\n\n    std::cout << \"بعد: \" << fs::hard_link_count(\"original.txt\") << '\\n'; // 2\n    std::cout << \"الرابط: \" << fs::hard_link_count(\"link.txt\") << '\\n';    // 2\n    // كلاهما يشيران لنفس الملف الفعلي\n}",
+          "explanationArabic": "الرابط الصلب هو اسم آخر لنفس الملف. hard_link_count يُرجع عدد الأسماء. الملف لا يُحذف فعليًا حتى يصل العدد لصفر. كلا المسارين يُرجعان نفس العدد."
+        },
+        {
+          "titleArabic": "عدد روابط مجلد",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    fs::create_directory(\"mydir\");\n    std::cout << \"مجلد فارغ: \" << fs::hard_link_count(\"mydir\") << '\\n'; // عادةً 2\n\n    fs::create_directory(\"mydir/sub\");\n    std::cout << \"بعد إضافة مجلد فرعي: \" << fs::hard_link_count(\"mydir\") << '\\n'; // 3\n}",
+          "explanationArabic": "المجلدات تبدأ بعدد 2 (نفسه + .). كل مجلد فرعي يزيد العداد بـ 1 بسبب .. في المجلد الفرعي. هذا سلوك Unix — على ويندوز قد يختلف."
+        }
+      ],
+      "related": [
+        "std::filesystem::create_hard_link",
+        "std::filesystem::status",
+        "std::filesystem::remove"
+      ]
+    },
+    "std::filesystem::canonical": {
+      "title": "std::filesystem::canonical",
+      "type": "دالة مسارات",
+      "description": "يُرجع المسار المطلق النظيف — يحل كل الروابط الرمزية و.. و. لإنتاج مسار فريد ونظيف. يرمي خطأ إذا كان المسار غير موجود. مفيد لمقارنة المسارات أو حفظ مسارات فريدة.",
+      "usage": "تنظيف المسارات، مقارنة مسارات مختلفة، حفظ مسارات فريدة بدون . أو .. أو روابط رمزية.",
+      "example": "auto clean = std::filesystem::canonical(\"../dir/./file.txt\");",
+      "includeHeader": "#include <filesystem>",
+      "usageExamples": [
+        {
+          "titleArabic": "تنظيف مسار من . و..",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    // المسار قبل التنظيف\n    fs::path messy = \"./src/../include/./header.h\";\n    std::cout << \"قبل: \" << messy << '\\n';\n\n    // المسار بعد التنظيف (يجب أن يوجد)\n    fs::path clean = fs::canonical(messy);\n    std::cout << \"بعد: \" << clean << '\\n';\n    // مثلًا: /home/user/include/header.h\n}",
+          "explanationArabic": "canonical يُزيل . (المجلد الحالي) و.. (المجلد الأعلى) ويحول المسار لمسار مطلق. المسار يجب أن يوجد فعليًا — يرمي خطأ إذا لم يكن كذلك."
+        },
+        {
+          "titleArabic": "مقارنة مسارات مختلفة",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    fs::path a = \"/home/user/project/../file.txt\";\n    fs::path b = \"/home/user/file.txt\";\n    fs::path c = \"./file.txt\";\n\n    // بدون canonical: كلها مختلفة\n    std::cout << (a == b) << '\\n'; // false\n    std::cout << (a == c) << '\\n'; // false\n\n    // مع canonical: يمكن مقارنة حقيقية\n    // auto ca = fs::canonical(a);\n    // auto cb = fs::canonical(b);\n    // std::cout << (ca == cb) << '\\n'; // true إذا أشارا لنفس الملف\n}",
+          "explanationArabic": "المسارات النصية المختلفة قد تشير لنفس الملف. canonical يحل هذا لأنه يُرجع مسارًا فريدًا. مقارنة المسارات بدون canonical قد تعطي نتائج خاطئة."
+        },
+        {
+          "titleArabic": "حل الرابط الرمزي",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    // إنشاء ملف ورابط رمزي\n    std::ofstream(\"real.txt\");\n    fs::create_symlink(\"real.txt\", \"shortcut\");\n\n    // symlink_status يُرجع معلومات الرابط نفسه\n    std::cout << \"نوع الرابط: \" << fs::is_symlink(fs::symlink_status(\"shortcut\")) << '\\n';\n\n    // canonical يحل الرابط ويُرجع المسار الحقيقي\n    std::cout << \"المسار الحقيقي: \" << fs::canonical(\"shortcut\") << '\\n';\n}",
+          "explanationArabic": "canonical يحل الروابط الرمزية ويُرجع المسار الفعلي للملف. يختلف عن symlink_status الذي يُرجع معلومات الرابط نفسه. مفيد لمعرفة الملف الحقيقي الذي يشير إليه الرابط."
+        }
+      ],
+      "related": [
+        "std::filesystem::absolute",
+        "std::filesystem::relative",
+        "std::filesystem::read_symlink"
+      ]
+    },
+    "std::filesystem::relative": {
+      "title": "std::filesystem::relative",
+      "type": "دالة مسارات",
+      "description": "يُنشئ مسارًا نسبيًا من مسار إلى آخر. يُجيب على السؤال: كيف أصل من p إلى base؟ النتيجة مسار نسبي يمكن استخدامه مع base للوصول لـ p. مفيد لعرض مسارات مختصرة أو إنشاء روابط نسبية.",
+      "usage": "عرض مسار نسبي بدل المطلق، إنشاء روابط نسبية بين ملفات.",
+      "example": "auto rel = std::filesystem::relative(\"/a/b/c.txt\", \"/a\"); // b/c.txt",
+      "includeHeader": "#include <filesystem>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء مسار نسبي",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    fs::path target = \"/home/user/project/src/main.cpp\";\n    fs::path base = \"/home/user/project\";\n\n    fs::path rel = fs::relative(target, base);\n    std::cout << \"المسار النسبي: \" << rel << '\\n';\n    // src/main.cpp\n\n    // يمكن استخدامه مع base للوصول للملف\n    std::cout << \"الملف الكامل: \" << (base / rel) << '\\n';\n}",
+          "explanationArabic": "relative(target, base) يُرجع المسار من base لـ target. base / rel يُعيد المسار الكامل. مفيد لعرض مسارات مختصرة في السجل أو واجهة المستخدم."
+        },
+        {
+          "titleArabic": "مسار نسبي يحتاج ..",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    fs::path target = \"/home/user/docs/report.txt\";\n    fs::path base = \"/home/user/project/src\";\n\n    fs::path rel = fs::relative(target, base);\n    std::cout << rel << '\\n';\n    // ../../docs/report.txt\n    // يحتاج الصعود لمجلدين ثم النزول لـ docs\n}",
+          "explanationArabic": "إذا كان الهدف في فرع مختلف، relative يُنشئ مسارًا يحتوي .. للصعود. هذا يسمح بالوصول لأي ملف من أي نقطة عبر مسار نسبي."
+        }
+      ],
+      "related": [
+        "std::filesystem::canonical",
+        "std::filesystem::absolute",
+        "std::filesystem::proximate"
+      ]
+    },
+    "std::filesystem::read_symlink": {
+      "title": "std::filesystem::read_symlink",
+      "type": "دالة روابط رمزية",
+      "description": "يقرأ هدف الرابط الرمزي — يُرجع المسار الذي يشير إليه الرابط. يرمي خطأ إذا كان المسار ليس رابطًا رمزيًا. الهدف قد يكون مسارًا نسبيًا (بالنسبة لموقع الرابط) أو مطلقًا.",
+      "usage": "معرفة الملف الحقيقي الذي يشير إليه الرابط الرمزي، تتبع سلسلة روابط.",
+      "example": "auto target = std::filesystem::read_symlink(\"shortcut\");",
+      "includeHeader": "#include <filesystem>",
+      "usageExamples": [
+        {
+          "titleArabic": "قراءة هدف رابط رمزي",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    // إنشاء ملف ورابط رمزي\n    std::ofstream(\"original.txt\");\n    fs::create_symlink(\"original.txt\", \"link_to_original\");\n\n    // قراءة هدف الرابط\n    fs::path target = fs::read_symlink(\"link_to_original\");\n    std::cout << \"الرابط يشير إلى: \" << target << '\\n';\n    // original.txt (مسار نسبي)\n}",
+          "explanationArabic": "read_symlink يُرجع الهدف كما هو مخزّن في الرابط. قد يكون نسبيًا أو مطلقًا حسب كيف أُنشئ الرابط. لتحويله لمطلق استخدم canonical."
+        },
+        {
+          "titleArabic": "التحقق قبل القراءة",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    fs::path p = \"some_file\";\n\n    // تحقق مما إذا كان رابطًا رمزيًا أولًا\n    if (fs::is_symlink(p)) {\n        fs::path target = fs::read_symlink(p);\n        std::cout << p << \" -> \" << target << '\\n';\n    } else {\n        std::cout << p << \" ليس رابطًا رمزيًا\" << '\\n';\n    }\n}",
+          "explanationArabic": "read_symlink يرمي خطأ إذا لم يكن المسار رابطًا رمزيًا. is_symlink يتحقق أولًا. هذا النمط الآمن يمنع الاستثناءات غير المتوقعة."
+        }
+      ],
+      "related": [
+        "std::filesystem::create_symlink",
+        "std::filesystem::is_symlink",
+        "std::filesystem::canonical"
+      ]
+    },
+    "std::filesystem::create_symlink": {
+      "title": "std::filesystem::create_symlink",
+      "type": "دالة روابط رمزية",
+      "description": "يُنشئ رابطًا رمزيًا (symbolic link) يشير إلى مسار آخر. الرابط الرمزي هو ملف خاص يحتوي مسارًا نصيًا. يختلف عن الرابط الصلب — الرابط الرمزي يمكن أن يشير لمجلد أو ملف غير موجود أو ملف في نظام ملفات آخر.",
+      "usage": "إنشاء اختصارات للملفات، ربط إصدارات مختلفة من مكتبة، إنشاء روابط تكوينية.",
+      "example": "std::filesystem::create_symlink(\"target.txt\", \"shortcut\");",
+      "includeHeader": "#include <filesystem>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء رابط رمزي لملف",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    std::ofstream(\"config.json\");\n    fs::create_symlink(\"config.json\", \"config_link\");\n\n    // القراءة عبر الرابط تعمل كأنك قرأت الملف الأصلي\n    std::ifstream via_link(\"config_link\");\n    std::cout << \"الرابط يعمل: \" << via_link.good() << '\\n';\n}",
+          "explanationArabic": "create_symlink(target, link_name) يُنشئ رابطًا رمزيًا. القراءة والكتابة عبر الرابط تذهب للملف الأصلي. حذف الرابط لا يحذف الملف الأصلي."
+        },
+        {
+          "titleArabic": "رابط رمزي لمجلد",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    fs::create_directory(\"real_project\");\n\n    // إنشاء رابط رمزي لمجلد\n    fs::create_symlink(\"real_project\", \"current_project\");\n\n    // التعامل مع الرابط مثل مجلد عادي\n    for (const auto& entry : fs::directory_iterator(\"current_project\")) {\n        std::cout << entry.path() << '\\n';\n    }\n}",
+          "explanationArabic": "الرابط الرمزي يمكن أن يشير لمجلد. directory_iterator يعمل عبر الرابط بشكل شفاف. مفيد لتبديل إصدارات المشروع أو المكونات."
+        },
+        {
+          "titleArabic": "create_symlink vs create_directory_symlink",
+          "code": "#include <iostream>\n#include <filesystem>\nnamespace fs = std::filesystem;\n\nint main() {\n    // create_symlink: عام — يعمل للملفات والمجلدات\n    // create_directory_symlink: خاص بالمجلدات — يُوضح القصد\n\n    fs::create_symlink(\"target\", \"link1\");           // عام\n    fs::create_directory_symlink(\"target\", \"link2\");  // واضح أنه مجلد\n\n    // النسخة الخاصة لا تُنشئ رابطًا لملف عادي حتى لو كان الاسم موجودًا\n    // هذا يمنع الأخطاء عند الخلط بين ملف ومجلد بنفس الاسم\n}",
+          "explanationArabic": "create_directory_symlink يُوضح القصد ويمنع الأخطاء. استخدم النسخة الخاصة عند معرفة النوع مسبقًا. create_symlink العام أنسب عندما لا تعرف النوع."
+        }
+      ],
+      "related": [
+        "std::filesystem::read_symlink",
+        "std::filesystem::create_hard_link",
+        "std::filesystem::is_symlink"
+      ]
+    }
+  }
+}

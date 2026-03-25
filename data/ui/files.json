@@ -1,0 +1,353 @@
+{
+    "vulkanFileSections": {
+        "headers": {
+            "title": "ملفات vulkan",
+            "path": "vulkan",
+            "files": [
+                "vk_enum_string_helper.h",
+                "vk_icd.h",
+                "vk_layer.h",
+                "vk_platform.h",
+                "vulkan.cppm",
+                "vulkan.h",
+                "vulkan.hpp",
+                "vulkan_android.h",
+                "vulkan_beta.h",
+                "vulkan_core.h",
+                "vulkan_directfb.h",
+                "vulkan_enums.hpp",
+                "vulkan_extension_inspection.hpp",
+                "vulkan_format_traits.hpp",
+                "vulkan_fuchsia.h",
+                "vulkan_funcs.hpp",
+                "vulkan_ggp.h",
+                "vulkan_handles.hpp",
+                "vulkan_hash.hpp",
+                "vulkan_hpp_macros.hpp",
+                "vulkan_ios.h",
+                "vulkan_layer_settings.hpp",
+                "vulkan_macos.h",
+                "vulkan_metal.h",
+                "vulkan_ohos.h",
+                "vulkan_profiles.hpp",
+                "vulkan_raii.hpp",
+                "vulkan_screen.h",
+                "vulkan_shared.hpp",
+                "vulkan_static_assertions.hpp",
+                "vulkan_structs.hpp",
+                "vulkan_to_string.hpp",
+                "vulkan_vi.h",
+                "vulkan_video.cppm",
+                "vulkan_video.hpp",
+                "vulkan_wayland.h",
+                "vulkan_win32.h",
+                "vulkan_xcb.h",
+                "vulkan_xlib.h",
+                "vulkan_xlib_xrandr.h"
+            ]
+        },
+        "utility": {
+            "title": "ملفات vulkan/utility",
+            "path": "vulkan/utility",
+            "files": [
+                "vk_concurrent_unordered_map.hpp",
+                "vk_dispatch_table.h",
+                "vk_format_utils.h",
+                "vk_safe_struct.hpp",
+                "vk_safe_struct_utils.hpp",
+                "vk_small_containers.hpp",
+                "vk_sparse_range_map.hpp",
+                "vk_struct_helper.hpp"
+            ]
+        }
+    },
+    "fileReferenceOverrides": {
+        "vulkan.h": {
+            "description": "الملف الرئيسي الذي يجمع تعريفات Vulkan الأساسية ويضم الترويسات القياسية الشائعة في أغلب المشاريع.",
+            "includes": [
+                "vulkan_core.h",
+                "vk_platform.h"
+            ],
+            "keyItems": [
+                "VkInstance",
+                "VkDevice",
+                "vkCreateInstance",
+                "VK_API_VERSION_1_3"
+            ],
+            "usage": "ضمّن هذا الملف عندما تريد نقطة دخول واحدة لمعظم أنواع Vulkan ودوالها وثوابتها دون اختيار ترويسات جزئية يدوياً.",
+            "example": "#include <vulkan/vulkan.h>\n\nVkInstance instance = VK_NULL_HANDLE;"
+        },
+        "vulkan_core.h": {
+            "description": "يحتوي على النواة الأساسية لواجهة Vulkan: الأنواع والهياكل والتعدادات والدوال العامة بعيداً عن ترويسات المنصات.",
+            "keyItems": [
+                "VkApplicationInfo",
+                "VkInstanceCreateInfo",
+                "VkResult",
+                "vkCreateDevice"
+            ],
+            "usage": "يفيد عندما تريد التركيز على تعريفات Vulkan الأساسية أو معرفة أين تعرّف البنى والتعدادات قبل ضمّ الترويسة الجامعة.",
+            "example": "#include <vulkan/vulkan_core.h>\n\nVkApplicationInfo appInfo = {};"
+        },
+        "vk_platform.h": {
+            "description": "يعرف الأنواع والتوافقات المنصاتية الدنيا التي تعتمد عليها بقية ترويسات Vulkan قبل تعريف المقابض والدوال.",
+            "keyItems": [
+                "VKAPI_ATTR",
+                "VKAPI_CALL",
+                "VK_DEFINE_HANDLE"
+            ],
+            "usage": "لا يضمَّن عادة مباشرة في كود التطبيق، لكنه يحدد أساس التوافق بين الترويسات والمترجم والمنصة.",
+            "example": "#include <vulkan/vk_platform.h>\n\nVKAPI_ATTR VkResult VKAPI_CALL myFunction();"
+        },
+        "vk_enum_string_helper.h": {
+            "description": "يوفر دوال مساعدة لتحويل كثير من تعدادّات Vulkan وقيمها إلى نصوص قابلة للطباعة والتشخيص.",
+            "keyItems": [
+                "string_VkResult",
+                "string_VkFormat",
+                "VkResult"
+            ],
+            "usage": "مفيد في التسجيل logging أو رسائل الأخطاء عندما تريد اسم القيمة النصي بدلاً من رقمها فقط.",
+            "example": "#include <vulkan/vk_enum_string_helper.h>\n\nconst char* name = string_VkResult(VK_SUCCESS);"
+        },
+        "vk_icd.h": {
+            "description": "ترويسة منخفضة المستوى مرتبطة بتكامل ICD بين برنامج التشغيل وواجهة Vulkan loader.",
+            "keyItems": [
+                "VkNegotiateLayerInterface",
+                "VKAPI_CALL"
+            ],
+            "usage": "غالباً تهم مطوري السواقات أو الطبقات أكثر من تطبيقات Vulkan العادية.",
+            "example": "#include <vulkan/vk_icd.h>"
+        },
+        "vk_layer.h": {
+            "description": "ترويسة مخصصة لبناء Validation Layers أو Layers مخصصة تتكامل مع loader وتستقبل الاستدعاءات.",
+            "keyItems": [
+                "VkLayerProperties",
+                "vkNegotiateLoaderLayerInterfaceVersion"
+            ],
+            "usage": "تفيد عند تطوير Layer خاصة بك أو عند فهم كيف تتكامل طبقات Vulkan مع الـ loader.",
+            "example": "#include <vulkan/vk_layer.h>"
+        },
+        "vulkan.hpp": {
+            "description": "الواجهة الحديثة C++ لـ Vulkan-Hpp، وتغلف كثيراً من الأنواع والدوال بصياغة C++ أكثر أماناً ووضوحاً.",
+            "keyItems": [
+                "vk::Instance",
+                "vk::Device",
+                "vk::createInstance"
+            ],
+            "usage": "استخدمها عندما تكتب المشروع بأسلوب C++ وتريد الاستفادة من الأنواع المغلفة والاستثناءات والواجهات الحديثة.",
+            "example": "#include <vulkan/vulkan.hpp>\n\nvk::ApplicationInfo appInfo{};"
+        },
+        "vulkan_raii.hpp": {
+            "description": "يقدم طبقة RAII فوق Vulkan-Hpp لإدارة أعمار الكائنات تلقائياً وفق نمط C++ الحديث.",
+            "keyItems": [
+                "vk::raii::Context",
+                "vk::raii::Instance",
+                "vk::raii::Device"
+            ],
+            "usage": "يفيد عندما تريد أن يتحرر المورد تلقائياً عند خروج الكائن من النطاق بدلاً من استدعاء دوال التدمير يدوياً.",
+            "example": "#include <vulkan/vulkan_raii.hpp>\n\nvk::raii::Context context;"
+        },
+        "vulkan_structs.hpp": {
+            "description": "يجمع تعريفات البنى المغلفة في Vulkan-Hpp ويعرضها بصياغة C++ متوافقة مع باقي طبقة Hpp.",
+            "keyItems": [
+                "vk::InstanceCreateInfo",
+                "vk::ApplicationInfo"
+            ],
+            "usage": "مفيد عندما تراجع كيفية تمثيل البنى الأساسية في واجهة C++ أو تحتاج تضمينها بشكل جزئي.",
+            "example": "#include <vulkan/vulkan_structs.hpp>\n\nvk::InstanceCreateInfo info{};"
+        },
+        "vulkan_handles.hpp": {
+            "description": "يعرّف أنواع المقابض المغلفة في Vulkan-Hpp مثل Instance وDevice وBuffer وغيرها.",
+            "keyItems": [
+                "vk::Instance",
+                "vk::Device",
+                "vk::Buffer"
+            ],
+            "usage": "مفيد لفهم تمثيل مقابض Vulkan في C++ أو عند تضمين تعريفات المقابض فقط في مشروع يعتمد Hpp.",
+            "example": "#include <vulkan/vulkan_handles.hpp>\n\nvk::Device device;"
+        },
+        "vulkan_funcs.hpp": {
+            "description": "يجمع أغلفة واستدعاءات الدوال في Vulkan-Hpp ويعرض الواجهات C++ المرتبطة بالدوال الأساسية والامتدادات.",
+            "keyItems": [
+                "vk::createDevice",
+                "vk::Queue::submit",
+                "vk::Device::waitIdle"
+            ],
+            "usage": "يفيد عندما تستخدم واجهة Hpp وتريد استدعاء دوال Vulkan عبر الأصناف والأنواع الحديثة بدلاً من الواجهة C المباشرة.",
+            "example": "#include <vulkan/vulkan_funcs.hpp>"
+        },
+        "vulkan_enums.hpp": {
+            "description": "يعرض التعدادات والأعلام الخاصة بـ Vulkan-Hpp بصياغة C++ قوية النوع.",
+            "keyItems": [
+                "vk::Result",
+                "vk::Format",
+                "vk::ImageLayout"
+            ],
+            "usage": "مفيد عندما تريد استخدام enum classes في C++ بدلاً من القيم C التقليدية.",
+            "example": "#include <vulkan/vulkan_enums.hpp>\n\nvk::Result result = vk::Result::eSuccess;"
+        },
+        "vulkan_video.hpp": {
+            "description": "يجمع تعريفات واجهات الفيديو في Vulkan-Hpp للترميز وفك الترميز والملفات المرتبطة بها.",
+            "keyItems": [
+                "vk::VideoSessionKHR",
+                "vk::VideoSessionParametersKHR"
+            ],
+            "usage": "استخدمه إذا كان مشروعك يتعامل مع امتدادات فيديو Vulkan ويحتاج الواجهة C++ الخاصة بها.",
+            "example": "#include <vulkan/vulkan_video.hpp>"
+        },
+        "vulkan_video.cppm": {
+            "description": "وحدة C++ Modules لجزء الفيديو من Vulkan-Hpp.",
+            "keyItems": [
+                "vk::VideoSessionKHR"
+            ],
+            "usage": "تفيد إذا كان مشروعك يعتمد C++ Modules بدلاً من تضمين ملفات HPP التقليدية.",
+            "example": "import vulkan_video;"
+        },
+        "vulkan.cppm": {
+            "description": "وحدة C++ Modules العامة لـ Vulkan-Hpp.",
+            "keyItems": [
+                "vk::Instance",
+                "vk::Device",
+                "vk::Result"
+            ],
+            "usage": "استخدمها عندما تريد استيراد Vulkan كـ C++ module بدلاً من تضمين vulkan.hpp.",
+            "example": "import vulkan;"
+        },
+        "vulkan_wayland.h": {
+            "description": "ترويسة امتدادات Wayland لإنشاء Surface وربط Vulkan بمدير العرض Wayland.",
+            "includes": [
+                "vulkan.h"
+            ],
+            "keyItems": [
+                "VkWaylandSurfaceCreateInfoKHR",
+                "vkCreateWaylandSurfaceKHR",
+                "VkSurfaceKHR"
+            ],
+            "usage": "تستخدم عندما يكون التطبيق أصلياً على Wayland وتحتاج إنشاء Surface من نافذة أو سطح Wayland.",
+            "example": "#include <vulkan/vulkan_wayland.h>\n\nVkWaylandSurfaceCreateInfoKHR createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;"
+        },
+        "vulkan_win32.h": {
+            "description": "ترويسة امتدادات Win32 لإنشاء Surface وربط Vulkan بنافذة Windows.",
+            "includes": [
+                "vulkan.h"
+            ],
+            "keyItems": [
+                "VkWin32SurfaceCreateInfoKHR",
+                "vkCreateWin32SurfaceKHR",
+                "VkSurfaceKHR"
+            ],
+            "usage": "تستخدم عندما يكون التطبيق قائماً على Win32 API وتحتاج إنشاء Surface لربطه بالعرض.",
+            "example": "#include <vulkan/vulkan_win32.h>\n\nVkWin32SurfaceCreateInfoKHR createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;"
+        },
+        "vulkan_xlib.h": {
+            "description": "ترويسة امتدادات Xlib على Linux لإنشاء Surface من نافذة X11.",
+            "includes": [
+                "vulkan.h"
+            ],
+            "keyItems": [
+                "VkXlibSurfaceCreateInfoKHR",
+                "vkCreateXlibSurfaceKHR",
+                "VkSurfaceKHR"
+            ],
+            "usage": "تستخدم عندما يعتمد التطبيق على Xlib/X11 مباشرة لإنشاء النوافذ والسطوح.",
+            "example": "#include <vulkan/vulkan_xlib.h>\n\nVkXlibSurfaceCreateInfoKHR createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;"
+        },
+        "vulkan_xcb.h": {
+            "description": "ترويسة امتدادات XCB على Linux لإنشاء Surface من نوافذ XCB.",
+            "includes": [
+                "vulkan.h"
+            ],
+            "keyItems": [
+                "VkXcbSurfaceCreateInfoKHR",
+                "vkCreateXcbSurfaceKHR",
+                "VkSurfaceKHR"
+            ],
+            "usage": "تستخدم عندما يبنى التطبيق على XCB بدلاً من Xlib لإنشاء السطح.",
+            "example": "#include <vulkan/vulkan_xcb.h>\n\nVkXcbSurfaceCreateInfoKHR createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;"
+        },
+        "vulkan_android.h": {
+            "description": "ترويسة امتدادات Android Surface لربط Vulkan بنافذة أو ANativeWindow على Android.",
+            "keyItems": [
+                "VkAndroidSurfaceCreateInfoKHR",
+                "vkCreateAndroidSurfaceKHR",
+                "VkSurfaceKHR"
+            ],
+            "usage": "تستخدم في تطبيقات Android الأصلية عند إنشاء Surface من ANativeWindow.",
+            "example": "#include <vulkan/vulkan_android.h>"
+        },
+        "vulkan_metal.h": {
+            "description": "ترويسة امتدادات Metal Surface لربط Vulkan بطبقة CAMetalLayer على Apple platforms.",
+            "keyItems": [
+                "VkMetalSurfaceCreateInfoEXT",
+                "vkCreateMetalSurfaceEXT",
+                "VkSurfaceKHR"
+            ],
+            "usage": "تستخدم عندما يحتاج التطبيق على macOS/iOS إنشاء Surface من طبقة Metal.",
+            "example": "#include <vulkan/vulkan_metal.h>"
+        },
+        "vulkan_macos.h": {
+            "description": "ترويسة امتدادات macOS القديمة لإنشاء Surface على macOS في المسارات التي تعتمد MVK_macos_surface.",
+            "keyItems": [
+                "VkMacOSSurfaceCreateInfoMVK",
+                "vkCreateMacOSSurfaceMVK"
+            ],
+            "usage": "تظهر في المشاريع التي تتعامل مع امتداد MVK_macos_surface أو توافق MoltenVK الأقدم.",
+            "example": "#include <vulkan/vulkan_macos.h>"
+        },
+        "vulkan_ios.h": {
+            "description": "ترويسة امتدادات iOS القديمة في MoltenVK لإنشاء Surface من UIView أو طبقات العرض الملحقة.",
+            "keyItems": [
+                "VkIOSSurfaceCreateInfoMVK",
+                "vkCreateIOSSurfaceMVK"
+            ],
+            "usage": "تستخدم في مشاريع iOS التي تعتمد امتداد MVK_ios_surface.",
+            "example": "#include <vulkan/vulkan_ios.h>"
+        },
+        "vk_dispatch_table.h": {
+            "description": "ملف utility ينشئ جداول dispatch لتجميع مؤشرات دوال Vulkan وربطها بالجهاز أو المثيل أو الطبقات.",
+            "keyItems": [
+                "vkGetInstanceProcAddr",
+                "vkGetDeviceProcAddr",
+                "VkDevice"
+            ],
+            "usage": "يفيد في الطبقات والأدوات التي تحتاج تحميل الدوال ديناميكياً وإعادة تمريرها عبر جداول منظمة.",
+            "example": "#include <vulkan/utility/vk_dispatch_table.h>"
+        },
+        "vk_format_utils.h": {
+            "description": "ملف utility يوفّر أدوات مساعدة لتحليل التنسيقات VkFormat وفهم خصائص القنوات والأحجام المرتبطة بها.",
+            "keyItems": [
+                "VkFormat",
+                "VK_FORMAT_R8G8B8A8_UNORM"
+            ],
+            "usage": "مفيد عندما تحتاج منطقاً مساعداً يفهم طبيعة التنسيقات بدلاً من فحص كل Format يدوياً.",
+            "example": "#include <vulkan/utility/vk_format_utils.h>"
+        },
+        "vk_safe_struct.hpp": {
+            "description": "ملف utility يوفّر safe structs لنسخ هياكل Vulkan وامتلاك الذاكرة التابعة للمؤشرات بشكل آمن.",
+            "keyItems": [
+                "VkInstanceCreateInfo",
+                "VkDeviceCreateInfo"
+            ],
+            "usage": "يفيد في الطبقات والأدوات التي تحتاج نسخ البنى المركبة دون فقدان المؤشرات التابعة لها.",
+            "example": "#include <vulkan/utility/vk_safe_struct.hpp>"
+        },
+        "vk_safe_struct_utils.hpp": {
+            "description": "ملف utility يضيف وظائف مساعدة للعمل على safe structs وتحويلاتها ونسخها.",
+            "keyItems": [
+                "VkInstanceCreateInfo",
+                "VkDeviceCreateInfo"
+            ],
+            "usage": "يظهر عادة مع vk_safe_struct.hpp عندما تحتاج عمليات نسخ أو تحويل إضافية للبنى الآمنة.",
+            "example": "#include <vulkan/utility/vk_safe_struct_utils.hpp>"
+        },
+        "vk_struct_helper.hpp": {
+            "description": "ملف utility يحتوي على دوال أو قوالب تساعد على تهيئة هياكل Vulkan الشائعة بسرعة وبصياغة أوضح.",
+            "keyItems": [
+                "VkInstanceCreateInfo",
+                "VkApplicationInfo",
+                "VkDeviceCreateInfo"
+            ],
+            "usage": "مفيد عندما تريد بناء هياكل Vulkan المتكررة بطريقة أقصر من التهيئة اليدوية لكل حقل.",
+            "example": "#include <vulkan/utility/vk_struct_helper.hpp>"
+        }
+    }
+}

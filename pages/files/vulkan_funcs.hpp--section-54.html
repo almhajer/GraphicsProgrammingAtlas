@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_funcs.hpp • القسم 54 من 73 • الأسطر 23851-24300 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_funcs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_funcs.hpp.html">vulkan_funcs.hpp</a> /
+        <span>القسم 54 من 73 • الأسطر 23851-24300</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_funcs.hpp</h1>
+      <p class="page-description">القسم 54 من 73 • الأسطر 23851-24300</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-53.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-55.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_funcs.hpp</span>
+        <span class="source-stat">القسم: 54/73</span>
+        <span class="source-stat">الأسطر: 23851-24300</span>
+        <span class="source-stat">حجم الملف: 2.19 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetEncodedVideoSessionParametersKHR &amp;&amp; &quot;Function &lt;vkGetEncodedVideoSessionParametersKHR&gt; requires &lt;VK_KHR_video_encode_queue&gt;&quot; );
+#  endif
+
+    std::pair&lt;VideoEncodeSessionParametersFeedbackInfoKHR, std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt; data_(
+      std::piecewise_construct, std::forward_as_tuple(), std::forward_as_tuple( uint8_tAllocator ) );
+    VideoEncodeSessionParametersFeedbackInfoKHR &amp; feedbackInfo = data_.first;
+    std::vector&lt;uint8_t, Uint8_tAllocator&gt; &amp;      data         = data_.second;
+    size_t                                        dataSize;
+    Result                                        result;
+    do
+    {
+      result = static_cast&lt;Result&gt;(
+        d.vkGetEncodedVideoSessionParametersKHR( m_device,
+                                                 reinterpret_cast&lt;const VkVideoEncodeSessionParametersGetInfoKHR *&gt;( &amp;videoSessionParametersInfo ),
+                                                 reinterpret_cast&lt;VkVideoEncodeSessionParametersFeedbackInfoKHR *&gt;( &amp;feedbackInfo ),
+                                                 &amp;dataSize,
+                                                 nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; dataSize )
+      {
+        data.resize( dataSize );
+        result = static_cast&lt;Result&gt;(
+          d.vkGetEncodedVideoSessionParametersKHR( m_device,
+                                                   reinterpret_cast&lt;const VkVideoEncodeSessionParametersGetInfoKHR *&gt;( &amp;videoSessionParametersInfo ),
+                                                   reinterpret_cast&lt;VkVideoEncodeSessionParametersFeedbackInfoKHR *&gt;( &amp;feedbackInfo ),
+                                                   &amp;dataSize,
+                                                   reinterpret_cast&lt;void *&gt;( data.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getEncodedVideoSessionParametersKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( data_ ) );
+  }
+
+  // wrapper function for command vkGetEncodedVideoSessionParametersKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetEncodedVideoSessionParametersKHR.html
+  template &lt;typename X,
+            typename Y,
+            typename... Z,
+            typename Uint8_tAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename Uint8_tAllocator::value_type, uint8_t&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetEncodedVideoSessionParametersKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::pair&lt;StructureChain&lt;X, Y, Z...&gt;, std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt;&gt;::type
+    Device::getEncodedVideoSessionParametersKHR( const VideoEncodeSessionParametersGetInfoKHR &amp; videoSessionParametersInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetEncodedVideoSessionParametersKHR &amp;&amp; &quot;Function &lt;vkGetEncodedVideoSessionParametersKHR&gt; requires &lt;VK_KHR_video_encode_queue&gt;&quot; );
+#  endif
+
+    std::pair&lt;StructureChain&lt;X, Y, Z...&gt;, std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt; data_;
+    VideoEncodeSessionParametersFeedbackInfoKHR &amp; feedbackInfo = data_.first.template get&lt;VideoEncodeSessionParametersFeedbackInfoKHR&gt;();
+    std::vector&lt;uint8_t, Uint8_tAllocator&gt; &amp;      data         = data_.second;
+    size_t                                        dataSize;
+    Result                                        result;
+    do
+    {
+      result = static_cast&lt;Result&gt;(
+        d.vkGetEncodedVideoSessionParametersKHR( m_device,
+                                                 reinterpret_cast&lt;const VkVideoEncodeSessionParametersGetInfoKHR *&gt;( &amp;videoSessionParametersInfo ),
+                                                 reinterpret_cast&lt;VkVideoEncodeSessionParametersFeedbackInfoKHR *&gt;( &amp;feedbackInfo ),
+                                                 &amp;dataSize,
+                                                 nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; dataSize )
+      {
+        data.resize( dataSize );
+        result = static_cast&lt;Result&gt;(
+          d.vkGetEncodedVideoSessionParametersKHR( m_device,
+                                                   reinterpret_cast&lt;const VkVideoEncodeSessionParametersGetInfoKHR *&gt;( &amp;videoSessionParametersInfo ),
+                                                   reinterpret_cast&lt;VkVideoEncodeSessionParametersFeedbackInfoKHR *&gt;( &amp;feedbackInfo ),
+                                                   &amp;dataSize,
+                                                   reinterpret_cast&lt;void *&gt;( data.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getEncodedVideoSessionParametersKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( data_ ) );
+  }
+
+  // wrapper function for command vkGetEncodedVideoSessionParametersKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetEncodedVideoSessionParametersKHR.html
+  template &lt;typename X,
+            typename Y,
+            typename... Z,
+            typename Uint8_tAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename Uint8_tAllocator::value_type, uint8_t&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetEncodedVideoSessionParametersKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::pair&lt;StructureChain&lt;X, Y, Z...&gt;, std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt;&gt;::type
+                       Device::getEncodedVideoSessionParametersKHR( const VideoEncodeSessionParametersGetInfoKHR &amp; videoSessionParametersInfo,
+                                                 Uint8_tAllocator const &amp;                       uint8_tAllocator,
+                                                 Dispatch const &amp;                               d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetEncodedVideoSessionParametersKHR &amp;&amp; &quot;Function &lt;vkGetEncodedVideoSessionParametersKHR&gt; requires &lt;VK_KHR_video_encode_queue&gt;&quot; );
+#  endif
+
+    std::pair&lt;StructureChain&lt;X, Y, Z...&gt;, std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt; data_(
+      std::piecewise_construct, std::forward_as_tuple(), std::forward_as_tuple( uint8_tAllocator ) );
+    VideoEncodeSessionParametersFeedbackInfoKHR &amp; feedbackInfo = data_.first.template get&lt;VideoEncodeSessionParametersFeedbackInfoKHR&gt;();
+    std::vector&lt;uint8_t, Uint8_tAllocator&gt; &amp;      data         = data_.second;
+    size_t                                        dataSize;
+    Result                                        result;
+    do
+    {
+      result = static_cast&lt;Result&gt;(
+        d.vkGetEncodedVideoSessionParametersKHR( m_device,
+                                                 reinterpret_cast&lt;const VkVideoEncodeSessionParametersGetInfoKHR *&gt;( &amp;videoSessionParametersInfo ),
+                                                 reinterpret_cast&lt;VkVideoEncodeSessionParametersFeedbackInfoKHR *&gt;( &amp;feedbackInfo ),
+                                                 &amp;dataSize,
+                                                 nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; dataSize )
+      {
+        data.resize( dataSize );
+        result = static_cast&lt;Result&gt;(
+          d.vkGetEncodedVideoSessionParametersKHR( m_device,
+                                                   reinterpret_cast&lt;const VkVideoEncodeSessionParametersGetInfoKHR *&gt;( &amp;videoSessionParametersInfo ),
+                                                   reinterpret_cast&lt;VkVideoEncodeSessionParametersFeedbackInfoKHR *&gt;( &amp;feedbackInfo ),
+                                                   &amp;dataSize,
+                                                   reinterpret_cast&lt;void *&gt;( data.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getEncodedVideoSessionParametersKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( data_ ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdEncodeVideoKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEncodeVideoKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdEncodeVideoKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::encodeVideoKHR( const VideoEncodeInfoKHR * pEncodeInfo, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdEncodeVideoKHR( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkVideoEncodeInfoKHR *&gt;( pEncodeInfo ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdEncodeVideoKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEncodeVideoKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdEncodeVideoKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::encodeVideoKHR( const VideoEncodeInfoKHR &amp; encodeInfo, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdEncodeVideoKHR &amp;&amp; &quot;Function &lt;vkCmdEncodeVideoKHR&gt; requires &lt;VK_KHR_video_encode_queue&gt;&quot; );
+#  endif
+
+    d.vkCmdEncodeVideoKHR( m_commandBuffer, reinterpret_cast&lt;const VkVideoEncodeInfoKHR *&gt;( &amp;encodeInfo ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+#if defined( VK_ENABLE_BETA_EXTENSIONS )
+  //=== VK_NV_cuda_kernel_launch ===
+
+  // wrapper function for command vkCreateCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCudaModuleNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateCudaModuleNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::createCudaModuleNV( const CudaModuleCreateInfoNV * pCreateInfo,
+                                                                            const AllocationCallbacks *    pAllocator,
+                                                                            CudaModuleNV *                 pModule,
+                                                                            Dispatch const &amp;               d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCreateCudaModuleNV( static_cast&lt;VkDevice&gt;( m_device ),
+                                                        reinterpret_cast&lt;const VkCudaModuleCreateInfoNV *&gt;( pCreateInfo ),
+                                                        reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                        reinterpret_cast&lt;VkCudaModuleNV *&gt;( pModule ) ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreateCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCudaModuleNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateCudaModuleNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;CudaModuleNV&gt;::type
+    Device::createCudaModuleNV( const CudaModuleCreateInfoNV &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateCudaModuleNV &amp;&amp; &quot;Function &lt;vkCreateCudaModuleNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#    endif
+
+    CudaModuleNV module;
+    Result       result = static_cast&lt;Result&gt;( d.vkCreateCudaModuleNV( m_device,
+                                                                 reinterpret_cast&lt;const VkCudaModuleCreateInfoNV *&gt;( &amp;createInfo ),
+                                                                 reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                 reinterpret_cast&lt;VkCudaModuleNV *&gt;( &amp;module ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createCudaModuleNV&quot; );
+
+    return detail::createResultValueType( result, std::move( module ) );
+  }
+
+#    ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkCreateCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCudaModuleNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateCudaModuleNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;UniqueHandle&lt;CudaModuleNV, Dispatch&gt;&gt;::type
+    Device::createCudaModuleNVUnique( const CudaModuleCreateInfoNV &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#      if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateCudaModuleNV &amp;&amp; &quot;Function &lt;vkCreateCudaModuleNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#      endif
+
+    CudaModuleNV module;
+    Result       result = static_cast&lt;Result&gt;( d.vkCreateCudaModuleNV( m_device,
+                                                                 reinterpret_cast&lt;const VkCudaModuleCreateInfoNV *&gt;( &amp;createInfo ),
+                                                                 reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                 reinterpret_cast&lt;VkCudaModuleNV *&gt;( &amp;module ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createCudaModuleNVUnique&quot; );
+
+    return detail::createResultValueType( result,
+                                          UniqueHandle&lt;CudaModuleNV, Dispatch&gt;( module, detail::ObjectDestroy&lt;Device, Dispatch&gt;( *this, allocator, d ) ) );
+  }
+#    endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#  endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetCudaModuleCacheNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetCudaModuleCacheNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetCudaModuleCacheNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result
+    Device::getCudaModuleCacheNV( CudaModuleNV module, size_t * pCacheSize, void * pCacheData, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetCudaModuleCacheNV( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkCudaModuleNV&gt;( module ), pCacheSize, pCacheData ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetCudaModuleCacheNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetCudaModuleCacheNV.html
+  template &lt;typename Uint8_tAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename Uint8_tAllocator::value_type, uint8_t&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetCudaModuleCacheNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt;::type
+                       Device::getCudaModuleCacheNV( CudaModuleNV module, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetCudaModuleCacheNV &amp;&amp; &quot;Function &lt;vkGetCudaModuleCacheNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#    endif
+
+    std::vector&lt;uint8_t, Uint8_tAllocator&gt; cacheData;
+    size_t                                 cacheSize;
+    Result                                 result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetCudaModuleCacheNV( m_device, static_cast&lt;VkCudaModuleNV&gt;( module ), &amp;cacheSize, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; cacheSize )
+      {
+        cacheData.resize( cacheSize );
+        result = static_cast&lt;Result&gt;(
+          d.vkGetCudaModuleCacheNV( m_device, static_cast&lt;VkCudaModuleNV&gt;( module ), &amp;cacheSize, reinterpret_cast&lt;void *&gt;( cacheData.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getCudaModuleCacheNV&quot; );
+    VULKAN_HPP_ASSERT( cacheSize &lt;= cacheData.size() );
+    if ( cacheSize &lt; cacheData.size() )
+    {
+      cacheData.resize( cacheSize );
+    }
+    return detail::createResultValueType( result, std::move( cacheData ) );
+  }
+
+  // wrapper function for command vkGetCudaModuleCacheNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetCudaModuleCacheNV.html
+  template &lt;typename Uint8_tAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename Uint8_tAllocator::value_type, uint8_t&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetCudaModuleCacheNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;uint8_t, Uint8_tAllocator&gt;&gt;::type
+                       Device::getCudaModuleCacheNV( CudaModuleNV module, Uint8_tAllocator const &amp; uint8_tAllocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetCudaModuleCacheNV &amp;&amp; &quot;Function &lt;vkGetCudaModuleCacheNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#    endif
+
+    std::vector&lt;uint8_t, Uint8_tAllocator&gt; cacheData( uint8_tAllocator );
+    size_t                                 cacheSize;
+    Result                                 result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetCudaModuleCacheNV( m_device, static_cast&lt;VkCudaModuleNV&gt;( module ), &amp;cacheSize, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; cacheSize )
+      {
+        cacheData.resize( cacheSize );
+        result = static_cast&lt;Result&gt;(
+          d.vkGetCudaModuleCacheNV( m_device, static_cast&lt;VkCudaModuleNV&gt;( module ), &amp;cacheSize, reinterpret_cast&lt;void *&gt;( cacheData.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getCudaModuleCacheNV&quot; );
+    VULKAN_HPP_ASSERT( cacheSize &lt;= cacheData.size() );
+    if ( cacheSize &lt; cacheData.size() )
+    {
+      cacheData.resize( cacheSize );
+    }
+    return detail::createResultValueType( result, std::move( cacheData ) );
+  }
+#  endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCreateCudaFunctionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCudaFunctionNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateCudaFunctionNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::createCudaFunctionNV( const CudaFunctionCreateInfoNV * pCreateInfo,
+                                                                              const AllocationCallbacks *      pAllocator,
+                                                                              CudaFunctionNV *                 pFunction,
+                                                                              Dispatch const &amp;                 d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCreateCudaFunctionNV( static_cast&lt;VkDevice&gt;( m_device ),
+                                                          reinterpret_cast&lt;const VkCudaFunctionCreateInfoNV *&gt;( pCreateInfo ),
+                                                          reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                          reinterpret_cast&lt;VkCudaFunctionNV *&gt;( pFunction ) ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreateCudaFunctionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCudaFunctionNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateCudaFunctionNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;CudaFunctionNV&gt;::type
+    Device::createCudaFunctionNV( const CudaFunctionCreateInfoNV &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateCudaFunctionNV &amp;&amp; &quot;Function &lt;vkCreateCudaFunctionNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#    endif
+
+    CudaFunctionNV function;
+    Result         result = static_cast&lt;Result&gt;( d.vkCreateCudaFunctionNV( m_device,
+                                                                   reinterpret_cast&lt;const VkCudaFunctionCreateInfoNV *&gt;( &amp;createInfo ),
+                                                                   reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                   reinterpret_cast&lt;VkCudaFunctionNV *&gt;( &amp;function ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createCudaFunctionNV&quot; );
+
+    return detail::createResultValueType( result, std::move( function ) );
+  }
+
+#    ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkCreateCudaFunctionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCudaFunctionNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateCudaFunctionNV ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;UniqueHandle&lt;CudaFunctionNV, Dispatch&gt;&gt;::type
+    Device::createCudaFunctionNVUnique( const CudaFunctionCreateInfoNV &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#      if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateCudaFunctionNV &amp;&amp; &quot;Function &lt;vkCreateCudaFunctionNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#      endif
+
+    CudaFunctionNV function;
+    Result         result = static_cast&lt;Result&gt;( d.vkCreateCudaFunctionNV( m_device,
+                                                                   reinterpret_cast&lt;const VkCudaFunctionCreateInfoNV *&gt;( &amp;createInfo ),
+                                                                   reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                   reinterpret_cast&lt;VkCudaFunctionNV *&gt;( &amp;function ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createCudaFunctionNVUnique&quot; );
+
+    return detail::createResultValueType( result,
+                                          UniqueHandle&lt;CudaFunctionNV, Dispatch&gt;( function, detail::ObjectDestroy&lt;Device, Dispatch&gt;( *this, allocator, d ) ) );
+  }
+#    endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#  endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkDestroyCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyCudaModuleNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyCudaModuleNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void
+    Device::destroyCudaModuleNV( CudaModuleNV module, const AllocationCallbacks * pAllocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkDestroyCudaModuleNV(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkCudaModuleNV&gt;( module ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkDestroyCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyCudaModuleNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyCudaModuleNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void
+    Device::destroyCudaModuleNV( CudaModuleNV module, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkDestroyCudaModuleNV &amp;&amp; &quot;Function &lt;vkDestroyCudaModuleNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#    endif
+
+    d.vkDestroyCudaModuleNV( m_device, static_cast&lt;VkCudaModuleNV&gt;( module ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ) );
+  }
+#  endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkDestroyCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyCudaModuleNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyCudaModuleNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::destroy( CudaModuleNV module, const AllocationCallbacks * pAllocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkDestroyCudaModuleNV(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkCudaModuleNV&gt;( module ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkDestroyCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyCudaModuleNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyCudaModuleNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::destroy( CudaModuleNV module, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkDestroyCudaModuleNV &amp;&amp; &quot;Function &lt;vkDestroyCudaModuleNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#    endif
+
+    d.vkDestroyCudaModuleNV( m_device, static_cast&lt;VkCudaModuleNV&gt;( module ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ) );
+  }
+#  endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkDestroyCudaFunctionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyCudaFunctionNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyCudaFunctionNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void
+    Device::destroyCudaFunctionNV( CudaFunctionNV function, const AllocationCallbacks * pAllocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkDestroyCudaFunctionNV(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkCudaFunctionNV&gt;( function ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkDestroyCudaFunctionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyCudaFunctionNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyCudaFunctionNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void
+    Device::destroyCudaFunctionNV( CudaFunctionNV function, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkDestroyCudaFunctionNV &amp;&amp; &quot;Function &lt;vkDestroyCudaFunctionNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#    endif
+
+    d.vkDestroyCudaFunctionNV( m_device, static_cast&lt;VkCudaFunctionNV&gt;( function ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ) );
+  }
+#  endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkDestroyCudaFunctionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyCudaFunctionNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyCudaFunctionNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::destroy( CudaFunctionNV function, const AllocationCallbacks * pAllocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkDestroyCudaFunctionNV(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkCudaFunctionNV&gt;( function ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkDestroyCudaFunctionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroyCudaFunctionNV.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkDestroyCudaFunctionNV ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::destroy( CudaFunctionNV function, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkDestroyCudaFunctionNV &amp;&amp; &quot;Function &lt;vkDestroyCudaFunctionNV&gt; requires &lt;VK_NV_cuda_kernel_launch&gt;&quot; );
+#    endif
+
+    d.vkDestroyCudaFunctionNV( m_device, static_cast&lt;VkCudaFunctionNV&gt;( function ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ) );
+  }
+#  endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-53.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-55.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

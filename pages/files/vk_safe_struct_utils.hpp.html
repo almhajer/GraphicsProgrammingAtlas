@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_safe_struct_utils.hpp - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_safe_struct_utils.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <span>vk_safe_struct_utils.hpp</span>
+      </nav>
+      <h1 class="page-title">📄 vk_safe_struct_utils.hpp</h1>
+      <p class="page-description">ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.</p>
+      <div class="standalone-badges">
+        <span class="standalone-badge">ملفات vulkan/utility</span>
+        <span class="standalone-badge">utility</span>
+        <span class="standalone-badge"><span dir="ltr">vulkan/utility/vk_safe_struct_utils.hpp</span></span>
+      </div>
+    </div>
+
+    <div class="standalone-grid">
+      <section class="standalone-card">
+        <h2>الهدف الفعلي للملف</h2>
+        <ul class="insight-list">
+          <li>هذا الملف أداة مساندة أكثر من كونه جزءاً من عقد API الرسمي؛ الغرض منه تسهيل النسخ، التحويل، dispatch، أو التعامل مع هياكل Vulkan المساعدة داخل الأدوات والطبقات.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>متى تستخدمه؟</h2>
+        <p>استخدم vk_safe_struct_utils.hpp عندما تحتاج وظائف أو بنى مساعدة تدعم الطبقات أو الأدوات أو الشيفرات المساندة حول Vulkan.</p>
+      </section>
+      <section class="standalone-card">
+        <h2>مثال تضمين</h2>
+        <pre class="code-block" dir="ltr"><code class="language-cpp">#include &lt;vulkan/utility/vk_safe_struct_utils.hpp&gt;</code></pre>
+      </section>
+      <section class="standalone-card">
+        <h2>الملفات المضمنة</h2>
+        <ul><li><a class="standalone-link" href="./vulkan.h.html"><code>vulkan/vulkan.h</code></a></li><li><code>cassert</code></li><li><code>cstdlib</code></li><li><code>cstring</code></li><li><code>functional</code></li><li><code>vector</code></li></ul>
+      </section>
+      <section class="standalone-card">
+        <h2>تركيب الملف</h2>
+        <ul class="insight-list">
+          <li>يستورد 6 ملفاً آخر قبل بناء تعريفاته الخاصة.</li><li>ملامحه C++ واضحة: 2 namespace، 0 class، و0 استعمالاً لـ inline تقريباً.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>ما الذي تقوله التعليقات نفسها؟</h2>
+        <ul class="insight-list">
+          
+            <li>
+              State that elements in a pNext chain may need to be aware of
+              <span class="comment-context">struct PNextCopyState {</span>
+            </li>
+          
+            <li>
+              Custom initialization function. Returns true if the structure passed to init was initialized, false otherwise
+              <span class="comment-context">std::function&lt;bool(VkBaseOutStructure* /* safe_sruct */, const VkBaseOutStructure* /* in_struct */)&gt; init;</span>
+            </li>
+          
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الأسطر: 127</span>
+        <span class="source-stat">الحجم: 4.4 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>/***************************************************************************
+ *
+ * Copyright (c) 2015-2024 The Khronos Group Inc.
+ * Copyright (c) 2015-2024 Valve Corporation
+ * Copyright (c) 2015-2024 LunarG, Inc.
+ * Copyright (c) 2015-2024 Google Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ ****************************************************************************/
+
+#pragma once
+#include &lt;vulkan/vulkan.h&gt;
+#include &lt;cassert&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cstring&gt;
+#include &lt;functional&gt;
+#include &lt;vector&gt;
+
+namespace vku {
+
+// State that elements in a pNext chain may need to be aware of
+struct PNextCopyState {
+    // Custom initialization function. Returns true if the structure passed to init was initialized, false otherwise
+    std::function&lt;bool(VkBaseOutStructure* /* safe_sruct */, const VkBaseOutStructure* /* in_struct */)&gt; init;
+};
+
+void* SafePnextCopy(const void* pNext, PNextCopyState* copy_state = {});
+void FreePnextChain(const void* pNext);
+char* SafeStringCopy(const char* in_string);
+
+template &lt;typename Base, typename T&gt;
+bool AddToPnext(Base&amp; base, const T&amp; data) {
+    assert(base.ptr());  // All safe struct have a ptr() method. Prevent use with non-safe structs.
+    auto** prev = reinterpret_cast&lt;VkBaseOutStructure**&gt;(const_cast&lt;void**&gt;(&amp;base.pNext));
+    auto* current = *prev;
+    while (current) {
+        if (data.sType == current-&gt;sType) {
+            return false;
+        }
+        prev = reinterpret_cast&lt;VkBaseOutStructure**&gt;(&amp;current-&gt;pNext);
+        current = *prev;
+    }
+    *prev = reinterpret_cast&lt;VkBaseOutStructure*&gt;(SafePnextCopy(&amp;data));
+    return true;
+}
+
+template &lt;typename Base&gt;
+bool RemoveFromPnext(Base&amp; base, VkStructureType t) {
+    assert(base.ptr());  // All safe struct have a ptr() method. Prevent use with non-safe structs.
+    auto** prev = reinterpret_cast&lt;VkBaseOutStructure**&gt;(const_cast&lt;void**&gt;(&amp;base.pNext));
+    auto* current = *prev;
+    while (current) {
+        if (t == current-&gt;sType) {
+            *prev = current-&gt;pNext;
+            current-&gt;pNext = nullptr;
+            FreePnextChain(current);
+            return true;
+        }
+        prev = reinterpret_cast&lt;VkBaseOutStructure**&gt;(&amp;current-&gt;pNext);
+        current = *prev;
+    }
+    return false;
+}
+
+template &lt;typename CreateInfo&gt;
+uint32_t FindExtension(CreateInfo&amp; ci, const char* extension_name) {
+    assert(ci.ptr());  // All safe struct have a ptr() method. Prevent use with non-safe structs.
+    for (uint32_t i = 0; i &lt; ci.enabledExtensionCount; i++) {
+        if (strcmp(ci.ppEnabledExtensionNames[i], extension_name) == 0) {
+            return i;
+        }
+    }
+    return ci.enabledExtensionCount;
+}
+
+template &lt;typename CreateInfo&gt;
+bool AddExtension(CreateInfo&amp; ci, const char* extension_name) {
+    assert(ci.ptr());  // All safe struct have a ptr() method. Prevent use with non-safe structs.
+    uint32_t pos = FindExtension(ci, extension_name);
+    if (pos &lt; ci.enabledExtensionCount) {
+        // already present
+        return false;
+    }
+    char** exts = new char*[ci.enabledExtensionCount + 1];
+    if (ci.ppEnabledExtensionNames) {
+        memcpy(exts, ci.ppEnabledExtensionNames, sizeof(char*) * ci.enabledExtensionCount);
+    }
+    exts[ci.enabledExtensionCount] = SafeStringCopy(extension_name);
+    delete[] ci.ppEnabledExtensionNames;
+    ci.ppEnabledExtensionNames = exts;
+    ci.enabledExtensionCount++;
+    return true;
+}
+
+template &lt;typename CreateInfo&gt;
+bool RemoveExtension(CreateInfo&amp; ci, const char* extension_name) {
+    assert(ci.ptr());  // All safe struct have a ptr() method. Prevent use with non-safe structs.
+    uint32_t pos = FindExtension(ci, extension_name);
+    if (pos &gt;= ci.enabledExtensionCount) {
+        // not present
+        return false;
+    }
+    if (ci.enabledExtensionCount == 1) {
+        delete[] ci.ppEnabledExtensionNames[0];
+        delete[] ci.ppEnabledExtensionNames;
+        ci.ppEnabledExtensionNames = nullptr;
+        ci.enabledExtensionCount = 0;
+        return true;
+    }
+    uint32_t out_pos = 0;
+    char** exts = new char*[ci.enabledExtensionCount - 1];
+    for (uint32_t i = 0; i &lt; ci.enabledExtensionCount; i++) {
+        if (i == pos) {
+            delete[] ci.ppEnabledExtensionNames[i];
+        } else {
+            exts[out_pos++] = const_cast&lt;char*&gt;(ci.ppEnabledExtensionNames[i]);
+        }
+    }
+    delete[] ci.ppEnabledExtensionNames;
+    ci.ppEnabledExtensionNames = exts;
+    ci.enabledExtensionCount--;
+    return true;
+}
+
+}  // namespace vku
+</code></pre>
+    </section>
+    
+  </main>
+</body>
+</html>

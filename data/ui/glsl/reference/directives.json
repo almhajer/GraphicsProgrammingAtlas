@@ -1,0 +1,69 @@
+{
+  "key": "directives",
+  "title": "التوجيهات والمعالجة المسبقة",
+  "icon": "📜",
+  "description": "",
+  "items": [
+    {
+      "name": "#version",
+      "aliases": [
+        "version"
+      ],
+      "kind": "Directive",
+      "description": "يحدد نسخة لغة GLSL والقواعد النحوية التي يجب أن يفسر بها المترجم ملف الشيدر.",
+      "usage": "يوضع عادة في أول سطر من ملف الشيدر مثل `#version 460 core`.",
+      "execution": "يؤثر أثناء preprocessing والترجمة فقط، ولا ينفذ كتعليمة runtime على GPU.",
+      "effect": "تغييره يبدل القواعد المتاحة في الشيدر، والميزات والـ built-ins والـ qualifiers التي يقبلها المترجم.",
+      "vulkanBridge": "يجب أن تتوافق النسخة المستخدمة مع المسار الذي ستترجمه به أداة glslc إلى SPIR-V قبل تمريره إلى vkCreateShaderModule.",
+      "example": "#version 460 core",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html#introduction"
+    },
+    {
+      "name": "#extension",
+      "aliases": [
+        "extension"
+      ],
+      "kind": "Directive",
+      "description": "يطلب تمكين امتداد لغوي أو يحدد كيف يتعامل المترجم مع غيابه.",
+      "usage": "يظهر عندما تحتاج ميزات لغوية أو built-ins غير موجودة في النواة الأساسية للنسخة الحالية.",
+      "execution": "يُقرأ قبل الترجمة ليقرر المترجم هل يسمح باستخدام الرموز الخاصة بالامتداد أم يرفضها.",
+      "effect": "يغير مجموعة الخصائص اللغوية المتاحة في ملف الشيدر نفسه.",
+      "vulkanBridge": "يفيد عندما تعتمد على امتدادات GLSL الخاصة بمسارات Vulkan مثل خصائص ray tracing أو shader objects التي تحتاج ترجمة SPIR-V متوافقة مع الامتداد.",
+      "example": "#extension GL_ARB_separate_shader_objects : enable",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "#define",
+      "aliases": [
+        "define"
+      ],
+      "kind": "Directive",
+      "description": "ينشئ Macro نصياً في مرحلة preprocessing قبل تحليل التعليمات الفعلية للشيدر.",
+      "usage": "يستخدم لتوليد ثوابت أو مسارات تجميع شرطية أو اختصارات لغوية.",
+      "execution": "لا ينفذ على GPU، بل يستبدل النص قبل بناء الشجرة النحوية للشيدر.",
+      "effect": "يغير النص النهائي الذي سيترجمه المترجم، وقد يبدل التعليمات أو القيم المضمنة في SPIR-V.",
+      "vulkanBridge": "شائع في أنظمة البناء التي تولد أكثر من Shader Variant قبل إنشاء Shader Modules داخل التطبيق.",
+      "example": "#define MAX_LIGHTS 8",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "#if",
+      "aliases": [
+        "if",
+        "ifdef",
+        "ifndef",
+        "elif",
+        "else",
+        "endif"
+      ],
+      "kind": "Conditional Compilation Directive",
+      "description": "يوجه preprocessing لاختيار أجزاء من النص أو تجاهلها بناءً على تعبيرات أو تعريفات ماكرو.",
+      "usage": "يستخدم لإنشاء Shader Variants أو مسارات ترجمة مختلفة من نفس الملف.",
+      "execution": "يحذف أو يبقي أسطرًا كاملة قبل الترجمة، لذلك لا يصل إلا المسار المختار إلى الـ compiler backend.",
+      "effect": "يؤدي إلى بناء SPIR-V مختلف بحسب الماكرو المفعّل.",
+      "vulkanBridge": "مفيد عندما تريد أكثر من تكوين للشيدر دون إدارة عدة ملفات منفصلة في نظام البناء.",
+      "example": "#ifdef USE_TEXTURE\nlayout(set = 0, binding = 1) uniform sampler2D texSampler;\n#endif",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    }
+  ]
+}

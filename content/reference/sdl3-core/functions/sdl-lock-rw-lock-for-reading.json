@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_LockRWLockForReading",
+    "slug": "sdl-lock-rw-lock-for-reading",
+    "titleArabic": "قفل read/write lock read only operations",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-lock-rw-lock-for-reading",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-lock-rw-lock-for-reading.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "قفل read/write lock read only operations",
+    "actualMeaningArabic": "قفل read/write lock read only operations.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى قفل read/write lock read only operations داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه void وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Lock the read/write lock for read only operations."
+  },
+  "signature": {
+    "raw": "void SDL_LockRWLockForReading(SDL_RWLock *rwlock);",
+    "returnType": "void",
+    "parameters": [
+      "SDL_RWLock *rwlock"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_mutex.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "rwlock",
+        "type": "SDL_RWLock *",
+        "descriptionArabic": "يمثل المعامل rwlock من النوع SDL_RWLock * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the read/write lock to lock."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This will block until the rwlock is available, which is to say it is\nnot locked for writing by any other thread. Of all threads waiting to\nlock the rwlock, all may do so at the same time as long as they are\nrequesting read-only access; if a thread wants to lock for writing, only\none may do so at a time, and no other threads, read-only or not, may\nhold the lock at the same time.",
+      "It is legal for the owning thread to lock an already-locked rwlock\nfor reading. It must unlock it the same number of times before it is\nactually made available for other threads in the system (this is known\nas a \"recursive rwlock\").",
+      "Note that locking for writing is not recursive (this is only\navailable to read-only locks).",
+      "It is illegal to request a read-only lock from a thread that already\nholds the write lock. Doing so results in undefined behavior. Unlock the\nwrite lock before requesting a read-only lock. (But, of course, if you\nhave the write lock, you don't need further locks to read in any\ncase.)",
+      "This function does not fail; if rwlock is NULL, it will return\nimmediately having locked nothing. If the rwlock is valid, this function\nwill always block until it can lock the mutex, and return with it\nlocked."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_LockRWLockForReading",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_LockRWLockForWriting",
+        "route": "#ref/sdl3-core/functions/sdl-lock-rw-lock-for-writing",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_TryLockRWLockForReading",
+        "route": "#ref/sdl3-core/functions/sdl-try-lock-rw-lock-for-reading",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_UnlockRWLock",
+        "route": "#ref/sdl3-core/functions/sdl-unlock-rw-lock",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Thread Synchronization\nPrimitives",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

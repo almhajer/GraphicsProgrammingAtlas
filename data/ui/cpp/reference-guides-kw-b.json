@@ -1,0 +1,2226 @@
+{
+  "referenceGuides": {
+    "switch": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، switch مناسبة عندما يكون القرار كله مبنيًا على قيمة واحدة محددة، وتريد توزيع التنفيذ على حالات ثابتة معروفة بدل تكرار مقارنة المتغير نفسه في if متعددة.",
+      "projectStepsArabic": [
+        "استخدمها عندما تكون قيمة واحدة هي التي تحدد المسار بين عدة حالات معروفة.",
+        "أضف break بوضوح عندما تريد إنهاء كل حالة وعدم السقوط إلى التي بعدها.",
+        "استخدم default إذا كان للحالات غير المغطاة معنى يجب التصريح به."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "اختيار مسار بناءً على قيمة واحدة",
+          "code": "int score_for_mode(int mode) {\n    switch (mode) {\n        case 0:\n            return 10;\n        case 1:\n            return 20;\n        default:\n            return 0;\n    }\n}",
+          "explanationArabic": "هذا أبسط وجه للاستعمال: متغير واحد يحدد أي فرع سيعمل، مع مسار احتياطي واضح للحالات الأخرى.",
+          "relatedTokens": [
+            "switch",
+            "case",
+            "default",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التعامل مع الحروف أو الرموز القصيرة",
+          "code": "int classify(char op) {\n    switch (op) {\n        case '+':\n            return 1;\n        case '-':\n            return 2;\n        default:\n            return -1;\n    }\n}",
+          "explanationArabic": "هذا يوضح أن switch ليست خاصة بالأرقام فقط، بل بأي قيمة يمكن مطابقتها بحالات ثابتة مناسبة.",
+          "relatedTokens": [
+            "switch",
+            "case",
+            "default",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الحاجة إلى break لتحديد حدود كل حالة",
+          "code": "int count_steps(int mode) {\n    int steps = 0;\n    switch (mode) {\n        case 1:\n            steps = 1;\n            break;\n        case 2:\n            steps = 2;\n            break;\n        default:\n            steps = 0;\n            break;\n    }\n    return steps;\n}",
+          "explanationArabic": "هذا مثال أذكى قليلًا لأنه يوضح أن break ليست تفصيلًا تجميليًا هنا، بل جزء من ضبط نهاية كل حالة داخل switch.",
+          "relatedTokens": [
+            "switch",
+            "break",
+            "case",
+            "default",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "case",
+        "default",
+        "break"
+      ]
+    },
+    "case": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، case ليست شرطًا عامًا؛ بل حالة ثابتة داخل switch تقول للمترجم: إذا طابقت القيمة هذا الثابت فابدأ من هنا.",
+      "projectStepsArabic": [
+        "اكتب كل case بوصف ذهني واضح: ما القيمة التي تغطيها؟ وما المسار الذي تبدأه؟",
+        "أنهِ الحالة بـ break إذا كان المطلوب إيقاف التنفيذ عند نهايتها.",
+        "انتبه أن case لا تعمل وحدها خارج switch."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حالة واحدة داخل switch",
+          "code": "int to_score(int value) {\n    switch (value) {\n        case 1:\n            return 100;\n        default:\n            return 0;\n    }\n}",
+          "explanationArabic": "case هنا هي عنوان الحالة التي تطابق القيمة 1 وتبدأ منها أوامر هذا الفرع.",
+          "relatedTokens": [
+            "case",
+            "switch",
+            "default",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "عدة حالات متجاورة",
+          "code": "int is_weekend(int day) {\n    switch (day) {\n        case 6:\n        case 7:\n            return 1;\n        default:\n            return 0;\n    }\n}",
+          "explanationArabic": "هذا يوضح أن أكثر من case يمكن أن تتشارك المسار نفسه إذا كانت النتيجة المطلوبة واحدة.",
+          "relatedTokens": [
+            "case",
+            "switch",
+            "default",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "case مع break عند تحديث متغير",
+          "code": "int level_name(int level) {\n    int code = 0;\n    switch (level) {\n        case 3:\n            code = 30;\n            break;\n        default:\n            code = -1;\n            break;\n    }\n    return code;\n}",
+          "explanationArabic": "هنا تظهر العلاقة المباشرة بين case وbreak: تبدأ الأوامر من case ثم ينهي break هذه الحالة بوضوح.",
+          "relatedTokens": [
+            "case",
+            "break",
+            "switch",
+            "default",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "switch",
+        "break",
+        "default"
+      ]
+    },
+    "default": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، default تمثل القرار الاحتياطي داخل switch عندما لا تنتمي القيمة إلى أي حالة مغطاة صراحة.",
+      "projectStepsArabic": [
+        "استخدم default عندما يكون للحالات الأخرى معنى واضح ينبغي التصريح به.",
+        "لا تجعل default تخفي خطأ مهمًا إذا كان من الأفضل إظهاره بوضوح.",
+        "اقرأها ذهنيًا كجملة: إذا لم ينجح شيء مما سبق فافعل هذا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "مسار احتياطي صريح",
+          "code": "int decode(int value) {\n    switch (value) {\n        case 1:\n            return 10;\n        default:\n            return -1;\n    }\n}",
+          "explanationArabic": "default هنا تمنع ترك بقية القيم بلا معنى وتعلن ما الذي يحدث في الحالات غير المعروفة.",
+          "relatedTokens": [
+            "default",
+            "switch",
+            "case",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تجميع الحالات المعروفة مقابل البقية",
+          "code": "int category(char ch) {\n    switch (ch) {\n        case 'a':\n            return 1;\n        case 'b':\n            return 2;\n        default:\n            return 0;\n    }\n}",
+          "explanationArabic": "هذا يوضح أن default لا تمثل قيمة بعينها، بل كل ما بقي خارج الحالات المسماة.",
+          "relatedTokens": [
+            "default",
+            "switch",
+            "case",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "default مع تحديث متغير محلي",
+          "code": "int score(int state) {\n    int result = 0;\n    switch (state) {\n        case 4:\n            result = 40;\n            break;\n        default:\n            result = -40;\n            break;\n    }\n    return result;\n}",
+          "explanationArabic": "هذا المثال يوضح أن default قد تكون أيضًا جزءًا من منطق أوسع داخل switch، لا مجرد return سريع.",
+          "relatedTokens": [
+            "default",
+            "switch",
+            "break",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "switch",
+        "case",
+        "break"
+      ]
+    },
+    "break": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، break تعني الخروج فورًا من الحلقة الحالية أو switch الحالية فقط. لا تعني العودة من الدالة ولا إيقاف البرنامج، بل إنهاء البنية التي تقف داخلها الآن.",
+      "projectStepsArabic": [
+        "استخدمها عندما يصبح الاستمرار داخل الحلقة أو الحالة الحالية غير مطلوب بعد الآن.",
+        "فرّق ذهنيًا بينها وبين return: break تخرج من loop أو switch، أما return فتخرج من الدالة كلها.",
+        "داخل switch، استعملها بوعي حتى لا يحدث سقوط غير مقصود إلى الحالة التالية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إيقاف حلقة عند العثور على المطلوب",
+          "code": "int main() {\n    int found = 0;\n    for (int i = 0; i < 10; ++i) {\n        if (i == 4) {\n            found = i;\n            break;\n        }\n    }\n    return found;\n}",
+          "explanationArabic": "break هنا تقول: بعد العثور على القيمة المطلوبة لا داعي لإكمال بقية الحلقة.",
+          "relatedTokens": [
+            "break",
+            "for",
+            "if",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "إنهاء حالة داخل switch",
+          "code": "int score(int level) {\n    int value = 0;\n    switch (level) {\n        case 2:\n            value = 20;\n            break;\n        default:\n            value = -1;\n            break;\n    }\n    return value;\n}",
+          "explanationArabic": "هذا يوضح دور break داخل switch: إنهاء الحالة الحالية ومنع السقوط إلى ما بعدها.",
+          "relatedTokens": [
+            "break",
+            "switch",
+            "case",
+            "default",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين break وreturn",
+          "code": "int run() {\n    for (int i = 0; i < 5; ++i) {\n        if (i == 2) {\n            break;\n        }\n    }\n    return 7;\n}",
+          "explanationArabic": "بعد break يستمر تنفيذ الدالة من بعد الحلقة، لذلك يعود السطر الأخير وينفذ. هذا يميزها عن return بوضوح.",
+          "relatedTokens": [
+            "break",
+            "for",
+            "return",
+            "if"
+          ]
+        }
+      ],
+      "followUps": [
+        "continue",
+        "switch",
+        "return"
+      ]
+    },
+    "user-defined literal": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، user-defined literal تجعل الثابت نفسه يتكلم بلغة المجال الذي تعمل فيه. بدل أن تكتب قيمة خامة ثم تطلب من القارئ أن يتذكر وحدتها أو تحويلها، يصبح suffix جزءًا من المعنى عند القراءة والترجمة معًا.",
+      "projectStepsArabic": [
+        "استخدمها عندما يضيف suffix معنى حقيقيًا مثل وحدة قياس أو نوع مجال، لا عندما تكون مجرد حيلة شكلية.",
+        "عرّف literal operator باسم `operator\"\"_suffix` داخل namespace مناسب ثم استورد هذا النطاق بوعي.",
+        "إذا كان suffix غير مألوف أو لا يوضح شيئًا إضافيًا، فالدالة الصريحة الواضحة غالبًا أفضل."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تحويل الرقم مباشرة إلى نوع مجال",
+          "code": "struct Distance {\n    long double meters;\n};\n\nconstexpr Distance operator\"\"_km(long double value) {\n    return Distance{value * 1000.0L};\n}\n\nint main() {\n    Distance trip = 2.5_km;\n    return trip.meters > 2000.0L ? 1 : 0;\n}",
+          "explanationArabic": "suffix `_km` هنا ليس زينة. هو الذي يحول الثابت إلى `Distance` بوحدة واضحة منذ لحظة كتابة الكود. هذا يقلل احتمال تمرير قيم بلا سياق أو خلط الأمتار بالكيلومترات.",
+          "relatedTokens": [
+            "user-defined literal",
+            "operator",
+            "struct",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "أشهر مثال عملي: chrono literals",
+          "code": "#include <chrono>\n#include <thread>\n\nusing namespace std::chrono_literals;\n\nint main() {\n    auto wait = 150ms;\n    std::this_thread::sleep_for(wait);\n    return 0;\n}",
+          "explanationArabic": "هذا المثال يبين لماذا هذه الميزة مفيدة عمليًا: `150ms` أوضح فورًا من بناء كائن مدة يدويًا، ويجعل الوحدة جزءًا من النص البرمجي نفسه.",
+          "relatedTokens": [
+            "user-defined literal",
+            "namespace",
+            "std::thread",
+            "operator"
+          ]
+        },
+        {
+          "titleArabic": "متى لا تكون الخيار الأنسب",
+          "code": "struct Port {\n    int value;\n};\n\nconstexpr Port make_port(int v) {\n    return Port{v};\n}\n\nint main() {\n    Port p = make_port(8080);\n    return p.value;\n}",
+          "explanationArabic": "إذا لم يكن suffix مألوفًا أو لم يضف معنى أقوى من اسم دالة واضح، فقد يصبح الكود أغرب لا أوضح. الفكرة ليست استخدام literals المخصصة كلما أمكن، بل حين تجعل القراءة أدق وأسرع.",
+          "relatedTokens": [
+            "user-defined literal",
+            "operator",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "operator",
+        "namespace",
+        "std::string"
+      ]
+    },
+    "continue": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، continue تعني تجاهل ما تبقى من أوامر الدورة الحالية والانتقال مباشرة إلى الدورة التالية من الحلقة نفسها.",
+      "projectStepsArabic": [
+        "استخدمها عندما تريد استبعاد بعض الدورات مبكرًا مع استمرار المعالجة لبقية العناصر.",
+        "تأكد أن شرط التخطي واضح للقارئ حتى لا تصبح الحلقة مليئة بقفزات صعبة التتبع.",
+        "فرّق بينها وبين break: continue تكمل الحلقة، أما break فتخرج منها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تجاهل قيمة معينة ومتابعة الحلقة",
+          "code": "int main() {\n    int sum = 0;\n    for (int i = 0; i < 5; ++i) {\n        if (i == 2) {\n            continue;\n        }\n        sum += i;\n    }\n    return sum;\n}",
+          "explanationArabic": "الدورة التي تحقق الشرط لا تكمل جمع القيمة، لكن الحلقة نفسها لا تنتهي.",
+          "relatedTokens": [
+            "continue",
+            "for",
+            "if",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تخطي العناصر غير المناسبة في while",
+          "code": "int main() {\n    int value = 0;\n    int count = 0;\n    while (value < 5) {\n        ++value;\n        if (value == 3) {\n            continue;\n        }\n        ++count;\n    }\n    return count;\n}",
+          "explanationArabic": "هذا يوضح أن continue لا تخص for فقط، بل أي حلقة يمكن أن تتجاوز دورة محددة وتعود لفحص الدورة التالية.",
+          "relatedTokens": [
+            "continue",
+            "while",
+            "if",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين continue وbreak",
+          "code": "int main() {\n    int count = 0;\n    for (int i = 0; i < 4; ++i) {\n        if (i == 1) {\n            continue;\n        }\n        ++count;\n    }\n    return count;\n}",
+          "explanationArabic": "هذا المثال أذكى قليلًا لأنه يرسخ الفكرة: الدورة التي تحقق الشرط تُهمل فقط، لكن الحلقة تستمر مع بقية القيم.",
+          "relatedTokens": [
+            "continue",
+            "break",
+            "for",
+            "if",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "break",
+        "for",
+        "while"
+      ]
+    },
+    "try": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، try تعني أن هذا الجزء من التنفيذ قد يخرج من المسار الطبيعي عبر استثناء، وأنك تريد وضع التعامل مع هذا الاحتمال قريبًا منه بدل تركه مبعثرًا.",
+      "projectStepsArabic": [
+        "اجعل try تغطي فقط الجزء الذي تتوقع منه فشلًا استثنائيًا فعلًا.",
+        "اربطها بـ catch واضحة المعنى حتى يفهم القارئ ماذا سيحدث عند الفشل.",
+        "لا تحيط بها كتلًا كبيرة بلا داعٍ لأن ذلك يضعف تحديد مصدر الاستثناء."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تنفيذ مسار قد يفشل استثنائيًا",
+          "code": "#include <stdexcept>\n\nint main() {\n    try {\n        throw std::runtime_error(\"فشل\");\n    } catch (const std::runtime_error&) {\n        return 1;\n    }\n}",
+          "explanationArabic": "هذا أبسط وجه: try تحدد المكان الذي قد يخرج منه الاستثناء، وcatch تتولى القرار بعده مباشرة.",
+          "relatedTokens": [
+            "try",
+            "catch",
+            "throw",
+            "std::runtime_error",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "فصل المسار العادي عن مسار الفشل",
+          "code": "#include <stdexcept>\n\nint read_value(bool fail) {\n    try {\n        if (fail) {\n            throw std::runtime_error(\"تعذر القراءة\");\n        }\n        return 7;\n    } catch (const std::runtime_error&) {\n        return -1;\n    }\n}",
+          "explanationArabic": "هنا يظهر الفرق بوضوح: داخل try يوجد المسار الطبيعي، وإذا وقع الاستثناء ينتقل التنفيذ إلى catch بدل متابعة الأسطر نفسها.",
+          "relatedTokens": [
+            "try",
+            "catch",
+            "throw",
+            "if",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "try ضيقة حول الموضع الخطر فقط",
+          "code": "#include <stdexcept>\n\nint main() {\n    int value = 0;\n    try {\n        value = 4;\n        throw std::runtime_error(\"توقف\");\n    } catch (const std::runtime_error&) {\n        value = -4;\n    }\n    return value;\n}",
+          "explanationArabic": "هذا مثال أذكى قليلًا لأنه يوضح أن try الأفضل أن تبقى حول المسار الذي قد يرمي فعلًا، لا حول كمية كبيرة من الكود بلا حاجة.",
+          "relatedTokens": [
+            "try",
+            "catch",
+            "throw",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "catch",
+        "throw",
+        "std::exception"
+      ]
+    },
+    "catch": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، catch هي نقطة استقبال الفشل الاستثنائي بعد خروجه من try، لذلك تمثل القرار المحلي: هل سأحول الخطأ إلى قيمة؟ رسالة؟ أم أعيد رميه؟",
+      "projectStepsArabic": [
+        "التقط النوع الذي تحتاجه بوضوح بدل التقاط كل شيء من دون سبب.",
+        "اجعل ما تفعله داخل catch مفهومًا: تحويل، تسجيل، إعادة رمي، أو إنهاء منظم.",
+        "لا تبتلع الخطأ بصمت إذا كان ذلك سيخفي سبب المشكلة عن القارئ أو المستخدم."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "التقاط نوع استثناء محدد",
+          "code": "#include <stdexcept>\n\nint main() {\n    try {\n        throw std::runtime_error(\"فشل\");\n    } catch (const std::runtime_error&) {\n        return 1;\n    }\n}",
+          "explanationArabic": "catch هنا تقول بوضوح: إذا خرج هذا النوع من الخطأ فسأتعامل معه هنا.",
+          "relatedTokens": [
+            "catch",
+            "try",
+            "throw",
+            "std::runtime_error",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التقاط الاستثناء العام عبر std::exception",
+          "code": "#include <stdexcept>\n#include <exception>\n\nint main() {\n    try {\n        throw std::runtime_error(\"خطأ عام\");\n    } catch (const std::exception&) {\n        return -1;\n    }\n}",
+          "explanationArabic": "هذا يوضح أن catch قد تعمل على واجهة أعم مثل std::exception عندما تريد مسارًا عامًا لعائلة الاستثناءات القياسية.",
+          "relatedTokens": [
+            "catch",
+            "try",
+            "std::exception",
+            "std::runtime_error",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تحويل الاستثناء إلى قرار محلي",
+          "code": "#include <stdexcept>\n\nint safe_value(bool fail) {\n    try {\n        if (fail) {\n            throw std::runtime_error(\"قيمة غير صالحة\");\n        }\n        return 5;\n    } catch (const std::runtime_error&) {\n        return 0;\n    }\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح الدور العملي الحقيقي لـ catch: تحويل الفشل الخارج من try إلى نتيجة محلية مفهومة.",
+          "relatedTokens": [
+            "catch",
+            "try",
+            "throw",
+            "if",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "try",
+        "throw",
+        "std::exception"
+      ]
+    },
+    "enum": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، enum تعطي الحالات المحدودة أسماء واضحة بدل أرقام خامة. الفكرة هنا ليست الزينة اللغوية، بل ربط القيمة بمعنى صريح يقرأه المبتدئ فورًا.",
+      "projectStepsArabic": [
+        "استخدم enum عندما تكون القيم الممكنة محدودة ومعروفة سلفًا.",
+        "اختر أسماء الحالات بحيث تكشف المعنى مباشرة لا مجرد ترقيم جديد.",
+        "عندما تحتاج عزلاً أوضح للأسماء والتحويلات، فكّر في enum class بدل enum العامة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حالات مسماة بدل أرقام صامتة",
+          "code": "enum class Mode {\n    Idle,\n    Running,\n    Stopped\n};\n\nint main() {\n    Mode mode = Mode::Running;\n    return mode == Mode::Running;\n}",
+          "explanationArabic": "هذا أبسط استعمال: الحالة تقرأ بالاسم مباشرة بدل الاعتماد على 0 أو 1 بلا معنى ظاهر.",
+          "relatedTokens": [
+            "enum",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الربط مع switch لقراءة الحالات",
+          "code": "enum class State {\n    Ready,\n    Busy\n};\n\nint score(State state) {\n    switch (state) {\n        case State::Ready:\n            return 1;\n        case State::Busy:\n            return 2;\n    }\n    return 0;\n}",
+          "explanationArabic": "هذا يوضح فائدة enum العملية: حين تمررها إلى switch تصبح الحالات المقروءة واضحة جدًا للمبتدئ.",
+          "relatedTokens": [
+            "enum",
+            "switch",
+            "case",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "اختيار اسم يكشف المعنى",
+          "code": "enum class Access {\n    Guest,\n    Member,\n    Admin\n};\n\nint main() {\n    Access role = Access::Admin;\n    return role == Access::Admin;\n}",
+          "explanationArabic": "هذا مثال أذكى قليلًا لأنه يبين أن قوة enum ليست في البنية فقط، بل في أن أسماء الحالات نفسها تحمل المعنى بدل تعليق خارجي أو اتفاق خفي.",
+          "relatedTokens": [
+            "enum",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "switch",
+        "case",
+        "class"
+      ]
+    },
+    "public": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، public تعني: هذا جزء من الواجهة التي أسمح للخارج أن يعتمد عليها. ليست مجرد مكان لوضع الدوال، بل حد يحدد ما هو متاح رسميًا.",
+      "projectStepsArabic": [
+        "ضع في public ما تريد للآخرين استعماله فعلًا من النوع.",
+        "لا تجعل الحقول أو الدوال العامة تتجاوز ما يحتاجه الاستخدام الخارجي الحقيقي.",
+        "اقرأ public دائمًا بوصفها واجهة مقصودة لا مجرد مساحة مفتوحة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دالة عامة تمثل الواجهة",
+          "code": "class Counter {\npublic:\n    int current() const {\n        return 4;\n    }\n};\n\nint main() {\n    Counter counter;\n    return counter.current();\n}",
+          "explanationArabic": "الدالة داخل public هي ما يستطيع الخارج استعماله من هذا النوع بوضوح.",
+          "relatedTokens": [
+            "public",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "باني عام لإنشاء الكائن",
+          "code": "class User {\npublic:\n    explicit User(int value) : id(value) {}\n\n    int get_id() const {\n        return id;\n    }\n\nprivate:\n    int id;\n};",
+          "explanationArabic": "هذا يوضح أن public لا تخص الدوال العادية فقط، بل أيضًا البناة التي تسمح أصلًا بتكوين الكائن من الخارج.",
+          "relatedTokens": [
+            "public",
+            "private",
+            "class",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "public كواجهة لا ككشف كامل للحالة",
+          "code": "class Temperature {\npublic:\n    bool is_freezing() const {\n        return value <= 0;\n    }\n\nprivate:\n    int value = -2;\n};",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح أن public الأفضل أن تكشف سلوكًا أو واجهة، لا أن تكشف كل الحقول مباشرة.",
+          "relatedTokens": [
+            "public",
+            "private",
+            "class",
+            "bool",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "private",
+        "protected",
+        "class"
+      ]
+    },
+    "private": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، private تعني أن هذا الجزء يخص الداخل فقط. فائدتها الحقيقية حماية الحالة الداخلية بحيث لا يستطيع الخارج كسر معناها أو تعديلها كما يشاء.",
+      "projectStepsArabic": [
+        "ضع في private ما لا تريد أن يصبح جزءًا من العقدة العامة للنوع.",
+        "اجعل الواجهة العامة تمر عبر public بدل السماح بالتعديل المباشر على الحقول.",
+        "تذكر أن private ليست زخرفة جمالية؛ بل أداة لحماية المعنى الداخلي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حقل داخلي لا يلمسه الخارج مباشرة",
+          "code": "class Counter {\nprivate:\n    int value = 0;\n};",
+          "explanationArabic": "هذا أبسط معنى لـ private: الحقل موجود داخل النوع، لكنه ليس جزءًا من الواجهة التي يستعملها الخارج.",
+          "relatedTokens": [
+            "private",
+            "class"
+          ]
+        },
+        {
+          "titleArabic": "الوصول للحالة عبر public بدل كشفها",
+          "code": "class Counter {\npublic:\n    int current() const {\n        return value;\n    }\n\nprivate:\n    int value = 4;\n};",
+          "explanationArabic": "هنا private تحمي القيمة نفسها، بينما public تعطي طريقة مقصودة لقراءتها.",
+          "relatedTokens": [
+            "private",
+            "public",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "منع كسر الحالة الداخلية من الخارج",
+          "code": "class Temperature {\npublic:\n    bool is_freezing() const {\n        return degree <= 0;\n    }\n\nprivate:\n    int degree = -1;\n};",
+          "explanationArabic": "هذا مثال أذكى لأن الهدف ليس مجرد الإخفاء، بل حماية معنى الكائن بحيث لا يعدّل الخارج الدرجة بلا ضوابط.",
+          "relatedTokens": [
+            "private",
+            "public",
+            "class",
+            "bool",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "public",
+        "protected",
+        "class"
+      ]
+    },
+    "explicit": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، explicit تمنع المترجم من استدعاء باني ذي معامل واحد ضمنيًا عند التحويل بين الأنواع. فائدتها تظهر عندما يكون النوع يمثل مفهومًا مختلفًا عن النوع الأساسي ولا تريد تحويلًا صامتًا يربك القراءة.",
+      "projectStepsArabic": [
+        "أضف explicit على كل باني ذي معامل واحد إذا لم يكن التحويل الضمني جزءًا من معنى النوع.",
+        "تذكر أنها تمنع التحويل من النوع الأساسي إلى نوعك ضمنيًا، لا العكس.",
+        "لا تضيفها بلا سبب؛ إذا كان التحويل الضمني طبيعيًا ومفهومًا فدعه يعمل."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "منع تحويل ضمني من عدد إلى نوع مخصص",
+          "code": "struct Amount {\n    explicit Amount(int v) : value(v) {}\n    int value;\n};\n\nint main() {\n    Amount a = Amount(5);\n    return a.value;\n}",
+          "explanationArabic": "الباني explicit يمنع كتابة Amount b = 5; لأن المترجم لن يحوّل 5 ضمنيًا. يجب أن تكتب التحويل صراحةً.",
+          "relatedTokens": [
+            "explicit",
+            "struct",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التحويل الصريح عبر static_cast مع وجود explicit",
+          "code": "struct Amount {\n    explicit Amount(int v) : value(v) {}\n    int value;\n};\n\nint main() {\n    Amount c = static_cast<Amount>(10);\n    return c.value;\n}",
+          "explanationArabic": "static_cast تجعل التحويل صريحًا وواضحًا للقارئ حتى مع وجود explicit. الصياغة أطول لكن المعنى أوضح.",
+          "relatedTokens": [
+            "explicit",
+            "struct",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "explicit مع bool لمنع التحويل المنطقي الضمني",
+          "code": "struct Handle {\n    explicit operator bool() const {\n        return valid;\n    }\n    bool valid = true;\n};\n\nint main() {\n    Handle h;\n    if (static_cast<bool>(h)) {\n        return 1;\n    }\n    return 0;\n}",
+          "explanationArabic": "هذا مثال أذكى: explicit على operator bool تمنع استعمال الكائن مباشرة في if بدون تحويل صريح، مما يقلل الأخطاء غير المقصودة.",
+          "relatedTokens": [
+            "explicit",
+            "bool",
+            "if",
+            "return",
+            "struct"
+          ]
+        }
+      ],
+      "followUps": [
+        "class",
+        "struct",
+        "static_cast"
+      ]
+    },
+    "attributes": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، attributes ليست أوامر سحرية تغير منطق البرنامج، بل وسيلة لقول شيء مهم للمترجم أو للقارئ في نفس موضع الكيان: هذه النتيجة لا ينبغي تجاهلها، هذا المتغير قد يبقى بلا استعمال، هذا الرمز مهجور، أو هذا الفرع مقصود أن يكون نادرًا. قيمتها أنها تربط النية بالكيان نفسه بدل تركها اتفاقًا خارجيًا غير مكتوب.",
+      "projectStepsArabic": [
+        "استخدم attributes المعيارية عندما تريد التعبير عن نية يمكن للمترجم فهمها مثل `[[nodiscard]]` و `[[maybe_unused]]` و `[[deprecated]]`.",
+        "لا تتوقع أن تحل attribute محل التصميم الجيد أو معالجة الأخطاء؛ هي تضيف دلالة أو تحذيرًا أو تلميحًا فقط.",
+        "فضّل الصيغ المعيارية داخل `[[...]]` على الامتدادات الخاصة بالمترجمات عندما يتوفر المقابل القياسي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نتيجة لا ينبغي تجاهلها",
+          "code": "[[nodiscard]] int parse_config() {\n    return 1;\n}\n\nint main() {\n    return parse_config();\n}",
+          "explanationArabic": "المغزى من `[[nodiscard]]` أن الدالة تعيد شيئًا يعد جزءًا من الاستخدام الصحيح لها. إذا تجاهلت النتيجة فأنت غالبًا تتجاهل قرارًا أو فشلًا أو قيمة تحكم مهمة.",
+          "relatedTokens": [
+            "attributes",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متغير مقصود أنه قد لا يستخدم",
+          "code": "int main() {\n    [[maybe_unused]] int debug_counter = 0;\n    return 0;\n}",
+          "explanationArabic": "أحيانًا يكون وجود المتغير مقصودًا مؤقتًا أو مرتبطًا ببناء معيّن، لكنك لا تريد ضجيج تحذيرات غير مفيد. هنا تصير attribute تصريحًا واضحًا أن عدم الاستخدام معروف ومقبول.",
+          "relatedTokens": [
+            "attributes",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تحذير انتقال لا إصلاح سحري",
+          "code": "[[deprecated(\"استخدم parse_new بدلًا منها\")]]\nint parse_old() {\n    return 0;\n}\n\nint main() {\n    return parse_old();\n}",
+          "explanationArabic": "هذا يوضح الحد الحقيقي لـ attributes: هي تستطيع تحذيرك وتوجيهك، لكنها لا تصلح التصميم وحدها. إذا كانت الواجهة قديمة فـ `[[deprecated]]` تساعد على الانتقال، لا أكثر.",
+          "relatedTokens": [
+            "attributes",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "final",
+        "constexpr",
+        "public"
+      ]
+    },
+    "export": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، export تُستخدم مع نظام الوحدات النمطية C++20 لتصدير تعريفات من وحدة نمطية يمكن استيرادها بدل تضمين الترويسات. فائدتها تظهر عند الانتقال من #include إلى import لتحسين سرعة الترجمة وتقليل التكرار.",
+      "projectStepsArabic": [
+        "استخدم export module لتعريف بداية الوحدة النمطية.",
+        "ضع export قبل كل تعريف تريد أن يكون متاحًا للمستوردين.",
+        "فرّق بين ما تريد تصديره وبين التفاصيل الداخلية التي تبقى خاصة بالوحدة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "وحدة نمطية تصدّر دالة",
+          "code": "export module math_utils;\n\nexport int add(int a, int b) {\n    return a + b;\n}",
+          "explanationArabic": "export module تعلن بداية الوحدة، وexport قبل الدالة تجعلها متاحة لأي ملف يستورد هذه الوحدة.",
+          "relatedTokens": [
+            "export",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استيراد وحدة في ملف آخر",
+          "code": "import math_utils;\n\nint main() {\n    return add(3, 4);\n}",
+          "explanationArabic": "import تستبدل #include وتستفيد من الوحدة المصدّرة مباشرة. الفرق أن الوحدة تُحمّل مرة واحدة لا في كل ترويسة.",
+          "relatedTokens": [
+            "export",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تصدير نوع كامل مع دواله",
+          "code": "export module shapes;\n\nexport struct Circle {\n    double radius;\n};\n\nexport double area(const Circle& c) {\n    return 3.14 * c.radius * c.radius;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح أن export لا تخص الدوال فقط، بل يمكن أن تصدّر أنواعًا كاملة مع ما يرتبط بها من واجهات.",
+          "relatedTokens": [
+            "export",
+            "struct",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "module",
+        "import",
+        "namespace"
+      ]
+    },
+    "thread_local": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، thread_local تجعل لكل خيط نسخته الخاصة المستقلة من المتغير. فائدتها تظهر عندما تحتاج بيانات محلية لكل خيط مثل معرّفات أو عدادات أو حالات خاصة بدل متغير مشترك يحتاج أقفالًا.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج بيانات فريدة لكل خيط لا يتداخل بعضها مع بعض.",
+        "تذكر أن لكل خيط نسخته المستقلة، لذلك القراءة والكتابة من خيوط مختلفة لا تحتاج قفلًا.",
+        "لا تستخدمها بديلًا عن mutex إذا كان المتغير يجب أن يكون مشتركًا فعلًا بين الخيوط."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عداد مستقل لكل خيط",
+          "code": "#include <thread>\n\nthread_local int counter = 0;\n\nvoid worker(int* result) {\n    ++counter;\n    *result = counter;\n}\n\nint main() {\n    int r1 = 0;\n    int r2 = 0;\n    std::thread t1(worker, &r1);\n    std::thread t2(worker, &r2);\n    t1.join();\n    t2.join();\n    return r1 + r2;\n}",
+          "explanationArabic": "كل خيط يرى نسخته الخاصة من counter، لذلك كل منهما يقرأ 1 وليس 2. هذا يختلف عن static العادية التي يتشاركها كل الخيوط.",
+          "relatedTokens": [
+            "thread_local",
+            "static",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين static وthread_local",
+          "code": "#include <thread>\n\nint shared = 0;\nthread_local int local = 0;\n\nvoid worker(int* out) {\n    ++shared;\n    ++local;\n    *out = local;\n}\n\nint main() {\n    int r1 = 0;\n    int r2 = 0;\n    std::thread t1(worker, &r1);\n    std::thread t2(worker, &r2);\n    t1.join();\n    t2.join();\n    return shared;\n}",
+          "explanationArabic": "shared يتغير من كلا الخيطين وتصبح قيمتها 2، بينما local لكل خيط نسخته الخاصة. هذا يوضح الفرق الجوهري بين مدتي التخزين.",
+          "relatedTokens": [
+            "thread_local",
+            "static",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "معرّف فريد لكل خيط",
+          "code": "#include <thread>\n\nthread_local int thread_id = 0;\n\nvoid init(int id, int* out) {\n    thread_id = id;\n    *out = thread_id;\n}\n\nint main() {\n    int r1 = 0;\n    int r2 = 0;\n    std::thread t1(init, 10, &r1);\n    std::thread t2(init, 20, &r2);\n    t1.join();\n    t2.join();\n    return r1 + r2;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح استخدامًا عمليًا: كل خيط يثبت معرّفه الخاص ويقرأه لاحقًا من دون تداخل مع الخيوط الأخرى.",
+          "relatedTokens": [
+            "thread_local",
+            "static",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "static",
+        "constexpr",
+        "const"
+      ]
+    },
+    "volatile": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، volatile تخبر المترجم بألا يحذف أو يعيد ترتيب القراءات والكتابات على المتغير. فائدتها نادرة جدًا وتقتصر على التواصل المباشر مع أجهزة أو ذاكرة معيّنة. ليست بديلًا عن mutex أو atomic.",
+      "projectStepsArabic": [
+        "استخدمها فقط عند التواصل مع أجهزة أو ذاكرة معيّنة تتغير خارج سياق البرنامج العادي.",
+        "لا تستخدمها كأداة تزامن بين الخيوط أبدًا.",
+        "إذا كنت تحتاج تزامنًا حقيقيًا فاستخدم std::atomic أو mutex."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قراءة من سجل جهاز عبر عنوان ثابت",
+          "code": "volatile int* sensor = reinterpret_cast<volatile int*>(0x4000);\nint main() {\n    int reading = *sensor;\n    return reading;\n}",
+          "explanationArabic": "volatile تضمن أن المترجم سيقرأ من العنوان فعليًا في كل مرة ولن يفترض أن القيمة لم تتغير منذ القراءة السابقة.",
+          "relatedTokens": [
+            "volatile",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استعمال volatile بدل أداة التزامن",
+          "code": "// خطأ شائع: volatile لا تحمي من سباق البيانات\n// volatile int shared = 0;\n// الصحيح: استخدم std::atomic<int> أو mutex\n\n#include <atomic>\nstd::atomic<int> shared = 0;\n\nint main() {\n    shared.fetch_add(1);\n    return shared.load();\n}",
+          "explanationArabic": "volatile لا تضمن ترتيبًا ذريًا بين الخيوط ولا تمنع سباق البيانات. هذا الخطأ شائع جدًا بين المبتدئين.",
+          "relatedTokens": [
+            "volatile",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "كتابة إلى سجل تحكم جهاز",
+          "code": "volatile int* control = reinterpret_cast<volatile int*>(0x4004);\n\nint main() {\n    *control = 1;\n    return 0;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح الوجه الثاني: الكتابة إلى سجل جهاز يجب أن تصل فعلًا إلى العنوان ولا تُحذف بوصفها كتابة لا يُقرأ ناتجها.",
+          "relatedTokens": [
+            "volatile",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "const",
+        "static",
+        "std::atomic"
+      ]
+    },
+    "protected": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، protected تعني أن العضو ليس واجهة عامة للخارج، لكنه ما زال متاحًا للأنواع المشتقة. فائدتها تظهر فقط عندما تكون الوراثة مقصودة فعلاً في التصميم.",
+      "projectStepsArabic": [
+        "استخدم protected فقط إذا كان النوع المشتق يحتاج هذا العضو فعلًا.",
+        "إذا لم تكن الوراثة جزءًا من التصميم، فغالبًا private أوضح وأضيق.",
+        "لا تتعامل معها كحل وسط افتراضي بين public وprivate من دون حاجة حقيقية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عضو متاح للنوع المشتق",
+          "code": "class Base {\nprotected:\n    int value = 5;\n};\n\nclass Derived : public Base {\npublic:\n    int current() const {\n        return value;\n    }\n};",
+          "explanationArabic": "value ليست عامة للجميع، لكنها ما زالت متاحة داخل النوع المشتق Derived.",
+          "relatedTokens": [
+            "protected",
+            "public",
+            "class",
+            "return",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين protected وprivate في الوراثة",
+          "code": "class Base {\nprotected:\n    int value = 3;\n};\n\nclass Child : public Base {\npublic:\n    int doubled() const {\n        return value * 2;\n    }\n};",
+          "explanationArabic": "هذا يوضح الدور العملي: العضو ليس واجهة عامة، لكنه ليس مغلقًا أيضًا أمام الابن المشتق.",
+          "relatedTokens": [
+            "protected",
+            "private",
+            "public",
+            "class",
+            "return",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "عدم جعله واجهة عامة للكل",
+          "code": "class Base {\nprotected:\n    int state = 9;\n};\n\nclass Child : public Base {\npublic:\n    int read_state() const {\n        return state;\n    }\n};\n\nint main() {\n    Child child;\n    return child.read_state();\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح أن الخارج لا يقرأ state مباشرة، بل عبر واجهة يختارها النوع المشتق نفسه.",
+          "relatedTokens": [
+            "protected",
+            "public",
+            "class",
+            "return",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "private",
+        "public",
+        "class"
+      ]
+    },
+    "class": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، class تعني أن النوع لا يكتفي بتجميع بيانات، بل يحاول حماية حالة داخلية يجب أن تبقى صحيحة بعد البناء وطوال عمر الكائن.",
+      "projectStepsArabic": [
+        "استخدم class عندما تحتاج حالة داخلية أو عقدة يجب أن تبقى صحيحة ولا تريد كشف التمثيل الداخلي بلا قيد.",
+        "إذا كانت البيانات يمكن أن تتغير مستقلّة عن بعضها ولا تحتاج invariant واضحًا، فقد تكون struct أوضح.",
+        "اجعل البناء يثبت الحالة الصحيحة منذ البداية بدل ترك الكائن ناقص المعنى بعد إنشائه."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "كائن يثبت حالة أولية صحيحة",
+          "code": "class Counter {\npublic:\n    explicit Counter(int start) : value(start) {}\n\n    int current() const {\n        return value;\n    }\n\nprivate:\n    int value;\n};\n\nint main() {\n    Counter counter(3);\n    return counter.current();\n}",
+          "explanationArabic": "الفكرة هنا ليست إخفاء البيانات فقط، بل جعل الكائن يولد ومعه حالة مفهومة منذ السطر الأول.",
+          "relatedTokens": [
+            "class",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "منع كسر الحالة من الخارج",
+          "code": "class Temperature {\npublic:\n    explicit Temperature(int degree) : value(degree) {}\n\n    bool is_freezing() const {\n        return value <= 0;\n    }\n\nprivate:\n    int value;\n};",
+          "explanationArabic": "القارئ يتعامل مع سلوك واضح عبر الدوال العامة، لا مع حقل خام يمكن العبث به من أي مكان.",
+          "relatedTokens": [
+            "class",
+            "bool",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "ملكية واضحة داخل class",
+          "code": "#include <memory>\n\nclass Holder {\npublic:\n    Holder() : value(std::make_unique<int>(7)) {}\n\n    int current() const {\n        return *value;\n    }\n\nprivate:\n    std::unique_ptr<int> value;\n};",
+          "explanationArabic": "هذا مثال ذكي يربط class بفكرة الملكية والعمر الزمني، لا بمجرد إخفاء الحقول عن الخارج.",
+          "relatedTokens": [
+            "class",
+            "std::unique_ptr",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "struct",
+        "const",
+        "std::unique_ptr"
+      ]
+    },
+    "register": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، register لا تُستخدم أبدًا. هي كلمة محجوزة مهملة منذ C++17 صارت بلا أي تأثير على السلوك أو الأداء. فائدتها الوحيدة أن تعرفها عند قراءة كود قديم فلا تُربك.",
+      "projectStepsArabic": [
+        "لا تستخدمها في أي شيفرة حديثة.",
+        "عند قراءة كود قديم يحتوي register، تجاهلها لأنها لا تغيّر شيئًا.",
+        "إذا رأيتها في مراجعة كود، اعتبرها ضجيجًا يمكن حذفه بلا خوف."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "كود قديم يستخدم register في عدّاد حلقة",
+          "code": "// شيفرة قديمة قد تصادفها في مكتبات C/C++ القديمة\nint sum_old_style(const int* data, int count) {\n    register int i;\n    register int total = 0;\n    for (i = 0; i < count; ++i) {\n        register int current = data[i];\n        total += current;\n    }\n    return total;\n}\n\nint main() {\n    int values[] = {1, 2, 3};\n    return sum_old_style(values, 3);\n}",
+          "explanationArabic": "هذا ما قد تراه فعليًا في كود قديم: register تُوضع أمام كل متغير محلي بفكرة أن المبرمج يساعد المترجم. في C++17 وما بعدها كل هذه الكلمات تُتجاهل كليًا والسلوك مطابق لما لو حُذفت.",
+          "relatedTokens": [
+            "register",
+            "const",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "نفس الكود بعد حذف register",
+          "code": "int sum_modern(const int* data, int count) {\n    int total = 0;\n    for (int i = 0; i < count; ++i) {\n        total += data[i];\n    }\n    return total;\n}\n\nint main() {\n    int values[] = {1, 2, 3};\n    return sum_modern(values, 3);\n}",
+          "explanationArabic": "بعد حذف register أصبح الكود أنظف بنفس السلوك تمامًا. المترجم الحديث أفضل من المبرمج في اختيار ما يضعه في السجلات، لذلك register فقدت سبب وجودها الأصلي.",
+          "relatedTokens": [
+            "const",
+            "int",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "register لم تعد تمنع أخذ العنوان منذ C++17",
+          "code": "int main() {\n    register int value = 7;\n    int* ptr = &value;\n    *ptr = 10;\n    return value;\n}",
+          "explanationArabic": "في المعيار القديم كانت register تمنع أخذ العنوان لأن الفكرة الأصلية أن المتغير في سجل وليس في الذاكرة. منذ C++17 أُزيل هذا القيد وصارت register بلا أي تأثير فعلي، حتى على أخذ العنوان. هذا يؤكد أنها كلمة فارغة المعنى تمامًا.",
+          "relatedTokens": [
+            "register",
+            "auto",
+            "volatile"
+          ]
+        }
+      ],
+      "followUps": [
+        "auto",
+        "volatile",
+        "const"
+      ]
+    },
+    "bool": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، bool هو أصغر وحدة قرار: إما صحيح أو خاطئ. يظهر في نتائج المقارنات وشروط التحكم وقيم الإرجاع.",
+      "projectStepsArabic": [
+        "استخدم bool عندما يكون المعنى المنطقي للقيمة هو الأهم، لا قيمتها العددية.",
+        "لا تعتمد على تحويل bool إلى int وإلا قد تُفاجأ بأن true ليست دائمًا 1.",
+        "سمّ المتغيرات المنطقية بأسماء أسئلة مثل is_ready أو has_value لتوضيح المعنى."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نتيجة مقارنة منطقية",
+          "code": "int main() {\n    bool is_positive = (5 > 0);\n    return is_positive ? 1 : 0;\n}",
+          "explanationArabic": "المقارنة تنتج bool مباشرة، لذلك المتغير يحمل قرارًا لا عددًا خامًا.",
+          "relatedTokens": [
+            "bool",
+            "if",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قيمة إرجاع تمثل سؤالًا",
+          "code": "bool is_even(int value) {\n    return value % 2 == 0;\n}\n\nint main() {\n    return is_even(4) ? 1 : 0;\n}",
+          "explanationArabic": "اسم الدالة يطرح سؤالًا منطقيًا، وbool هي الإجابة الطبيعية لهذا السؤال.",
+          "relatedTokens": [
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: التحويل العددي",
+          "code": "int main() {\n    bool flag = true;\n    int value = flag + 10;\n    return value;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن true تتحول إلى 1 هنا، لكن الاعتماد على هذا السلوك في الحسابات قد يربك المعنى المنطقي الأصلي.",
+          "relatedTokens": [
+            "bool",
+            "int",
+            "true"
+          ]
+        }
+      ],
+      "followUps": [
+        "true",
+        "false",
+        "if"
+      ]
+    },
+    "int": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، int هو النوع الافتراضي للأعداد الصحيحة. غالبًا 32 بت لكن حجمه الدقيق يعتمد على التنفيذ.",
+      "projectStepsArabic": [
+        "استخدم int كنوع افتراضي عندما لا تحتاج نطاقًا خاصًا أو عرضًا محددًا.",
+        "لا تعتمد على حجمه الدقيق إذا كان النطاق مهمًا؛ استخدم أنواعًا محددة العرض مثل int32_t عند الحاجة.",
+        "انتبه لتجاوز النطاق عند العمليات الحسابية لأن السلوك عند التجاوز غير معرّف مع الأعداد ذات الإشارة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عداد بسيط",
+          "code": "int main() {\n    int count = 0;\n    for (int i = 0; i < 5; ++i) {\n        ++count;\n    }\n    return count;\n}",
+          "explanationArabic": "int هنا يكفي لأن العدد صغير والنطاق الافتراضي يغطيه بوضوح.",
+          "relatedTokens": [
+            "int",
+            "for",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "ناتج عملية حسابية",
+          "code": "int sum(int a, int b) {\n    return a + b;\n}\n\nint main() {\n    return sum(3, 4);\n}",
+          "explanationArabic": "int النوع الطبيعي لمعظم الحسابات الصحيحة العادية.",
+          "relatedTokens": [
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متى لا يكفي int",
+          "code": "#include <cstdint>\n\nint main() {\n    int32_t exact = 100000;\n    int64_t large = 10000000000LL;\n    return static_cast<int>(exact);\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن int قد لا تكفي عندما تحتاج نطاقًا أو عرضًا محددًا بدقة.",
+          "relatedTokens": [
+            "int",
+            "int32_t",
+            "int64_t",
+            "static_cast"
+          ]
+        }
+      ],
+      "followUps": [
+        "unsigned",
+        "long",
+        "size_t"
+      ]
+    },
+    "true": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، true تمثل القيمة المنطقية الصحيحة وتُستخدم مع bool أو في السياقات التي تتطلب نتيجة منطقية.",
+      "projectStepsArabic": [
+        "استخدم true عند تهيئة متغير bool أو إرجاع نجاح أو في شروط التحكم.",
+        "لا تعتمد على أن true تساوي 1 دائمًا عند التحويلات العددية.",
+        "فضّل true/false على 1/0 عندما يكون المعنى منطقيًا لا عدديًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تهيئة متغير منطقي",
+          "code": "int main() {\n    bool ready = true;\n    return ready ? 1 : 0;\n}",
+          "explanationArabic": "true هنا تعلن بوضوح أن القيمة منطقية صحيحة لا عددًا عاديًا.",
+          "relatedTokens": [
+            "true",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "إرجاع نجاح من دالة",
+          "code": "bool validate(int value) {\n    return value > 0;\n}\n\nint main() {\n    return validate(5) == true ? 1 : 0;\n}",
+          "explanationArabic": "المقارنة مع true أوضح من المقارنة مع 1 لأنها تحافظ على المعنى المنطقي.",
+          "relatedTokens": [
+            "true",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "true ليست دائمًا 1",
+          "code": "int main() {\n    bool flag = true;\n    int value = flag + 1;\n    return value;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن true تتحول إلى 1 عند الحاجة، لكن الاعتماد على هذا في الحسابات يفقد المعنى المنطقي.",
+          "relatedTokens": [
+            "true",
+            "bool",
+            "int"
+          ]
+        }
+      ],
+      "followUps": [
+        "false",
+        "bool",
+        "if"
+      ]
+    },
+    "false": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، false تمثل القيمة المنطقية الخاطئة وتُستخدم مع bool أو في السياقات التي تتطلب نتيجة منطقية.",
+      "projectStepsArabic": [
+        "استخدم false عند تهيئة متغير bool أو إرجاع فشل أو في شروط التحكم.",
+        "لا تخلط بين false و 0 أو nullptr في السياقات المختلطة.",
+        "فضّل false على 0 عندما يكون المعنى المنطقي هو الأهم."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تهيئة حالة فشل",
+          "code": "int main() {\n    bool failed = false;\n    return failed ? 1 : 0;\n}",
+          "explanationArabic": "false تعلن بوضوح أن الحالة المنطقية هي الفشل أو عدم التحقق.",
+          "relatedTokens": [
+            "false",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قيمة افتراضية منطقية",
+          "code": "bool check(int value) {\n    bool result = false;\n    if (value > 0) {\n        result = true;\n    }\n    return result;\n}\n\nint main() {\n    return check(-1) ? 1 : 0;\n}",
+          "explanationArabic": "false هنا تمثل الافتراض المبدئي قبل التحقق الفعلي من الشرط.",
+          "relatedTokens": [
+            "false",
+            "bool",
+            "if",
+            "true",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الخلط بين false و 0",
+          "code": "int main() {\n    bool flag = false;\n    int zero = 0;\n    bool same = (flag == zero);\n    return same ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن false و0 يتساويان في المقارنة لكنهما ينتميان لمعاني مختلفة.",
+          "relatedTokens": [
+            "false",
+            "bool",
+            "int"
+          ]
+        }
+      ],
+      "followUps": [
+        "true",
+        "bool",
+        "if"
+      ]
+    },
+    "static_cast": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، static_cast هو التحويل الصريح الافتراضي: إذا كان التحويل معروفًا وآمنًا ترجميًا فهو المكان المناسب.",
+      "projectStepsArabic": [
+        "استخدمها عند التحويل بين الأنواع العددية أو بين أنواع في تسلسل وراثي.",
+        "لا تستخدمها لتحويلات غير آمنة بين مؤشرات غير مرتبطة؛ استخدم reinterpret_cast بدلًا منها.",
+        "فضّلها على التحويل الضمني لأنها تجعل التحويل واضحًا وقابلًا للبحث."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تحويل عشري إلى صحيح",
+          "code": "int main() {\n    double pi = 3.14;\n    int approx = static_cast<int>(pi);\n    return approx;\n}",
+          "explanationArabic": "static_cast تقطع الجزء العشري بوضوح وتعلن أنك تقصد هذا التحويل.",
+          "relatedTokens": [
+            "static_cast",
+            "double",
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تحويل صحيح إلى عشري",
+          "code": "int main() {\n    int count = 5;\n    double result = static_cast<double>(count) / 2;\n    return static_cast<int>(result);\n}",
+          "explanationArabic": "التحويل قبل القسمة يضمن النتيجة العشرية بدل القسمة الصحيحة.",
+          "relatedTokens": [
+            "static_cast",
+            "int",
+            "double",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تحويل size_t إلى int",
+          "code": "#include <cstddef>\n\nint main() {\n    std::size_t length = 10;\n    int count = static_cast<int>(length);\n    return count;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح حالة شائعة: التحويل بين أنواع ذات إشارة مختلفة يحتاج صياغة صريحة.",
+          "relatedTokens": [
+            "static_cast",
+            "size_t",
+            "int",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "dynamic_cast",
+        "reinterpret_cast",
+        "const_cast"
+      ]
+    },
+    "dynamic_cast": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، dynamic_cast يسأل وقت التشغيل: هل هذا الكائن فعلاً من هذا النوع المشتق؟ وهي مرتبطة بالتعدد الشكلي لا بالوراثة فقط.",
+      "projectStepsArabic": [
+        "استخدمها فقط عند الوراثة المتعددة الأشكال عندما تحتاج التحقق من النوع الفعلي.",
+        "تأكد من وجود دالة virtual في الأساس لأنها شرط لعمل dynamic_cast.",
+        "افحص النتيجةnullptr عند التحويل بين المؤشرات لأن الفشل صامت."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تحويل آمن بين مؤشرات مشتقة",
+          "code": "class Base {\npublic:\n    virtual ~Base() = default;\n};\n\nclass Derived : public Base {\npublic:\n    int value = 7;\n};\n\nint main() {\n    Base* base = new Derived();\n    Derived* derived = dynamic_cast<Derived*>(base);\n    int result = derived ? derived->value : 0;\n    delete base;\n    return result;\n}",
+          "explanationArabic": "dynamic_cast تتحقق وقت التشغيل أن base يشير فعلاً إلى Derived قبل التحويل.",
+          "relatedTokens": [
+            "dynamic_cast",
+            "virtual",
+            "class",
+            "nullptr",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "فشل التحويل يعيد nullptr",
+          "code": "class Base {\npublic:\n    virtual ~Base() = default;\n};\n\nclass Other : public Base {};\n\nint main() {\n    Base* base = new Other();\n    // Derived* derived = dynamic_cast<Derived*>(base);\n    // derived سيكون nullptr لأن النوع الفعلي ليس Derived\n    delete base;\n    return 0;\n}",
+          "explanationArabic": "هذا يوضح أن الفشل لا يرمي استثناءً مع المؤشرات بل يعيد nullptr، لذلك يجب الفحص دائمًا.",
+          "relatedTokens": [
+            "dynamic_cast",
+            "virtual",
+            "nullptr",
+            "class"
+          ]
+        },
+        {
+          "titleArabic": "لا تعمل بدون virtual",
+          "code": "class Base {\npublic:\n    // لا توجد دالة virtual هنا\n};\n\nclass Derived : public Base {};\n\nint main() {\n    Base* base = new Derived();\n    // dynamic_cast<Derived*>(base); // خطأ ترجمة\n    delete base;\n    return 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن dynamic_cast مرتبطة بالتعدد الشكلي لا بالوراثة فقط.",
+          "relatedTokens": [
+            "dynamic_cast",
+            "virtual",
+            "class"
+          ]
+        }
+      ],
+      "followUps": [
+        "virtual",
+        "override",
+        "static_cast"
+      ]
+    },
+    "const_cast": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، const_cast تتعامل مع واجهات غير مصممة جيدًا من ناحية const. لا تغيّر القيمة نفسها بل نوع المؤشر أو المرجع فقط.",
+      "projectStepsArabic": [
+        "استخدمها فقط في حالات ضيقة جدًا مع واجهات قديمة تتطلب غير const.",
+        "لا تستخدمها لتعديل قيمة كانت const أصلًا لأن ذلك سلوك غير معرّف.",
+        "إذا وجدت نفسك تستخدمها كثيرًا فراجع تصميم الواجهة بدل التعامل مع أعراضها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إزالة const من مؤشر",
+          "code": "int main() {\n    const int value = 7;\n    const int* cp = &value;\n    int* p = const_cast<int*>(cp);\n    return *p;\n}",
+          "explanationArabic": "const_cast تغيّر نوع المؤشر فقط من const int* إلى int* من دون تغيير القيمة نفسها.",
+          "relatedTokens": [
+            "const_cast",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تمرير إلى واجهة تتطلب غير const",
+          "code": "void legacy_modify(int* ptr);\n\nint main() {\n    const int value = 5;\n    // legacy_modify(const_cast<int*>(&value)); // خطير إذا كانت القيمة const أصلًا\n    return 0;\n}",
+          "explanationArabic": "هذا يوضح الحالة النادرة التي قد تحتاج فيها const_cast: واجهة قديمة لا تقبل const.",
+          "relatedTokens": [
+            "const_cast",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "سلوك غير معرّف عند التعديل الفعلي",
+          "code": "// تحذير: تعديل قيمة كانت const أصلًا عبر const_cast\n// سلوك غير معرّف وقد يسبب مشاكل غير متوقعة\n\nint main() {\n    const int value = 9;\n    // int* p = const_cast<int*>(&value);\n    // *p = 10; // غير معرّف!\n    return value;\n}",
+          "explanationArabic": "هذا مثال ذكي تحذيري: const_cast لا تجعل القيمة قابلة للتعديل بأمان إذا كانت const أصلًا.",
+          "relatedTokens": [
+            "const_cast",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "const",
+        "static_cast",
+        "reinterpret_cast"
+      ]
+    },
+    "reinterpret_cast": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، reinterpret_cast هي الأقل أمانًا بين التحويلات. تعيد تفسير البايتات الخام كنوع آخر من دون أي فحص أو تحويل.",
+      "projectStepsArabic": [
+        "استخدمها فقط في شيفرة منخفضة المستوى جدًا تحتاج إعادة تفسير ذاكرة.",
+        "تأكد أن التخطيط الذاكري متوافق قبل التحويل لأن أي خطأ يسبب فساد ذاكرة.",
+        "لا تستخدمها كبديل عن static_cast أو dynamic_cast إذا كان التحويل الآمن ممكنًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إعادة تفسير بايتات عدد كحروف",
+          "code": "int main() {\n    int value = 65;\n    char* bytes = reinterpret_cast<char*>(&value);\n    return bytes[0];\n}",
+          "explanationArabic": "reinterpret_cast تعيد قراءة نفس البايتات لكن بصيغة char بدل int.",
+          "relatedTokens": [
+            "reinterpret_cast",
+            "char",
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن static_cast",
+          "code": "int main() {\n    int value = 42;\n    // static_cast<char*>(value); // خطأ: لا يوجد تحويل صالح\n    char* bytes = reinterpret_cast<char*>(&value);\n    return bytes[0];\n}",
+          "explanationArabic": "static_cast ترفض هذا التحويل لأنه غير آمن، بينما reinterpret_cast تنفذه لأنها لا تفحص الصلاحية.",
+          "relatedTokens": [
+            "reinterpret_cast",
+            "static_cast",
+            "char",
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استعمال نادر: تخطيط ذاكرة ثنائي",
+          "code": "int main() {\n    float f = 3.14f;\n    unsigned int* bits = reinterpret_cast<unsigned int*>(&f);\n    return (*bits) > 0 ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح استخدامًا نادرًا فعليًا: قراءة التمثيل الثنائي لقيمة عشرية كأعداد صحيحة.",
+          "relatedTokens": [
+            "reinterpret_cast",
+            "float",
+            "unsigned",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "static_cast",
+        "const_cast",
+        "volatile"
+      ]
+    },
+    "import": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، import هي بديل حديث لـ #include في نظام الوحدات النمطية C++20. تحسّن سرعة الترجمة وتقلل التبعيات.",
+      "projectStepsArabic": [
+        "استخدمها بدل #include عند دعم المترجم الكامل للوحدات النمطية.",
+        "لا تخلطها مع #include بلا خطة واضحة لأن ذلك قد يسبب مشاكل بناء.",
+        "تذكر أن دعم الوحدات يختلف بين المترجمات حتى الآن."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "استيراد وحدة نمطية",
+          "code": "import std.core;\n\nint main() {\n    return 0;\n}",
+          "explanationArabic": "import تستبدل #include وتحمّل الوحدة المعرفة مسبقًا بدل تضمين نص الترويسة.",
+          "relatedTokens": [
+            "import",
+            "export",
+            "module"
+          ]
+        },
+        {
+          "titleArabic": "استيراد وحدة محلية",
+          "code": "import math_utils;\n\nint main() {\n    return add(2, 3);\n}",
+          "explanationArabic": "يمكن استيراد وحداتك الخاصة بعد تعريفها عبر export module.",
+          "relatedTokens": [
+            "import",
+            "export",
+            "module",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن #include",
+          "code": "// قديم: #include <iostream>\n// حديث: import std.core;\n\nint main() {\n    return 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح الفرق النفسي: import تعلن أنك تحتاج الوحدة، لا أنك تُدخل نصًا في هذا الموضع.",
+          "relatedTokens": [
+            "import",
+            "export",
+            "module"
+          ]
+        }
+      ],
+      "followUps": [
+        "export",
+        "module",
+        "namespace"
+      ]
+    },
+    "module": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، module تعلن بداية وحدة نمطية تحل محل الترويسات التقليدية مع تحكم أوضح في ما يُصدر وما يبقى داخليًا.",
+      "projectStepsArabic": [
+        "استخدمها في ملفات .cppm لتعريف وحدات قابلة للاستيراد.",
+        "فرّق بين ما تريد تصديره وما تريد إبقاءه داخليًا.",
+        "تأكد من دعم المترجم قبل الاعتماد عليها في الإنتاج."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تعريف وحدة نمطية",
+          "code": "export module math_utils;\n\nexport int add(int a, int b) {\n    return a + b;\n}",
+          "explanationArabic": "export module تعلن بداية الوحدة، وexport قبل الدالة تجعلها متاحة للمستوردين.",
+          "relatedTokens": [
+            "module",
+            "export",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "جزء داخلي غير مصدّر",
+          "code": "module math_utils;\n\nint internal_helper(int x) {\n    return x * 2;\n}\n\nexport int doubled(int x) {\n    return internal_helper(x);\n}",
+          "explanationArabic": "internal_helper ليست مصدّرة لذلك لا يمكن للمستوردين رؤيتها. هذا يوفر تحكمًا أوضح من #include.",
+          "relatedTokens": [
+            "module",
+            "export",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "وحدة مع نوع مصدّر",
+          "code": "export module shapes;\n\nexport struct Point {\n    int x;\n    int y;\n};",
+          "explanationArabic": "هذا مثال ذكي يوضح أن الوحدات يمكن أن تصدّر أنواعًا كاملة مع ما يرتبط بها.",
+          "relatedTokens": [
+            "module",
+            "export",
+            "struct"
+          ]
+        }
+      ],
+      "followUps": [
+        "import",
+        "export",
+        "namespace"
+      ]
+    },
+    "char": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، char هو أصغر وحدة تخزين: بايت واحد بالضبط. يُستخدم للنصوص الخام والبايتات الفردية وليس بالضرورة للأحرف فقط.",
+      "projectStepsArabic": [
+        "استخدمه عند التعامل مع بايتات فردية أو نصوص منخفضة المستوى.",
+        "لا تستخدمه لنصوص حقيقية بدل std::string أو std::string_view.",
+        "انتبه أن char قد تكون signed أو unsigned بحسب التنفيذ."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حرف واحد",
+          "code": "int main() {\n    char ch = 'A';\n    return ch;\n}",
+          "explanationArabic": "char يخزن حرفًا واحدًا في بايت واحد. الحرف الحرفي يُكتب بين علامتي اقتباس مفردة.",
+          "relatedTokens": [
+            "char",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "مصفوفة أحرف منتهية بصفر",
+          "code": "int main() {\n    char text[5] = {'H', 'i', 0};\n    return text[0];\n}",
+          "explanationArabic": "هذا الشكل القديم للنصوص في C. std::string أوضح وأأمن في C++ الحديثة.",
+          "relatedTokens": [
+            "char",
+            "std::string",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قراءة بايتات من ذاكرة",
+          "code": "int main() {\n    int value = 65;\n    char* bytes = reinterpret_cast<char*>(&value);\n    return bytes[0];\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن char تُستخدم أحيانًا كوحدة بايت لا كحرف نصي.",
+          "relatedTokens": [
+            "char",
+            "reinterpret_cast",
+            "int",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::string",
+        "std::string_view",
+        "int"
+      ]
+    },
+    "float": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، float هو وعاء للأعداد العشرية بتوفير ذاكرة على حساب الدقة. غالبًا 32 بت بحوالي 7 أرقام معنوية.",
+      "projectStepsArabic": [
+        "استخدم float عندما تحتاج أعدادًا عشرية مع توفير الذاكرة مثل إحداثيات الرسوم.",
+        "أضف f بعد الرقم الحرفي مثل 3.14f حتى لا يُفسر كـ double.",
+        "لا تستخدمها في الحسابات المالية لأن التقريب يسبب أخطاء تراكمية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عدد عشري بدقة مفردة",
+          "code": "int main() {\n    float pos = 1.5f;\n    return static_cast<int>(pos);\n}",
+          "explanationArabic": "f بعد الرقم تجعل المترجم يتعامل معه كـ float لا كـ double.",
+          "relatedTokens": [
+            "float",
+            "static_cast",
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حساب رسومي بسيط",
+          "code": "int main() {\n    float x = 2.0f;\n    float y = 3.0f;\n    float distance = x * x + y * y;\n    return static_cast<int>(distance);\n}",
+          "explanationArabic": "float تكفي في كثير من حسابات الرسوم عندما لا تحتاج دقة عالية.",
+          "relatedTokens": [
+            "float",
+            "int",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "فقدان الدقة مع الأعداد الكبيرة",
+          "code": "int main() {\n    float big = 10000000.0f;\n    float result = big + 1.0f;\n    return (result == big) ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن float تفقد دقتها عند الأعداد الكبيرة لأن عدد الأرقام المعنوية محدود.",
+          "relatedTokens": [
+            "float",
+            "double",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "double",
+        "int",
+        "auto"
+      ]
+    },
+    "double": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، double هو النوع العشري الافتراضي. غالبًا 64 بت بحوالي 15 رقمًا معنويًا.",
+      "projectStepsArabic": [
+        "استخدم double كنوع افتراضي للأعداد العشرية عندما لا يكون توفير الذاكرة ضروريًا.",
+        "الأرقام العشرية الحرفية مثل 3.14 تُفسر كـ double تلقائيًا.",
+        "لا تستخدم float بدلها بلا سبب واضح لأن الدقة الأقل قد تسبب أخطاء غير متوقعة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نوع عشري افتراضي",
+          "code": "int main() {\n    double pi = 3.14159;\n    return static_cast<int>(pi);\n}",
+          "explanationArabic": "بدون f بعد الرقم، المترجم يفسره كـ double تلقائيًا.",
+          "relatedTokens": [
+            "double",
+            "static_cast",
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حساب علمي بسيط",
+          "code": "int main() {\n    double radius = 5.0;\n    double area = 3.14159 * radius * radius;\n    return static_cast<int>(area);\n}",
+          "explanationArabic": "double تكفي لمعظم الحسابات العلمية والرسومية الدقيقة.",
+          "relatedTokens": [
+            "double",
+            "int",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متى تكون float أنسب",
+          "code": "int main() {\n    float positions[3] = {1.0f, 2.0f, 3.0f};\n    double precise = 3.14159265358979;\n    return static_cast<int>(positions[0] + precise);\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن لكل نوع سياقه: float للإحداثيات الكثيرة وdouble للدقة.",
+          "relatedTokens": [
+            "double",
+            "float",
+            "int",
+            "static_cast",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "float",
+        "int",
+        "auto"
+      ]
+    },
+    "unsigned": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، unsigned يجعل النوع لا يحمل إشارة فيتضاعف نطاق الموجبات. شائع مع الأحجام والفهارس والمعرّفات.",
+      "projectStepsArabic": [
+        "استخدمه عندما تكون القيم السالبة مستحيلة منطقيًا مثل الأحجام والفهارس.",
+        "انتبه أن الطرح بين قيم unsigned قد يلتف إلى قيمة كبيرة بدل سالب.",
+        "فضّل الأنواع المحددة العرض مثل uint32_t عند الحاجة إلى حجم دقيق."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فهرس لا يمكن أن يكون سالبًا",
+          "code": "int main() {\n    unsigned int index = 3;\n    return static_cast<int>(index);\n}",
+          "explanationArabic": "unsigned تعلن أن القيمة سالبة مستحيلة منطقيًا، لذلك النطاق الموجب يتسع.",
+          "relatedTokens": [
+            "unsigned",
+            "int",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: الطرح يلتف",
+          "code": "int main() {\n    unsigned int a = 3;\n    unsigned int b = 5;\n    unsigned int result = a - b;\n    return (result > 1000) ? 1 : 0;\n}",
+          "explanationArabic": "الطرح هنا لا يعطي -2 بل قيمة كبيرة جدًا بسبب الالتفاف. هذا خطأ شائع جدًا.",
+          "relatedTokens": [
+            "unsigned",
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدام مع size_t",
+          "code": "#include <cstddef>\n\nint main() {\n    std::size_t length = 10;\n    for (std::size_t i = 0; i < length; ++i) {\n        if (i == 5) return static_cast<int>(i);\n    }\n    return 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن unsigned تظهر كثيرًا في الفهارس والأحجام عبر size_t.",
+          "relatedTokens": [
+            "unsigned",
+            "size_t",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "int",
+        "size_t",
+        "uint32_t"
+      ]
+    },
+    "long": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، long يوسع نطاق النوع العددي. الحجم الفعلي يعتمد على التنفيذ لذلك لا تعتمد على حجم دقيق.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج نطاقًا أوسع من int.",
+        "استخدم long long عندما تحتاج 64 بت كحد أدنى مضمون.",
+        "فضّل الأنواع المحددة العرض مثل int64_t عند الحاجة لضمان الحجم."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قيمة كبيرة",
+          "code": "int main() {\n    long big = 100000L;\n    return static_cast<int>(big % 1000);\n}",
+          "explanationArabic": "L بعد الرقم يجعل المترجم يعامله كـ long. النطاق أوسع من int العادية.",
+          "relatedTokens": [
+            "long",
+            "int",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "long long لقيم أكبر",
+          "code": "int main() {\n    long long huge = 10000000000LL;\n    return static_cast<int>(huge % 1000);\n}",
+          "explanationArabic": "long long تضمن 64 بت على الأقل بينما long قد تكون 32 بت في بعض التنفيذات.",
+          "relatedTokens": [
+            "long",
+            "int",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الحجم الفعلي يعتمد على التنفيذ",
+          "code": "#include <cstddef>\n\nint main() {\n    return sizeof(long) >= sizeof(int) ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن long قد تساوي int في بعض التنفيذات لذلك لا تعتمد على حجمها.",
+          "relatedTokens": [
+            "long",
+            "int",
+            "sizeof",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "int",
+        "unsigned",
+        "int64_t"
+      ]
+    },
+    "short": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، short تضيق النوع العددي لتوفير الذاكرة. 16 بت على الأقل.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج توفير ذاكرة مع ضمان أن القيم صغيرة.",
+        "لا تستخدمها للقيم التي قد تتجاوز نطاقها لأن التجاوز صامت.",
+        "فضّلها في البنى المضغوطة أو البيانات ذات الحجم المحدود."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قيمة صغيرة توفر ذاكرة",
+          "code": "int main() {\n    short port = 8080;\n    return port;\n}",
+          "explanationArabic": "short تكفي هنا لأن رقم المنفذ صغير ولا يحتاج نطاق int كامل.",
+          "relatedTokens": [
+            "short",
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "مصفوفة مضغوطة",
+          "code": "int main() {\n    short values[4] = {1, 2, 3, 4};\n    return values[0] + values[3];\n}",
+          "explanationArabic": "مصفوفة short تأخذ نصف مساحة مصفوفة int لنفس عدد العناصر.",
+          "relatedTokens": [
+            "short",
+            "int",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "خطر التجاوز الصامت",
+          "code": "int main() {\n    short value = 30000;\n    value = value + 10000;\n    return value < 0 ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن short قد تلتف بصمت عند التجاوز مما يعطي نتيجة غير متوقعة.",
+          "relatedTokens": [
+            "short",
+            "int",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "int",
+        "char",
+        "unsigned"
+      ]
+    },
+    "signed": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، signed تؤكد أن النوع يحمل إشارة. هو السلوك الافتراضي لمعظم الأنواع لكنه يهم خصوصًا مع char.",
+      "projectStepsArabic": [
+        "استخدمها مع char لتوضيح أنها ليست unsigned عندما يهمك هذا الفرق.",
+        "لا تضيفها على أنواع هي افتراضياً signed لأنها تزيد الضجيج.",
+        "تذكر أن char وحدها قد تكون signed أو unsigned بحسب التنفيذ."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "توضيح أن char تحمل إشارة",
+          "code": "int main() {\n    signed char byte = -128;\n    return byte < 0 ? 1 : 0;\n}",
+          "explanationArabic": "signed char تضمن أن البايت يحمل إشارة بغض النظر عن التنفيذ.",
+          "relatedTokens": [
+            "signed",
+            "char",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن unsigned char",
+          "code": "int main() {\n    signed char sc = -1;\n    unsigned char uc = 255;\n    return (sc < 0 && uc > 0) ? 1 : 0;\n}",
+          "explanationArabic": "نفس البايتات لكن التفسير مختلف: signed تقرأها كـ -1 وunsigned تقرأها كـ 255.",
+          "relatedTokens": [
+            "signed",
+            "unsigned",
+            "char",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "لماذا لا تُستخدم كثيرًا",
+          "code": "int main() {\n    signed int a = -5;\n    int b = -5;\n    return (a == b) ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن signed مع int لا تغير شيئًا لأن int افتراضياً signed. لذلك لا تُستخدم كثيرًا.",
+          "relatedTokens": [
+            "signed",
+            "int",
+            "unsigned",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "unsigned",
+        "char",
+        "int"
+      ]
+    },
+    "co_await": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، co_await تعني أن الكوروتين يتوقف هنا حتى يصبح العمل غير المتزامن جاهزًا، ثم يستأنف التنفيذ من نفس النقطة. هي ليست استدعاءً عاديًا ينتظر نتيجة، بل تعليقًا تعاونيًا لا يحجب الخيط.",
+      "projectStepsArabic": [
+        "استخدم co_await عندما يكون العمل غير المتزامن بطبيعته مثل قراءة ملف أو انتظار إطار زمني أو استقبال بيانات من شبكة.",
+        "تأكد أن النوع المعامل يدعم بروتوكول awaitable (يملك await_ready وawait_suspend وawait_resume).",
+        "لا تستخدم co_await داخل دالة عادية لأنها تصنع الكوروتين تلقائيًا فقط عند وجود co_await أو co_return أو co_yield."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "انتظار عمل يكتمل فورًا",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct ImmediateTask {\n    struct promise_type {\n        ImmediateTask get_return_object() { return {}; }\n        std::suspend_never initial_suspend() { return {}; }\n        std::suspend_never final_suspend() noexcept { return {}; }\n        void return_void() {}\n        void unhandled_exception() {}\n    };\n};\n\nstruct ReadyAwaiter {\n    bool await_ready() const noexcept { return true; }\n    void await_suspend(std::coroutine_handle<>) const noexcept {}\n    void await_resume() const noexcept {}\n};\n\nImmediateTask example() {\n    std::cout << \"قبل الانتظار\\n\";\n    co_await ReadyAwaiter{};\n    std::cout << \"بعد الانتظار\\n\";\n}\n\nint main() {\n    example();\n}",
+          "explanationArabic": "هنا co_await لا تُعلّق التنفيذ فعليًا لأن await_ready تعيد true، لكن البنية نفسها توضح كيف تُدرج نقطة الانتظار داخل الكوروتين.",
+          "relatedTokens": [
+            "co_await",
+            "co_return"
+          ]
+        },
+        {
+          "titleArabic": "انتظار مع تعليق فعلي ثم استئناف",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct SuspendedTask {\n    struct promise_type {\n        SuspendedTask get_return_object() { return {}; }\n        std::suspend_always initial_suspend() { return {}; }\n        std::suspend_never final_suspend() noexcept { return {}; }\n        void return_void() {}\n        void unhandled_exception() {}\n    };\n};\n\nstruct PauseAwaiter {\n    bool await_ready() const noexcept { return false; }\n    void await_suspend(std::coroutine_handle<> h) const noexcept {\n        // نستأنف فورًا في هذا المثال البسيط\n        h.resume();\n    }\n    void await_resume() const noexcept {}\n};\n\nSuspendedTask run() {\n    std::cout << \"خطوة 1\\n\";\n    co_await PauseAwaiter{};\n    std::cout << \"خطوة 2 بعد الاستئناف\\n\";\n}\n\nint main() {\n    run();\n}",
+          "explanationArabic": "await_ready تعيد false هنا فتُعلَّق الكوروتين فعليًا عند co_await، ثم نستأنفها يدويًا عبر h.resume(). هذا يوضح أن co_await ليست استدعاءً عاديًا بل نقطة تعليق حقيقية.",
+          "relatedTokens": [
+            "co_await",
+            "co_return"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام co_await خارج كوروتين",
+          "code": "// خطأ: co_await لا يمكن أن تظهر داخل دالة عادية\n// void normal_function() {\n//     co_await some_awaiter; // خطأ ترجمة\n// }\n\n// الصحيح: الدالة يجب أن تكون كوروتينًا\n// أي دالة تحتوي co_await أو co_return أو co_yield\n// تتحول تلقائيًا إلى كوروتين\n\nint main() {\n    return 0;\n}",
+          "explanationArabic": "هذا مثال ذكي تحذيري: وجود co_await هو ما يحوّل الدالة إلى كوروتين. بدونها الدالة عادية ولا يمكنها استخدام كلمات الكوروتينات.",
+          "relatedTokens": [
+            "co_await",
+            "co_return",
+            "co_yield"
+          ]
+        }
+      ],
+      "followUps": [
+        "co_return",
+        "co_yield"
+      ]
+    },
+    "co_return": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، co_return تنهي تنفيذ الكوروتين وتُسلّم القيمة النهائية إلى من ينتظر النتيجة. هي ليست return العادية؛ بل الطريقة الوحيدة لإنهاء كوروتين يُرجع قيمة.",
+      "projectStepsArabic": [
+        "استخدم co_return داخل أي كوروتين يحتاج إرجاع قيمة نهائية.",
+        "تأكد أن promise_type يملك return_value إذا أردت إرجاع قيمة، أو return_void إذا كان الكوروتين بلا قيمة مرجعة.",
+        "لا تخلط بين return وco_return داخل نفس الكوروتين؛ return العادية غير مسموحة هناك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "كوروتين يُرجع قيمة عبر co_return",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct IntTask {\n    struct promise_type {\n        int value = 0;\n        IntTask get_return_object() { return {}; }\n        std::suspend_never initial_suspend() { return {}; }\n        std::suspend_never final_suspend() noexcept { return {}; }\n        void return_value(int v) { value = v; }\n        void unhandled_exception() {}\n    };\n};\n\nIntTask compute() {\n    co_return 42;\n}\n\nint main() {\n    compute();\n    std::cout << \"اكتمل\\n\";\n}",
+          "explanationArabic": "co_return هنا تنهي الكوروتين وتُمرر القيمة 42 إلى return_value داخل promise_type. هذه هي الطريقة الوحيدة لإرجاع قيمة من كوروتين.",
+          "relatedTokens": [
+            "co_return",
+            "co_await"
+          ]
+        },
+        {
+          "titleArabic": "co_return بعد حساب بسيط",
+          "code": "#include <coroutine>\n\nstruct IntTask {\n    struct promise_type {\n        int result = 0;\n        IntTask get_return_object() { return {}; }\n        std::suspend_never initial_suspend() { return {}; }\n        std::suspend_never final_suspend() noexcept { return {}; }\n        void return_value(int v) { result = v; }\n        void unhandled_exception() {}\n    };\n};\n\nIntTask double_value(int input) {\n    int temp = input * 2;\n    co_return temp;\n}\n\nint main() {\n    double_value(5);\n    return 0;\n}",
+          "explanationArabic": "co_return لا تُرجع فورًا عند أول سطر؛ بل يمكن أن يسبقها حساب عادي داخل الكوروتين قبل تسليم النتيجة النهائية.",
+          "relatedTokens": [
+            "co_return",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين return وco_return",
+          "code": "#include <coroutine>\n\nstruct VoidTask {\n    struct promise_type {\n        VoidTask get_return_object() { return {}; }\n        std::suspend_never initial_suspend() { return {}; }\n        std::suspend_never final_suspend() noexcept { return {}; }\n        void return_void() {}\n        void unhandled_exception() {}\n    };\n};\n\nVoidTask example() {\n    // return;  // خطأ: لا يمكن استخدام return داخل كوروتين\n    co_return; // صحيح: إنهاء كوروتين بلا قيمة\n}\n\nint main() {\n    example();\n    return 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن return العادية ممنوعة داخل الكوروتين. co_return هي البديل المخصص الذي يتعامل مع promise_type لا مع آلية العودة العادية.",
+          "relatedTokens": [
+            "co_return",
+            "return",
+            "void"
+          ]
+        }
+      ],
+      "followUps": [
+        "co_await",
+        "co_yield",
+        "return"
+      ]
+    },
+    "co_yield": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، co_yield تُعلّق الكوروتين وتُسلّم قيمة مؤقتة للمُستهلك، ثم تستأنف من نفس النقطة عند الطلب التالي. هذا يجعلها الأداة الطبيعية لبناء مولّدات قيم كسولة.",
+      "projectStepsArabic": [
+        "استخدم co_yield عندما تريد إنتاج تسلسل قيم يُستهلك واحدة واحدة بدل حسابها كلها مرة واحدة.",
+        "تأكد أن promise_type يملك yield_value لأن co_yield تستدعيها داخليًا.",
+        "انتبه أن كل co_yield تُعلّق الكوروتين، لذلك لا تستخدمها داخل حلقة لا نهائية بدون شرط توقف واضح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "مولّد بسيط يُسلّم قيمتين",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct Generator {\n    struct promise_type {\n        int current_value = 0;\n        Generator get_return_object() { return {}; }\n        std::suspend_always initial_suspend() { return {}; }\n        std::suspend_always final_suspend() noexcept { return {}; }\n        std::suspend_always yield_value(int value) {\n            current_value = value;\n            return {};\n        }\n        void return_void() {}\n        void unhandled_exception() {}\n    };\n};\n\nGenerator two_values() {\n    co_yield 10;\n    co_yield 20;\n}\n\nint main() {\n    auto gen = two_values();\n    std::cout << \"المولّد أُنشئ\\n\";\n}",
+          "explanationArabic": "co_yield هنا تُسلّم 10 ثم تُعلّق الكوروتين. عند الاستئناف تُسلّم 20. كل قيمة تُمرر عبر yield_value داخل promise_type.",
+          "relatedTokens": [
+            "co_yield",
+            "co_return"
+          ]
+        },
+        {
+          "titleArabic": "مولّد يُسلّم تسلسل أعداد",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct Generator {\n    struct promise_type {\n        int current_value = 0;\n        Generator get_return_object() { return {}; }\n        std::suspend_always initial_suspend() { return {}; }\n        std::suspend_always final_suspend() noexcept { return {}; }\n        std::suspend_always yield_value(int value) {\n            current_value = value;\n            return {};\n        }\n        void return_void() {}\n        void unhandled_exception() {}\n    };\n};\n\nGenerator range(int start, int end) {\n    for (int i = start; i < end; ++i) {\n        co_yield i;\n    }\n}\n\nint main() {\n    auto gen = range(1, 4);\n    std::cout << \"المولّد جاهز\\n\";\n}",
+          "explanationArabic": "co_yield داخل الحلقة تُسلّم قيمة ثم تُعلّق. كل استئناف يكمل الحلقة حتى تنتهي. هذا النمط هو الأساس لمولّدات القيم الكسولة.",
+          "relatedTokens": [
+            "co_yield",
+            "for",
+            "co_return"
+          ]
+        },
+        {
+          "titleArabic": "co_yield ليست co_return",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct Generator {\n    struct promise_type {\n        int current_value = 0;\n        Generator get_return_object() { return {}; }\n        std::suspend_always initial_suspend() { return {}; }\n        std::suspend_always final_suspend() noexcept { return {}; }\n        std::suspend_always yield_value(int value) {\n            current_value = value;\n            return {};\n        }\n        void return_void() {}\n        void unhandled_exception() {}\n    };\n};\n\nGenerator count_to(int limit) {\n    for (int i = 1; i <= limit; ++i) {\n        co_yield i; // تسليم مؤقت مع تعليق\n    }\n    // co_return يحدث تلقائيًا عند نهاية الدالة\n}\n\nint main() {\n    auto gen = count_to(3);\n    std::cout << \"عدد القيم: 3\\n\";\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح الفرق الجوهري: co_yield تُسلّم قيمة وتستمر، بينما co_return تنهي الكوروتين نهائيًا. عند نهاية الدالة يحدث return_void تلقائيًا.",
+          "relatedTokens": [
+            "co_yield",
+            "co_return",
+            "for"
+          ]
+        }
+      ],
+      "followUps": [
+        "co_await",
+        "co_return"
+      ]
+    },
+    "asm": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، asm هي كلمة محجوزة تسمح بإدراج تعليمات تجميع مباشرة. لكن الصيغة المعيارية `asm(\"string\");` محدودة جدًا وغير عملية، لذلك كل المترجمات تستخدم صيغًا امتدادية مختلفة (GCC يستخدم `__asm__` وMSVC يستخدم `__asm`). هذا يعني أن أي كود يستخدم asm يكسر قابلية النقل بين المنصات.",
+      "projectStepsArabic": [
+        "لا تستخدمها إلا إذا كانت هناك حاجة حقيقية لتعليمات معالج خاصة لا يوفرها C++.",
+        "تذكر أن الصيغة المعيارية asm محدودة وغير مفيدة عمليًا، وأن الصيغ الفعلية هي امتدادات مترجم-specific.",
+        "إذا كنت تحتاج تحسينات SIMD أو تعليمات خاصة، فكّر أولًا في البدائل القياسية مثل <immintrin.h> قبل اللجوء إلى asm."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "الصيغة المعيارية لـ asm (محدودة وغير عملية)",
+          "code": "int main() {\n    asm(\"nop\");\n    return 0;\n}",
+          "explanationArabic": "هذه هي الصيغة المعيارية الوحيدة لـ asm في C++: تعليمة تجميع داخل نص بين قوسين. لكنها لا تسمح بتحديد المدخلات والمخرجات ولا السجلات. لذلك لا أحد يستخدمها فعليًا والمترجمات تقدم صيغًا امتدادية بدلًا منها.",
+          "relatedTokens": [
+            "asm"
+          ]
+        },
+        {
+          "titleArabic": "الصيغة الامتدادية لـ GCC/Clang: __asm__ مع مدخلات ومخرجات",
+          "code": "int main() {\n    int result = 0;\n    __asm__(\n        \"movl $5, %%eax;\\n\\t\"\n        \"addl $3, %%eax;\\n\\t\"\n        \"movl %%eax, %0;\\n\\t\"\n        : \"=r\"(result)\n    );\n    return result;\n}",
+          "explanationArabic": "هذه ليست asm المعيارية بل امتداد GCC يُكتب __asm__ (بشرطتين). الصيغة تسمح بتحديد السجلات والمدخلات والمخرجات عبر قيود مثل =r. %%eax سجل المعالج و%0 مكان النتيجة. هذا لا يعمل على MSVC.",
+          "relatedTokens": [
+            "asm",
+            "volatile",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "البدائل الأأمن: استخدام intrinsics بدل asm يدوية",
+          "code": "#include <immintrin.h>\n\nint main() {\n    // بدل كتابة تعليمات SSE يدوية عبر asm\n    // نستخدم الدوال الجاهزة من <immintrin.h>\n    __m128 a = _mm_set1_ps(2.0f);\n    __m128 b = _mm_set1_ps(3.0f);\n    __m128 c = _mm_add_ps(a, b);\n    float result = _mm_cvtss_f32(c);\n    return static_cast<int>(result);\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن كثيرًا مما كان يحتاج asm في الماضي صار له بدائل معيارية. الدوال مثل _mm_add_ps تُنتج تعليمات SSE نفسها لكن بصياغة يفهمها المترجم ويحسنها، بدل نص تجميع خام لا يتحكم فيه المترجم.",
+          "relatedTokens": [
+            "asm",
+            "float",
+            "static_cast"
+          ]
+        }
+      ],
+      "followUps": [
+        "volatile",
+        "extern",
+        "const"
+      ]
+    },
+    "and": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، and ليست مفهومًا مختلفًا عن `&&`، بل هي تهجئة نصية قياسية لنفس العامل المنطقي تمامًا. فائدتها الحقيقية أنها تجعل بعض الشروط تُقرأ بالكلمات بدل الرموز، لا أنها تقدم سلوكًا جديدًا.",
+      "projectStepsArabic": [
+        "اقرأها دائمًا على أنها &&: نفس short-circuit ونفس أولوية التشغيل العامة في السياق المنطقي.",
+        "استخدمها فقط إذا كان الأسلوب العام في الملف يفضل الكلمات البديلة، ولا تخلط بلا سبب بين and و&& داخل نفس المقطع.",
+        "تذكر أنها تعمل على المنطق لا على البتات؛ لعمليات masks استخدم bitand أو العامل &."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "شرط منطقي عادي مع short-circuit",
+          "code": "bool ready = true;\nbool has_data = false;\n\nint main() {\n    if (ready and has_data) {\n        return 1;\n    }\n    return 0;\n}",
+          "explanationArabic": "هذا هو الوجه المباشر لـ and: نفس معنى `ready && has_data`. إذا كان الطرف الأول false فلن يحتاج المترجم لتقييم الثاني ضمن منطق short-circuit المعتاد.",
+          "relatedTokens": [
+            "and",
+            "bool",
+            "if"
+          ]
+        },
+        {
+          "titleArabic": "ليست بديلًا عن bitand مع الأقنعة الثنائية",
+          "code": "int flags = 0b1100;\nint mask  = 0b1010;\n\nint main() {\n    // هذا AND منطقي: النتيجة 1 لأن القيمتين غير صفريتين\n    int logical = flags and mask;\n    return logical;\n}",
+          "explanationArabic": "هنا and لا تُعيد تقاطع البتات، بل تقيّم القيمتين كحالتين منطقيتين. لأن كلتا القيمتين غير صفرية فالنتيجة true. إذا كنت تريد تقاطع البتات الحقيقي فاستعمل bitand أو `&`.",
+          "relatedTokens": [
+            "and",
+            "bitand",
+            "int"
+          ]
+        }
+      ],
+      "followUps": [
+        "or",
+        "not",
+        "bitand"
+      ]
+    },
+    "not": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، not هي التهجئة النصية للعامل `!` ولا تضيف أي منطق جديد. أهم قيمة تعليمية لها أنها تذكرك بالفرق بين النفي المنطقي ونفي البتات عبر `compl`.",
+      "projectStepsArabic": [
+        "اقرأها دائمًا على أنها نفي منطقي لا قلب للبتات.",
+        "استخدمها في الشروط الواضحة مثل not ready إذا كان هذا يجعل العبارة أسهل قراءة.",
+        "لا تخلط بينها وبين compl لأن compl تعمل على التمثيل الثنائي لا على true/false."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قلب النتيجة المنطقية",
+          "code": "bool ready = false;\n\nint main() {\n    if (not ready) {\n        return 1;\n    }\n    return 0;\n}",
+          "explanationArabic": "المعنى هنا هو نفسه `!ready`. إذا كانت ready false تصبح not ready true فيدخل الفرع.",
+          "relatedTokens": [
+            "not",
+            "bool",
+            "if"
+          ]
+        },
+        {
+          "titleArabic": "ليست قلبًا للبتات",
+          "code": "int value = 4;\n\nint main() {\n    bool logical = not value; // false لأن value غير صفرية\n    return logical;\n}",
+          "explanationArabic": "حتى مع نوع عددي، not تحوّل القيمة أولًا إلى معنى منطقي: الصفر false وغير الصفر true. لذلك الناتج هنا false، لا قيمة ثنائية معكوسة. لقلب البتات استخدم compl.",
+          "relatedTokens": [
+            "not",
+            "compl",
+            "int"
+          ]
+        }
+      ],
+      "followUps": [
+        "and",
+        "or",
+        "compl"
+      ]
+    },
+    "typeid": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، typeid هي أداة RTTI تسأل المترجم والنظام التشغيلي عن النوع الذي يتعامل معه البرنامج فعليًا أثناء التشغيل. فائدتها ليست \"طباعة اسم النوع\" فقط، بل مقارنة الأنواع أو كشف النوع الفعلي خلف مرجع أو مؤشر متعدد الأشكال.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج مقارنة نوعين أثناء التشغيل أو تريد معرفة النوع الفعلي لكائن polymorphic.",
+        "تذكر أن النوع الفعلي لا يظهر عبر typeid(*ptr) إلا إذا كان النوع الأساس يملك دالة virtual واحدة على الأقل.",
+        "لا تجعلها بديلًا عن التصميم الجيد دائمًا؛ كثير من الحالات الأنسب لها virtual dispatch أو polymorphism بدل التفريع على النوع يدويًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "مقارنة النوع الفعلي لكائن polymorphic",
+          "code": "#include <typeinfo>\n\nstruct Base { virtual ~Base() = default; };\nstruct Derived : Base {};\n\nint main() {\n    Base* ptr = new Derived();\n    bool is_derived = typeid(*ptr) == typeid(Derived);\n    delete ptr;\n    return is_derived ? 0 : 1;\n}",
+          "explanationArabic": "لأن Base فيها virtual destructor، صار النوع polymorphic. لذلك `typeid(*ptr)` يكشف النوع الفعلي للكائن وهو Derived، لا النوع الثابت للمؤشر فقط.",
+          "relatedTokens": [
+            "typeid",
+            "virtual",
+            "class"
+          ]
+        },
+        {
+          "titleArabic": "بدون virtual ترى النوع الثابت لا الفعلي",
+          "code": "#include <typeinfo>\n\nstruct PlainBase {};\nstruct Derived : PlainBase {};\n\nint main() {\n    PlainBase* ptr = new Derived();\n    bool looks_base = typeid(*ptr) == typeid(PlainBase);\n    delete ptr;\n    return looks_base ? 0 : 1;\n}",
+          "explanationArabic": "هنا لا يوجد virtual، لذلك RTTI لا تملك نقطة تعدد أشكال تكشف النوع الفعلي. النتيجة تعكس النوع الثابت PlainBase. هذه من أكثر نقاط الالتباس شيوعًا مع typeid.",
+          "relatedTokens": [
+            "typeid",
+            "dynamic_cast",
+            "virtual"
+          ]
+        },
+        {
+          "titleArabic": "ليست بديلًا عن polymorphism",
+          "code": "#include <typeinfo>\n\nstruct Shape { virtual ~Shape() = default; virtual int area() const = 0; };\nstruct Square : Shape { int area() const override { return 4; } };\n\nint main() {\n    Square square;\n    Shape& ref = square;\n    return ref.area(); // أفضل من التفريع على typeid(ref)\n}",
+          "explanationArabic": "أحيانًا وجود typeid في الكود يعني أنك تهرب من polymorphism بدل استخدامه. إذا كان المطلوب تنفيذ سلوك مختلف حسب النوع، فغالبًا الدالة virtual أوضح وأصدق من كتابة if على typeid في كل مرة.",
+          "relatedTokens": [
+            "typeid",
+            "virtual",
+            "override",
+            "class"
+          ]
+        }
+      ],
+      "followUps": [
+        "dynamic_cast",
+        "virtual",
+        "class"
+      ]
+    },
+    "replaceable_if_eligible": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، replaceable_if_eligible ليست أداة يومية مثل if أو class، بل specifier جديد في C++26 يعلن خاصية بنيوية على النوع نفسه. المعنى الحقيقي لها متعلق بما إذا كان النوع يمكن اعتباره قابلاً للاستبدال ضمن القواعد الحديثة للغة، لا بما يحدث داخل جسم الدوال.",
+      "projectStepsArabic": [
+        "اقرأها كخاصية تُعلن على تعريف النوع لا كتعليمة تنفيذية.",
+        "توقع أن دعمها العملي مرتبط بالمترجم والإصدار لأن هذه منطقة حديثة جدًا من C++26.",
+        "لا تستخدمها لمجرد الزينة؛ وجودها يجب أن يكون جزءًا من تصميم نوع منخفض المستوى أو من تجربة خصائص الأنواع الحديثة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تعريف نوع مع specifier الخاصية",
+          "code": "struct replaceable_if_eligible Token {\n    int id;\n};\n\nint main() {\n    Token t{7};\n    return t.id;\n}",
+          "explanationArabic": "الـ specifier هنا لا يضيف دالة ولا يغير طريقة الوصول للأعضاء. هو وصف بنيوي يلتصق بالنوع نفسه، مثل إعلان أن هذا النوع يدخل في فئة خصائص معينة عندما يكون مؤهلًا لذلك.",
+          "relatedTokens": [
+            "replaceable_if_eligible",
+            "struct",
+            "class"
+          ]
+        },
+        {
+          "titleArabic": "ليس بديلًا عن final أو override",
+          "code": "struct replaceable_if_eligible Packet {\n    int id;\n};\n\nstruct Leaf final {\n    int value;\n};\n\nint main() {\n    Packet p{1};\n    Leaf l{2};\n    return p.id + l.value;\n}",
+          "explanationArabic": "final تغلق الوراثة أو إعادة التعريف، أما replaceable_if_eligible فتتعلق بخصيصة بنيوية مختلفة تمامًا. الخلط بينهما يجعل specifier الجديد يبدو كأنه أداة OOP وهو ليس كذلك.",
+          "relatedTokens": [
+            "replaceable_if_eligible",
+            "final",
+            "override",
+            "class"
+          ]
+        }
+      ],
+      "followUps": [
+        "trivially_relocatable_if_eligible",
+        "class",
+        "final"
+      ]
+    },
+    "trivially_relocatable_if_eligible": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، trivially_relocatable_if_eligible يصرح بأن النوع يمكن اعتباره قابلًا للنقل المكاني relocation بصورة تافهة عندما يحقق شروط الأهلية. الفكرة هنا ليست النسخ ولا التحريك عبر move constructor، بل إمكانية نقل تمثيل الكائن في الذاكرة بطريقة أبسط عندما تسمح القواعد بذلك.",
+      "projectStepsArabic": [
+        "اقرأه كخاصية تتعلق ببنية النوع في الذاكرة لا بواجهة الكائن العامة.",
+        "افصل بين relocation و move: التحريك يستدعي منطق النوع، أما relocation تهتم بنقل التمثيل نفسه عندما يكون ذلك آمنًا.",
+        "توقع أن هذه المنطقة حديثة جدًا وتحتاج دعم مترجم ومعيار مناسب قبل الاعتماد العملي عليها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إعلان نوع مع خاصية النقل المكاني",
+          "code": "struct trivially_relocatable_if_eligible BufferHandle {\n    int id;\n    void* ptr;\n};\n\nint main() {\n    BufferHandle handle{1, nullptr};\n    return handle.id;\n}",
+          "explanationArabic": "وجود الـ specifier هنا لا يعني أن النوع صار movable بالمعنى التقليدي فقط، بل يعلن قابلية أعمق تتعلق بنقله في الذاكرة عندما تكون شروط الأهلية متحققة.",
+          "relatedTokens": [
+            "trivially_relocatable_if_eligible",
+            "struct",
+            "class"
+          ]
+        },
+        {
+          "titleArabic": "الفرق المفاهيمي عن std::move",
+          "code": "#include <utility>\n\nstruct trivially_relocatable_if_eligible Node {\n    int value;\n};\n\nint main() {\n    Node a{3};\n    Node b = std::move(a); // هذا move عادي في الكود\n    return b.value;\n}",
+          "explanationArabic": "std::move يعبّر عن نية التحريك في سطر معين، أما trivially_relocatable_if_eligible فهي خاصية على تعريف النوع نفسه. لذلك لا يجب قراءة الـ specifier وكأنه \"استدعاء move تلقائي\"؛ المجالان مختلفان.",
+          "relatedTokens": [
+            "trivially_relocatable_if_eligible",
+            "std::move",
+            "class"
+          ]
+        }
+      ],
+      "followUps": [
+        "replaceable_if_eligible",
+        "std::move",
+        "class"
+      ]
+    },
+    "contract_assert": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، contract_assert لا تعني مجرد `assert` بتهجئة جديدة، بل تعبر عن شرط تعاقدي يجب أن يظل صحيحًا لأن بقية الكود مبنية عليه. الفرق التعليمي المهم أنها تصف افتراضًا من عقد الاستخدام الصحيح، لا مجرد فحص طارئ أو دفاعي عام.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون الشرط جزءًا من contract المنطقية للدالة أو للمسار، لا مجرد فحص تشغيل عرضي.",
+        "لا تخلط بينها وبين static_assert: static_assert تفحص وقت الترجمة، أما contract_assert فتتعلق بعقد التنفيذ واستخدام الكود.",
+        "اربطها ذهنيًا برأس `<contracts>` وبمفاهيم preconditions/postconditions التي قدمتها C++26."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "شرط تعاقدي قبل عملية حساسة",
+          "code": "int divide(int a, int b) {\n    contract_assert(b != 0);\n    return a / b;\n}\n\nint main() {\n    return divide(8, 2);\n}",
+          "explanationArabic": "هذا لا يقول فقط: \"تحقق من الصفر\"، بل يعلن أن القسمة الصحيحة هنا مبنية أصلًا على أن `b` ليست صفرًا. إذا كُسر هذا الشرط فالمشكلة ليست نتيجة فرع عادي، بل خرق في عقد الاستعمال نفسه.",
+          "relatedTokens": [
+            "contract_assert",
+            "if",
+            "static_assert"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن static_assert",
+          "code": "constexpr int chunk = 16;\nstatic_assert(chunk > 0);\n\nint read_at(int index, int size) {\n    contract_assert(index >= 0);\n    contract_assert(index < size);\n    return index;\n}",
+          "explanationArabic": "static_assert فوق تحسم أمرًا ثابتًا وقت الترجمة. أما contract_assert فتصف شروطًا يجب أن تكون صحيحة أثناء الاستعمال الفعلي للدالة. الخلط بين المجالين يجعل التصميم غير دقيق.",
+          "relatedTokens": [
+            "contract_assert",
+            "static_assert",
+            "constexpr"
+          ]
+        }
+      ],
+      "followUps": [
+        "<contracts>",
+        "static_assert",
+        "requires"
+      ]
+    },
+    "#define": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، #define تعمل قبل أن يرى المترجم اللغة نفسها. هذا يعني أنها لا تحترم الأنواع ولا النطاقات ولا أسماء الدوال، بل تستبدل النص حرفيًا ثم تترك الناتج للمترجم. لذلك فائدتها الحقيقية اليوم محصورة في بعض الثوابت النصية وأعلام البناء والربط مع كود قديم، لا في كونها بديلًا عامًا عن constexpr أو الدوال.",
+      "projectStepsArabic": [
+        "تذكر دائمًا أن #define استبدال نصي لا كيان لغوي.",
+        "استخدم constexpr أو const أو inline function عندما يكون المطلوب قيمة أو سلوكًا منضبطًا نوعيًا داخل C++.",
+        "احذر جدًا من الماكروات الدالية لأن الأقواس والأسبقية والآثار الجانبية قد تجعلها تخدعك بسهولة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ثابت نصي بسيط قبل الترجمة",
+          "code": "#define BUFFER_SIZE 256\n\nint main() {\n    int data[BUFFER_SIZE];\n    return static_cast<int>(sizeof(data));\n}",
+          "explanationArabic": "هنا BUFFER_SIZE ليست متغيرًا ولا constexpr، بل نص يستبدله المعالج المسبق بالعدد 256 قبل أن تبدأ الترجمة الفعلية. لهذا لا يمكنك أخذ عنوانه أو معرفة نوعه لأنه ليس كائنًا أصلًا."
+        },
+        {
+          "titleArabic": "الخطر الكلاسيكي للماكروات الدالية",
+          "code": "#define SQUARE(x) ((x) * (x))\n\nint main() {\n    int i = 3;\n    int a = SQUARE(i + 1);   // ((i + 1) * (i + 1))\n    int b = SQUARE(i++);     // خطر: i++ يتكرر مرتين\n    return a + b;\n}",
+          "explanationArabic": "هذا يوضح لماذا لا تُقرأ الماكرو كدالة عادية. الوسيط يُلصق نصيًا داخل الجسم، لذلك الآثار الجانبية مثل i++ قد تتكرر أكثر مما تتوقع. لهذا تكون inline function أو constexpr function أكثر صدقًا وأمانًا."
+        }
+      ],
+      "followUps": [
+        "#undef",
+        "constexpr",
+        "inline"
+      ]
+    },
+    "#undef": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، #undef لا تحذف متغيرًا ولا اسمًا من namespace، بل تزيل تعريف ماكرو من بيئة المعالج المسبق فقط. فائدتها الحقيقية تظهر عندما تتعامل مع ملفات رأس أو مكتبات قديمة تلوّث مساحة الأسماء بماكروات قصيرة أو عامة.",
+      "projectStepsArabic": [
+        "اقرأها دائمًا كتنظيف لبيئة preprocessor لا كتغيير في النطاقات اللغوية العادية.",
+        "استخدمها عندما تحتاج التخلص من ماكرو متصادم قبل تعريف شيء يحمل الاسم نفسه أو قبل تضمين جزء آخر من الكود.",
+        "تذكر أن #undef لا يمس constexpr ولا المتغيرات ولا الدوال، لأنه يعمل قبل كل ذلك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إلغاء ماكرو قبل تعريف اسم حقيقي",
+          "code": "#define VALUE 10\n#undef VALUE\n\nint VALUE = 20;\n\nint main() {\n    return VALUE;\n}",
+          "explanationArabic": "لو بقي الماكرو معرّفًا، لتحول الاسم VALUE لاحقًا إلى النص 10 في أماكن غير متوقعة. #undef هنا لا يحذف متغيرًا، بل يمنع استمرار الاستبدال النصي قبل أن ترى اللغة الاسم الحقيقي."
+        },
+        {
+          "titleArabic": "ليس عكس constexpr",
+          "code": "constexpr int limit = 5;\n\nint main() {\n    // #undef limit   // هذا لا يعمل لأن limit ليست ماكرو أصلًا\n    return limit;\n}",
+          "explanationArabic": "هذا مثال مهم لأن بعض المبتدئين يظنون أن #undef يمكنها إزالة أي اسم. الحقيقة أنها لا تعرف سوى الماكروات. constexpr هنا كيان لغوي طبيعي لا علاقة له بالمعالج المسبق."
+        }
+      ],
+      "followUps": [
+        "#define",
+        "constexpr",
+        "namespace"
+      ]
+    },
+    "أسبقية المشغّلات وترابطها": {
+      "fullProjectNoteArabic": "أسبقية المشغّلات ليست دالة تستدعيها ولا كلمة مفتاحية تكتبها، بل قاعدة ذهنية يحتاجها المترجم نفسه لقراءة أي تعبير. عندما تكتب `2 + 3 * 4`، المترجم لا يقرأها من اليسار لليمين كما يقرأها الإنسان، بل يبحث عن المشغل الأعلى أسبقية (`*`) ويُقيّمه أولًا فيحصل على 14 لا 20. الترابط يحدد الاتجاه عند تساوي الأسبقية: `a = b = 0` تُقرأ من اليمين لليسار لأن الإسناد ترابطه من اليمين.",
+      "projectStepsArabic": [
+        "احفظ المبدأ العام: الأوابد (prefix) واللاحقات (postfix) أولًا، ثم الحساب (* / % ثم + -)، ثم المقارنات، ثم البتات، ثم المنطق (&& قبل ||)، ثم الإسناد، والفاصلة أخيرًا.",
+        "عند الشك، ضع أقواس. الأقواس لا تُبطئ البرنامج ولا تُغيّر المعنى إذا كانت صحيحة — تُوضحه فقط.",
+        "تذكّر أن المشغلات البتية (& | ^) أسبقيتها أقل من == و !=، وهذا مخالف لحدس كثير من المبرمجين.",
+        "تذكّر أن && أسبقيتها أعلى من ||، لذلك `a || b && c` تعني `a || (b && c)` لا `(a || b) && c`."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "لماذا الأسبقية مهمة: ضرب قبل جمع",
+          "code": "int main() {\n    int a = 2 + 3 * 4;     // 14: * أسبقية أعلى من +\n    int b = (2 + 3) * 4;   // 20: الأقواس تُغيّر الترتيب\n    return a + b;           // 34\n}",
+          "explanationArabic": "بدون أسبقية، `2 + 3 * 4` كانت ستُعطي 20 (جمع ثم ضرب). الأسبقية تجعل المترجم يُقيّم `3 * 4` أولًا فيحصل على 12، ثم `2 + 12 = 14`. الأقواس تسمح لك بتجاوز الأسبقية متى احتجت.",
+          "relatedTokens": [
+            "operator",
+            "if"
+          ]
+        },
+        {
+          "titleArabic": "المقارنات أسبقية أعلى من المنطق",
+          "code": "int main() {\n    int age = 25;\n    bool has_id = true;\n    // && أسبقيتها أقل من >= و ==\n    // لذلك هذا يُقرأ كـ: (age >= 18) && (has_id == true)\n    if (age >= 18 && has_id) {\n        return 1;\n    }\n    return 0;\n}",
+          "explanationArabic": "لو كانت && أسبقية أعلى من >= لكان المعنى `age >= (18 && has_id)` وهو مقارنة عدد مع bool — لا معنى له. الأسبقية الصحيحة تجعل المقارنات تُقيَّم أولًا ثم تُدمج عبر &&.",
+          "relatedTokens": [
+            "and",
+            "if",
+            "bool"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: & البتية أقل أسبقية من ==",
+          "code": "int main() {\n    unsigned int flags = 0b1010;\n    unsigned int mask = 0b0010;\n\n    // ❌ هذا خطأ: == أسبقية أعلى من &\n    // flags & mask == 0 تُقرأ كـ flags & (mask == 0)\n    // أي: flags & 1 = 0b1010 & 0b0001 = 0b0000 = 0\n\n    // ✅ الصحيح: أقواس حول العملية البتية\n    if ((flags & mask) != 0) {\n        return 1;\n    }\n    return 0;\n}",
+          "explanationArabic": "هذا من أكثر الأخطاء فخامًا لأنه لا يُسبب خطأ ترجمة بل سلوكًا خاطئًا صامتًا. المشغلات البتية (& | ^) أسبقيتها بين المقارنات والمنطق، لا فوق المقارنات كما يتوقع كثير من المبرمجين. القاعدة البسيطة: ضع أقواس دائمًا حول العملية البتية عند مقارنة النتيجة.",
+          "relatedTokens": [
+            "bitand",
+            "and",
+            "if"
+          ]
+        }
+      ],
+      "followUps": [
+        "operator",
+        "and",
+        "or",
+        "not",
+        "bitand",
+        "bitor",
+        "xor",
+        "static_cast"
+      ]
+    },
+    "static_assert": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، static_assert تفحص شرطًا يمكن حسمه وقت الترجمة وتُوقِف البناء فورًا إذا فشل مع رسالة واضحة. فائدتها أن تكتشف الأخطاء المنطقية قبل تشغيل البرنامج بدل اكتشافها متأخرًا وقت التنفيذ.",
+      "projectStepsArabic": [
+        "استخدمها عند نقاط التصميم التي يجب أن تكون صحيحة وقت الترجمة مثل أحجام البنى وقيود الأنواع.",
+        "أضف رسالة توضيحية بعد الشرط حتى يفهم المطور سبب الفشل مباشرة من رسالة المترجم.",
+        "لا تستخدمها لفحص قيم تعتمد على وقت التشغيل لأن static_assert تحتاج شرطًا ثابتًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فحص حجم نوع وقت الترجمة",
+          "code": "#include <cstddef>\n\nstatic_assert(sizeof(int) >= 4, \"int يجب أن تكون 4 بايت على الأقل\");\n\n// هذا السطر سيفشل البناء إذا فُعِّل:\n// static_assert(sizeof(int) == 2, \"int لن تكون 2 بايت على أغلب المنصات\");\n\nint main() {\n    return static_cast<int>(sizeof(int));\n}",
+          "explanationArabic": "هذا أبسط استعمال: static_assert تتأكد أن حجم int لا يقل عن 4 بايت. السطر المعلّق يوضح ما يحدث عند الفشل: المترجم يوقف البناء ويعرض الرسالة المكتوبة. هذا الفشل يحدث قبل أي تشغيل للبرنامج.",
+          "relatedTokens": [
+            "static_assert",
+            "sizeof",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "فحص قيد على بنية مُعرَّفة",
+          "code": "struct Vertex {\n    float x;\n    float y;\n    float z;\n};\n\nstatic_assert(sizeof(Vertex) == 3 * sizeof(float), \"Vertex يجب أن تكون 3 أعداد عشرية فقط بلا حشو\");\n\n// لو أضفت حقلًا مثل float w; فوق سيفشل هذا الفحص تلقائيًا\n\nint main() {\n    Vertex v{1.0f, 2.0f, 3.0f};\n    return static_cast<int>(v.x + v.y + v.z);\n}",
+          "explanationArabic": "هذا يوضح الاستخدام العملي الأهم: التأكد أن تخطيط البنية في الذاكرة مطابق لما تتوقعه. إذا أضفت حقلًا جديدًا أو تغيّر الحشو، يفشل البناء فورًا بدل أن ينتج سلوكًا خفيًا خاطئًا. هذا النمط شائع في مشاريع الرسوم عند التأكد من توافق البنى مع تنسيقات GPU.",
+          "relatedTokens": [
+            "static_assert",
+            "sizeof",
+            "struct",
+            "float"
+          ]
+        },
+        {
+          "titleArabic": "صيغة C++17 بدون رسالة + فحص constexpr",
+          "code": "constexpr int buffer_size(int elements, int element_bytes) {\n    return elements * element_bytes;\n}\n\n// C++17 يسمح بحذف الرسالة:\nstatic_assert(buffer_size(4, 8) == 32);\nstatic_assert(buffer_size(0, 8) == 0);\n\n// هذا سيفشل البناء إذا فُعِّل:\n// static_assert(buffer_size(4, 8) == 100);\n\nint main() {\n    constexpr int size = buffer_size(4, 8);\n    int buffer[size];\n    return buffer[0] + size;\n}",
+          "explanationArabic": "هذا مثال أذكى يجمع فكرتين: أولًا static_assert مع constexpr تفحص ناتج دالة محسوبة وقت الترجمة. ثانيًا صيغة C++17 تسمح بحذف الرسالة عندما يكون الشرط نفسه واضحًا. السطر المعلّق يوضح أن الفشل يحدث قبل أي تشغيل.",
+          "relatedTokens": [
+            "static_assert",
+            "constexpr",
+            "sizeof",
+            "int"
+          ]
+        }
+      ],
+      "followUps": [
+        "constexpr",
+        "sizeof",
+        "const"
+      ]
+    }
+  }
+}

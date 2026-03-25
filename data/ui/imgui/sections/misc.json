@@ -1,0 +1,260 @@
+{
+  "key": "misc",
+  "title": "متفرقات",
+  "icon": "symbol-misc",
+  "description": "أي نوع لا يندرج مباشرة تحت الأقسام القياسية الأخرى.",
+  "items": [
+    {
+      "name": "Fade وHover وProgress داخل نافذة أدوات",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي أن Dear ImGui تقرأ القيم الحالية فقط، بينما الزمن والتحويلات والتدرجات تبقى مسؤولية كاملة على التطبيق في كل Frame.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "الأنيميشن هنا ليست خاصية خفية داخل Dear ImGui؛ التطبيق نفسه يحسب interpolation ثم يمرر القيم"
+    },
+    {
+      "name": "ImGui + GLFW",
+      "kind": "Misc",
+      "shortTooltip": "هذا التكامل يحوّل GLFW من مجرد مكتبة نافذة إلى طبقة منصة كاملة بالنسبة لـ Dear ImGui. فهي تمد ImGuiIO بحالة الفأرة ولوحة المفاتيح وحجم النافذة وتوقيت الإطار، بينما تبقى عملية الرسم نفسها في backend آخر.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_glfw.h",
+      "displayName": "في هذا التكامل تكون GLFW مسؤولة عن النافذة وسياق المنصة وتمرير الإدخال إلى Dear ImGui"
+    },
+    {
+      "name": "ImGui + GLFW + OpenGL",
+      "kind": "Misc",
+      "shortTooltip": "هذا هو التكامل المرجعي الخفيف لـ Dear ImGui: منصة بسيطة، renderer backend مباشر، وتسلسل تهيئة قصير وواضح. لذلك يستخدم كثيراً كنقطة بداية أو كمرجع لفهم بقية التكاملات.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_glfw.h",
+      "displayName": "يوضح هذا المثال العملي التكامل الكامل بين Dear ImGui وGLFW وOpenGL"
+    },
+    {
+      "name": "ImGui + OpenGL",
+      "kind": "Misc",
+      "shortTooltip": "يجعل هذا التكامل OpenGL طبقة الرسم التي تنفذ أوامر Dear ImGui النهائية. فالـ backend يقرأ ImGui::GetDrawData بعد ImGui::Render ثم يبني الاستدعاءات اللازمة للرسم داخل framebuffer الحالي.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_opengl3.h",
+      "displayName": "في هذا التكامل تكون OpenGL مسؤولة عن رسم Dear ImGui عبر renderer backend خاص بها"
+    },
+    {
+      "name": "ImGui + SDL3",
+      "kind": "Misc",
+      "shortTooltip": "يجعل هذا التكامل SDL3 طبقة المنصة الفعلية لـ Dear ImGui. فهي تزود ImGuiIO بحالة الفأرة ولوحة المفاتيح والأحداث وحجم النافذة، بينما تبقى أوامر الرسم في backend آخر.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_sdl3.h",
+      "displayName": "في هذا التكامل تكون SDL3 مسؤولة عن إنشاء النافذة وتمرير SDL_Event وحالة الإدخال إلى Dear ImGui"
+    },
+    {
+      "name": "ImGui + SDL3 + Vulkan",
+      "kind": "Misc",
+      "shortTooltip": "هذا التكامل يجمع طبقتين متكاملتين: SDL3 كطبقة منصة، وVulkan كطبقة رسم. Dear ImGui تجلس بينهما فتقرأ الإدخال القادم من SDL3 وتولد draw data تستهلكها Vulkan داخل نفس command buffers والإطار الحالي.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_vulkan.h",
+      "displayName": "يشرح هذا التكامل كيف يعمل Dear ImGui داخل تطبيق SDL3 + Vulkan كامل"
+    },
+    {
+      "name": "ImGui + Vulkan",
+      "kind": "Misc",
+      "shortTooltip": "هذا التكامل يجعل backend Vulkan يقرأ ImGui::GetDrawData في نهاية الإطار ثم يحولها إلى أوامر تكتب داخل VkCommandBuffer. لذلك هو أقرب إلى طبقة ترجمة بين قلب Dear ImGui وبنية الرسم الصريحة في Vulkan.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_vulkan.h",
+      "displayName": "في هذا التكامل تكون Vulkan مسؤولة عن رسم بيانات Dear ImGui النهائية عبر backend خاص بها"
+    },
+    {
+      "name": "imgui.h",
+      "kind": "Misc",
+      "shortTooltip": "يمثل نقطة الدخول البرمجية إلى الواجهة العامة؛ فمنه يحصل المصرّف على التصريحات والبنى والأعلام التي سيستخدمها التطبيق لبناء واجهات Dear ImGui.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "هو ملف الترويسة الرئيسي الذي يجب تضمينه للوصول إلى الأنواع والدوال العامة والرايات الأساسية"
+    },
+    {
+      "name": "ImGuiWindowFlags_NoResize",
+      "kind": "Misc",
+      "shortTooltip": "تقرأها Dear ImGui أثناء بناء النافذة لتعطيل منطق مقابض السحب ومؤشرات تغيير الحجم الخاصة بهذه النافذة.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "من ImGuiWindowFlags تعلن أن النافذة يجب ألا تسمح للمستخدم بتغيير حجمها يدوياً"
+    },
+    {
+      "name": "MenuBar وقوائم فرعية وقائمة سياقية",
+      "kind": "Misc",
+      "shortTooltip": "القوائم في Dear ImGui هي طبقة تنظيم منطقية للأوامر، وليست مجرد سطور نصية؛ فهي تجمع الأفعال في موضع معروف وتسمح بإظهار فروع فرعية وسياق تفاعلي أوضح.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "بدلاً من الاكتفاء بقائمة صغيرة من عنصرين"
+    },
+    {
+      "name": "Platform Backend و Renderer Backend",
+      "kind": "Misc",
+      "shortTooltip": "يمثل هذا الباب خريطة التشغيل الحقيقية لـ Dear ImGui داخل التطبيقات. قلب المكتبة يبني عناصر الواجهة ويولد draw data فقط، بينما يدير Platform Backend النوافذ والإدخال، ويتولى Renderer Backend تحويل تلك البيانات إلى أوامر رسم على OpenGL أو Vulkan أو غيرهما.",
+      "sourceUrl": "https://github.com/ocornut/imgui/tree/master/backends",
+      "displayName": "يوضح هذا الدليل أن تشغيل Dear ImGui يعتمد عادة على Platform Backend يربط النافذة والأحداث"
+    },
+    {
+      "name": "Sidebar متحركة مع Toast notification وتدرج ظهور",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي أن أي فتح/إغلاق متحرك أو نافذة عابرة في Dear ImGui هو مجرد حالة منطقية وقيم انتقالية يحسبها التطبيق بين الإطارات.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "Dear ImGui لا تقدم Sidebar animation أو Toast lifecycle جاهزة غالباً"
+    },
+    {
+      "name": "Theme editor متعدد الحقول مع Palette ومعاينة مشهد",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي أن تطبيق اللون في Dear ImGui يحدث عندما تحفظ القيم في حالة Theme داخل التطبيق ثم تستخدمها في النصوص والخلفيات وأزرار المعاينة والرسم المخصص.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "بدلاً من حقل لون واحد"
+    },
+    {
+      "name": "إضافة عناصر جديدة داخل شجرة الواجهة",
+      "kind": "Misc",
+      "shortTooltip": "Dear ImGui لا تحتفظ بهيكل الشجرة نيابة عنك؛ التطبيق يملك البيانات الفعلية للعقد والأسماء والآباء، ثم يعيد بناء الشجرة كل Frame وفق هذه البيانات.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يركز هذا المثال على سيناريو شائع في المحررات"
+    },
+    {
+      "name": "إعادة ترتيب عقدة داخل شجرة المشهد",
+      "kind": "Misc",
+      "shortTooltip": "Dear ImGui لا تعيد بناء Hierarchy عنك؛ هي تعطيك واجهة سحب وإفلات، أما إعادة الترتيب الفعلية فتحدث داخل مصفوفة العقد أو بنية الشجرة التي يملكها التطبيق.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "المصدر هنا هو عقدة Tree نفسها"
+    },
+    {
+      "name": "استهداف Viewport ومستطيل تحديد داخل المحرر",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي أن التطبيق يفسر تداخل المؤشر مع Viewport ومع مستطيل التحديد كحالة UI targeting، ثم يربطها بمنطق اختيار العناصر أو تحديث الـ inspector.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "المثال يوضح أن Dear ImGui تستطيع وصف الاستهداف داخل مساحة Viewport نفسها عبر InvisibleButton"
+    },
+    {
+      "name": "التحويم والاستهداف وليس التصادم الفيزيائي",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي هنا أن Dear ImGui تعطيك معلومات عن علاقة المؤشر بعناصر الواجهة الحالية، ثم يقرر التطبيق هل يعتبر ذلك استهدافاً أو تداخلاً أو حالة تفعيل منطقية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يستخدم المثال IsItemHovered و IsMouseHoveringRect و Selectable لإظهار كيف يقرأ التطبيق حالة"
+    },
+    {
+      "name": "تحريك مؤشر ولوحة بين الإطارات",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي هو أن الموضع في Dear ImGui ليس قيمة تتذكرها الواجهة وحدها، بل حالة يملكها التطبيق ويعيد تمريرها كل إطار إلى SetNextWindowPos أو SetCursorScreenPos أو عناصر الرسم.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "الحركة هنا لا تأتي من نظام Animation جاهز في Dear ImGui؛ التطبيق نفسه يحدث القيم مثل"
+    },
+    {
+      "name": "ساعة تناظرية ورقمية داخل نافذة أدوات",
+      "kind": "Misc",
+      "shortTooltip": "الساعة هنا ليست Widget جاهزة من Dear ImGui؛ التطبيق هو من يحسب الزوايا والوقت الحالي ثم يمرر النتيجة إلى ImDrawList والنصوص في كل Frame.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يشرح هذا المثال كيف يبني التطبيق ساعة واضحة داخل نافذة Dear ImGui عبر رسم دائرة وعقارب"
+    },
+    {
+      "name": "سحب أصل من القائمة إلى منطقة العرض",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي هنا أن Dear ImGui لا ينقل العنصر الرسومي نفسه، بل ينقل payload منطقية يكتبها التطبيق ثم يقرر الهدف كيف يستهلكها بعد الإفلات.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "هذا المثال لا يشرح دالة واحدة فقط"
+    },
+    {
+      "name": "سحب لون أو نص وإفلاته في حقل مادة",
+      "kind": "Misc",
+      "shortTooltip": "السحب والإفلات هنا يثبت أن Dear ImGui تتعامل مع payload منطقية عامة، لا مع ملفات أو أيقونات فقط؛ فيمكن نقل لون أو نص أو معرف مادة بالآلية نفسها.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "الفكرة هنا أن المصدر قد يكون ColorButton أو سطر نص أو بطاقة مادة"
+    },
+    {
+      "name": "سيارة تتحرك على مسار دائري",
+      "kind": "Misc",
+      "shortTooltip": "الحركة الدائرية هنا لا تأتي من نظام فيزياء أو scene graph؛ التطبيق يحسب الزاوية والموضع من sin/cos ويعيد رسم السيارة في موضعها الجديد كل Frame.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يجمع هذا المثال بين الحركة الدائرية وتحريك عنصر مرئي واضح يشبه سيارة صغيرة أو Marker داخل"
+    },
+    {
+      "name": "صندوق اختيار مع صور مصغرة",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي أن Dear ImGui لا تمنعك من جعل عنصر الاختيار غنياً بصرياً؛ يمكنك وضع صور مصغرة ونصوص داخل BeginCombo ثم حفظ الفهرس المختار في حالة مستقرة.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يوضح هذا المثال كيف تبني صندوق اختيار أكثر غنى من Combo النصية عبر إظهار صور مصغرة داخل"
+    },
+    {
+      "name": "قوائم متداخلة ثلاثية مع صور مصغرة",
+      "kind": "Misc",
+      "shortTooltip": "القائمة المتداخلة هنا ليست مجرد شجرة نصوص؛ هي Workflow كامل يتدرج من قسم عام إلى قسم فرعي إلى عنصر نهائي مدعوم بمعاينة بصرية صغيرة.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يبني هذا المثال شريط قوائم احترافياً يتضمن مستويات متداخلة متعددة من القوائم"
+    },
+    {
+      "name": "كيبورد افتراضي على الشاشة",
+      "kind": "Misc",
+      "shortTooltip": "Dear ImGui لا تقدم كيبورد جاهزة افتراضياً، لكن Immediate Mode تجعل بناء واحدة أمراً مباشراً: أزرار، صفوف، ومخزن نص يملكه التطبيق.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يبين هذا المثال كيف ينشئ التطبيق لوحة مفاتيح مرئية من أزرار متتابعة"
+    },
+    {
+      "name": "لوحة أدوات الألوان والثيم",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي أن اللون في Dear ImGui هو حالة يملكها التطبيق عادة بصيغة RGB أو RGBA، ثم تعرضه الأدوات وتحدثه وتعيد رسم النص أو الخلفية أو العنصر الذي يعتمد عليه.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "بدلاً من الاكتفاء بزر لون واحد"
+    },
+    {
+      "name": "لوحة عائمة وMarker يتحركان باستمرار داخل مساحة أدوات",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي أن Dear ImGui لا تملك Timeline للحركة، وإنما تقرأ آخر موضع تحفظه أنت في التطبيق لكل عنصر متحرك أو نافذة عائمة أو مؤشر بصري.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "الحركة هنا ليست تأثيراً بصرياً جاهزاً"
+    },
+    {
+      "name": "محرر انفجار تفاعلي مع نبضة وقطع متناثرة",
+      "kind": "Misc",
+      "shortTooltip": "الانفجار هنا ليس مؤثراً جاهزاً من Dear ImGui، بل قيم مثل intensity وradius وtime_since_blast يملكها التطبيق ثم يحولها إلى دوائر وشظايا وخطوط داخل الواجهة.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يعرض هذا المثال محرر تأثير انفجار صغير"
+    },
+    {
+      "name": "محرر تطاير وجسيمات متناثرة",
+      "kind": "Misc",
+      "shortTooltip": "التطاير هنا ليس نظام particles مكتمل، بل معاينة تشرح كيف تتغير مواضع الجسيمات عند تحديث lifetime وvelocity وspread بين الإطارات داخل UI.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يعرض هذا المثال تأثير تطاير بصري مبسط داخل نافذة الأدوات"
+    },
+    {
+      "name": "محرر نصي متعدد الأسطر مع أدوات حفظ وبحث",
+      "kind": "Misc",
+      "shortTooltip": "Dear ImGui لا تملك محرراً نصياً احترافياً كاملًا جاهزًا، لكنها تعطيك أساساً عملياً عبر InputTextMultiline يمكن توسيعه بحقول بحث وأدوات وحالة خارجية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يعرض هذا المثال محرراً نصياً عملياً لا يقتصر على حقل إدخال واحد"
+    },
+    {
+      "name": "محرر وهج Glow مع طبقات سطوع متدرجة",
+      "kind": "Misc",
+      "shortTooltip": "الوهج هنا ليس Bloom renderer كاملاً، بل تقريب بصري داخل الواجهة يوضح كيف تتدرج الطبقات اللونية والسطوع حول العنصر المضيء.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يبني هذا المثال محرر وهج بسيط يربط بين شدة الوهج ونصف قطره ولونه وبين معاينة مرئية فورية"
+    },
+    {
+      "name": "مساحة Docking احترافية مع نوافذ متعددة وToggles",
+      "kind": "Misc",
+      "shortTooltip": "الإرساء في Dear ImGui لا يعني أن المكتبة تحتفظ بمخطط الواجهة بدلاً عن التطبيق؛ بل يعني أن التطبيق يفعّل Docking ويعيد بناء النوافذ نفسها كل Frame مع حالات show_* وflags مناسبة.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "بدلاً من نافذة واحدة"
+    },
+    {
+      "name": "مساحة عمل Docking مع MenuBar ولوحات Scene وInspector وConsole",
+      "kind": "Misc",
+      "shortTooltip": "المعنى الحقيقي أن Dear ImGui يمكن أن تكون غلاف محرر كامل إذا فعّلت Docking وربطت MenuBar بحالة اللوحات وأجزاء مساحة العمل.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "الفكرة هنا أن القوائم ليست معزولة عن بنية المحرر؛ فهي تقود Workspace كاملة"
+    },
+    {
+      "name": "معاينة مجسم سلكي ثلاثي الأبعاد داخل نافذة ImGui",
+      "kind": "Misc",
+      "shortTooltip": "Dear ImGui ليست محرك 3D بحد ذاتها، لكن التطبيق يستطيع رسم معاينات ثلاثية الأبعاد مبسطة أو أدوات wireframe داخل النوافذ عبر حساب الإسقاط بنفسه ثم رسم الخطوط الناتجة.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يعرض هذا المثال شكلاً ثلاثي الأبعاد مبسطاً داخل الواجهة نفسها"
+    },
+    {
+      "name": "مفاتيح Toggle مخصصة لحالات الأدوات",
+      "kind": "Misc",
+      "shortTooltip": "Dear ImGui لا تفرض شكلاً واحداً للـ Toggle؛ التطبيق يمكنه استخدام InvisibleButton وImDrawList أو ألوان الأزرار لبناء Toggle مرئي مع الحفاظ على الحالة المنطقية في bool واضح.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يقدم هذا المثال شكل Toggle أكثر قرباً من مفاتيح الأنظمة الحديثة بدل الاكتفاء بـ Checkbox"
+    },
+    {
+      "name": "نقل عنصر بين خانات Inventory",
+      "kind": "Misc",
+      "shortTooltip": "السحب والإفلات هنا ليس رسماً متحركاً فقط؛ هو بروتوكول مصغر لإرسال هوية العنصر من خانة إلى أخرى ثم تحديث مصفوفة inventory بعد الإفلات.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "displayName": "يبين المثال كيف يستخدم التطبيق payload منطقية صغيرة لإعادة ترتيب العناصر داخل الواجهة نفسها"
+    }
+  ]
+}

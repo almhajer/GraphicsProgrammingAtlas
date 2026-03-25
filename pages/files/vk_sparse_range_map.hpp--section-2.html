@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_sparse_range_map.hpp • القسم 2 من 5 • الأسطر 451-900 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_sparse_range_map.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vk_sparse_range_map.hpp.html">vk_sparse_range_map.hpp</a> /
+        <span>القسم 2 من 5 • الأسطر 451-900</span>
+      </nav>
+      <h1 class="page-title">📄 vk_sparse_range_map.hpp</h1>
+      <p class="page-description">القسم 2 من 5 • الأسطر 451-900</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-1.html">القسم السابق</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-3.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vk_sparse_range_map.hpp</span>
+        <span class="source-stat">القسم: 2/5</span>
+        <span class="source-stat">الأسطر: 451-900</span>
+        <span class="source-stat">حجم الملف: 87.8 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>        friend class range_map;
+        using WrappedIterator = WrappedIterator_;
+
+      private:
+        WrappedIterator pos_;
+
+        // Create an iterator at a specific internal state -- only from the parent container
+        iterator_impl(const WrappedIterator &amp;pos) : pos_(pos) {}
+
+      public:
+        iterator_impl() : iterator_impl(WrappedIterator()) {}
+        iterator_impl(const iterator_impl &amp;other) : pos_(other.pos_) {}
+
+        iterator_impl &amp;operator=(const iterator_impl &amp;rhs) {
+            pos_ = rhs.pos_;
+            return *this;
+        }
+
+        inline bool operator==(const iterator_impl &amp;rhs) const { return pos_ == rhs.pos_; }
+
+        inline bool operator!=(const iterator_impl &amp;rhs) const { return pos_ != rhs.pos_; }
+
+        ValueType &amp;operator*() const { return *pos_; }
+        ValueType *operator-&gt;() const { return &amp;*pos_; }
+
+        iterator_impl &amp;operator++() {
+            ++pos_;
+            return *this;
+        }
+
+        iterator_impl &amp;operator--() {
+            --pos_;
+            return *this;
+        }
+
+        // To allow for iterator -&gt; const_iterator construction
+        // NOTE: while it breaks strict encapsulation, it does so less than friend
+        const WrappedIterator &amp;get_pos() const { return pos_; }
+    };
+
+  public:
+    using iterator = iterator_impl&lt;value_type, ImplIterator&gt;;
+
+    // The const iterator must be derived to allow the conversion from iterator, which iterator doesn&#39;t support
+    class const_iterator : public iterator_impl&lt;const value_type, ImplConstIterator&gt; {
+        using Base = iterator_impl&lt;const value_type, ImplConstIterator&gt;;
+        friend range_map;
+
+      public:
+        const_iterator &amp;operator=(const const_iterator &amp;other) {
+            Base::operator=(other);
+            return *this;
+        }
+        const_iterator(const const_iterator &amp;other) : Base(other) {}
+        const_iterator(const iterator &amp;it) : Base(ImplConstIterator(it.get_pos())) {}
+        const_iterator() : Base() {}
+
+      private:
+        const_iterator(const ImplConstIterator &amp;pos) : Base(pos) {}
+    };
+
+  protected:
+    inline bool at_end(const iterator &amp;it) { return at_impl_end(it.pos_); }
+    inline bool at_end(const const_iterator &amp;it) const { return at_impl_end(it.pos_); }
+    inline bool at_begin(const iterator &amp;it) { return at_impl_begin(it.pos_); }
+
+    template &lt;typename That, typename Iterator&gt;
+    static bool is_contiguous_impl(That *const that, const key_type &amp;range, const Iterator &amp;lower) {
+        // Search range or intersection is empty
+        if (lower == that-&gt;impl_end() || lower-&gt;first.excludes(range)) return false;
+
+        if (lower-&gt;first.includes(range)) {
+            return true;  // there is one entry that contains the whole key range
+        }
+
+        bool contiguous = true;
+        for (auto pos = lower; contiguous &amp;&amp; pos != that-&gt;impl_end() &amp;&amp; range.includes(pos-&gt;first.begin); ++pos) {
+            // if current doesn&#39;t cover the rest of the key range, check to see that the next is extant and abuts
+            if (pos-&gt;first.end &lt; range.end) {
+                auto next = pos;
+                ++next;
+                contiguous = (next != that-&gt;impl_end()) &amp;&amp; pos-&gt;first.is_prior_to(next-&gt;first);
+            }
+        }
+        return contiguous;
+    }
+
+  public:
+    iterator end() { return iterator(impl_map_.end()); }                          //  policy and bounds don&#39;t matter for end
+    const_iterator end() const { return const_iterator(impl_map_.end()); }        //  policy and bounds don&#39;t matter for end
+    iterator begin() { return iterator(impl_map_.begin()); }                      // with default policy, and thus no bounds
+    const_iterator begin() const { return const_iterator(impl_map_.begin()); }    // with default policy, and thus no bounds
+    const_iterator cbegin() const { return const_iterator(impl_map_.cbegin()); }  // with default policy, and thus no bounds
+    const_iterator cend() const { return const_iterator(impl_map_.cend()); }      // with default policy, and thus no bounds
+
+    iterator erase(const iterator &amp;pos) {
+        assert(!at_end(pos));
+        return iterator(impl_erase(pos.pos_));
+    }
+
+    iterator erase(range&lt;iterator&gt; bounds) {
+        auto current = bounds.begin.pos_;
+        while (current != bounds.end.pos_) {
+            assert(!at_impl_end(current));
+            current = impl_map_.erase(current);
+        }
+        assert(current == bounds.end.pos_);
+        return current;
+    }
+
+    iterator erase(iterator first, iterator last) { return erase(range&lt;iterator&gt;(first, last)); }
+
+    // Before trying to erase a range, function touch_mapped_value is called on the mapped value.
+    // touch_mapped_value is allowed to have it&#39;s parameter type to be non const reference.
+    // If it returns true, regular erase will occur.
+    // Else, range is kept.
+    template &lt;typename TouchOp&gt;
+    iterator erase_range_or_touch(const key_type &amp;bounds, const TouchOp &amp;touch_mapped_value) {
+        auto lower = lower_bound_impl(bounds);
+
+        if (at_impl_end(lower) || !bounds.intersects(lower-&gt;first)) {
+            // There is nothing in this range lower bound is above bound
+            return iterator(lower);
+        }
+        auto next = impl_erase_range(bounds, lower, touch_mapped_value);
+        return iterator(next);
+    }
+
+    iterator erase_range(const key_type &amp;bounds) {
+        return erase_range_or_touch(bounds, [](const auto &amp;) { return true; });
+    }
+
+    void clear() { impl_map_.clear(); }
+
+    iterator find(const key_type &amp;key) { return iterator(impl_map_.find(key)); }
+
+    const_iterator find(const key_type &amp;key) const { return const_iterator(impl_map_.find(key)); }
+
+    iterator find(const index_type &amp;index) {
+        auto lower = lower_bound(range&lt;index_type&gt;(index, index + 1));
+        if (!at_end(lower) &amp;&amp; lower-&gt;first.includes(index)) {
+            return lower;
+        }
+        return end();
+    }
+
+    const_iterator find(const index_type &amp;index) const {
+        auto lower = lower_bound(key_type(index, index + 1));
+        if (!at_end(lower) &amp;&amp; lower-&gt;first.includes(index)) {
+            return lower;
+        }
+        return end();
+    }
+
+    iterator lower_bound(const key_type &amp;key) { return iterator(lower_bound_impl(key)); }
+
+    const_iterator lower_bound(const key_type &amp;key) const { return const_iterator(lower_bound_impl(key)); }
+
+    iterator upper_bound(const key_type &amp;key) { return iterator(upper_bound_impl(key)); }
+
+    const_iterator upper_bound(const key_type &amp;key) const { return const_iterator(upper_bound_impl(key)); }
+
+    range&lt;iterator&gt; bounds(const key_type &amp;key) { return {lower_bound(key), upper_bound(key)}; }
+    range&lt;const_iterator&gt; cbounds(const key_type &amp;key) const { return {lower_bound(key), upper_bound(key)}; }
+    range&lt;const_iterator&gt; bounds(const key_type &amp;key) const { return cbounds(key); }
+
+    using insert_pair = std::pair&lt;iterator, bool&gt;;
+
+    // This is traditional no replacement insert.
+    insert_pair insert(const value_type &amp;value) {
+        const auto &amp;key = value.first;
+        if (!key.non_empty()) {
+            // It&#39;s an invalid key, early bail pointing to end
+            return std::make_pair(end(), false);
+        }
+
+        // Look for range conflicts (and an insertion point, which makes the lower_bound *not* wasted work)
+        // we don&#39;t have to check upper if just check that lower doesn&#39;t intersect (which it would if lower != upper)
+        auto lower = lower_bound_impl(key);
+        if (at_impl_end(lower) || !lower-&gt;first.intersects(key)) {
+            // range is not even partially overlapped, and lower is strictly &gt; than key
+            auto impl_insert = impl_map_.emplace_hint(lower, value);
+            // auto impl_insert = impl_map_.emplace(value);
+            iterator wrap_it(impl_insert);
+            return std::make_pair(wrap_it, true);
+        }
+        // We don&#39;t replace
+        return std::make_pair(iterator(lower), false);
+    }
+
+    iterator insert(const_iterator hint, const value_type &amp;value) {
+        bool hint_open;
+        ImplConstIterator impl_next = hint.pos_;
+        if (impl_map_.empty()) {
+            hint_open = true;
+        } else if (impl_next == impl_map_.cbegin()) {
+            hint_open = value.first.strictly_less(impl_next-&gt;first);
+        } else if (impl_next == impl_map_.cend()) {
+            auto impl_prev = impl_next;
+            --impl_prev;
+            hint_open = value.first.strictly_greater(impl_prev-&gt;first);
+        } else {
+            auto impl_prev = impl_next;
+            --impl_prev;
+            hint_open = value.first.strictly_greater(impl_prev-&gt;first) &amp;&amp; value.first.strictly_less(impl_next-&gt;first);
+        }
+
+        if (!hint_open) {
+            // Hint was unhelpful, fall back to the non-hinted version
+            auto plain_insert = insert(value);
+            return plain_insert.first;
+        }
+
+        auto impl_insert = impl_map_.insert(impl_next, value);
+        return iterator(impl_insert);
+    }
+
+    // Try to insert value. If insertion failed, recursively split union of retrieved stored range with inserted range.
+    // Split at intersection of stored range and inserted range.
+    // Range intersection is merged using merge_op.
+    // Ranges before and after this intersection are recursively inserted.
+    // merge_pos should have this signature: (mapped_type&amp; current_value, const mapped_type&amp; new_value) -&gt; void
+    template &lt;typename MergeOp&gt;
+    iterator split_and_merge_insert(const value_type &amp;value, const MergeOp &amp;merge_op) {
+        if (!value.first.non_empty()) {
+            return end();
+        }
+
+        if (auto [it, was_inserted] = insert(value); !was_inserted) {
+            // insert failed, so at least one stored range intersects with new range
+            const RangeKey it_range = it-&gt;first;
+            const auto &amp;[inserted_range, insert_mapped_value] = value;
+            const RangeKey intersection = it_range &amp; inserted_range;
+            // if intersection is empty or invalid, insertion should have succeeded
+            assert(intersection.non_empty());
+
+            const iterator split_point_it = split(it, *this, intersection);
+            // given it-&gt;first and instersection do intersect, split should have succeeded
+            assert(split_point_it != end());
+            // merge values at inserted range and retrieved range intersection
+            merge_op(split_point_it-&gt;second, insert_mapped_value);
+
+            // Recursively insert ranges before and after intersection
+            const RangeKey range_after_intersection(intersection.end, std::max(it_range.end, inserted_range.end));
+            const RangeKey range_before_intersection(std::min(it_range.begin, inserted_range.begin), intersection.begin);
+            split_and_merge_insert({range_after_intersection, insert_mapped_value}, merge_op);
+            if (range_before_intersection.non_empty()) {
+                return split_and_merge_insert({range_before_intersection, insert_mapped_value}, merge_op);
+            } else {
+                return split_point_it;
+            }
+        } else {
+            return it;
+        }
+    }
+
+    template &lt;typename SplitOp&gt;
+    iterator split(const iterator whole_it, const index_type &amp;index, const SplitOp &amp;split_op) {
+        auto split_it = split_impl(whole_it.pos_, index, split_op);
+        return iterator(split_it);
+    }
+
+    // The overwrite hint here is lower.... and if it&#39;s not right... this fails
+    template &lt;typename Value&gt;
+    iterator overwrite_range(const iterator &amp;lower, Value &amp;&amp;value) {
+        // We&#39;re not robust to a bad hint, so detect it with extreme prejudice
+        // TODO: Add bad hint test to make this robust...
+        auto lower_impl = lower.pos_;
+        auto insert_hint = lower_impl;
+        if (!at_impl_end(lower_impl)) {
+            // If we&#39;re at end (and the hint is good, there&#39;s nothing to erase
+            assert(lower == lower_bound(value.first));
+            insert_hint = impl_erase_range(value.first, lower_impl, [](const auto &amp;) { return true; });
+        }
+        auto inserted = impl_insert(insert_hint, std::forward&lt;Value&gt;(value));
+        return iterator(inserted);
+    }
+
+    template &lt;typename Value&gt;
+    iterator overwrite_range(Value &amp;&amp;value) {
+        auto lower = lower_bound(value.first);
+        return overwrite_range(lower, value);
+    }
+
+    bool empty() const { return impl_map_.empty(); }
+    size_type size() const { return impl_map_.size(); }
+
+    // For configuration/debug use // Use with caution...
+    ImplMap &amp;get_implementation_map() { return impl_map_; }
+    const ImplMap &amp;get_implementation_map() const { return impl_map_; }
+};
+
+template &lt;typename Container&gt;
+using const_correct_iterator = decltype(std::declval&lt;Container&gt;().begin());
+
+// The an array based small ordered map for range keys for use as the range map &quot;ImplMap&quot; as an alternate to std::map
+//
+// Assumes RangeKey::index_type is unsigned (TBD is it useful to generalize to unsigned?)
+// Assumes RangeKey implements begin, end, &lt; and (TBD) from template range above
+template &lt;typename Key, typename T, typename RangeKey = range&lt;Key&gt;, size_t N = 64, typename SmallIndex = uint8_t&gt;
+class small_range_map {
+    using SmallRange = range&lt;SmallIndex&gt;;
+
+  public:
+    using mapped_type = T;
+    using key_type = RangeKey;
+    using value_type = std::pair&lt;const key_type, mapped_type&gt;;
+    using index_type = typename key_type::index_type;
+
+    using size_type = SmallIndex;
+    template &lt;typename Map_, typename Value_&gt;
+    struct IteratorImpl {
+      public:
+        using Map = Map_;
+        using Value = Value_;
+        friend Map;
+        Value *operator-&gt;() const { return map_-&gt;get_value(pos_); }
+        Value &amp;operator*() const { return *(map_-&gt;get_value(pos_)); }
+        IteratorImpl &amp;operator++() {
+            pos_ = map_-&gt;next_range(pos_);
+            return *this;
+        }
+        IteratorImpl &amp;operator--() {
+            pos_ = map_-&gt;prev_range(pos_);
+            return *this;
+        }
+        IteratorImpl &amp;operator=(const IteratorImpl &amp;other) {
+            map_ = other.map_;
+            pos_ = other.pos_;
+            return *this;
+        }
+        bool operator==(const IteratorImpl &amp;other) const {
+            if (at_end() &amp;&amp; other.at_end()) {
+                return true;  // all ends are equal
+            }
+            return (map_ == other.map_) &amp;&amp; (pos_ == other.pos_);
+        }
+        bool operator!=(const IteratorImpl &amp;other) const { return !(*this == other); }
+
+        // At end()
+        IteratorImpl() : map_(nullptr), pos_(N) {}
+        IteratorImpl(const IteratorImpl &amp;other) : map_(other.map_), pos_(other.pos_) {}
+
+        // Raw getters to allow for const_iterator conversion below
+        Map *get_map() const { return map_; }
+        SmallIndex get_pos() const { return pos_; }
+
+        bool at_end() const { return (map_ == nullptr) || (pos_ &gt;= map_-&gt;get_limit()); }
+
+      protected:
+        IteratorImpl(Map *map, SmallIndex pos) : map_(map), pos_(pos) {}
+
+      private:
+        Map *map_;
+        SmallIndex pos_;  // the begin of the current small_range
+    };
+    using iterator = IteratorImpl&lt;small_range_map, value_type&gt;;
+
+    // The const iterator must be derived to allow the conversion from iterator, which iterator doesn&#39;t support
+    class const_iterator : public IteratorImpl&lt;const small_range_map, const value_type&gt; {
+        using Base = IteratorImpl&lt;const small_range_map, const value_type&gt;;
+        friend small_range_map;
+
+      public:
+        const_iterator(const iterator &amp;it) : Base(it.get_map(), it.get_pos()) {}
+        const_iterator() : Base() {}
+
+      private:
+        const_iterator(const small_range_map *map, SmallIndex pos) : Base(map, pos) {}
+    };
+
+    iterator begin() {
+        // Either ranges of 0 is valid and begin is 0 and begin *or* it&#39;s invalid an points to the first valid range (or end)
+        return iterator(this, ranges_[0].begin);
+    }
+    const_iterator cbegin() const { return const_iterator(this, ranges_[0].begin); }
+    const_iterator begin() const { return cbegin(); }
+    iterator end() { return iterator(); }
+    const_iterator cend() const { return const_iterator(); }
+    const_iterator end() const { return cend(); }
+
+    void clear() {
+        const SmallRange clear_range(limit_, 0);
+        for (SmallIndex i = 0; i &lt; limit_; ++i) {
+            auto &amp;range = ranges_[i];
+            if (range.begin == i) {
+                // Clean up the backing store
+                destruct_value(i);
+            }
+            range = clear_range;
+        }
+        size_ = 0;
+    }
+
+    // Find entry with an exact key match (uncommon use case)
+    iterator find(const key_type &amp;key) {
+        assert(in_bounds(key));
+        if (key.begin &lt; limit_) {
+            const SmallIndex small_begin = static_cast&lt;SmallIndex&gt;(key.begin);
+            const auto &amp;range = ranges_[small_begin];
+            if (range.begin == small_begin) {
+                const auto small_end = static_cast&lt;SmallIndex&gt;(key.end);
+                if (range.end == small_end) return iterator(this, small_begin);
+            }
+        }
+        return end();
+    }
+    const_iterator find(const key_type &amp;key) const {
+        assert(in_bounds(key));
+        if (key.begin &lt; limit_) {
+            const SmallIndex small_begin = static_cast&lt;SmallIndex&gt;(key.begin);
+            const auto &amp;range = ranges_[small_begin];
+            if (range.begin == small_begin) {
+                const auto small_end = static_cast&lt;SmallIndex&gt;(key.end);
+                if (range.end == small_end) return const_iterator(this, small_begin);
+            }
+        }
+        return end();
+    }
+
+    iterator find(const index_type &amp;index) {
+        if (index &lt; get_limit()) {
+            const SmallIndex small_index = static_cast&lt;SmallIndex&gt;(index);
+            const auto &amp;range = ranges_[small_index];
+            if (range.valid()) {
+                return iterator(this, range.begin);
+            }
+        }
+        return end();
+    }
+
+    const_iterator find(const index_type &amp;index) const {
+        if (index &lt; get_limit()) {
+            const SmallIndex small_index = static_cast&lt;SmallIndex&gt;(index);
+            const auto &amp;range = ranges_[small_index];
+            if (range.valid()) {
+                return const_iterator(this, range.begin);
+            }
+        }
+        return end();
+    }
+
+    size_type size() const { return size_; }
+    bool empty() const { return 0 == size_; }
+
+    iterator erase(const_iterator pos) {
+        assert(pos.map_ == this);
+        return erase_impl(pos.get_pos());
+    }
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-1.html">القسم السابق</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-3.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

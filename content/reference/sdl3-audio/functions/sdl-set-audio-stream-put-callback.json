@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-audio",
+    "displayName": "SDL3Audio",
+    "displayNameArabic": "SDL3Audio",
+    "description": "مرجع عربي مستقل لفرع الصوت في SDL3: الأجهزة، SDL_AudioStream، تنسيقات العينات، وماكرو الصوت الرسمية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_SetAudioStreamPutCallback",
+    "slug": "sdl-set-audio-stream-put-callback",
+    "titleArabic": "ضبط callback that runs when data is added الصوت الدفق",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-audio/functions/sdl-set-audio-stream-put-callback",
+    "contentPath": "content/reference/sdl3-audio/functions/sdl-set-audio-stream-put-callback.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "ضبط callback that runs when data is added الصوت الدفق",
+    "actualMeaningArabic": "ضبط callback that runs when data is added الصوت الدفق.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى ضبط callback that runs when data is added الصوت الدفق داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success or false on failure; call SDL_GetError () for more information. This only fails if stream is NULL. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Set a callback that runs when data is added to an audio stream."
+  },
+  "signature": {
+    "raw": "bool SDL_SetAudioStreamPutCallback(SDL_AudioStream *stream, SDL_AudioStreamCallback callback, void *userdata);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AudioStream *stream",
+      "SDL_AudioStreamCallback callback",
+      "void *userdata"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_audio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "SDL_AudioStream *",
+        "descriptionArabic": "يمثل المعامل stream من النوع SDL_AudioStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the audio stream to set the new callback on."
+      },
+      {
+        "name": "callback",
+        "type": "SDL_AudioStreamCallback",
+        "descriptionArabic": "يمثل المعامل callback من النوع SDL_AudioStreamCallback القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new callback function to call when data is added to the stream."
+      },
+      {
+        "name": "userdata",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل userdata من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an opaque pointer provided to the callback for its own personal use."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This callback is called after the data is added to the stream, giving the callback the chance to obtain it immediately.",
+      "The callback can (optionally) call SDL_GetAudioStreamData () to obtain audio from the stream during this call.",
+      "The callback's additional_amount argument is how many bytes of converted data (in the stream's output format) was provided by the caller, although this may underestimate a little for safety. This value might be less than what is currently available in the stream, if data was already there, and might be less than the caller provided if the stream needs to keep a buffer to aid in resampling. Which means the callback may be provided with zero bytes, and a different amount on each call.",
+      "The callback may call SDL_GetAudioStreamAvailable to see the total amount currently available to read from the stream, instead of the total provided by the current call.",
+      "The callback is not required to obtain all data. It is allowed to read less or none at all. Anything not read now simply remains in the stream for later access.",
+      "Clearing or flushing an audio stream does not call this callback.",
+      "This function obtains the stream's lock, which means any existing callback (get or put) in progress will finish running before setting the new callback.",
+      "Setting a NULL function turns off the callback."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success or false on failure; call SDL_GetError () for more information. This only fails if stream is NULL.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_SetAudioStreamPutCallback",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_SetAudioStreamGetCallback",
+        "route": "#ref/sdl3-audio/functions/sdl-set-audio-stream-get-callback",
+        "libraryId": "sdl3-audio",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3 Audio API",
+    "packageKey": "audio",
+    "packageName": "SDL3Audio"
+  }
+}

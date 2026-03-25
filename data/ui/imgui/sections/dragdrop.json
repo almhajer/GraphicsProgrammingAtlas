@@ -1,0 +1,214 @@
+{
+  "key": "dragdrop",
+  "title": "السحب والإفلات",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "dragdrop",
+      "sectionTitle": "السحب والإفلات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Selectable",
+        "ImGui::BeginDragDropSource",
+        "ImGui::SetDragDropPayload",
+        "ImGui::BeginDragDropTarget",
+        "ImGui::AcceptDragDropPayload",
+        "ImGui::SetTooltip"
+      ],
+      "instructions": [],
+      "notes": [
+        "مصدر السحب هنا هو صف الأصل نفسه داخل القائمة.",
+        "هدف الإفلات هو مساحة Viewport مستقلة لا عنصر فيزيائي داخل عالم اللعبة.",
+        "نوع البيانات المنقولة هو فهرس عدد صحيح، لكن يمكن استبداله بمعرف UUID أو مؤشر أو اسم ملف حسب بنية المشروع."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مصدر السحب: قائمة أصول. هدف الإفلات: Viewport target. نوع البيانات المنقولة: فهرس int يشير إلى الأصل. بعد الإفلات: يتغير الأصل المعروض في نافذة العرض.",
+        "code": "for (int i = 0; i < IM_ARRAYSIZE(assets); ++i) {\n    ImGui::Selectable(assets[i], active_asset == i);\n    if (ImGui::BeginDragDropSource()) {\n        ImGui::SetDragDropPayload(\"ASSET_INDEX\", &i, sizeof(int));\n        ImGui::Text(\"اسحب: %s\", assets[i]);\n        ImGui::EndDragDropSource();\n    }\n}\n\nImGui::InvisibleButton(\"viewport_target\", ImVec2(340.0f, 200.0f));\nif (ImGui::BeginDragDropTarget()) {\n    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"ASSET_INDEX\")) {\n        active_asset = *(const int*)payload->Data;\n    }\n    ImGui::EndDragDropTarget();\n}",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawAssetDropExample() {\n    static const char* assets[] = {\n        \"Ship.mesh\",\n        \"Crate.mesh\",\n        \"SunLight.entity\",\n        \"SmokeTrail.vfx\"\n    };\n    static int active_asset = 0;\n\n    ImGui::Begin(\"Asset Browser\");\n    ImGui::Text(\"اسحب أصلاً من القائمة إلى منطقة العرض.\");\n    ImGui::Separator();\n\n    for (int i = 0; i < IM_ARRAYSIZE(assets); ++i) {\n        ImGui::Selectable(assets[i], active_asset == i);\n        if (ImGui::BeginDragDropSource()) {\n            ImGui::SetDragDropPayload(\"ASSET_INDEX\", &i, sizeof(int));\n            ImGui::Text(\"المصدر: %s\", assets[i]);\n            ImGui::Text(\"نوع البيانات: ASSET_INDEX\");\n            ImGui::EndDragDropSource();\n        }\n    }\n    ImGui::End();\n\n    ImGui::Begin(\"Viewport Target\");\n    ImGui::Text(\"الهدف: إسقاط أصل فوق هذه المنطقة.\");\n    ImGui::Text(\"الأصل النشط حالياً: %s\", assets[active_asset]);\n    ImGui::Spacing();\n\n    ImGui::InvisibleButton(\"viewport_target\", ImVec2(340.0f, 200.0f));\n    if (ImGui::IsItemHovered()) {\n        ImGui::SetTooltip(\"حرر المؤشر هنا لتغيير الأصل المعروض.\");\n    }\n\n    if (ImGui::BeginDragDropTarget()) {\n        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"ASSET_INDEX\")) {\n            active_asset = *(const int*)payload->Data;\n        }\n        ImGui::EndDragDropTarget();\n    }\n\n    ImGui::Text(\"بعد الإفلات: يعرض Viewport الأصل المسقط.\");\n    ImGui::End();\n}",
+        "explanation": "المثال يفصل بين المصدر والهدف بوضوح. المصدر يكتب payload من نوع ASSET_INDEX، والهدف يقرأها فقط عندما يحدث الإفلات داخل المنطقة المحددة.",
+        "expectedResult": "عند سحب أصل من القائمة وإفلاته على Viewport target يتغير اسم الأصل النشط مباشرة، ويصبح واضحاً للمستخدم أي أصل أصبح معروضاً.",
+        "importantNote": "Dear ImGui لا تنقل الملف الحقيقي أو الكائن الرسومي تلقائياً؛ التطبيق هو من يحدد نوع البيانات المنقولة ويقرر معنى التغيير بعد الإفلات."
+      },
+      "guiRepresentation": {
+        "title": "Asset Browser",
+        "mockup": "Asset Browser -> Ship.mesh\nViewport Target -> SunLight.entity\nPayload Type -> ASSET_INDEX\nبعد الإفلات -> يتغير الأصل النشط",
+        "explanation": "الصورة توضح بوضوح المصدر على اليسار والهدف على اليمين، مع ذكر نوع البيانات المنقولة والنتيجة النهائية بعد الإفلات."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "سحب أصل من القائمة إلى منطقة العرض",
+      "shortTooltip": "مثال مستقل يوضح Drag & Drop بين قائمة أصول على اليسار ومنطقة عرض على اليمين داخل Dear ImGui.",
+      "description": "يبين هذا المثال دورة السحب والإفلات الكاملة داخل واجهة Dear ImGui: مصدر السحب هو قائمة الأصول، وهدف الإفلات هو نافذة العرض، والبيانات المنقولة هي معرف الأصل نفسه.",
+      "officialArabicDescription": "هذا المثال لا يشرح دالة واحدة فقط، بل يشرح سيناريو متكامل يمر عبر BeginDragDropSource و SetDragDropPayload و BeginDragDropTarget و AcceptDragDropPayload داخل نافذتين واضحتين.",
+      "realMeaning": "المعنى الحقيقي هنا أن Dear ImGui لا ينقل العنصر الرسومي نفسه، بل ينقل payload منطقية يكتبها التطبيق ثم يقرر الهدف كيف يستهلكها بعد الإفلات.",
+      "whenToUse": "استخدم هذا النمط عندما تملك Asset Browser أو قائمة ملفات أو كائنات، وتريد إسقاط الأصل المختار على Viewport أو Scene panel أو Property slot.",
+      "practicalBenefit": "يعطيك هذا النمط واجهة أدوات عملية تشبه المحررات الفعلية: أصل واضح يسحب، هدف واضح يستقبل، وحالة نهائية واضحة بعد الإفلات.",
+      "misuseImpact": "إذا اختلف نوع payload بين المصدر والهدف أو لم تحفظ المعرف بطريقة مستقرة، فقد يرى المستخدم عملية سحب صحيحة بصرياً لكن بلا نتيجة منطقية بعد الإفلات."
+    },
+    {
+      "sectionKey": "dragdrop",
+      "sectionTitle": "السحب والإفلات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Button",
+        "ImGui::SameLine",
+        "ImGui::BeginDragDropSource",
+        "ImGui::BeginDragDropTarget",
+        "ImGui::AcceptDragDropPayload"
+      ],
+      "instructions": [],
+      "notes": [
+        "نوع البيانات المنقولة هنا هو slot index وليس النص المعروض نفسه.",
+        "هدف الإفلات قد يكون خانة ممتلئة أو فارغة؛ كلا الحالتين واضحتان في منطق التطبيق.",
+        "هذه العملية ليست تصادماً فيزيائياً بين عناصر، بل استهداف واجهة يقرأه التطبيق ثم يبدل البيانات."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مصدر السحب: Slot ممتلئ. هدف الإفلات: Slot آخر. نوع البيانات المنقولة: slot index. بعد الإفلات: يتبدل العنصران أو ينتقل العنصر إلى الخانة الفارغة.",
+        "code": "if (ImGui::Button(slots[slot], ImVec2(84.0f, 84.0f))) {}\nif (ImGui::BeginDragDropSource()) {\n    ImGui::SetDragDropPayload(\"INVENTORY_SLOT\", &slot, sizeof(int));\n    ImGui::Text(\"المصدر: slot %d\", slot);\n    ImGui::EndDragDropSource();\n}\nif (ImGui::BeginDragDropTarget()) {\n    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"INVENTORY_SLOT\")) {\n        const int source_slot = *(const int*)payload->Data;\n        SwapSlots(source_slot, slot);\n    }\n    ImGui::EndDragDropTarget();\n}",
+        "fullCode": "#include <imgui.h>\n#include <utility>\n\nvoid DrawInventoryDropExample() {\n    static const char* slots[8] = {\n        \"Sword\", \"Potion\", \"Shield\", \"\",\n        \"Bow\", \"\", \"Torch\", \"Key\"\n    };\n\n    auto swap_slots = [&](int source_slot, int target_slot) {\n        std::swap(slots[source_slot], slots[target_slot]);\n    };\n\n    ImGui::Begin(\"Inventory\");\n    ImGui::Text(\"اسحب عنصراً من Slot إلى Slot آخر.\");\n    ImGui::Separator();\n\n    for (int slot = 0; slot < 8; ++slot) {\n        if (slot > 0 && slot % 4 != 0) {\n            ImGui::SameLine();\n        }\n\n        const char* label = slots[slot][0] ? slots[slot] : \"[Empty]\";\n        ImGui::Button(label, ImVec2(84.0f, 84.0f));\n\n        if (slots[slot][0] && ImGui::BeginDragDropSource()) {\n            ImGui::SetDragDropPayload(\"INVENTORY_SLOT\", &slot, sizeof(int));\n            ImGui::Text(\"المصدر: slot %d\", slot);\n            ImGui::Text(\"العنصر: %s\", slots[slot]);\n            ImGui::EndDragDropSource();\n        }\n\n        if (ImGui::BeginDragDropTarget()) {\n            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"INVENTORY_SLOT\")) {\n                const int source_slot = *(const int*)payload->Data;\n                swap_slots(source_slot, slot);\n            }\n            ImGui::EndDragDropTarget();\n        }\n    }\n\n    ImGui::Separator();\n    ImGui::Text(\"بعد الإفلات: تتبدل محتويات الخانات أو ينتقل العنصر إلى الخانة الفارغة.\");\n    ImGui::End();\n}",
+        "explanation": "المثال يوضح أن مصدر السحب هو الخانة نفسها، وأن الهدف هو الخانة التي تستقبل payload. بعد الإفلات يغير التطبيق مصفوفة slots ثم يعاد الرسم في الإطار التالي.",
+        "expectedResult": "يمكن للمستخدم إعادة ترتيب العناصر داخل Inventory بالماوس، وتنعكس النتيجة فوراً على شبكة الخانات من دون أي نافذة وسيطة.",
+        "importantNote": "يجب أن تبقى حالة الخانات محفوظة في مصفوفة أو بنية دائمة؛ لأن Dear ImGui يعيد بناء الواجهة كل Frame ولا يحتفظ بمحتوى Inventory بدلاً عنك."
+      },
+      "guiRepresentation": {
+        "title": "Inventory",
+        "mockup": "Slot 0 -> Sword\nSlot 3 -> [Empty]\nPayload Type -> INVENTORY_SLOT\nبعد الإفلات -> تبديل أو نقل",
+        "explanation": "الواجهة هنا تشبه شبكات الجرد المعروفة: خانات واضحة، وسحب مباشر، ونتيجة منطقية بعد الإفلات داخل Slot آخر."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "نقل عنصر بين خانات Inventory",
+      "shortTooltip": "مثال مستقل يوضح سحب عنصر من Slot وإفلاته في Slot آخر مع تبديل المحتوى.",
+      "description": "يعرض هذا المثال سيناريو Inventory واضحاً: مصدر السحب هو خانة ممتلئة، وهدف الإفلات هو خانة أخرى، والبيانات المنقولة هي رقم الخانة أو معرف العنصر، وبعد الإفلات يتبدل المحتوى بين الخانتين.",
+      "officialArabicDescription": "يبين المثال كيف يستخدم التطبيق payload منطقية صغيرة لإعادة ترتيب العناصر داخل الواجهة نفسها بدلاً من نقل كائنات ضخمة أو نسخ بيانات كثيرة أثناء السحب.",
+      "realMeaning": "السحب والإفلات هنا ليس رسماً متحركاً فقط؛ هو بروتوكول مصغر لإرسال هوية العنصر من خانة إلى أخرى ثم تحديث مصفوفة inventory بعد الإفلات.",
+      "whenToUse": "استخدمه في Inventories أو Skill bars أو Hotbars أو أي واجهة تعتمد خانات قابلة لإعادة الترتيب من قبل المستخدم.",
+      "practicalBenefit": "يجعل إعادة ترتيب الخانات فورية وواضحة، ويحول السحب والإفلات إلى جزء طبيعي من إدارة العناصر بدلاً من أزرار نقل منفصلة.",
+      "misuseImpact": "إذا لم تميز بين source_slot وtarget_slot بوضوح فقد يستبدل العنصر بنفسه أو يضيع ترتيب الخانات بعد الإفلات."
+    },
+    {
+      "sectionKey": "dragdrop",
+      "sectionTitle": "السحب والإفلات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::ColorButton",
+        "ImGui::Selectable",
+        "ImGui::BeginDragDropSource",
+        "ImGui::SetDragDropPayload",
+        "ImGui::BeginDragDropTarget",
+        "ImGui::AcceptDragDropPayload",
+        "ImVec4"
+      ],
+      "instructions": [],
+      "notes": [
+        "مصدر السحب قد يكون زر لون أو سطر نص أو بطاقة اسم، وليس من الضروري أن يكون ملفاً أو عنصر شجرة.",
+        "الهدف يجب أن يتحقق من نوع payload قبل استخدامها.",
+        "بعد الإفلات يحدث التطبيق حالة المادة، ثم تنعكس النتيجة في المعاينة في الإطار التالي."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مصدر السحب: ColorButton أو وسم نصي. هدف الإفلات: حقل مادة. نوع البيانات المنقولة: RGBA أو MaterialTag. بعد الإفلات: تتغير المعاينة اللونية أو اسم الوسم.",
+        "code": "if (ImGui::ColorButton(\"Accent\", accent_color)) {}\nif (ImGui::BeginDragDropSource()) {\n    ImGui::SetDragDropPayload(\"COLOR4\", accent_rgba, sizeof(float) * 4);\n    ImGui::Text(\"المصدر: لون RGBA\");\n    ImGui::EndDragDropSource();\n}\nif (ImGui::BeginDragDropTarget()) {\n    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"COLOR4\")) {\n        memcpy(material_rgba, payload->Data, sizeof(float) * 4);\n    }\n    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"MATERIAL_TAG\")) {\n        material_tag = (const char*)payload->Data;\n    }\n    ImGui::EndDragDropTarget();\n}",
+        "fullCode": "#include <imgui.h>\n#include <cstring>\n\nvoid DrawColorPayloadExample() {\n    static float accent_rgba[4] = {0.19f, 0.55f, 0.92f, 1.0f};\n    static float material_rgba[4] = {0.36f, 0.39f, 0.44f, 1.0f};\n    static const char* material_tag = \"Default\";\n    static const char* tags[] = {\"Metal\", \"Glass\", \"UI Accent\"};\n\n    ImGui::Begin(\"Color Sources\");\n    ImGui::ColorButton(\"Accent\", ImVec4(accent_rgba[0], accent_rgba[1], accent_rgba[2], accent_rgba[3]));\n    if (ImGui::BeginDragDropSource()) {\n        ImGui::SetDragDropPayload(\"COLOR4\", accent_rgba, sizeof(float) * 4);\n        ImGui::Text(\"المصدر: لون RGBA\");\n        ImGui::EndDragDropSource();\n    }\n\n    for (int i = 0; i < IM_ARRAYSIZE(tags); ++i) {\n        ImGui::Selectable(tags[i]);\n        if (ImGui::BeginDragDropSource()) {\n            ImGui::SetDragDropPayload(\"MATERIAL_TAG\", tags[i], (int)strlen(tags[i]) + 1);\n            ImGui::Text(\"المصدر: %s\", tags[i]);\n            ImGui::EndDragDropSource();\n        }\n    }\n    ImGui::End();\n\n    ImGui::Begin(\"Material Field\");\n    ImGui::Text(\"الهدف: حقل مادة يستقبل لوناً أو وسماً.\");\n    ImGui::ColorButton(\"Preview\", ImVec4(material_rgba[0], material_rgba[1], material_rgba[2], material_rgba[3]));\n    ImGui::Text(\"Current Tag: %s\", material_tag);\n    ImGui::InvisibleButton(\"material_target\", ImVec2(260.0f, 90.0f));\n\n    if (ImGui::BeginDragDropTarget()) {\n        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"COLOR4\")) {\n            std::memcpy(material_rgba, payload->Data, sizeof(float) * 4);\n        }\n        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"MATERIAL_TAG\")) {\n            material_tag = (const char*)payload->Data;\n        }\n        ImGui::EndDragDropTarget();\n    }\n    ImGui::Text(\"بعد الإفلات: تتغير المعاينة أو الوسم بحسب نوع البيانات.\");\n    ImGui::End();\n}",
+        "explanation": "المثال يوضح نوعين مختلفين من payload: COLOR4 و MATERIAL_TAG. الهدف نفسه يستطيع استقبال النوعين لكن يعالج كل نوع بطريقة مختلفة بعد الإفلات.",
+        "expectedResult": "يمكن للمستخدم سحب لون أو وسم نصي من نافذة المصادر وإفلاته على حقل المادة، فتتغير المعاينة أو اسم الوسم فوراً.",
+        "importantNote": "هذا المثال مهم لأنه يوضح أن السحب والإفلات في Dear ImGui ليس محصوراً بالعناصر المرئية فقط، بل يصلح لنقل القيم والوسوم وأنواع البيانات الصغيرة بين أجزاء الواجهة."
+      },
+      "guiRepresentation": {
+        "title": "Material Field",
+        "mockup": "Color Source -> RGBA\nText Source -> UI Accent\nTarget -> Material Field\nبعد الإفلات -> تحديث اللون أو الوسم",
+        "explanation": "الصورة تبين انتقال اللون أو النص من لوحة مصادر صغيرة إلى حقل مادة داخل نافذة الخصائص."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "سحب لون أو نص وإفلاته في حقل مادة",
+      "shortTooltip": "مثال مستقل يوضح سحب Payload لونية أو نصية وإفلاتها على حقل مادة داخل نافذة الخصائص.",
+      "description": "يجمع هذا المثال بين سحب اللون كسلسلة قيم RGBA أو كسجل Material Tag، ثم إفلاته على حقل داخل نافذة الخصائص لتحديث المادة الحالية.",
+      "officialArabicDescription": "الفكرة هنا أن المصدر قد يكون ColorButton أو سطر نص أو بطاقة مادة، لكن الهدف يستقبل payload موحدة ويفسرها حسب النوع الذي يعلنه التطبيق.",
+      "realMeaning": "السحب والإفلات هنا يثبت أن Dear ImGui تتعامل مع payload منطقية عامة، لا مع ملفات أو أيقونات فقط؛ فيمكن نقل لون أو نص أو معرف مادة بالآلية نفسها.",
+      "whenToUse": "استخدمه في Material editors وTheme tools وواجهات الربط بين أسماء العناصر والقيم اللونية أو النصية.",
+      "practicalBenefit": "يجعل ربط اللون أو الوسم بالمادة الحالية عملية بصرية مباشرة بدل إدخال القيم يدوياً أو نسخ النص بين الحقول.",
+      "misuseImpact": "إذا لم تفصل بين نوع payload اللونية والنصية فقد يسقط المستخدم قيمة بلون صحيح لكن يقرأها الهدف على أنها Tag أو العكس."
+    },
+    {
+      "sectionKey": "dragdrop",
+      "sectionTitle": "السحب والإفلات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::TreeNode",
+        "ImGui::BeginDragDropSource",
+        "ImGui::BeginDragDropTarget",
+        "ImGui::AcceptDragDropPayload"
+      ],
+      "instructions": [],
+      "notes": [
+        "مصدر السحب هو TreeNode نفسها.",
+        "هدف الإفلات يجب أن يرفض إسقاط العقدة على نفسها أو على عقدة غير صالحة.",
+        "البيانات المنقولة هنا هي node id فقط، لا بنية العقدة كاملة."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مصدر السحب: عقدة شجرية. هدف الإفلات: عقدة أخرى أو منطقة إدراج. نوع البيانات المنقولة: node id. بعد الإفلات: يتغير ترتيب العقد أو الأب الحالي.",
+        "code": "ImGui::TreeNodeEx(node.label, flags);\nif (ImGui::BeginDragDropSource()) {\n    ImGui::SetDragDropPayload(\"SCENE_NODE\", &node.id, sizeof(int));\n    ImGui::Text(\"اسحب العقدة: %s\", node.label);\n    ImGui::EndDragDropSource();\n}\nif (ImGui::BeginDragDropTarget()) {\n    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"SCENE_NODE\")) {\n        const int source_id = *(const int*)payload->Data;\n        ReparentNode(source_id, node.id);\n    }\n    ImGui::EndDragDropTarget();\n}",
+        "fullCode": "#include <imgui.h>\n\nstruct SceneNode {\n    int id;\n    const char* label;\n    int parent;\n};\n\nvoid DrawHierarchyReorderExample() {\n    static SceneNode nodes[] = {\n        {1, \"Scene\", 0},\n        {2, \"Camera\", 1},\n        {3, \"Lights\", 1},\n        {4, \"Meshes\", 1},\n        {5, \"Player\", 4}\n    };\n\n    auto reparent_node = [&](int source_id, int target_id) {\n        for (SceneNode& node : nodes) {\n            if (node.id == source_id && source_id != target_id) {\n                node.parent = target_id;\n            }\n        }\n    };\n\n    ImGui::Begin(\"Scene Tree\");\n    ImGui::Text(\"اسحب عقدة وأفلِتها فوق عقدة أخرى لتغيير الأب الحالي.\");\n    ImGui::Separator();\n\n    for (SceneNode& node : nodes) {\n        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;\n        const bool opened = ImGui::TreeNodeEx(node.label, flags);\n\n        if (ImGui::BeginDragDropSource()) {\n            ImGui::SetDragDropPayload(\"SCENE_NODE\", &node.id, sizeof(int));\n            ImGui::Text(\"المصدر: %s\", node.label);\n            ImGui::Text(\"نوع البيانات: SCENE_NODE\");\n            ImGui::EndDragDropSource();\n        }\n\n        if (ImGui::BeginDragDropTarget()) {\n            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"SCENE_NODE\")) {\n                const int source_id = *(const int*)payload->Data;\n                reparent_node(source_id, node.id);\n            }\n            ImGui::EndDragDropTarget();\n        }\n\n        if (opened) {\n            ImGui::Text(\"Node ID: %d\", node.id);\n            ImGui::Text(\"Parent ID: %d\", node.parent);\n            ImGui::TreePop();\n        }\n    }\n\n    ImGui::End();\n}",
+        "explanation": "كل عقدة في الشجرة تصبح مصدراً محتملاً وهدفاً محتملاً. بعد قبول payload يغير التطبيق parent أو الترتيب داخل بنية العقد التي يملكها.",
+        "expectedResult": "يمكن للمستخدم سحب عقدة من الشجرة وإفلاتها على عقدة أخرى، فتتغير العلاقة التنظيمية أو الترتيب الذي يعرضه المحرر.",
+        "importantNote": "هذا المثال يخص شجرة واجهة داخل Dear ImGui، وليس تصادماً أو انتقالاً فيزيائياً بين كائنات داخل محرك اللعبة."
+      },
+      "guiRepresentation": {
+        "title": "Scene Tree",
+        "mockup": "Scene Tree -> Camera / Lights / Meshes\nSource -> Player\nTarget -> Meshes\nبعد الإفلات -> Parent جديد",
+        "explanation": "الصورة تبين أن السحب هنا يغير ترتيب الشجرة أو الأب الحالي، لا موضعاً فيزيائياً داخل العالم."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "إعادة ترتيب عقدة داخل شجرة المشهد",
+      "shortTooltip": "مثال مستقل يوضح سحب عقدة من Scene Tree وإفلاتها داخل موضع أو أب جديد.",
+      "description": "يبين هذا المثال كيف يتحول سحب عقدة شجرية من Hierarchy إلى عملية إعادة ترتيب أو إعادة parent داخل شجرة المشهد.",
+      "officialArabicDescription": "المصدر هنا هو عقدة Tree نفسها، والهدف هو عقدة أخرى أو منطقة إدراج، والبيانات المنقولة هي node id أو index يملكه التطبيق.",
+      "realMeaning": "Dear ImGui لا تعيد بناء Hierarchy عنك؛ هي تعطيك واجهة سحب وإفلات، أما إعادة الترتيب الفعلية فتحدث داخل مصفوفة العقد أو بنية الشجرة التي يملكها التطبيق.",
+      "whenToUse": "استخدمه في Scene Hierarchy وOutliner وFolders وTree Views التي تسمح بإعادة parent أو reorder للعناصر.",
+      "practicalBenefit": "يجعل إعادة تنظيم الشجرة عملية مباشرة داخل الواجهة نفسها، وهو سلوك متوقع في أي محرر مشاهد أو ملفات حديث.",
+      "misuseImpact": "إذا قبل الهدف إسقاط العقدة على نفسها أو على فرع تابع لها فقد تنتج شجرة غير صالحة أو حلقة parent غير مقبولة منطقياً."
+    }
+  ]
+}

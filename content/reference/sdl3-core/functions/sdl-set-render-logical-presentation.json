@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_SetRenderLogicalPresentation",
+    "slug": "sdl-set-render-logical-presentation",
+    "titleArabic": "Set a device-independent resolution and presentation mode for\nrendering",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-set-render-logical-presentation",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-set-render-logical-presentation.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Set a device-independent resolution and presentation mode for\nrendering",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Set الرسم Logical Presentation داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Set الرسم Logical Presentation داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Set a device-independent resolution and presentation mode for\nrendering."
+  },
+  "signature": {
+    "raw": "bool SDL_SetRenderLogicalPresentation(SDL_Renderer *renderer, int w, int h, SDL_RendererLogicalPresentation mode);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_Renderer *renderer",
+      "int w",
+      "int h",
+      "SDL_RendererLogicalPresentation mode"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_render.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "renderer",
+        "type": "SDL_Renderer *",
+        "descriptionArabic": "يمثل المعامل renderer من النوع SDL_Renderer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the rendering context."
+      },
+      {
+        "name": "w",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل w من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the width of the logical resolution."
+      },
+      {
+        "name": "h",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل h من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the height of the logical resolution."
+      },
+      {
+        "name": "mode",
+        "type": "SDL_RendererLogicalPresentation",
+        "descriptionArabic": "يمثل المعامل mode من النوع SDL_RendererLogicalPresentation القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the presentation mode used."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This function sets the width and height of the logical rendering\noutput. The renderer will act as if the current render target is always\nthe requested dimensions, scaling to the actual resolution as\nnecessary.",
+      "This can be useful for games that expect a fixed size, but would like\nto scale the output to whatever is available, regardless of how a user\nresizes a window, or if the display is high DPI.",
+      "Logical presentation can be used with both render target textures and\nthe renderer's window; the state is unique to each render target, and\nthis function sets the state for the current render target. It might be\nuseful to draw to a texture that matches the window dimensions with\nlogical presentation enabled, and then draw that texture across the\nentire window with logical presentation disabled. Be careful not to\nrender both with logical presentation enabled, however, as this could\nproduce double-letterboxing, etc.",
+      "You can disable logical coordinates by setting the mode to SDL_LOGICAL_PRESENTATION_DISABLED ,\nand in that case you get the full pixel resolution of the render target;\nit is safe to toggle logical presentation during the rendering of a\nframe: perhaps most of the rendering is done to specific dimensions but\nto make fonts look sharp, the app turns off logical presentation while\ndrawing text, for example.",
+      "You can convert coordinates in an event into rendering coordinates\nusing SDL_ConvertEventToRenderCoordinates ()."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_SetRenderLogicalPresentation",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_ConvertEventToRenderCoordinates",
+        "route": "#ref/sdl3-core/functions/sdl-convert-event-to-render-coordinates",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetRenderLogicalPresentation",
+        "route": "#ref/sdl3-core/functions/sdl-get-render-logical-presentation",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GetRenderLogicalPresentationRect",
+        "route": "#ref/sdl3-core/functions/sdl-get-render-logical-presentation-rect",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "2D Accelerated Rendering",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

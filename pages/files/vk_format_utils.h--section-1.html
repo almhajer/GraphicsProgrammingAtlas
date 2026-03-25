@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_format_utils.h • القسم 1 من 5 • الأسطر 1-450 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vk_format_utils.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_format_utils.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vk_format_utils.h.html">vk_format_utils.h</a> /
+        <span>القسم 1 من 5 • الأسطر 1-450</span>
+      </nav>
+      <h1 class="page-title">📄 vk_format_utils.h</h1>
+      <p class="page-description">القسم 1 من 5 • الأسطر 1-450</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_format_utils.h.html">ملخص الملف</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم سابق</span>
+      <a class="standalone-link" href="./vk_format_utils.h--section-2.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vk_format_utils.h</span>
+        <span class="source-stat">القسم: 1/5</span>
+        <span class="source-stat">الأسطر: 1-450</span>
+        <span class="source-stat">حجم الملف: 135.7 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>// *** THIS FILE IS GENERATED - DO NOT EDIT ***
+// See format_utils_generator.py for modifications
+// Copyright 2023-2025 The Khronos Group Inc.
+// Copyright 2023-2025 Valve Corporation
+// Copyright 2023-2025 LunarG, Inc.
+//
+// SPDX-License-Identifier: Apache-2.0
+
+#pragma once
+
+// clang-format off
+
+#ifdef __cplusplus
+extern &quot;C&quot; {
+#endif
+
+#include &lt;vulkan/vulkan.h&gt;
+
+#include &lt;stdbool.h&gt;
+
+#define VKU_FORMAT_INVALID_INDEX 0xFFFFFFFF
+#define VKU_FORMAT_MAX_PLANES 3
+#define VKU_FORMAT_MAX_COMPONENTS 4
+
+enum VKU_FORMAT_NUMERICAL_TYPE {
+    VKU_FORMAT_NUMERICAL_TYPE_NONE = 0,
+    VKU_FORMAT_NUMERICAL_TYPE_BOOL,
+    VKU_FORMAT_NUMERICAL_TYPE_SFIXED5,
+    VKU_FORMAT_NUMERICAL_TYPE_SFLOAT,
+    VKU_FORMAT_NUMERICAL_TYPE_SINT,
+    VKU_FORMAT_NUMERICAL_TYPE_SNORM,
+    VKU_FORMAT_NUMERICAL_TYPE_SRGB,
+    VKU_FORMAT_NUMERICAL_TYPE_SSCALED,
+    VKU_FORMAT_NUMERICAL_TYPE_UFLOAT,
+    VKU_FORMAT_NUMERICAL_TYPE_UINT,
+    VKU_FORMAT_NUMERICAL_TYPE_UNORM,
+    VKU_FORMAT_NUMERICAL_TYPE_USCALED,
+};
+
+enum VKU_FORMAT_COMPATIBILITY_CLASS {
+    VKU_FORMAT_COMPATIBILITY_CLASS_NONE = 0,
+    VKU_FORMAT_COMPATIBILITY_CLASS_10BIT_2PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_10BIT_2PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_10BIT_2PLANE_444,
+    VKU_FORMAT_COMPATIBILITY_CLASS_10BIT_3PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_10BIT_3PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_10BIT_3PLANE_444,
+    VKU_FORMAT_COMPATIBILITY_CLASS_128BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_12BIT_2PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_12BIT_2PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_12BIT_2PLANE_444,
+    VKU_FORMAT_COMPATIBILITY_CLASS_12BIT_3PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_12BIT_3PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_12BIT_3PLANE_444,
+    VKU_FORMAT_COMPATIBILITY_CLASS_14BIT_2PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_14BIT_2PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_16BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_16BIT_2PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_16BIT_2PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_16BIT_2PLANE_444,
+    VKU_FORMAT_COMPATIBILITY_CLASS_16BIT_3PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_16BIT_3PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_16BIT_3PLANE_444,
+    VKU_FORMAT_COMPATIBILITY_CLASS_192BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_24BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_256BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_32BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_32BIT_B8G8R8G8,
+    VKU_FORMAT_COMPATIBILITY_CLASS_32BIT_G8B8G8R8,
+    VKU_FORMAT_COMPATIBILITY_CLASS_48BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_B10G10R10G10,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_B12G12R12G12,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_B16G16R16G16,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_G10B10G10R10,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_G12B12G12R12,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_G16B16G16R16,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_R10G10B10A10,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_R12G12B12A12,
+    VKU_FORMAT_COMPATIBILITY_CLASS_64BIT_R14G14B14A14,
+    VKU_FORMAT_COMPATIBILITY_CLASS_8BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_8BIT_2PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_8BIT_2PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_8BIT_2PLANE_444,
+    VKU_FORMAT_COMPATIBILITY_CLASS_8BIT_3PLANE_420,
+    VKU_FORMAT_COMPATIBILITY_CLASS_8BIT_3PLANE_422,
+    VKU_FORMAT_COMPATIBILITY_CLASS_8BIT_3PLANE_444,
+    VKU_FORMAT_COMPATIBILITY_CLASS_8BIT_ALPHA,
+    VKU_FORMAT_COMPATIBILITY_CLASS_96BIT,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_10X10,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_10X5,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_10X6,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_10X8,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_12X10,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_12X12,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_3X3X3,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_4X3X3,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_4X4,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_4X4X3,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_4X4X4,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_5X4,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_5X4X4,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_5X5,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_5X5X4,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_5X5X5,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_6X5,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_6X5X5,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_6X6,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_6X6X5,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_6X6X6,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_8X5,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_8X6,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ASTC_8X8,
+    VKU_FORMAT_COMPATIBILITY_CLASS_BC1_RGB,
+    VKU_FORMAT_COMPATIBILITY_CLASS_BC1_RGBA,
+    VKU_FORMAT_COMPATIBILITY_CLASS_BC2,
+    VKU_FORMAT_COMPATIBILITY_CLASS_BC3,
+    VKU_FORMAT_COMPATIBILITY_CLASS_BC4,
+    VKU_FORMAT_COMPATIBILITY_CLASS_BC5,
+    VKU_FORMAT_COMPATIBILITY_CLASS_BC6H,
+    VKU_FORMAT_COMPATIBILITY_CLASS_BC7,
+    VKU_FORMAT_COMPATIBILITY_CLASS_D16,
+    VKU_FORMAT_COMPATIBILITY_CLASS_D16S8,
+    VKU_FORMAT_COMPATIBILITY_CLASS_D24,
+    VKU_FORMAT_COMPATIBILITY_CLASS_D24S8,
+    VKU_FORMAT_COMPATIBILITY_CLASS_D32,
+    VKU_FORMAT_COMPATIBILITY_CLASS_D32S8,
+    VKU_FORMAT_COMPATIBILITY_CLASS_EAC_R,
+    VKU_FORMAT_COMPATIBILITY_CLASS_EAC_RG,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ETC2_EAC_RGBA,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ETC2_RGB,
+    VKU_FORMAT_COMPATIBILITY_CLASS_ETC2_RGBA,
+    VKU_FORMAT_COMPATIBILITY_CLASS_PVRTC1_2BPP,
+    VKU_FORMAT_COMPATIBILITY_CLASS_PVRTC1_4BPP,
+    VKU_FORMAT_COMPATIBILITY_CLASS_PVRTC2_2BPP,
+    VKU_FORMAT_COMPATIBILITY_CLASS_PVRTC2_4BPP,
+    VKU_FORMAT_COMPATIBILITY_CLASS_S8,
+};
+// Return the plane index of a given VkImageAspectFlagBits.
+//     VK_IMAGE_ASPECT_PLANE_0_BIT -&gt; 0
+//     VK_IMAGE_ASPECT_PLANE_1_BIT -&gt; 1
+//     VK_IMAGE_ASPECT_PLANE_2_BIT -&gt; 2
+//     &lt;any other value&gt; -&gt; VKU_FORMAT_INVALID_INDEX
+static inline uint32_t vkuGetPlaneIndex(VkImageAspectFlagBits aspect);
+
+// Returns whether a VkFormat is of the numerical format BOOL
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsBOOL(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format SFIXED5
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsSFIXED5(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format SFLOAT
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsSFLOAT(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format SINT
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsSINT(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format SNORM
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsSNORM(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format SRGB
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsSRGB(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format SSCALED
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsSSCALED(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format UFLOAT
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsUFLOAT(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format UINT
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsUINT(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format UNORM
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsUNORM(VkFormat format);
+
+// Returns whether a VkFormat is of the numerical format USCALED
+// Format must only contain one numerical format, so formats like D16_UNORM_S8_UINT always return false
+static inline bool vkuFormatIsUSCALED(VkFormat format);
+
+// Returns whether the type of a VkFormat is a OpTypeInt (SPIR-V) from &quot;Interpretation of Numeric Format&quot; table
+static inline bool vkuFormatIsSampledInt(VkFormat format);
+
+// Returns whether the type of a VkFormat is a OpTypeFloat (SPIR-V) from &quot;Interpretation of Numeric Format&quot; table
+static inline bool vkuFormatIsSampledFloat(VkFormat format);
+
+// Returns whether a VkFormat is a compressed format of type ASTC_HDR
+static inline bool vkuFormatIsCompressed_ASTC_HDR(VkFormat format);
+
+// Returns whether a VkFormat is a compressed format of type ASTC_LDR
+static inline bool vkuFormatIsCompressed_ASTC_LDR(VkFormat format);
+
+// Returns whether a VkFormat is a compressed format of type BC
+static inline bool vkuFormatIsCompressed_BC(VkFormat format);
+
+// Returns whether a VkFormat is a compressed format of type EAC
+static inline bool vkuFormatIsCompressed_EAC(VkFormat format);
+
+// Returns whether a VkFormat is a compressed format of type ETC2
+static inline bool vkuFormatIsCompressed_ETC2(VkFormat format);
+
+// Returns whether a VkFormat is a compressed format of type PVRTC
+static inline bool vkuFormatIsCompressed_PVRTC(VkFormat format);
+
+// Returns whether a VkFormat is of any compressed format type
+static inline bool vkuFormatIsCompressed(VkFormat format);
+
+// Returns whether a VkFormat is either a depth or stencil format
+static inline bool vkuFormatIsDepthOrStencil(VkFormat format);
+
+// Returns whether a VkFormat is a depth and stencil format
+static inline bool vkuFormatIsDepthAndStencil(VkFormat format);
+
+// Returns whether a VkFormat is a depth only format
+static inline bool vkuFormatIsDepthOnly(VkFormat format);
+
+// Returns whether a VkFormat is a stencil only format
+static inline bool vkuFormatIsStencilOnly(VkFormat format);
+
+// Returns whether a VkFormat has a depth component
+static inline bool vkuFormatHasDepth(VkFormat format) { return (vkuFormatIsDepthOnly(format) || vkuFormatIsDepthAndStencil(format)); }
+
+// Returns whether a VkFormat has a stencil component
+static inline bool vkuFormatHasStencil(VkFormat format) { return (vkuFormatIsStencilOnly(format) || vkuFormatIsDepthAndStencil(format)); }
+
+// Returns the size of the depth component in bits if it has one. Otherwise it returns 0
+static inline uint32_t vkuFormatDepthSize(VkFormat format);
+
+// Returns the size of the stencil component in bits if it has one. Otherwise it returns 0
+static inline uint32_t vkuFormatStencilSize(VkFormat format);
+
+// Returns the numerical type of the depth component if it has one.  Otherwise it returns VKU_FORMAT_NUMERICAL_TYPE_NONE
+static inline enum VKU_FORMAT_NUMERICAL_TYPE vkuFormatDepthNumericalType(VkFormat format);
+
+// Returns the numerical type of the stencil component if it has one.  Otherwise it returns VKU_FORMAT_NUMERICAL_TYPE_NONE
+static inline enum VKU_FORMAT_NUMERICAL_TYPE vkuFormatStencilNumericalType(VkFormat format);
+
+// Returns whether a VkFormat is packed
+static inline bool vkuFormatIsPacked(VkFormat format);
+
+// Returns whether a VkFormat is YCbCr
+// This corresponds to formats with _444, _422, or _420 in their name
+static inline bool vkuFormatRequiresYcbcrConversion(VkFormat format);
+
+// Returns whether a VkFormat is XChromaSubsampled
+// This corresponds to formats with _422 or 420 in their name
+static inline bool vkuFormatIsXChromaSubsampled(VkFormat format);
+
+// Returns whether a VkFormat is YChromaSubsampled
+// This corresponds to formats with _420 in their name
+static inline bool vkuFormatIsYChromaSubsampled(VkFormat format);
+
+// Returns whether a VkFormat is Multiplane
+// Single-plane &quot;_422&quot; formats are treated as 2x1 compressed (for copies)
+static inline bool vkuFormatIsSinglePlane_422(VkFormat format);
+
+// Returns number of planes in format (which is 1 by default)
+static inline uint32_t vkuFormatPlaneCount(VkFormat format);
+
+// Returns whether a VkFormat is multiplane
+// Note - Formats like VK_FORMAT_G8B8G8R8_422_UNORM are NOT multi-planar, they require a
+//        VkSamplerYcbcrConversion and you should use vkuFormatRequiresYcbcrConversion instead
+static inline bool vkuFormatIsMultiplane(VkFormat format) { return ((vkuFormatPlaneCount(format)) &gt; 1u); }
+
+// Returns a VkFormat that is compatible with a given plane of a multiplane format
+// Will return VK_FORMAT_UNDEFINED if given a plane aspect that doesn&#39;t exist for the format
+static inline VkFormat vkuFindMultiplaneCompatibleFormat(VkFormat mp_fmt, VkImageAspectFlagBits plane_aspect);
+
+// Returns the extent divisors of a multiplane format given a plane
+// Will return {1, 1} if given a plane aspect that doesn&#39;t exist for the VkFormat
+static inline VkExtent2D vkuFindMultiplaneExtentDivisors(VkFormat mp_fmt, VkImageAspectFlagBits plane_aspect);
+
+// From table in spec vkspec.html#formats-compatible-zs-color
+// Introduced in VK_KHR_maintenance8 to allow copying between color and depth/stencil formats
+static inline bool vkuFormatIsDepthStencilWithColorSizeCompatible(VkFormat color_format, VkFormat ds_format, VkImageAspectFlags aspect_mask);
+
+// Returns the count of components in a VkFormat
+static inline uint32_t vkuFormatComponentCount(VkFormat format);
+
+// Returns the texel block extent of a VkFormat
+static inline VkExtent3D vkuFormatTexelBlockExtent(VkFormat format);
+
+// Returns the Compatibility Class of a VkFormat as defined by the spec
+static inline enum VKU_FORMAT_COMPATIBILITY_CLASS vkuFormatCompatibilityClass(VkFormat format);
+
+// Returns the number of texels inside a texel block
+// Will always be 1 when not using compressed block formats
+static inline uint32_t vkuFormatTexelsPerBlock(VkFormat format);
+
+// Returns the number of bytes in a single Texel Block.
+// When dealing with a depth/stencil format, need to consider using vkuFormatStencilSize or vkuFormatDepthSize.
+// When dealing with mulit-planar formats, need to consider using vkuGetPlaneIndex.
+static inline uint32_t vkuFormatTexelBlockSize(VkFormat format);
+
+// Returns whether a VkFormat contains only 8-bit sized components
+static inline bool vkuFormatIs8bit(VkFormat format);
+
+// Returns whether a VkFormat contains only 16-bit sized components
+static inline bool vkuFormatIs16bit(VkFormat format);
+
+// Returns whether a VkFormat contains only 32-bit sized components
+static inline bool vkuFormatIs32bit(VkFormat format);
+
+// Returns whether a VkFormat contains only 64-bit sized components
+static inline bool vkuFormatIs64bit(VkFormat format);
+
+// Returns whether a VkFormat has a component of a given size
+static inline bool vkuFormatHasComponentSize(VkFormat format, uint32_t size);
+
+// Returns whether a VkFormat has a Red color component
+static inline bool vkuFormatHasRed(VkFormat format);
+
+// Returns whether a VkFormat has a Green color component
+static inline bool vkuFormatHasGreen(VkFormat format);
+
+// Returns whether a VkFormat has a Blue color component
+static inline bool vkuFormatHasBlue(VkFormat format);
+
+// Returns whether a VkFormat has a Alpha color component
+static inline bool vkuFormatHasAlpha(VkFormat format);
+
+// Returns whether a VkFormat is equal to VK_FORMAT_UNDEFINED
+static inline bool vkuFormatIsUndefined(VkFormat format) { return (format == VK_FORMAT_UNDEFINED); }
+
+// Returns whether a VkFormat is a &quot;blocked image&quot; as defined in the spec (vkspec.html#blocked-image)
+static inline bool vkuFormatIsBlockedImage(VkFormat format) {
+    return (vkuFormatIsCompressed(format) || vkuFormatIsSinglePlane_422(format));
+}
+
+// Returns whether a VkFormat is a &quot;color format&#39;. Because there is no official specification definition of
+// &quot;color format&quot;, it is defined here as anything that isn&#39;t a depth/stencil format, multiplane format, or the undefined format.
+static inline bool vkuFormatIsColor(VkFormat format) {
+    return !(vkuFormatIsUndefined(format) || vkuFormatIsDepthOrStencil(format) || vkuFormatIsMultiplane(format));
+}
+
+enum VKU_FORMAT_COMPONENT_TYPE {
+    VKU_FORMAT_COMPONENT_TYPE_NONE,
+    VKU_FORMAT_COMPONENT_TYPE_R,
+    VKU_FORMAT_COMPONENT_TYPE_G,
+    VKU_FORMAT_COMPONENT_TYPE_B,
+    VKU_FORMAT_COMPONENT_TYPE_A,
+    VKU_FORMAT_COMPONENT_TYPE_D,
+    VKU_FORMAT_COMPONENT_TYPE_S,
+};
+
+// Compressed formats don&#39;t have a defined component size
+#define VKU_FORMAT_COMPRESSED_COMPONENT 0xFFFFFFFF
+
+struct VKU_FORMAT_COMPONENT_INFO {
+    enum VKU_FORMAT_COMPONENT_TYPE type;
+    uint32_t size;  // bits
+};
+
+// Generic information for all formats
+struct VKU_FORMAT_INFO {
+    enum VKU_FORMAT_COMPATIBILITY_CLASS compatibility;
+    uint32_t texel_block_size;  // bytes
+    uint32_t texels_per_block;
+    VkExtent3D block_extent;
+    uint32_t component_count;
+    struct VKU_FORMAT_COMPONENT_INFO components[VKU_FORMAT_MAX_COMPONENTS];
+};
+const struct VKU_FORMAT_INFO vku_formats[295] = {
+    { VKU_FORMAT_COMPATIBILITY_CLASS_NONE, 0, 0, {0, 0, 0}, 0, {} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_8BIT, 1, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 4}, {VKU_FORMAT_COMPONENT_TYPE_G, 4}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 4}, {VKU_FORMAT_COMPONENT_TYPE_G, 4}, {VKU_FORMAT_COMPONENT_TYPE_B, 4}, {VKU_FORMAT_COMPONENT_TYPE_A, 4}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 4}, {VKU_FORMAT_COMPONENT_TYPE_G, 4}, {VKU_FORMAT_COMPONENT_TYPE_R, 4}, {VKU_FORMAT_COMPONENT_TYPE_A, 4}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_R, 5}, {VKU_FORMAT_COMPONENT_TYPE_G, 6}, {VKU_FORMAT_COMPONENT_TYPE_B, 5}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_B, 5}, {VKU_FORMAT_COMPONENT_TYPE_G, 6}, {VKU_FORMAT_COMPONENT_TYPE_R, 5}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 5}, {VKU_FORMAT_COMPONENT_TYPE_G, 5}, {VKU_FORMAT_COMPONENT_TYPE_B, 5}, {VKU_FORMAT_COMPONENT_TYPE_A, 1}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 5}, {VKU_FORMAT_COMPONENT_TYPE_G, 5}, {VKU_FORMAT_COMPONENT_TYPE_R, 5}, {VKU_FORMAT_COMPONENT_TYPE_A, 1}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 1}, {VKU_FORMAT_COMPONENT_TYPE_R, 5}, {VKU_FORMAT_COMPONENT_TYPE_G, 5}, {VKU_FORMAT_COMPONENT_TYPE_B, 5}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_8BIT, 1, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_8BIT, 1, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_8BIT, 1, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_8BIT, 1, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_8BIT, 1, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_8BIT, 1, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_8BIT, 1, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_24BIT, 3, 1, {1, 1, 1}, 3, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}, {VKU_FORMAT_COMPONENT_TYPE_A, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 8}, {VKU_FORMAT_COMPONENT_TYPE_B, 8}, {VKU_FORMAT_COMPONENT_TYPE_G, 8}, {VKU_FORMAT_COMPONENT_TYPE_R, 8}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 4, {{VKU_FORMAT_COMPONENT_TYPE_A, 2}, {VKU_FORMAT_COMPONENT_TYPE_B, 10}, {VKU_FORMAT_COMPONENT_TYPE_G, 10}, {VKU_FORMAT_COMPONENT_TYPE_R, 10}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 16}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 16}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 16}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 16}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 16}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 16}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_16BIT, 2, 1, {1, 1, 1}, 1, {{VKU_FORMAT_COMPONENT_TYPE_R, 16}} },
+    { VKU_FORMAT_COMPATIBILITY_CLASS_32BIT, 4, 1, {1, 1, 1}, 2, {{VKU_FORMAT_COMPONENT_TYPE_R, 16}, {VKU_FORMAT_COMPONENT_TYPE_G, 16}} },</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_format_utils.h.html">ملخص الملف</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم سابق</span>
+      <a class="standalone-link" href="./vk_format_utils.h--section-2.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

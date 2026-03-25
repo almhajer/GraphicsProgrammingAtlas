@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan.hpp • القسم 18 من 58 • الأسطر 7651-8100 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan.hpp.html">vulkan.hpp</a> /
+        <span>القسم 18 من 58 • الأسطر 7651-8100</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan.hpp</h1>
+      <p class="page-description">القسم 18 من 58 • الأسطر 7651-8100</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-17.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-19.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan.hpp</span>
+        <span class="source-stat">القسم: 18/58</span>
+        <span class="source-stat">الأسطر: 7651-8100</span>
+        <span class="source-stat">حجم الملف: 1.05 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+    protected:
+      template &lt;typename T&gt;
+      void destroy( T t ) VULKAN_HPP_NOEXCEPT
+      {
+        VULKAN_HPP_ASSERT( m_dispatch );
+        t.destroy( m_allocationCallbacks, *m_dispatch );
+      }
+
+    private:
+      Optional&lt;const AllocationCallbacks&gt; m_allocationCallbacks = nullptr;
+      Dispatch const *                    m_dispatch            = nullptr;
+    };
+
+    template &lt;typename OwnerType, typename Dispatch&gt;
+    class ObjectFree
+    {
+    public:
+      ObjectFree() = default;
+
+      ObjectFree( OwnerType                                               owner,
+                  Optional&lt;const AllocationCallbacks&gt; allocationCallbacks VULKAN_HPP_DEFAULT_ASSIGNMENT( nullptr ),
+                  Dispatch const &amp; dispatch                               VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) VULKAN_HPP_NOEXCEPT
+        : m_owner( owner )
+        , m_allocationCallbacks( allocationCallbacks )
+        , m_dispatch( &amp;dispatch )
+      {
+      }
+
+      OwnerType getOwner() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_owner;
+      }
+
+      Optional&lt;const AllocationCallbacks&gt; getAllocator() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_allocationCallbacks;
+      }
+
+      Dispatch const &amp; getDispatch() const VULKAN_HPP_NOEXCEPT
+      {
+        return *m_dispatch;
+      }
+
+    protected:
+      template &lt;typename T&gt;
+      void destroy( T t ) VULKAN_HPP_NOEXCEPT
+      {
+        VULKAN_HPP_ASSERT( m_owner &amp;&amp; m_dispatch );
+        ( m_owner.free )( t, m_allocationCallbacks, *m_dispatch );
+      }
+
+    private:
+      OwnerType                           m_owner               = {};
+      Optional&lt;const AllocationCallbacks&gt; m_allocationCallbacks = nullptr;
+      Dispatch const *                    m_dispatch            = nullptr;
+    };
+
+    template &lt;typename OwnerType, typename Dispatch&gt;
+    class ObjectRelease
+    {
+    public:
+      ObjectRelease() = default;
+
+      ObjectRelease( OwnerType owner, Dispatch const &amp; dispatch VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) VULKAN_HPP_NOEXCEPT
+        : m_owner( owner )
+        , m_dispatch( &amp;dispatch )
+      {
+      }
+
+      OwnerType getOwner() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_owner;
+      }
+
+      Dispatch const &amp; getDispatch() const VULKAN_HPP_NOEXCEPT
+      {
+        return *m_dispatch;
+      }
+
+    protected:
+      template &lt;typename T&gt;
+      void destroy( T t ) VULKAN_HPP_NOEXCEPT
+      {
+        VULKAN_HPP_ASSERT( m_owner &amp;&amp; m_dispatch );
+        m_owner.release( t, *m_dispatch );
+      }
+
+    private:
+      OwnerType        m_owner    = {};
+      Dispatch const * m_dispatch = nullptr;
+    };
+
+    template &lt;typename OwnerType, typename PoolType, typename Dispatch&gt;
+    class PoolFree
+    {
+    public:
+      PoolFree() = default;
+
+      PoolFree( OwnerType owner, PoolType pool, Dispatch const &amp; dispatch VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) VULKAN_HPP_NOEXCEPT
+        : m_owner( owner )
+        , m_pool( pool )
+        , m_dispatch( &amp;dispatch )
+      {
+      }
+
+      OwnerType getOwner() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_owner;
+      }
+
+      PoolType getPool() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_pool;
+      }
+
+      Dispatch const &amp; getDispatch() const VULKAN_HPP_NOEXCEPT
+      {
+        return *m_dispatch;
+      }
+
+    protected:
+      template &lt;typename T&gt;
+      void destroy( T t ) VULKAN_HPP_NOEXCEPT
+      {
+        ( m_owner.free )( m_pool, t, *m_dispatch );
+      }
+
+    private:
+      OwnerType        m_owner    = OwnerType();
+      PoolType         m_pool     = PoolType();
+      Dispatch const * m_dispatch = nullptr;
+    };
+
+  }  // namespace detail
+#endif  // !VULKAN_HPP_NO_SMART_HANDLE
+
+  //==================
+  //=== BASE TYPEs ===
+  //==================
+
+  using Bool32          = uint32_t;
+  using DeviceAddress   = uint64_t;
+  using DeviceSize      = uint64_t;
+  using RemoteAddressNV = void *;
+  using SampleMask      = uint32_t;
+
+  template &lt;typename Type, Type value = Type{}&gt;
+  struct CppType
+  {
+  };
+}  // namespace VULKAN_HPP_NAMESPACE
+
+#include &lt;vulkan/vulkan_enums.hpp&gt;
+#if !defined( VULKAN_HPP_NO_TO_STRING )
+#  include &lt;vulkan/vulkan_to_string.hpp&gt;
+#endif
+
+#ifndef VULKAN_HPP_NO_EXCEPTIONS
+namespace std
+{
+  template &lt;&gt;
+  struct is_error_code_enum&lt;VULKAN_HPP_NAMESPACE::Result&gt; : public true_type
+  {
+  };
+}  // namespace std
+#endif
+
+namespace VULKAN_HPP_NAMESPACE
+{
+#ifndef VULKAN_HPP_NO_EXCEPTIONS
+  class ErrorCategoryImpl : public std::error_category
+  {
+  public:
+    virtual const char * name() const VULKAN_HPP_NOEXCEPT override
+    {
+      return VULKAN_HPP_NAMESPACE_STRING &quot;::Result&quot;;
+    }
+
+    virtual std::string message( int ev ) const override
+    {
+#  if defined( VULKAN_HPP_NO_TO_STRING )
+      return std::to_string( ev );
+#  else
+      return to_string( static_cast&lt;Result&gt;( ev ) );
+#  endif
+    }
+  };
+
+  class Error
+  {
+  public:
+    Error() VULKAN_HPP_NOEXCEPT                = default;
+    Error( const Error &amp; ) VULKAN_HPP_NOEXCEPT = default;
+    virtual ~Error() VULKAN_HPP_NOEXCEPT       = default;
+
+    virtual const char * what() const VULKAN_HPP_NOEXCEPT = 0;
+  };
+
+  class LogicError
+    : public Error
+    , public std::logic_error
+  {
+  public:
+    explicit LogicError( const std::string &amp; what ) : Error(), std::logic_error( what ) {}
+
+    explicit LogicError( char const * what ) : Error(), std::logic_error( what ) {}
+
+    virtual const char * what() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::logic_error::what();
+    }
+  };
+
+  class SystemError
+    : public Error
+    , public std::system_error
+  {
+  public:
+    SystemError( std::error_code ec ) : Error(), std::system_error( ec ) {}
+
+    SystemError( std::error_code ec, std::string const &amp; what ) : Error(), std::system_error( ec, what ) {}
+
+    SystemError( std::error_code ec, char const * what ) : Error(), std::system_error( ec, what ) {}
+
+    SystemError( int ev, std::error_category const &amp; ecat ) : Error(), std::system_error( ev, ecat ) {}
+
+    SystemError( int ev, std::error_category const &amp; ecat, std::string const &amp; what ) : Error(), std::system_error( ev, ecat, what ) {}
+
+    SystemError( int ev, std::error_category const &amp; ecat, char const * what ) : Error(), std::system_error( ev, ecat, what ) {}
+
+    virtual const char * what() const VULKAN_HPP_NOEXCEPT
+    {
+      return std::system_error::what();
+    }
+  };
+
+  VULKAN_HPP_INLINE const std::error_category &amp; errorCategory() VULKAN_HPP_NOEXCEPT
+  {
+    static ErrorCategoryImpl instance;
+    return instance;
+  }
+
+  VULKAN_HPP_INLINE std::error_code make_error_code( Result e ) VULKAN_HPP_NOEXCEPT
+  {
+    return std::error_code( static_cast&lt;int&gt;( e ), errorCategory() );
+  }
+
+  VULKAN_HPP_INLINE std::error_condition make_error_condition( Result e ) VULKAN_HPP_NOEXCEPT
+  {
+    return std::error_condition( static_cast&lt;int&gt;( e ), errorCategory() );
+  }
+
+  class OutOfHostMemoryError : public SystemError
+  {
+  public:
+    OutOfHostMemoryError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorOutOfHostMemory ), message ) {}
+
+    OutOfHostMemoryError( char const * message ) : SystemError( make_error_code( Result::eErrorOutOfHostMemory ), message ) {}
+  };
+
+  class OutOfDeviceMemoryError : public SystemError
+  {
+  public:
+    OutOfDeviceMemoryError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorOutOfDeviceMemory ), message ) {}
+
+    OutOfDeviceMemoryError( char const * message ) : SystemError( make_error_code( Result::eErrorOutOfDeviceMemory ), message ) {}
+  };
+
+  class InitializationFailedError : public SystemError
+  {
+  public:
+    InitializationFailedError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorInitializationFailed ), message ) {}
+
+    InitializationFailedError( char const * message ) : SystemError( make_error_code( Result::eErrorInitializationFailed ), message ) {}
+  };
+
+  class DeviceLostError : public SystemError
+  {
+  public:
+    DeviceLostError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorDeviceLost ), message ) {}
+
+    DeviceLostError( char const * message ) : SystemError( make_error_code( Result::eErrorDeviceLost ), message ) {}
+  };
+
+  class MemoryMapFailedError : public SystemError
+  {
+  public:
+    MemoryMapFailedError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorMemoryMapFailed ), message ) {}
+
+    MemoryMapFailedError( char const * message ) : SystemError( make_error_code( Result::eErrorMemoryMapFailed ), message ) {}
+  };
+
+  class LayerNotPresentError : public SystemError
+  {
+  public:
+    LayerNotPresentError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorLayerNotPresent ), message ) {}
+
+    LayerNotPresentError( char const * message ) : SystemError( make_error_code( Result::eErrorLayerNotPresent ), message ) {}
+  };
+
+  class ExtensionNotPresentError : public SystemError
+  {
+  public:
+    ExtensionNotPresentError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorExtensionNotPresent ), message ) {}
+
+    ExtensionNotPresentError( char const * message ) : SystemError( make_error_code( Result::eErrorExtensionNotPresent ), message ) {}
+  };
+
+  class FeatureNotPresentError : public SystemError
+  {
+  public:
+    FeatureNotPresentError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorFeatureNotPresent ), message ) {}
+
+    FeatureNotPresentError( char const * message ) : SystemError( make_error_code( Result::eErrorFeatureNotPresent ), message ) {}
+  };
+
+  class IncompatibleDriverError : public SystemError
+  {
+  public:
+    IncompatibleDriverError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorIncompatibleDriver ), message ) {}
+
+    IncompatibleDriverError( char const * message ) : SystemError( make_error_code( Result::eErrorIncompatibleDriver ), message ) {}
+  };
+
+  class TooManyObjectsError : public SystemError
+  {
+  public:
+    TooManyObjectsError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorTooManyObjects ), message ) {}
+
+    TooManyObjectsError( char const * message ) : SystemError( make_error_code( Result::eErrorTooManyObjects ), message ) {}
+  };
+
+  class FormatNotSupportedError : public SystemError
+  {
+  public:
+    FormatNotSupportedError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorFormatNotSupported ), message ) {}
+
+    FormatNotSupportedError( char const * message ) : SystemError( make_error_code( Result::eErrorFormatNotSupported ), message ) {}
+  };
+
+  class FragmentedPoolError : public SystemError
+  {
+  public:
+    FragmentedPoolError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorFragmentedPool ), message ) {}
+
+    FragmentedPoolError( char const * message ) : SystemError( make_error_code( Result::eErrorFragmentedPool ), message ) {}
+  };
+
+  class UnknownError : public SystemError
+  {
+  public:
+    UnknownError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorUnknown ), message ) {}
+
+    UnknownError( char const * message ) : SystemError( make_error_code( Result::eErrorUnknown ), message ) {}
+  };
+
+  class ValidationFailedError : public SystemError
+  {
+  public:
+    ValidationFailedError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorValidationFailed ), message ) {}
+
+    ValidationFailedError( char const * message ) : SystemError( make_error_code( Result::eErrorValidationFailed ), message ) {}
+  };
+
+  class OutOfPoolMemoryError : public SystemError
+  {
+  public:
+    OutOfPoolMemoryError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorOutOfPoolMemory ), message ) {}
+
+    OutOfPoolMemoryError( char const * message ) : SystemError( make_error_code( Result::eErrorOutOfPoolMemory ), message ) {}
+  };
+
+  class InvalidExternalHandleError : public SystemError
+  {
+  public:
+    InvalidExternalHandleError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorInvalidExternalHandle ), message ) {}
+
+    InvalidExternalHandleError( char const * message ) : SystemError( make_error_code( Result::eErrorInvalidExternalHandle ), message ) {}
+  };
+
+  class InvalidOpaqueCaptureAddressError : public SystemError
+  {
+  public:
+    InvalidOpaqueCaptureAddressError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorInvalidOpaqueCaptureAddress ), message ) {}
+
+    InvalidOpaqueCaptureAddressError( char const * message ) : SystemError( make_error_code( Result::eErrorInvalidOpaqueCaptureAddress ), message ) {}
+  };
+
+  class FragmentationError : public SystemError
+  {
+  public:
+    FragmentationError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorFragmentation ), message ) {}
+
+    FragmentationError( char const * message ) : SystemError( make_error_code( Result::eErrorFragmentation ), message ) {}
+  };
+
+  class NotPermittedError : public SystemError
+  {
+  public:
+    NotPermittedError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorNotPermitted ), message ) {}
+
+    NotPermittedError( char const * message ) : SystemError( make_error_code( Result::eErrorNotPermitted ), message ) {}
+  };
+
+  class SurfaceLostKHRError : public SystemError
+  {
+  public:
+    SurfaceLostKHRError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorSurfaceLostKHR ), message ) {}
+
+    SurfaceLostKHRError( char const * message ) : SystemError( make_error_code( Result::eErrorSurfaceLostKHR ), message ) {}
+  };
+
+  class NativeWindowInUseKHRError : public SystemError
+  {
+  public:
+    NativeWindowInUseKHRError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorNativeWindowInUseKHR ), message ) {}
+
+    NativeWindowInUseKHRError( char const * message ) : SystemError( make_error_code( Result::eErrorNativeWindowInUseKHR ), message ) {}
+  };
+
+  class OutOfDateKHRError : public SystemError
+  {
+  public:
+    OutOfDateKHRError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorOutOfDateKHR ), message ) {}
+
+    OutOfDateKHRError( char const * message ) : SystemError( make_error_code( Result::eErrorOutOfDateKHR ), message ) {}
+  };
+
+  class IncompatibleDisplayKHRError : public SystemError
+  {
+  public:
+    IncompatibleDisplayKHRError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorIncompatibleDisplayKHR ), message ) {}
+
+    IncompatibleDisplayKHRError( char const * message ) : SystemError( make_error_code( Result::eErrorIncompatibleDisplayKHR ), message ) {}
+  };
+
+  class InvalidShaderNVError : public SystemError
+  {
+  public:
+    InvalidShaderNVError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorInvalidShaderNV ), message ) {}
+
+    InvalidShaderNVError( char const * message ) : SystemError( make_error_code( Result::eErrorInvalidShaderNV ), message ) {}
+  };
+
+  class ImageUsageNotSupportedKHRError : public SystemError
+  {
+  public:
+    ImageUsageNotSupportedKHRError( std::string const &amp; message ) : SystemError( make_error_code( Result::eErrorImageUsageNotSupportedKHR ), message ) {}
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-17.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan.hpp--section-19.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

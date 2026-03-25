@@ -1,0 +1,222 @@
+[
+  {
+    "name": "Building an Executable",
+    "titleArabic": "أبسط بداية: تعريف مشروع ثم إنشاء executable من ملف مصدر واحد",
+    "actualMeaningArabic": "هذا المثال يترجم الفكرة الأولى من CMake Tutorial: تبدأ بـ cmake_minimum_required ثم project ثم add_executable لبناء برنامج واحد من مصادره.",
+    "purposeArabic": "يعطي القارئ أول شكل صحيح لـ CMakeLists.txt قبل التوسع إلى المكتبات والروابط والاختبارات.",
+    "whyUseArabic": "لأنه يكشف بسرعة أن CMake يصف الهدف وما يحتاجه، لا أنه مجرد shell script لتشغيل compiler.",
+    "carriedValueArabic": "يظهر كيف تتحول ثلاثة أسطر تقريباً إلى target فعلي داخل الرسم ثم إلى أوامر build عبر المولد المختار.",
+    "usage": [
+      "هذا هو المدخل الطبيعي لأي مشروع CLI أو تجربة تعليمية أولى.",
+      "بعد فهمه يصبح الانتقال إلى add_library وtarget_link_libraries أسهل كثيراً.",
+      "إذا أردت معيارًا افتراضيًا لكل أهداف ++C التي ستنشأ لاحقًا فضع set(CMAKE_CXX_STANDARD 20) قبل إنشاء الأهداف، أما CXX_STANDARD فتكتب لاحقًا على target بعينه عندما تحتاج استثناءً محددًا."
+    ],
+    "notes": [
+      "يرتبط مباشرة بـ Tutorial Step 1 / Exercise 1.",
+      "الملف الناتج يصبح قابلاً للتشغيل من build tree بعد إتمام البناء."
+    ],
+    "example": "cmake_minimum_required(VERSION 3.26)\nproject(HelloCMake LANGUAGES CXX)\n\nadd_executable(hello\n  main.cpp\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "cmake_minimum_required",
+      "project",
+      "add_executable"
+    ]
+  },
+  {
+    "name": "Building a Library",
+    "titleArabic": "فصل المنطق في مكتبة مستقلة ثم إعادة استعمالها من executable",
+    "actualMeaningArabic": "هذا المثال يبين الانتقال من برنامج واحد إلى مكتبة target مستقلة تحمل منطقاً قابلاً لإعادة الاستخدام.",
+    "purposeArabic": "يعلم القارئ كيف تتحول الملفات المشتركة إلى add_library بدل تجميع كل شيء في executable واحد ضخم.",
+    "whyUseArabic": "لأن المشاريع الحقيقية تحتاج boundaries أوضح بين التطبيق والمنطق المشترك وواجهات API.",
+    "carriedValueArabic": "يضيف عقدة مكتبة إلى build graph ويهيئها لتكون هدفاً يمكن ربطه ونشر واجهته لاحقاً.",
+    "usage": [
+      "هذا هو التوسع الطبيعي بعد المثال الأول في Tutorial Step 1 / Exercise 2.",
+      "غالباً ستضيف معه include directories وواجهة headers."
+    ],
+    "notes": [
+      "يمكن للمكتبة أن تكون STATIC أو SHARED أو تترك النوع ليتحدد عبر BUILD_SHARED_LIBS.",
+      "الهدف هنا ليس مجرد ملف وسيط؛ بل واجهة استعمال كاملة عندما تضيف له متطلبات مناسبة."
+    ],
+    "example": "add_library(calclib STATIC\n  calculator.cpp\n)\n\ntarget_include_directories(calclib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "add_library",
+      "target_include_directories",
+      "BUILD_SHARED_LIBS"
+    ]
+  },
+  {
+    "name": "Linking Libraries and Executables",
+    "titleArabic": "ربط التطبيق بالمكتبة وتحويل الاعتماديات إلى علاقة targets واضحة",
+    "actualMeaningArabic": "هذا المثال يبين أن التطبيق لا يعرف مسارات linker خام، بل يربط target باسم target آخر عبر target_link_libraries.",
+    "purposeArabic": "يشرح كيف تتصل الأهداف ببعضها داخل CMake بعد تعريف كل هدف على حدة.",
+    "whyUseArabic": "لأنه المدخل الحقيقي لفهم usage requirements والاعتماديات العابرة transitively.",
+    "carriedValueArabic": "يبني edge اعتماد واضحة في الرسم البياني بين executable والمكتبة، ما يغير compile/link behaviour للطرفين.",
+    "usage": [
+      "يظهر رسمياً في Tutorial Step 1 / Exercise 3.",
+      "يفضل استخدام أسماء targets لا مسارات الملفات الناتجة."
+    ],
+    "notes": [
+      "هذا المثال هو النقطة التي يبدأ عندها معنى PUBLIC وPRIVATE فعلياً.",
+      "منه تنطلق بقية أوامر target_* الحديثة."
+    ],
+    "example": "add_executable(calculator main.cpp)\ntarget_link_libraries(calculator PRIVATE calclib)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "target_link_libraries",
+      "targets and usage requirements",
+      "PUBLIC/PRIVATE/INTERFACE"
+    ]
+  },
+  {
+    "name": "Subdirectories",
+    "titleArabic": "تقسيم المشروع إلى مجلدات فرعية لكل منها CMakeLists.txt خاص به",
+    "actualMeaningArabic": "هذا المثال يوضح أن add_subdirectory ليس مجرد include نصي، بل دخول رسمي إلى directory scope جديد يضيف أهدافه إلى نفس الشجرة.",
+    "purposeArabic": "ينقل المشروع من ملف وحيد إلى بنية منظمة مثل src وtests وexamples.",
+    "whyUseArabic": "يحافظ على وضوح الشجرة كلما كبر المشروع ويجعل كل جزء يملك ملفه القريب.",
+    "carriedValueArabic": "يوسع build graph بقراءة ملفات فرعية أثناء configure مع المحافظة على الرؤية المشتركة للأهداف.",
+    "usage": [
+      "يظهر في Tutorial Step 1 / Exercise 4.",
+      "يناسب تقسيم src وlib وtests حتى في مشاريع صغيرة نسبياً."
+    ],
+    "notes": [
+      "المتغيرات المحلية تبقى مرتبطة بالنطاق الفرعي إلا إذا نقلتها عمداً.",
+      "المسارات الحالية تتبدل عند الدخول إلى كل مجلد."
+    ],
+    "example": "# root CMakeLists.txt\nadd_subdirectory(src)\nadd_subdirectory(tests)\n\n# src/CMakeLists.txt\nadd_library(calclib calculator.cpp)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "add_subdirectory",
+      "directory scope and add_subdirectory"
+    ]
+  },
+  {
+    "name": "Core Variables, Flow, and Reusable Blocks",
+    "titleArabic": "الأوامر الأساسية في CMakeLists.txt: متغيرات ورسائل وقوائم وحلقات وكتل قابلة لإعادة الاستخدام",
+    "actualMeaningArabic": "هذا المثال يجمع الأوامر الأساسية التي يراها المبتدئ مبكرًا في CMakeLists.txt: set() لتجهيز القيم، message() لعرضها، list() لبناء قائمة، foreach()/endforeach() للمرور عليها، include() لجلب ملف مساعد، macro()/endmacro() وfunction()/endfunction() لتجميع منطق يعاد استعماله، وunset() لتنظيف القيم المؤقتة.",
+    "purposeArabic": "يعطي القارئ صورة عملية متماسكة لكيفية ظهور هذه الأوامر داخل ملف واحد قبل الانتقال إلى الأهداف والمكتبات والتثبيت.",
+    "whyUseArabic": "لأن كثيرًا من سقوط الفهم في CMake لا يأتي من الأوامر الكبيرة فقط، بل من عدم فهم الأوامر الصغيرة التي تشكل النسيج اليومي للملف نفسه.",
+    "carriedValueArabic": "يوضح هذا المثال أن هذه الأوامر كلها تعمل في Configure time: بعضها يغيّر القيم المرئية، وبعضها ينظم الكتل، وبعضها يعيد استخدام منطق صغير داخل نفس المشروع.",
+    "usage": [
+      "يناسب القراءة المبكرة قبل التوسع إلى target_* وfind_package() لأنك ترى فيه لغة CMake الأساسية نفسها.",
+      "يمكن تشغيل فكرته على ملف CMakeLists.txt صغير لفهم كيف تتحرك القيم من set() إلى message() ثم إلى list() وforeach().",
+      "لاحظ هنا الفرق بين ${var} و${stooges} كتوسعات متغيرات عادية، وبين ${CMAKE_CURRENT_SOURCE_DIR} كمتغير مدمج مرتبط بالدليل الحالي، وبين $ENV{HOME} كقراءة من بيئة النظام."
+    ],
+    "notes": [
+      "المثال يوضح فرق النطاق سريعًا: function() أكثر عزلاً من macro()، وunset() يتأثر بالنطاق الذي تعمل فيه.",
+      "include() هنا ليس مشروعًا فرعيًا جديدًا، بل إدراج مباشر لملف أو وحدة أثناء configure.",
+      "${CMAKE_CURRENT_SOURCE_DIR} يُقيَّم من directory scope الحالي، بينما $ENV{HOME} يُقرأ من بيئة العملية التي شغّلت CMake في تلك اللحظة."
+    ],
+    "example": "set(var \"World!\")\nmessage(STATUS \"Hello ${var}\")\n\nset(stooges \"Larry\" \"Moe\")\nlist(APPEND stooges \"Curly\")\nmessage(STATUS \"Stooges contains: ${stooges}\")\nmessage(STATUS \"This dir: ${CMAKE_CURRENT_SOURCE_DIR}\")\nmessage(STATUS \"Home from env: $ENV{HOME}\")\n\nforeach(stooge IN LISTS stooges)\n  message(STATUS \"Stooge: ${stooge}\")\nendforeach()\n\ninclude(cmake/helpers.cmake)\n\nmacro(MyMacro MacroArgument)\n  message(STATUS \"Macro sees ${MacroArgument}\")\nendmacro()\n\nfunction(MyFunc FuncArgument)\n  message(STATUS \"Function sees ${FuncArgument}\")\nendfunction()\n\nunset(var)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "set",
+      "message",
+      "list",
+      "foreach",
+      "endforeach",
+      "include",
+      "macro",
+      "endmacro",
+      "function",
+      "endfunction",
+      "unset"
+    ]
+  },
+  {
+    "name": "Testing with CTest",
+    "titleArabic": "تعريف executable ثم تسجيله كاختبار يمكن تشغيله عبر ctest",
+    "actualMeaningArabic": "هذا المثال يوضح المسار العملي للاختبارات في CMake: تفعيل الاختبار ثم إضافة test command باسم واضح داخل الشجرة.",
+    "purposeArabic": "يعلم القارئ كيف ينقل التحقق من التشغيل اليدوي إلى مسار اختبار رسمي قابل للأتمتة.",
+    "whyUseArabic": "لأن الاختبارات تصبح جزءاً من build interface للمشروع، ويمكن تشغيلها من CI أو IDE أو الطرفية عبر ctest.",
+    "carriedValueArabic": "ينتج بيانات اختبار في build tree لا ملفات ترجمة فقط، ما يجعل ctest يفهم ماذا يشغّل وكيف.",
+    "usage": [
+      "هذا هو قلب Tutorial Step 8.",
+      "يمكن التوسع بعده بخصائص الاختبار وWORKING_DIRECTORY وCONFIGURATIONS."
+    ],
+    "notes": [
+      "تحتاج enable_testing() أو include(CTest) أولاً.",
+      "الاختبار نفسه قد يستدعي executable بني في نفس المشروع."
+    ],
+    "example": "include(CTest)\nadd_executable(calculator_tests test_main.cpp)\nadd_test(NAME calculator_smoke COMMAND calculator_tests)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "CTest",
+      "enable_testing",
+      "add_test",
+      "BUILD_TESTING"
+    ]
+  },
+  {
+    "name": "Installing and Exporting",
+    "titleArabic": "تثبيت الأهداف ثم تصديرها كي يستهلكها مشروع آخر عبر find_package",
+    "actualMeaningArabic": "هذا المثال يجمع بين install() وملفات التصدير ووحدة CMakePackageConfigHelpers حتى يتحول المشروع من build محلي إلى dependency قابلة لإعادة الاستهلاك عبر package config files واضحة.",
+    "purposeArabic": "يعلمك كيف تنهي دورة المكتبة: بناء ثم تثبيت ثم تصدير targets ثم توليد ملفات Config وConfigVersion التي يقرأها المستهلك لاحقاً.",
+    "whyUseArabic": "لأن المكتبة التي لا تصدر واجهتها جيداً تجبر المستهلكين على include/link يدوي هش، بينما package config الجيد يجعل find_package هو بوابة الاستهلاك الرسمية.",
+    "carriedValueArabic": "ينشئ install rules وexport metadata وملفات package config تؤثر في الاستخدام downstream بعد التثبيت، وتربط install/package step مباشرة بمسار configure في المشروع المستهلك.",
+    "usage": [
+      "هذا المثال يستلهم Tutorial Step 9 مباشرة.",
+      "يناسب أي مكتبة تريد أن تصبح قابلة للاستهلاك عبر find_package(MyLib CONFIG)."
+    ],
+    "notes": [
+      "GNUInstallDirs وCMakePackageConfigHelpers يكملان هذا المسار عادةً.",
+      "التثبيت ليس نهاية المطاف؛ التصدير وملفات Config/ConfigVersion هما ما يجعل الواجهة قابلة للاستهلاك المعياري."
+    ],
+    "example": "include(GNUInstallDirs)\ninclude(CMakePackageConfigHelpers)\n\nwrite_basic_package_version_file(\n  MyLibConfigVersion.cmake\n  VERSION ${PROJECT_VERSION}\n  COMPATIBILITY SameMajorVersion\n)\n\ninstall(TARGETS calclib EXPORT CalcTargets\n  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}\n  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}\n)\ninstall(EXPORT CalcTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Calc)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "install",
+      "GNUInstallDirs",
+      "CMakePackageConfigHelpers",
+      "find_package",
+      "package config files and Config mode"
+    ]
+  },
+  {
+    "name": "Finding Dependencies",
+    "titleArabic": "اكتشاف dependency جاهزة ثم ربط imported target الناتج بالمشروع",
+    "actualMeaningArabic": "هذا المثال يوضح المسار الحديث: ابحث عن الحزمة ثم اربط imported target الذي توفره، بدل جمع include paths وlibs يدوياً.",
+    "purposeArabic": "يبني الجسر بين مشروعك والحزم المثبتة أو المصدّرة من مشاريع أخرى.",
+    "whyUseArabic": "لأن dependency management في CMake الحديث يعتمد على targets وحزم config أكثر من اعتماده على المتغيرات القديمة وحدها.",
+    "carriedValueArabic": "يدخل imported targets أو نتائج بحث إلى configure الحالي، ثم يغيّر graph الربط للأهداف التي تستهلكها.",
+    "usage": [
+      "هذا هو محور Tutorial Step 10.",
+      "استخدم REQUIRED عندما لا يمكن للمشروع أن يعمل بدون الحزمة، وأضف COMPONENTS عندما تحتاج أجزاء محددة منها فقط."
+    ],
+    "notes": [
+      "قد يعتمد النجاح على package config files أو Find modules أو متغيرات مثل Foo_ROOT.",
+      "الهدف المستورد يحمل عادة include paths والروابط والتعريفات المطلوبة."
+    ],
+    "example": "find_package(ZLIB REQUIRED)\nadd_executable(calculator main.cpp)\ntarget_link_libraries(calculator PRIVATE ZLIB::ZLIB)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "find_package",
+      "FindPackageHandleStandardArgs",
+      "CMP0074"
+    ]
+  },
+  {
+    "name": "Generator Expressions by Configuration",
+    "titleArabic": "تبديل الإعدادات حسب التشكيلة أو واجهة البناء باستخدام Generator Expressions",
+    "actualMeaningArabic": "هذا المثال يوضح كيف تستعمل $<CONFIG:...> وBUILD_INTERFACE وINSTALL_INTERFACE لجعل نفس target تتصرف بمرونة حسب سياق التوليد أو الاستهلاك.",
+    "purposeArabic": "ينقل القارئ من الشروط الثابتة في configure إلى شروط سياقية تؤجل حتى generate أو الاستهلاك الفعلي.",
+    "whyUseArabic": "لأن كثيراً من الفروق العملية في المشاريع الحديثة تتعلق بالتشكيلة أو بسياق build/install، لا بقرار configure واحد ثابت.",
+    "carriedValueArabic": "يغير القيم الناتجة في خصائص target بحسب السياق، من دون الحاجة إلى نسخ targets أو منطق متكرر.",
+    "usage": [
+      "هذا يمتد من Tutorial Step 11 / Exercise 2.",
+      "مفيد جداً في الواجهات القابلة للتثبيت والتصدير."
+    ],
+    "notes": [
+      "الشرط هنا لا يحسم فور كتابة السطر، بل عند قراءة الخاصية في السياق المناسب.",
+      "غالباً يظهر مع خصائص الواجهة include/compile definitions."
+    ],
+    "example": "target_compile_definitions(calculator\n  PRIVATE $<$<CONFIG:Debug>:CALC_DEBUG_BUILD>\n)\n\ntarget_include_directories(calclib\n  PUBLIC\n    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n    $<INSTALL_INTERFACE:include>\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+    "related": [
+      "Generator Expressions",
+      "CMAKE_BUILD_TYPE",
+      "INTERFACE_INCLUDE_DIRECTORIES"
+    ]
+  }
+]

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "ImGui::BeginPopup",
+    "slug": "im-gui-begin-popup",
+    "titleArabic": "تبدأ نطاق popup بالمعرف المحدد وتعيد هل يجب بناء محتواها الآن",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/functions/im-gui-begin-popup",
+    "contentPath": "content/reference/imgui/functions/im-gui-begin-popup.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تبدأ نطاق popup بالمعرف المحدد وتعيد هل يجب بناء محتواها الآن",
+    "actualMeaningArabic": "تسأل Dear ImGui هل popup المطابقة للمعرف في حالة ظهور، فإذا كانت كذلك تنشئ نطاق تخطيط ورسم خاصاً بها يشبه النوافذ الأخرى لكن ضمن نظام popups.",
+    "purposeArabic": "تستخدم بعد OpenPopup أو مع popups السياقية عندما تريد رسم محتوى القائمة أو النافذة المنبثقة نفسها.",
+    "whyUseArabic": "تعطيك نفس نمط العمل القائم على النطاقات: تبني المحتوى فقط عندما تكون popup فعلاً مفتوحة.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه تعيد `true` عندما تكون popup مفتوحة ويجب بناء محتواها في هذا الإطار. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "تبدأ محتوى نافذة منبثقة مفتوحة حالياً إذا كانت Dear ImGui تملك لها حالة فتح صالحة."
+  },
+  "signature": {
+    "raw": "bool ImGui::BeginPopup(const char* str_id)",
+    "returnType": "bool",
+    "parameters": [
+      "const char* str_id"
+    ],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "str_id",
+        "type": "const char*",
+        "descriptionArabic": "يطابق popup المفتوحة بحالتها الداخلية مع موضع بناء محتواها في الكود.",
+        "originalDescription": ""
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [
+      "تبدأ عادة بعد OpenPopup أو بعد حدث سياقي مشابه.",
+      "عند إعادة `true` ينشأ نطاق popup ويجب أن ينتهي بـ ImGui::EndPopup.",
+      "تنتهي popup عندما تغلق داخلياً أو عندما يقرر Dear ImGui إسقاطها بسبب التفاعل."
+    ],
+    "returns": "تعيد `true` عندما تكون popup مفتوحة ويجب بناء محتواها في هذا الإطار.",
+    "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+    "example": "if (ImGui::Begin(\"إجراءات المورد\")) {\n if (ImGui::Button(\"المزيد\")) {\n ImGui::OpenPopup(\"asset_actions\");\n }\n\n if (ImGui::BeginPopup(\"asset_actions\")) {\n ImGui::Text(\"إعادة تسمية\");\n ImGui::Text(\"حذف\");\n ImGui::EndPopup();\n }\n}\nImGui::End();"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::OpenPopup",
+        "route": "#ref/imgui/functions/im-gui-open-popup",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::EndPopup",
+        "route": "#ref/imgui/functions/im-gui-end-popup",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::Button",
+        "route": "#ref/imgui/functions/im-gui-button",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/popups.json",
+    "category": "النوافذ المنبثقة",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

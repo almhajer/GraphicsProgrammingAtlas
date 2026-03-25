@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_ReadAsyncIO",
+    "slug": "sdl-read-async-io",
+    "titleArabic": "بدء async read",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-read-async-io",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-read-async-io.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "بدء async read",
+    "actualMeaningArabic": "بدء async read.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى بدء async read داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Start an async read."
+  },
+  "signature": {
+    "raw": "bool SDL_ReadAsyncIO(SDL_AsyncIO *asyncio, void *ptr, Uint64 offset, Uint64 size, SDL_AsyncIOQueue *queue, void *userdata);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_AsyncIO *asyncio",
+      "void *ptr",
+      "Uint64 offset",
+      "Uint64 size",
+      "SDL_AsyncIOQueue *queue",
+      "void *userdata"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_asyncio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "asyncio",
+        "type": "SDL_AsyncIO *",
+        "descriptionArabic": "يمثل المعامل asyncio من النوع SDL_AsyncIO * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer to an SDL_AsyncIO\nstructure."
+      },
+      {
+        "name": "ptr",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل ptr من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer to a buffer to read data into."
+      },
+      {
+        "name": "offset",
+        "type": "Uint64",
+        "descriptionArabic": "يمثل المعامل offset من النوع Uint64 القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the position to start reading in the data source."
+      },
+      {
+        "name": "size",
+        "type": "Uint64",
+        "descriptionArabic": "يمثل المعامل size من النوع Uint64 القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the number of bytes to read from the data source."
+      },
+      {
+        "name": "queue",
+        "type": "SDL_AsyncIOQueue *",
+        "descriptionArabic": "يمثل المعامل queue من النوع SDL_AsyncIOQueue * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a queue to add the new SDL_AsyncIO\nto."
+      },
+      {
+        "name": "userdata",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل userdata من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an app-defined pointer that will be provided with the task\nresults."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This function reads up to size bytes from\n offset position in the data source to the area pointed at\nby ptr . This function may read less bytes than\nrequested.",
+      "This function returns as quickly as possible; it does not wait for\nthe read to complete. On a successful return, this work will continue in\nthe background. If the work begins, even failure is asynchronous: a\nfailing return value from this function only means the work couldn't\nstart at all.",
+      "ptr must remain available until the work is done, and\nmay be accessed by the system at any time until then. Do not allocate it\non the stack, as this might take longer than the life of the calling\nfunction to complete!",
+      "An SDL_AsyncIOQueue must be\nspecified. The newly-created task will be added to it when it completes\nits work."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_ReadAsyncIO",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_WriteAsyncIO",
+        "route": "#ref/sdl3-core/functions/sdl-write-async-io",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_CreateAsyncIOQueue",
+        "route": "#ref/sdl3-core/functions/sdl-create-async-io-queue",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Async I/O",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

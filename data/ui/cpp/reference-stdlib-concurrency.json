@@ -1,0 +1,605 @@
+{
+  "referenceData": {
+    "std::atomic": {
+      "title": "std::atomic",
+      "type": "نوع التزامن",
+      "description": "غلاف يجعل العمليات على القيمة ذرية لا يُقاطعها خيط آخر.",
+      "usage": "يظهر عند مشاركة متغير بسيط بين خيوط بدون mutex.",
+      "example": "std::atomic<int> counter{0};\ncounter.fetch_add(1);",
+      "usageExamples": [
+        {
+          "titleArabic": "عداد آمن بين خيوط متعددة",
+          "code": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<int> counter{0};\n\nvoid increment(int times) {\n    for (int i = 0; i < times; ++i) {\n        counter.fetch_add(1, std::memory_order_relaxed);\n        // relaxed: لا يُفرض ترتيبًا على العمليات الأخرى — الأسرع\n    }\n}\n\nstd::thread t1(increment, 100000);\nstd::thread t2(increment, 100000);\nt1.join();\nt2.join();\n\n// النتيجة دائمًا 200000 — لا تضيع أي عملية\nstd::cout << counter.load();",
+          "explanationArabic": "fetch_add تُنفّذ القراءة والزيادة والكتابة كوحدة ذرية واحدة — لا يمكن لخيطين أن يقرآ نفس القيمة ويُزياداها معًا. memory_order_relaxed هو الأسرع لأنه لا يُفرض ترتيبًا على الذاكرة — مناسب للعدادات البسيطة التي لا تُتحقق بشروط أخرى."
+        },
+        {
+          "titleArabic": "علم إيقاف (flag) مع memory_order_acquire/release",
+          "code": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<bool> ready{false};\nint data = 0;\n\n// الخيط المنتج\nstd::thread producer([&] {\n    data = 42; // كتابة عادية\n    ready.store(true, std::memory_order_release);\n    // release: كل الكتابات السابقة (data=42) تصبح مرئية عند الاستيقاظ\n});\n\n// الخيط المستهلك\nstd::thread consumer([&] {\n    while (!ready.load(std::memory_order_acquire)) {\n        // انتظار مُزدحم — في التطبيق الحقيقي استخدم condition_variable\n    }\n    // acquire: يضمن رؤية data=42 المكتوب قبل release\n    std::cout << data; // مضمون: 42\n});\n\nproducer.join();\nconsumer.join();",
+          "explanationArabic": "memory_order_release/acquire يُشكّلان زوجًا: release يضمن أن كل الكتابات قبلها مرئية لأي خيط يرى القيمة عبر acquire. بدون هذا الزوج، المُصرِّف أو المعالج قد يُعيد ترتيب data=42 بعد store(true). relaxed لا يكفي هنا لأنه لا يضمن ترتيب الذاكرة."
+        },
+        {
+          "titleArabic": "خطأ شائع: استبدال atomic بـ volatile",
+          "code": "#include <atomic>\n\n// ❌ volatile لا يوفر ذرية — عدّاد volatile يفقد عمليات\n// volatile int bad_counter = 0;\n// // ++bad_counter يقرأ ثم يزيد ثم يكتب — ثلاث خطوات غير ذرية!\n// // خيطان قد يقرآ نفس القيمة فيُزياداها مرة واحدة بدل مرتين\n\n// ❌ volatile لا يوفر ترتيب ذاكرة — لا يمنع إعادة الترتيب\n// volatile bool flag = false;\n// // المعالج قد يُعيد ترتيب الكتابات حول flag\n\n// ✅ atomic هو الصحيح: يوفر الذرية وترتيب الذاكرة\nstd::atomic<int> counter{0};\ncounter++; // ذري: يقرأ ويزيد ويكتب كوحدة واحدة\n\n// ✅ atomic_flag أبسط وأسرع لعلم بسيط\nstd::atomic_flag lock = ATOMIC_FLAG_INIT;\n// test_and_set: ذري — يُرجع القيمة القديمة ويضع true\n// clear: يُعيد القيمة لـ false",
+          "explanationArabic": "volatile في C++ يخبر المُصرِّف فقط 'لا تُزِل القراءة/الكتابة' — لا يمنع التزامن ولا يوفر ذرية ولا ترتيب ذاكرة. ++volatile_int ثلاث عمليات منفصلة (قراءة، زيادة، كتابة) يمكن تقاطعها. atomic::operator++ عملية ذرية واحدة. القاعدة: لا تستخدم volatile أبدًا للتزامن في C++ — استخدم atomic."
+        }
+      ],
+      "related": [
+        "std::thread",
+        "std::mutex",
+        "volatile"
+      ]
+    },
+    "std::thread": {
+      "title": "std::thread",
+      "type": "نوع التزامن",
+      "description": "يمثل خيط تنفيذ مستقل يمكن تشغيل دالة أو lambda فيه بالتوازي.",
+      "usage": "يظهر عند الحاجة لتوازي فعلي بين مهام مستقلة.",
+      "example": "std::thread t([]{ do_work(); });\nt.join();",
+      "usageExamples": [
+        {
+          "titleArabic": "تشغيل دالة في خيط منفصل وانتظارها",
+          "code": "#include <thread>\n#include <iostream>\n\nvoid print_message(const std::string& msg) {\n    std::cout << msg << '\\n';\n}\n\nint main() {\n    std::thread t(print_message, \"مرحبًا من الخيط الجديد\");\n    t.join(); // ينتظر انتهاء الخيط قبل المتابعة\n    std::cout << \"الخيط الرئيسي واصل العمل\\n\";\n}",
+          "explanationArabic": "std::thread ينشئ خيطًا جديدًا ينفذ print_message فورًا. join يُجمّد الخيط الرئيسي حتى ينتهي الخيط الجديد — بدون join سيدمر مُنشئ thread الكائن عند نهاية النطاق ويُستدعى std::terminate."
+        },
+        {
+          "titleArabic": "تقسيم عمل على عدة خيوط مع mutex",
+          "code": "#include <thread>\n#include <mutex>\n#include <vector>\n#include <iostream>\n\nstd::mutex mtx;\nint total = 0;\n\nvoid sum_range(int start, int end) {\n    int local_sum = 0;\n    for (int i = start; i < end; ++i) {\n        local_sum += i;\n    }\n    std::lock_guard<std::mutex> lock(mtx);\n    total += local_sum;\n    // القفل فقط عند الجمع النهائي — لا داخل الحلقة\n}\n\nint main() {\n    std::vector<std::thread> threads;\n    int chunk = 250;\n    for (int i = 0; i < 1000; i += chunk) {\n        threads.emplace_back(sum_range, i, i + chunk);\n    }\n    for (auto& t : threads) {\n        t.join();\n    }\n    std::cout << total; // 499500\n}",
+          "explanationArabic": "كل خيط يجمع جزءه محليًا أولًا (local_sum) ثم يُضيفه للمجموع تحت قفل. هذا أسرع بكثير من قفل كل عملية إضافة فردية لأن القفل يحدث 4 مرات فقط بدل 1000. lock_guard يضمن فتح القفل حتى لو ألقى الكود استثناءً."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان join أو detach",
+          "code": "#include <thread>\n\nvoid task() {\n    // عمل طويل\n}\n\nint main() {\n    std::thread t(task);\n    // ❌ نهاية النطاق بدون join أو detach\n    // البرنامج يستدعي std::terminate فورًا\n    // ✅ الحل: t.join(); أو t.detach();\n}",
+          "explanationArabic": "إذا دُمّر كائن std::thread وكان لا يزال joinable (أي لم يُستدعَ join أو detach)، يستدعي المُدمِّر std::terminate وينتهي البرنامج فورًا. هذا تصميم متعمّد لمنع الخيوط اليتيمة التي تصل لذاكرة مُحرَّرة. القاعدة: كل خيط إما join أو detach قبل نهاية نطاقه."
+        }
+      ],
+      "related": [
+        "std::mutex",
+        "std::atomic",
+        "std::future"
+      ]
+    },
+    "std::mutex": {
+      "title": "std::mutex",
+      "type": "نوع التزامن",
+      "description": "قفل استبعاد متبادل يحمي قسمًا حرجًا من الوصول المتزامن. خيط واحد فقط يستطيع أخذ القفل في لحظة ما — باقي الخيوط تنتظر حتى يُحرر.",
+      "usage": "يظهر عند مشاركة بيانات بين خيوط ويجب ضمان وصول حصري.",
+      "example": "std::mutex m;\nstd::lock_guard<std::mutex> lock(m);",
+      "includeHeader": "#include <mutex>",
+      "usageExamples": [
+        {
+          "titleArabic": "حماية متغير مشترك مع lock_guard",
+          "code": "#include <mutex>\n#include <thread>\n#include <iostream>\n\nstd::mutex mtx;\nint counter = 0;\n\nvoid safe_increment(int times) {\n    for (int i = 0; i < times; ++i) {\n        std::lock_guard<std::mutex> lock(mtx);\n        // القفل مأخوذ هنا — خيط واحد فقط ينفذ هذه المنطقة\n        ++counter;\n        // القفل يُحرر تلقائيًا عند نهاية النطاق (})\n    }\n}\n\nint main() {\n    std::thread t1(safe_increment, 100000);\n    std::thread t2(safe_increment, 100000);\n    t1.join();\n    t2.join();\n    std::cout << counter; // دائمًا 200000\n}",
+          "explanationArabic": "lock_guard يأخذ القفل عند بنائه ويحرره عند تدميره (RAII) — لا تحتاج unlock يدوي أبدًا. بدون القفل، ++counter ليست ذرية (تقرأ ثم تزيد ثم تكتب) فيمكن لخيطين قراءة نفس القيمة. القفل هنا داخل الحلقة — هذا صحيح منطقيًا لكنه بطيء لأن القفل/التحرير يحدث 200000 مرة."
+        },
+        {
+          "titleArabic": "تقليص القفل: اجمع محليًا ثم اقفل",
+          "code": "#include <mutex>\n#include <thread>\n#include <vector>\n#include <iostream>\n\nstd::mutex mtx;\nstd::vector<int> results;\n\nvoid compute_and_store(int id) {\n    // عمل مكلف بدون قفل — لا يصل لبيانات مشتركة\n    int local_result = id * id;\n\n    // القفل فقط عند الكتابة للمتغير المشترك\n    {\n        std::lock_guard<std::mutex> lock(mtx);\n        results.push_back(local_result);\n    }\n    // القفل مُحرر — باقي الخيوط تستطيع الكتابة\n}\n\nint main() {\n    std::vector<std::thread> threads;\n    for (int i = 0; i < 8; ++i) {\n        threads.emplace_back(compute_and_store, i);\n    }\n    for (auto& t : threads) t.join();\n    // results = {0, 1, 4, 9, 16, 25, 36, 49} (الترتيب قد يختلف)\n}",
+          "explanationArabic": "القاعدة الأساسية: قلّل مدة القفل قدر الإمكان. العمل المحلي لا يحتاج حماية — القفل فقط عند لمس البيانات المشتركة. النطاق { } حول lock_guard يحدد بدقة متى يُحرر القفل — بدون هذا النطاق سيمتد القفل لنهاية الدالة. هذا النمط أسرع بكثير من قفل الحلقة كاملة."
+        },
+        {
+          "titleArabic": "خطأ شائع: قفل يدوي بدون RAII",
+          "code": "#include <mutex>\n\nstd::mutex mtx;\nint data = 0;\n\n// ❌ خطأ: إذا رمى الكود استثناءً لا يُفتح القفل — deadlock!\n// void bad() {\n//     mtx.lock();\n//     data += 10;\n//     if (data > 100) throw std::runtime_error(\"كبير جداً\");\n//     // القفل لا يُفتح أبداً لأن throw يتخطى unlock\n//     mtx.unlock();\n// }\n\n// ✅ صحيح: lock_guard يُحرر القفل حتى مع الاستثناء\nvoid good() {\n    std::lock_guard<std::mutex> lock(mtx);\n    data += 10;\n    if (data > 100) throw std::runtime_error(\"كبير جداً\");\n    // lock_guard يُستدعى ~lock_guard عند الخروج (حتى بـ throw)\n    // القفل مضمون الإفلات\n}\n\n// ❌ خطأ آخر: نسخ mutex — محظور تمامًا\n// std::mutex m2 = mtx; // خطأ ترجمة: mutex غير قابل للنسخ",
+          "explanationArabic": "lock()/unlock() اليدوي خطر لأن أي مسار خروج غير متوقع (استثناء، return مبكر، break) يترك القفل مأخوذًا. lock_guard يحل هذا بالـ RAII: المُدمِّر يُحرر القفل دائمًا. mutex غير قابل للنسخ أو النقل بالتصميم — هذا يمنع أخطاء مثل قفلين يشيران لنفس mutex أو نسيان أي قفل مأخوذ."
+        }
+      ],
+      "related": [
+        "std::thread",
+        "std::lock_guard",
+        "std::unique_lock",
+        "std::atomic",
+        "std::scoped_lock"
+      ]
+    },
+    "std::recursive_mutex": {
+      "title": "std::recursive_mutex",
+      "type": "نوع التزامن",
+      "description": "مثل std::mutex لكن يسمح لنفس الخيط بأخذ القفل عدة مرات متداخلة.",
+      "usage": "يظهر عندما تدعو دالة تحمي قسمًا حرجًا دالة أخرى تحمي نفس القسم.",
+      "example": "std::recursive_mutex m;\nstd::lock_guard<std::recursive_mutex> lock(m);",
+      "related": [
+        "std::mutex",
+        "std::lock_guard",
+        "std::shared_mutex"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "قفل متداخل من نفس الخيط",
+          "code": "#include <mutex>\n\nstd::recursive_mutex rm;\n\nvoid inner() {\n    std::lock_guard<std::recursive_mutex> lock(rm);\n    // يمكن أخذ القفل مرة أخرى لأن نفس الخيط يملكه\n}\n\nvoid outer() {\n    std::lock_guard<std::recursive_mutex> lock(rm);\n    inner(); // لا deadlock — recursive_mutex يسمح بذلك\n}",
+          "explanationArabic": "recursive_mutex يسمح لنفس الخيط بأخذ القفل عدة مرات. يجب أن يُحرر بنفس عدد المرات."
+        },
+        {
+          "titleArabic": "عدد مرات القفل",
+          "code": "#include <mutex>\n#include <iostream>\n\nint main() {\n    std::recursive_mutex rm;\n    rm.lock();\n    rm.lock();\n    std::cout << \"locked twice\";\n    rm.unlock();\n    rm.unlock(); // يجب تحرير مرتين\n}",
+          "explanationArabic": "كل lock يحتاج unlock مقابلًا. مع lock_guard أو scoped_lock يتم هذا تلقائيًا."
+        },
+        {
+          "titleArabic": "تجنب استخدامه إن أمكن",
+          "code": "#include <mutex>\n\n// ❌ recursive_mutex أبطأ من mutex العادي\n// استخدمه فقط إذا كانت الدوال تتداخل فعلًا\n\n// ✅ الأفضل: أعد تصميم الكود لتفادي التداخل\nstd::mutex m;\nvoid inner(int& data) { data += 10; }\nvoid outer() {\n    int local = 0;\n    inner(local); // لا يحتاج قفل — local ليس مشتركًا\n    std::lock_guard<std::mutex> lock(m);\n    // استخدم local هنا\n}",
+          "explanationArabic": "recursive_mutex أبطأ من mutex العادي بسبب تتبع عدد مرات القفل. إذا استطعت تفادي التداخل بتصميم أفضل فافعل."
+        }
+      ]
+    },
+    "std::shared_mutex": {
+      "title": "std::shared_mutex",
+      "type": "نوع التزامن",
+      "description": "قفل قراءة-كتابة يسمح لعدة خيوط بالقراءة المتوازية في نفس اللحظة أو بخيط واحد بالكتابة الحصرية (C++17). القراءة لا تمنع قراءة أخرى، لكنها تمنع الكتابة. الكتابة تمنع القراءة والكتابة معًا. يُنفَّذ داخليًا عبر آلية تفرّق بين قفل مشترك (shared) وقفل حصري (exclusive).",
+      "usage": "مفيد لبيانات تُقرأ كثيرًا وتُكتب قليلًا مثل ذاكرة التخزين المؤقت (cache) أو إعدادات التطبيق أو قوائم الموارد. إذا كانت القراءة والكتابة متقاربتين فـ std::mutex أنسب لأن حمل shared_mutex أعلى.",
+      "example": "std::shared_mutex rw;\n{ std::shared_lock sl(rw); read(); }\n{ std::unique_lock ul(rw); write(); }",
+      "includeHeader": "#include <shared_mutex>",
+      "usageExamples": [
+        {
+          "titleArabic": "قفل قراءة متوازي وقفل كتابة حصري",
+          "code": "#include <shared_mutex>\n#include <mutex>\n#include <thread>\n#include <vector>\n#include <iostream>\n\nstd::shared_mutex rw_mutex;\nint shared_data = 0;\n\nvoid reader(int id) {\n    // shared_lock: يسمح لعدة قراءات بالتوازي\n    std::shared_lock<std::shared_mutex> lock(rw_mutex);\n    std::cout << \"قارئ \" << id << \": \" << shared_data << '\\n';\n    // عند خروج lock من النطاق يُحرر القفل تلقائيًا\n}\n\nvoid writer(int value) {\n    // unique_lock: قفل حصري — ينتظر كل القراءات أن تنتهي\n    std::unique_lock<std::shared_mutex> lock(rw_mutex);\n    shared_data = value;\n    std::cout << \"كاتب: أصبحت القيمة \" << shared_data << '\\n';\n}\n\nint main() {\n    std::vector<std::thread> threads;\n    // 3 قراءات متوازية — يمكنهم العمل في نفس اللحظة\n    for (int i = 0; i < 3; ++i)\n        threads.emplace_back(reader, i);\n    // كتابة واحدة — تنتظر القراءات ثم تحصر القفل\n    threads.emplace_back(writer, 42);\n    for (auto& t : threads) t.join();\n}",
+          "explanationArabic": "shared_lock يأخذ قفلًا مشتركًا — عدة خيوط يمكنها أخذ shared_lock في نفس الوقت. unique_lock يأخذ قفلًا حصريًا — ينتظر حتى يُحرر كل الأقفال المشتركة ثم يمنع أي قفل جديد. هذا يُحقق توازيًا حقيقيًا في القراءة مع حماية الكتابة."
+        },
+        {
+          "titleArabic": "ذاكرة تخزين مؤقت تُقرأ كثيرًا وتُكتب قليلًا",
+          "code": "#include <shared_mutex>\n#include <string>\n#include <unordered_map>\n#include <optional>\n\nclass TextureCache {\n    std::unordered_map<std::string, int> cache_;\n    mutable std::shared_mutex mutex_;\n\npublic:\n    // القراءة: قفل مشترك — عدة خيوط تقرأ معًا\n    std::optional<int> get(const std::string& name) const {\n        std::shared_lock<std::shared_mutex> lock(mutex_);\n        auto it = cache_.find(name);\n        if (it != cache_.end()) return it->second;\n        return std::nullopt;\n    }\n\n    // الكتابة: قفل حصري — خيط واحد فقط\n    void put(const std::string& name, int texture_id) {\n        std::unique_lock<std::shared_mutex> lock(mutex_);\n        cache_[name] = texture_id;\n    }\n\n    // التحقق من الوجود: قراءة فقط — قفل مشترك\n    bool contains(const std::string& name) const {\n        std::shared_lock<std::shared_mutex> lock(mutex_);\n        return cache_.count(name) > 0;\n    }\n};",
+          "explanationArabic": "mutable يسمح بتعديل mutex_ داخل دوال const لأن القفل نفسه ليس جزءًا من الحالة المنطقية. get و contains يستخدمان shared_lock لأنهما لا يُعدّلان البيانات — عدة خيوط تستطيع الاستدعاء في نفس الوقت. put يستخدم unique_lock لأنه يُعدّل الحاوية. هذا النمط هو الاستخدام الأكثر شيوعًا لـ shared_mutex."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام unique_lock للقراءة",
+          "code": "#include <shared_mutex>\n#include <thread>\n#include <iostream>\n\nstd::shared_mutex rw;\nint data = 0;\n\nvoid bad_reader() {\n    // ❌ unique_lock يأخذ قفلًا حصريًا حتى للقراءة!\n    // هذا يُلغي كل فائدة shared_mutex — القراءات تنتظر بعضها\n    // std::unique_lock<std::shared_mutex> lock(rw);\n    // std::cout << data << '\\n';\n}\n\nvoid good_reader() {\n    // ✅ shared_lock للقراءة — يسمح بتوازي القراءات\n    std::shared_lock<std::shared_mutex> lock(rw);\n    std::cout << data << '\\n';\n}\n\nvoid writer() {\n    // ✅ unique_lock للكتابة — قفل حصري\n    std::unique_lock<std::shared_mutex> lock(rw);\n    ++data;\n}\n\n// ❌ خطأ آخر: استخدام std::mutex بدل shared_mutex لكاش يُقرأ كثيرًا\n// std::mutex plain_mutex;\n// // كل القراءات تتسلسل — لا توازي حتى في القراءة!\n// // إذا كان 10 خيوط تقرأ، تعمل واحدًا تلو الآخر",
+          "explanationArabic": "الفرق الجوهري: shared_lock يسمح بتوازي القراءات، unique_lock يحصر الوصول كليًا. استخدام unique_lock للقراءة يُلغي فائدة shared_mutex تمامًا ويجعلها أبطأ من std::mutex العادي لأن shared_mutex له حمل داخلي أعلى. القاعدة: قراءة = shared_lock دائمًا، كتابة = unique_lock دائمًا."
+        }
+      ],
+      "related": [
+        "std::mutex",
+        "std::shared_lock",
+        "std::unique_lock",
+        "std::lock_guard",
+        "std::recursive_mutex"
+      ]
+    },
+    "std::future": {
+      "title": "std::future",
+      "type": "نوع التزامن",
+      "description": "يمثل قيمة ستكون متاحة لاحقًا من خيط آخر. get() تحجب حتى تصبح القيمة جاهزة ثم يُنقلها — لا يمكن استدعاء get() أكثر من مرة. يوفر wait() للانتظار بدون قراءة و wait_for() لانتظار بمدة زمنية.",
+      "usage": "يظهر مع std::async أو std::promise لاستقبال نتائج غير متزامنة.",
+      "example": "std::future<int> result = std::async(task);\nint value = result.get();",
+      "includeHeader": "#include <future>",
+      "usageExamples": [
+        {
+          "titleArabic": "استقبال نتيجة من std::async",
+          "code": "#include <future>\n#include <iostream>\n\nint compute(int x) {\n    // محاكاة عمل مكلف\n    return x * x;\n}\n\nint main() {\n    // launch::async يُجبر التشغيل في خيط فعلي (ليس تأجيلًا)\n    std::future<int> f = std::async(std::launch::async, compute, 42);\n\n    // يمكنك عمل أشياء أخرى هنا بينما الخيط يعمل\n    std::cout << \"جاري الحساب...\\n\";\n\n    // get() يحجب حتى النتيجة ثم يُنقلها\n    int result = f.get(); // 1764\n    std::cout << result;\n\n    // ❌ لا تستدعِ get() مرة ثانية — يُرمي std::future_error\n}",
+          "explanationArabic": "std::async مع launch::async يُنشئ خيطًا فعليًا. بدونها قد يُؤجَّل التنفيذ حتى get() (lazy). get() يُنقل القيمة — بعد الاستدعاء الأولى يصبح future غير صالح. هذا يضمن أن مالكًا واحدًا فقط يأخذ النتيجة."
+        },
+        {
+          "titleArabic": "انتظار بمدة زمنية مع wait_for",
+          "code": "#include <future>\n#include <chrono>\n#include <iostream>\n\nint main() {\n    std::future<int> f = std::async(std::launch::async, []{\n        // عمل طويل\n        int sum = 0;\n        for (int i = 0; i < 100000000; ++i) sum += i;\n        return sum;\n    });\n\n    // wait_for: انتظر 100ms ثم أبلّغ عن الحالة\n    auto status = f.wait_for(std::chrono::milliseconds(100));\n    if (status == std::future_status::ready) {\n        std::cout << \"جاهز: \" << f.get();\n    } else if (status == std::future_status::timeout) {\n        std::cout << \"لم ينتهِ بعد — استمر لاحقًا\";\n        // لا تستدعِ get() هنا — الخيط ما زال يعمل\n    }\n}",
+          "explanationArabic": "wait_for ينتظر المدة المحددة ثم يُرجع الحالة بدون أخذ القيمة. timeout يعني 'لم ينتهِ بعد' — لا تستدعِ get() في هذه الحالة لأنه سيحجب. deferred يعني أن التنفيذ لم يبدأ (عندما لم تُستخدم launch::async). هذا النمط مفيد لتحديث واجهة المستخدم أثناء انتظار نتيجة."
+        },
+        {
+          "titleArabic": "خطأ شائع: استدعاء get() مرتين",
+          "code": "#include <future>\n\nstd::future<int> f = std::async(std::launch::async, [] { return 42; });\n\nint a = f.get(); // ✅ أول مرة — يُرجع 42\n// int b = f.get(); // ❌ يرمي std::future_error: no shared state\n\n// ✅ إذا احتجت القيمة في عدة أماكن: خزّنها في متغير\nint result = f.get(); // خذها مرة واحدة\nint x = result;      // استخدم النسخة المخزّنة\nint y = result;      // آمن",
+          "explanationArabic": "get() يُنقل القيمة من الحالة المشتركة (shared state) ثم يُبطّلها — هذا تصميم متعمّد لمنع الغموض حول 'من يملك النتيجة'. بعد get()، valid() يُرجع false. القاعدة: خزّن نتيجة get() في متغير واستخدمها مرارًا."
+        }
+      ],
+      "related": [
+        "std::promise",
+        "std::async",
+        "std::thread",
+        "std::future_status"
+      ]
+    },
+    "std::promise": {
+      "title": "std::promise",
+      "type": "نوع التزامن",
+      "description": "كائن يُمثّل جانب الإرسال في قناة اتصال بين خيوط. يربط بـ std::future عبر get_future() — الخيط المنتج يكتب القيمة بـ set_value() والخيط المستهلك يقرأها بـ future::get(). كل promise يُنتج future واحدًا فقط. يمكنه أيضًا إرسال استثناء بـ set_exception() بدل قيمة عادية. إذا دُمّر promise بدون set_value أو set_exception، يُستدعى future::get() ويرمي std::future_error مع broken_promise.",
+      "usage": "يظهر عندما تحتاج نقل نتيجة من خيط إلى آخر بطريقة يدوية — عندما لا يكفي std::async لأنك تتحكم في الخيط بنفسك. شائع في أنظمة المهام والأنابيب (pipelines) حيث يُنتج خيط نتيجة لخيط آخر.",
+      "example": "std::promise<int> prom;\nstd::future<int> fut = prom.get_future();\nprom.set_value(42);",
+      "includeHeader": "#include <future>",
+      "usageExamples": [
+        {
+          "titleArabic": "إرسال نتيجة من خيط منفصل",
+          "code": "#include <future>\n#include <thread>\n#include <iostream>\n\nstd::promise<int> prom;\nstd::future<int> fut = prom.get_future();\n\n// الخيط المنتج: يُنفّذ عملًا ثم يُرسل النتيجة\nstd::thread producer([&prom] {\n    int result = 42 * 2; // محاكاة حساب\n    prom.set_value(result); // يُرسل القيمة — future يصبح جاهزًا\n});\n\n// الخيط المستهلك: ينتظر ويقرأ النتيجة\nint value = fut.get(); // يحجب حتى set_value — يُرجع 84\nstd::cout << value;\n\nproducer.join();",
+          "explanationArabic": "get_future() يُنشئ future مرتبطًا بـ promise — يجب استدعاؤه قبل تمرير promise للخيط. set_value() يُفعّل future ويُخزّن القيمة في الحالة المشتركة. get() يحجب حتى يصبح future جاهزًا ثم يُرجع القيمة. ملاحظة: get_future() يُستدعى مرة واحدة فقط — استدعاؤه مرتين يرمي future_error."
+        },
+        {
+          "titleArabic": "إرسال استثناء من الخيط المنتج",
+          "code": "#include <future>\n#include <thread>\n#include <iostream>\n#include <stdexcept>\n\nstd::promise<void> prom;\nstd::future<void> fut = prom.get_future();\n\nstd::thread worker([&prom] {\n    try {\n        // عمل قد يفشل\n        bool success = false;\n        if (!success) {\n            prom.set_exception(\n                std::make_exception_ptr(\n                    std::runtime_error(\"فشل تحميل الملمس\")\n                )\n            );\n            return;\n        }\n        prom.set_value();\n    } catch (...) {\n        // إعادة توجيه أي استثناء غير متوقع\n        prom.set_exception(std::current_exception());\n    }\n});\n\ntry {\n    fut.get(); // يُرمي runtime_error هنا!\n} catch (const std::runtime_error& e) {\n    std::cout << \"خطأ من الخيط: \" << e.what();\n}\n\nworker.join();",
+          "explanationArabic": "set_exception يحوّل الاستثناء إلى future — المستهلك يراه عبر get() التي تُعيد رميه. make_exception_ptr يبني exception_ptr من أي استثناء. current_exception() يلتقط الاستثناء الحالي داخل catch ويمرره — مفيد لإعادة توجيه استثناءات غير متوقعة. هذا النمط أنظف من محاولة رمي استثناء عبر حدود الخيوط مباشرة (مستحيل فعلًا)."
+        },
+        {
+          "titleArabic": "خطأ شائع: تدمير promise بدون إرسال قيمة",
+          "code": "#include <future>\n#include <thread>\n\n// ❌ كارثة: prom يُدمَّر بدون set_value أو set_exception\n// std::future<int> broken() {\n//     std::promise<int> prom;\n//     std::future<int> fut = prom.get_future();\n//     std::thread([&prom] {\n//         // لو رمى هنا استثناء ولم يُمسكه...\n//         // prom يُدمَّر بدون set_value\n//     }).detach();\n//     return fut;\n// }\n// // fut.get() يرمي std::future_error: broken_promise\n\n// ✅ صحيح: تأكد دائمًا من set_value أو set_exception\nstd::future<int> safe() {\n    std::promise<int> prom;\n    std::future<int> fut = prom.get_future();\n    std::thread([&prom] {\n        try {\n            prom.set_value(42);\n        } catch (...) {\n            prom.set_exception(std::current_exception());\n        }\n    }).detach();\n    return fut;\n}\n\n// ✅ أو أفضل: لا تستخدم detach أصلًا — استخدم join\n// واجعل الخيط مضمون الانتهاء قبل تدمير promise",
+          "explanationArabic": "عند تدمير promise بدون إرسال قيمة أو استثناء، يُخزَّن broken_promise في الحالة المشتركة. عندما يحاول المستهلك استدعاء get() يُرمى future_error. هذا يمنع الانتظار الأبدي — أفضل من التسكع بلا نهاية. القاعدة: في كل مسار خروج من الخيط المنتج، استدعِ set_value أو set_exception."
+        }
+      ],
+      "related": [
+        "std::future",
+        "std::async",
+        "std::thread",
+        "std::exception_ptr",
+        "std::current_exception"
+      ]
+    },
+    "std::condition_variable": {
+      "title": "std::condition_variable",
+      "type": "نوع التزامن",
+      "description": "آلية إشعار تسمح لخيط بالانتظار حتى يُنبّهه خيط آخر أن شرطًا ما تحقق. يعمل دائمًا مع std::unique_lock<std::mutex> — عند استدعاء wait() يُحرر القفل مؤقتًا وينام الخيط، وعند الإيقاظ يُعاود أخذ القفل قبل العودة. notify_one() يُيقظ خيطًا واحدًا وnotify_all() يُيقظ الكل. لا يعمل مع std::shared_mutex — لذلك استخدم std::condition_variable_any إذا احتجت قفل قراءة-كتابة.",
+      "usage": "الآلية الأساسية لأنماط الإنتاج-الاستهلاك (producer-consumer) وقوائم الانتظار والإشارات بين خيوط. بديل أنظف من الانتظار المُزدحم (busy-wait) مع atomic لأنه لا يستهلك معالجًا أثناء الانتظار.",
+      "example": "std::condition_variable cv;\ncv.wait(lock, []{ return ready; });\ncv.notify_one();",
+      "includeHeader": "#include <condition_variable>",
+      "usageExamples": [
+        {
+          "titleArabic": "نمط الإنتاج-الاستهلاك مع طابور بسيط",
+          "code": "#include <condition_variable>\n#include <mutex>\n#include <queue>\n#include <thread>\n#include <iostream>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nstd::queue<int> tasks;\nbool done = false;\n\n// المستهلك: ينتظر حتى يوجد عنصر أو ينتهي الإنتاج\nvoid consumer() {\n    std::unique_lock<std::mutex> lock(mtx);\n    while (!done || !tasks.empty()) {\n        // wait مع lambda: يتحقق من الشرط، إن كان خاطئًا يُحرر القفل وينام\n        // عند الإيقاظ يُعاود أخذ القفل ويتحقق مجددًا\n        cv.wait(lock, [&] { return !tasks.empty() || done; });\n\n        if (!tasks.empty()) {\n            int job = tasks.front();\n            tasks.pop();\n            lock.unlock(); // حرر القفل أثناء المعالجة\n            std::cout << \"معالجة: \" << job << '\\n';\n            lock.lock(); // أعد القفل للدورة التالية\n        }\n    }\n}\n\n// المنتج: يُضيف عناصر ويُنبّه المستهلك\nvoid producer() {\n    for (int i = 1; i <= 5; ++i) {\n        {\n            std::lock_guard<std::mutex> lock(mtx);\n            tasks.push(i);\n        }\n        cv.notify_one(); // يُوقظ خيطًا واحدًا ينتظر\n    }\n    {\n        std::lock_guard<std::mutex> lock(mtx);\n        done = true;\n    }\n    cv.notify_all(); // يُوقظ كل الخيوط لتفحص done\n}",
+          "explanationArabic": "wait مع lambda (الشكل الثاني) يحل مشكلة الاستيقاظ الكاذب (spurious wakeup) — يتحقق من الشرط في حلقة ضمنية. بدون lambda يجب كتابة while يدويًا. notify_one يُوقظ خيطًا واحدًا فقط — أنسب لمستهلك واحد. notify_all يُوقظ الكل — ضروري عند الإنهاء لأن عدة خيوط قد تنتظر. حرر القفل أثناء المعالجة لتسمح للمنتج بالإضافة بالتوازي."
+        },
+        {
+          "titleArabic": "انتظار بمدة زمنية مع wait_for",
+          "code": "#include <condition_variable>\n#include <mutex>\n#include <chrono>\n#include <iostream>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nbool data_ready = false;\n\nvoid wait_with_timeout() {\n    std::unique_lock<std::mutex> lock(mtx);\n\n    // wait_for: ينتظر حتى 500ms أو حتى يتحقق الشرط\n    bool success = cv.wait_for(lock, std::chrono::milliseconds(500),\n        [&] { return data_ready; }\n    );\n\n    if (success) {\n        std::cout << \"البيانات جاهزة\\n\";\n    } else {\n        std::cout << \"انتهت المهلة — لم تصل بيانات\\n\";\n    }\n}\n\nvoid producer_delayed() {\n    std::this_thread::sleep_for(std::chrono::milliseconds(200));\n    {\n        std::lock_guard<std::mutex> lock(mtx);\n        data_ready = true;\n    }\n    cv.notify_one(); // يُوقظ قبل انتهاء المهلة\n}",
+          "explanationArabic": "wait_for مع lambda يُرجع bool: true إذا تحقق الشرط، false إذا انتهت المهلة. بدون lambda يُرجع cv_status (timeout أو no_timeout) لكنه لا يتحقق من الشرط — أنصح دائمًا باستخدام الشكل مع lambda. wait_for لا يضمن انتظار المدة كاملة — يستيقظ فورًا عند notify. هذا أنظف من الانتظار المُزدحم لأن الخيط ينام فعلًا ولا يستهلك معالجًا."
+        },
+        {
+          "titleArabic": "خطأ شائع: notify بدون قفل أو فقدان الإشعار",
+          "code": "#include <condition_variable>\n#include <mutex>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nbool ready = false;\n\n// ❌ خطأ: notify قبل أن يبدأ المستهلك الانتظار\n// المنتج يُنبّه لكن لا أحد ينتظر — الإشعار يضيع!\n// void lost_wakeup() {\n//     ready = true;\n//     cv.notify_one(); // لا أحد ينتظر — ضاعت!\n//     // المستهلك يبدأ wait بعد هذا فينتظر للأبد\n// }\n\n// ✅ صحيح: غيّر الشرط تحت القفل قبل notify\nvoid safe_notify() {\n    {\n        std::lock_guard<std::mutex> lock(mtx);\n        ready = true;\n    } // القفل يُحرر هنا\n    cv.notify_one(); // آمن: حتى لو بدأ المستهلك wait بعد هذا،\n    // سيتحقق من ready فورًا ولن ينام\n}\n\n// ❌ خطأ آخر: استخدام lock_guard بدل unique_lock مع wait\n// std::lock_guard<std::mutex> lock(mtx);\n// cv.wait(lock, [&]{ return ready; });\n// // خطأ ترجمة: wait يحتاج unique_lock لأنه يُحرر القفل داخليًا\n\n// ✅ wait يحتاج unique_lock حصريًا\nstd::unique_lock<std::mutex> lock(mtx);\ncv.wait(lock, [&]{ return ready; });",
+          "explanationArabic": "فقدان الإشعار (lost wakeup) هو خطأ كلاسيكي: المنتج يُرسل notify قبل أن ينام المستهلك فيُضاع الإشعار. الحل: تغيير الشرط تحت القفل. إذا بدأ المستهلك wait بعد notify، سيتحقق من ready فورًا (لأن wait يأخذ القفل أولًا ثم يتحقق). wait يحتاج unique_lock لأنه يُحرر القفل داخليًا — lock_guard لا يدعم هذا."
+        }
+      ],
+      "related": [
+        "std::mutex",
+        "std::unique_lock",
+        "std::thread",
+        "std::atomic",
+        "std::condition_variable_any"
+      ]
+    },
+    "std::lock_guard": {
+      "title": "std::lock_guard",
+      "type": "نوع التزامن",
+      "description": "غلاف RAII بسيط لقفل mutex. يأخذ القفل عند البناء ويحرره عند الخروج.",
+      "usage": "الخيار الأسهل لحماية قسم حرج عندما لا تحتاج فتح القفل مبكرًا.",
+      "example": "std::lock_guard<std::mutex> lock(m);",
+      "related": [
+        "std::mutex",
+        "std::unique_lock",
+        "std::scoped_lock"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "حماية قسم حرج بسيط",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::mutex m;\nint counter = 0;\n\nvoid safe_inc() {\n    std::lock_guard<std::mutex> lock(m);\n    ++counter;\n} // القفل يُحرر تلقائيًا هنا",
+          "explanationArabic": "lock_guard يأخذ القفل عند بنائه ويحرره عند تدميره. لا تحتاج unlock يدوي أبدًا."
+        },
+        {
+          "titleArabic": "آمن مع الاستثناءات",
+          "code": "#include <mutex>\n\nstd::mutex m;\nvoid may_throw() {\n    std::lock_guard<std::mutex> lock(m);\n    throw std::runtime_error(\"error\");\n    // القفل مضمون الإفلات حتى مع throw\n}",
+          "explanationArabic": "lock_guard يضمن تحرير القفل حتى عند رمي استثناء. هذا الفرق الأساسي عن lock/unlock اليدوي."
+        },
+        {
+          "titleArabic": "لا يمكن تحريره مبكرًا",
+          "code": "#include <mutex>\n\nstd::mutex m;\nvoid fn() {\n    std::lock_guard<std::mutex> lock(m);\n    // لا يمكن lock.unlock() مبكرًا\n    // القفل يبقى حتى نهاية النطاق\n    // إذا احتجت تحرير مبكر: استخدم unique_lock بدلًا من ذلك\n}",
+          "explanationArabic": "lock_guard لا يدعم unlock مبكر. إذا احتجت تحرير القفل قبل نهاية النطاق استخدم unique_lock."
+        }
+      ]
+    },
+    "std::unique_lock": {
+      "title": "std::unique_lock",
+      "type": "نوع التزامن",
+      "description": "غلاف RAII لقفل mutex مع تحكم أكبر: تأخير أو تحرير مبكر أو نقل.",
+      "usage": "يظهر مع condition_variable أو عند الحاجة لتحرير مبكر.",
+      "example": "std::unique_lock<std::mutex> lock(m);\ncv.wait(lock);\nlock.unlock();",
+      "related": [
+        "std::mutex",
+        "std::lock_guard",
+        "std::condition_variable"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تحرير القفل مبكرًا",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::mutex m;\nvoid fn() {\n    std::unique_lock<std::mutex> lock(m);\n    // قسم حرج\n    lock.unlock(); // تحرير مبكر\n    // عمل بدون قفل\n    lock.lock(); // إعادة القفل\n}",
+          "explanationArabic": "unique_lock يسمح بتحرير وإعادة القفل يدويًا. مفيد لتقليل مدة القفل."
+        },
+        {
+          "titleArabic": "استخدامه مع condition_variable",
+          "code": "#include <mutex>\n#include <condition_variable>\n\nstd::mutex m;\nstd::condition_variable cv;\nbool ready = false;\n\nvoid wait_fn() {\n    std::unique_lock<std::mutex> lock(m);\n    cv.wait(lock, [] { return ready; });\n    // lock يُحرر أثناء الانتظار ويُعاود أخذه عند الإيقاظ\n}",
+          "explanationArabic": "condition_variable::wait يحتاج unique_lock لأنه يُحرر القفل داخليًا أثناء الانتظار. lock_guard لا يدعم هذا."
+        },
+        {
+          "titleArabic": "تأخير أخذ القفل",
+          "code": "#include <mutex>\n\nstd::mutex m;\nvoid fn() {\n    std::unique_lock<std::mutex> lock(m, std::defer_lock);\n    // القفل غير مأخوذ بعد\n    lock.lock(); // أخذ القفل لاحقًا\n}",
+          "explanationArabic": "defer_lock يبني unique_lock بدون أخذ القفل. مفيد عندما تريد التحكم في توقيت القفل."
+        }
+      ]
+    },
+    "std::scoped_lock": {
+      "title": "std::scoped_lock",
+      "type": "نوع التزامن",
+      "description": "غلاف RAII يقفل عدة mutexes دفعة واحدة مع تجنب deadlock (C++17).",
+      "usage": "يفيد عند قفل عدة mutexes في نفس الوقت بأمان.",
+      "example": "std::scoped_lock lock(mutex_a, mutex_b);",
+      "related": [
+        "std::mutex",
+        "std::lock_guard",
+        "std::unique_lock"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "قفل عدة mutexes بأمان",
+          "code": "#include <mutex>\n\nstd::mutex m1, m2;\n\nvoid transfer() {\n    std::scoped_lock lock(m1, m2);\n    // كلا القفلين مأخوذان بأمان بدون deadlock\n}",
+          "explanationArabic": "scoped_lock يقفل عدة mutexes دفعة واحدة باستخدام خوارزمية تتجنب deadlock. أنظف من lock() المنفصل."
+        },
+        {
+          "titleArabic": "مقارنة مع lock_guard",
+          "code": "#include <mutex>\n\nstd::mutex m;\n\n// scoped_lock مع mutex واحد يعمل كـ lock_guard\nstd::scoped_lock lock(m); // يقفل m\n// عند نهاية النطاق يُحرر تلقائيًا",
+          "explanationArabic": "scoped_lock مع mutex واحد يعادل lock_guard تمامًا. مع عدة mutexes يضيف تجنب deadlock."
+        },
+        {
+          "titleArabic": "تجنب deadlock عند تبادل البيانات",
+          "code": "#include <mutex>\n\nstd::mutex mtx_a, mtx_b;\nint data_a = 0, data_b = 0;\n\nvoid swap_safely() {\n    // ❌ بدون scoped_lock: ترتيب القفل الخاطئ يُسبب deadlock\n    // std::lock_guard<std::mutex> l1(mtx_a);\n    // std::lock_guard<std::mutex> l2(mtx_b);\n\n    // ✅ scoped_lock يُحدد الترتيب تلقائيًا\n    std::scoped_lock lock(mtx_a, mtx_b);\n    int tmp = data_a;\n    data_a = data_b;\n    data_b = tmp;\n}",
+          "explanationArabic": "إذا أخذ خيط m1 ثم m2 وأخذ خيط آخر m2 ثم m1 يحصل deadlock. scoped_lock يستخدم خوارزمية deadlock-avoidance تُحدد ترتيبًا آمنًا."
+        }
+      ]
+    },
+    "std::async": {
+      "title": "std::async",
+      "type": "دالة التزامن",
+      "description": "تشغل دالة بشكل غير متزامن وتُرجع future لنتيجتها.",
+      "usage": "الطريقة الأبسط لتنفيذ مهمة غير متزامنة.",
+      "example": "std::future<int> f = std::async(std::launch::async, compute, arg);",
+      "related": [
+        "std::future",
+        "std::promise",
+        "std::thread"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تشغيل مهمة غير متزامنة",
+          "code": "#include <future>\n#include <iostream>\n\nint compute(int x) { return x * x; }\n\nint main() {\n    auto f = std::async(std::launch::async, compute, 5);\n    std::cout << \"جاري...\\n\";\n    std::cout << f.get(); // 25\n}",
+          "explanationArabic": "async مع launch::async يُشغّل الدالة في خيط فعلي. get() يحجب حتى النتيجة."
+        },
+        {
+          "titleArabic": "launch::async مقابل التأجيل",
+          "code": "#include <future>\n\n// launch::async: يُشغّل في خيط فورًا\nauto f1 = std::async(std::launch::async, [] { return 1; });\n\n// بدون تحديد: قد يُؤجَّل حتى get()\nauto f2 = std::async([] { return 2; });\n\n// launch::deferred: يُشغّل عند get() فقط\nauto f3 = std::async(std::launch::deferred, [] { return 3; });",
+          "explanationArabic": "بدون تحديد السياسة، المُصرِّف يختار. استخدم launch::async دائمًا إذا أردت توازيًا فعليًا."
+        },
+        {
+          "titleArabic": "عدة مهام متوازية",
+          "code": "#include <future>\n#include <iostream>\n\nint main() {\n    auto f1 = std::async(std::launch::async, [] { int s=0; for(int i=0;i<100;++i)s+=i; return s; });\n    auto f2 = std::async(std::launch::async, [] { int s=0; for(int i=100;i<200;++i)s+=i; return s; });\n    std::cout << f1.get() + f2.get(); // 19800\n}",
+          "explanationArabic": "كل async يُشغّل في خيط منفصل. get يحجب حتى النتيجة. المهام تعمل بالتوازي."
+        }
+      ]
+    },
+    "std::once_flag": {
+      "title": "std::once_flag",
+      "type": "نوع التزامن",
+      "description": "كائن يضمن تنفيذ دالة مرة واحدة فقط حتى مع خيوط متعددة.",
+      "usage": "يُستخدم مع std::call_once لتهيئة موارد مشتركة مرة واحدة.",
+      "example": "std::once_flag flag;\nstd::call_once(flag, []{ init(); });",
+      "related": [
+        "std::call_once",
+        "std::mutex",
+        "static"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تهيئة مرة واحدة فقط",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::once_flag flag;\n\nvoid init() { std::cout << \"تهيئة\\n\"; }\n\nvoid use() {\n    std::call_once(flag, init);\n    // init تُستدعى مرة واحدة فقط مهما تكرر use()\n}",
+          "explanationArabic": "call_once يضمن تنفيذ الدالة مرة واحدة حتى مع خيوط متعددة. أنظف من static داخل دالة في بعض الحالات."
+        },
+        {
+          "titleArabic": "تهيئة آمنة مع خيوط متعددة",
+          "code": "#include <mutex>\n#include <thread>\n#include <iostream>\n\nstd::once_flag flag;\nvoid worker(int id) {\n    std::call_once(flag, [] { std::cout << \"init\\n\"; });\n    std::cout << id << \" جاهز\\n\";\n}\n\nint main() {\n    std::thread t1(worker, 1);\n    std::thread t2(worker, 2);\n    t1.join(); t2.join();\n}",
+          "explanationArabic": "حتى لو بدأ خيطان call_once في نفس اللحظة، init تُنفَّذ مرة واحدة. الخيوط الأخرى تنتظر ثم تتابع."
+        },
+        {
+          "titleArabic": "لا تنسَ أن once_flag يجب أن يكون مشتركًا",
+          "code": "#include <mutex>\n\n// ❌ خطأ: flag محلي — كل استدعاء يُنشئ واحدًا جديدًا\n// void bad() {\n//     std::once_flag flag;\n//     std::call_once(flag, init); // لا فائدة — flag جديدة كل مرة\n// }\n\n// ✅ صحيح: flag عام أو static\nstd::once_flag flag;\nvoid good() {\n    std::call_once(flag, init);\n}",
+          "explanationArabic": "once_flag يجب أن يكون مشتركًا بين كل الاستدعاءات. إذا كان محليًا فكل استدعاء يحصل على flag جديد."
+        }
+      ]
+    },
+    "std::jthread": {
+      "title": "std::jthread",
+      "type": "نوع تزامن (C++20)",
+      "description": "خيط ينضم تلقائيًا عند تدميره. يدعم stop_token للإيقاف التعاوني. بديل أكثر أمانًا من std::thread.",
+      "usage": "بديل std::thread الأنظف — لا تحتاج join() يدوي.",
+      "example": "std::jthread t([](std::stop_token st){ while(!st.stop_requested()) work(); });",
+      "includeHeader": "#include <thread>",
+      "usageExamples": [
+        {
+          "titleArabic": "خيط ينضم تلقائيًا",
+          "code": "#include <thread>\n#include <iostream>\n\nvoid task() {\n    std::cout << \"working\\n\";\n}\n\nint main() {\n    std::jthread t(task);\n    std::cout << \"main\\n\";\n}",
+          "explanationArabic": "jthread ينضم تلقائيًا عند خروج main. لا تحتاج join() صريح. أأمن من thread."
+        },
+        {
+          "titleArabic": "مع stop_token للإيقاف",
+          "code": "#include <thread>\n#include <iostream>\n\nint main() {\n    std::jthread t([](std::stop_token st) {\n        int i = 0;\n        while (!st.stop_requested() && i < 100)\n            ++i;\n    });\n    t.request_stop();",
+          "explanationArabic": "request_stop يُرسل إشارة إيقاف. الخيط يفحص stop_requested() ويتوقف بلطف."
+        },
+        {
+          "titleArabic": "لا حاجة لـ join يدوي",
+          "code": "#include <thread>\n\nvoid run() {\n    std::jthread worker([]{\n        for (int i = 0; i < 10; ++i) {}\n    });\n}",
+          "explanationArabic": "worker ينضم تلقائيًا عند نهاية run(). مع thread كان يجب استدعاء join() صريحًا."
+        }
+      ],
+      "related": [
+        "std::thread",
+        "std::stop_token",
+        "std::atomic"
+      ]
+    },
+    "std::latch": {
+      "title": "std::latch",
+      "type": "نوع تزامن (C++20)",
+      "description": "حاجز يُستخدم مرة واحدة. ينتظر الخيط حتى يُنقص العداد لصفر عبر count_down من عدة خيوط.",
+      "usage": "للانتظار حتى تُنهي عدة خيوط مرحلة معينة قبل المتابعة.",
+      "example": "std::latch done(3); done.wait();",
+      "includeHeader": "#include <latch>",
+      "usageExamples": [
+        {
+          "titleArabic": "انتظار عدة خيوط",
+          "code": "#include <latch>\n#include <thread>\n#include <iostream>\n\nint main() {\n    constexpr int N = 3;\n    std::latch done(N);\n    for (int i = 0; i < N; ++i) {\n        std::thread([&] {\n            done.count_down();\n        }).detach();\n    }\n    done.wait();\n    std::cout << \"all done\";\n}",
+          "explanationArabic": "count_down يُنقص العداد. wait ينتظر حتى يصل لصفر. latch لا يمكن إعادة ضبطه."
+        },
+        {
+          "titleArabic": "تهيئة متوازية",
+          "code": "#include <latch>\n\nvoid init_phase(std::latch& l) {\n    l.count_down();\n}",
+          "explanationArabic": "كل خيط يُنقص latch عند انتهاء تهيئته. المنتظر يتابع بعد اكتمال الكل."
+        },
+        {
+          "titleArabic": "لا يمكن إعادة استخدامه",
+          "code": "#include <latch>\n\nstd::latch l(2);\nl.count_down();\nl.count_down();\n// l.wait(); // صحيح — العداد صفر\n// l.count_down(); // سلوك غير معرّف — لا يمكن إعادة استخدامه",
+          "explanationArabic": "latch لمرة واحدة فقط. للحاجز القابل لإعادة الاستخدام استخدم std::barrier."
+        }
+      ],
+      "related": [
+        "std::barrier",
+        "std::thread",
+        "std::atomic"
+      ]
+    },
+    "std::barrier": {
+      "title": "std::barrier",
+      "type": "نوع تزامن (C++20)",
+      "description": "حاجز قابل لإعادة الاستخدام. ينتظر عدد محدد من الخيوط ثم يُنفذ دالة تزامن ويعود للعداد الأصلي.",
+      "usage": "للمهام المتكررة حيث تحتاج عدة خيوط أن تتزامن عند نقطة عدة مرات.",
+      "example": "std::barrier sync(4); sync.arrive_and_wait();",
+      "includeHeader": "#include <barrier>",
+      "usageExamples": [
+        {
+          "titleArabic": "تزامن خيوط متكرر",
+          "code": "#include <barrier>\n#include <thread>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::barrier sync(3);\n    std::vector<std::jthread> threads;\n    for (int i = 0; i < 3; ++i) {\n        threads.emplace_back([&sync, i] {\n            sync.arrive_and_wait();\n        });\n    }\n}",
+          "explanationArabic": "arrive_and_wait يُنقص العداد وينتظر الباقي. عند الوصول للعدد الكامل يُحرر الجميع ويعود العداد."
+        },
+        {
+          "titleArabic": "مع دالة تزامن",
+          "code": "#include <barrier>\n\nauto on_complete = []() noexcept {};\nstd::barrier sync(4, on_complete);",
+          "explanationArabic": "on_complete تُنفذ مرة واحدة عندما يصل كل الخيوط للحاجز. تُنفذ في أحد الخيوط فقط."
+        },
+        {
+          "titleArabic": "arrive_and_drop لتقليل العدد",
+          "code": "#include <barrier>\n\nstd::barrier sync(4);\nsync.arrive_and_drop();",
+          "explanationArabic": "arrive_and_drop يُنخرط الخيط من الحاجز ويُقلل العدد. مفيد عند انتهاء خيط مبكرًا."
+        }
+      ],
+      "related": [
+        "std::latch",
+        "std::jthread",
+        "std::condition_variable"
+      ]
+    },
+    "std::counting_semaphore": {
+      "title": "std::counting_semaphore",
+      "type": "نوع تزامن (C++20)",
+      "description": "سيمافور عددي يتحكم في عدد الخيوط التي يمكنها الوصول لمورد مشترك. يدعم acquire و release.",
+      "usage": "لتحديد عدد الخيوط النشطة مثل تجمع خيوط أو محدد اتصالات.",
+      "example": "std::counting_semaphore<4> sem(0);",
+      "includeHeader": "#include <semaphore>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحديد عدد الخيوط المتوازية",
+          "code": "#include <semaphore>\n#include <thread>\n#include <vector>\n\nint main() {\n    std::counting_semaphore<4> sem(4);\n    std::vector<std::jthread> threads;\n    for (int i = 0; i < 10; ++i) {\n        threads.emplace_back([&sem] {\n            sem.acquire();\n            sem.release();\n        });\n    }\n}",
+          "explanationArabic": "acquire ينتظر حتى يتوفر مكان. release يُحرر مكانًا. فقط 4 خيوط تعمل في وقت واحد."
+        },
+        {
+          "titleArabic": "استخدام try_acquire بدون انتظار",
+          "code": "#include <semaphore>\n\nstd::counting_semaphore<1> sem(1);\nif (sem.try_acquire()) {\n    sem.release();\n}",
+          "explanationArabic": "try_acquire يُرجع فورًا — true إذا نجح أو false إذا كان العداد صفر. لا يُجمّد الخيط."
+        },
+        {
+          "titleArabic": "إشارة بين خيوط",
+          "code": "#include <semaphore>\n#include <thread>\n\nstd::counting_semaphore<1> signal(0);\nstd::jthread producer([&] { signal.release(); });\nstd::jthread consumer([&] { signal.acquire(); });",
+          "explanationArabic": "العداد يبدأ بصفر. consumer ينتظر حتى يُحرر producer. أنظف من flag + condition_variable."
+        }
+      ],
+      "related": [
+        "std::binary_semaphore",
+        "std::mutex",
+        "std::condition_variable"
+      ]
+    },
+    "std::binary_semaphore": {
+      "title": "std::binary_semaphore",
+      "type": "نوع تزامن (C++20)",
+      "description": "سيمافور ثنائي (0 أو 1). اختصار لـ counting_semaphore<1>. يُستخدم كقفل خفيف أو إشارة.",
+      "usage": "كبديل خفيف لـ mutex عند عدم الحاجة لقفل/فتح متداخل.",
+      "example": "std::binary_semaphore sem(1);",
+      "includeHeader": "#include <semaphore>",
+      "usageExamples": [
+        {
+          "titleArabic": "قفل خفيف",
+          "code": "#include <semaphore>\n\nstd::binary_semaphore sem(1);\nvoid critical() {\n    sem.acquire();\n    sem.release();\n}",
+          "explanationArabic": "acquire ينتظر حتى يتوفر (1). release يُحرر. مثل mutex لكن أبسط."
+        },
+        {
+          "titleArabic": "إشارة بين خيطين",
+          "code": "#include <semaphore>\n#include <thread>\n\nstd::binary_semaphore ready(0);\nstd::jthread waiter([&] { ready.acquire(); });\nready.release();",
+          "explanationArabic": "waiter ينتظر حتى يُستدعى release. أنظف من condition_variable للإشارة البسيطة."
+        },
+        {
+          "titleArabic": "لا يدعم قفل متداخل",
+          "code": "#include <semaphore>\n\nstd::binary_semaphore sem(1);\nsem.acquire();\n// sem.acquire(); // طريق مسدود! الخيط نفسه ينتظر نفسه",
+          "explanationArabic": "عكس recursive_mutex، السيمافور لا يكتشف القفل المتداخل. استخدم mutex إذا احتجت ذلك."
+        }
+      ],
+      "related": [
+        "std::counting_semaphore",
+        "std::mutex",
+        "std::lock_guard"
+      ]
+    },
+    "std::stop_token": {
+      "title": "std::stop_token",
+      "type": "نوع تزامن (C++20)",
+      "description": "آلية إيقاف تعاوني تُمرر للخيط ليفحصها. الخيط يقرر متى يتوقف بنفسه.",
+      "usage": "لإيقاف خيوط العمل بلطف بدل التوقف القسري.",
+      "example": "void work(std::stop_token st) { while(!st.stop_requested()) task(); }",
+      "includeHeader": "#include <stop_token>",
+      "usageExamples": [
+        {
+          "titleArabic": "إيقاف تعاوني مع jthread",
+          "code": "#include <thread>\n#include <iostream>\n\nint main() {\n    std::jthread t([](std::stop_token st) {\n        int i = 0;\n        while (!st.stop_requested())\n            ++i;\n    });\n    t.request_stop();",
+          "explanationArabic": "jthread يُمرر stop_token تلقائيًا للدالة. request_stop يُرسل إشارة الإيقاف."
+        },
+        {
+          "titleArabic": "استخدام stop_callback",
+          "code": "#include <stop_token>\n#include <iostream>\n\nvoid setup(std::stop_token st) {\n    std::stop_callback cb(st, [] {\n        std::cout << \"stopping\\n\";\n    });\n}",
+          "explanationArabic": "stop_callback يُنفذ دالة عند طلب الإيقاف. مفيد لتنظيف الموارد عند التوقف."
+        },
+        {
+          "titleArabic": "فحص stop_requested في حلقة",
+          "code": "#include <stop_token>\n#include <thread>\n\nvoid loop(std::stop_token st) {\n    while (!st.stop_requested()) {\n    }\n}",
+          "explanationArabic": "الفحص المنتظم لـ stop_requested يسمح للخيط بالتوقف بلطف. لا يُقطع العمل فورًا."
+        }
+      ],
+      "related": [
+        "std::jthread",
+        "std::atomic",
+        "std::condition_variable"
+      ]
+    },
+    "std::call_once": {
+      "title": "std::call_once",
+      "type": "دالة تزامن",
+      "description": "يضمن تنفيذ دالة مرة واحدة فقط حتى مع عدة خيوط تُناديها بالتوازي. يستخدم once_flag مشترك.",
+      "usage": "للتهيئة الكسولة الآمنة أو تنفيذ إعداد مرة واحدة.",
+      "example": "std::call_once(flag, init_func);",
+      "includeHeader": "#include <mutex>",
+      "usageExamples": [
+        {
+          "titleArabic": "تهيئة مرة واحدة",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::once_flag flag;\nvoid init() { std::cout << \"init\\n\"; }\n\nint main() {\n    std::call_once(flag, init);\n    std::call_once(flag, init);",
+          "explanationArabic": "init تُنفذ مرة واحدة فقط. الاستدعاء الثاني ينتظر الأول ثم يتجاوز."
+        },
+        {
+          "titleArabic": "آمن مع خيوط متعددة",
+          "code": "#include <mutex>\n#include <thread>\n\nstd::once_flag flag;\nvoid worker() {\n    std::call_once(flag, [] {});\n}",
+          "explanationArabic": "حتى لو بدأ عدة خيوط call_once في نفس اللحظة، الدالة تُنفذ مرة واحدة فقط."
+        },
+        {
+          "titleArabic": "once_flag يجب أن يكون مشتركًا",
+          "code": "#include <mutex>\n\nstd::once_flag global_flag;\nvoid safe_init() {\n    std::call_once(global_flag, [] {});\n}",
+          "explanationArabic": "once_flag يجب أن يكون عامًا أو static. إذا كان محليًا فكل استدعاء يحصل على flag جديد."
+        }
+      ],
+      "related": [
+        "std::once_flag",
+        "std::mutex",
+        "std::thread"
+      ]
+    }
+  }
+}

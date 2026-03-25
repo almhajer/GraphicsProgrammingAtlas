@@ -1,0 +1,911 @@
+{
+  "referenceGuides": {
+    "VkBool32": {
+      "fullProjectNoteArabic": "داخل مشروع Vulkan فعلي، من الأفضل أن يبقى VkBool32 على حدود API أو داخل البنى الرسمية، بينما تتحول القرارات الداخلية إلى bool محلي واضح المعنى.",
+      "projectStepsArabic": [
+        "افصل بين bool المحلي في منطق التطبيق وبين VkBool32 الذي يمر عبر البنى أو الدوال الرسمية.",
+        "حوّل القيم عند الحدود بوضوح بدل نشر VkBool32 في طبقات لا تحتاج إلى معرفة بتفاصيل Vulkan.",
+        "سمّ المتغيرات بحيث يظهر هل هي حالة محلية أم قيمة متوافقة مع الواجهة الرسمية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تحويل bool إلى VkBool32",
+          "code": "#include <cstdint>\n\nint main() {\n    bool ready = true;\n    std::uint32_t result = ready ? 1 : 0;\n    return static_cast<int>(result);\n}",
+          "explanationArabic": "VkBool32 ليست bool نفسها بل نوع عددي محدد العرض. هذا يوضح الفرق بين القيمة المنطقية وتمثيلها في واجهة Vulkan.",
+          "relatedTokens": [
+            "VkBool32",
+            "bool",
+            "true"
+          ]
+        },
+        {
+          "titleArabic": "فحص VkBool32 كشرط",
+          "code": "#include <cstdint>\n\nint main() {\n    std::uint32_t vk_result = 1;\n    bool is_set = (vk_result != 0);\n    return is_set ? 1 : 0;\n}",
+          "explanationArabic": "هذا يوضح أن VkBool32 تُفحص بقيمتها العددية لا كنوع منطقي مباشر. الفرق مهم عند حدود API.",
+          "relatedTokens": [
+            "VkBool32",
+            "bool",
+            "false"
+          ]
+        },
+        {
+          "titleArabic": "الفصل بين bool المحلي وVkBool32 الرسمي",
+          "code": "#include <cstdint>\n\nstd::uint32_t to_vk_bool(bool value) {\n    return value ? 1 : 0;\n}\n\nint main() {\n    bool local_check = true;\n    std::uint32_t api_value = to_vk_bool(local_check);\n    return static_cast<int>(api_value);\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح الفلسفة الصحيحة: افصل منطقك الداخلي (bool) عن واجهة API (VkBool32) بصريحة.",
+          "relatedTokens": [
+            "VkBool32",
+            "bool",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "bool",
+        "true",
+        "false"
+      ]
+    },
+    "char16_t": {
+      "fullProjectNoteArabic": "char16_t نوع لتمثيل وحدات UTF-16. كل قيمة منه تمثل وحدة ترميز واحدة من UTF-16، وهي 16 بت غير موقّعة. يُستخدم داخليًا في بعض الأنظمة مثل Windows لتخزين النصوص.",
+      "projectStepsArabic": [
+        "استخدمه عند التعامل مع واجهات أو بيانات تتوقع UTF-16 تحديدًا.",
+        "لا تستخدمه لنصوص UTF-8 أو UTF-32 لأن كل ترميز له نوعه المناسب.",
+        "تذكر أن الحرف الواحد في Unicode قد يحتاج وحدتين UTF-16 (surrogate pair) إذا كان خارج BMP."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حرف UTF-16 واحد",
+          "code": "#include <cstdint>\n\nint main() {\n    char16_t ch = u'A';\n    return static_cast<int>(ch);\n}",
+          "explanationArabic": "u قبل الحرف تجعل المترجم يخزنه كوحدة UTF-16 في char16_t.",
+          "relatedTokens": [
+            "char16_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "مصفوفة UTF-16",
+          "code": "#include <cstdint>\n\nint main() {\n    char16_t text[] = u\"AB\";\n    return static_cast<int>(text[1]);\n}",
+          "explanationArabic": "u قبل النص تجعل العناصر من النوع char16_t. هذا مختلف عن u8 و U.",
+          "relatedTokens": [
+            "char16_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حرف عربي كوحدة UTF-16",
+          "code": "#include <cstdint>\n\nint main() {\n    char16_t arabic = u'ب';\n    return static_cast<int>(arabic) > 0 ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح أن char16_t يمكنها تمثيل الأحرف العربية مباشرة لأنها تقع داخل BMP ولا تحتاج surrogate pairs.",
+          "relatedTokens": [
+            "char16_t",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "char8_t",
+        "char32_t",
+        "wchar_t"
+      ]
+    },
+    "char32_t": {
+      "fullProjectNoteArabic": "char32_t نوع لتمثيل نقاط كود Unicode الفردية. كل قيمة منه تمثل نقطة كود واحدة بغض النظر عن الترميز المستخدم. هذا يجعلها الأوضح للتعامل مع الأحرف على مستوى Unicode نفسه.",
+      "projectStepsArabic": [
+        "استخدمها عندما تريد التعامل مع نقاط كود Unicode مباشرة من دون التفكير في الترميز.",
+        "لا تستخدمها كنوع تخزين رئيسي للنصوص الطويلة لأن كل حرف يأخذ 32 بت.",
+        "فضّلها على wchar_t لأن حجم wchar_t يختلف بين المنصات بينما char32_t ثابت دائمًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نقطة كود Unicode واحدة",
+          "code": "#include <cstdint>\n\nint main() {\n    char32_t ch = U'A';\n    return static_cast<int>(ch);\n}",
+          "explanationArabic": "U قبل الحرف تجعل المترجم يخزنه كنقطة كود Unicode كاملة في char32_t.",
+          "relatedTokens": [
+            "char32_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حرف خارج BMP",
+          "code": "#include <cstdint>\n\nint main() {\n    char32_t emoji = U'😀';\n    return static_cast<int>(emoji) > 0x10000 ? 1 : 0;\n}",
+          "explanationArabic": "هذا الحرف يحتاج وحدتين في UTF-16 لكنه وحدة واحدة في char32_t. هذا يوضح فائدة التمثيل المباشر لنقاط الكود.",
+          "relatedTokens": [
+            "char32_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن char16_t عند الأحرف المعقدة",
+          "code": "#include <cstdint>\n\nint main() {\n    char32_t single = U'😀';\n    // في char16_t ستحتاج وحدتين (surrogate pair)\n    // لكن char32_t تمثلها كقيمة واحدة واضحة\n    return static_cast<int>(single);\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح أن char32_t تبسّط التعامل مع الأحرف خارج BMP بينما char16_t تحتاج معالجة إضافية.",
+          "relatedTokens": [
+            "char32_t",
+            "char16_t",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "char8_t",
+        "char16_t",
+        "wchar_t"
+      ]
+    },
+    "char8_t": {
+      "fullProjectNoteArabic": "char8_t نوع أضيف في C++20 لتمثيل وحدات UTF-8 المنفصلة. هو مختلف عن char العادية لأنه غير موقّع دائمًا ومخصص لترميز UTF-8 حصرًا، مما يزيل اللبس بين char الموقّعة وغير الموقّعة عند التعامل مع النصوص.",
+      "projectStepsArabic": [
+        "استخدمه عند التعامل مع بيانات UTF-8 الخام عندما تريد نية واضحة بأن هذه وحدات UTF-8 لا مجرد بايتات.",
+        "لا تستخدمه كبديل عن std::string أو std::string_view للنصوص العامة.",
+        "تأكد أن المترجم يدعم C++20 قبل استعماله."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حرف UTF-8 واحد",
+          "code": "#include <cstdint>\n\nint main() {\n    char8_t ch = u8'A';\n    return static_cast<int>(ch);\n}",
+          "explanationArabic": "u8 قبل الحرف تجعل المترجم يتعامل معه كوحدة UTF-8، وchar8_t تؤكد أن النوع غير موقّع.",
+          "relatedTokens": [
+            "char8_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قراءة وحدة UTF-8 من مصفوفة",
+          "code": "#include <cstdint>\n\nint main() {\n    char8_t text[] = u8\"Hi\";\n    return static_cast<int>(text[0]);\n}",
+          "explanationArabic": "u8 قبل النص تجعل كل عنصر في المصفوفة من النوع char8_t بدل char.",
+          "relatedTokens": [
+            "char8_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن char العادية",
+          "code": "#include <cstdint>\n\nint main() {\n    char8_t utf8 = u8'x';\n    // char8_t دائمًا غير موقّع بخلاف char التي قد تكون موقّعة\n    return static_cast<int>(utf8) > 0 ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح أن char8_t غير موقّع دائمًا بينما char قد تكون موقّعة بحسب التنفيذ. هذا يمنع لبسًا شائعًا عند مقارنة وحدات UTF-8.",
+          "relatedTokens": [
+            "char8_t",
+            "char",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "char16_t",
+        "char32_t",
+        "char"
+      ]
+    },
+    "int16_t": {
+      "fullProjectNoteArabic": "int16_t نوع صحيح بإشارة محدد بضبط 16 بت بنطاق من −32768 إلى 32767. يُستخدم في البيانات الصوتية والفيديو المضغوطة وأي بروتوكول يحتاج حجمًا ثابتًا أصغر من int.",
+      "projectStepsArabic": [
+        "استخدمه عندما تحتاج 16 بت بإشارة وتريد أن يكون النطاق مضمونًا عبر المنصات.",
+        "فضّله على short لأن short قد تكون أكبر من 16 بت في بعض التنفيذات النادرة.",
+        "انتبه لتجاوز النطاق عند العمليات الحسابية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قيمة صوتية موقّعة",
+          "code": "#include <cstdint>\n\nint main() {\n    int16_t sample = -16000;\n    return sample < 0 ? 1 : 0;\n}",
+          "explanationArabic": "int16_t شائعة في بيانات الصوت لأن عيّنة صوتية موقّعة 16 بت هي المعيار الشائع.",
+          "relatedTokens": [
+            "int16_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حساب ضمن النطاق الآمن",
+          "code": "#include <cstdint>\n\nint main() {\n    int16_t a = 10000;\n    int16_t b = 20000;\n    int32_t sum = static_cast<int32_t>(a) + static_cast<int32_t>(b);\n    return sum;\n}",
+          "explanationArabic": "التحويل إلى int32_t قبل الجمع يمنع تجاوز النطاق الذي كان سيحدث لو جمعنا داخل int16_t.",
+          "relatedTokens": [
+            "int16_t",
+            "int32_t",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن short",
+          "code": "#include <cstdint>\n\nint main() {\n    int16_t exact = 32767;\n    // short قد تكون أكبر من 16 بت في تنفيذيات نادرة\n    // لكن int16_t دائمًا 16 بت بالضبط\n    return static_cast<int>(exact);\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح لماذا int16_t أنسب من short عند الحاجة لضمان الحجم: short تعتمد على التنفيذ بينما int16_t ثابتة.",
+          "relatedTokens": [
+            "int16_t",
+            "short",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "uint16_t",
+        "int8_t",
+        "int32_t"
+      ]
+    },
+    "int64_t": {
+      "fullProjectNoteArabic": "int64_t نوع صحيح بإشارة محدد العرض بضبط 64 بت. فائدته أن نطاقه ومعنى تجاوزه لا يعتمدان على التنفيذ، مما يجعله أنسب من long أو long long عندما يكون الحجم الدقيق مهمًا.",
+      "projectStepsArabic": [
+        "استخدمه عندما تحتاج نطاقًا مضمونًا من −2^63 إلى 2^63−1 بغض النظر عن المنصة.",
+        "فضّله على long long في البيانات والبروتوكولات التي تحتاج حجمًا ثابتًا عبر منصات مختلفة.",
+        "انتبه أن الطرح بين قيمتين قد يلتف إذا كانت النتيجة خارج النطاق."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قيمة كبيرة مضمونة العرض",
+          "code": "#include <cstdint>\n\nint main() {\n    int64_t big = 5000000000LL;\n    return big > 0 ? 1 : 0;\n}",
+          "explanationArabic": "int64_t تضمن 64 بت بالضبط، لذلك هذه القيمة آمنة مهما كانت المنصة.",
+          "relatedTokens": [
+            "int64_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حساب قد يتجاوز int العادية",
+          "code": "#include <cstdint>\n\nint main() {\n    int64_t a = 2000000000;\n    int64_t b = 2000000000;\n    int64_t sum = a + b;\n    return sum == 4000000000LL ? 1 : 0;\n}",
+          "explanationArabic": "مجموع هاتين القيمتين يتجاوز نطاق int32 لكنه آمن داخل int64_t.",
+          "relatedTokens": [
+            "int64_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التحويل من int إلى int64_t عند الحاجة",
+          "code": "#include <cstdint>\n\nint main() {\n    int small = 42;\n    int64_t wide = static_cast<int64_t>(small);\n    return static_cast<int>(wide);\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح متى تحتاج تحويلًا صريحًا من نوع أضيق إلى int64_t.",
+          "relatedTokens": [
+            "int64_t",
+            "static_cast",
+            "int",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "int32_t",
+        "uint64_t",
+        "long"
+      ]
+    },
+    "int8_t": {
+      "fullProjectNoteArabic": "int8_t نوع صحيح بإشارة محدد بضبط 8 بت، أي بايت واحد بنطاق من −128 إلى 127. فائدته في التمثيل الصريح للبايتات عندما تحتاج إشارة واضحة، مثل بيانات الصوت أو البكسلات الموقّعة.",
+      "projectStepsArabic": [
+        "استخدمه عندما تحتاج بايت واحد بإشارة واضحة وتريد أن يكون النطاق مضمونًا.",
+        "لا تستخدمه كنوع عام للأعداد لأن نطاقه ضيق جدًا.",
+        "فضّله على signed char عند الحاجة لنية واضحة أن هذا بايت موقّع."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "بايت موقّع بسيط",
+          "code": "#include <cstdint>\n\nint main() {\n    int8_t byte = -100;\n    return byte < 0 ? 1 : 0;\n}",
+          "explanationArabic": "int8_t تضمن 8 بت بإشارة، لذلك النطاق من −128 إلى 127 بغض النظر عن التنفيذ.",
+          "relatedTokens": [
+            "int8_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تجاوز النطاق الصامت",
+          "code": "#include <cstdint>\n\nint main() {\n    int8_t byte = 127;\n    byte = static_cast<int8_t>(byte + 1);\n    return byte < 0 ? 1 : 0;\n}",
+          "explanationArabic": "إضافة 1 إلى 127 تُلتف إلى −128 بسبب تجاوز النطاق. هذا السلوك معرّف مع الأنواع الموقّعة لكنه قد يكون غير متوقع.",
+          "relatedTokens": [
+            "int8_t",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن uint8_t",
+          "code": "#include <cstdint>\n\nint main() {\n    int8_t signed_byte = -1;\n    uint8_t unsigned_byte = 255;\n    return (signed_byte < 0 && unsigned_byte > 0) ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح أن نفس البايتات تُقرأ بشكل مختلف حسب نوعها: موقّع أو غير موقّع.",
+          "relatedTokens": [
+            "int8_t",
+            "uint8_t",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "uint8_t",
+        "int16_t",
+        "char"
+      ]
+    },
+    "uint16_t": {
+      "fullProjectNoteArabic": "uint16_t نوع صحيح بدون إشارة محدد بضبط 16 بت بنطاق من 0 إلى 65535. شائع في بروتوكولات الشبكات وأرقام المنافذ وتنسيقات الملفات.",
+      "projectStepsArabic": [
+        "استخدمه عندما تحتاج 16 بت بدون إشارة وتريد ضمان الحجم.",
+        "فضّله على unsigned short عند الحاجة لحجم ثابت.",
+        "انتبه أن الطرح يلتف إذا كانت النتيجة سالبة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "رقم منفذ شبكة",
+          "code": "#include <cstdint>\n\nint main() {\n    uint16_t port = 8080;\n    return static_cast<int>(port);\n}",
+          "explanationArabic": "أرقام المنافذ تتراوح من 0 إلى 65535 لذلك uint16_t تناسبها تمامًا.",
+          "relatedTokens": [
+            "uint16_t",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الحد الأقصى للنوع",
+          "code": "#include <cstdint>\n\nint main() {\n    uint16_t max = 65535;\n    uint16_t overflow = static_cast<uint16_t>(max + 1);\n    return overflow == 0 ? 1 : 0;\n}",
+          "explanationArabic": "إضافة 1 إلى القيمة القصوى تُلتف إلى الصفر. هذا سلوك متوقع مع الأنواع غير الموقّعة لكنه قد يسبب أخطاء.",
+          "relatedTokens": [
+            "uint16_t",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قراءة بايتتين كقيمة واحدة",
+          "code": "#include <cstdint>\n\nint main() {\n    uint8_t high = 0x12;\n    uint8_t low = 0x34;\n    uint16_t combined = (static_cast<uint16_t>(high) << 8) | low;\n    return combined == 0x1234 ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح استخدامًا عمليًا شائعًا: تجميع بايتتين في قيمة 16 بت واحدة كما يحدث في بروتوكولات الشبكات.",
+          "relatedTokens": [
+            "uint16_t",
+            "uint8_t",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "int16_t",
+        "uint8_t",
+        "uint32_t"
+      ]
+    },
+    "uint8_t": {
+      "fullProjectNoteArabic": "uint8_t نوع صحيح بدون إشارة محدد بضبط 8 بت، أي بايت واحد بنطاق من 0 إلى 255. هو النوع الطبيعي للبايتات الخام مثل بيانات الصور والشبكات والملفات الثنائية.",
+      "projectStepsArabic": [
+        "استخدمه عندما تتعامل مع بايتات خام لا تحتمل قيمًا سالبة.",
+        "فضّله على unsigned char عند الحاجة لنية واضحة أن هذا بايت خام.",
+        "انتبه عند الطرح لأن النتيجة قد تلتفت إلى قيمة كبيرة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "بايت خام بسيط",
+          "code": "#include <cstdint>\n\nint main() {\n    uint8_t byte = 200;\n    return static_cast<int>(byte);\n}",
+          "explanationArabic": "uint8_t تضمن 8 بت بدون إشارة، لذلك النطاق من 0 إلى 255 دائمًا.",
+          "relatedTokens": [
+            "uint8_t",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التفاف عند الطرح",
+          "code": "#include <cstdint>\n\nint main() {\n    uint8_t a = 5;\n    uint8_t b = 10;\n    uint8_t result = static_cast<uint8_t>(a - b);\n    return result > 200 ? 1 : 0;\n}",
+          "explanationArabic": "الطرح يعطي −5 لكن مع uint8_t تلتفت القيمة إلى 251. هذا خطأ شائع مع الأنواع غير الموقّعة.",
+          "relatedTokens": [
+            "uint8_t",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "مصفوفة بايتات خام",
+          "code": "#include <cstdint>\n\nint main() {\n    uint8_t pixels[4] = {255, 128, 64, 0};\n    return static_cast<int>(pixels[0]);\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح الاستخدام العملي الأشهر: مصفوفة من البايتات الخام لتمثيل بيانات ثنائية مثل قيم البكسلات.",
+          "relatedTokens": [
+            "uint8_t",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "int8_t",
+        "uint16_t",
+        "char"
+      ]
+    },
+    "ptrdiff_t": {
+      "fullProjectNoteArabic": "ptrdiff_t نوع صحيح بإشارة ناتج عن طرح مؤشرين يشيران إلى عناصر في نفس المصفوفة. معناه الحقيقي أنه يمثل الفرق بالعدد من العناصر لا بالبايتات، وهو النوع الصحيح لهذا الفرق حسب المعيار.",
+      "projectStepsArabic": [
+        "استخدمه عند طرح مؤشرين لمعرفة المسافة بينهما بعدد العناصر.",
+        "لا تستخدم int أو size_t لهذا الغرض لأنهما قد لا تكفيان أو قد يكون إشارتهما خاطئة.",
+        "تذكر أن النتيجة قد تكون سالبة إذا كان المؤشر الأول قبل الثاني."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فرق بين مؤشري مصفوفة",
+          "code": "#include <cstddef>\n\nint main() {\n    int values[5] = {10, 20, 30, 40, 50};\n    std::ptrdiff_t diff = &values[4] - &values[1];\n    return static_cast<int>(diff);\n}",
+          "explanationArabic": "الفرق هنا 3 عناصر لا 12 بايت. ptrdiff_t هو النوع الصحيح لهذا الفرق حسب المعيار.",
+          "relatedTokens": [
+            "ptrdiff_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "فرق سالب عند عكس الترتيب",
+          "code": "#include <cstddef>\n\nint main() {\n    int values[] = {1, 2, 3};\n    std::ptrdiff_t diff = &values[0] - &values[2];\n    return diff < 0 ? 1 : 0;\n}",
+          "explanationArabic": "عندما يكون المؤشر الأول قبل الثاني، النتيجة سالبة. هذا يوضح لماذا ptrdiff_t ذات إشارة.",
+          "relatedTokens": [
+            "ptrdiff_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين ptrdiff_t و size_t",
+          "code": "#include <cstddef>\n\nint main() {\n    int values[] = {1, 2, 3, 4, 5};\n    std::ptrdiff_t signed_diff = &values[4] - &values[0];\n    std::size_t count = 5;\n    return static_cast<int>(signed_diff) == static_cast<int>(count) ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح الفرق: size_t للعدد والحجم وهي غير موقّعة، بينما ptrdiff_t لفرق المؤشرات وهي موقّعة. كلاهما يختلف في المعنى والاستخدام.",
+          "relatedTokens": [
+            "ptrdiff_t",
+            "size_t",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "size_t",
+        "uintptr_t",
+        "nullptr"
+      ]
+    },
+    "wchar_t": {
+      "fullProjectNoteArabic": "wchar_t نوع حرف عريض حجمه يعتمد على المنصة: 16 بت على Windows و32 بت على Linux/macOS. هذا الاختلاف يجعله غير مناسب للبيانات القابلة للنقل بين المنصات، لذلك تُفضّل char16_t أو char32_t عند الحاجة لحجم ثابت.",
+      "projectStepsArabic": [
+        "استخدمه فقط عند التعامل مع واجهات نظام تتوقع wchar_t تحديدًا مثل واجهات Windows API.",
+        "لا تستخدمه كنوع نصي عام إذا كان الكود يجب أن يعمل بنفس الطريقة عبر منصات مختلفة.",
+        "فضّل char32_t للنصوص Unicode أو char8_t لـ UTF-8 عند الحاجة لقابلية النقل."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حرف عريض واحد",
+          "code": "int main() {\n    wchar_t ch = L'A';\n    return static_cast<int>(ch);\n}",
+          "explanationArabic": "L قبل الحرف تجعل المترجم يخزنه كـ wchar_t. الحجم الفعلي يعتمد على المنصة.",
+          "relatedTokens": [
+            "wchar_t",
+            "static_cast",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "نص عريض",
+          "code": "int main() {\n    const wchar_t* text = L\"Hello\";\n    return static_cast<int>(text[0]);\n}",
+          "explanationArabic": "L قبل النص تجعل كل حرف من النوع wchar_t. هذا شائع في واجهات Windows.",
+          "relatedTokens": [
+            "wchar_t",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الحجم يختلف بين المنصات",
+          "code": "int main() {\n    // على Windows: sizeof(wchar_t) == 2\n    // على Linux/macOS: sizeof(wchar_t) == 4\n    return static_cast<int>(sizeof(wchar_t));\n}",
+          "explanationArabic": "هذا مثال أذكى تحذيري: حجم wchar_t ليس ثابتًا بين المنصات. هذا يمنع استخدامها كنوع قابل للنقل في البيانات أو الملفات.",
+          "relatedTokens": [
+            "wchar_t",
+            "sizeof",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "char16_t",
+        "char32_t",
+        "char8_t"
+      ]
+    },
+    "std::valarray": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::valarray يمثل مصفوفة من القيم مع عمليات رياضية متجهية. فائدته أنها مصممة للحسابات العلمية والرياضية بكفاءة.",
+      "projectStepsArabic": [
+        "استخدمها لحسابات متجهية مثل في العلوم أو الهندسة.",
+        "استفد من العمليات مثل + , - , * , / على المصفوفات.",
+        "تجنب استخدامها لأغراض عامة؛ استخدم vector بدلاً من ذلك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء valarray",
+          "code": "#include <valarray>\n\nint main() {\n    std::valarray<double> v = {1.0, 2.0, 3.0};\n    return v.size() == 3;\n}",
+          "explanationArabic": "std::valarray يمكن تهيئتها مثل مصفوفة.",
+          "relatedTokens": [
+            "std::valarray",
+            "double"
+          ]
+        },
+        {
+          "titleArabic": "عمليات متجهية",
+          "code": "#include <valarray>\n\nint main() {\n    std::valarray<double> a = {1.0, 2.0};\n    std::valarray<double> b = {3.0, 4.0};\n    auto sum = a + b;\n    return sum[0] == 4.0 && sum[1] == 6.0;\n}",
+          "explanationArabic": "العمليات الرياضية تُطبق على كل عنصر.",
+          "relatedTokens": [
+            "std::valarray",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "دوال رياضية",
+          "code": "#include <valarray>\n#include <cmath>\n\nint main() {\n    std::valarray<double> v = {0.0, 1.57};\n    auto sin_v = std::sin(v);\n    return sin_v[0] == 0.0;\n}",
+          "explanationArabic": "يمكن تطبيق دوال رياضية على المصفوفة بأكملها.",
+          "relatedTokens": [
+            "std::valarray",
+            "std::sin"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "double",
+        "std::complex"
+      ]
+    },
+    "std::complex": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::complex يمثل عدد مركب مع الجزء الحقيقي والتخيلي. فائدته أنها توفر عمليات رياضية للأعداد المركبة مباشرة في اللغة.",
+      "projectStepsArabic": [
+        "استخدمها لحسابات تتضمن أعداد مركبة مثل في الإشارات أو الفيزياء.",
+        "استخدم real() وimag() للوصول إلى الأجزاء.",
+        "تجنب استخدامها لأنواع بسيطة؛ استخدم double أو float بدلاً من ذلك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء عدد مركب",
+          "code": "#include <complex>\n\nint main() {\n    std::complex<double> c(3.0, 4.0);\n    return c.real() == 3.0 && c.imag() == 4.0;\n}",
+          "explanationArabic": "std::complex يأخذ الجزء الحقيقي والتخيلي في البناء.",
+          "relatedTokens": [
+            "std::complex",
+            "double"
+          ]
+        },
+        {
+          "titleArabic": "عمليات رياضية",
+          "code": "#include <complex>\n\nint main() {\n    std::complex<double> a(1.0, 2.0);\n    std::complex<double> b(3.0, 4.0);\n    auto sum = a + b;\n    return sum.real() == 4.0 && sum.imag() == 6.0;\n}",
+          "explanationArabic": "يمكن إجراء عمليات مثل الجمع مباشرة على الأعداد المركبة.",
+          "relatedTokens": [
+            "std::complex",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "القيمة المطلقة",
+          "code": "#include <complex>\n\nint main() {\n    std::complex<double> c(3.0, 4.0);\n    double mag = std::abs(c);\n    return mag == 5.0;\n}",
+          "explanationArabic": "std::abs تعطي القيمة المطلقة (المقدار) للعدد المركب.",
+          "relatedTokens": [
+            "std::complex",
+            "std::abs"
+          ]
+        }
+      ],
+      "followUps": [
+        "double",
+        "float",
+        "std::valarray"
+      ]
+    },
+    "std::bitset": {
+      "fullProjectNoteArabic": "std::bitset حاوية تخزن مجموعة بتات ثابتة الحجم في وقت الترجمة. فائدتها تظهر عند التعامل مع أعلام أو حالات ثنائية أو تمثيل حقول بتات محددة من بروتوكول.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون عدد البتات معروفًا في وقت الترجمة.",
+        "استخدم set وreset وflip وtest للتعامل مع البتات الفردية.",
+        "لا تستخدمها عندما يكون عدد البتات متغيرًا وقت التشغيل."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تعيين وقراءة بت واحد",
+          "code": "#include <bitset>\n\nint main() {\n    std::bitset<8> flags;\n    flags.set(3);\n    return flags.test(3) ? 1 : 0;\n}",
+          "explanationArabic": "bitset<8> تحجز 8 بتات. set(3) تفعّل البت رقم 3 وtest(3) تفحصه.",
+          "relatedTokens": [
+            "std::bitset",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "عدّاد البتات المفعّلة",
+          "code": "#include <bitset>\n\nint main() {\n    std::bitset<8> flags(\"10110011\");\n    return static_cast<int>(flags.count());\n}",
+          "explanationArabic": "count() تعيد عدد البتات المفعّلة. تهيئة bitset بنص ثنائي واضحة ومريحة.",
+          "relatedTokens": [
+            "std::bitset",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تمثيل أعلام حالة",
+          "code": "#include <bitset>\n\nint main() {\n    std::bitset<4> state;\n    state.set(0); // جاهز\n    state.set(2); // مفعّل\n    bool ready_and_active = state.test(0) && state.test(2);\n    return ready_and_active ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح استخدامًا عمليًا: bitset تمثل عدة أعلام حالة في متغير واحد بدل عدة bool منفصلة.",
+          "relatedTokens": [
+            "std::bitset",
+            "bool",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "bool",
+        "uint8_t",
+        "constexpr"
+      ]
+    },
+    "std::initializer_list": {
+      "fullProjectNoteArabic": "std::initializer_list قائمة تهيئة خفيفة الوزن تُستخدم لتمرير مجموعة قيم إلى حاوية أو دالة. المعنى الحقيقي أنها واجهة مؤقتة للقراءة فقط لا تملك البيانات بل تشير إلى بيانات موجودة في مكان آخر.",
+      "projectStepsArabic": [
+        "استخدمها كمعامل دالة عندما تريد قبول قائمة تهيئة مثل {1, 2, 3}.",
+        "تذكر أنها للقراءة فقط ولا يمكن تعديل عناصرها.",
+        "انتبه لعمر البيانات الأصلية لأن initializer_list لا تملك نسخة منها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تهيئة vector بقائمة",
+          "code": "#include <vector>\n#include <initializer_list>\n\nint main() {\n    std::vector<int> values = {1, 2, 3};\n    return static_cast<int>(values.size());\n}",
+          "explanationArabic": "القائمة {1, 2, 3} هنا تُبنى كـ initializer_list مؤقتة ثم يقرأها vector الباني.",
+          "relatedTokens": [
+            "std::initializer_list",
+            "std::vector",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "دالة تقبل قائمة تهيئة",
+          "code": "#include <initializer_list>\n\nint sum(std::initializer_list<int> values) {\n    int total = 0;\n    for (int v : values) {\n        total += v;\n    }\n    return total;\n}\n\nint main() {\n    return sum({1, 2, 3, 4});\n}",
+          "explanationArabic": "الدالة تقبل initializer_list فتُستدعى بصياغة مريحة مع الأقواس المعقوفة.",
+          "relatedTokens": [
+            "std::initializer_list",
+            "for",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "لا تملك البيانات بل تشير إليها",
+          "code": "#include <initializer_list>\n\nint first(std::initializer_list<int> values) {\n    return values.size() > 0 ? *values.begin() : 0;\n}\n\nint main() {\n    return first({10, 20, 30});\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح أن initializer_list لا تنسخ البيانات بل تشير إلى القيم المؤقتة. لذلك يجب استخدام القيم أثناء وجود القائمة فقط.",
+          "relatedTokens": [
+            "std::initializer_list",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "std::array",
+        "for"
+      ]
+    },
+    "std::endl": {
+      "fullProjectNoteArabic": "عندما يكبر المشروع، std::endl ينبغي أن تبقى مقصودة في نقاط تريد فيها تفريغًا فوريًا للتدفق، لا كبديل افتراضي لكل سطر جديد.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج رؤية الرسالة فورًا أثناء التصحيح أو عند نقاط الإقلاع الحساسة.",
+        "استبدلها بـ \\n في المسارات الكثيفة إذا لم تكن بحاجة إلى تفريغ مباشر.",
+        "اربط اختيارك بين endl و\\n بسياسة تسجيل مفهومة بدل التبديل العشوائي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "سطر جديد واضح",
+          "code": "#include <iostream>\n\nint main() {\n    std::cout << \"First line\" << std::endl;\n    std::cout << \"Second line\";\n}",
+          "explanationArabic": "هذا يضيف سطرًا جديدًا ويجبر التدفق على إرسال ما فيه مباشرة.",
+          "relatedTokens": [
+            "std::cout",
+            "std::endl"
+          ]
+        },
+        {
+          "titleArabic": "طباعة حالة ثم الانتقال لسطر جديد",
+          "code": "#include <iostream>\n\nint main() {\n    bool ok = true;\n    std::cout << \"Ready: \" << ok << std::endl;\n}",
+          "explanationArabic": "هذا مناسب عند رسائل الحالة القصيرة التي تريد رؤيتها مباشرة في الطرفية.",
+          "relatedTokens": [
+            "std::cout",
+            "std::endl",
+            "bool"
+          ]
+        },
+        {
+          "titleArabic": "مقارنة ذهنية مع \\n",
+          "code": "#include <iostream>\n\nint main() {\n    std::cout << \"Line 1\\n\";\n    std::cout << \"Line 2\" << std::endl;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن endl ليست فقط سطرًا جديدًا، بل سطر جديد مع تفريغ للتدفق.",
+          "relatedTokens": [
+            "std::cout",
+            "std::endl"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::cout",
+        "std::stringstream"
+      ]
+    },
+    "std::numeric_limits": {
+      "fullProjectNoteArabic": "في المشروع الكامل، std::numeric_limits مفيدة حين تريد sentinel أو حدًا أقصى أو أدنى موثقًا بدل قيمة سحرية لا يعرف القارئ لماذا اختيرت.",
+      "projectStepsArabic": [
+        "استخدم الحدود العددية فقط عندما يكون معناها واضحًا مثل \"لم يحدد بعد\" أو \"الحد الأقصى الممكن\".",
+        "أضف تعليقًا قصيرًا أو اسم متغير دالًا إذا كانت القيمة القصوى جزءًا من عقدة منطقية حساسة.",
+        "تجنب نشر numeric_limits في كل مكان إذا كان من الأفضل تعريف ثابت دلالي أو إعداد أوضح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "أكبر قيمة ممكنة",
+          "code": "#include <limits>\n\nint main() {\n    int max_value = std::numeric_limits<int>::max();\n    return max_value > 0;\n}",
+          "explanationArabic": "هذا يوضح كيف تقرأ الحد الأعلى الحقيقي للنوع بدل كتابة رقم تقريبي يدويًا.",
+          "relatedTokens": [
+            "std::numeric_limits"
+          ]
+        },
+        {
+          "titleArabic": "أصغر قيمة ممكنة",
+          "code": "#include <limits>\n\nint main() {\n    int min_value = std::numeric_limits<int>::min();\n    return min_value < 0;\n}",
+          "explanationArabic": "هذا مفيد عندما تحتاج حدًا معروفًا للنوع نفسه بدل رقم سحري مبهم.",
+          "relatedTokens": [
+            "std::numeric_limits"
+          ]
+        },
+        {
+          "titleArabic": "حد أعلى لنوع محدد العرض",
+          "code": "#include <limits>\n#include <cstdint>\n\nint main() {\n    auto max_value = std::numeric_limits<uint32_t>::max();\n    return max_value > 0 ? 0 : 1;\n}",
+          "explanationArabic": "هذا مثال ذكي لأنه يربط حدود النوع باسم نوع محدد العرض، لا بنوع عام فقط.",
+          "relatedTokens": [
+            "std::numeric_limits",
+            "uint32_t",
+            "auto"
+          ]
+        }
+      ],
+      "followUps": [
+        "uint32_t",
+        "uint64_t",
+        "size_t"
+      ]
+    },
+    "std::unordered_set": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::unordered_set هي حاوية تخزن قيمًا فريدة باستخدام جدول تجزئة. فائدتها في البحث السريع والتحقق من الوجود دون ترتيب، مناسبة لمجموعات البيانات غير المرتبة.",
+      "projectStepsArabic": [
+        "استخدمها للتحقق السريع من وجود عنصر دون ترتيب.",
+        "تجنبها إذا كنت تحتاج ترتيبًا، فـ set أفضل.",
+        "استخدم insert لإضافة عناصر، وfind للبحث."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إضافة والبحث",
+          "code": "#include <unordered_set>\n\nint main() {\n    std::unordered_set<int> s;\n    s.insert(1);\n    s.insert(2);\n    return s.count(1);\n}",
+          "explanationArabic": "insert يضيف العنصر إذا لم يكن موجودًا، وcount يعيد 1 إذا وجد.",
+          "relatedTokens": [
+            "std::unordered_set",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التحقق من الوجود",
+          "code": "#include <unordered_set>\n\nint main() {\n    std::unordered_set<int> s = {1, 2, 3};\n    return s.find(2) != s.end() ? 1 : 0;\n}",
+          "explanationArabic": "find يعيد مؤشر إلى العنصر إذا وجد، أو end إذا لم يجد.",
+          "relatedTokens": [
+            "std::unordered_set",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حذف عنصر",
+          "code": "#include <unordered_set>\n\nint main() {\n    std::unordered_set<int> s = {1, 2, 3};\n    s.erase(2);\n    return s.size();\n}",
+          "explanationArabic": "erase يحذف العنصر إذا وجد، ويعيد عدد العناصر المحذوفة.",
+          "relatedTokens": [
+            "std::unordered_set",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::set",
+        "std::unordered_map",
+        "std::vector"
+      ]
+    },
+    "std::unordered_map": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::unordered_map تربط مفتاحًا بقيمة باستخدام جدول تجزئة. فائدتها في البحث السريع دون الحفاظ على ترتيب، مناسبة للبيانات غير المرتبة مثل قواميس سريعة.",
+      "projectStepsArabic": [
+        "استخدمها للبحث السريع دون ترتيب.",
+        "تجنبها إذا كنت تحتاج ترتيبًا، فـ map أفضل.",
+        "استخدم find للبحث الآمن."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إدراج وقراءة",
+          "code": "#include <unordered_map>\n#include <string>\n\nint main() {\n    std::unordered_map<std::string, int> ages;\n    ages[\"Ali\"] = 25;\n    return ages[\"Ali\"];\n}",
+          "explanationArabic": "[] يدرج المفتاح إذا لم يكن موجودًا، ويعيد القيمة.",
+          "relatedTokens": [
+            "std::unordered_map",
+            "std::string",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "البحث الآمن",
+          "code": "#include <unordered_map>\n#include <string>\n\nint main() {\n    std::unordered_map<std::string, int> data;\n    data[\"x\"] = 10;\n    auto it = data.find(\"missing\");\n    return (it != data.end()) ? it->second : -1;\n}",
+          "explanationArabic": "find يعيد مؤشر نهاية إذا لم يجد المفتاح، دون إدراج.",
+          "relatedTokens": [
+            "std::unordered_map",
+            "auto",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "عدّاد التكرارات",
+          "code": "#include <unordered_map>\n#include <string>\n#include <vector>\n\nint main() {\n    std::vector<std::string> words = {\"a\", \"b\", \"a\"};\n    std::unordered_map<std::string, int> freq;\n    for (const auto& w : words) ++freq[w];\n    return freq[\"a\"];\n}",
+          "explanationArabic": "unordered_map مثالي لعدّادات التكرارات بسبب البحث السريع.",
+          "relatedTokens": [
+            "std::unordered_map",
+            "std::vector",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::map",
+        "std::unordered_set",
+        "std::pair"
+      ]
+    },
+    "std::list": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::list هي حاوية مزدوجة الربط تسمح بالإدراج والحذف في أي موضع بكفاءة ثابتة. فائدتها في السيناريوهات التي تحتاج تعديلًا متكررًا في الوسط، مثل قوائم المهام أو البيانات المتغيرة.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج إدراجًا وحذفًا متكررًا في الوسط.",
+        "تجنبها إذا كنت تحتاج وصولًا عشوائيًا، فـ vector أو deque أفضل.",
+        "استخدم splice لنقل عناصر بين قوائم بكفاءة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إدراج في الوسط",
+          "code": "#include <list>\n\nint main() {\n    std::list<int> lst = {1, 3, 4};\n    auto it = lst.begin();\n    ++it;\n    lst.insert(it, 2);\n    return lst.size();\n}",
+          "explanationArabic": "insert يضيف العنصر قبل المؤشر، مما يجعل الإدراج في الوسط كفءًا.",
+          "relatedTokens": [
+            "std::list",
+            "auto",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حذف عنصر محدد",
+          "code": "#include <list>\n\nint main() {\n    std::list<int> lst = {1, 2, 3, 2};\n    lst.remove(2);\n    return lst.size();\n}",
+          "explanationArabic": "remove يحذف جميع العناصر التي تساوي القيمة المحددة.",
+          "relatedTokens": [
+            "std::list",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "دمج قوائم",
+          "code": "#include <list>\n\nint main() {\n    std::list<int> lst1 = {1, 2};\n    std::list<int> lst2 = {3, 4};\n    lst1.splice(lst1.end(), lst2);\n    return lst1.size();\n}",
+          "explanationArabic": "splice ينقل العناصر من قائمة إلى أخرى بكفاءة دون نسخ.",
+          "relatedTokens": [
+            "std::list",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "std::deque",
+        "std::forward_list"
+      ]
+    },
+    "std::memcpy": {
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي لـ std::memcpy هنا أنه نسخ بايتات خامة لا أكثر. فائدته في المشروع تظهر عند دوال الرفع المساعدة ومسارات التجهيز المرحلي، لا في طبقات منطق الأعمال أو الكائنات العالية المستوى.",
+      "projectStepsArabic": [
+        "تأكد أن المصدر والوجهة يمثلان bytes خامة متوافقة قبل النسخ، لأن أكثر سوء فهم شائع هنا هو استخدامها على كائنات تحتاج semantics أعلى.",
+        "اجمع مسارات النسخ المتكررة داخل دوال مساعدة واضحة تحمل الحجم والمعنى بدل استدعاءات memcpy متناثرة.",
+        "اربط كل memcpy بسياقها مثل mapped memory أو buffer upload حتى لا يصبح النسخ الخام خطوة مبهمة في الكود."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نسخ مصفوفة أعداد",
+          "code": "#include <cstring>\n\nint main() {\n    int source[3] = {1, 2, 3};\n    int target[3] = {};\n    std::memcpy(target, source, sizeof(source));\n    return target[2];\n}",
+          "explanationArabic": "هذا يوضح الاستخدام المباشر عندما تكون الذاكرة في المصدر والوجهة متوافقة تمامًا.",
+          "relatedTokens": [
+            "std::memcpy"
+          ]
+        },
+        {
+          "titleArabic": "نسخ نص خام",
+          "code": "#include <cstring>\n\nint main() {\n    char source[6] = \"Atlas\";\n    char target[6] = {};\n    std::memcpy(target, source, sizeof(source));\n    return target[0];\n}",
+          "explanationArabic": "المقصود هنا نسخ المحتوى الخام كما هو، لا تحليل النص أو إعادة تفسيره.",
+          "relatedTokens": [
+            "std::memcpy"
+          ]
+        },
+        {
+          "titleArabic": "نسخ bytes إلى buffer جاهز",
+          "code": "#include <cstring>\n\nint main() {\n    unsigned char source[4] = {1, 2, 3, 4};\n    unsigned char target[4] = {};\n    std::memcpy(target, source, sizeof(source));\n    return target[3];\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن memcpy تتعامل مع الذاكرة كبايتات خامة، سواء كانت الأرقام تمثل نصًا أو بيانات ثنائية.",
+          "relatedTokens": [
+            "std::memcpy"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "size_t",
+        "uint32_t"
+      ]
+    }
+  }
+}

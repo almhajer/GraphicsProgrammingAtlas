@@ -1,0 +1,2036 @@
+{
+  "referenceGuides": {
+    "std::vector": {
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي هنا أن std::vector ليس مجرد قائمة مريحة، بل حاوية تملك البيانات وتحدد من يحتفظ بها ومتى تكبر ومتى يعاد تخصيصها. هذا مهم في أي برنامج يجمع بيانات ديناميكيًا مثل عناصر واجهة أو نتائج قراءة أو مدخلات مستخدم.",
+      "projectStepsArabic": [
+        "حدد من يملك الحاوية ومن يسمح له فقط بالقراءة منها حتى لا تتحول إعادة التخصيص إلى سلوك خفي يصعب على المبتدئ ملاحظته.",
+        "إذا كانت الحاوية تنمو كثيرًا، أضف reserve في المسارات المعروفة لأن السلوك الفعلي لـ vector يشمل إعادة تخصيص قد تبطل المؤشرات السابقة.",
+        "افصل بين vector المؤقتة لبناء البيانات وبين الحاويات الطويلة العمر داخل الوحدة البرمجية المستقلة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تجميع قيم ديناميكية",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values;\n    values.push_back(10);\n    values.push_back(20);\n    values.push_back(30);\n    return values.size();\n}",
+          "explanationArabic": "vector مناسبة هنا لأن عدد العناصر ينمو أثناء التنفيذ ولا نعرفه مسبقًا.",
+          "relatedTokens": [
+            "std::vector",
+            "size_t"
+          ]
+        },
+        {
+          "titleArabic": "تهيئة مباشرة ثم المرور على العناصر",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values{1, 2, 3, 4};\n    int sum = 0;\n    for (int value : values) {\n        sum += value;\n    }\n    return sum;\n}",
+          "explanationArabic": "هذا يوضح أن vector ليست فقط للحفظ، بل أيضًا للعمل الطبيعي مع الحلقات والمدى.",
+          "relatedTokens": [
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "حجز مساحة قبل الإضافة",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values;\n    values.reserve(4);\n    values.push_back(1);\n    values.push_back(2);\n    values.push_back(3);\n    values.push_back(4);\n    return values[3];\n}",
+          "explanationArabic": "هذا مثال ذكي بسيط: عندما تعرف تقريبًا عدد العناصر، يمكنك حجز المساحة قبل الإضافة.",
+          "relatedTokens": [
+            "std::vector",
+            "size_t"
+          ]
+        },
+        {
+          "titleArabic": "إزالة عنصر من vector",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values{1, 2, 3, 4};\n    values.erase(values.begin() + 1);\n    return values.size();\n}",
+          "explanationArabic": "يمكن إزالة عناصر من vector باستخدام erase، مما يغير حجمها.",
+          "relatedTokens": [
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "البحث في vector",
+          "code": "#include <vector>\n#include <algorithm>\n\nint main() {\n    std::vector<int> values{1, 2, 3, 4};\n    auto it = std::find(values.begin(), values.end(), 3);\n    return it != values.end() ? *it : 0;\n}",
+          "explanationArabic": "استخدام std::find للبحث عن عنصر في vector.",
+          "relatedTokens": [
+            "std::vector",
+            "std::find",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "ترتيب vector",
+          "code": "#include <vector>\n#include <algorithm>\n\nint main() {\n    std::vector<int> values{4, 2, 3, 1};\n    std::sort(values.begin(), values.end());\n    return values[0];\n}",
+          "explanationArabic": "ترتيب عناصر vector باستخدام std::sort.",
+          "relatedTokens": [
+            "std::vector",
+            "std::sort"
+          ]
+        }
+      ],
+      "followUps": [
+        "size_t",
+        "std::array",
+        "auto"
+      ]
+    },
+    "std::array": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::array مناسبة عندما يكون عدد العناصر جزءًا من معنى النوع نفسه. هي أوضح من المصفوفة الخام عندما تريد حجمًا ثابتًا مع واجهة معيارية تقرأ بسهولة.",
+      "projectStepsArabic": [
+        "اخترها عندما يكون عدد العناصر معروفًا من البداية ولا يتغير أثناء التنفيذ.",
+        "مررها عندما تريد الحفاظ على ثبات العدد بدل استعمال حاوية قابلة للنمو.",
+        "إذا صار الحجم متغيرًا بطبيعته فانتقل إلى std::vector بدل الالتفاف حول هذا الثبات."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قيم ثابتة بعدد معروف",
+          "code": "#include <array>\n\nint main() {\n    std::array<int, 4> values{1, 2, 3, 4};\n    return values[2];\n}",
+          "explanationArabic": "هذا أبسط استخدام: عدد العناصر معروف من البداية ولا يحتاج نموًا لاحقًا.",
+          "relatedTokens": [
+            "std::array"
+          ]
+        },
+        {
+          "titleArabic": "المرور على العناصر مع size",
+          "code": "#include <array>\n\nint main() {\n    std::array<int, 3> values{4, 5, 6};\n    int sum = 0;\n    for (int value : values) {\n        sum += value;\n    }\n    return sum == static_cast<int>(values.size()) * 5;\n}",
+          "explanationArabic": "هذا يوضح أنها ليست مجرد مصفوفة خامة؛ بل حاوية تملك دوالًا واضحة مثل size مع دعم الحلقات مباشرة.",
+          "relatedTokens": [
+            "std::array",
+            "size_t"
+          ]
+        },
+        {
+          "titleArabic": "إرجاع مجموعة ثابتة من دالة",
+          "code": "#include <array>\n\nstd::array<int, 3> build_values() {\n    return {7, 8, 9};\n}\n\nint main() {\n    auto values = build_values();\n    return values.front() + values.back();\n}",
+          "explanationArabic": "هذا مثال أذكى قليلًا: العدد الثابت جزء من نوع الناتج نفسه، لذلك يقرأ القارئ العقدة مباشرة من توقيع الدالة.",
+          "relatedTokens": [
+            "std::array",
+            "auto"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "size_t",
+        "auto"
+      ]
+    },
+    "std::optional": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::optional مناسبة عندما يكون وجود القيمة نفسه أمرًا غير مضمون. فائدتها أنها تجعل هذا الاحتمال جزءًا من النوع بدل الاعتماد على رقم خاص أو سلسلة فارغة أو قيمة متفق عليها سرًا بين الدوال.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون غياب النتيجة احتمالًا حقيقيًا ومقصودًا في تصميم الدالة أو البنية.",
+        "افحص وجود القيمة عبر has_value أو if (opt) قبل الوصول إلى المحتوى إذا لم تكن متأكدًا من حضوره.",
+        "لا تستخدمها عندما تكون القيمة يجب أن تكون موجودة دائمًا، لأن وجود optional حينها يضعف العقدة بدل توضيحها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دالة قد تعيد قيمة وقد لا تعيدها",
+          "code": "#include <optional>\n\nstd::optional<int> find_even(int value) {\n    if (value % 2 == 0) {\n        return value;\n    }\n    return std::nullopt;\n}\n\nint main() {\n    auto result = find_even(8);\n    return result.has_value() ? result.value() : 0;\n}",
+          "explanationArabic": "هذا أبسط وجه للاستعمال: النتيجة ليست مضمونة، لذلك نوع الإرجاع نفسه يصرح بإمكانية الغياب بدل إخفائها.",
+          "relatedTokens": [
+            "std::optional",
+            "auto",
+            "bool"
+          ]
+        },
+        {
+          "titleArabic": "قيمة بديلة عبر value_or",
+          "code": "#include <optional>\n\nint main() {\n    std::optional<int> retries;\n    int value = retries.value_or(3);\n    return value;\n}",
+          "explanationArabic": "عندما يكون لديك بديل معقول، value_or تختصر سؤال: هل توجد قيمة؟ وإذا لم توجد فاستعمل هذا البديل.",
+          "relatedTokens": [
+            "std::optional"
+          ]
+        },
+        {
+          "titleArabic": "إنشاء المحتوى ثم حذفه",
+          "code": "#include <optional>\n#include <string>\n\nint main() {\n    std::optional<std::string> name;\n    name.emplace(\"Atlas\");\n    bool before_reset = name.has_value();\n    name.reset();\n    return before_reset && !name.has_value() ? 0 : 1;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح أن optional ليست فحصًا فقط؛ بل كائن يمكنه اكتساب المحتوى ثم فقده بوضوح عبر emplace وreset.",
+          "relatedTokens": [
+            "std::optional",
+            "std::string",
+            "bool"
+          ]
+        }
+      ],
+      "followUps": [
+        "bool",
+        "std::string",
+        "nullptr"
+      ]
+    },
+    "std::any": {
+      "fullProjectNoteArabic": "std::any حاوية تخزن أي نوع مع الحفاظ على معلومات النوع في وقت التشغيل. فائدتها نادرة لأنها تخفي النوع عن المترجم، لذلك لا تستخدمها إلا عندما يكون عدم تحديد النوع مسبقًا جزءًا من التصميم الفعلي.",
+      "projectStepsArabic": [
+        "لا تستخدمها كبديل عن الأنواع المحددة إذا كان النوع معروفًا مسبقًا.",
+        "استخدم std::any_cast لاستخراج القيمة مع التحقق من النوع.",
+        "تذكر أنها تُضيف عبئًا زمنيًا وتخزينيًا مقارنة بالأنواع المحددة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تخزين أنواع مختلفة في نفس الحاوية",
+          "code": "#include <any>\n#include <string>\n\nint main() {\n    std::any value = 42;\n    value = std::string(\"Atlas\");\n    return std::any_cast<std::string>(value).size();\n}",
+          "explanationArabic": "std::any يمكنها أن تحمل int ثم std::string في نفس المتغير. any_cast تستخرج القيمة مع فحص النوع.",
+          "relatedTokens": [
+            "std::any",
+            "std::string",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "فحص النوع قبل الاستخراج",
+          "code": "#include <any>\n\nint main() {\n    std::any value = 42;\n    bool is_int = value.type() == typeid(int);\n    return is_int ? std::any_cast<int>(value) : 0;\n}",
+          "explanationArabic": "type() تعيد معلومات النوع الفعلي المخزن. هذا يسمح بالفحص قبل الاستخراج لتجنب الاستثناء.",
+          "relatedTokens": [
+            "std::any",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "any_cast خاطئ يرمي استثناء",
+          "code": "#include <any>\n#include <stdexcept>\n\nint main() {\n    std::any value = 42;\n    try {\n        auto str = std::any_cast<std::string>(value);\n        (void)str;\n    } catch (const std::bad_any_cast&) {\n        return -1;\n    }\n    return 0;\n}",
+          "explanationArabic": "هذا مثال أذكى تحذيري: إذا حاولت استخراج نوع خاطئ يُرمى std::bad_any_cast. لذلك يجب الفحص أولًا أو استخدام المؤشر.",
+          "relatedTokens": [
+            "std::any",
+            "std::string",
+            "try",
+            "catch",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::variant",
+        "std::optional",
+        "std::string"
+      ]
+    },
+    "std::string": {
+      "fullProjectNoteArabic": "عندما يكبر المشروع، يجب أن تتحول النصوص من متغيرات متناثرة إلى عقود واضحة: رسائل أخطاء، أسماء موارد، مسارات ملفات، أو مفاتيح إعدادات.",
+      "projectStepsArabic": [
+        "افصل النصوص الموجهة للمستخدم عن النصوص التقنية مثل مسارات الملفات أو أسماء الامتدادات.",
+        "تجنب تمرير c_str مؤقتة إلى مسارات تحتفظ بالمؤشر بعد نهاية التعبير الحالي.",
+        "إذا صار النص جزءًا من إعدادات أو حالة واجهة، اربطه بطبقة حفظ أو إعدادات واضحة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تجميع نص بسيط",
+          "code": "#include <string>\n\nint main() {\n    std::string first = \"Hello\";\n    std::string second = \"World\";\n    std::string full = first + \", \" + second;\n    return full.size();\n}",
+          "explanationArabic": "std::string تعطيك سلسلة تملك محتواها ويمكن جمعها وتمريرها بين الدوال بأمان نسبيًا.",
+          "relatedTokens": [
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "التحقق من الفراغ",
+          "code": "#include <string>\n\nbool has_name(const std::string& name) {\n    return !name.empty();\n}\n\nint main() {\n    return has_name(\"Atlas\");\n}",
+          "explanationArabic": "هذا يوضح أن string ليست مجرد مصفوفة حروف، بل كائن يقدم عمليات جاهزة مثل التحقق من الفراغ وقراءة الحجم.",
+          "relatedTokens": [
+            "std::string",
+            "const",
+            "bool"
+          ]
+        },
+        {
+          "titleArabic": "أخذ جزء من النص",
+          "code": "#include <string>\n\nint main() {\n    std::string value = \"Graphics\";\n    std::string part = value.substr(0, 5);\n    return part == \"Graph\";\n}",
+          "explanationArabic": "هذا يوضح أن std::string لا تقتصر على التخزين، بل تقدم عمليات جاهزة لمعالجة النص نفسه.",
+          "relatedTokens": [
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "البحث في النص",
+          "code": "#include <string>\n\nint main() {\n    std::string text = \"Hello World\";\n    std::size_t pos = text.find(\"World\");\n    return pos != std::string::npos ? static_cast<int>(pos) : -1;\n}",
+          "explanationArabic": "std::string تقدم دالة find للبحث عن سلاسل فرعية داخل النص.",
+          "relatedTokens": [
+            "std::string",
+            "std::size_t"
+          ]
+        },
+        {
+          "titleArabic": "استبدال جزء من النص",
+          "code": "#include <string>\n\nint main() {\n    std::string text = \"Hello World\";\n    text.replace(6, 5, \"Universe\");\n    return text == \"Hello Universe\";\n}",
+          "explanationArabic": "يمكن استبدال أجزاء من النص باستخدام replace.",
+          "relatedTokens": [
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "تحويل النص إلى أرقام",
+          "code": "#include <string>\n\nint main() {\n    std::string num_str = \"42\";\n    int num = std::stoi(num_str);\n    return num;\n}",
+          "explanationArabic": "std::string يمكن تحويلها إلى أنواع أخرى مثل الأعداد باستخدام دوال مثل stoi.",
+          "relatedTokens": [
+            "std::string",
+            "int"
+          ]
+        }
+      ],
+      "followUps": [
+        "const",
+        "std::runtime_error"
+      ]
+    },
+    "std::string_view": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::string_view مفيدة عندما يكون النص موجودًا أصلًا في مكان آخر وأنت تريد قراءته فقط من دون نسخه أو امتلاكه.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المطلوب قراءة النص فقط لا تعديله ولا امتلاكه.",
+        "انتبه دائمًا إلى عمر المصدر الأصلي لأن string_view لا تحتفظ بالنص داخلها.",
+        "إذا احتجت تخزين النص طويلًا أو تعديله، فاستخدم std::string بدلها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "استقبال نص للقراءة فقط",
+          "code": "#include <string_view>\n\nbool is_empty(std::string_view text) {\n    return text.empty();\n}\n\nint main() {\n    return is_empty(\"Atlas\") ? 1 : 0;\n}",
+          "explanationArabic": "الدالة هنا تقرأ النص فقط ولا تحتاج امتلاكه، لذلك string_view تكفي.",
+          "relatedTokens": [
+            "std::string_view",
+            "bool"
+          ]
+        },
+        {
+          "titleArabic": "قراءة جزء من نص أكبر",
+          "code": "#include <string_view>\n\nint main() {\n    std::string_view text = \"GraphicsAtlas\";\n    std::string_view part = text.substr(0, 8);\n    return part.size();\n}",
+          "explanationArabic": "يمكنها تمثيل مقطع من النص من دون إنشاء نسخة جديدة من الأحرف.",
+          "relatedTokens": [
+            "std::string_view"
+          ]
+        },
+        {
+          "titleArabic": "القراءة من std::string الموجودة أصلًا",
+          "code": "#include <string>\n#include <string_view>\n\nint main() {\n    std::string owner = \"Hello\";\n    std::string_view view = owner;\n    return view.front();\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن string_view تشاهد نصًا يملكه كائن آخر، لذلك يبقى owner هو المالك الحقيقي.",
+          "relatedTokens": [
+            "std::string_view",
+            "std::string"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::string",
+        "const",
+        "std::span"
+      ]
+    },
+    "std::unique_ptr": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::unique_ptr تمثل ملكية وحيدة لكائن على الذاكرة الديناميكية. فائدتها أنها تجعل العمر الزمني واضحًا وتغلق باب النسيان الشائع لـ delete اليدوي.",
+      "projectStepsArabic": [
+        "استخدمها عندما تكون هناك جهة واحدة فقط تملك الكائن.",
+        "مرر المرجع أو المؤشر الخام غير المالك عند الحاجة للقراءة أو الاستعمال المؤقت، ولا تنقل الملكية بلا سبب واضح.",
+        "استعمل make_unique عند الإنشاء حتى تبقى الصياغة أوضح وأكثر أمانًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ملكية وحيدة لكائن",
+          "code": "#include <memory>\n\nstruct FileHandle {\n    int id = 7;\n};\n\nint main() {\n    auto handle = std::make_unique<FileHandle>();\n    return handle->id;\n}",
+          "explanationArabic": "الكائن هنا يملك صاحبًا واحدًا فقط، وسيُحذف تلقائيًا عند نهاية النطاق.",
+          "relatedTokens": [
+            "std::unique_ptr",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "نقل الملكية",
+          "code": "#include <memory>\n\nstd::unique_ptr<int> create_value() {\n    return std::make_unique<int>(42);\n}\n\nint main() {\n    std::unique_ptr<int> value = create_value();\n    return *value;\n}",
+          "explanationArabic": "الملكية تنتقل من ناتج الدالة إلى المتغير المحلي بدل نسخ المؤشر أو إدارة delete يدويًا.",
+          "relatedTokens": [
+            "std::unique_ptr",
+            "nullptr"
+          ]
+        },
+        {
+          "titleArabic": "بدء فارغ ثم إنشاء الكائن",
+          "code": "#include <memory>\n\nint main() {\n    std::unique_ptr<int> value;\n    if (!value) {\n        value = std::make_unique<int>(9);\n    }\n    return *value;\n}",
+          "explanationArabic": "هذا يوضح وجهًا آخر شائعًا: قد يبدأ المؤشر الذكي فارغًا ثم يتلقى الملكية لاحقًا.",
+          "relatedTokens": [
+            "std::unique_ptr",
+            "nullptr"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::move",
+        "nullptr",
+        "auto"
+      ]
+    },
+    "std::move": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::move لا تنقل الموارد بنفسها، بل تقول للمترجم: من الآن يمكن اعتبار هذا الكائن مصدرًا يجوز نقل محتواه منه إذا كان النوع يدعم ذلك.",
+      "projectStepsArabic": [
+        "استخدمها عندما تكون قد انتهيت من المعنى السابق للكائن وتريد تمرير موارده إلى مكان جديد.",
+        "لا تعد قراءة الكائن بعد std::move كما لو كان محتواه مضمونًا كما كان.",
+        "تجنب إضافتها بلا سبب؛ إذا لم يكن هناك نقل فعلي للملكية أو المحتوى فهي تزيد اللبس بدل التوضيح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نقل سلسلة إلى متغير جديد",
+          "code": "#include <string>\n#include <utility>\n\nint main() {\n    std::string source = \"Atlas\";\n    std::string target = std::move(source);\n    return target.size();\n}",
+          "explanationArabic": "هنا نسمح بنقل محتوى السلسلة إلى target بدل نسخه.",
+          "relatedTokens": [
+            "std::move",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "تمرير ملكية إلى دالة",
+          "code": "#include <memory>\n#include <utility>\n\nvoid consume(std::unique_ptr<int> value) {\n    (void)value;\n}\n\nint main() {\n    auto ptr = std::make_unique<int>(7);\n    consume(std::move(ptr));\n    return 0;\n}",
+          "explanationArabic": "هذا يوضح الوجه العملي الأهم: نقل الملكية إلى جهة أخرى بوضوح.",
+          "relatedTokens": [
+            "std::move",
+            "std::unique_ptr",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "إرجاع عنصر مالك من دالة مساعدة",
+          "code": "#include <string>\n#include <utility>\n\nstd::string take_name(std::string value) {\n    return std::move(value);\n}\n\nint main() {\n    std::string name = \"Atlas\";\n    std::string result = take_name(std::move(name));\n    return result.size();\n}",
+          "explanationArabic": "هذا مثال أذكى قليلًا لأنه يوضح سطر النقل عند الاستدعاء وسطر الإرجاع مع نوع يملك ذاكرة فعلًا.",
+          "relatedTokens": [
+            "std::move",
+            "std::string"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::unique_ptr",
+        "std::string",
+        "auto"
+      ]
+    },
+    "std::sort": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::sort هي الأداة المعيارية لإعادة ترتيب العناصر الموجودة داخل مجال قابل للترتيب بدل كتابة خوارزمية خاصة في كل مرة.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المطلوب إعادة ترتيب البيانات نفسها داخل الحاوية الحالية.",
+        "إذا كان الترتيب غير الافتراضي هو المقصود، مرر مقارنة توضح الفكرة بدل الاعتماد على ترتيب غير مناسب.",
+        "تذكر أنها تغيّر الترتيب الأصلي للحاوية، لذلك لا تستخدمها إذا كنت تحتاج الإبقاء على التسلسل الأول."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ترتيب أعداد تصاعديًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> values{4, 1, 3, 2};\n    std::sort(values.begin(), values.end());\n    return values.front();\n}",
+          "explanationArabic": "هذا أبسط وجه: إعادة ترتيب القيم داخل الحاوية نفسها تصاعديًا.",
+          "relatedTokens": [
+            "std::sort",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "ترتيب تنازلي بمقارنة واضحة",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> values{4, 1, 3, 2};\n    std::sort(values.begin(), values.end(), [](int a, int b) {\n        return a > b;\n    });\n    return values.front();\n}",
+          "explanationArabic": "هنا نغير معنى الترتيب نفسه عبر مقارنة صريحة بدل الاعتماد على السلوك الافتراضي.",
+          "relatedTokens": [
+            "std::sort",
+            "std::vector",
+            "bool"
+          ]
+        },
+        {
+          "titleArabic": "ترتيب أسماء حسب الطول",
+          "code": "#include <algorithm>\n#include <string>\n#include <vector>\n\nint main() {\n    std::vector<std::string> names{\"Ali\", \"Nora\", \"Atlas\"};\n    std::sort(names.begin(), names.end(), [](const std::string& a, const std::string& b) {\n        return a.size() < b.size();\n    });\n    return names.front().size();\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح أن sort لا ترتب الأرقام فقط؛ بل أي عناصر تملك قاعدة مقارنة واضحة.",
+          "relatedTokens": [
+            "std::sort",
+            "std::vector",
+            "std::string",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "auto",
+        "bool"
+      ]
+    },
+    "std::span": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::span تفيد عندما تريد تمرير تسلسل متجاور للقراءة أو المعالجة من دون نقل الملكية أو ربط الدالة بنوع حاوية واحد بعينه.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المطلوب مجالًا من العناصر لا حاوية مالكة جديدة.",
+        "انتبه إلى أن المصدر الأصلي يجب أن يبقى حيًا طوال مدة استعمال span.",
+        "إذا احتجت تملك البيانات أو تغيير عددها فانتقل إلى حاوية مثل std::vector بدلها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قراءة مجال من std::array",
+          "code": "#include <array>\n#include <span>\n\nint sum(std::span<const int> values) {\n    int total = 0;\n    for (int value : values) {\n        total += value;\n    }\n    return total;\n}\n\nint main() {\n    std::array<int, 3> values{1, 2, 3};\n    return sum(values);\n}",
+          "explanationArabic": "الدالة هنا لا تحتاج امتلاك البيانات، بل فقط القراءة من مجال متجاور.",
+          "relatedTokens": [
+            "std::span",
+            "std::array",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "مشاهدة جزء من vector",
+          "code": "#include <span>\n#include <vector>\n\nint main() {\n    std::vector<int> values{4, 5, 6, 7};\n    std::span<int> tail(values.data() + 1, 2);\n    return tail[0] + tail[1];\n}",
+          "explanationArabic": "يمكن أن تمثل جزءًا من التسلسل نفسه بدل كل الحاوية دفعة واحدة.",
+          "relatedTokens": [
+            "std::span",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "واجهة دالة لا تنحاز لحاوية واحدة",
+          "code": "#include <array>\n#include <span>\n\nint first_value(std::span<const int> values) {\n    return values.empty() ? 0 : values.front();\n}\n\nint main() {\n    std::array<int, 2> values{9, 8};\n    return first_value(values);\n}",
+          "explanationArabic": "هذا مثال أذكى لأن الدالة تتعامل مع المجال نفسه، لا مع نوع الحاوية المالكة له.",
+          "relatedTokens": [
+            "std::span",
+            "std::array",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::array",
+        "std::vector",
+        "const"
+      ]
+    },
+    "std::ifstream": {
+      "fullProjectNoteArabic": "الغرض الحقيقي من std::ifstream في هذا المشروع هو قراءة الملفات كجزء من مسار عمل واضح مثل محمّل الشيفرات أو قارئ الملفات. هو ليس مجرد بديل أنيق عن fopen، بل عقدة دخول للبيانات القادمة من القرص.",
+      "projectStepsArabic": [
+        "افصل فتح الملف والتحقق من نجاحه عن منطق قراءة bytes أو النص نفسه حتى يبقى سبب الفشل واضحًا.",
+        "وحّد أوضاع الفتح الثنائية أو النصية داخل دوال مساعدة واضحة لأن المبتدئ يخلط بسهولة بين القراءة النصية والثنائية في مسارات تحميل الشيفرات.",
+        "أعد رسالة خطأ أو استثناء يحمل اسم الملف والمسار بدل فشل صامت يصعب تتبعه."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فتح ملف نصي",
+          "code": "#include <fstream>\n\nint main() {\n    std::ifstream file(\"notes.txt\");\n    return file.is_open() ? 0 : 1;\n}",
+          "explanationArabic": "أبسط وجه للاستخدام: فتح الملف ثم التحقق أن الفتح نجح قبل أي قراءة فعلية.",
+          "relatedTokens": [
+            "std::ifstream"
+          ]
+        },
+        {
+          "titleArabic": "قراءة أول سطر",
+          "code": "#include <fstream>\n#include <string>\n\nint main() {\n    std::ifstream file(\"notes.txt\");\n    std::string line;\n    if (std::getline(file, line)) {\n        return line.size();\n    }\n    return 0;\n}",
+          "explanationArabic": "هذا يوضح الاستخدام العملي الشائع: فتح الملف ثم قراءة سطر نصي إلى std::string.",
+          "relatedTokens": [
+            "std::ifstream",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "قراءة الملف كاملًا إلى نص",
+          "code": "#include <fstream>\n#include <sstream>\n#include <string>\n\nint main() {\n    std::ifstream file(\"notes.txt\");\n    std::stringstream buffer;\n    buffer << file.rdbuf();\n    std::string content = buffer.str();\n    return content.empty() ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي أكثر قليلًا عندما تحتاج تحميل النص كله دفعة واحدة ثم تحليله لاحقًا.",
+          "relatedTokens": [
+            "std::ifstream",
+            "std::stringstream",
+            "std::string"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::stringstream",
+        "std::string",
+        "std::runtime_error"
+      ]
+    },
+    "std::exception": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::exception ليست استثناءً محددًا بحد ذاته بقدر ما هي القاعدة المشتركة التي تسمح لك بالتقاط الأخطاء المعيارية وقراءة رسالتها بواجهة موحدة.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المطلوب التقاط الاستثناءات المعيارية العامة بدل نوع فرعي واحد فقط.",
+        "إذا كنت تعرف نوع الفشل الأدق فالتقط النوع الأخص أولًا ثم ارجع إلى std::exception كشبكة أوسع عند الحاجة.",
+        "اعرض what() أو سجله كرسالة تفسيرية، لكن لا تكتفِ بالتقاط عام إذا كانت المعالجة الدقيقة مطلوبة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "التقاط استثناء معياري عام",
+          "code": "#include <exception>\n\nint main() {\n    try {\n        throw std::exception();\n    } catch (const std::exception& error) {\n        return error.what() != nullptr ? 0 : 1;\n    }\n}",
+          "explanationArabic": "هذا أبسط شكل يوضح أن std::exception يمكن التقاطها عبر مرجع ثابت وقراءة رسالتها الموحدة.",
+          "relatedTokens": [
+            "std::exception",
+            "const",
+            "nullptr"
+          ]
+        },
+        {
+          "titleArabic": "التقاط نوع فرعي عبر الواجهة العامة",
+          "code": "#include <exception>\n#include <stdexcept>\n\nint main() {\n    try {\n        throw std::runtime_error(\"failure\");\n    } catch (const std::exception& error) {\n        return error.what()[0] == 'f' ? 0 : 1;\n    }\n}",
+          "explanationArabic": "هنا الاستثناء الفعلي أخص، لكننا نقطفه عبر std::exception لأن المطلوب واجهة موحدة لقراءة الرسالة.",
+          "relatedTokens": [
+            "std::exception",
+            "std::runtime_error",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "تمرير رسالة الخطأ إلى دالة موحدة",
+          "code": "#include <exception>\n#include <stdexcept>\n\nint consume_error(const std::exception& error) {\n    return error.what()[0] == 'b' ? 0 : 1;\n}\n\nint main() {\n    try {\n        throw std::runtime_error(\"broken\");\n    } catch (const std::exception& error) {\n        return consume_error(error);\n    }\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح كيف تعمل std::exception كواجهة موحدة يمكن تمريرها بين الدوال بدل نشر أنواع فرعية متعددة في كل مكان.",
+          "relatedTokens": [
+            "std::exception",
+            "std::runtime_error",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::runtime_error",
+        "std::string",
+        "const"
+      ]
+    },
+    "std::runtime_error": {
+      "fullProjectNoteArabic": "std::runtime_error هو الاستثناء الأكثر شيوعًا في برامج C++ المستقلة لأنه يمثل فشلًا اكتُشف أثناء التنفيذ لا أثناء الترجمة. يُستخدم عندما لا يمكنك معرفة إن كان الفشل سيحدث مسبقًا مثل فشل فتح ملف أو عدم توفر مورد.",
+      "projectStepsArabic": [
+        "استخدمه عندما يكون الفشل ناتجًا عن ظروف وقت التشغيل لا عن خطأ منطقي يمكن اكتشافه قبل التشغيل.",
+        "مرر رسالة واضحة تصف سبب الفشل لأن what() هي الطريقة الوحيدة لقراءة الرسالة.",
+        "التقطه بـ const std::runtime_error& إذا كنت تحتاج معالجة خاصة به، أو بـ const std::exception& كواجهة عامة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "رمي استثناء عند فشل عملية",
+          "code": "#include <stdexcept>\n\nint divide(int a, int b) {\n    if (b == 0) {\n        throw std::runtime_error(\"القسمة على صفر\");\n    }\n    return a / b;\n}\n\nint main() {\n    try {\n        divide(10, 0);\n    } catch (const std::runtime_error& e) {\n        return 1;\n    }\n}",
+          "explanationArabic": "throw تُنشئ كائن runtime_error وتنقله لأقرب catch مطابق. الرسالة تُقرأ عبر what(). التقاطه بمرجع ثابت يمنع النسخ.",
+          "relatedTokens": [
+            "std::runtime_error",
+            "throw",
+            "try",
+            "catch",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "التقاط عبر std::exception كواجهة عامة",
+          "code": "#include <stdexcept>\n#include <exception>\n\nint main() {\n    try {\n        throw std::runtime_error(\"فشل تحميل\");\n    } catch (const std::exception& e) {\n        return e.what()[0] == 'f' ? 0 : 1;\n    }\n}",
+          "explanationArabic": "runtime_error يرث من std::exception، لذلك يمكن التقاطه بالنوع الأعم. هذا مفيد لمعالجة موحدة لكل الاستثناءات المعيارية.",
+          "relatedTokens": [
+            "std::runtime_error",
+            "std::exception",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "إعادة توجيه الاستثناء عبر مكدس الاستدعاء",
+          "code": "#include <stdexcept>\n#include <iostream>\n\nvoid load_file() {\n    throw std::runtime_error(\"الملف غير موجود\");\n}\n\nvoid init() {\n    load_file();\n}\n\nint main() {\n    try {\n        init();\n    } catch (const std::runtime_error& e) {\n        std::cout << e.what();\n    }\n}",
+          "explanationArabic": "عندما لا يوجد catch في دالة، ينتقل الاستثناء تلقائيًا عبر مكدس الاستدعاء. هذا يفصل مكان اكتشاف الخطأ عن مكان معالجته.",
+          "relatedTokens": [
+            "std::runtime_error",
+            "throw",
+            "try",
+            "catch"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::exception",
+        "std::logic_error",
+        "throw",
+        "try",
+        "catch"
+      ]
+    },
+    "std::set": {
+      "fullProjectNoteArabic": "في المشروع الكامل، std::set مفيدة فقط عندما تكون uniqueness جزءًا من العقدة نفسها مثل queue family indices الفريدة، لا كخيار افتراضي لكل تجميع بيانات.",
+      "projectStepsArabic": [
+        "وثق لماذا تحتاج uniqueness أصلًا قبل اختيار std::set بدل vector أو array.",
+        "إذا كان الناتج سيُمرر لاحقًا إلى API تتوقع تسلسلًا متجاورًا، حضّر تحويلًا واضحًا إلى vector في الحدود المناسبة.",
+        "احتفظ بالحاوية داخل خطوة التجميع لا داخل كل طبقات النظام إذا كانت الحاجة مؤقتة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إزالة التكرار تلقائيًا",
+          "code": "#include <set>\n\nint main() {\n    std::set<int> values{3, 1, 3, 2};\n    return values.size();\n}",
+          "explanationArabic": "set تحتفظ بالقيم الفريدة فقط، لذلك القيمة المكررة لا تضيف عنصرًا جديدًا.",
+          "relatedTokens": [
+            "std::set"
+          ]
+        },
+        {
+          "titleArabic": "التحقق من وجود قيمة",
+          "code": "#include <set>\n\nint main() {\n    std::set<int> values{1, 2, 4};\n    return values.count(2) ? 0 : 1;\n}",
+          "explanationArabic": "هذا يوضح استخدامها عندما يكون سؤالك الأساسي: هل هذه القيمة موجودة أم لا؟",
+          "relatedTokens": [
+            "std::set",
+            "bool"
+          ]
+        },
+        {
+          "titleArabic": "ترتيب منطقي مع إدراجات متعددة",
+          "code": "#include <set>\n\nint main() {\n    std::set<int> values;\n    values.insert(9);\n    values.insert(2);\n    values.insert(5);\n    return *values.begin();\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن set لا تمنع التكرار فقط، بل تحفظ العناصر بترتيب منطقي داخلي.",
+          "relatedTokens": [
+            "std::set"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "uint32_t",
+        "size_t"
+      ]
+    },
+    "std::stringstream": {
+      "fullProjectNoteArabic": "عندما يكبر المشروع، std::stringstream يجب أن يبقى أداة تجميع أو قراءة نص محلية داخل loaders أو أدوات تشخيص، لا طبقة نصية دائمة لكل المسارات.",
+      "projectStepsArabic": [
+        "استخدمه حين تكون القراءة التدفقية أو تجميع النص على مراحل أوضح من concatenation اليدوي.",
+        "افصل النص الناتج النهائي إلى std::string واضحة إذا كان سيغادر طبقة التجميع الحالية.",
+        "تجنب استعماله في المسارات الساخنة إذا كان المطلوب مجرد سلسلة بسيطة أو buffer معروف البنية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تجميع نص على مراحل",
+          "code": "#include <sstream>\n#include <string>\n\nint main() {\n    std::stringstream builder;\n    builder << \"Width: \" << 128 << \", Height: \" << 64;\n    std::string text = builder.str();\n    return text.size();\n}",
+          "explanationArabic": "هذا مناسب عندما تبني نصًا خطوة خطوة بدل جمع أجزاء كثيرة يدويًا.",
+          "relatedTokens": [
+            "std::stringstream",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "قراءة أعداد من نص",
+          "code": "#include <sstream>\n\nint main() {\n    std::stringstream stream(\"10 20\");\n    int a = 0;\n    int b = 0;\n    stream >> a >> b;\n    return a + b;\n}",
+          "explanationArabic": "ليس دوره التجميع فقط؛ يمكن استخدامه أيضًا لتحليل النص واستخراج القيم منه.",
+          "relatedTokens": [
+            "std::stringstream"
+          ]
+        },
+        {
+          "titleArabic": "إعادة تكوين رسالة من بيانات متعددة",
+          "code": "#include <sstream>\n#include <string>\n\nint main() {\n    std::string name = \"Atlas\";\n    int version = 3;\n    std::stringstream stream;\n    stream << name << \" v\" << version;\n    return stream.str().size();\n}",
+          "explanationArabic": "هذا مثال ذكي يبين أن stringstream مفيد حين تريد بناء رسالة مركبة من أنواع مختلفة من دون تحويلات يدوية كثيرة.",
+          "relatedTokens": [
+            "std::stringstream",
+            "std::string"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::ifstream",
+        "std::string",
+        "std::cout"
+      ]
+    },
+    "std::cout": {
+      "fullProjectNoteArabic": "المعنى العملي لـ std::cout هنا أنه قناة تشخيص سريعة للمثال، لا جزء من منطق الرسوم أو إدارة الحالة. فائدته أن يريك ما حدث الآن، لكن الإكثار منه يربك القراءة ويخفي بنية المشروع.",
+      "projectStepsArabic": [
+        "افصل رسائل الحالة السريعة عن رسائل الأخطاء التي يجب أن ترفع استثناءً أو نتيجة فشل صريحة حتى لا يختلط الغرض من كل رسالة.",
+        "قلل الكتابة إلى الطرفية داخل حلقات الإطار أو المسارات المتكررة لأن السلوك الفعلي هنا قد يؤثر في الأداء ويشوش المخرجات.",
+        "اربط الرسائل التشخيصية لاحقًا بمستوى تسجيل أو علامة تصحيح إذا اتسع المشروع."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "طباعة نص بسيط",
+          "code": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello\";\n}",
+          "explanationArabic": "هذا أبسط استخدام: إرسال نص مباشر إلى خرج الطرفية.",
+          "relatedTokens": [
+            "std::cout"
+          ]
+        },
+        {
+          "titleArabic": "طباعة قيمة مع شرح",
+          "code": "#include <iostream>\n\nint main() {\n    int score = 42;\n    std::cout << \"Score: \" << score;\n}",
+          "explanationArabic": "يمكن تمرير النصوص والقيم في نفس السطر لبناء مخرجات تشخيصية واضحة.",
+          "relatedTokens": [
+            "std::cout"
+          ]
+        },
+        {
+          "titleArabic": "طباعة حالة مع إنهاء سطر",
+          "code": "#include <iostream>\n\nint main() {\n    bool ready = true;\n    std::cout << \"Ready: \" << ready << std::endl;\n}",
+          "explanationArabic": "هذا مثال ذكي يجمع بين طباعة قيمة منطقية وإنهاء السطر فورًا لقراءة أوضح في الطرفية.",
+          "relatedTokens": [
+            "std::cout",
+            "std::endl",
+            "bool"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::endl",
+        "std::stringstream",
+        "std::runtime_error"
+      ]
+    },
+    "std::tuple": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::tuple تجمع عدة قيم من أنواع مختلفة تحت كيان واحد. فائدتها في تمثيل مجموعات متعددة العناصر دون struct، مثل إرجاع قيم متعددة من دالة.",
+      "projectStepsArabic": [
+        "استخدمها لقيم متعددة مترابطة.",
+        "استخدم get للوصول إلى العناصر بالفهرس.",
+        "استخدم tie أو structured binding للفك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء tuple",
+          "code": "#include <tuple>\n\nint main() {\n    std::tuple<int, double, std::string> t(1, 2.5, \"hi\");\n    return std::get<0>(t);\n}",
+          "explanationArabic": "tuple يجمع أنواع مختلفة، وget<0> يصل إلى العنصر الأول.",
+          "relatedTokens": [
+            "std::tuple",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدام tie",
+          "code": "#include <tuple>\n\nint main() {\n    std::tuple<int, int> t = {3, 4};\n    int x, y;\n    std::tie(x, y) = t;\n    return x + y;\n}",
+          "explanationArabic": "tie يربط المتغيرات بالعناصر في tuple.",
+          "relatedTokens": [
+            "std::tuple",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "structured binding",
+          "code": "#include <tuple>\n\nint main() {\n    auto t = std::make_tuple(1, 2, 3);\n    auto [a, b, c] = t;\n    return a + b + c;\n}",
+          "explanationArabic": "structured binding يفك tuple إلى متغيرات.",
+          "relatedTokens": [
+            "std::tuple",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::pair",
+        "std::array",
+        "struct"
+      ]
+    },
+    "std::map": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::map هي حاوية مرتبة تربط مفتاحًا بقيمة باستخدام شجرة بحث متوازنة. فائدتها في البحث السريع والحفاظ على الترتيب، مناسبة للبيانات المرتبة مثل قواميس أو فهارس.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج بحثًا سريعًا وقيمًا مرتبة حسب المفتاح.",
+        "تجنبها إذا لم يكن الترتيب مهمًا، فـ unordered_map أسرع.",
+        "استخدم find بدلاً من [] للقراءة فقط لتجنب إدراج غير مقصود."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إدراج وقراءة",
+          "code": "#include <map>\n#include <string>\n\nint main() {\n    std::map<std::string, int> ages;\n    ages[\"Ali\"] = 25;\n    return ages[\"Ali\"];\n}",
+          "explanationArabic": "[] يدرج المفتاح إذا لم يكن موجودًا، ويعيد القيمة.",
+          "relatedTokens": [
+            "std::map",
+            "std::string",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "البحث الآمن",
+          "code": "#include <map>\n#include <string>\n\nint main() {\n    std::map<std::string, int> data;\n    data[\"x\"] = 10;\n    auto it = data.find(\"missing\");\n    return (it != data.end()) ? it->second : -1;\n}",
+          "explanationArabic": "find يعيد مؤشر نهاية إذا لم يجد المفتاح، دون إدراج.",
+          "relatedTokens": [
+            "std::map",
+            "auto",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التكرار المرتب",
+          "code": "#include <map>\n\nint main() {\n    std::map<int, int> m = {{3, 30}, {1, 10}, {2, 20}};\n    auto it = m.begin();\n    return it->first;\n}",
+          "explanationArabic": "map يحافظ على الترتيب حسب المفتاح، لذا begin يعيد أصغر مفتاح.",
+          "relatedTokens": [
+            "std::map",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::unordered_map",
+        "std::set",
+        "std::pair"
+      ]
+    },
+    "std::pair": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::pair تجمع قيمتين من نوعين مختلفين تحت كيان واحد. فائدتها في تمثيل علاقات ثنائية مثل مفتاح وقيمة أو إحداثيات، دون الحاجة إلى struct مخصص.",
+      "projectStepsArabic": [
+        "استخدمها لقيم ثنائية مترابطة.",
+        "استخدم first وsecond للوصول إلى العناصر.",
+        "استخدم make_pair أو structured binding للإنشاء والفك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء زوج",
+          "code": "#include <utility>\n\nint main() {\n    std::pair<int, double> p(1, 2.5);\n    return p.first;\n}",
+          "explanationArabic": "pair يجمع int وdouble معًا، وfirst يصل إلى العنصر الأول.",
+          "relatedTokens": [
+            "std::pair",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدام make_pair",
+          "code": "#include <utility>\n\nint main() {\n    auto p = std::make_pair(10, 20);\n    return p.second;\n}",
+          "explanationArabic": "make_pair يستنتج الأنواع ويبني الزوج.",
+          "relatedTokens": [
+            "std::pair",
+            "auto",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "structured binding",
+          "code": "#include <utility>\n\nint main() {\n    std::pair<int, int> p = {3, 4};\n    auto [x, y] = p;\n    return x + y;\n}",
+          "explanationArabic": "structured binding يفك الزوج إلى متغيرات منفصلة.",
+          "relatedTokens": [
+            "std::pair",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::tuple",
+        "std::map",
+        "struct"
+      ]
+    },
+    "std::variant": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::variant تمثل قيمة قد تكون من أحد الأنواع المحددة مسبقًا. فائدتها في تجنب الـ union غير الآمن وتوفير بديل آمن للأنواع المتعددة.",
+      "projectStepsArabic": [
+        "حدد الأنواع الممكنة عند التصريح.",
+        "استخدم holds_alternative وget للتحقق والوصول.",
+        "استخدم visit لمعالجة جميع الأنواع."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء variant",
+          "code": "#include <variant>\n\nint main() {\n    std::variant<int, double> v = 42;\n    return std::holds_alternative<int>(v) ? 1 : 0;\n}",
+          "explanationArabic": "variant يحتوي على int، وholds_alternative يتحقق من النوع.",
+          "relatedTokens": [
+            "std::variant",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدام get",
+          "code": "#include <variant>\n\nint main() {\n    std::variant<int, double> v = 3.14;\n    if (std::holds_alternative<double>(v)) {\n        return static_cast<int>(std::get<double>(v));\n    }\n    return 0;\n}",
+          "explanationArabic": "get يستخرج القيمة إذا كان النوع صحيحًا.",
+          "relatedTokens": [
+            "std::variant",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدام visit",
+          "code": "#include <variant>\n\nint main() {\n    std::variant<int, double> v = 42;\n    int result = std::visit([](auto&& arg) { return static_cast<int>(arg); }, v);\n    return result;\n}",
+          "explanationArabic": "visit يطبق lambda على القيمة بغض النظر عن النوع.",
+          "relatedTokens": [
+            "std::variant",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::any",
+        "std::optional",
+        "union"
+      ]
+    },
+    "std::shared_ptr": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::shared_ptr تمثل ملكية مشتركة: عدة جهات قد تحمل مؤشرًا ذكيًا إلى نفس الكائن، وعند انتهاء آخر مالك يُحذف الكائن تلقائيًا. فائدتها عندما يكون عمر الكائن غير معروف مسبقًا وتحتاج عدة أجزاء من الكود أن تشير إليه.",
+      "projectStepsArabic": [
+        "استخدمها فقط عندما يكون المعنى التصميمي هو ملكية مشتركة حقيقية بين عدة جهات.",
+        "استخدم make_shared عند الإنشاء لأنها تخصص الكائن والعداد في تخصيص واحد.",
+        "انتبه إلى الدورات المرجعية لأنها تمنع الحذف التلقائي.",
+        "لا تستخدمها بديلًا عن المراجع أو unique_ptr إذا كانت الملكية الفردية كافية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ملكية مشتركة بين كائنين",
+          "code": "#include <memory>\n\nint main() {\n    auto shared = std::make_shared<int>(42);\n    auto copy = shared;\n    return *copy;\n}",
+          "explanationArabic": "كلا المؤشرين يشيران إلى نفس الكائن. العداد الداخلي يتبع عدد المالكين ويحذف الكائن عند الوصول إلى صفر.",
+          "relatedTokens": [
+            "std::shared_ptr",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "فحص عدد المالكين",
+          "code": "#include <memory>\n\nint main() {\n    auto original = std::make_shared<int>(7);\n    auto copy = original;\n    return original.use_count() == 2 ? 1 : 0;\n}",
+          "explanationArabic": "use_count تعيد عدد المالكين الحاليين. هذا مفيد للتشخيص لكن لا يُعتمد عليه في المنطق الأساسي.",
+          "relatedTokens": [
+            "std::shared_ptr",
+            "auto",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق الذهني عن unique_ptr",
+          "code": "#include <memory>\n\nint main() {\n    auto unique = std::make_unique<int>(1);\n    // auto copy = unique; // خطأ: لا يمكن نسخ unique_ptr\n    auto shared = std::make_shared<int>(2);\n    auto copy = shared; // صحيح: shared_ptr قابلة للنسخ\n    return *shared + *copy;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح الفرق الجوهري: unique_ptr ملكية وحيدة لا تُنسخ، بينما shared_ptr ملكية مشتركة يمكن مشاركتها. اختر بناءً على معنى الملكية الفعلي لا على الراحة اللحظية.",
+          "relatedTokens": [
+            "std::shared_ptr",
+            "std::unique_ptr",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::unique_ptr",
+        "std::weak_ptr",
+        "auto"
+      ]
+    },
+    "std::find": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::find تبحث عن قيمة داخل مجال وتُعيد مؤشر مرور إلى أول عنصر مطابق. فائدتها أن البحث مكتوب مرة واحدة ويعمل مع أي حاوية تقدم مؤشرات بداية ونهاية.",
+      "projectStepsArabic": [
+        "استخدمها عندما تريد البحث عن قيمة محددة داخل مجال معروف.",
+        "قارن النتيجة بـ end لتعرف هل وُجدت القيمة أم لا.",
+        "إذا كنت تبحث في حاوية مرتبة فstd::binary_search أو lower_bound أسرع."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "البحث عن قيمة في vector",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> values{4, 2, 7, 1};\n    auto it = std::find(values.begin(), values.end(), 7);\n    return (it != values.end()) ? *it : 0;\n}",
+          "explanationArabic": "std::find تمر على العناصر واحدًا واحدًا وتُعيد مؤشرًا إلى أول تطابق. المقارنة مع end تخبرك هل وُجدت القيمة.",
+          "relatedTokens": [
+            "std::find",
+            "std::vector",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "فحص وجود قيمة فقط",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> values{1, 2, 3};\n    bool found = std::find(values.begin(), values.end(), 5) != values.end();\n    return found ? 0 : 1;\n}",
+          "explanationArabic": "أحيانًا المطلوب isn't القيمة نفسها بل معرفة هل توجد. المقارنة مع end تعطي هذا الجواب مباشرة.",
+          "relatedTokens": [
+            "std::find",
+            "std::vector",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "البحث في جزء من الحاوية",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> values{10, 20, 30, 40, 50};\n    auto it = std::find(values.begin() + 1, values.begin() + 4, 30);\n    return (it != values.begin() + 4) ? *it : 0;\n}",
+          "explanationArabic": "هذا مثال أذكى يوضح أن std::find لا تبحث في كل الحاوية بالضرورة؛ بل في المجال الذي تحدده أنت عبر المؤشرات.",
+          "relatedTokens": [
+            "std::find",
+            "std::vector",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::sort",
+        "std::vector",
+        "std::binary_search"
+      ]
+    },
+    "std::function": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::function تمثل كائن يمكن أن يحمل أي callable مثل دالة عادية أو lambda أو functor. فائدتها أنها توحد التعامل مع جميع أنواع الدوال القابلة للاستدعاء تحت نوع واحد، مما يسهل تمريرها كمعاملات أو تخزينها.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج تمرير دالة كمعامل أو تخزينها في حاوية أو كعضو في صنف.",
+        "حدد النوع بدقة في template parameter لتجنب أخطاء الترجمة.",
+        "تجنب الاستخدام المفرط لأنها تضيف overhead مقارنة بالمؤشرات الدالة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تخزين دالة عادية",
+          "code": "#include <functional>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main() {\n    std::function<int(int, int)> func = add;\n    return func(3, 4);\n}",
+          "explanationArabic": "std::function يمكن أن تحمل دالة عادية، مما يجعلها سهلة التمرير أو التخزين.",
+          "relatedTokens": [
+            "std::function",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تخزين lambda",
+          "code": "#include <functional>\n\nint main() {\n    std::function<int(int)> square = [](int x) { return x * x; };\n    return square(5);\n}",
+          "explanationArabic": "lambda يمكن تخزينها مباشرة في std::function لاستخدامها لاحقًا.",
+          "relatedTokens": [
+            "std::function",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تمرير إلى دالة أخرى",
+          "code": "#include <functional>\n#include <vector>\n#include <algorithm>\n\nint main() {\n    std::vector<int> values{1, 2, 3, 4, 5};\n    std::function<bool(int)> is_even = [](int x) { return x % 2 == 0; };\n    auto it = std::find_if(values.begin(), values.end(), is_even);\n    return (it != values.end()) ? *it : 0;\n}",
+          "explanationArabic": "std::function يمكن تمريرها إلى خوارزميات مثل find_if لتخصيص السلوك.",
+          "relatedTokens": [
+            "std::function",
+            "std::vector",
+            "std::find_if",
+            "auto"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::bind",
+        "lambda",
+        "std::vector"
+      ]
+    },
+    "std::forward": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::forward تستخدم للحفاظ على قيمة النوع (lvalue أو rvalue) عند تمرير المعاملات في دوال template. فائدتها أنها تسمح بـ perfect forwarding، مما يحافظ على الكفاءة والسلوك الصحيح للدوال التي تأخذ معاملات متنوعة.",
+      "projectStepsArabic": [
+        "استخدمها في دوال template عند تمرير المعاملات إلى دوال أخرى للحفاظ على lvalue/rvalue.",
+        "استخدمها مع && في المعاملات للإشارة إلى universal reference.",
+        "تجنب استخدامها خارج سياق perfect forwarding لأنها قد تغير السلوك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تمرير في دالة template",
+          "code": "#include <utility>\n\nvoid process(int& x) { x = 10; }\nvoid process(int&& x) { }\n\ntemplate<typename T>\nvoid wrapper(T&& arg) {\n    process(std::forward<T>(arg));\n}\n\nint main() {\n    int x = 5;\n    wrapper(x);\n    return x;\n}",
+          "explanationArabic": "std::forward يحافظ على نوع المرجع، مما يجعل wrapper يتصرف كما لو كانت process مُستدعاة مباشرة.",
+          "relatedTokens": [
+            "std::forward",
+            "template",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "مع rvalue reference",
+          "code": "#include <utility>\n#include <string>\n\nvoid take_rvalue(std::string&& s) { }\n\ntemplate<typename T>\nvoid forward_func(T&& arg) {\n    take_rvalue(std::forward<T>(arg));\n}\n\nint main() {\n    std::string s = \"test\";\n    forward_func(std::move(s));\n    return 0;\n}",
+          "explanationArabic": "std::forward يضمن أن std::move يحول s إلى rvalue ويتم تمريرها كذلك.",
+          "relatedTokens": [
+            "std::forward",
+            "std::move",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "في factory function",
+          "code": "#include <utility>\n#include <memory>\n\nstruct Widget {\n    Widget(int) {}\n};\n\ntemplate<typename... Args>\nstd::unique_ptr<Widget> make_widget(Args&&... args) {\n    return std::make_unique<Widget>(std::forward<Args>(args)...);\n}\n\nint main() {\n    auto w = make_widget(42);\n    return 0;\n}",
+          "explanationArabic": "std::forward يحافظ على أنواع المعاملات عند إنشاء الكائن، مما يسمح بكفاءة أفضل.",
+          "relatedTokens": [
+            "std::forward",
+            "std::unique_ptr",
+            "template"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::move",
+        "template",
+        "std::unique_ptr"
+      ]
+    },
+    "size_t": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، size_t هو النوع المعياري الذي تعيده دوال مثل sizeof و.size() لأنه يمثل الأحجام والعدد بعدد العناصر لا بالبايتات دائمًا. هو غير موقّع، لذلك لا يمكن أن يحمل قيمة سالبة، وحجمه يعتمد على المنصة فغالبًا 64 بت على الأنظمة الحديثة.",
+      "projectStepsArabic": [
+        "استخدمه عندما تتعامل مع ناتج sizeof أو .size() أو أي عدد لا يمكن أن يكون سالبًا منطقيًا.",
+        "لا تستخدم int أو unsigned int بديلًا عنه لأنهما قد لا يكفيان نطاقًا أو قد يحملان إشارة غير مناسبة للأحجام.",
+        "انتبه أن الطرح بين قيم size_t قد يلتف إلى قيمة كبيرة بدل سالب، لذلك فحّص الترتيب قبل الطرح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حجم نوع بالبايتات",
+          "code": "#include <cstddef>\n\nint main() {\n    std::size_t bytes = sizeof(int);\n    return static_cast<int>(bytes);\n}",
+          "explanationArabic": "sizeof تعيد size_t لأن الحجم بالبايتات لا يمكن أن يكون سالبًا. هذا أبسط وجه للاستعمال.",
+          "relatedTokens": [
+            "size_t",
+            "sizeof",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "عدد عناصر حاوية",
+          "code": "#include <cstddef>\n#include <vector>\n\nint main() {\n    std::vector<int> values{10, 20, 30};\n    std::size_t count = values.size();\n    return static_cast<int>(count);\n}",
+          "explanationArabic": ".size() تعيد size_t لأن عدد العناصر لا يمكن أن يكون سالبًا. هذا الاستخدام الأشهر في البرامج العادية.",
+          "relatedTokens": [
+            "size_t",
+            "std::vector",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: الطرح يلتف بدل أن يعطي سالبًا",
+          "code": "#include <cstddef>\n\nint main() {\n    std::size_t a = 3;\n    std::size_t b = 5;\n    std::size_t diff = a - b;\n    return diff > 1000 ? 1 : 0;\n}",
+          "explanationArabic": "a - b منطقيًا تساوي −2، لكن size_t غير موقّع فتلتفت القيمة إلى رقم كبير جدًا. هذا الخطأ شائع جدًا عند فحص الفهارس أو الأحجام.",
+          "relatedTokens": [
+            "size_t",
+            "unsigned",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "ptrdiff_t",
+        "sizeof",
+        "std::vector",
+        "unsigned"
+      ]
+    },
+    "std::atomic": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::atomic توفر عمليات ذرية آمنة للخيوط المتعددة. فائدتها أنها تحمي من سباق البيانات دون الحاجة إلى mutex، مما يجعلها أسرع لعمليات بسيطة.",
+      "projectStepsArabic": [
+        "استخدمها لمتغيرات مشتركة بين خيوط متعددة تحتاج تحديث آمن.",
+        "اختر العمليات الذرية المناسبة مثل load, store, fetch_add.",
+        "تجنب استخدام volatile بدلاً منها لأن volatile لا تضمن الذرية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عداد آمن للخيوط",
+          "code": "#include <atomic>\n#include <thread>\n\nstd::atomic<int> counter = 0;\n\nvoid increment() {\n    for (int i = 0; i < 1000; ++i) {\n        counter.fetch_add(1);\n    }\n}\n\nint main() {\n    std::thread t1(increment);\n    std::thread t2(increment);\n    t1.join();\n    t2.join();\n    return counter.load();\n}",
+          "explanationArabic": "fetch_add تضمن أن الزيادة آمنة حتى لو كانت الخيوط تعمل في وقت واحد.",
+          "relatedTokens": [
+            "std::atomic",
+            "std::thread",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قراءة وكتابة آمنة",
+          "code": "#include <atomic>\n\nstd::atomic<bool> flag = false;\n\nint main() {\n    flag.store(true);\n    bool value = flag.load();\n    return value ? 1 : 0;\n}",
+          "explanationArabic": "store وload تضمنان أن القراءة والكتابة آمنة في بيئة متعددة الخيوط.",
+          "relatedTokens": [
+            "std::atomic",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "مقارنة وتبديل",
+          "code": "#include <atomic>\n\nstd::atomic<int> value = 5;\n\nint main() {\n    int expected = 5;\n    bool success = value.compare_exchange_strong(expected, 10);\n    return success ? value.load() : 0;\n}",
+          "explanationArabic": "compare_exchange_strong يغير القيمة فقط إذا كانت تساوي القيمة المتوقعة، مما يمنع سباق البيانات.",
+          "relatedTokens": [
+            "std::atomic",
+            "bool",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::thread",
+        "std::mutex",
+        "volatile"
+      ]
+    },
+    "std::thread": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::thread تمثل خيط تنفيذ منفصل. فائدتها أنها تسمح بتنفيذ مهام متعددة في وقت واحد، مما يحسن الأداء للمهام المستقلة.",
+      "projectStepsArabic": [
+        "استخدمها لمهام يمكن تنفيذها بشكل مستقل عن بعضها.",
+        "تأكد من استدعاء join أو detach لكل thread.",
+        "احذر من سباق البيانات واستخدم atomic أو mutex لحماية البيانات المشتركة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تشغيل دالة في خيط منفصل",
+          "code": "#include <thread>\n#include <iostream>\n\nvoid worker() {\n    // some work\n}\n\nint main() {\n    std::thread t(worker);\n    t.join();\n    return 0;\n}",
+          "explanationArabic": "std::thread ينشئ خيط جديد ينفذ الدالة worker، وjoin ينتظر انتهاءه.",
+          "relatedTokens": [
+            "std::thread",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تمرير معاملات إلى الخيط",
+          "code": "#include <thread>\n\nvoid add(int a, int b, int* result) {\n    *result = a + b;\n}\n\nint main() {\n    int result = 0;\n    std::thread t(add, 3, 4, &result);\n    t.join();\n    return result;\n}",
+          "explanationArabic": "يمكن تمرير معاملات إلى الدالة عبر std::thread.",
+          "relatedTokens": [
+            "std::thread",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "عدة خيوط تعمل معًا",
+          "code": "#include <thread>\n#include <vector>\n\nvoid process(int id) {\n    // process id\n}\n\nint main() {\n    std::vector<std::thread> threads;\n    for (int i = 0; i < 4; ++i) {\n        threads.emplace_back(process, i);\n    }\n    for (auto& t : threads) {\n        t.join();\n    }\n    return 0;\n}",
+          "explanationArabic": "يمكن إنشاء عدة خيوط وانتظار انتهائها جميعًا.",
+          "relatedTokens": [
+            "std::thread",
+            "std::vector",
+            "auto"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::atomic",
+        "std::mutex",
+        "std::future"
+      ]
+    },
+    "std::mutex": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::mutex يوفر قفل للحماية من الوصول المتزامن إلى البيانات المشتركة. فائدته أنه يمنع سباق البيانات بين الخيوط.",
+      "projectStepsArabic": [
+        "استخدم lock_guard أو unique_lock لإدارة القفل تلقائيًا.",
+        "تجنب قفل mutex لفترات طويلة لتجنب حجب الخيوط الأخرى.",
+        "استخدم atomic لعمليات بسيطة إذا أمكن لأنها أسرع."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حماية متغير مشترك",
+          "code": "#include <mutex>\n#include <thread>\n\nstd::mutex mtx;\nint shared = 0;\n\nvoid increment() {\n    std::lock_guard<std::mutex> lock(mtx);\n    ++shared;\n}\n\nint main() {\n    std::thread t1(increment);\n    std::thread t2(increment);\n    t1.join();\n    t2.join();\n    return shared;\n}",
+          "explanationArabic": "lock_guard يقفل الmutex تلقائيًا عند الدخول ويفتحه عند الخروج.",
+          "relatedTokens": [
+            "std::mutex",
+            "std::thread",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قفل يدوي",
+          "code": "#include <mutex>\n\nstd::mutex mtx;\n\nvoid func() {\n    mtx.lock();\n    // critical section\n    mtx.unlock();\n}\n\nint main() {\n    func();\n    return 0;\n}",
+          "explanationArabic": "يمكن قفل وفتح الmutex يدويًا، لكن lock_guard أكثر أمانًا.",
+          "relatedTokens": [
+            "std::mutex",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "unique_lock لمزيد من التحكم",
+          "code": "#include <mutex>\n\nstd::mutex mtx;\n\nvoid func() {\n    std::unique_lock<std::mutex> lock(mtx);\n    // critical section\n}\n\nint main() {\n    func();\n    return 0;\n}",
+          "explanationArabic": "unique_lock يسمح بتحرير القفل مؤقتًا إذا لزم الأمر.",
+          "relatedTokens": [
+            "std::mutex",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::thread",
+        "std::atomic",
+        "std::condition_variable"
+      ]
+    },
+    "std::deque": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::deque (double-ended queue) هي حاوية ديناميكية تسمح بالإدراج والحذف من الطرفين بكفاءة. فائدتها في السيناريوهات التي تحتاج إدراجًا سريعًا في البداية والنهاية، مثل قوائم الانتظار أو المخازن المؤقتة.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج إدراجًا وحذفًا سريعًا من الطرفين.",
+        "تجنبها إذا كنت تحتاج وصولًا عشوائيًا متكررًا، فـ vector أفضل للوصول العشوائي.",
+        "انتبه إلى أن المؤشرات والمراجع قد تصبح غير صالحة بعد الإدراج أو الحذف."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إدراج وحذف من الطرفين",
+          "code": "#include <deque>\n\nint main() {\n    std::deque<int> dq;\n    dq.push_back(1);\n    dq.push_front(2);\n    dq.pop_back();\n    return dq.front();\n}",
+          "explanationArabic": "push_front وpush_back يضيفان إلى الطرفين، وpop_back يحذف من النهاية، وfront يعيد العنصر الأول.",
+          "relatedTokens": [
+            "std::deque",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدام كقائمة انتظار",
+          "code": "#include <deque>\n\nint main() {\n    std::deque<int> queue;\n    queue.push_back(10);\n    queue.push_back(20);\n    int first = queue.front();\n    queue.pop_front();\n    return first;\n}",
+          "explanationArabic": "deque مناسبة لقوائم الانتظار حيث يتم إضافة العناصر في النهاية وحذفها من البداية.",
+          "relatedTokens": [
+            "std::deque",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "وصول عشوائي",
+          "code": "#include <deque>\n\nint main() {\n    std::deque<int> dq = {1, 2, 3, 4, 5};\n    return dq[2];\n}",
+          "explanationArabic": "deque تدعم الوصول العشوائي مثل vector، لكنها أقل كفاءة في الوسط.",
+          "relatedTokens": [
+            "std::deque",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "std::list",
+        "std::queue"
+      ]
+    },
+    "std::chrono": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::chrono توفر أدوات لقياس الوقت والتواريخ. فائدتها في التعامل مع الوقت بدقة وأمان، مثل قياس الأداء أو الانتظار.",
+      "projectStepsArabic": [
+        "استخدم high_resolution_clock لقياس الوقت.",
+        "استخدم duration لتمثيل فترات الوقت.",
+        "استخدم time_point لتمثيل نقاط زمنية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قياس الوقت",
+          "code": "#include <chrono>\n\nint main() {\n    auto start = std::chrono::high_resolution_clock::now();\n    // some code\n    auto end = std::chrono::high_resolution_clock::now();\n    auto duration = end - start;\n    return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() > 0 ? 1 : 0;\n}",
+          "explanationArabic": "high_resolution_clock يقيس الوقت بدقة عالية.",
+          "relatedTokens": [
+            "std::chrono",
+            "auto",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "انتظار",
+          "code": "#include <chrono>\n#include <thread>\n\nint main() {\n    std::this_thread::sleep_for(std::chrono::seconds(1));\n    return 0;\n}",
+          "explanationArabic": "sleep_for يوقف التنفيذ لفترة محددة.",
+          "relatedTokens": [
+            "std::chrono",
+            "std::thread",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "duration",
+          "code": "#include <chrono>\n\nint main() {\n    std::chrono::seconds s(5);\n    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(s);\n    return ms.count();\n}",
+          "explanationArabic": "duration يمثل فترة زمنية، ويمكن تحويلها.",
+          "relatedTokens": [
+            "std::chrono",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::thread",
+        "std::mutex",
+        "std::future"
+      ]
+    },
+    "std::filesystem": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، std::filesystem توفر أدوات للتعامل مع الملفات والمجلدات. فائدتها في التعامل مع المسارات والعمليات على الملفات بطريقة محمولة.",
+      "projectStepsArabic": [
+        "استخدم path لتمثيل المسارات.",
+        "استخدم exists وis_directory للتحقق.",
+        "استخدم create_directory وremove للعمليات."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "التحقق من وجود ملف",
+          "code": "#include <filesystem>\n\nint main() {\n    std::filesystem::path p(\"file.txt\");\n    return std::filesystem::exists(p) ? 1 : 0;\n}",
+          "explanationArabic": "exists يتحقق من وجود الملف أو المجلد.",
+          "relatedTokens": [
+            "std::filesystem",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "إنشاء مجلد",
+          "code": "#include <filesystem>\n\nint main() {\n    std::filesystem::path dir(\"test_dir\");\n    std::filesystem::create_directory(dir);\n    return std::filesystem::is_directory(dir) ? 1 : 0;\n}",
+          "explanationArabic": "create_directory ينشئ مجلدًا إذا لم يكن موجودًا.",
+          "relatedTokens": [
+            "std::filesystem",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قراءة محتوى مجلد",
+          "code": "#include <filesystem>\n\nint main() {\n    std::filesystem::path dir(\".\");\n    int count = 0;\n    for (const auto& entry : std::filesystem::directory_iterator(dir)) {\n        ++count;\n    }\n    return count;\n}",
+          "explanationArabic": "directory_iterator يتكرر على محتوى المجلد.",
+          "relatedTokens": [
+            "std::filesystem",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::ifstream",
+        "std::ofstream",
+        "std::string"
+      ]
+    },
+    "std::make_unique": {
+      "fullProjectNoteArabic": "std::make_unique هي الطريقة المعيارية لإنشاء unique_ptr في C++14 فما فوق. هي أنظف وأأمن من new مباشرة لأنها تمنع تسرب الذاكرة عند حدوث استثناء في معاملات البناء، وتضمن أن الذاكرة مملوكة لكائن واحد فقط يُحرر تلقائيًا عند انتهاء عمره.",
+      "projectStepsArabic": [
+        "استخدمها دائمًا بدل new عند الحاجة لملكية حصرية لكائن على الكومة.",
+        "لا تستخدم new مباشرة مع unique_ptr لأن make_unique أأمن من الاستثناءات أثناء البناء.",
+        "مرر unique_ptr بالقيمة عند نقل الملكية، أو بالمرجع عندما لا تريد نقلها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء كائن بملكية حصرية",
+          "code": "#include <memory>\n\nstruct Widget {\n    int value;\n    Widget(int v) : value(v) {}\n};\n\nint main() {\n    auto w = std::make_unique<Widget>(42);\n    return w->value;\n}",
+          "explanationArabic": "make_unique تنشئ الكائن على الكومة وتعيده داخل unique_ptr. لا حاجة لـ delete لأن unique_ptr يحرر الذاكرة تلقائيًا عند خروج w من النطاق.",
+          "relatedTokens": [
+            "std::unique_ptr",
+            "std::make_unique",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "نقل الملكية إلى دالة أخرى",
+          "code": "#include <memory>\n\nstruct Config {\n    int width;\n    Config(int w) : width(w) {}\n};\n\nvoid use(std::unique_ptr<Config> cfg) {\n    int w = cfg->width;\n}\n\nint main() {\n    auto cfg = std::make_unique<Config>(800);\n    use(std::move(cfg));\n    return cfg == nullptr ? 1 : 0;\n}",
+          "explanationArabic": "std::move تنقل الملكية من cfg إلى المعامل. بعد النقل cfg تصبح nullptr ولا يمكن استخدامها. هذا يضمن أن كائنًا واحدًا فقط يملك الذاكرة في كل لحظة.",
+          "relatedTokens": [
+            "std::make_unique",
+            "std::move",
+            "nullptr"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام new مباشرة",
+          "code": "#include <memory>\n\nstruct Node {\n    int data;\n    Node(int d) : data(d) {}\n};\n\nint main() {\n    auto n1 = std::make_unique<Node>(10);\n    return n1->data;\n}",
+          "explanationArabic": "البديل الخطأ هو std::unique_ptr<Node>(new Node(10)) — إذا رمى Node استثناءً أثناء البناء فقد يتسرب الذاكرة. make_unique تمنع هذا لأنها تُخصّص وتبني في خطوة واحدة آمنة.",
+          "relatedTokens": [
+            "std::make_unique",
+            "std::unique_ptr"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::unique_ptr",
+        "std::make_shared",
+        "std::move"
+      ]
+    },
+    "std::make_shared": {
+      "fullProjectNoteArabic": "std::make_shared تنشئ shared_ptr بكفاءة عالية لأنها تُخصّص الكائن وعداد المرجع في تخصيص ذاكرة واحد. هذا يعني تخصيصًا أقل وتخزينًا أفضل في الذاكرة المؤقتة مقارنة بـ shared_ptr مع new.",
+      "projectStepsArabic": [
+        "استخدمها دائمًا بدل new عند الحاجة لملكية مشتركة.",
+        "لا تستخدمها إذا كان الكائن كبيرًا جدًا وتريد تحريره قبل انتهاء عمر shared_ptr الأخير لأن الذاكرة لا تُحرر حتى يختفي العداد.",
+        "shared_ptr مناسب عندما تحتاج عدة أجزاء من البرنامج الوصول لنفس الكائن دون تحديد من يملكه."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ملكية مشتركة بين كائنين",
+          "code": "#include <memory>\n\nstruct Resource {\n    int id;\n    Resource(int i) : id(i) {}\n};\n\nint main() {\n    auto res = std::make_shared<Resource>(1);\n    auto copy = res;\n    return res.use_count();\n}",
+          "explanationArabic": "use_count يُرجع عدد shared_ptr التي تشير لنفس الكائن. هنا res وcopy يشيران لنفس Resource فالعداد = 2. عند خروج كليهما من النطاق يُحرر الكائن.",
+          "relatedTokens": [
+            "std::make_shared",
+            "std::shared_ptr",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "تمرير shared_ptr إلى دالة",
+          "code": "#include <memory>\n\nstruct Logger {\n    void log(int code) {}\n};\n\nvoid process(std::shared_ptr<Logger> logger) {\n    logger->log(100);\n}\n\nint main() {\n    auto logger = std::make_shared<Logger>();\n    process(logger);\n    return logger.use_count();\n}",
+          "explanationArabic": "تمرير shared_ptr بالقيمة يزيد العداد مؤقتًا داخل الدالة ثم ينقص عند عودتها. الكائن يبقى حيًا طالما يوجد shared_ptr واحد على الأقل يشير إليه.",
+          "relatedTokens": [
+            "std::make_shared",
+            "std::shared_ptr"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين make_shared و new مع shared_ptr",
+          "code": "#include <memory>\n\nstruct Data {\n    int value;\n    Data(int v) : value(v) {}\n};\n\nint main() {\n    auto d1 = std::make_shared<Data>(10);\n    return d1->value;\n}",
+          "explanationArabic": "make_shared تخصّص Data وعداد المرجع معًا في تخصيص واحد. أما shared_ptr<Data>(new Data(10)) فتخصّص مرتين: مرة للكائن ومرة للعداد. make_shared أسرع وأنظف.",
+          "relatedTokens": [
+            "std::make_shared",
+            "std::shared_ptr"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::shared_ptr",
+        "std::make_unique",
+        "std::weak_ptr"
+      ]
+    },
+    "std::lock_guard": {
+      "fullProjectNoteArabic": "std::lock_guard تغلق mutex عند بنائها وتحرره عند تدميرها عبر RAII. هذا يعني أن القفل يُحرر تلقائيًا حتى لو رمت الدالة استثناءً أو عادت مبكرًا. هي الأبسط والأأمن لحماية قسم حرّ (critical section) في خيط واحد.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج قفلًا بسيطًا يُحرر تلقائيًا عند خروجك من النطاق.",
+        "لا تستخدمها إذا كنت تحتاج فتح القفل قبل نهاية النطاق — استخدم unique_lock بدلًا من ذلك.",
+        "تأكد أن كل خيط يقفل نفس mutex عند الوصول للبيانات المشتركة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حماية عداد مشترك",
+          "code": "#include <mutex>\n#include <thread>\n#include <atomic>\n\nint counter = 0;\nstd::mutex mtx;\n\nvoid safe_increment() {\n    std::lock_guard<std::mutex> lock(mtx);\n    ++counter;\n}\n\nint main() {\n    std::thread t1(safe_increment);\n    std::thread t2(safe_increment);\n    t1.join();\n    t2.join();\n    return counter;\n}",
+          "explanationArabic": "lock_guard يقفل mtx عند دخول الدالة ويحرره عند خروجها. هذا يضمن أن ++counter لا يتنفذ في خيطين في نفس اللحظة.",
+          "relatedTokens": [
+            "std::lock_guard",
+            "std::mutex",
+            "std::thread"
+          ]
+        },
+        {
+          "titleArabic": "حماية مع استثناء",
+          "code": "#include <mutex>\n\nstd::mutex mtx;\nint value = 0;\n\nvoid may_throw(bool should_throw) {\n    std::lock_guard<std::mutex> lock(mtx);\n    value = 42;\n    if (should_throw) throw 1;\n    value = 99;\n}\n\nint main() {\n    try { may_throw(true); } catch (...) {}\n    return value;\n}",
+          "explanationArabic": "حتى لو رمت الدالة استثناءً، lock_guard تُحرر mtx في مدمرها. هذا ميزة RAII الأساسية — لا تحتاج try/catch لتحرير القفل.",
+          "relatedTokens": [
+            "std::lock_guard",
+            "std::mutex"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان القفل",
+          "code": "#include <mutex>\n#include <thread>\n\nint data = 0;\nstd::mutex mtx;\n\nvoid wrong() {\n    mtx.lock();\n    ++data;\n    mtx.unlock();\n}\n\nvoid right() {\n    std::lock_guard<std::mutex> lock(mtx);\n    ++data;\n}\n\nint main() {\n    return 0;\n}",
+          "explanationArabic": "الطريقة اليدوية lock/unlock خطرة: إذا رمى الكود بينهما استثناءً لن يُحرر القفل أبدًا (deadlock). lock_guard تحل هذا تلقائيًا.",
+          "relatedTokens": [
+            "std::lock_guard",
+            "std::mutex"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::unique_lock",
+        "std::scoped_lock",
+        "std::mutex"
+      ]
+    },
+    "std::scoped_lock": {
+      "fullProjectNoteArabic": "std::scoped_lock (C++17) تقفل عدة mutexes في وقت واحد بطريقة آمنة تمنع deadlock. هي النسخة المحسّنة من lock_guard لدعم عدة أقفال. تستخدم خوارزمية deadlock-avoidance داخليًا.",
+      "projectStepsArabic": [
+        "استخدمها بدل lock_guard عندما تحتاج قفل أكثر من mutex في نفس النطاق.",
+        "لا تحتاج لترتيب الأقفال يدويًا لأنها تمنع deadlock تلقائيًا.",
+        "هي الخيار الأول في C++17 لقفل عدة موارد معًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قفل mutexين معًا",
+          "code": "#include <mutex>\n\nstd::mutex mtx_a;\nstd::mutex mtx_b;\nint a = 0, b = 0;\n\nvoid transfer() {\n    std::scoped_lock lock(mtx_a, mtx_b);\n    --a;\n    ++b;\n}\n\nint main() {\n    transfer();\n    return b;\n}",
+          "explanationArabic": "scoped_lock يقفل mtx_a و mtx_b معًا بأمان. حتى لو خيط آخر قفلهما بترتيب معكوس لن يحدث deadlock.",
+          "relatedTokens": [
+            "std::scoped_lock",
+            "std::mutex",
+            "std::lock_guard"
+          ]
+        },
+        {
+          "titleArabic": "قفل واحد (بديل lock_guard)",
+          "code": "#include <mutex>\n\nstd::mutex mtx;\nint value = 0;\n\nvoid update() {\n    std::scoped_lock lock(mtx);\n    ++value;\n}\n\nint main() {\n    update();\n    return value;\n}",
+          "explanationArabic": "مع mutex واحد scoped_lock تتصرف مثل lock_guard تمامًا. في C++17 يمكنك استخدامها كبديل موحد.",
+          "relatedTokens": [
+            "std::scoped_lock",
+            "std::mutex"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: قفل يدوي لعدة mutexes",
+          "code": "#include <mutex>\n\nstd::mutex mtx1, mtx2;\nint x = 0, y = 0;\n\nvoid unsafe() {\n    std::lock_guard<std::mutex> l1(mtx1);\n    std::lock_guard<std::mutex> l2(mtx2);\n    ++x; ++y;\n}\n\nvoid safe() {\n    std::scoped_lock lock(mtx1, mtx2);\n    ++x; ++y;\n}\n\nint main() {\n    return 0;\n}",
+          "explanationArabic": "القفل المتتالي l1 ثم l2 قد يسبب deadlock إذا قفل خيط آخر l2 ثم l1. scoped_lock تستخدم std::lock داخليًا لمنع هذا.",
+          "relatedTokens": [
+            "std::scoped_lock",
+            "std::lock_guard",
+            "std::mutex"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::lock_guard",
+        "std::unique_lock",
+        "std::mutex"
+      ]
+    },
+    "std::async": {
+      "fullProjectNoteArabic": "std::async تُشغّل مهمة بشكل غير متزامن وتُرجع future يحمل النتيجة. هي أبسط طريقة في C++ لتنفيذ كود في خيط منفصل دون التعامل المباشر مع std::thread. تُدير تجمع الخيوط تلقائيًا عند استخدام std::launch::async.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج تشغيل عملية ثقيلة في الخلفية والحصول على نتيجتها لاحقًا.",
+        "استخدم std::launch::async لضمان التشغيل في خيط منفصل.",
+        "لا تنسَ استدعاء .get() على future لأنه ينتظر النتيجة ويُحرر الموارد."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حساب غير متزامن بسيط",
+          "code": "#include <future>\n\nint compute(int x) {\n    return x * x;\n}\n\nint main() {\n    auto fut = std::async(std::launch::async, compute, 5);\n    int result = fut.get();\n    return result;\n}",
+          "explanationArabic": "async تُشغّل compute في خيط منفصل وترجع future. get() ينتظر انتهاء المهمة ويعيد النتيجة (25).",
+          "relatedTokens": [
+            "std::async",
+            "std::future",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "تشغيل عدة مهام بالتوازي",
+          "code": "#include <future>\n\nint heavy(int id) {\n    int sum = 0;\n    for (int i = 0; i < 1000; ++i) sum += i * id;\n    return sum;\n}\n\nint main() {\n    auto f1 = std::async(std::launch::async, heavy, 1);\n    auto f2 = std::async(std::launch::async, heavy, 2);\n    return f1.get() + f2.get();\n}",
+          "explanationArabic": "كل async تُشغّل في خيط منفصل. get() ينتظر كل مهمة على حدة. المهام الثلاث تتنفذ بالتوازي.",
+          "relatedTokens": [
+            "std::async",
+            "std::future"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان get()",
+          "code": "#include <future>\n\nint work() { return 42; }\n\nint main() {\n    auto fut = std::async(std::launch::async, work);\n    return fut.get();\n}",
+          "explanationArabic": "إذا لم تستدعِ get() فإن المُصرّف قد يحرر future قبل انتهاء المهمة. get() ضروري لضمان الانتظار والحصول على النتيجة.",
+          "relatedTokens": [
+            "std::async",
+            "std::future"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::future",
+        "std::thread",
+        "std::promise"
+      ]
+    },
+    "std::future": {
+      "fullProjectNoteArabic": "std::future تمثل نتيجة عملية غير متزامنة ستكون متاحة لاحقًا. يمكن الانتظار عليها بـ get() أو فحصها بـ wait_for(). هي الطريقة المعيارية لتمرير النتائج بين الخيوط في C++.",
+      "projectStepsArabic": [
+        "تحصل عليها من std::async أو std::promise::get_future().",
+        "استدعِ get() مرة واحدة فقط — الاستدعاء الثاني يُسبب سلوكًا غير معرّف.",
+        "استخدم wait_for لفحص الجاهزية دون حجب الخيط الحالي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "انتظار النتيجة",
+          "code": "#include <future>\n\nint main() {\n    std::future<int> fut = std::async(std::launch::async, []{ return 100; });\n    int result = fut.get();\n    return result;\n}",
+          "explanationArabic": "get() يحجب الخيط الحالي حتى تكتمل المهمة ثم يعيد النتيجة. لا يمكن استدعاؤه مرتين.",
+          "relatedTokens": [
+            "std::future",
+            "std::async"
+          ]
+        },
+        {
+          "titleArabic": "فحص الجاهزية بـ wait_for",
+          "code": "#include <future>\n\nint main() {\n    std::future<int> fut = std::async(std::launch::async, []{\n        int sum = 0;\n        for (int i = 0; i < 10000; ++i) sum += i;\n        return sum;\n    });\n    auto status = fut.wait_for(std::chrono::milliseconds(0));\n    return status == std::future_status::ready ? 0 : 1;\n}",
+          "explanationArabic": "wait_for بـ 0 مللي ثانية يفحص الجاهزية دون انتظار. يُرجع ready إذا اكتملت أو timeout إذا لم تكتمل بعد.",
+          "relatedTokens": [
+            "std::future",
+            "std::chrono::duration"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: get() مرتين",
+          "code": "#include <future>\n\nint main() {\n    std::future<int> fut = std::async(std::launch::async, []{ return 7; });\n    int r1 = fut.get();\n    return r1;\n}",
+          "explanationArabic": "get() ينقل النتيجة من future. الاستدعاء الثاني يُسبب std::future_error. احفظ النتيجة في متغير واستخدمها بدل استدعاء get() مرة أخرى.",
+          "relatedTokens": [
+            "std::future",
+            "std::async"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::async",
+        "std::promise",
+        "std::thread"
+      ]
+    },
+    "std::ofstream": {
+      "fullProjectNoteArabic": "std::ofstream تُستخدم لكتابة البيانات إلى ملفات نصية أو ثنائية. هي ت inherite من std::ostream وتضيف إدارة الملفات. تفتح الملف عند البناء وتغلقه عند التدمير عبر RAII.",
+      "projectStepsArabic": [
+        "استخدمها لكتابة سجلات أو نتائج أو بيانات تهيئة إلى ملفات.",
+        "تحقق دائمًا من is_open() قبل الكتابة لأن فتح الملف قد يفشل.",
+        "استخدم std::ios::binary عند كتابة بيانات ثنائية لتجنب تحويل الأحرف."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "كتابة نص بسيط",
+          "code": "#include <fstream>\n\nint main() {\n    std::ofstream file(\"output.txt\");\n    if (file.is_open()) {\n        file << \"Hello from C++\" << std::endl;\n        file << 42 << \" \" << 3.14;\n    }\n    return file.is_open() ? 1 : 0;\n}",
+          "explanationArabic": "ofstream يفتح الملف للكتابة. << تكتب البيانات كـ cout. الملف يُغلق تلقائيًا عند خروج file من النطاق.",
+          "relatedTokens": [
+            "std::ofstream",
+            "std::endl"
+          ]
+        },
+        {
+          "titleArabic": "إضافة إلى ملف موجود",
+          "code": "#include <fstream>\n\nint main() {\n    std::ofstream file(\"log.txt\", std::ios::app);\n    if (file.is_open()) {\n        file << \"New entry\" << std::endl;\n    }\n    return file.is_open() ? 1 : 0;\n}",
+          "explanationArabic": "std::ios::app يفتح الملف في وضع الإضافة. الكتابة تُضاف في نهاية الملف بدل استبدال محتواه.",
+          "relatedTokens": [
+            "std::ofstream"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: عدم فحص فتح الملف",
+          "code": "#include <fstream>\n\nint main() {\n    std::ofstream file(\"/nonexistent/path/data.txt\");\n    if (!file.is_open()) {\n        return -1;\n    }\n    file << \"data\";\n    return 0;\n}",
+          "explanationArabic": "إذا لم يكن المسار موجودًا أو ليس لديك صلاحية الكتابة، يفشل الفتح بصمت. is_open() هو الطريقة الوحيدة لمعرفة ذلك.",
+          "relatedTokens": [
+            "std::ofstream"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::ifstream",
+        "std::fstream",
+        "std::filesystem::path"
+      ]
+    },
+    "std::chrono::steady_clock": {
+      "fullProjectNoteArabic": "std::chrono::steady_clock ساعة لا يمكن ضبطها للخلف أبدًا. هي الأنسب لقياس الفترات الزمنية لأنها مضمونة أن تزداد فقط. على عكس system_clock التي قد تُعدَّل بواسطة النظام.",
+      "projectStepsArabic": [
+        "استخدمها لقياس زمن تنفيذ دوال أو عمليات.",
+        "لا تستخدمها لعرض التاريخ والوقت الحقيقي — استخدم system_clock بدلًا من ذلك.",
+        "استخدم auto مع now() لأن النوع قد يختلف بين المنصات."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قياس زمن تنفيذ عملية",
+          "code": "#include <chrono>\n\nint main() {\n    auto start = std::chrono::steady_clock::now();\n    volatile int sum = 0;\n    for (int i = 0; i < 1000000; ++i) sum += i;\n    auto end = std::chrono::steady_clock::now();\n    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);\n    return elapsed.count() > 0 ? 1 : 0;\n}",
+          "explanationArabic": "now() يُرجع time_point. الطرح بين نقطتين يعطي duration. duration_cast يحولها للوحدة المطلوبة.",
+          "relatedTokens": [
+            "std::chrono::steady_clock",
+            "std::chrono::duration",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "قياس بالمللي ثانية",
+          "code": "#include <chrono>\n\nint main() {\n    auto t1 = std::chrono::steady_clock::now();\n    volatile double x = 0;\n    for (int i = 0; i < 100000; ++i) x += 0.1;\n    auto t2 = std::chrono::steady_clock::now();\n    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);\n    return static_cast<int>(ms.count());\n}",
+          "explanationArabic": "milliseconds مناسبة لقياس العمليات المتوسطة السرعة. count() يُرجع القيمة العددية.",
+          "relatedTokens": [
+            "std::chrono::steady_clock",
+            "std::chrono::duration"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام system_clock للقياس",
+          "code": "#include <chrono>\n\nint main() {\n    auto start = std::chrono::steady_clock::now();\n    volatile int dummy = 0;\n    for (int i = 0; i < 1000; ++i) ++dummy;\n    auto end = std::chrono::steady_clock::now();\n    auto us = std::chrono::duration_cast<std::chrono::microseconds>(end - start);\n    return us.count() >= 0 ? 1 : 0;\n}",
+          "explanationArabic": "system_clock قد تُعدَّل للخلف إذا غيّر المستخدم ساعة النظام أو حدث مزامنة NTP. steady_clock لا تتأثر بهذا فقياساتها دقيقة دائمًا.",
+          "relatedTokens": [
+            "std::chrono::steady_clock",
+            "std::chrono::duration"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::chrono::duration",
+        "std::chrono::time_point",
+        "std::chrono::system_clock"
+      ]
+    },
+    "std::chrono::duration": {
+      "fullProjectNoteArabic": "std::chrono::duration تمثل فترة زمنية بين نقطتين زمنيتين. تحمل قيمة عددية ووحدة زمنية (ثوانٍ، مللي ثانية، إلخ). هي جزء من مكتبة chrono وتُستخدم مع الساعات لقياس الزمن بدقة.",
+      "projectStepsArabic": [
+        "استخدم الأنواع المُسبقة مثل milliseconds و microseconds عند الحاجة.",
+        "استخدم duration_cast لتحويل بين الوحدات عند الحاجة.",
+        "لا تخلط بين duration (فترة) و time_point (لحظة زمنية)."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء مدة زمنية",
+          "code": "#include <chrono>\n\nint main() {\n    std::chrono::milliseconds timeout(500);\n    std::chrono::seconds wait(1);\n    return timeout.count() < wait.count() ? 1 : 0;\n}",
+          "explanationArabic": "milliseconds و seconds أنواع duration مُسبقة. count() يُرجع القيمة العددية بالوحدة المحددة.",
+          "relatedTokens": [
+            "std::chrono::duration",
+            "std::chrono::steady_clock"
+          ]
+        },
+        {
+          "titleArabic": "تحويل بين الوحدات",
+          "code": "#include <chrono>\n\nint main() {\n    std::chrono::seconds sec(2);\n    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(sec);\n    return static_cast<int>(ms.count());\n}",
+          "explanationArabic": "duration_cast يحول 2 ثانية إلى 2000 مللي ثانية. التحويل من وحدة أكبر لأصغر دقيق. العكس يقطع الكسور.",
+          "relatedTokens": [
+            "std::chrono::duration"
+          ]
+        },
+        {
+          "titleArabic": "استخدام literals (C++14)",
+          "code": "#include <chrono>\n\nusing namespace std::chrono_literals;\n\nint main() {\n    auto d1 = 500ms;\n    auto d2 = 2s;\n    auto total = d1 + d2;\n    return static_cast<int>(total.count());\n}",
+          "explanationArabic": " literals مثل 500ms و 2s أنظف من البناء اليدوي. تحتاج using namespace std::chrono_literals أو std::chrono_literals::.",
+          "relatedTokens": [
+            "std::chrono::duration",
+            "auto"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::chrono::steady_clock",
+        "std::chrono::time_point"
+      ]
+    },
+    "std::stack": {
+      "fullProjectNoteArabic": "std::stack هي محول حاوية يوفر سلوك LIFO (آخر داخل أول خارج). هي ليست حاوية مستقلة بل غلاف فوق حاوية أخرى (vector افتراضيًا). تدعم push, pop, top فقط.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج سلوك الأخير داخل أول خارج مثل تراجع الأوامر أو تحليل الأقواس.",
+        "لا توفر وصولًا عشوائيًا أو تكرارًا على العناصر — هذا مقصود.",
+        "يمكن تغيير الحاوية الأساسية مثل stack<T, deque<T>>."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دفع وسحب عناصر",
+          "code": "#include <stack>\n\nint main() {\n    std::stack<int> s;\n    s.push(10);\n    s.push(20);\n    s.push(30);\n    int top = s.top();\n    s.pop();\n    return s.top();\n}",
+          "explanationArabic": "push يضيف في الأعلى. top يُرجع العنصر العلوي بدون إزالته. pop يزيل العنصر العلوي بدون إرجاعه. هنا top=30 ثم pop فيصبح top=20.",
+          "relatedTokens": [
+            "std::stack"
+          ]
+        },
+        {
+          "titleArabic": "فحص التوازن of أقواس",
+          "code": "#include <stack>\n#include <string>\n\nbool balanced(const std::string& expr) {\n    std::stack<char> s;\n    for (char c : expr) {\n        if (c == '(' || c == '[') s.push(c);\n        else if (c == ')' || c == ']') {\n            if (s.empty()) return false;\n            s.pop();\n        }\n    }\n    return s.empty();\n}\n\nint main() {\n    return balanced(\"([])\") ? 1 : 0;\n}",
+          "explanationArabic": "stack مثالية لفحص التوازن لأنها تتذكر ترتيب الفتح. كل إغلاق يُطابق آخر فتح.",
+          "relatedTokens": [
+            "std::stack",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استدعاء top على stack فارغة",
+          "code": "#include <stack>\n\nint main() {\n    std::stack<int> s;\n    s.push(1);\n    s.pop();\n    if (!s.empty()) {\n        int val = s.top();\n    }\n    return s.empty() ? 1 : 0;\n}",
+          "explanationArabic": "top أو pop على stack فارغة يُسبب سلوكًا غير معرّف. تحقق دائمًا بـ empty() قبل الاستدعاء.",
+          "relatedTokens": [
+            "std::stack"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::queue",
+        "std::vector",
+        "std::deque"
+      ]
+    },
+    "std::queue": {
+      "fullProjectNoteArabic": "std::queue هي محول حاوية يوفر سلوك FIFO (أول داخل أول خارج). تستخدم deque كحاوية أساسية افتراضيًا. تدعم push, pop, front, back فقط.",
+      "projectStepsArabic": [
+        "استخدمها لعمليات الطابور مثل معالجة الأحداث أو المهام بالترتيب.",
+        "لا توفر وصولًا عشوائيًا — هذا مقصود لأن الطابور يُستخدم بالترتيب فقط.",
+        "front تعيد العنصر التالي بدون إزالته. pop تزيله بدون إرجاعه."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إضافة وسحب بالترتيب",
+          "code": "#include <queue>\n\nint main() {\n    std::queue<int> q;\n    q.push(10);\n    q.push(20);\n    q.push(30);\n    int first = q.front();\n    q.pop();\n    return q.front();\n}",
+          "explanationArabic": "push يضيف في الخلف. front يُرجع العنصر الأمامي. pop يزيله. العناصر تخرج بنفس ترتيب الدخول: 10 ثم 20 ثم 30.",
+          "relatedTokens": [
+            "std::queue"
+          ]
+        },
+        {
+          "titleArabic": "معالجة مهام بالترتيب",
+          "code": "#include <queue>\n#include <string>\n\nint main() {\n    std::queue<std::string> tasks;\n    tasks.push(\"load\");\n    tasks.push(\"render\");\n    tasks.push(\"present\");\n    int count = 0;\n    while (!tasks.empty()) {\n        tasks.pop();\n        ++count;\n    }\n    return count;\n}",
+          "explanationArabic": "queue مثالية لمعالجة المهام بالترتيب. كل مهمة تُعالج قبل التالية.",
+          "relatedTokens": [
+            "std::queue",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان empty check",
+          "code": "#include <queue>\n\nint main() {\n    std::queue<int> q;\n    q.push(1);\n    q.pop();\n    if (!q.empty()) {\n        int val = q.front();\n    }\n    return q.empty() ? 1 : 0;\n}",
+          "explanationArabic": "front أو pop على queue فارغة يُسبب سلوكًا غير معرّف. تحقق دائمًا بـ empty() أولًا.",
+          "relatedTokens": [
+            "std::queue"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::stack",
+        "std::priority_queue",
+        "std::deque"
+      ]
+    },
+    "std::priority_queue": {
+      "fullProjectNoteArabic": "std::priority_queue هي محول حاوية يُخرج العنصر الأكبر دائمًا (أو الأصغر مع greater). تستخدم vector كحاوية أساسية وتحافظ على الكومة (heap) داخليًا.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج معالجة العناصر حسب الأولوية لا الترتيب.",
+        "الافتراضي يُخرج الأكبر أولًا. استخدم greater للأصغر.",
+        "لا توفر وصولًا عشوائيًا أو تكرارًا على العناصر."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إخراج الأكبر أولًا",
+          "code": "#include <queue>\n\nint main() {\n    std::priority_queue<int> pq;\n    pq.push(30);\n    pq.push(10);\n    pq.push(20);\n    int top = pq.top();\n    pq.pop();\n    return pq.top();\n}",
+          "explanationArabic": "top تعيد الأكبر (30). بعد pop يصبح الأكبر التالي هو 20. الترتيب الداخلي كومة لا مصفوفة مرتبة.",
+          "relatedTokens": [
+            "std::priority_queue"
+          ]
+        },
+        {
+          "titleArabic": "إخراج الأصغر أولًا",
+          "code": "#include <queue>\n#include <vector>\n#include <functional>\n\nint main() {\n    std::priority_queue<int, std::vector<int>, std::greater<int>> pq;\n    pq.push(30);\n    pq.push(10);\n    pq.push(20);\n    return pq.top();\n}",
+          "explanationArabic": "std::greater يجعل الأصغر في الأعلى. تحتاج تمرير الحاوية والمقارن كمعاملات template.",
+          "relatedTokens": [
+            "std::priority_queue",
+            "std::greater",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: الظن أنها مرتبة بالكامل",
+          "code": "#include <queue>\n\nint main() {\n    std::priority_queue<int> pq;\n    pq.push(5);\n    pq.push(1);\n    pq.push(3);\n    int count = 0;\n    while (!pq.empty()) {\n        pq.pop();\n        ++count;\n    }\n    return count;\n}",
+          "explanationArabic": "priority_queue ليست مرتبة بالكامل — هي كومة. فقط top() مضمون أن يكون الأكبر. لا تفترض ترتيبًا داخليًا.",
+          "relatedTokens": [
+            "std::priority_queue"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::queue",
+        "std::stack",
+        "std::greater"
+      ]
+    },
+    "std::error_code": {
+      "fullProjectNoteArabic": "std::error_code يُمثل رمز خطأ مرتبط بفئة (category) محددة. هو بديل أخف من الاستثناءات للخطأ المتوقع مثل فشل فتح ملف أو خطأ شبكة. يحمل القيمة والفئة معًا بدون تخصيص ذاكرة.",
+      "projectStepsArabic": [
+        "استخدمه بدل الاستثناءات للأخطاء المتوقعة التي تحدث بشكل متكرر.",
+        "التحقق عبر operator bool أو مقارنة القيمة مع 0.",
+        "message() يُرجع نصًا يصف الخطأ بلغة النظام."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فحص خطأ بسيط",
+          "code": "#include <system_error>\n\nint main() {\n    std::error_code ec;\n    return ec ? 1 : 0;\n}",
+          "explanationArabic": "error_code الافتراضي لا يحتوي خطأ (value == 0). operator bool يُرجع true عند وجود خطأ.",
+          "relatedTokens": [
+            "std::error_code"
+          ]
+        },
+        {
+          "titleArabic": "استخدام مع filesystem",
+          "code": "#include <filesystem>\n#include <system_error>\n#include <iostream>\n\nint main() {\n    std::error_code ec;\n    auto size = std::filesystem::file_size(\"nonexistent.txt\", ec);\n    if (ec) {\n        return 1;\n    }\n    return 0;\n}",
+          "explanationArabic": "النسخة التي تأخذ error_code لا ترمي استثناءً. بدلًا من ذلك تضع الخطأ في ec. هذا أنظف من try/catch للأخطاء المتوقعة.",
+          "relatedTokens": [
+            "std::error_code",
+            "std::filesystem::path"
+          ]
+        },
+        {
+          "titleArabic": "الحصول على وصف الخطأ",
+          "code": "#include <system_error>\n#include <iostream>\n\nint main() {\n    std::error_code ec = std::make_error_code(std::errc::no_such_file_or_directory);\n    return ec ? 1 : 0;\n}",
+          "explanationArabic": "make_error_code ينشئ error_code من errc enum. ec.message() تُرجع نصًا واضحًا مثل 'No such file or directory'.",
+          "relatedTokens": [
+            "std::error_code",
+            "std::errc"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::system_error",
+        "std::filesystem::path",
+        "std::errc"
+      ]
+    },
+    "std::nullopt": {
+      "fullProjectNoteArabic": "std::nullopt هو كائن خاص من نوع nullopt_t يُستخدم لتهيئة std::optional بقيمة 'لا قيمة'. هو ليس nullptr ولا 0 — هو يعني تحديدًا أن القيمة غير موجودة أو غير متاحة.",
+      "projectStepsArabic": [
+        "استخدمه لإنشاء optional بدون قيمة أو لمقارنة optional مع 'لا قيمة'.",
+        "لا تخلط بين nullopt و nullptr — الأول للأرقام والأنواع الأخرى والثاني للمؤشرات فقط.",
+        "has_value() أو operator bool يفحصان وجود القيمة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء optional بدون قيمة",
+          "code": "#include <optional>\n\nint main() {\n    std::optional<int> val = std::nullopt;\n    return val.has_value() ? 1 : 0;\n}",
+          "explanationArabic": "nullopt يجعل optional لا يحتوي قيمة. has_value() يُرجع false و operator bool يُرجع false.",
+          "relatedTokens": [
+            "std::nullopt",
+            "std::optional"
+          ]
+        },
+        {
+          "titleArabic": "إرجاع optional من دالة",
+          "code": "#include <optional>\n#include <string>\n\nstd::optional<int> parse(const std::string& s) {\n    if (s.empty()) return std::nullopt;\n    return std::stoi(s);\n}\n\nint main() {\n    auto r1 = parse(\"42\");\n    auto r2 = parse(\"\");\n    return (r1.has_value() && !r2.has_value()) ? 1 : 0;\n}",
+          "explanationArabic": "nullopt يُستخدم كإشارة واضحة أن الدالة لم تُرجع قيمة صالحة. هذا أنظف من إرجاع -1 أو رمي استثناء.",
+          "relatedTokens": [
+            "std::nullopt",
+            "std::optional",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: الخلط مع nullptr",
+          "code": "#include <optional>\n\nint main() {\n    std::optional<int> a = std::nullopt;\n    std::optional<int*> b = nullptr;\n    return (!a && !b) ? 1 : 0;\n}",
+          "explanationArabic": "nullopt مخصص لـ optional. nullptr للمؤشرات. لا تستخدم nullptr مع optional<int> لأن int ليس مؤشرًا.",
+          "relatedTokens": [
+            "std::nullopt",
+            "std::optional",
+            "nullptr"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::optional",
+        "nullptr"
+      ]
+    },
+    "std::out_of_range": {
+      "fullProjectNoteArabic": "std::out_of_range استثناء يُرمى عند الوصول لعنصر خارج النطاق المسموح مثل at() على vector أو string. يرث من std::logic_error. هو أأمن من operator[] الذي لا يتحقق من الحدود.",
+      "projectStepsArabic": [
+        "التقطه بـ catch(const std::out_of_range&) عند استخدام at() أو similar.",
+        "استخدم at() بدل operator[] عندما لا تكون متأكدًا من صحة الفهرس.",
+        "لا تلتقطه بصمت — سجّل الخطأ أو أعالجه بشكل مناسب."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "at() ترمي عند تجاوز الحدود",
+          "code": "#include <vector>\n#include <stdexcept>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    try {\n        int val = v.at(10);\n    } catch (const std::out_of_range&) {\n        return 1;\n    }\n    return 0;\n}",
+          "explanationArabic": "at(10) يتجاوز حجم vector (3 عناصر). يُرمى out_of_range الذي يمكن التقطه والتعامل معه.",
+          "relatedTokens": [
+            "std::out_of_range",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين at و operator[]",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> v = {10, 20, 30};\n    int safe = v.at(1);\n    int unsafe = v[1];\n    return safe == unsafe ? 1 : 0;\n}",
+          "explanationArabic": "at() و operator[] يعطيان نفس النتيجة عند فهرس صحيح. لكن عند فهرس خاطئ at() ترمي استثناءً و operator[] يُسبب سلوكًا غير معرّف.",
+          "relatedTokens": [
+            "std::out_of_range",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: عدم التقاط الاستثناء",
+          "code": "#include <vector>\n#include <stdexcept>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    try {\n        v.at(100);\n        return 0;\n    } catch (const std::out_of_range& e) {\n        return -1;\n    }\n}",
+          "explanationArabic": "إذا لم تلتقط out_of_range سينتهي البرنامج بـ terminate. التقطها دائمًا عند استخدام at() على بيانات قد تكون خاطئة.",
+          "relatedTokens": [
+            "std::out_of_range",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::invalid_argument",
+        "std::logic_error",
+        "std::vector"
+      ]
+    }
+  }
+}

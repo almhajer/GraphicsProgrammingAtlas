@@ -1,0 +1,93 @@
+[
+  {
+    "name": "CXX_STANDARD",
+    "titleArabic": "خاصية target تحدد معيار C++ المطلوب لهذا الهدف تحديداً",
+    "actualMeaningArabic": "هذه خاصية target تضبط معيار C++ الذي يجب أن يستوفيه هذا الهدف، مثل 17 أو 20، بغض النظر عن بقية الأهداف.",
+    "purposeArabic": "تستخدم عندما تريد معياراً واضحاً لهدف معين بدلاً من الاكتفاء بمتغير افتراضي عام.",
+    "whyUseArabic": "تقرب القرار من target نفسه، وهذا أدق عندما تختلف متطلبات المعايير بين مكتبات أو أدوات داخل نفس المشروع.",
+    "carriedValueArabic": "تؤثر في قواعد الترجمة الفعلية لهذا الهدف عند generate/build عبر اختيار flags أو features المناسبة للمترجم.",
+    "usage": [
+      "يمكن ضبطها عبر set_property(TARGET ...) أو set_target_properties(...).",
+      "تتلقى قيمة افتراضية من CMAKE_CXX_STANDARD إذا كانت مضبوطة قبل إنشاء الهدف.",
+      "عندما تراها خامة داخل set_target_properties(... PROPERTIES CXX_STANDARD 20) فهي اسم خاصية target، لا توسعة متغير من شكل ${...}."
+    ],
+    "notes": [
+      "مرتبطة بكيان target لا بدليل أو مشروع كامل.",
+      "في كثير من المشاريع الحديثة تكون أدق من الاعتماد فقط على المتغير العام.",
+      "الفرق العملي: CMAKE_CXX_STANDARD يضبط default للأهداف الجديدة، أما CXX_STANDARD فتفرض القيمة مباشرة على هدف محدد حتى لو خالف بقية المشروع."
+    ],
+    "example": "set_target_properties(calculator PROPERTIES CXX_STANDARD 20)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html",
+    "related": [
+      "CMAKE_CXX_STANDARD",
+      "add_executable"
+    ]
+  },
+  {
+    "name": "POSITION_INDEPENDENT_CODE",
+    "titleArabic": "خاصية target تطلب شيفرة قابلة لإعادة التموضع عند الحاجة",
+    "actualMeaningArabic": "هذه الخاصية تخبر CMake أن الهدف يجب أن يترجم بكود position independent، وهو مطلب شائع للمكتبات المشتركة أو لبعض سيناريوهات الربط.",
+    "purposeArabic": "تستخدم عندما يحتاج target إلى PIC لأسباب منصة أو نوع مكتبة أو ربط لاحق.",
+    "whyUseArabic": "بدلاً من تمرير flags خام خاصة بكل مترجم، تجعل CMake يطبق المعنى البنيوي المناسب للمنصة.",
+    "carriedValueArabic": "تغيّر compile flags وما يرتبط بها لهذا الهدف، لذلك يظهر أثرها في artefacts الناتجة وليس في configure المجرد فقط.",
+    "usage": [
+      "تظهر كثيراً مع SHARED libraries أو مع static libraries التي ستدخل لاحقاً في shared library.",
+      "هي خاصية على target نفسه لا على المشروع كله."
+    ],
+    "notes": [
+      "بعض المنصات تفعلها ضمنياً لبعض الأنواع، لكن الخاصية تبقى الطريقة المعلنة لضبطها.",
+      "يمكن أن تقترن بمفاهيم static/shared libraries."
+    ],
+    "example": "set_target_properties(calclib PROPERTIES POSITION_INDEPENDENT_CODE ON)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/prop_tgt/POSITION_INDEPENDENT_CODE.html",
+    "related": [
+      "add_library",
+      "BUILD_SHARED_LIBS"
+    ]
+  },
+  {
+    "name": "OUTPUT_NAME",
+    "titleArabic": "خاصية target تغيّر الاسم النهائي للملف الناتج دون تغيير اسم target المنطقي",
+    "actualMeaningArabic": "هذه الخاصية تفصل بين اسم target الذي تتعامل معه أوامر CMake وبين اسم artefact النهائي الذي يخرج إلى القرص.",
+    "purposeArabic": "تستخدم عندما تريد الحفاظ على اسم target واضحاً داخل CMake لكنك تحتاج اسماً مختلفاً للملف النهائي المصدَّر أو المثبت.",
+    "whyUseArabic": "تحل مشكلة شائعة: الاسم المنطقي داخل المشروع قد لا يكون هو الاسم التجاري أو التاريخي الذي يجب أن يحمله الملف الناتج.",
+    "carriedValueArabic": "تؤثر في اسم artefact الناتج في build/install، لكنها لا تغير اسم target الذي تستخدمه أوامر CMake الأخرى.",
+    "usage": [
+      "مفيدة عندما تملك targets داخلية بأسماء غير صالحة أو غير مرغوبة كأسماء ملفات نهائية.",
+      "قد تستخدم أيضاً لتوحيد أسماء نواتج بين منصات مختلفة."
+    ],
+    "notes": [
+      "هي خاصية target، لذلك يمكن أن تختلف من هدف لآخر بسهولة.",
+      "لا تستبدل alias target؛ بل تعالج اسم الملف الناتج."
+    ],
+    "example": "set_target_properties(calculator PROPERTIES OUTPUT_NAME calc)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/prop_tgt/OUTPUT_NAME.html",
+    "related": [
+      "add_executable",
+      "install"
+    ]
+  },
+  {
+    "name": "INTERFACE_INCLUDE_DIRECTORIES",
+    "titleArabic": "خاصية target تحمل include paths التي تُنشر إلى من يربط هذا الهدف",
+    "actualMeaningArabic": "هذه خاصية واجهة target تمثل مسارات الترويسات التي يحتاجها المستهلك downstream عندما يربط هذا الهدف.",
+    "purposeArabic": "تستخدم لنشر واجهة المكتبة العامة إلى targets أخرى بشكل ترابطي ومنظّم.",
+    "whyUseArabic": "هي القلب العملي لفكرة usage requirements: المستهلك يحصل على include paths من target نفسه بدل نسخها يدوياً.",
+    "carriedValueArabic": "لا تغيّر ترجمة الهدف الحالي فقط، بل تحدد ما الذي يرثه من يربطه لاحقاً، لذلك أثرها عابر للأهداف.",
+    "usage": [
+      "غالباً تضبطها عملياً عبر target_include_directories(PUBLIC/INTERFACE ...).",
+      "مع التثبيت تستخدم كثيراً مع BUILD_INTERFACE وINSTALL_INTERFACE."
+    ],
+    "notes": [
+      "مرتبطة بكيان target الواجهي أو المكتبي.",
+      "فهمها مهم جداً عند تصدير packages أو بناء مكتبات قابلة لإعادة الاستخدام."
+    ],
+    "example": "target_include_directories(calclib\n  PUBLIC\n    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n    $<INSTALL_INTERFACE:include>\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/prop_tgt/INTERFACE_INCLUDE_DIRECTORIES.html",
+    "related": [
+      "target_include_directories",
+      "Generator Expressions",
+      "Installing and Exporting"
+    ]
+  }
+]

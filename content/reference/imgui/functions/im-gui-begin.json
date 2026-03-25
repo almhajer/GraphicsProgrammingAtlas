@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "ImGui::Begin",
+    "slug": "im-gui-begin",
+    "titleArabic": "تبدأ نافذة Dear ImGui جديدة أو تتابع بناؤها في الإطار الحالي",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/functions/im-gui-begin",
+    "contentPath": "content/reference/imgui/functions/im-gui-begin.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تبدأ نافذة Dear ImGui جديدة أو تتابع بناؤها في الإطار الحالي",
+    "actualMeaningArabic": "تمثل نقطة دخول إلى سجل النافذة الحالية داخل Dear ImGui؛ فهي تنشئ أو تعيد تنشيط بنية النافذة، وتربط أي عناصر ترسم بعدها بهذا النطاق حتى تصل إلى ImGui::End.",
+    "purposeArabic": "تستخدم كلما أردت فتح نافذة مستقلة بعنوان وشريط علوي وحالة تخطيط خاصة بها داخل الإطار الحالي.",
+    "whyUseArabic": "تعطيك نطاقاً واضحاً لترتيب عناصر الواجهة وربطها باسم النافذة وأعلامها وحالتها الداخلية من دون إدارة شجرة عناصر دائمة يدوياً.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه تعيد `true` عندما يكون من المناسب بناء محتوى النافذة الداخلي في هذا الإطار، وتعيد `false` عندما تكون النافذة مطوية أو محجوبة بالطريقة التي تسمح لك بتخطي المحتوى. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "تبدأ نافذة مرئية جديدة في Dear ImGui وتحدد النطاق الذي ستوضع داخله عناصر الواجهة التالية."
+  },
+  "signature": {
+    "raw": "bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)",
+    "returnType": "bool",
+    "parameters": [
+      "const char* name",
+      "bool* p_open",
+      "ImGuiWindowFlags flags"
+    ],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "name",
+        "type": "const char*",
+        "descriptionArabic": "يمثل المعرف النصي الذي يربط بين النافذة الحالية وحالتها المحفوظة مثل الموضع والحجم وحالة الطي.",
+        "originalDescription": ""
+      },
+      {
+        "name": "p_open",
+        "type": "bool*",
+        "descriptionArabic": "يربط زر الإغلاق في شريط النافذة بمتغير تملكه أنت حتى تعكس الواجهة قرار المستخدم في كود التطبيق.",
+        "originalDescription": ""
+      },
+      {
+        "name": "flags",
+        "type": "ImGuiWindowFlags",
+        "descriptionArabic": "تحدد قيود النافذة مثل منع تغيير الحجم أو منع التحريك أو إخفاء أشرطة معيّنة قبل أن يرسم Dear ImGui النافذة.",
+        "originalDescription": ""
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [
+      "الأعلام تمرر مرةً واحدة في بداية النطاق، لذلك هي المكان الصحيح لفرض سلوك النافذة العام.",
+      "اسم النافذة هو جزء من الهوية المنطقية، وليس مجرد عنوان مرئي."
+    ],
+    "remarks": [],
+    "instructions": [
+      "أنشئ متغير حالة خارجي إذا أردت السماح للمستخدم بإغلاق النافذة من الواجهة.",
+      "استدع ImGui::Begin مرةً واحدة لكل نافذة في كل إطار تريد ظهورها فيه.",
+      "وازن النطاق دائماً بـ ImGui::End حتى لو أعادت الدالة `false`."
+    ],
+    "lifecycle": [
+      "يبدأ الاستخدام داخل إطار صالح بعد ImGui::NewFrame ومع وجود سياق Dear ImGui منشأ مسبقاً.",
+      "يجب أن يقترن كل استدعاء ناجح أو غير ناجح إلى ImGui::Begin باستدعاء مقابل إلى ImGui::End في الإطار نفسه.",
+      "تنتهي حياة النافذة المنطقية عندما يتوقف التطبيق عن استدعاء ImGui::Begin باسمها أو عندما تمسح حالتها المخزنة صراحة."
+    ],
+    "returns": "تعيد `true` عندما يكون من المناسب بناء محتوى النافذة الداخلي في هذا الإطار، وتعيد `false` عندما تكون النافذة مطوية أو محجوبة بالطريقة التي تسمح لك بتخطي المحتوى.",
+    "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+    "example": "bool show_inspector = true;\nif (ImGui::Begin(\"المعاين\", &show_inspector, ImGuiWindowFlags_NoResize)) {\n ImGui::Text(\"الكائن الحالي: Cube\");\n ImGui::Checkbox(\"إظهار الحدود\", &show_bounds);\n}\nImGui::End();"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::End",
+        "route": "#ref/imgui/functions/im-gui-end",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::Text",
+        "route": "#ref/imgui/functions/im-gui-text",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::Checkbox",
+        "route": "#ref/imgui/functions/im-gui-checkbox",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGuiWindowFlags",
+        "route": "#ref/imgui/enums/im-gui-window-flags",
+        "libraryId": "imgui",
+        "kindId": "enums"
+      },
+      {
+        "name": "ImGuiWindowFlags_NoResize",
+        "route": "#ref/imgui/misc/im-gui-window-flags-no-resize",
+        "libraryId": "imgui",
+        "kindId": "misc"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/windows.json",
+    "category": "النوافذ والنطاقات",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

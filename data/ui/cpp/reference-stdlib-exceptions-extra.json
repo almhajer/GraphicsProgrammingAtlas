@@ -1,0 +1,817 @@
+{
+  "referenceData": {
+    "std::length_error": {
+      "title": "std::length_error",
+      "type": "استثناء قياسي",
+      "description": "استثناء يُرمى عند محاولة تغيير حجم كائن يتجاوز الحد الأقصى المسموح (max_size). يرث من logic_error.",
+      "usage": "يظهر عند محاولة إنشاء string أو vector بحجم يتجاوز max_size.",
+      "example": "throw std::length_error(\"size exceeds max_size\");",
+      "includeHeader": "#include <stdexcept>",
+      "usageExamples": [
+        {
+          "titleArabic": "vector يرمي length_error عند تجاوز max_size",
+          "code": "#include <stdexcept>\n#include <vector>\n#include <iostream>\n\nint main() {\n    try {\n        std::vector<int> v;\n        v.resize(v.max_size()); // سيرمي length_error\n    } catch (const std::length_error& e) {\n        std::cout << e.what();\n    }\n}",
+          "explanationArabic": "max_size() يُرجع أكبر حجم ممكن نظريًا. محاولة resize أو reserve أكبر منه تُرمي length_error. هذا نادر في الممارسة لأن max_size عادةً كبير جدًا."
+        },
+        {
+          "titleArabic": "التحقق من max_size قبل التخصيص الكبير",
+          "code": "#include <stdexcept>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<char> v;\n    size_t requested = 1'000'000'000'000;\n\n    // التحقق قبل المحاولة — أنظف من try/catch هنا\n    if (requested > v.max_size()) {\n        std::cout << \"الطلب يتجاوز الحد الأقصى: \"\n                  << v.max_size() << '\\n';\n        return 1;\n    }\n\n    // إذا مررنا الفحص، قد يفشل بسبب نفاد الذاكرة (bad_alloc)\n    try {\n        v.resize(requested);\n    } catch (const std::bad_alloc&) {\n        std::cout << \"الذاكرة غير كافية رغم أن الحجم مقبول نظريًا\";\n    }\n}",
+          "explanationArabic": "max_size يُرجع الحد النظري الأقصى. فحصه قبل التخصيص يمنع length_error ويعطي رسالة أوضح. لكن حتى لو مرر الفحص، قد يفشل التخصيص بسبب نفاد الذاكرة (bad_alloc). الفرق: length_error عن حد النوع، bad_alloc عن حد النظام."
+        },
+        {
+          "titleArabic": "length_error vs bad_alloc vs out_of_range",
+          "code": "#include <stdexcept>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n\n    // out_of_range: فهرس خارج الحجم الحالي\n    // v.at(10); // out_of_range — العنصر غير موجود\n\n    // length_error: محاولة جعل الحاوية أكبر من max_size\n    // v.resize(v.max_size() + 1); // length_error — الحجم مستحيل\n\n    // bad_alloc: الحجم مقبول نظريًا لكن الذاكرة غير كافية\n    // v.resize(1'000'000'000'000); // bad_alloc — لا ذاكرة كافية\n\n    // الثلاثة أخطاء مختلفة تحتاج معالجة مختلفة\n}",
+          "explanationArabic": "ثلاثة أخطاء شائعة مع الحاويات لكل منها سبب مختلف: out_of_range عن وصول لعنصر غير موجود (فهرس خاطئ)، length_error عن محاولة حجم مستحيل (تجاوز max_size)، bad_alloc عن نفاد ذاكرة فعلية. الخلط بينها يُسبب معالجة خاطئة."
+        }
+      ],
+      "related": [
+        "std::logic_error",
+        "std::bad_alloc",
+        "std::out_of_range"
+      ]
+    },
+    "std::overflow_error": {
+      "title": "std::overflow_error",
+      "type": "استثناء قياسي",
+      "description": "استثناء يُرمى عند تجاوز حسابي (arithmetic overflow). يرث من runtime_error.",
+      "usage": "يظهر عند عمليات حسابية تتجاوز نطاق النوع.",
+      "example": "throw std::overflow_error(\"value too large\");",
+      "includeHeader": "#include <stdexcept>",
+      "usageExamples": [
+        {
+          "titleArabic": "تجاوز في حساب صحيح",
+          "code": "#include <stdexcept>\n#include <iostream>\n\nint safe_add(int a, int b) {\n    if (b > 0 && a > INT_MAX - b) {\n        throw std::overflow_error(\"integer overflow\");\n    }\n    return a + b;\n}\n\nint main() {\n    try {\n        safe_add(INT_MAX, 1);\n    } catch (const std::overflow_error& e) {\n        std::cout << e.what(); // integer overflow\n    }\n}",
+          "explanationArabic": "overflow_error يُرمى عند اكتشاف تجاوز صريح. C++ لا يتحقق من التجاوز تلقائيًا — يجب فحصه يدويًا. بعض المكتبات ترميه عند اكتشاف تجاوز."
+        },
+        {
+          "titleArabic": "stod قد يرمي overflow_error",
+          "code": "#include <stdexcept>\n#include <string>\n#include <iostream>\n\nint main() {\n    try {\n        std::string huge = \"1e999\";\n        double d = std::stod(huge); // قد يرمي overflow_error\n    } catch (const std::overflow_error& e) {\n        std::cout << \"overflow: \" << e.what();\n    }\n}",
+          "explanationArabic": "stod و stoi قد تُرمي overflow_error إذا كانت القيمة أكبر من أن تستوعب في النوع المستهدف."
+        },
+        {
+          "titleArabic": "تجاوز C++ صامت — لا يرمي استثناء",
+          "code": "#include <iostream>\n\nint main() {\n    int x = INT_MAX;\n    x += 1; // ❌ تجاوز صامت — سلوك غير معرّف!\n    // لا يرمي overflow_error تلقائيًا\n    std::cout << x; // غير مضمون\n\n    // ✅ الفحص اليدوي ضروري\n    // ✅ أو استخدم -ftrapv في GCC/Clang للتحويل لاستثناء\n}",
+          "explanationArabic": "تجاوز الأعداد الصحيحة في C++ سلوك غير معرّف (UB) — لا يرمي استثناء تلقائيًا. الفحص اليدوي أو المُصرّفات الخاصة ضروريان."
+        }
+      ],
+      "related": [
+        "std::runtime_error",
+        "std::underflow_error",
+        "std::length_error"
+      ]
+    },
+    "std::underflow_error": {
+      "title": "std::underflow_error",
+      "type": "استثناء قياسي",
+      "description": "استثناء يُرمى عند تجاوز حسابي سلبي (arithmetic underflow). يرث من runtime_error.",
+      "usage": "يظهر عند عمليات حسابية تنتج قيمة أصغر من أن يستوعبها النوع.",
+      "example": "throw std::underflow_error(\"value too small\");",
+      "includeHeader": "#include <stdexcept>",
+      "usageExamples": [
+        {
+          "titleArabic": "تجاوز سلبي صريح",
+          "code": "#include <stdexcept>\n#include <iostream>\n#include <climits>\n\nint safe_sub(int a, int b) {\n    if (b < 0 && a < INT_MIN - b) {\n        throw std::underflow_error(\"integer underflow\");\n    }\n    return a - b;\n}\n\nint main() {\n    try {\n        safe_sub(INT_MIN, 1);\n    } catch (const std::underflow_error& e) {\n        std::cout << e.what(); // integer underflow\n    }\n}",
+          "explanationArabic": "underflow_error يُرمى عند اكتشاف تجاوز سلبي. مثل overflow_error، يجب فحصه يدويًا في C++."
+        },
+        {
+          "titleArabic": "underflow vs overflow",
+          "code": "#include <stdexcept>\n\n// overflow: القيمة أكبر من الحد الأعلى\n// INT_MAX + 1 → overflow\n\n// underflow: القيمة أصغر من الحد الأدنى\n// INT_MIN - 1 → underflow\n\n// كلاهما سلوك غير معرّف في C++ مع الأعداد الصحيحة\n// يجب الفحص يدويًا",
+          "explanationArabic": "overflow = تجاوز الحد الأعلى، underflow = تجاوز الحد الأدنى. كلاهما UB مع الأعداد الصحيحة في C++. مع الأعداد العشرية (IEEE 754)، underflow يعني نتيجة أصغر من smallest normal."
+        },
+        {
+          "titleArabic": "مع الأعداد العشرية IEEE 754",
+          "code": "#include <iostream>\n#include <limits>\n#include <cmath>\n\nint main() {\n    double tiny = std::numeric_limits<double>::min();\n    double result = tiny / 10.0;\n    // مع IEEE 754: gradual underflow — لا يرمي استثناء\n    // النتيجة: subnormal number (denormal)\n    std::cout << result << '\\n';\n    std::cout << std::isinf(result); // 0 — ليس infinity\n}",
+          "explanationArabic": "مع IEEE 754، underflow عشري لا يرمي استثناء — ينتج subnormal number. underflow_error استثناء C++ يُرمى يدويًا عند اكتشاف تجاوز في مكتبات أو كود مخصص."
+        }
+      ],
+      "related": [
+        "std::runtime_error",
+        "std::overflow_error",
+        "std::numeric_limits"
+      ]
+    },
+    "std::bad_cast": {
+      "title": "std::bad_cast",
+      "type": "استثناء قياسي",
+      "description": "استثناء يُرمى عند فشل dynamic_cast لمرجع. يرث من exception.",
+      "usage": "يظهر عند استخدام dynamic_cast على مرجع لنوع غير صحيح.",
+      "example": "try { auto& d = dynamic_cast<D&>(b); } catch (std::bad_cast&) {}",
+      "includeHeader": "#include <typeinfo>",
+      "usageExamples": [
+        {
+          "titleArabic": "dynamic_cast فاشل على مرجع",
+          "code": "#include <typeinfo>\n#include <iostream>\n\nstruct Base { virtual ~Base() {} };\nstruct Derived : Base { void hello() { std::cout << \"derived\"; } };\n\nint main() {\n    Base b;\n    try {\n        Derived& d = dynamic_cast<Derived&>(b);\n        d.hello();\n    } catch (const std::bad_cast& e) {\n        std::cout << \"bad cast: \" << e.what();\n    }\n}",
+          "explanationArabic": "dynamic_cast على مرجع يرمي bad_cast عند الفشل. على مؤشر يُرجع nullptr بدل رمي استثناء. هذا الفرق مهم."
+        },
+        {
+          "titleArabic": "dynamic_cast على مؤشر يُرجع nullptr",
+          "code": "#include <typeinfo>\n#include <iostream>\n\nstruct Base { virtual ~Base() {} };\nstruct Derived : Base {};\n\nint main() {\n    Base b;\n    // ✅ على مؤشر: يُرجع nullptr عند الفشل\n    Derived* d = dynamic_cast<Derived*>(&b);\n    if (!d) {\n        std::cout << \"cast failed\"; // سيُطبع\n    }\n\n    // ❌ على مرجع: يرمي bad_cast عند الفشل\n    // Derived& r = dynamic_cast<Derived&>(b); // bad_cast!\n}",
+          "explanationArabic": "dynamic_cast على مؤشر يُرجع nullptr عند الفشل — تحقق يدويًا. على مرجع يرمي bad_cast — التقطه بـ try/catch. القاعدة: استخدم المؤشر إذا الفشل متوقع."
+        }
+      ],
+      "related": [
+        "dynamic_cast",
+        "std::exception",
+        "virtual"
+      ]
+    },
+    "std::exception": {
+      "title": "std::exception",
+      "type": "استثناء قياسي",
+      "description": "الفئة الأساسية لكل الاستثناءات القياسية. توفر what() لرسالة توضيحية.",
+      "usage": "يُستخدم كنوع catch عام أو كأساس لاستثناءات مخصصة.",
+      "example": "catch (const std::exception& e) { std::cerr << e.what(); }",
+      "related": [
+        "std::runtime_error",
+        "try",
+        "catch",
+        "throw"
+      ]
+    },
+    "std::runtime_error": {
+      "title": "std::runtime_error",
+      "type": "استثناء قياسي",
+      "description": "استثناء لخطأ وقت تشغيل لا يمكن اكتشافه وقت الترجمة. يرث من std::exception ويحمل رسالة نصية تُقرأ عبر what(). يُستخدم عندما يكون الفشل ناتجًا عن ظروف خارجية مثل فشل فتح ملف أو عدم توفر مورد، لا عن خطأ منطقي في الكود نفسه.",
+      "usage": "شائع عند فشل استدعاءات النظام أو فشل فتح ملف أو عدم صلاحية بيانات وقت التشغيل.",
+      "example": "throw std::runtime_error(\"فشل إنشاء الجهاز\");",
+      "includeHeader": "#include <stdexcept>",
+      "usageExamples": [
+        {
+          "titleArabic": "رمي استثناء مع رسالة واضحة عند فشل عملية",
+          "code": "#include <stdexcept>\n#include <iostream>\n\nint divide(int a, int b) {\n    if (b == 0) {\n        throw std::runtime_error(\"القسمة على صفر غير مسموحة\");\n    }\n    return a / b;\n}\n\nint main() {\n    try {\n        int result = divide(10, 0);\n    } catch (const std::runtime_error& e) {\n        std::cout << \"خطأ: \" << e.what();\n    }\n}",
+          "explanationArabic": "throw تُنشئ كائن runtime_error وتنقله لأقرب catch مطابق. e.what() يُرجع الرسالة النصية التي مررتها عند الإنشاء. التقاطه بمرجع ثابت (const&) يمنع النسخ غير الضروري ويسمح بقراءة الرسالة بأمان."
+        },
+        {
+          "titleArabic": "التقاط عبر std::exception كواجهة عامة",
+          "code": "#include <stdexcept>\n#include <exception>\n#include <iostream>\n\nint main() {\n    try {\n        throw std::runtime_error(\"فشل تحميل الملمس\");\n    } catch (const std::exception& e) {\n        std::cout << e.what();\n    }\n}",
+          "explanationArabic": "runtime_error يرث من std::exception، لذلك يمكن التقاطه عبر النوع الأعم. هذا مفيد عندما تريد معالجة كل الاستثناءات المعيارية بواجهة موحدة. القاعدة: التقط النوع الأخص أولًا إذا كنت تحتاج معالجة مختلفة لكل نوع."
+        },
+        {
+          "titleArabic": "إعادة توجيه الاستثناء من دالة لدالة",
+          "code": "#include <stdexcept>\n#include <iostream>\n\nvoid load_config() {\n    throw std::runtime_error(\"ملف الإعدادات غير موجود\");\n}\n\nvoid init() {\n    load_config(); // لا يوجد catch هنا — الاستثناء ينتقل للأعلى\n}\n\nint main() {\n    try {\n        init();\n    } catch (const std::runtime_error& e) {\n        std::cout << \"فشل الإعداد: \" << e.what();\n    }\n}",
+          "explanationArabic": "عندما لا يوجد catch في دالة، ينتقل الاستثناء تلقائيًا عبر مكدس الاستدعاء حتى يجد catch مطابق أو يُنهي البرنامج بـ std::terminate. هذا يسمح بفصل مكان اكتشاف الخطأ عن مكان معالجته."
+        }
+      ],
+      "related": [
+        "std::exception",
+        "throw",
+        "try",
+        "catch",
+        "std::logic_error"
+      ]
+    },
+    "std::logic_error": {
+      "title": "std::logic_error",
+      "type": "استثناء قياسي",
+      "description": "استثناء يشير إلى خطأ منطقي يمكن اكتشافه قبل التشغيل.",
+      "usage": "يُرمى عند انتهاك شرط مسبق معروف.",
+      "example": "throw std::logic_error(\"شرط مسبق مُخالف\");",
+      "related": [
+        "std::runtime_error",
+        "std::invalid_argument",
+        "std::exception"
+      ]
+    },
+    "std::invalid_argument": {
+      "title": "std::invalid_argument",
+      "type": "استثناء قياسي",
+      "description": "يُرمى عند تمرير معامل غير صالح لدالة. مشتق من std::logic_error.",
+      "usage": "يظهر عند التحقق من صحة المدخلات.",
+      "example": "if (value < 0) throw std::invalid_argument(\"قيمة سالبة\");",
+      "related": [
+        "std::logic_error",
+        "std::out_of_range",
+        "std::exception"
+      ]
+    },
+    "std::out_of_range": {
+      "title": "std::out_of_range",
+      "type": "استثناء قياسي",
+      "description": "يُرمى عند محاولة الوصول لعنصر خارج النطاق المسموح.",
+      "usage": "يظهر مع at() عند فهرس خارج الحدود.",
+      "example": "std::vector<int> v = {1, 2};\nv.at(5); // يرمي out_of_range",
+      "related": [
+        "std::logic_error",
+        "std::invalid_argument",
+        "std::vector"
+      ]
+    },
+    "std::bad_alloc": {
+      "title": "std::bad_alloc",
+      "type": "استثناء قياسي",
+      "description": "يُرمى عند فشل تخصيص الذاكرة الديناميكية.",
+      "usage": "يظهر عندما يفشل new أو إنشاء حاويات كبيرة جدًا.",
+      "example": "try { std::vector<int> huge(1e15); } catch (const std::bad_alloc&) { /* */ }",
+      "related": [
+        "new",
+        "std::exception",
+        "std::vector"
+      ]
+    },
+    "std::system_error": {
+      "title": "std::system_error",
+      "type": "استثناء قياسي",
+      "description": "استثناء يحمل error_code لتفسير أخطاء النظام.",
+      "usage": "يظهر عند فشل عمليات النظام.",
+      "example": "throw std::system_error(ec, \"فشل فتح الملف\");",
+      "related": [
+        "std::error_code",
+        "std::runtime_error",
+        "std::exception"
+      ]
+    },
+    "std::domain_error": {
+      "title": "std::domain_error",
+      "type": "استثناء قياسي",
+      "description": "استثناء يُرمى عند تمرير قيمة خارج نطاق الدالة الرياضية (domain). يرث من logic_error. مثلًا: sqrt لعدد سالب أو acos لقيمة أكبر من 1.",
+      "usage": "يظهر في المكتبات الرياضية والتحليل العددي عند اكتشاف قيم غير صالحة رياضيًا. يُرمى يدويًا عند التحقق من صحة المدخلات الرياضية.",
+      "example": "if (x < 0) throw std::domain_error(\"sqrt: negative argument\");",
+      "includeHeader": "#include <stdexcept>",
+      "usageExamples": [
+        {
+          "titleArabic": "رمي domain_error لقيمة رياضية غير صالحة",
+          "code": "#include <stdexcept>\n#include <cmath>\n#include <iostream>\n\ndouble safe_sqrt(double x) {\n    if (x < 0.0) {\n        throw std::domain_error(\"sqrt: لا يمكن حساب الجذر التربيعي لعدد سالب\");\n    }\n    return std::sqrt(x);\n}\n\nint main() {\n    try {\n        double result = safe_sqrt(-4.0);\n    } catch (const std::domain_error& e) {\n        std::cout << e.what();\n    }\n}",
+          "explanationArabic": "domain_error يُرمى عند قيمة خارج نطاق الدالة. sqrt لعدد سالب وacos لقيمة خارج [-1, 1] أمثلة كلاسيكية. يرث من logic_error لأن المشكلة يمكن اكتشافها قبل التشغيل بالتحقق من المدخلات."
+        },
+        {
+          "titleArabic": "domain_error vs invalid_argument vs range_error",
+          "code": "#include <stdexcept>\n\n// domain_error: القيمة خارج نطاق الدالة رياضيًا\n// sqrt(-1) → domain_error (الجذر التربيعي لا يقبل السالب)\n\n// invalid_argument: القيمة غير صالحة بشكل عام\n// stoi(\"abc\") → invalid_argument (ليس رقمًا)\n\n// range_error: القيمة صالحة لكن النتيجة خارج النطاق\n// exp(1000) → range_error (النتيجة تتجاوز النطاق)\n\n// الثلاثة ترث من logic_error لكن لكل منها سياق مختلف",
+          "explanationArabic": "domain_error للدوال الرياضية (قيمة خارج المجال). invalid_argument للمدخلات غير الصالحة بشكل عام. range_error عندما النتيجة تتجاوز النطاق المسموح. التمييز يساعد في معالجة الأخطاء بشكل مختلف."
+        },
+        {
+          "titleArabic": "التحقق من قيمة acos قبل الاستدعاء",
+          "code": "#include <stdexcept>\n#include <cmath>\n#include <iostream>\n\nint main() {\n    double x = 1.5;\n    // acos(x) لقيمة خارج [-1, 1] تُرجع NaN\n    // الأفضل: تحقق ورمي استثناء واضح\n    if (x < -1.0 || x > 1.0) {\n        throw std::domain_error(\"acos: القيمة خارج النطاق [-1, 1]\");\n    }\n    double angle = std::acos(x);\n    std::cout << angle;\n}",
+          "explanationArabic": "بدل ترك الدالة تُرجع NaN صامتًا، التحقق ورمي domain_error يُعطي رسالة واضحة. هذا أنسب في المكتبات التي تخدم مستخدمين آخرين."
+        }
+      ],
+      "related": [
+        "std::logic_error",
+        "std::invalid_argument",
+        "std::range_error",
+        "std::runtime_error"
+      ]
+    },
+    "std::range_error": {
+      "title": "std::range_error",
+      "type": "استثناء قياسي",
+      "description": "استثناء يُرمى عند نتيجة حسابية تتجاوز النطاق المسموح لنوع البيانات. يرث من runtime_error. مثلًا: exp بقيمة كبيرة جدًا تُنتج overflow.",
+      "usage": "يظهر عند اكتشاف أن نتيجة عملية تتجاوز النطاق. يختلف عن overflow_error بأنه أعم — يشمل أي تجاوز للنطاق المسموح لا فقط التجاوز الحسابي.",
+      "example": "if (result > MAX_VALUE) throw std::range_error(\"result out of range\");",
+      "includeHeader": "#include <stdexcept>",
+      "usageExamples": [
+        {
+          "titleArabic": "رمي range_error عند تجاوز النتيجة",
+          "code": "#include <stdexcept>\n#include <cmath>\n#include <iostream>\n\nint main() {\n    try {\n        double x = 1000.0;\n        // exp(1000) تتجاوز نطاق double\n        double result = std::exp(x);\n        if (std::isinf(result)) {\n            throw std::range_error(\"exp: النتيجة تتجاوز النطاق\");\n        }\n    } catch (const std::range_error& e) {\n        std::cout << e.what();\n    }\n}",
+          "explanationArabic": "range_error يُرمى عند نتيجة خارج النطاق المسموح. exp(1000) تُنتج infinity — هذا تجاوز للنطاق. يرث من runtime_error لأنه يحدث أثناء التشغيل ولا يمكن اكتشافه دائمًا قبل التشغيل."
+        },
+        {
+          "titleArabic": "range_error vs overflow_error",
+          "code": "#include <stdexcept>\n\n// range_error: نتيجة خارج النطاق المسموح (أعم)\n// exp(1000) → range_error (النتيجة تتجاوز double)\n\n// overflow_error: تجاوز حسابي صريح (أضيق)\n// INT_MAX + 1 → overflow_error (تجاوز عدد صحيح)\n\n// range_error يشمل overflow_error كحالة خاصة\n// لكن range_error أوسع: يشمل أي نتيجة خارج النطاق\n// حتى لو لم يكن تجاوزًا حسابيًا بالمعنى الضيق",
+          "explanationArabic": "overflow_error للتجاوز الحسابي الصريح (إضافة أعداد صحيحة تتجاوز الحد). range_error أوسع: أي نتيجة خارج النطاق المسموح. range_error يرث من runtime_error وoverflow_error أيضًا يرث من runtime_error."
+        },
+        {
+          "titleArabic": "stod قد يرمي range_error",
+          "code": "#include <stdexcept>\n#include <string>\n#include <iostream>\n\nint main() {\n    try {\n        std::string huge = \"1e9999\";\n        double d = std::stod(huge);\n        // قد يرمي out_of_range (وهو اسم آخر لـ range_error في هذا السياق)\n    } catch (const std::out_of_range& e) {\n        std::cout << \"out of range: \" << e.what();\n    }\n}",
+          "explanationArabic": "stod و stoi تُرمي out_of_range (من نفس عائلة range_error) إذا كانت القيمة أكبر من أن تستوعب في النوع. out_of_range يرث من logic_error لكنه يُستخدم هنا كـ range error عمليًا."
+        }
+      ],
+      "related": [
+        "std::runtime_error",
+        "std::overflow_error",
+        "std::underflow_error",
+        "std::domain_error"
+      ]
+    },
+    "std::nested_exception": {
+      "title": "std::nested_exception",
+      "type": "استثناء قياسي",
+      "description": "استثناء مُضمّن يسمح بتخزين واسترجاع استثناء داخل آخر. يُستخدم مع throw_with_nested لتتبع سلسلة الاستثناءات المتداخلة عند معالجة الأخطاء متعددة المستويات.",
+      "usage": "يُستخدم في catch blocks لفحص ما إذا كان الاستثناء يحتوي على استثناء آخر مُضمّن داخله.",
+      "example": "try { /* ... */ } catch (const std::exception& e) { std::throw_with_nested(std::runtime_error(\"فشلت العملية\")); }",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "تضمين استثناء داخل آخر مع throw_with_nested",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nvoid inner() {\n    throw std::invalid_argument(\"معامل غير صالح\");\n}\n\nvoid outer() {\n    try {\n        inner();\n    } catch (const std::exception& e) {\n        std::throw_with_nested(\n            std::runtime_error(\"فشلت العملية الخارجية\")\n        );\n    }\n}\n\nvoid print_exception(const std::exception& e, int level = 0) {\n    std::cerr << std::string(level, ' ') << e.what() << '\\n';\n    try {\n        std::rethrow_if_nested(e);\n    } catch (const std::exception& nested) {\n        print_exception(nested, level + 2);\n    }\n}\n\nint main() {\n    try {\n        outer();\n    } catch (const std::exception& e) {\n        print_exception(e);\n    }\n}",
+          "explanationArabic": "throw_with_nested يرمي الاستثناء الجديد مع تضمين الاستثناء الحالي بداخله كـ nested_exception. rethrow_if_nested يستخرج الاستثناء المُضمّن. هذا يسمح بتتبع كامل سلسلة الأخطاء من الداخل للخارج."
+        },
+        {
+          "titleArabic": "فحص وجود استثناء مُضمّن",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nint main() {\n    try {\n        try {\n            throw std::invalid_argument(\"خطأ داخلي\");\n        } catch (...) {\n            std::throw_with_nested(std::runtime_error(\"خطأ خارجي\"));\n        }\n    } catch (const std::exception& e) {\n        std::cout << e.what() << '\\n';\n\n        const auto* nested = dynamic_cast<const std::nested_exception*>(&e);\n        if (nested && nested->nested_ptr()) {\n            std::cout << \"يوجد استثناء مُضمّن\\n\";\n        }\n    }\n}",
+          "explanationArabic": "nested_ptr() يُرجع exception_ptr للاستثناء المُضمّن. إذا كان nullptr فلا يوجد استثناء داخلي. dynamic_cast يفحص هل الاستثناء فعليًا من نوع nested_exception."
+        }
+      ],
+      "related": [
+        "std::throw_with_nested",
+        "std::rethrow_if_nested",
+        "std::exception_ptr"
+      ]
+    },
+    "std::bad_typeid": {
+      "title": "std::bad_typeid",
+      "type": "استثناء قياسي",
+      "description": "يُرمى عند تطبيق typeid على مرجع فارغ (dereferenced null pointer) لنوع متعدد الأشكال (polymorphic). يرث من exception.",
+      "usage": "يظهر عند استخدام typeid(*ptr) حيث ptr فارغ ويشير لنوع يحتوي virtual functions.",
+      "example": "Base* p = nullptr; typeid(*p); // يرمي bad_typeid",
+      "includeHeader": "#include <typeinfo>",
+      "usageExamples": [
+        {
+          "titleArabic": "typeid على مؤشر فارغ لنوع متعدد الأشكال",
+          "code": "#include <typeinfo>\n#include <iostream>\n\nstruct Base { virtual ~Base() {} };\nstruct Derived : Base {};\n\nint main() {\n    Base* p = nullptr;\n    try {\n        const std::type_info& info = typeid(*p);\n        std::cout << info.name();\n    } catch (const std::bad_typeid& e) {\n        std::cout << \"bad_typeid: \" << e.what();\n    }\n}",
+          "explanationArabic": "typeid(*p) يحتاج فك المرجع (dereference). إذا كان p فارغًا والنوع polymorphic (يحتوي virtual)، يرمي bad_typeid. مع typeid(p) بدون فك المرجع لا يرمي — يُرجع نوع المؤشر نفسه."
+        },
+        {
+          "titleArabic": "typeid على مؤشر فارغ لنوع غير متعدد الأشكال",
+          "code": "#include <typeinfo>\n#include <iostream>\n\nstruct NotPolymorphic { /* لا virtual functions */ };\n\nint main() {\n    NotPolymorphic* p = nullptr;\n    const std::type_info& info = typeid(*p);\n    // لا يرمي bad_typeid لأن النوع ليس polymorphic\n    // لكن dereference nullptr سلوك غير معرّف (UB)\n    std::cout << info.name();\n}",
+          "explanationArabic": "bad_typeid يُرمى فقط مع الأنواع polymorphic. مع أنواع غير polymorphic، typeid(*nullptr) سلوك غير معرّف (UB) — لا يرمي استثناء. لذلك لا تعتمد على typeid للتحقق من nullptr."
+        },
+        {
+          "titleArabic": "التحقق الآمن قبل استخدام typeid",
+          "code": "#include <typeinfo>\n#include <iostream>\n\nstruct Base { virtual ~Base() = default; };\nstruct Derived : Base { void greet() { std::cout << \"مرحبًا\\n\"; } };\n\nvoid safe_typeid(Base* p) {\n    if (!p) {\n        std::cout << \"مؤشر فارغ — لا يمكن استخدام typeid\\n\";\n        return;\n    }\n    std::cout << typeid(*p).name() << '\\n';\n}\n\nint main() {\n    Derived d;\n    safe_typeid(&d);  // آمن\n    safe_typeid(nullptr); // يطبع رسالة بدل رمي استثناء\n}",
+          "explanationArabic": "التحقق من nullptr قبل typeid يمنع bad_typeid. هذا أسهل وأوضح من try/catch. القاعدة: تحقق من الصلاحية قبل الاستعلام عن النوع."
+        }
+      ],
+      "related": [
+        "typeid",
+        "std::bad_cast",
+        "dynamic_cast"
+      ]
+    },
+    "std::bad_weak_ptr": {
+      "title": "std::bad_weak_ptr",
+      "type": "استثناء قياسي",
+      "description": "يُرمى عند محاولة إنشاء shared_ptr من weak_ptr منتهي الصلاحية (expired). يرث من exception.",
+      "usage": "يظهر عند استدعاء مُنشئ shared_ptr بـ weak_ptr يشير لكائن تم حذفه بالفعل.",
+      "example": "std::shared_ptr<int> sp(wp); // يرمي bad_weak_ptr إذا wp منتهي",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء shared_ptr من weak_ptr منتهي",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    std::weak_ptr<int> wp;\n    {\n        auto sp = std::make_shared<int>(42);\n        wp = sp;\n    }\n    // sp خرج من النطاق — الكائن تم حذفه\n    // wp الآن منتهي الصلاحية\n\n    try {\n        std::shared_ptr<int> sp2(wp);\n        // bad_weak_ptr! الكائن لم يعد موجودًا\n    } catch (const std::bad_weak_ptr& e) {\n        std::cout << \"bad_weak_ptr: \" << e.what();\n    }\n}",
+          "explanationArabic": "weak_ptr لا يملك الكائن — يراقبه فقط. إذا تم حذف كل shared_ptr المالكة، يصبح weak_ptr منتهيًا. محاولة إنشاء shared_ptr منه ترمي bad_weak_ptr. استخدم lock() بدلًا من المُنشئ للحصول على nullptr بدل استثناء."
+        },
+        {
+          "titleArabic": "استخدام lock() بدل المُنشئ لتجنب bad_weak_ptr",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    std::weak_ptr<int> wp;\n    {\n        auto sp = std::make_shared<int>(42);\n        wp = sp;\n    }\n\n    // الطريقة الآمنة: lock() يُرجع shared_ptr فارغ إذا منتهي\n    if (auto sp2 = wp.lock()) {\n        std::cout << *sp2; // لن يُنفذ لأن wp منتهي\n    } else {\n        std::cout << \"الكائن لم يعد موجودًا\";\n    }\n}",
+          "explanationArabic": "lock() يُرجع shared_ptr مشترك إذا الكائن لا يزال حيًا، أو shared_ptr فارغ إذا انتهت صلاحيته. هذا أنسب من try/catch في معظم الحالات لأنه لا يُحدث استثناء."
+        },
+        {
+          "titleArabic": "bad_weak_ptr في أنماط المراقب (Observer)",
+          "code": "#include <memory>\n#include <iostream>\n#include <vector>\n\nstruct Observer {\n    virtual ~Observer() = default;\n    virtual void notify() = 0;\n};\n\nstruct Subject {\n    void add(std::weak_ptr<Observer> obs) {\n        observers.push_back(obs);\n    }\n    void notifyAll() {\n        for (auto& wp : observers) {\n            if (auto sp = wp.lock()) {\n                sp->notify();\n            }\n            // إذا انتهت صلاحية Observer، نتجاوزه بسلاسة\n        }\n    }\n    std::vector<std::weak_ptr<Observer>> observers;\n};\n\nint main() {\n    auto subj = std::make_shared<Subject>();\n    auto obs = std::make_shared<Observer>();\n    // obs->add(subj); // مثال على الربط\n    // عند حذف obs، يصبح weak_ptr منتهيًا\n    // notifyAll يتجاوزه بدون bad_weak_ptr\n}",
+          "explanationArabic": "weak_ptr شائع في نمط Observer: يسمح للمراقب بالبقاء ضعيفًا حتى لا يمنع تحرير الكائن المراقب. lock() يتجاهل المراقبين المنتهين بسلاسة."
+        }
+      ],
+      "related": [
+        "std::shared_ptr",
+        "std::weak_ptr",
+        "std::bad_alloc"
+      ]
+    },
+    "std::bad_function_call": {
+      "title": "std::bad_function_call",
+      "type": "استثناء قياسي",
+      "description": "يُرمى عند استدعاء std::function فارغة (لا تحتوي على هدف قابل للاستدعاء). يرث من exception.",
+      "usage": "يظهر عند استدعاء operator() على function لم تُعيّن لها دالة أو lambda أو كائن قابل للاستدعاء.",
+      "example": "std::function<void()> f; f(); // يرمي bad_function_call",
+      "includeHeader": "#include <functional>",
+      "usageExamples": [
+        {
+          "titleArabic": "استدعاء function فارغة",
+          "code": "#include <functional>\n#include <iostream>\n\nint main() {\n    std::function<int(int, int)> add;\n    // add فارغة — لم تُعيّن\n\n    try {\n        int result = add(2, 3);\n    } catch (const std::bad_function_call& e) {\n        std::cout << \"bad_function_call: \" << e.what();\n    }\n}",
+          "explanationArabic": "std::function بشكل افتراضي فارغة. استدعاؤها يرمي bad_function_call. يجب التحقق من أنها تحتوي على هدف قبل الاستدعاء باستخدام operator bool أو if (f)."
+        },
+        {
+          "titleArabic": "التحقق قبل الاستدعاء",
+          "code": "#include <functional>\n#include <iostream>\n\nvoid safe_call(std::function<void()> callback) {\n    if (callback) {\n        callback();\n    } else {\n        std::cout << \"لا توجد دالة مسجلة\\n\";\n    }\n}\n\nint main() {\n    safe_call([] { std::cout << \"مرحبًا\\n\"; });\n    safe_call({}); // يطبع رسالة بدل رمي استثناء\n}",
+          "explanationArabic": "operator bool يُرجع true إذا كانت function تحتوي على هدف قابل للاستدعاء. التحقق قبل الاستدعاء أنظف من try/catch ويفصل المعالجة المنطقية عن معالجة الأخطاء."
+        },
+        {
+          "titleArabic": "bad_function_call مع الأعضاء الشرطيين",
+          "code": "#include <functional>\n#include <iostream>\n\nclass Button {\n    std::function<void()> onClick;\npublic:\n    void setCallback(std::function<void()> cb) { onClick = std::move(cb); }\n    void click() {\n        if (onClick) onClick();\n        // بدون التحقق: bad_function_call إذا لم يُعيّن callback\n    }\n};\n\nint main() {\n    Button btn;\n    btn.click(); // آمن — لا callback مسجل\n    btn.setCallback([] { std::cout << \"تم النقر\\n\"; });\n    btn.click(); // يُنفذ callback\n}",
+          "explanationArabic": "في الأنماط مثل callback اختياري، من الشائع أن function تكون فارغة إذا لم يُسجّل callback. التحقق بـ if (onClick) يمنع bad_function_call ويسمح بسلوك افتراضي سليم."
+        }
+      ],
+      "related": [
+        "std::function",
+        "std::move",
+        "std::bad_typeid"
+      ]
+    },
+    "std::bad_array_new_length": {
+      "title": "std::bad_array_new_length",
+      "type": "استثناء قياسي",
+      "description": "يُرمى عند تمرير حجم سالب أو كبير جدًا لـ new[]. يرث من bad_alloc ويتوفر منذ C++11.",
+      "usage": "يظهر عند تخصيص مصفوفة ديناميكية بحجم غير صالح: سالب، صفر (في بعض الأنظمة)، أو يتجاوز الحد الأقصى.",
+      "example": "int* p = new int[-1]; // يرمي bad_array_new_length",
+      "includeHeader": "#include <new>",
+      "usageExamples": [
+        {
+          "titleArabic": "حجم سالب لـ new[]",
+          "code": "#include <new>\n#include <iostream>\n\nint main() {\n    try {\n        int* p = new int[-1];\n    } catch (const std::bad_array_new_length& e) {\n        std::cout << \"bad_array_new_length: \" << e.what();\n    } catch (const std::bad_alloc& e) {\n        std::cout << \"bad_alloc: \" << e.what();\n    }\n}",
+          "explanationArabic": "new int[-1] يرمي bad_array_new_length لأن الحجم سالب. يجب التقاط bad_array_new_length قبل bad_alloc لأنه أكثر تحديدًا. bad_array_new_length يرث من bad_alloc."
+        },
+        {
+          "titleArabic": "حجم يتجاوز الحد الأقصى",
+          "code": "#include <new>\n#include <iostream>\n#include <limits>\n\nint main() {\n    size_t huge = std::numeric_limits<size_t>::max();\n    try {\n        char* p = new char[huge];\n    } catch (const std::bad_array_new_length& e) {\n        std::cout << \"حجم غير صالح: \" << e.what();\n    } catch (const std::bad_alloc& e) {\n        std::cout << \"ذاكرة غير كافية: \" << e.what();\n    }\n}",
+          "explanationArabic": "حجم يتجاوز الحد الأقصى لنوع size_t يرمي bad_array_new_length. إذا كان الحجم صالحًا رياضيًا لكن الذاكرة غير كافية، يُرمى bad_alloc. التمييز يساعد في تشخيص المشكلة."
+        },
+        {
+          "titleArabic": "التحقق من الحجم قبل new[]",
+          "code": "#include <new>\n#include <iostream>\n\nint main() {\n    int count = -1;\n\n    if (count <= 0) {\n        std::cout << \"حجم غير صالح\\n\";\n        return 1;\n    }\n\n    try {\n        int* p = new int[count];\n        delete[] p;\n    } catch (const std::bad_alloc&) {\n        std::cout << \"ذاكرة غير كافية\\n\";\n    }\n}",
+          "explanationArabic": "التحقق من الحجم قبل new[] يمنع bad_array_new_length ويُبسّط معالجة الأخطاء. إذا تأكدت أن الحجم موجب، كل ما تحتاجه هو التقاط bad_alloc."
+        }
+      ],
+      "related": [
+        "std::bad_alloc",
+        "new",
+        "std::length_error"
+      ]
+    },
+    "std::throw_with_nested": {
+      "title": "std::throw_with_nested",
+      "type": "دالة",
+      "description": "ترمي الاستثناء الممرر مع تضمين الاستثناء الحالي (إذا كان هناك active exception) بداخله كـ nested_exception. تسمح بتتبع سلسلة الأخطاء متعددة المستويات.",
+      "usage": "يُستخدم داخل catch block لرمي استثناء جديد مع الاحتفاظ بالاستثناء الأصلي المُلتقط.",
+      "example": "catch (const std::exception& e) { std::throw_with_nested(std::runtime_error(\"فشلت العملية\")); }",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "تضمين الاستثناء الأصلي في استثناء جديد",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nvoid load_file() {\n    throw std::runtime_error(\"الملف غير موجود\");\n}\n\nvoid process() {\n    try {\n        load_file();\n    } catch (const std::exception& e) {\n        std::throw_with_nested(\n            std::runtime_error(\"فشلت عملية المعالجة\")\n        );\n    }\n}\n\nint main() {\n    try {\n        process();\n    } catch (const std::exception& e) {\n        std::cout << \"الخارجي: \" << e.what() << '\\n';\n\n        try {\n            std::rethrow_if_nested(e);\n        } catch (const std::exception& inner) {\n            std::cout << \"الداخلي: \" << inner.what() << '\\n';\n        }\n    }\n}",
+          "explanationArabic": "throw_with_nested يرمي الاستثناء الجديد ويجعل الاستثناء الأصلي متاحًا عبر nested_exception. rethrow_if_nested يستخرجه. هذا يسمح بعرض كامل سلسلة الأخطاء من الأعمق للأكثر سطحية."
+        },
+        {
+          "titleArabic": "throw_with_nested بدون استثناء نشط",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nint main() {\n    try {\n        // لا يوجد active exception حاليًا\n        std::throw_with_nested(\n            std::runtime_error(\"استثناء بسيط\")\n        );\n    } catch (const std::exception& e) {\n        std::cout << e.what() << '\\n';\n\n        try {\n            std::rethrow_if_nested(e);\n        } catch (const std::exception&) {\n            std::cout << \"يوجد استثناء مُضمّن\\n\";\n        } catch (...) {\n            std::cout << \"لا يوجد استثناء مُضمّن\\n\";\n        }\n    }\n}",
+          "explanationArabic": "إذا لم يكن هناك active exception، throw_with_nested ترمي الاستثناء الجديد فقط بدون تضمين. rethrow_if_nested لن تجد شيئًا وسترمي ما يرميه catch(...) مما يعني لا يوجد nested."
+        }
+      ],
+      "related": [
+        "std::nested_exception",
+        "std::rethrow_if_nested",
+        "std::exception_ptr"
+      ]
+    },
+    "std::rethrow_if_nested": {
+      "title": "std::rethrow_if_nested",
+      "type": "دالة",
+      "description": "تعيد رمي الاستثناء المُضمّن داخل nested_exception إذا كان من النوع المحدد. تُستخدم لفحص واستخراج الاستثناءات المتداخلة.",
+      "usage": "يُستخدم داخل catch block لاستخراج الاستثناء الداخلي من nested_exception والتعامل معه.",
+      "example": "catch (const std::exception& e) { std::rethrow_if_nested(e); }",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخراج الاستثناء المُضمّن",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nvoid inner() {\n    throw std::invalid_argument(\"مدخل خاطئ\");\n}\n\nvoid outer() {\n    try {\n        inner();\n    } catch (...) {\n        std::throw_with_nested(std::runtime_error(\"خطأ في المعالجة\"));\n    }\n}\n\nint main() {\n    try {\n        outer();\n    } catch (const std::exception& e) {\n        std::cout << \"الخارجي: \" << e.what() << '\\n';\n        try {\n            std::rethrow_if_nested(e);\n        } catch (const std::invalid_argument& inner) {\n            std::cout << \"الداخلي: \" << inner.what() << '\\n';\n        } catch (const std::exception& inner) {\n            std::cout << \"داخلي آخر: \" << inner.what() << '\\n';\n        }\n    }\n}",
+          "explanationArabic": "rethrow_if_nested تفحص هل الاستثناء من نوع nested_exception. إذا كان كذلك، تعيد رمي الاستثناء المُضمّن داخله. يمكنك التقاطه بنوع محدد أو عام. الترتيب في catch مهم: الأخص أولًا."
+        },
+        {
+          "titleArabic": "دالة طباعة متكررة لسلسلة الاستثناءات",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nvoid print_nested(const std::exception& e, int depth = 0) {\n    std::cerr << std::string(depth * 2, ' ')\n              << e.what() << '\\n';\n    try {\n        std::rethrow_if_nested(e);\n    } catch (const std::exception& nested) {\n        print_nested(nested, depth + 1);\n    } catch (...) {}\n}\n\nint main() {\n    try {\n        try {\n            throw std::invalid_argument(\"خطأ 1\");\n        } catch (...) {\n            std::throw_with_nested(std::runtime_error(\"خطأ 2\"));\n        }\n    } catch (const std::exception& e) {\n        print_nested(e);\n    }\n}",
+          "explanationArabic": "استخدام rethrow_if_nested بشكل متكرر يسمح بطباعة كامل سلسلة الاستثناءات المتداخلة. كل مستوى يُطبع بمسافة بادئة أكبر لتوضيح التسلسل الهرمي للأخطاء."
+        }
+      ],
+      "related": [
+        "std::throw_with_nested",
+        "std::nested_exception",
+        "std::rethrow_exception"
+      ]
+    },
+    "std::rethrow_exception": {
+      "title": "std::rethrow_exception",
+      "type": "دالة",
+      "description": "تعيد رمي استثناء من exception_ptr. تُستخدم لنقل الاستثناء من سياق لآخر (مثل بين خيوط أو من catch block لآخر).",
+      "usage": "يُستخدم مع exception_ptr لإعادة رمي استثناء تم حفظه مسبقًا.",
+      "example": "std::rethrow_exception(eptr);",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "نقل استثناء بين خيوط",
+          "code": "#include <exception>\n#include <iostream>\n#include <thread>\n#include <future>\n\nint main() {\n    std::exception_ptr eptr;\n\n    std::thread t([&eptr] {\n        try {\n            throw std::runtime_error(\"خطأ من الخيط الفرعي\");\n        } catch (...) {\n            eptr = std::current_exception();\n        }\n    });\n\n    t.join();\n\n    if (eptr) {\n        try {\n            std::rethrow_exception(eptr);\n        } catch (const std::exception& e) {\n            std::cout << \"تم التقاط: \" << e.what();\n        }\n    }\n}",
+          "explanationArabic": "current_exception() يلتقط الاستثناء كـ exception_ptr. يمكن نقله عبر خيوط. rethrow_exception يعيد رميه في الخيط الرئيسي. هذا النمط أساسي لنقل الأخطاء بين الخيوط."
+        },
+        {
+          "titleArabic": "إعادة رمي في catch block مختلف",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nvoid handle_error(std::exception_ptr eptr) {\n    try {\n        std::rethrow_exception(eptr);\n    } catch (const std::runtime_error& e) {\n        std::cout << \"runtime_error: \" << e.what() << '\\n';\n    } catch (const std::exception& e) {\n        std::cout << \"exception: \" << e.what() << '\\n';\n    }\n}\n\nint main() {\n    try {\n        throw std::runtime_error(\"فشلت العملية\");\n    } catch (...) {\n        handle_error(std::current_exception());\n    }\n}",
+          "explanationArabic": "rethrow_exception يسمح بفصل مكان التقاط الاستثناء عن مكان معالجته. handle_error تستقبل exception_ptr وتتعامل معه بأنواع مختلفة."
+        }
+      ],
+      "related": [
+        "std::current_exception",
+        "std::make_exception_ptr",
+        "std::exception_ptr"
+      ]
+    },
+    "std::current_exception": {
+      "title": "std::current_exception",
+      "type": "دالة",
+      "description": "يُرجع exception_ptr للاستثناء النشط حاليًا. تُستخدم داخل catch block لالتقاط الاستثناء ككائن قابل للنقل والتخزين.",
+      "usage": "يُستخدم داخل catch block لحفظ الاستثناء ومعالجته لاحقًا أو نقله بين خيوط.",
+      "example": "catch (...) { auto eptr = std::current_exception(); }",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "التقاط الاستثناء النشط",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nint main() {\n    std::exception_ptr eptr;\n\n    try {\n        throw std::runtime_error(\"خطأ في التحميل\");\n    } catch (...) {\n        eptr = std::current_exception();\n    }\n\n    if (eptr) {\n        try {\n            std::rethrow_exception(eptr);\n        } catch (const std::exception& e) {\n            std::cout << e.what();\n        }\n    }\n}",
+          "explanationArabic": "current_exception() يلتقط الاستثناء الحالي كـ exception_ptr. يجب استدعاؤها داخل catch block مباشرة — لا يمكن استدعاؤها من دالة أخرى لأن الاستثناء يجب أن يكون نشطًا."
+        },
+        {
+          "titleArabic": "نقل الاستثناء عبر خيط آخر",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n#include <thread>\n\nvoid worker(std::exception_ptr& eptr) {\n    try {\n        throw std::runtime_error(\"فشل في الخيط العامل\");\n    } catch (...) {\n        eptr = std::current_exception();\n    }\n}\n\nint main() {\n    std::exception_ptr eptr;\n    std::thread t(worker, std::ref(eptr));\n    t.join();\n\n    if (eptr) {\n        try {\n            std::rethrow_exception(eptr);\n        } catch (const std::exception& e) {\n            std::cout << \"من الخيط: \" << e.what();\n        }\n    }\n}",
+          "explanationArabic": "exception_ptr يمكن نسخه ونقله بين خيوط. هذا يسمح بنقل الاستثناء من الخيط العامل للخيط الرئيسي. std::future و std::promise يستخدمان هذا النمط داخليًا."
+        }
+      ],
+      "related": [
+        "std::rethrow_exception",
+        "std::make_exception_ptr",
+        "std::exception_ptr"
+      ]
+    },
+    "std::make_exception_ptr": {
+      "title": "std::make_exception_ptr",
+      "type": "دالة",
+      "description": "يُنشئ exception_ptr من كائن استثناء مباشرة، بدون الحاجة لرميه والتقاطه. تُستخدم لإنشاء استثناءات مسبقًا أو في سياقات لا يمكن فيها استخدام throw.",
+      "usage": "يُستخدم لإنشاء exception_ptr من كائن استثناء مباشرة، مثل إنشاء قائمة استثناءات مسبقًا.",
+      "example": "auto eptr = std::make_exception_ptr(std::runtime_error(\"خطأ\"));",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء exception_ptr بدون رمي الاستثناء",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nint main() {\n    auto eptr = std::make_exception_ptr(\n        std::runtime_error(\"خطأ محفوظ مسبقًا\")\n    );\n\n    // لاحقًا... يمكن إعادة رميه\n    try {\n        std::rethrow_exception(eptr);\n    } catch (const std::exception& e) {\n        std::cout << e.what();\n    }\n}",
+          "explanationArabic": "make_exception_ptr يُنشئ exception_ptr بدون throw/catch. هذا مفيد لإنشاء استثناءات مسبقًا أو في سياقات مثل destructors حيث throw غير مسموح."
+        },
+        {
+          "titleArabic": "make_exception_ptr vs current_exception",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n\nint main() {\n    // make_exception_ptr: يُنشئ من كائن مباشرة\n    auto eptr1 = std::make_exception_ptr(\n        std::runtime_error(\"مُنشأ مباشرة\")\n    );\n\n    // current_exception: يلتقط الاستثناء النشط\n    std::exception_ptr eptr2;\n    try {\n        throw std::runtime_error(\"مُلتقط من catch\");\n    } catch (...) {\n        eptr2 = std::current_exception();\n    }\n\n    // كلاهما يُنتج exception_ptr صالح\n    // لكن make_exception_ptr أنسب عند عدم وجود استثناء نشط\n}",
+          "explanationArabic": "make_exception_ptr للإنشاء المباشر من كائن. current_exception للالتقاط من استثناء نشط. كلاهما يُنتج exception_ptr لكن لكل منهما سياق استخدام مختلف."
+        }
+      ],
+      "related": [
+        "std::current_exception",
+        "std::rethrow_exception",
+        "std::exception_ptr"
+      ]
+    },
+    "std::uncaught_exception": {
+      "title": "std::uncaught_exception",
+      "type": "دالة",
+      "description": "تتحقق هل يوجد استثناء نشط لم يُلتقط بعد. مهمل منذ C++17 — استخدم std::uncaught_exceptions بدلًا منها.",
+      "usage": "كانت تُستخدم لمنع throw داخل destructor أثناء معالجة استثناء آخر.",
+      "example": "if (std::uncaught_exception()) { /* لا ترمِ */ }",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق من وجود استثناء غير مُلتقط",
+          "code": "#include <exception>\n#include <iostream>\n\nstruct Safe {\n    ~Safe() {\n        if (std::uncaught_exception()) {\n            std::cout << \"يوجد استثناء نشط — لن أرمي\\n\";\n        } else {\n            std::cout << \"لا يوجد استثناء — آمن\\n\";\n        }\n    }\n};\n\nint main() {\n    Safe s;\n    throw std::runtime_error(\"خطأ\");\n}",
+          "explanationArabic": "uncaught_exception تُرجع true أثناء فك المكدس (stack unwinding). هذا يسمح لكتابة destructors آمنة لا تُسبب terminate عند رمي استثناء أثناء معالجة استثناء آخر."
+        },
+        {
+          "titleArabic": "لماذا أُهملت لصالح uncaught_exceptions",
+          "code": "#include <exception>\n#include <iostream>\n\nstruct Manager {\n    ~Manager() {\n        // uncaught_exception: لا تميز بين 1 و 2+ استثناءات نشطة\n        // uncaught_exceptions: تُرجع العدد الفعلي\n        int count = std::uncaught_exceptions();\n        if (count > 0) {\n            std::cout << \"يوجد \" << count << \" استثناءات نشطة\\n\";\n        }\n    }\n};\n\nint main() {\n    Manager m;\n    throw std::runtime_error(\"خطأ\");\n}",
+          "explanationArabic": "uncaught_exception لا تميز بين مستوى واحد ومتعدد من الاستثناءات المتداخلة. uncaught_exceptions (بجمع) تُرجع العدد الفعلي مما يسمح بكتابة كود أكثر دقة. استخدم uncaught_exceptions في C++17 وما بعده."
+        }
+      ],
+      "related": [
+        "std::uncaught_exceptions",
+        "std::terminate",
+        "std::exception"
+      ]
+    },
+    "std::uncaught_exceptions": {
+      "title": "std::uncaught_exceptions",
+      "type": "دالة",
+      "description": "تُرجع عدد الاستثناءات النشطة غير المُلتقطة حاليًا. متوفرة منذ C++17 كبديل لـ uncaught_exception.",
+      "usage": "يُستخدم لتحديد هل نحن في فك المكدس بسبب استثناء، وكم عدد الاستثناءات المتداخلة.",
+      "example": "int count = std::uncaught_exceptions();",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدام uncaught_exceptions في destructor آمن",
+          "code": "#include <exception>\n#include <iostream>\n\nstruct ScopedLogger {\n    int initial_count;\n    ScopedLogger() : initial_count(std::uncaught_exceptions()) {}\n    ~ScopedLogger() {\n        if (std::uncaught_exceptions() > initial_count) {\n            std::cout << \"تم طرح استثناء جديد في نطاقي\\n\";\n        } else {\n            std::cout << \"الخروج الطبيعي\\n\";\n        }\n    }\n};\n\nint main() {\n    ScopedLogger log;\n    throw std::runtime_error(\"خطأ\");\n}",
+          "explanationArabic": "حفظ قيمة uncaught_exceptions عند البناء ومقارنتها عند التدمير يحدد هل الاستثناء الجديد من نطاقك أم من نطاق خارجي. هذا أنسب من uncaught_exception البسيطة."
+        },
+        {
+          "titleArabic": "الفرق عن uncaught_exception",
+          "code": "#include <exception>\n#include <iostream>\n\nint main() {\n    std::cout << \"العدد: \" << std::uncaught_exceptions() << '\\n';\n    // 0 — لا يوجد استثناء نشط\n\n    try {\n        throw std::runtime_error(\"أول\");\n    } catch (...) {\n        // داخل catch: الاستثناء مُلتقط — العدد = 0\n        std::cout << \"داخل catch: \"\n                  << std::uncaught_exceptions() << '\\n';\n    }\n}",
+          "explanationArabic": "uncaught_exceptions تُرجع 0 داخل catch block لأن الاستثناء مُلتقط. تُرجع قيمة أكبر من 0 فقط أثناء stack unwinding قبل الوصول لـ catch. هذا يسمح بكتابة destructors تتصرف بشكل مختلف حسب السياق."
+        }
+      ],
+      "related": [
+        "std::uncaught_exception",
+        "std::terminate",
+        "std::exception"
+      ]
+    },
+    "std::set_terminate": {
+      "title": "std::set_terminate",
+      "type": "دالة",
+      "description": "تُعيّن دالة تُستدعى عند عدم وجود catch مطابق أو عند استدعاء std::terminate. تُرجع مؤشر الدالة السابقة.",
+      "usage": "يُستخدم لتخصيص سلوك البرنامج عند فشل معالجة الاستثناءات، مثل تسجيل الخطأ قبل الإنهاء.",
+      "example": "std::set_terminate(my_handler);",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "تعيين معالج terminate مخصص",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid my_terminate() {\n    std::cerr << \"خطأ: البرنامج سينتهي بسبب استثناء غير مُلتقط\\n\";\n    std::abort();\n}\n\nint main() {\n    std::set_terminate(my_terminate);\n    throw 42; // لا يوجد catch لـ int — سيُستدعى terminate\n}",
+          "explanationArabic": "عند رمي نوع لا يملك catch مطابق، يُستدعى terminate. set_terminate يسمح بتخصيص ما يحدث: تسجيل الخطأ، تنظيف الموارد، أو أي إجراء قبل الإنهاء. يجب أن يستدعي المعالج abort أو exit لأن terminate لا يعود."
+        },
+        {
+          "titleArabic": "استعادة المعالج السابق",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid custom_handler() {\n    std::cerr << \"معالج مخصص\\n\";\n    std::abort();\n}\n\nint main() {\n    auto old = std::set_terminate(custom_handler);\n    // ... كود يستخدم المعالج المخصص ...\n    std::set_terminate(old); // استعادة الافتراضي\n}",
+          "explanationArabic": "set_terminate تُرجع مؤشر المعالج السابق. هذا يسمح باستعادة المعالج الافتراضي أو تبديل المعالجات مؤقتًا في نطاق محدود."
+        }
+      ],
+      "related": [
+        "std::terminate",
+        "std::get_terminate",
+        "std::set_unexpected"
+      ]
+    },
+    "std::set_unexpected": {
+      "title": "std::set_unexpected",
+      "type": "دالة",
+      "description": "تُعيّن دالة unexpected handler التي تُستدعى عند رمي استثناء غير متوقع من دالة marked noexcept أو throw(). مهمل منذ C++17.",
+      "usage": "كانت تُستخدم مع dynamic exception specifications (throw()) قبل إهمالها في C++17.",
+      "example": "std::set_unexpected(my_unexpected_handler);",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدام set_unexpected مع throw() قديم",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid my_unexpected() {\n    std::cerr << \"استثناء غير متوقع!\\n\";\n    std::abort();\n}\n\nvoid old_style_func() throw() {\n    throw std::runtime_error(\"غير متوقع!\");\n}\n\nint main() {\n    std::set_unexpected(my_unexpected);\n    try {\n        old_style_func();\n    } catch (...) {\n        std::cout << \"تم التقاط\\n\";\n    }\n}",
+          "explanationArabic": "throw() كان يعني أن الدالة لا ترمي أي استثناء. إذا رمت، يُستدعى unexpected handler. منذ C++11، noexcept حل محل throw() و set_unexpected أصبحت مهملة. في C++17، dynamic exception specifications أُزيلت من اللغة."
+        },
+        {
+          "titleArabic": "البديل الحديث: noexcept و terminate",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid modern_func() noexcept {\n    throw std::runtime_error(\"هذا سيُسبب terminate\");\n}\n\nint main() {\n    std::set_terminate([] {\n        std::cerr << \"noexcept violation\\n\";\n        std::abort();\n    });\n    modern_func();\n}",
+          "explanationArabic": "بدل throw() و set_unexpected، استخدم noexcept و set_terminate. noexcept يعني نفس الشيء (لا استثناءات) والمعالجة عبر terminate بدل unexpected. هذا أبسط وأوضح."
+        }
+      ],
+      "related": [
+        "std::unexpected",
+        "std::get_unexpected",
+        "std::set_terminate",
+        "noexcept"
+      ]
+    },
+    "std::terminate": {
+      "title": "std::terminate",
+      "type": "دالة",
+      "description": "تُنهي البرنامج فورًا. تُستدعى تلقائيًا عند عدم وجود catch مطابق أو إعادة رمي استثناء في destructor أثناء stack unwinding أو انتهاك noexcept.",
+      "usage": "يُستدعى تلقائيًا من النظام عند حالات خطأ قاتلة. يمكن استدعاؤها يدويًا للإنهاء الفوري.",
+      "example": "std::terminate();",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "حالات استدعاء terminate تلقائيًا",
+          "code": "#include <exception>\n#include <iostream>\n\nstruct Bad {\n    ~Bad() {\n        throw std::runtime_error(\"خطأ في destructor\");\n        // إذا كان هناك استثناء آخر نشط، سيُستدعى terminate\n    }\n};\n\nint main() {\n    try {\n        Bad b;\n        throw std::runtime_error(\"خطأ أول\");\n        // استثناءان نشطان = terminate\n    } catch (const std::exception& e) {\n        std::cout << e.what();\n    }\n}",
+          "explanationArabic": "terminate يُستدعى تلقائيًا في عدة حالات: استثناءان نشطان في نفس الوقت، عدم وجود catch مطابق، انتهاك noexcept، أو استدعاء throw بدون استثناء نشط. هذه الحالات تعني خطأ في تصميم معالجة الأخطاء."
+        },
+        {
+          "titleArabic": "تخصيص سلوك terminate",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid my_handler() {\n    std::cerr << \"terminate called!\\n\";\n    try {\n        std::rethrow_exception(std::current_exception());\n    } catch (const std::exception& e) {\n        std::cerr << \"السبب: \" << e.what() << '\\n';\n    } catch (...) {\n        std::cerr << \"سبب غير معروف\\n\";\n    }\n    std::abort();\n}\n\nint main() {\n    std::set_terminate(my_handler);\n    throw 42; // لا catch لـ int\n}",
+          "explanationArabic": "تخصيص terminate handler يسمح بتسجيل سبب الإنهاء قبل abort. current_exception() قد تُرجع exception_ptr للاستثناء الذي سبب terminate. هذا مفيد جدًا في التصحيح."
+        }
+      ],
+      "related": [
+        "std::set_terminate",
+        "std::get_terminate",
+        "std::abort",
+        "noexcept"
+      ]
+    },
+    "std::unexpected": {
+      "title": "std::unexpected",
+      "type": "دالة",
+      "description": "تُستدعى عند رمي استثناء غير متوقع من دالة marked noexcept أو throw(). مهمل منذ C++17.",
+      "usage": "كانت تُستدعى تلقائيًا عند انتهاك dynamic exception specification. الآن noexcept يستدعي terminate بدلًا منها.",
+      "example": "std::unexpected();",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "unexpected مع throw() قديم",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid func() throw(int) {\n    throw 3.14; // double غير متوقع — يُستدعى unexpected\n}\n\nint main() {\n    std::set_unexpected([] {\n        std::cerr << \"unexpected called!\\n\";\n        throw std::runtime_error(\"تحويل لاستثناء متوقع\");\n    });\n\n    try {\n        func();\n    } catch (int) {\n        std::cout << \"int caught\\n\";\n    } catch (const std::exception& e) {\n        std::cout << e.what() << '\\n';\n    }\n}",
+          "explanationArabic": "throw(int) يعني الدالة قد ترمي int فقط. رمي double يُستدعى unexpected. unexpected handler قد يحول الاستثناء لنوع مسموح أو يرمي std::bad_exception. هذا كله مهمل في C++17."
+        },
+        {
+          "titleArabic": "البديل الحديث: noexcept",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid func() noexcept {\n    // رمي أي شيء هنا يُسبب terminate مباشرة\n    // لا يوجد unexpected handler\n    throw 42;\n}\n\nint main() {\n    std::set_terminate([] {\n        std::cerr << \"noexcept violated\\n\";\n        std::abort();\n    });\n    func();\n}",
+          "explanationArabic": "noexcept حل محل throw() بالكامل. انتهاك noexcept يستدعي terminate مباشرة بدون المرور بـ unexpected. هذا أبسط ويُزيل تعقيد dynamic exception specifications."
+        }
+      ],
+      "related": [
+        "std::set_unexpected",
+        "std::get_unexpected",
+        "std::terminate",
+        "noexcept"
+      ]
+    },
+    "std::get_terminate": {
+      "title": "std::get_terminate",
+      "type": "دالة",
+      "description": "تُرجع مؤشر دالة terminate handler الحالية. متوفرة منذ C++11.",
+      "usage": "يُستخدم لفحص أو حفظ terminate handler الحالي قبل تغييره بـ set_terminate.",
+      "example": "auto handler = std::get_terminate();",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "حفظ واستعادة terminate handler",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid debug_handler() {\n    std::cerr << \"[DEBUG] terminate called\\n\";\n    std::abort();\n}\n\nint main() {\n    auto original = std::get_terminate();\n    std::cout << \"المعالج الافتراضي: \"\n              << (original == nullptr ? \"nullptr\" : \"مُعيّن\") << '\\n';\n\n    std::set_terminate(debug_handler);\n    auto current = std::get_terminate();\n    std::cout << \"المعالج الحالي: debug_handler\\n\";\n\n    std::set_terminate(original);\n}",
+          "explanationArabic": "get_terminate يُرجع مؤشر الدالة الحالية. يمكن مقارنته بقيمة محفوظة لمعرفة هل تغير. مفيد في المكتبات التي تحتاج لاستعادة المعالج الأصلي بعد الانتهاء."
+        },
+        {
+          "titleArabic": "التحقق من تغيير terminate handler",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid check_handler() {\n    auto h = std::get_terminate();\n    if (h == nullptr) {\n        std::cout << \"المعالج الافتراضي\\n\";\n    } else {\n        std::cout << \"معالج مخصص\\n\";\n    }\n}\n\nint main() {\n    check_handler();\n    std::set_terminate([] { std::abort(); });\n    check_handler();\n}",
+          "explanationArabic": "get_terminate تُرجع nullptr إذا كان المعالج هو الافتراضي، أو مؤشر الدالة المُعيّنة. هذا يسمح بالتحقق من الحالة الحالية دون التأثير عليها."
+        }
+      ],
+      "related": [
+        "std::set_terminate",
+        "std::terminate",
+        "std::get_unexpected"
+      ]
+    },
+    "std::get_unexpected": {
+      "title": "std::get_unexpected",
+      "type": "دالة",
+      "description": "تُرجع مؤشر دالة unexpected handler الحالية. مهمل منذ C++17.",
+      "usage": "كانت تُستخدم لفحص أو حفظ unexpected handler الحالي قبل تغييره بـ set_unexpected.",
+      "example": "auto handler = std::get_unexpected();",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "حفظ واستعادة unexpected handler",
+          "code": "#include <exception>\n#include <iostream>\n\nvoid my_unexpected() {\n    std::cerr << \"unexpected!\\n\";\n    throw std::bad_exception();\n}\n\nint main() {\n    auto original = std::get_unexpected();\n    std::set_unexpected(my_unexpected);\n\n    // ... كود يستخدم المعالج الجديد ...\n\n    std::set_unexpected(original);\n}",
+          "explanationArabic": "get_unexpected تحفظ المعالج الأصلي قبل تغييره. هذا نمط شائع في المكتبات: غيّر المعالج، نفّذ الكود، ثم استعد الأصلي. مهمل في C++17 لأن unexpected handler نفسه مهمل."
+        },
+        {
+          "titleArabic": "التحقق من حالة unexpected handler",
+          "code": "#include <exception>\n#include <iostream>\n\nint main() {\n    auto h = std::get_unexpected();\n    if (h == nullptr) {\n        std::cout << \"المعالج الافتراضي\\n\";\n    } else {\n        std::cout << \"معالج مخصص\\n\";\n    }\n}",
+          "explanationArabic": "مثل get_terminate، get_unexpected تُرجع nullptr للمعالج الافتراضي. مهمل في C++17 ولا ينبغي استخدامها في كود جديد. استخدم noexcept و set_terminate بدلًا منها."
+        }
+      ],
+      "related": [
+        "std::set_unexpected",
+        "std::unexpected",
+        "std::get_terminate"
+      ]
+    },
+    "std::exception_ptr": {
+      "title": "std::exception_ptr",
+      "type": "نوع",
+      "description": "نوع مؤشر يشير لكائن استثناء. يسمح بنقل الاستثناء بين خيوط أو تخزينه ومعالجته لاحقًا. يشبه المؤشر الذكي لكنه مُصمم خصيصًا للاستثناءات.",
+      "usage": "يُستخدم مع current_exception و rethrow_exception لنقل الاستثناءات بين سياقات مختلفة.",
+      "example": "std::exception_ptr eptr = std::current_exception();",
+      "includeHeader": "#include <exception>",
+      "usageExamples": [
+        {
+          "titleArabic": "نقل استثناء بين خيوط",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n#include <thread>\n\nvoid worker(std::exception_ptr& result) {\n    try {\n        throw std::runtime_error(\"فشل التحميل من الخيط\");\n    } catch (...) {\n        result = std::current_exception();\n    }\n}\n\nint main() {\n    std::exception_ptr eptr;\n    std::thread t(worker, std::ref(eptr));\n    t.join();\n\n    if (eptr) {\n        try {\n            std::rethrow_exception(eptr);\n        } catch (const std::exception& e) {\n            std::cout << \"تم التقاط من الخيط الرئيسي: \"\n                      << e.what();\n        }\n    }\n}",
+          "explanationArabic": "exception_ptr يسمح بنقل الاستثناء من خيط لآخر. داخل catch block في الخيط العامل، current_exception() يلتقطه كـ exception_ptr. في الخيط الرئيسي، rethrow_exception يعيد رميه. std::future يستخدم هذا النمط داخليًا."
+        },
+        {
+          "titleArabic": "تخزين استثناءات ومعالجتها لاحقًا",
+          "code": "#include <exception>\n#include <stdexcept>\n#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<std::exception_ptr> errors;\n\n    for (int i = 0; i < 3; ++i) {\n        try {\n            if (i == 1) throw std::runtime_error(\"خطأ 1\");\n            if (i == 2) throw std::invalid_argument(\"خطأ 2\");\n        } catch (...) {\n            errors.push_back(std::current_exception());\n        }\n    }\n\n    std::cout << \"عدد الأخطاء: \" << errors.size() << '\\n';\n    for (auto& eptr : errors) {\n        try {\n            std::rethrow_exception(eptr);\n        } catch (const std::exception& e) {\n            std::cout << \"- \" << e.what() << '\\n';\n        }\n    }\n}",
+          "explanationArabic": "exception_ptr يمكن تخزينه في حاويات ومعالجته لاحقًا. هذا مفيد لجمع عدة أخطاء من عمليات مختلفة وعرضها دفعة واحدة."
+        },
+        {
+          "titleArabic": "exception_ptr كنوع nullable",
+          "code": "#include <exception>\n#include <iostream>\n\nint main() {\n    std::exception_ptr eptr;\n    std::cout << \"فارغ: \" << !eptr << '\\n';\n\n    eptr = std::current_exception();\n    // لا يوجد استثناء نشط — يبقى فارغًا\n    std::cout << \"لا يزال فارغًا: \" << !eptr << '\\n';\n\n    try {\n        throw std::runtime_error(\"test\");\n    } catch (...) {\n        eptr = std::current_exception();\n    }\n    std::cout << \"يحتوي استثناء: \" << !!eptr << '\\n';\n}",
+          "explanationArabic": "exception_ptr behaves like a nullable pointer. الافتراضي فارغ (nullptr). التحقق بـ !eptr أو if (eptr) يحدد هل يحتوي استثناء. يمكن نسخه ومقارنته بالقيمة الافتراضية."
+        }
+      ],
+      "related": [
+        "std::current_exception",
+        "std::rethrow_exception",
+        "std::make_exception_ptr",
+        "std::nested_exception"
+      ]
+    },
+    "std::bad_exception": {
+      "title": "std::bad_exception",
+      "type": "استثناء",
+      "description": "استثناء يُرمى عند فشل معالجة استثناء متداخل (nested exception). يظهر عند استدعاء throw مع دالة marked noexcept أو unexpected.",
+      "usage": "يُستخدم في unexpected handler القديم لتحويل استثناء غير متوقع لـ bad_exception. يرث من exception.",
+      "example": "// في unexpected handler قديم\nvoid my_unexpected() {\n    throw std::bad_exception(); // تحويل لاستثناء مسموح\n}\n",
+      "includeHeader": "#include <exception>",
+      "related": ["std::exception", "std::nested_exception", "std::unexpected"]
+    },
+    "std::terminate_handler": {
+      "title": "std::terminate_handler",
+      "type": "نوع",
+      "description": "نوع مؤشر الدالة لمعالج terminate. يُمرَّر لـ set_terminate لتعيين دالة تُستدعى عند terminate. النوع: void(*)().",
+      "usage": "يُستخدم لحفظ أو مقارنة terminate handler. يُرجع من get_terminate ويُقبل في set_terminate.",
+      "example": "// حفظ واستعادة terminate handler\nstd::terminate_handler old = std::get_terminate();\nstd::set_terminate(my_handler);\n// ...\nstd::set_terminate(old);\n",
+      "includeHeader": "#include <exception>",
+      "related": ["std::set_terminate", "std::get_terminate", "std::terminate"]
+    },
+    "std::unexpected_handler": {
+      "title": "std::unexpected_handler",
+      "type": "نوع",
+      "description": "نوع مؤشر الدالة لمعالج unexpected (C++17 أزيل، يبقى للتوافق). النوع: void(*)(). كان يُمرَّر لـ set_unexpected.",
+      "usage": "كان يُستخدم لحفظ أو مقارنة unexpected handler. مهمل في C++17 — استخدم noexcept و set_terminate بدلًا منه.",
+      "example": "// مهمل — لا تستخدم في كود جديد\nstd::unexpected_handler old = std::get_unexpected();\nstd::set_unexpected(my_handler);\n",
+      "includeHeader": "#include <exception>",
+      "related": ["std::set_unexpected", "std::get_unexpected", "std::unexpected"]
+    }
+  }
+}

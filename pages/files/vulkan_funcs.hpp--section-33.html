@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_funcs.hpp • القسم 33 من 73 • الأسطر 14401-14850 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_funcs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_funcs.hpp.html">vulkan_funcs.hpp</a> /
+        <span>القسم 33 من 73 • الأسطر 14401-14850</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_funcs.hpp</h1>
+      <p class="page-description">القسم 33 من 73 • الأسطر 14401-14850</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-32.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-34.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_funcs.hpp</span>
+        <span class="source-stat">القسم: 33/73</span>
+        <span class="source-stat">الأسطر: 14401-14850</span>
+        <span class="source-stat">حجم الملف: 2.19 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkRegisterDeviceEventEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkRegisterDeviceEventEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkRegisterDeviceEventEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::registerEventEXT( const DeviceEventInfoEXT *  pDeviceEventInfo,
+                                                                          const AllocationCallbacks * pAllocator,
+                                                                          Fence *                     pFence,
+                                                                          Dispatch const &amp;            d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkRegisterDeviceEventEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                            reinterpret_cast&lt;const VkDeviceEventInfoEXT *&gt;( pDeviceEventInfo ),
+                                                            reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                            reinterpret_cast&lt;VkFence *&gt;( pFence ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkRegisterDeviceEventEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkRegisterDeviceEventEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkRegisterDeviceEventEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;Fence&gt;::type
+    Device::registerEventEXT( const DeviceEventInfoEXT &amp; deviceEventInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkRegisterDeviceEventEXT &amp;&amp; &quot;Function &lt;vkRegisterDeviceEventEXT&gt; requires &lt;VK_EXT_display_control&gt;&quot; );
+#  endif
+
+    Fence  fence;
+    Result result = static_cast&lt;Result&gt;( d.vkRegisterDeviceEventEXT( m_device,
+                                                                     reinterpret_cast&lt;const VkDeviceEventInfoEXT *&gt;( &amp;deviceEventInfo ),
+                                                                     reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                     reinterpret_cast&lt;VkFence *&gt;( &amp;fence ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::registerEventEXT&quot; );
+
+    return detail::createResultValueType( result, std::move( fence ) );
+  }
+
+#  ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkRegisterDeviceEventEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkRegisterDeviceEventEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkRegisterDeviceEventEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;UniqueHandle&lt;Fence, Dispatch&gt;&gt;::type
+    Device::registerEventEXTUnique( const DeviceEventInfoEXT &amp; deviceEventInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkRegisterDeviceEventEXT &amp;&amp; &quot;Function &lt;vkRegisterDeviceEventEXT&gt; requires &lt;VK_EXT_display_control&gt;&quot; );
+#    endif
+
+    Fence  fence;
+    Result result = static_cast&lt;Result&gt;( d.vkRegisterDeviceEventEXT( m_device,
+                                                                     reinterpret_cast&lt;const VkDeviceEventInfoEXT *&gt;( &amp;deviceEventInfo ),
+                                                                     reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                     reinterpret_cast&lt;VkFence *&gt;( &amp;fence ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::registerEventEXTUnique&quot; );
+
+    return detail::createResultValueType( result, UniqueHandle&lt;Fence, Dispatch&gt;( fence, detail::ObjectDestroy&lt;Device, Dispatch&gt;( *this, allocator, d ) ) );
+  }
+#  endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkRegisterDisplayEventEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkRegisterDisplayEventEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkRegisterDisplayEventEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::registerDisplayEventEXT( DisplayKHR                  display,
+                                                                                 const DisplayEventInfoEXT * pDisplayEventInfo,
+                                                                                 const AllocationCallbacks * pAllocator,
+                                                                                 Fence *                     pFence,
+                                                                                 Dispatch const &amp;            d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkRegisterDisplayEventEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                             static_cast&lt;VkDisplayKHR&gt;( display ),
+                                                             reinterpret_cast&lt;const VkDisplayEventInfoEXT *&gt;( pDisplayEventInfo ),
+                                                             reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                             reinterpret_cast&lt;VkFence *&gt;( pFence ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkRegisterDisplayEventEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkRegisterDisplayEventEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkRegisterDisplayEventEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;Fence&gt;::type Device::registerDisplayEventEXT( DisplayKHR                  display,
+                                                                                                                const DisplayEventInfoEXT &amp; displayEventInfo,
+                                                                                                                Optional&lt;const AllocationCallbacks&gt; allocator,
+                                                                                                                Dispatch const &amp;                    d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkRegisterDisplayEventEXT &amp;&amp; &quot;Function &lt;vkRegisterDisplayEventEXT&gt; requires &lt;VK_EXT_display_control&gt;&quot; );
+#  endif
+
+    Fence  fence;
+    Result result = static_cast&lt;Result&gt;( d.vkRegisterDisplayEventEXT( m_device,
+                                                                      static_cast&lt;VkDisplayKHR&gt;( display ),
+                                                                      reinterpret_cast&lt;const VkDisplayEventInfoEXT *&gt;( &amp;displayEventInfo ),
+                                                                      reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                      reinterpret_cast&lt;VkFence *&gt;( &amp;fence ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::registerDisplayEventEXT&quot; );
+
+    return detail::createResultValueType( result, std::move( fence ) );
+  }
+
+#  ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkRegisterDisplayEventEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkRegisterDisplayEventEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkRegisterDisplayEventEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;UniqueHandle&lt;Fence, Dispatch&gt;&gt;::type Device::registerDisplayEventEXTUnique(
+    DisplayKHR display, const DisplayEventInfoEXT &amp; displayEventInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkRegisterDisplayEventEXT &amp;&amp; &quot;Function &lt;vkRegisterDisplayEventEXT&gt; requires &lt;VK_EXT_display_control&gt;&quot; );
+#    endif
+
+    Fence  fence;
+    Result result = static_cast&lt;Result&gt;( d.vkRegisterDisplayEventEXT( m_device,
+                                                                      static_cast&lt;VkDisplayKHR&gt;( display ),
+                                                                      reinterpret_cast&lt;const VkDisplayEventInfoEXT *&gt;( &amp;displayEventInfo ),
+                                                                      reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                      reinterpret_cast&lt;VkFence *&gt;( &amp;fence ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::registerDisplayEventEXTUnique&quot; );
+
+    return detail::createResultValueType( result, UniqueHandle&lt;Fence, Dispatch&gt;( fence, detail::ObjectDestroy&lt;Device, Dispatch&gt;( *this, allocator, d ) ) );
+  }
+#  endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetSwapchainCounterEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSwapchainCounterEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetSwapchainCounterEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getSwapchainCounterEXT( SwapchainKHR              swapchain,
+                                                                                SurfaceCounterFlagBitsEXT counter,
+                                                                                uint64_t *                pCounterValue,
+                                                                                Dispatch const &amp;          d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetSwapchainCounterEXT(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkSwapchainKHR&gt;( swapchain ), static_cast&lt;VkSurfaceCounterFlagBitsEXT&gt;( counter ), pCounterValue ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetSwapchainCounterEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSwapchainCounterEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetSwapchainCounterEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    ResultValue&lt;uint64_t&gt;
+#  else
+    typename ResultValueType&lt;uint64_t&gt;::type
+#  endif
+    Device::getSwapchainCounterEXT( SwapchainKHR swapchain, SurfaceCounterFlagBitsEXT counter, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetSwapchainCounterEXT &amp;&amp; &quot;Function &lt;vkGetSwapchainCounterEXT&gt; requires &lt;VK_EXT_display_control&gt;&quot; );
+#  endif
+
+    uint64_t counterValue;
+    Result   result = static_cast&lt;Result&gt;(
+      d.vkGetSwapchainCounterEXT( m_device, static_cast&lt;VkSwapchainKHR&gt;( swapchain ), static_cast&lt;VkSurfaceCounterFlagBitsEXT&gt;( counter ), &amp;counterValue ) );
+
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getSwapchainCounterEXT&quot;, { Result::eSuccess, Result::eErrorOutOfDateKHR } );
+#  else
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getSwapchainCounterEXT&quot; );
+#  endif
+
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    return ResultValue&lt;uint64_t&gt;( result, std::move( counterValue ) );
+#  else
+    return detail::createResultValueType( result, std::move( counterValue ) );
+#  endif
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  //=== VK_GOOGLE_display_timing ===
+
+  // wrapper function for command vkGetRefreshCycleDurationGOOGLE, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRefreshCycleDurationGOOGLE.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetRefreshCycleDurationGOOGLE ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getRefreshCycleDurationGOOGLE( SwapchainKHR                 swapchain,
+                                                                                       RefreshCycleDurationGOOGLE * pDisplayTimingProperties,
+                                                                                       Dispatch const &amp;             d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetRefreshCycleDurationGOOGLE( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                   static_cast&lt;VkSwapchainKHR&gt;( swapchain ),
+                                                                   reinterpret_cast&lt;VkRefreshCycleDurationGOOGLE *&gt;( pDisplayTimingProperties ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetRefreshCycleDurationGOOGLE, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRefreshCycleDurationGOOGLE.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetRefreshCycleDurationGOOGLE ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;RefreshCycleDurationGOOGLE&gt;::type
+                       Device::getRefreshCycleDurationGOOGLE( SwapchainKHR swapchain, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetRefreshCycleDurationGOOGLE &amp;&amp; &quot;Function &lt;vkGetRefreshCycleDurationGOOGLE&gt; requires &lt;VK_GOOGLE_display_timing&gt;&quot; );
+#  endif
+
+    RefreshCycleDurationGOOGLE displayTimingProperties;
+    Result                     result = static_cast&lt;Result&gt;( d.vkGetRefreshCycleDurationGOOGLE(
+      m_device, static_cast&lt;VkSwapchainKHR&gt;( swapchain ), reinterpret_cast&lt;VkRefreshCycleDurationGOOGLE *&gt;( &amp;displayTimingProperties ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getRefreshCycleDurationGOOGLE&quot; );
+
+    return detail::createResultValueType( result, std::move( displayTimingProperties ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetPastPresentationTimingGOOGLE, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPastPresentationTimingGOOGLE.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetPastPresentationTimingGOOGLE ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getPastPresentationTimingGOOGLE( SwapchainKHR                   swapchain,
+                                                                                         uint32_t *                     pPresentationTimingCount,
+                                                                                         PastPresentationTimingGOOGLE * pPresentationTimings,
+                                                                                         Dispatch const &amp;               d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetPastPresentationTimingGOOGLE( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                     static_cast&lt;VkSwapchainKHR&gt;( swapchain ),
+                                                                     pPresentationTimingCount,
+                                                                     reinterpret_cast&lt;VkPastPresentationTimingGOOGLE *&gt;( pPresentationTimings ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetPastPresentationTimingGOOGLE, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPastPresentationTimingGOOGLE.html
+  template &lt;typename PastPresentationTimingGOOGLEAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename PastPresentationTimingGOOGLEAllocator::value_type, PastPresentationTimingGOOGLE&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetPastPresentationTimingGOOGLE ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    ResultValue&lt;std::vector&lt;PastPresentationTimingGOOGLE, PastPresentationTimingGOOGLEAllocator&gt;&gt;
+#  else
+    typename ResultValueType&lt;std::vector&lt;PastPresentationTimingGOOGLE, PastPresentationTimingGOOGLEAllocator&gt;&gt;::type
+#  endif
+    Device::getPastPresentationTimingGOOGLE( SwapchainKHR swapchain, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetPastPresentationTimingGOOGLE &amp;&amp; &quot;Function &lt;vkGetPastPresentationTimingGOOGLE&gt; requires &lt;VK_GOOGLE_display_timing&gt;&quot; );
+#  endif
+
+    std::vector&lt;PastPresentationTimingGOOGLE, PastPresentationTimingGOOGLEAllocator&gt; presentationTimings;
+    uint32_t                                                                         presentationTimingCount;
+    Result                                                                           result;
+    do
+    {
+      result =
+        static_cast&lt;Result&gt;( d.vkGetPastPresentationTimingGOOGLE( m_device, static_cast&lt;VkSwapchainKHR&gt;( swapchain ), &amp;presentationTimingCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; presentationTimingCount )
+      {
+        presentationTimings.resize( presentationTimingCount );
+        result = static_cast&lt;Result&gt;( d.vkGetPastPresentationTimingGOOGLE( m_device,
+                                                                           static_cast&lt;VkSwapchainKHR&gt;( swapchain ),
+                                                                           &amp;presentationTimingCount,
+                                                                           reinterpret_cast&lt;VkPastPresentationTimingGOOGLE *&gt;( presentationTimings.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    detail::resultCheck(
+      result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getPastPresentationTimingGOOGLE&quot;, { Result::eSuccess, Result::eIncomplete, Result::eErrorOutOfDateKHR } );
+#  else
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getPastPresentationTimingGOOGLE&quot; );
+#  endif
+
+    VULKAN_HPP_ASSERT( presentationTimingCount &lt;= presentationTimings.size() );
+    if ( presentationTimingCount &lt; presentationTimings.size() )
+    {
+      presentationTimings.resize( presentationTimingCount );
+    }
+
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    return ResultValue&lt;std::vector&lt;PastPresentationTimingGOOGLE, PastPresentationTimingGOOGLEAllocator&gt;&gt;( result, std::move( presentationTimings ) );
+#  else
+    return detail::createResultValueType( result, std::move( presentationTimings ) );
+#  endif
+  }
+
+  // wrapper function for command vkGetPastPresentationTimingGOOGLE, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPastPresentationTimingGOOGLE.html
+  template &lt;typename PastPresentationTimingGOOGLEAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename PastPresentationTimingGOOGLEAllocator::value_type, PastPresentationTimingGOOGLE&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetPastPresentationTimingGOOGLE ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    ResultValue&lt;std::vector&lt;PastPresentationTimingGOOGLE, PastPresentationTimingGOOGLEAllocator&gt;&gt;
+#  else
+    typename ResultValueType&lt;std::vector&lt;PastPresentationTimingGOOGLE, PastPresentationTimingGOOGLEAllocator&gt;&gt;::type
+#  endif
+    Device::getPastPresentationTimingGOOGLE( SwapchainKHR                                  swapchain,
+                                             PastPresentationTimingGOOGLEAllocator const &amp; pastPresentationTimingGOOGLEAllocator,
+                                             Dispatch const &amp;                              d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetPastPresentationTimingGOOGLE &amp;&amp; &quot;Function &lt;vkGetPastPresentationTimingGOOGLE&gt; requires &lt;VK_GOOGLE_display_timing&gt;&quot; );
+#  endif
+
+    std::vector&lt;PastPresentationTimingGOOGLE, PastPresentationTimingGOOGLEAllocator&gt; presentationTimings( pastPresentationTimingGOOGLEAllocator );
+    uint32_t                                                                         presentationTimingCount;
+    Result                                                                           result;
+    do
+    {
+      result =
+        static_cast&lt;Result&gt;( d.vkGetPastPresentationTimingGOOGLE( m_device, static_cast&lt;VkSwapchainKHR&gt;( swapchain ), &amp;presentationTimingCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; presentationTimingCount )
+      {
+        presentationTimings.resize( presentationTimingCount );
+        result = static_cast&lt;Result&gt;( d.vkGetPastPresentationTimingGOOGLE( m_device,
+                                                                           static_cast&lt;VkSwapchainKHR&gt;( swapchain ),
+                                                                           &amp;presentationTimingCount,
+                                                                           reinterpret_cast&lt;VkPastPresentationTimingGOOGLE *&gt;( presentationTimings.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    detail::resultCheck(
+      result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getPastPresentationTimingGOOGLE&quot;, { Result::eSuccess, Result::eIncomplete, Result::eErrorOutOfDateKHR } );
+#  else
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getPastPresentationTimingGOOGLE&quot; );
+#  endif
+
+    VULKAN_HPP_ASSERT( presentationTimingCount &lt;= presentationTimings.size() );
+    if ( presentationTimingCount &lt; presentationTimings.size() )
+    {
+      presentationTimings.resize( presentationTimingCount );
+    }
+
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+    return ResultValue&lt;std::vector&lt;PastPresentationTimingGOOGLE, PastPresentationTimingGOOGLEAllocator&gt;&gt;( result, std::move( presentationTimings ) );
+#  else
+    return detail::createResultValueType( result, std::move( presentationTimings ) );
+#  endif
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  //=== VK_EXT_discard_rectangles ===
+
+  // wrapper function for command vkCmdSetDiscardRectangleEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDiscardRectangleEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetDiscardRectangleEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setDiscardRectangleEXT( uint32_t         firstDiscardRectangle,
+                                                                uint32_t         discardRectangleCount,
+                                                                const Rect2D *   pDiscardRectangles,
+                                                                Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetDiscardRectangleEXT(
+      static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), firstDiscardRectangle, discardRectangleCount, reinterpret_cast&lt;const VkRect2D *&gt;( pDiscardRectangles ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdSetDiscardRectangleEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDiscardRectangleEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetDiscardRectangleEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setDiscardRectangleEXT( uint32_t                         firstDiscardRectangle,
+                                                                ArrayProxy&lt;const Rect2D&gt; const &amp; discardRectangles,
+                                                                Dispatch const &amp;                 d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdSetDiscardRectangleEXT &amp;&amp; &quot;Function &lt;vkCmdSetDiscardRectangleEXT&gt; requires &lt;VK_EXT_discard_rectangles&gt;&quot; );
+#  endif
+
+    d.vkCmdSetDiscardRectangleEXT(
+      m_commandBuffer, firstDiscardRectangle, discardRectangles.size(), reinterpret_cast&lt;const VkRect2D *&gt;( discardRectangles.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdSetDiscardRectangleEnableEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDiscardRectangleEnableEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetDiscardRectangleEnableEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setDiscardRectangleEnableEXT( Bool32 discardRectangleEnable, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetDiscardRectangleEnableEXT( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkBool32&gt;( discardRectangleEnable ) );
+  }
+
+  // wrapper function for command vkCmdSetDiscardRectangleModeEXT, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDiscardRectangleModeEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetDiscardRectangleModeEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setDiscardRectangleModeEXT( DiscardRectangleModeEXT discardRectangleMode, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetDiscardRectangleModeEXT( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkDiscardRectangleModeEXT&gt;( discardRectangleMode ) );
+  }
+
+  //=== VK_EXT_hdr_metadata ===
+
+  // wrapper function for command vkSetHdrMetadataEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetHdrMetadataEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSetHdrMetadataEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::setHdrMetadataEXT( uint32_t               swapchainCount,
+                                                    const SwapchainKHR *   pSwapchains,
+                                                    const HdrMetadataEXT * pMetadata,
+                                                    Dispatch const &amp;       d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkSetHdrMetadataEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                           swapchainCount,
+                           reinterpret_cast&lt;const VkSwapchainKHR *&gt;( pSwapchains ),
+                           reinterpret_cast&lt;const VkHdrMetadataEXT *&gt;( pMetadata ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkSetHdrMetadataEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetHdrMetadataEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSetHdrMetadataEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void Device::setHdrMetadataEXT( ArrayProxy&lt;const SwapchainKHR&gt; const &amp;   swapchains,
+                                                    ArrayProxy&lt;const HdrMetadataEXT&gt; const &amp; metadata,
+                                                    Dispatch const &amp;                         d ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkSetHdrMetadataEXT &amp;&amp; &quot;Function &lt;vkSetHdrMetadataEXT&gt; requires &lt;VK_EXT_hdr_metadata&gt;&quot; );
+#  endif
+#  ifdef VULKAN_HPP_NO_EXCEPTIONS
+    VULKAN_HPP_ASSERT( swapchains.size() == metadata.size() );
+#  else
+    if ( swapchains.size() != metadata.size() )
+    {
+      throw LogicError( VULKAN_HPP_NAMESPACE_STRING &quot;::Device::setHdrMetadataEXT: swapchains.size() != metadata.size()&quot; );
+    }
+#  endif /*VULKAN_HPP_NO_EXCEPTIONS*/
+
+    d.vkSetHdrMetadataEXT( m_device,
+                           swapchains.size(),
+                           reinterpret_cast&lt;const VkSwapchainKHR *&gt;( swapchains.data() ),
+                           reinterpret_cast&lt;const VkHdrMetadataEXT *&gt;( metadata.data() ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  //=== VK_KHR_create_renderpass2 ===
+
+  // wrapper function for command vkCreateRenderPass2KHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass2KHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateRenderPass2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::createRenderPass2KHR( const RenderPassCreateInfo2 * pCreateInfo,
+                                                                              const AllocationCallbacks *   pAllocator,
+                                                                              RenderPass *                  pRenderPass,
+                                                                              Dispatch const &amp;              d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCreateRenderPass2KHR( static_cast&lt;VkDevice&gt;( m_device ),
+                                                          reinterpret_cast&lt;const VkRenderPassCreateInfo2 *&gt;( pCreateInfo ),
+                                                          reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                          reinterpret_cast&lt;VkRenderPass *&gt;( pRenderPass ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreateRenderPass2KHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass2KHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateRenderPass2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;RenderPass&gt;::type
+    Device::createRenderPass2KHR( const RenderPassCreateInfo2 &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-32.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-34.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

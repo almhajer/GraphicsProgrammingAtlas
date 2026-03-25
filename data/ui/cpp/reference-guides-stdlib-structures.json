@@ -1,0 +1,143 @@
+{
+  "referenceGuides": {
+    "cpp-structures": {
+      "fullProjectNoteArabic": "البُنى (struct) في C++ ليست مجرد طريقة لتجميع بيانات معًا — بل هي أداة أساسية لبناء كل شيء تقريبًا في البرمجة الحقيقية: الرؤوس (vertices) في الرسوميات، الأحداث (events) في الأنظمة، إعدادات المحرك، بيانات اللاعب، رسائل الشبكة، وحتى الحاويات نفسها تُبنى داخليًا من بُنى. فهم البُنى يعني فهم كيف تُنظَّم البيانات في الذاكرة وكيف يتحكم المبرمج في هذا التنظيم. مع enum وtypedef/using تصبح البُنى أقوى لأنها تُسمح بتسمية الأنواع وبناء واجهات واضحة.",
+      "projectStepsArabic": [
+        {
+          "titleArabic": "ما هي البُنى ولماذا تختلف عن المتغيرات المنفصلة؟",
+          "contentArabic": "لو أردت تمثيل نقطة في الفضاء ثلاثي الأبعاد، يمكنك كتابة ثلاثة متغيرات: float x, y, z. لكن هذا يُصبح فوضويًا سريعًا: كيف تُمرّرها لدالة؟ كيف تُرجعها؟ كيف تُخزّن آلاف النقاط؟ البنية (struct) تحل هذا بجعل المجموعة كيانًا واحدًا له اسم ونوع. النقطة تصبح Point وليست ثلاثة أعداد عائمة منفصلة. هذا يُبسّط التمرير والتخزين والقراءة."
+        },
+        {
+          "titleArabic": "struct vs class — الفرق الحقيقي",
+          "contentArabic": "في C++ الفرق الوحيد بين struct وclass هو مستوى الوصول الافتراضي: struct يكون public افتراضيًا، وclass يكون private. هذا هو الفرق فقط — لا فرق في الأداء أو القدرات. العرف: استخدم struct عندما تكون البيانات هي الجوهر (مثل Point، Vertex، Config) واستخدم class عندما يكون السلوك (الوظائف) هو الجوهر ويجب حماية البيانات الداخلية (مثل std::vector، std::string)."
+        },
+        {
+          "titleArabic": "enum — تسمية القيم الثابتة",
+          "contentArabic": "enum يُنشئ نوعًا له مجموعة قيم محددة مسبقًا. بدل كتابة int state = 0 ثم تذكر أن 0 يعني 'idle' و1 يعني 'running'، تكتب enum State { Idle, Running, Paused } ثم State s = Running. الكود يصبح مقروءًا والخطأ يقل لأن المُصرِّف يتحقق أنك لا تُمرّر قيمة غير صالحة. enum class (C++11) أقوى لأنها لا تتحول ضمنيًا لأعداد."
+        },
+        {
+          "titleArabic": "typedef و using — أسماء بديلة لأنواع معقدة",
+          "contentArabic": "عندما يصبح اسم النوع طويلًا أو معقدًا (مثل مؤشر دالة أو قالب متداخل)، typedef وusing يُسهّلان الأمر. using (C++11) هو الأفضل لأنه أوضح ويدعم القوالب. مثلاً: using Color = float[3] بدل typedef float Color[3]. أو using Callback = void(*)(int) لتبسيط نوع المؤشر. الفكرة: لا تُغيّر النوع، فقط تُعطيه اسمًا أسهل."
+        }
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "بنية بسيطة — نقطة في الفضاء",
+          "code": "#include <iostream>\n\n// البنية تُجمّع بيانات مرتبطة تحت اسم واحد\nstruct Point {\n    float x;\n    float y;\n    float z;\n};\n\nint main() {\n    // إنشاء نقطة والوصول لحقولها بالنقطة .\n    Point p;\n    p.x = 1.0f;\n    p.y = 2.0f;\n    p.z = 3.0f;\n\n    std::cout << \"x=\" << p.x << \" y=\" << p.y << \" z=\" << p.z << '\\n';\n\n    // التهيئة المُجمّعة بأقواس {} (C++11)\n    Point p2{4.0f, 5.0f, 6.0f};\n\n    return 0;\n}",
+          "explanationArabic": "struct تُعرّف نوعًا جديدًا يحمّل عدة حقول. النقطة . تصل لكل حقل. التهيئة بـ {} أنظف من تعيين كل حقل على حدة. sizeof(Point) يساوي sizeof(float)*3 = 12 بايت — الحقول مُخزّنة بالترتيب في الذاكرة.",
+          "relatedTokens": [
+            "float",
+            "struct"
+          ]
+        },
+        {
+          "titleArabic": "بنية مع دوال داخلها — رأس ثلاثي الأبعاد",
+          "code": "#include <iostream>\n#include <cmath>\n\nstruct Vec3 {\n    float x, y, z;\n\n    // دوال داخل البنية تُسمى methods أو member functions\n    // يمكنها الوصول المباشر للحقول بدون معامل\n    float length() const {\n        return std::sqrt(x * x + y * y + z * z);\n    }\n\n    // normalize يُعدّل البنية نفسها — لذلك لا يكون const\n    void normalize() {\n        float len = length();\n        if (len > 0.0f) {\n            x /= len;\n            y /= len;\n            z /= len;\n        }\n    }\n};\n\nint main() {\n    Vec3 dir{3.0f, 0.0f, 4.0f};\n    std::cout << \"الطول: \" << dir.length() << '\\n'; // 5\n\n    dir.normalize();\n    std::cout << \"بعد التطبيع: \" << dir.x << \",\" << dir.y << \",\" << dir.z << '\\n';\n    // 0.6, 0, 0.8\n\n    return 0;\n}",
+          "explanationArabic": "الدوال داخل البنية تستطيع قراءة وتعديل الحقول مباشرة. const بعد الدالة تعني 'هذه الدالة لا تُعدّل البنية' — هذا يمنع الأخطاء ويُسمح باستدعائها على بنيات const. الفرق بين struct بيانات فقط وstruct ببيانات ودوال هو الفرق بين 'حاوية' و'كائن' — كلاهما صالح في C++.",
+          "relatedTokens": [
+            "struct",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "تهيئة البنية بـ مُنشئ",
+          "code": "#include <iostream>\n#include <string>\n\nstruct Player {\n    std::string name;\n    int health;\n    int score;\n\n    // المُنشئ: دالة تُستدعى تلقائيًا عند إنشاء البنية\n    // يُضمن أن البنية دائمًا في حالة صالحة\n    Player(const std::string& n, int h, int s)\n        : name(n), health(h), score(s) {}\n\n    void takeDamage(int dmg) {\n        health -= dmg;\n        if (health < 0) health = 0;\n    }\n\n    bool isAlive() const { return health > 0; }\n};\n\nint main() {\n    // المُنشئ يُستدعى تلقائيًا — لا يمكن ترك الحقول فارغة\n    Player hero{\"Ali\", 100, 0};\n    hero.takeDamage(30);\n\n    std::cout << hero.name << \": \" << hero.health << \" HP\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "المُنشئ (constructor) يحل مشكلة 'نسيت تهيئة حقل'. بدون مُنشئ، يمكن إنشاء Player وترك health بقيمة عشوائية (garbage). المُنشئ يُجبر تمرير كل القيم عند الإنشاء. قائمة التهيئة : name(n) أنسب من التعيين داخل الجسم لأنها تُهيّئ مباشرة بدل إنشاء ثم تعيين.",
+          "relatedTokens": [
+            "struct",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "enum — حالات اللعبة كمثال واقعي",
+          "code": "#include <iostream>\n#include <string>\n\n// enum عادي — القيم تتحول ضمنيًا لـ int\nenum GameState {\n    Menu,      // = 0 تلقائيًا\n    Playing,   // = 1\n    Paused,    // = 2\n    GameOver   // = 3\n};\n\nint main() {\n    GameState state = Playing;\n\n    // ❌ خطأ شائع: لا تُقارن enum بـ int مباشرة\n    // if (state == 1) { ... } — يعمل لكنه يفقد معنى القيمة\n\n    // ✅ قارن بقيمة enum — الكود يقرأ كجملة\n    if (state == Playing) {\n        std::cout << \"اللعبة جارية\" << '\\n';\n    }\n\n    // ✅ switch مع enum أنظف من if/else متتالية\n    switch (state) {\n        case Menu:    std::cout << \"القائمة\" << '\\n'; break;\n        case Playing: std::cout << \"جاري اللعب\" << '\n'; break;\n        case Paused:  std::cout << \"متوقف\" << '\\n'; break;\n        case GameOver:std::cout << \"انتهت\" << '\\n'; break;\n    }\n\n    return 0;\n}",
+          "explanationArabic": "enum يُنشئ نوعًا جديدًا بقيم محددة. كل قيمة تُعطى عددًا صحيحًا تلقائيًا بدءًا من 0. الفائدة ليست في الأرقام بل في الأسماء: الكود يقول Playing لا 1. switch مع enum أنسب من if/else لأن المُصرِّف يُحذّرك إذا نسيت حالة. انتبه: enum العادي يسمح بـ int state = 42 دون تحذير — استخدم enum class لمنع هذا.",
+          "relatedTokens": [
+            "enum",
+            "switch"
+          ]
+        },
+        {
+          "titleArabic": "enum class — النسخة الآمنة (C++11)",
+          "code": "#include <iostream>\n\n// enum class لا تتحول ضمنيًا لـ int\n// يجب تحديد النوع الأساسي صراحةً\nenum class Direction : uint8_t {\n    North = 0,\n    East  = 1,\n    South = 2,\n    West  = 3\n};\n\nenum class Color : uint32_t {\n    Red   = 0xFF0000FF,\n    Green = 0x00FF00FF,\n    Blue  = 0x0000FFFF\n};\n\nint main() {\n    Direction dir = Direction::North;\n    Color c = Color::Red;\n\n    // ❌ لا يُترجم: لا تحول ضمنيًا\n    // int x = dir;\n    // if (dir == 0) { ... }\n    // if (dir == Direction::East && dir == Color::Red) { ... } // أنواع مختلفة!\n\n    // ✅ التحويل صريحًا — أوضح نية المبرمج\n    int dir_val = static_cast<int>(dir); // 0\n\n    // ✅ المقارنة مع نفس النوع فقط\n    if (dir == Direction::North) {\n        std::cout << \"شمال\" << '\\n';\n    }\n\n    // ✅ switch يعمل مع enum class\n    switch (dir) {\n        case Direction::North: std::cout << \"N\" << '\\n'; break;\n        case Direction::East:  std::cout << \"E\" << '\\n'; break;\n        case Direction::South: std::cout << \"S\" << '\\n'; break;\n        case Direction::West:  std::cout << \"W\" << '\\n'; break;\n    }\n\n    return 0;\n}",
+          "explanationArabic": "enum class أقوى من enum العادي لثلاثة أسباب: (1) لا تتحول ضمنيًا لـ int فتمنع الأخطاء مثل if(dir == 0)، (2) لا تختلط أنواع enum مختلفة فـ Direction::North لا تساوي Color::Red أبدًا، (3) تُحدد النوع الأساسي (uint8_t) فتتحكم بحجم التخزين. القاعدة: استخدم enum class دائمًا في الكود الجديد.",
+          "relatedTokens": [
+            "enum class",
+            "uint8_t",
+            "static_cast"
+          ]
+        },
+        {
+          "titleArabic": "using — أسماء بديلة تبسّط الأنواع المعقدة",
+          "code": "#include <vector>\n#include <string>\n#include <functional>\n#include <iostream>\n\n// using أنظف من typedef ويدعم القوالب\nusing ScoreList = std::vector<int>;\nusing NameMap = std::vector<std::pair<std::string, int>>;\nusing IntCallback = void(*)(int);\n\n// مع القوالب — typedef لا يستطيع هذا\ntemplate<typename T>\nusing Vec = std::vector<T>;\n\nint main() {\n    // الأنواع البديلة تجعل الكود أوضح\n    ScoreList scores = {90, 85, 78, 92};\n    NameMap players = {{\"Ali\", 90}, {\"Sara\", 85}};\n\n    Vec<float> positions = {1.0f, 2.0f, 3.0f};\n    Vec<std::string> names = {\"Ali\", \"Sara\"};\n\n    for (int s : scores) std::cout << s << ' ';\n\n    return 0;\n}",
+          "explanationArabic": "using يُنشئ اسمًا بديلًا لنوع موجود — لا يُنشئ نوعًا جديدًا. ScoreList وvector<int> هما نفس النوع بالضبط. الفائدة في القراءة: ScoreList تخبرك أن هذا vector يحمّل نقاطًا لا أي أعداد. مع القوالب (using Vec<T> = ...) توفر using ميزة لا يمتلكها typedef القديم.",
+          "relatedTokens": [
+            "using",
+            "std::vector",
+            "template"
+          ]
+        },
+        {
+          "titleArabic": "union — تخزين قيمة واحدة من عدة أنواع",
+          "code": "#include <iostream>\n#include <cstdint>\n\n// union يُخزّن قيمة واحدة فقط في نفس المكان من الذاكرة\n// الحجم = حجم أكبر عضو\nunion Value {\n    int32_t i;\n    float f;\n    uint32_t u;\n};\n\nint main() {\n    Value v;\n    v.i = 42;\n    std::cout << \"كعدد صحيح: \" << v.i << '\\n'; // 42\n\n    // كتابة f تُكتب على نفس الذاكرة — i لم يعد صالحًا!\n    v.f = 3.14f;\n    std::cout << \"كعدد عشري: \" << v.f << '\\n'; // 3.14\n\n    // قراءة i الآن تعطي قيمة عشوائية ( reinterpretation )\n    // std::cout << v.i; // قيمة غير معرّفة!\n\n    // استخدام عملي: رؤية تمثيل البتات لعدد عشري\n    v.u = 0x40490FDB; // تمثيل بتات 3.14f تقريبًا\n    std::cout << v.f; // يُطبع قيمة عشرية قريبة من π\n\n    return 0;\n}",
+          "explanationArabic": "union يسمح بتخزين نوع واحد فقط في كل لحظة في نفس الذاكرة. الكتابة بنوع تُبطِل القراءة بنوع آخر. هذا يُستخدم في: (1) توفير الذاكرة عندما يكون فقط عضو واحد نشطًا، (2) رؤية تمثيل البتات (type punning)، (3) بناء أنواع variants. في C++17 std::variant أنسب من union الخام لأنه يتتبع النوع الفعلي آليًا.",
+          "relatedTokens": [
+            "union",
+            "uint32_t",
+            "float"
+          ]
+        },
+        {
+          "titleArabic": "بنية رأس (Vertex) للرسوميات — مثال واقعي",
+          "code": "#include <iostream>\n#include <vector>\n#include <cstdint>\n\n// رأس ثلاثي الأبعاد مع لون — الشكل الأكثر شيوعًا في الرسوميات\nstruct Vertex {\n    float pos[3];    // x, y, z — الموضع في الفضاء\n    float color[4];  // r, g, b, a — اللون مع الشفافية\n};\n\nint main() {\n    std::vector<Vertex> mesh;\n\n    // إضافة رؤوس للمشهد\n    mesh.push_back({{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}});\n    mesh.push_back({{1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}});\n    mesh.push_back({{0.5f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}});\n\n    // sizeof(Vertex) = 7 * 4 = 28 بايت\n    // هذا مهم لأن وحدة معالجة الرسومات (GPU) تحتاج معرفة حجم الرأس\n    std::cout << \"حجم الرأس: \" << sizeof(Vertex) << \" بايت\" << '\\n';\n    std::cout << \"عدد الرؤوس: \" << mesh.size() << '\\n';\n    std::cout << \"حجم البيانات الكلي: \" << mesh.size() * sizeof(Vertex) << \" بايت\" << '\\n';\n\n    // الوصول لرأس محدد\n    std::cout << \"أول رأس: (\" << mesh[0].pos[0] << \",\" << mesh[0].pos[1] << \",\" << mesh[0].pos[2] << \")\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "هذا مثال حقيقي على كيفية استخدام البنية في الرسوميات. Vertex تُمثّل نقطة في المشهد مع كل بياناتها (موضع + لون). vector<Vertex> يُخزّن آلاف الرؤوس. sizeof(Vertex) مهم لأن GPU تحتاج معرفة حجم كل رأس لقراءة البيانات بشكل صحيح. في المشاريع الحقيقية قد يُضاف UV (إحداثيات النسيج) وnormal (الاتجاه العمودي).",
+          "relatedTokens": [
+            "struct",
+            "float",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان تهيئة بنية محلية",
+          "code": "#include <iostream>\n\nstruct Config {\n    int width;\n    int height;\n    bool fullscreen;\n};\n\nint main() {\n    // ❌ بدون تهيئة: الحقول تحتوي قيم عشوائية (garbage)\n    // Config cfg;\n    // std::cout << cfg.width;  // قيمة عشوائية!\n    // std::cout << cfg.fullscreen; // قد يكون true أو false عشوائيًا\n\n    // ✅ التهيئة بـ {} تُعيّن كل الحقول العددية لصفر وbool لـ false\n    Config cfg{};\n    std::cout << cfg.width << ',' << cfg.height << ',' << cfg.fullscreen << '\\n';\n    // 0,0,0\n\n    // ✅ أو عيّن قيمًا صريحة\n    Config cfg2{1920, 1080, false};\n    std::cout << cfg2.width << 'x' << cfg2.height << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "البنيات المحلية (على stack) لا تُهيَّأ تلقائيًا — الحقول تحتوي ما كان في الذاكرة قبلًا (garbage). هذا يختلف عن vector الذي يُهيّئ عناصره. التهيئة بـ {} تحل هذه المشكلة بالكامل. القاعدة: هَيّئ دائمًا بنية محلية بـ {} أو بمنشئ. هذا من أكثر الأخطاء شيوعًا ويُسبب سلوكًا غير متوقع يصعب تتبعه.",
+          "relatedTokens": [
+            "struct"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: enum عادي يسمح بقيم غير صالحة",
+          "code": "#include <iostream>\n\nenum Color { Red, Green, Blue };\n\nint main() {\n    // ❌ يُترجم بدون تحذير! 99 ليس قيمة صالحة\n    Color c = static_cast<Color>(99);\n\n    // ❌ التحويل ضمني يعمل — لا حاجة حتى لـ static_cast مع int\n    Color c2 = Red;\n    int x = c2; // يعمل بصمت\n    c2 = static_cast<Color>(x); // يعمل حتى لو x = 999\n\n    // ❌ المقارنة مع int تعمل\n    if (c2 == 1) { std::cout << \"أخضر\" << '\\n'; }\n\n    // ✅ الحل: استخدم enum class\n    // enum class SafeColor { Red, Green, Blue };\n    // SafeColor sc = SafeColor::Red;\n    // int x2 = sc;          // ❌ لا يُترجم!\n    // SafeColor sc2 = static_cast<SafeColor>(99); // يعمل لكنه صريح وواضح\n\n    return 0;\n}",
+          "explanationArabic": "enum العادي لا يوفر أي حماية نوعية — هو مجرد أسماء فوق أعداد صحيحة. أي قيمة int يمكن تحويلها لـ enum. هذا يُسبب أخطاء صامتة. enum class يحل هذا بالكامل: لا تحول ضمنية، لا مقارنة مع int، ولا خلط بين أنواع enum مختلفة. استخدم enum class دائمًا في الكود الجديد واعتبر enum العادي كـ legacy.",
+          "relatedTokens": [
+            "enum",
+            "enum class",
+            "static_cast"
+          ]
+        },
+        {
+          "titleArabic": "بنية متداخلة — بيانات مهيكلة واقعية",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n\nstruct Transform {\n    float position[3]; // x, y, z\n    float rotation[3]; // pitch, yaw, roll\n    float scale[3];    // sx, sy, sz\n};\n\nstruct Mesh {\n    std::string name;\n    Transform transform;\n    std::vector<float> vertices;\n    std::vector<uint32_t> indices;\n};\n\nstruct Scene {\n    std::string name;\n    std::vector<Mesh> meshes;\n};\n\nint main() {\n    Scene scene{\"المشهد الرئيسي\"};\n\n    Mesh cube{\"مكعب\"};\n    cube.transform = {{0, 0, 0}, {0, 45, 0}, {1, 1, 1}};\n    cube.vertices = {0,0,0, 1,0,0, 1,1,0, 0,1,0};\n    cube.indices = {0, 1, 2, 0, 2, 3};\n\n    scene.meshes.push_back(cube);\n\n    std::cout << \"المشهد: \" << scene.name << '\\n';\n    std::cout << \"عدد الشبكات: \" << scene.meshes.size() << '\\n';\n    std::cout << \"أول شبكة: \" << scene.meshes[0].name << '\\n';\n    std::cout << \"عدد الرؤوس: \" << scene.meshes[0].vertices.size() / 3 << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "البُنى يمكنها احتواء بُنى أخرى — هذا يبني تسلسلًا هرميًا يعكس الواقع: مشهد يحتوي شبكات، كل شبكة لها تحويل ورؤوس ومؤشرات. هذا النمط أساسي في محركات الألعاب ومُحرّرات الرسوميات. التهيئة المتداخلة بـ {} تسمح بتعيين كل شيء في سطر واحد. الوصول يتطلب سلسلة من النقاط: scene.meshes[0].transform.position[0].",
+          "relatedTokens": [
+            "struct",
+            "std::vector",
+            "std::string",
+            "uint32_t"
+          ]
+        }
+      ],
+      "followUps": [
+        "struct",
+        "enum",
+        "enum class",
+        "union",
+        "using",
+        "typedef",
+        "const",
+        "static_cast",
+        "std::vector"
+      ]
+    }
+  }
+}

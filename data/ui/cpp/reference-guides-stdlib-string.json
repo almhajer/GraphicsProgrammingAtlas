@@ -1,0 +1,1005 @@
+{
+  "referenceData": {
+    "std::string::find": {
+      "title": "std::string::find",
+      "type": "دالة عضو في string",
+      "description": "تبحث عن أول ظهور لنص فرعي أو حرف داخل السلسلة. تُرجع الموضع (index) إذا وُجد، أو std::string::npos إذا لم تُجد. البحث خطي من البداية للنهاية — تعقيد O(n×m) حيث n طول النص وm طول المطلوب.",
+      "usage": "الأداة الأساسية للبحث داخل النصوص في C++. يظهر عند فحص محتوى نص، استخراج جزء بناءً على فاصل، التحقق من وجود كلمة أو امتداد ملف.",
+      "example": "auto pos = path.find('/');\nif (pos != std::string::npos) { /* وُجد */ }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "فصل اسم الملف من المسار الكامل",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string path = \"/assets/textures/hero.png\";\n\n    // rfind يبحث من النهاية — أنسب لفصل اسم الملف\n    auto pos = path.rfind('/');\n    if (pos != std::string::npos) {\n        // substr(pos + 1) يأخذ من بعد الفاصل حتى النهاية\n        std::string filename = path.substr(pos + 1);\n        std::cout << filename; // hero.png\n    }\n}",
+          "explanationArabic": "rfind هنا أنسب من find لأننا نريد آخر فاصل '/' وليس الأول. npos هو ثابت خاص يعني 'لم يُعثر' — يجب دائمًا المقارنة معه ولا تفترض أن القيمة المعادة فهرس صالح. substr بدون معامل ثانٍ يأخذ حتى نهاية النص."
+        },
+        {
+          "titleArabic": "التحقق من وجود كلمة داخل نص",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string response = \"HTTP/1.1 200 OK\";\n\n    // find يُرجع npos إذا لم يُجد — تحوّله لـ bool تلقائيًا\n    if (response.find(\"200\") != std::string::npos) {\n        std::cout << \"الطلب نجح\";\n    }\n\n    // نمط أنظف: لا تقارن مع npos، استخدم المباشرة\n    // لكن انتبه: find تُرجع size_t (عدد غير سالب)\n    // لذا لا تستخدم == -1 لأن npos ليس -1 بالضرورة\n}",
+          "explanationArabic": "npos هو أكبر قيمة ممكنة لنوع size_t — ليس -1 رغم أن بعض المبرمجين يكتبون كذلك. المقارنة الصحيحة دائمًا هي مع std::string::npos. find تُرجع size_t لذلك لا تُخزّن النتيجة في int لأنها قد تُقطع."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان npos والتعامل مع فشل البحث",
+          "code": "#include <string>\n\nstd::string data = \"hello world\";\n\n// ❌ كارثة: لو لم يُجد 'x' يُرجع npos وهو رقم ضخم\n// ثم substr يأخذه كموضع — سلوك غير معرّف أو استثناء\n// auto bad = data.find('x');\n// std::string sub = data.substr(bad, 3); // UB!\n\n// ❌ لا تقارن مع -1\n// if (data.find('x') == -1) { /* قد لا يعمل دائمًا */ }\n\n// ✅ دائمًا تحقق من npos قبل استخدام النتيجة\nauto pos = data.find(\"world\");\nif (pos != std::string::npos) {\n    std::string sub = data.substr(pos, 5); // آمن\n}\n\n// ✅ أو استخدم starts_with / ends_with (C++20) إذا كان الغرض بسيطًا\nif (data.starts_with(\"hello\")) { /* أوضح */ }",
+          "explanationArabic": "أخطر خطأ مع find هو استخدام النتيجة بدون فحص npos. npos كقيمة فهرس تعني 'موضع مستحيل' — تمريرها لـ substr أو operator[] يُنتج سلوكًا غير معرّف. القاعدة: كل نتيجة find يجب أن تُفحص قبل الاستخدام."
+        }
+      ],
+      "related": [
+        "std::string::rfind",
+        "std::string::substr",
+        "std::string::find_first_of",
+        "std::string_view"
+      ]
+    },
+    "std::string::rfind": {
+      "title": "std::string::rfind",
+      "type": "دالة عضو في string",
+      "description": "تبحث عن آخر ظهور لنص فرعي أو حرف داخل السلسلة — عكس find تمامًا. تبحث من النهاية نحو البداية لكن تُرجع الموضع من البداية (index عادي). تُرجع npos إذا لم تُجد.",
+      "usage": "يظهر عند الحاجة لآخر ظهور لفاصل أو امتداد أو كلمة. شائع في فصل اسم الملف من المسار، أو البحث عن آخر نقطة في اسم ملف لاستخراج الامتداد.",
+      "example": "auto pos = filename.rfind('.');\nif (pos != std::string::npos) { std::string ext = filename.substr(pos); }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخراج امتداد الملف",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string filename = \"archive.tar.gz\";\n\n    // rfind تُرجع آخر نقطة — المناسبة للامتداد\n    auto pos = filename.rfind('.');\n    if (pos != std::string::npos) {\n        std::string ext = filename.substr(pos); // \".gz\"\n        std::cout << ext;\n    }\n\n    // لو استخدمنا find كان سيعيد \".tar\" — ليس الامتداد الحقيقي\n    auto first_dot = filename.find('.');\n    std::cout << '\\n' << filename.substr(first_dot); // \".tar.gz\"\n}",
+          "explanationArabic": "rfind تجد آخر نقطة وليس أولى — هذا هو الفرق الجوهري عن find عند استخراج الامتداد. في \"archive.tar.gz\" نريد \".gz\" لا \".tar.gz\". rfind تُرجع الموضع من البداية رغم أنها تبحث من النهاية."
+        },
+        {
+          "titleArabic": "البحث من موضع محدد للخلف",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string path = \"/a/b/c/d/file.txt\";\n\n    // rfind مع موضع بدء: ابحث عن '/' قبل الموضع 8 فقط\n    auto pos = path.rfind('/', 8);\n    if (pos != std::string::npos) {\n        std::cout << path.substr(pos + 1); // \"c\"\n    }\n    // بدون تحديد الموضع كان سيعيد آخر '/' عند الموضع 10\n}",
+          "explanationArabic": "المعامل الثاني لـ rfind هو موضع البداية للبحث للخلف — لا يبحث في النص كله بل فقط قبل هذا الموضع. هذا مفيد عند التقسيم المتعدد المستويات حيث تريد فاصلًا عند مستوى معين."
+        },
+        {
+          "titleArabic": "rfind vs find: متى تستخدم أيهما",
+          "code": "#include <string>\n\nstd::string url = \"https://example.com/path/page?q=1#top\";\n\n// find: أول ظهور — أنسب للبروتوكول والمضيف\nauto scheme_end = url.find(\"://\");  // https\nauto host_start = scheme_end + 3;\nauto host_end = url.find('/', host_start); // example.com\n\n// rfind: آخر ظهور — أنسب للاستعلام والمرساة\nauto query_start = url.rfind('?'); // ?q=1\nauto fragment_start = url.rfind('#'); // #top\n\n// القاعدة: find للبنية من اليسار، rfind للبنية من اليمين",
+          "explanationArabic": "اختيار find أو rfind يعتمد على اتجاه البنية التي تحللها. البروتوكول والمضيف يأتيان أولًا → find. الاستعلام والمرساة يأتيان أخيرًا → rfind. فهم البنية يُحدد الأداة."
+        }
+      ],
+      "related": [
+        "std::string::find",
+        "std::string::substr",
+        "std::string::find_last_of"
+      ]
+    },
+    "std::string::substr": {
+      "title": "std::string::substr",
+      "type": "دالة عضو في string",
+      "description": "يُرجع سلسلة فرعية (substring) بدءًا من موضع محدد وبطول محدد. لا تُعدّل السلسلة الأصلية — تُرجع string جديدًا. إذا أُهمل الطول يأخذ حتى النهاية.",
+      "usage": "يظهر عند استخراج جزء من نص: اسم ملف من مسار، امتداد، بادئة، جزء محدد من رسالة. هو الطريقة المباشرة لقطع النصوص في C++.",
+      "example": "std::string ext = filename.substr(filename.rfind('.'));",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخراج جزء من نص بموضع وطول",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string version = \"v2.4.1\";\n\n    // substr(pos, count): يأخذ count أحرف بدءًا من pos\n    std::string major = version.substr(1, 1);  // \"2\"\n    std::string minor = version.substr(3, 1);  // \"4\"\n    std::string patch = version.substr(5);     // \"1\" (حتى النهاية)\n\n    std::cout << major << '.' << minor << '.' << patch; // 2.4.1\n}",
+          "explanationArabic": "المعامل الأول هو موضع البداية (index من الصفر). المعامل الثاني هو عدد الأحرف المطلوب (ليس موضع النهاية). بدون معامل ثانٍ يأخذ كل شيء من الموضع حتى النهاية. هذا يختلف عن لغات مثل JavaScript حيث substring تأخذ موضع النهاية."
+        },
+        {
+          "titleArabic": "قطع بادئة أو لاحقة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string text = \"  hello world  \";\n\n    // قطع المسافات البادئة يدويًا\n    auto start = text.find_first_not_of(' ');\n    if (start != std::string::npos) {\n        text = text.substr(start); // \"hello world  \"\n    }\n\n    // قطع المسافات اللاحقة\n    auto end = text.find_last_not_of(' ');\n    if (end != std::string::npos) {\n        text = text.substr(0, end + 1); // \"hello world\"\n    }\n\n    std::cout << '[' << text << ']'; // [hello world]\n\n    // ملاحظة: في C++20 استخدم trim أو تنفيذ يدوي أفضل\n}",
+          "explanationArabic": "trim النص يدويًا يتطلب find_first_not_of + find_last_not_of + substr. substr(0, end + 1) لأن المعامل الثاني هو العدد لا النهاية. هذا النمط شائع رغم أنه مطوّل — C++20 لا تزال لا توفر trim مدمج."
+        },
+        {
+          "titleArabic": "خطأ شائع: موضع أو طول خارج الحدود",
+          "code": "#include <string>\n\nstd::string s = \"hello\";\n\n// ❌ موضع خارج الحدود: يرمي std::out_of_range\n// auto bad = s.substr(10); // استثناء!\n\n// ✅ تحقق قبل الاستخراج\nauto pos = s.find('x');\nif (pos != std::string::npos) {\n    auto sub = s.substr(pos); // آمن\n}\n\n// ⚠️ طول أكبر من المتاح: لا يرمي استثناء بل يأخذ حتى النهاية\nauto safe = s.substr(2, 100); // \"llo\" — لا يستثني رغم أن 100 > 3\n// هذا سلوك صامت قد يكون مُلتبسًا",
+          "explanationArabic": "substr يرمي out_of_range فقط إذا كان الموضع أكبر من size(). أما إذا كان الطول أكبر من المتبقي فيأخذ حتى النهاية بسكوت. هذا يعني أن الطول الزائد لا يُسبب خطأ لكنه قد يُخفي خطأ منطقيًا."
+        }
+      ],
+      "related": [
+        "std::string::find",
+        "std::string::rfind",
+        "std::string::erase",
+        "std::string_view"
+      ]
+    },
+    "std::string::append": {
+      "title": "std::string::append",
+      "type": "دالة عضو في string",
+      "description": "يُضيف محتوى في نهاية السلسلة. يقبل string، C-string، حرفًا مكررًا، أو جزءًا من string. يُرجع مرجعًا للسلسلة نفسها مما يسمح بالتسلسل. أداءًا يعادل operator+= تقريبًا.",
+      "usage": "يظهر عند بناء نص تدريجيًا من أجزاء متعددة، خاصة عند الحاجة لإضافة جزء من نص (substring) بدل نص كامل.",
+      "example": "result.append(path).append(\"\\n\");",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء نص من أجزاء مع التسلسل",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string log;\n\n    // append يُرجع مرجعًا لنفس السلسلة — يمكن تسلسله\n    log.append(\"[INFO]\")\n        .append(\" \")\n        .append(\"بدء التحميل\")\n        .append(\"\\n\");\n\n    std::cout << log; // [INFO] بدء التحميل\n}",
+          "explanationArabic": "append يُرجع *this مما يسمح بسلسلة استدعاءات. هذا أنظف من كتابة عدة += خاصة مع أنواع مختلفة. append أوضح من += دلاليًا لأنه يُعبّر عن 'إضافة في النهاية' بينما += قد يُفهم كتعويض."
+        },
+        {
+          "titleArabic": "إضافة جزء من نص (substring append)",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string data = \"Hello, World!\";\n    std::string result;\n\n    // append(string, pos, count): يأخذ count أحرف من موضع pos\n    result.append(data, 7, 5); // \"World\"\n    std::cout << result; // World\n\n    // هذا ما يميز append عن += الذي لا يستطيع أخذ جزء\n    // data.substr(7, 5) يُنشئ string مؤقت ثم += يضيفه\n    // append(data, 7, 5) يضيف مباشرة بدون string مؤقت — أنسب أداءً\n}",
+          "explanationArabic": "الميزة الحقيقية لـ append على += هي القدرة على إضافة جزء من نص مباشرةً بدون إنشاء string مؤقت عبر substr. هذا يُوفّر تخصيص ذاكرة واحدًا. عندما تبني نصًا من أجزاء كثيرة، هذا الفرق يتراكم."
+        },
+        {
+          "titleArabic": "append vs operator+= vs push_back",
+          "code": "#include <string>\n\nstd::string s;\n\n// push_back: حرف واحد فقط\ns.push_back('a');\n\n// operator+=: string أو C-string أو حرف\ns += \"hello\";\ns += ' '; // حرف واحد أيضًا\n\n// append: كل ما سبق + جزء من string + تكرار حرف\ns.append(\"world\");         // string كامل\ns.append(\"test\", 0, 2);   // جزء: \"te\"\nstd::string other = \"!!!\";\ns.append(other);           // string آخر\ns.append(3, '!');          // 3 علامات تعجب\n\n// القاعدة: += للبساطة، append عند الحاجة لجزء أو تكرار",
+          "explanationArabic": "اختيار بينها يعتمد على السياق: push_back لحرف واحد (واضحة النية)، += للإضافة البسيطة، append عند الحاجة لميزات إضافية مثل جزء من نص أو تكرار حرف. أداءًا الثلاثة متقاربة لأن string تُخصص ذاكرة مسبقًا (capacity)."
+        }
+      ],
+      "related": [
+        "std::string::insert",
+        "std::string::push_back",
+        "std::string::operator+="
+      ]
+    },
+    "std::string::insert": {
+      "title": "std::string::insert",
+      "type": "دالة عضو في string",
+      "description": "يُدرج محتوى في موضع محدد داخل السلسلة — لا في النهاية مثل append. كل العناصر بعد الموضع تُزاح للأمام. مكلف أداءًا لأنه يحتاج نقل كل ما بعد موضع الإدراج.",
+      "usage": "يظهر عند الحاجة لإدراج نص في منتصف سلسلة: إضافة فاصل، تعديل مسار، إدراج قيمة في قالب نصي.",
+      "example": "path.insert(pos, \"/new\");",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج نص في موضع محدد",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string url = \"example.com/api/users\";\n\n    // إدراج 'https://' في البداية\n    url.insert(0, \"https://\");\n    std::cout << url; // https://example.com/api/users\n\n    // إدراج إصدار API بعد '/api'\n    auto pos = url.find(\"/api\");\n    if (pos != std::string::npos) {\n        url.insert(pos + 4, \"/v2\");\n        std::cout << '\\n' << url; // https://example.com/api/v2/users\n    }\n}",
+          "explanationArabic": "insert(pos, str) يُدرج str قبل الموضع pos. كل ما بعد pos يُزاح للأمام. هذا مكلف O(n) لأنه يحتاج نسخ كل شيء بعد الموضع. إذا كنت تُدرج في النهاية، استخدم append — أسرع لأنه لا إزاحة."
+        },
+        {
+          "titleArabic": "إدراج عدة أحرف متطابقة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string header = \"Name\";\n\n    // insert(pos, count, char): يُدرج count نسخة من حرف\n    header.insert(4, 20, '-');\n    header.insert(24, \"Score\");\n    std::cout << header;\n    // Name--------------------Score\n}",
+          "explanationArabic": "إدراج أحرف متطابقة مفيد لإنشاء جداول نصية أو فواصل. النسخة الثلاثية المعاملات من insert تأخذ (موضع، عدد، حرف). هذا أنظف من حلقة push_back."
+        },
+        {
+          "titleArabic": "تحذير الأداء: insert في حلقة = كارثة",
+          "code": "#include <string>\n\n// ❌ كارثة أداء: كل insert ينقل كل ما بعده\n// std::string result;\n// for (int i = 0; i < 10000; ++i) {\n//     result.insert(0, \"x\"); // O(n²) إجمالي!\n// }\n\n// ✅ البديل: ابنِ النص بالعكس ثم اعكسه\nstd::string result;\nfor (int i = 0; i < 10000; ++i) {\n    result.push_back('x'); // O(1) لكل إضافة في النهاية\n}\nstd::reverse(result.begin(), result.end()); // O(n) مرة واحدة\n\n// ✅ أو استخدم reserve + الفهرسة المباشرة\nstd::string result2;\nresult2.resize(10000);\nfor (int i = 0; i < 10000; ++i) {\n    result2[9999 - i] = 'x'; // كتابة مباشرة بدون إزاحة\n}",
+          "explanationArabic": "insert في بداية السلسلة داخل حلقة يُنتج O(n²) لأن كل إدراج ينقل كل العناصر الحالية. هذه واحدة من أكثر مصائد الأداء شيوعًا. الحل: أضف في النهاية واعكس، أو استخدم resize مع فهرسة مباشرة."
+        }
+      ],
+      "related": [
+        "std::string::append",
+        "std::string::erase",
+        "std::string::replace"
+      ]
+    },
+    "std::string::erase": {
+      "title": "std::string::erase",
+      "type": "دالة عضو في string",
+      "description": "يُزيل جزءًا من السلسلة إما بالموضع والطول أو بمكرّر. يُرجع مرجعًا للسلسلة المُعدّلة. يُنقّل العناصر بعد الجزء المحذوف للخلف لتغطية الفراغ.",
+      "usage": "يظهر عند إزالة حرف من نص، حذف جزء بناءً على فاصل، تنظيف نص من أحرف غير مرغوبة مع خوارزمية remove.",
+      "example": "s.erase(pos, count);",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "حذف جزء بموضع وطول",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string path = \"/assets/textures/hero.png\";\n\n    // حذف اسم الملف: نُجد آخر '/' ونحذف من بعده\n    auto pos = path.rfind('/');\n    if (pos != std::string::npos) {\n        path.erase(pos + 1); // حذف من بعد '/' حتى النهاية\n        std::cout << path; // /assets/textures/\n    }\n\n    // حذف البادئة\n    std::string full = \"prefix_data_suffix\";\n    full.erase(0, 7); // حذف أول 7 أحرف: \"prefix_\"\n    std::cout << '\\n' << full; // data_suffix\n}",
+          "explanationArabic": "erase(pos, count) يُزيل count أحرف بدءًا من pos. بدون count يُزيل كل شيء من pos حتى النهاية. هذا أنظح من substr لإعادة التعيين لأنه يُعدّل في المكان بدون إنشاء string جديد."
+        },
+        {
+          "titleArabic": "حذف حرف بمكرّر",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"aXbXcX\";\n\n    // erase(iterator) يُزيل حرفًا واحدًا في الموضع المُشار إليه\n    for (auto it = s.begin(); it != s.end(); ) {\n        if (*it == 'X') {\n            it = s.erase(it); // erase يُرجع مكرّر للعنصر التالي\n        } else {\n            ++it;\n        }\n    }\n    std::cout << s; // abc\n}",
+          "explanationArabic": "erase(it) يُرجع مكرّر للعنصر الذي حل محل المحذوف — هذا هو المكرّر الصحيح للمتابعة. لو كتبت ++it بعد erase تحصل على سلوك غير معرّف لأن المكرّر القديم بطل. هذا النمط شائع جدًا للحذف الشرطي."
+        },
+        {
+          "titleArabic": "النمط الشهير: erase + remove_if للحذف الشرطي",
+          "code": "#include <string>\n#include <algorithm>\n#include <iostream>\n\nint main() {\n    std::string s = \"h e l l o   w o r l d\";\n\n    // remove_if يُعيد ترتيب: ينقل ما نريد حذفه للنهاية\n    // erase يُزيل هذا الجزء من النهاية\n    s.erase(\n        std::remove_if(s.begin(), s.end(), [](char c) { return c == ' '; }),\n        s.end()\n    );\n    std::cout << s; // helloworld\n\n    // لماذا لا نستخدم erase وحدها؟\n    // لأن erase(pos, count) يحتاج موضعًا وليس شرطًا\n    // remove_if يحوّل الشرط إلى موضع واحد (بداية الجزء المراد حذفه)\n}",
+          "explanationArabic": "erase-remove idiom هو النمط القياسي لحذف كل العناصر المحققة لشرط. remove_if لا يحذف فعلًا — يُعيد ترتيب ويُرجع مكرّر لبداية 'القمامة'. erase يأخذ هذا المكرّر ويحذف فعليًا. بدون erase، remove_if يترك السلسلة بنفس الطول مع قيم غير مرغوبة في النهاية."
+        }
+      ],
+      "related": [
+        "std::string::insert",
+        "std::string::replace",
+        "std::remove_if"
+      ]
+    },
+    "std::string::replace": {
+      "title": "std::string::replace",
+      "type": "دالة عضو في string",
+      "description": "يُبدّل جزءًا من السلسلة بنص جديد. يأخذ موضع البداية وطول الجزء المراد استبداله ثم النص البديل. يُعدّل في المكان — لا يُرجع string جديدًا بل مرجعًا للسلسلة نفسها.",
+      "usage": "يظهر عند استبدال كل ظهورات كلمة، تعديل جزء من مسار، تحويل فاصل، أو بناء نص من قالب بتبديل العناصر النائبة.",
+      "example": "url.replace(pos, old_len, new_part);",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "استبدال جزء بموضع وطول",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string url = \"http://example.com/api/users\";\n\n    // استبدال 'http' بـ 'https'\n    url.replace(0, 4, \"https\");\n    std::cout << url; // https://example.com/api/users\n\n    // استبدال '/users' بـ '/items'\n    auto pos = url.rfind(\"/users\");\n    if (pos != std::string::npos) {\n        url.replace(pos, 6, \"/items\");\n        std::cout << '\\n' << url; // https://example.com/api/items\n    }\n}",
+          "explanationArabic": "replace(pos, count, str) يُزيل count أحرف من pos ثم يُدرج str مكانها. البديل (الذي يبدو أسهل لكنه أبطأ) هو erase + insert: erase يُزيل ثم insert يُضيف — عمليتان بدل واحدة. replace تفعل الاثنتين معًا بكفاءة أعلى."
+        },
+        {
+          "titleArabic": "استبدال كل ظهورات كلمة (نمط عام)",
+          "code": "#include <string>\n#include <iostream>\n\nvoid replace_all(std::string& s, const std::string& from, const std::string& to) {\n    if (from.empty()) return; // منع حلقة لا نهائية\n    size_t pos = 0;\n    while ((pos = s.find(from, pos)) != std::string::npos) {\n        s.replace(pos, from.size(), to);\n        pos += to.size(); // تخطي الجزء المستبدل لمنع حلقة لا نهائية\n    }\n}\n\nint main() {\n    std::string text = \"red blue red green red\";\n    replace_all(text, \"red\", \"yellow\");\n    std::cout << text; // yellow blue yellow green yellow\n}",
+          "explanationArabic": "string لا توفر replace_all مدمج — يجب بناؤه يدويًا. النقطة الحاسمة: pos += to.size() لا pos += from.size() لأن البديل قد يكون أطول أو أقصر. لو تخطيت by from.size() قد تُعيد معالجة جزء من البديل إذا كان أطول."
+        },
+        {
+          "titleArabic": "replace بجزء من string آخر",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string template_str = \"Hello {name}, your score is {score}\";\n    std::string values = \"name=Alice&score=95\";\n\n    // استبدال {name} بـ Alice\n    auto pos1 = template_str.find(\"{name}\");\n    if (pos1 != std::string::npos) {\n        // replace(pos, count, src, src_pos, src_count)\n        // يأخذ الجزء من values بدل string كامل\n        template_str.replace(pos1, 6, values, 5, 5); // \"Alice\"\n    }\n    std::cout << template_str; // Hello Alice, your score is {score}\n}",
+          "explanationArabic": "replace لها نسخة تأخذ 5 معاملات: (موضع في الهدف، طول الجزء المراد حذفه، مصدر البديل، موضع في المصدر، طول البديل من المصدر). هذا يُوفّر إنشاء string مؤقت عبر substr."
+        }
+      ],
+      "related": [
+        "std::string::erase",
+        "std::string::insert",
+        "std::string::find",
+        "std::string::substr"
+      ]
+    },
+    "std::string::at": {
+      "title": "std::string::at",
+      "type": "دالة عضو في string",
+      "description": "تُرجع مرجعًا للحرف في الموضع المحدد مع فحص الحدود. إذا كان الموضع خارج النطاق تُرمي std::out_of_range. تُرجع مرجعًا قابلًا للتعديل (non-const) أو للقراءة فقط (const) حسب نوع السلسلة.",
+      "usage": "يظهر عند الوصول لحرف في موضع محدد مع ضمان الأمان. الأنسب عندما يكون الموضع محسوبًا ديناميكيًا وقد يكون خارج الحدود. يُفضّل على operator[] عندما السلامة أهم من الأداء.",
+      "example": "char c = s.at(5); // آمن: يرمي استثناء لو الموضع خارج الحدود",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "الوصول الآمن لحرف بموضع ديناميكي",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"Hello, World!\";\n    int pos = 7; // قد يأتي من حساب أو إدخال مستخدم\n\n    try {\n        char c = s.at(pos);\n        std::cout << c; // W\n    } catch (const std::out_of_range& e) {\n        std::cout << \"موضع خارج الحدود: \" << e.what();\n    }\n}",
+          "explanationArabic": "at تختلف عن operator[] في أنها تتحقق من الحدود وتُرمي استثناءً بدل سلوك غير معرّف. هذا يجعلها أنسب عندما يكون الموضع ناتجًا عن حساب قد يُخطئ. الاستثناء يمنع انهيار صامت قد يصعب تتبعه."
+        },
+        {
+          "titleArabic": "تعديل حرف عبر at",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string name = \"alice\";\n\n    // at تُرجع مرجعًا — يمكن التعديل عبره\n    name.at(0) = 'A'; // تحويل أول حرف لكبير\n    std::cout << name; // Alice\n\n    // نفس الشيء يعمل في حلقة\n    for (size_t i = 0; i < name.size(); ++i) {\n        if (name.at(i) >= 'a' && name.at(i) <= 'z') {\n            name.at(i) -= 32; // تحويل للحرف الكبير\n        }\n    }\n}",
+          "explanationArabic": "at تُرجع مرجعًا (reference) وليس نسخة — لذا التعديل عبرها يُعدّل السلسلة الأصلية. هذا يسمح بتعديل أحرف مفردة بدون erase/insert. الفرق عن operator[] هو فقط فحص الحدود."
+        },
+        {
+          "titleArabic": "at vs operator[]: متى تستخدم أيهما",
+          "code": "#include <string>\n\nstd::string s = \"hello\";\n\n// operator[]: أسرع لكن بدون فحص حدود\n// s[100]; // سلوك غير معرّف — قد ينهار أو يُرجع قيمة عشوائية\n\n// at: أبطأ قليلًا لكن آمن\n// s.at(100); // يرمي std::out_of_range — يمكن التقاطه\n\n// القاعدة العملية:\n// - في حلقة تكرار عادية على كل الأحرف → operator[] (الأداء مهم)\n// - عند وصول بموضع محسوب أو من مدخل خارجي → at (السلامة مهمة)\n// - في كود حرج الأداء → operator[] بعد التحقق يدويًا\n\n// الأفضل في C++ الحديثة: استخدم for-each أو مكرّرات إن أمكن\nfor (char& c : s) { c = toupper(c); } // لا يحتاج at أو []",
+          "explanationArabic": "الاختيار بين at و operator[] هو توازن بين الأداء والسلامة. في معظم الحالات العملية، for-each أو المكرّرات أنسب من الاثنين لأنها تتجنب الفهرسة تمامًا. at أنسب كـ 'دفاع في العمق' عندما لا تضمن صحة الموضع."
+        }
+      ],
+      "related": [
+        "std::string::operator[]",
+        "std::string::front",
+        "std::string::back",
+        "std::string::size"
+      ]
+    },
+    "std::string::operator[]": {
+      "title": "std::string::operator[]",
+      "type": "دالة عضو في string",
+      "description": "يُرجع مرجعًا للحرف في الموضع المحدد بدون فحص الحدود. إذا كان الموضع خارج النطاق يكون السلوك غير معرّف (UB). استثناء: الموضع يساوي size() يُرجع حرفًا فارغًا '\\0' (للقراءة فقط) في السلاسل غير const.",
+      "usage": "الطريقة الأسرع للوصول المباشر لأحرف السلسلة. يظهر في الحلقات التكرارية، معالجة النصوص حرفًا بحرف، والوصول العشوائي عندما تضمن صحة الموضع.",
+      "example": "for (size_t i = 0; i < s.size(); ++i) { process(s[i]); }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "الوصول المباشر في حلقة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"Hello\";\n\n    // الوصول لكل حرف بالفهرسة المباشرة\n    for (size_t i = 0; i < s.size(); ++i) {\n        std::cout << \"s[\" << i << \"] = \" << s[i] << '\\n';\n    }\n    // s[0] = H, s[1] = e, s[2] = l, s[3] = l, s[4] = o\n}",
+          "explanationArabic": "operator[] لا يتحقق من الحدود — الموضع يجب أن يكون أصغر من size(). لذلك نستخدم size_t كنوع الفهرس (عدد صحيح غير سالب) لأن size() تُرجع size_t. استخدام int قد يسبب مشاكل إذا كان الحجم كبيرًا."
+        },
+        {
+          "titleArabic": "تعديل أحرف فردية",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string path = \"C:\\\\Users\\\\name\\\\file.txt\";\n\n    // تحويل كل '\\' إلى '/' — شائع في معالجة المسارات\n    for (size_t i = 0; i < path.size(); ++i) {\n        if (path[i] == '\\\\') {\n            path[i] = '/'; // تعديل مباشر عبر المرجع\n        }\n    }\n    std::cout << path; // C:/Users/name/file.txt\n}",
+          "explanationArabic": "operator[] يُرجع مرجعًا قابلًا للتعديل — لذا path[i] = '/' يُعدّل السلسلة في مكانها بدون إنشاء نسخة. هذا أسرع من erase + insert لأنه لا إزاحة عناصر."
+        },
+        {
+          "titleArabic": "الحرف الفارغ عند الموضع size()",
+          "code": "#include <string>\n\nstd::string s = \"test\";\n\n// s[4] (يساوي size()) يُرجع '\\0' للقراءة فقط\n// هذا يسمح بمعاملة string كـ C-string في بعض الحالات\nchar c = s[s.size()]; // c == '\\0' — صالح للقراءة\n\n// لكن لا تُعدّله!\n// s[s.size()] = 'x'; // سلوك غير معرّف في const string\n\n// هذا يختلف عن at:\n// s.at(s.size()); // يرمي out_of_range دائمًا\n\n// الفائدة: تمرير string لدالة C تتوقع null-terminated\n// some_c_func(s.c_str()); // أفضل — لا تعتمد على هذه الخاصية",
+          "explanationArabic": "الموضع size() يُرجع '\\0' في النسخة غير const فقط — هذا استثناء مقصود ليتوافق مع C-string. لكنه مصيدة: لا تعتمد عليه لأنه لا يعمل مع const string. استخدم c_str() دائمًا عند الحاجة لسلسلة منتهية بـ null."
+        }
+      ],
+      "related": [
+        "std::string::at",
+        "std::string::front",
+        "std::string::back",
+        "std::string::c_str"
+      ]
+    },
+    "std::string::front": {
+      "title": "std::string::front",
+      "type": "دالة عضو في string",
+      "description": "تُرجع مرجعًا لأول حرف في السلسلة. مكافئة لـ operator[](0) لكنها أوضح دلاليًا. سلوك غير معرّف إذا كانت السلسلة فارغة — لا تتحقق من ذلك.",
+      "usage": "يظهر عند الحاجة للوصول لأول حرف فقط: فحص البادئة، تحويل أول حرف لكبير، فحص نوع الحرف الأول.",
+      "example": "if (!s.empty() && s.front() == '/') { /* مسار مطلق */ }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص نوع المسار (مطلق أم نسبي)",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string path1 = \"/usr/local/bin\";\n    std::string path2 = \"src/main.cpp\";\n\n    // front() أوضح من [0] عند الوصول لأول حرف فقط\n    auto check_path = [](const std::string& p) {\n        if (!p.empty() && p.front() == '/') {\n            std::cout << p << \" ← مسار مطلق\\n\";\n        } else {\n            std::cout << p << \" ← مسار نسبي\\n\";\n        }\n    };\n\n    check_path(path1); // مسار مطلق\n    check_path(path2); // مسار نسبي\n}",
+          "explanationArabic": "front() أوضح من operator[](0) لأنها تُعبّر عن النية: 'أريد أول حرف'. لكنها لا تتحقق من الفراغ — يجب فحص empty() قبل الاستخدام. نسيان هذا الفحص هو خطأ شائع لأن front() على سلسلة فارغة = سلوك غير معرّف."
+        },
+        {
+          "titleArabic": "تحويل أول حرف لكبير",
+          "code": "#include <string>\n#include <iostream>\n#include <cctype>\n\nint main() {\n    std::string name = \"alice\";\n\n    if (!name.empty()) {\n        // front() تُرجع مرجعًا — التعديل يُعدّل الأصل\n        name.front() = std::toupper(name.front());\n        std::cout << name; // Alice\n    }\n}",
+          "explanationArabic": "front() تُرجع مرجعًا قابلًا للتعديل — لذا name.front() = ... يُعدّل أول حرف مباشرة. هذا أنظح من name[0] = ... لأن النية أوضح. لا تحتاج لـ erase + insert لتعديل حرف واحد."
+        },
+        {
+          "titleArabic": "front vs operator[](0) vs begin()",
+          "code": "#include <string>\n\nstd::string s = \"hello\";\n\n// الثلاثة يُرجعون نفس الحرف لكن بدلالات مختلفة:\nchar a = s.front();        // 'h' — الأوضح: 'أول حرف'\nchar b = s[0];             // 'h' — فهرسة: 'الحرف في الموضع 0'\nchar c = *s.begin();       // 'h' — مكرّر: 'العنصر الأول'\n\n// front() أنسب عندما تهتم بالقيمة لا بالموضع\n// operator[] أنسب في حلقة فهرسية\n// begin() أنسب مع الخوارزميات\n\n// ⚠️ كلها سلوك غير معرّف على سلسلة فارغة\n// std::string empty;\n// empty.front(); // UB!\n// empty[0];      // UB! (لا يُرجع '\\0' لأن 0 < size() = 0 = false)",
+          "explanationArabic": "اختيار الوصول يعتمد على السياق: front() عندما تهتم بأول حرف كقيمة، operator[] في الحلقات الفهرسية، begin() مع الخوارزميات والمكرّرات. الثلاثة لا تتحقق من الفراغ — empty() دائمًا أولًا."
+        }
+      ],
+      "related": [
+        "std::string::back",
+        "std::string::at",
+        "std::string::operator[]",
+        "std::string::empty"
+      ]
+    },
+    "std::string::back": {
+      "title": "std::string::back",
+      "type": "دالة عضو في string",
+      "description": "تُرجع مرجعًا لآخر حرف في السلسلة. مكافئة لـ operator[](size() - 1) لكنها أوضح دلاليًا. سلوك غير معرّف إذا كانت السلسلة فارغة.",
+      "usage": "يظهر عند فحص آخر حرف: التحقق من امتداد ملف، إزالة فاصل سطر trailing، فحص نوع النهاية.",
+      "example": "if (!s.empty() && s.back() == '\\n') { s.pop_back(); }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "إزالة فاصل السطر الزائد",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string line = \"hello world\\n\";\n\n    // نمط شائع جدًا: إزالة trailing newline\n    if (!line.empty() && line.back() == '\\n') {\n        line.pop_back(); // يُزيل آخر حرف\n    }\n    std::cout << '[' << line << ']'; // [hello world]\n\n    // التعامل مع \\r\\n (Windows)\n    if (!line.empty() && line.back() == '\\r') {\n        line.pop_back();\n    }\n}",
+          "explanationArabic": "back() + pop_back() هو النمط القياسي لإزالة أحرف نهاية السلسلة. back() تُرجع مرجعًا لآخر حرف للفحص، و pop_back() تُزيله. هذا أنظح من erase(size()-1, 1) لأنه لا يحتاج حساب موضع."
+        },
+        {
+          "titleArabic": "فحص امتداد ملف بسرعة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string filename = \"shader.frag\";\n\n    // بدل rfind('.') يمكنك فحص آخر حرف مباشرة\n    // لكن هذا يعمل فقط لامتدادات من حرف واحد\n    if (!filename.empty() && filename.back() == 'h') {\n        std::cout << \"ملف header\\n\";\n    }\n\n    // للامتدادات الطويلة، rfind أنسب\n    if (filename.size() >= 5 && filename.substr(filename.size() - 5) == \".frag\") {\n        std::cout << \"ملف fragment shader\\n\";\n    }\n}",
+          "explanationArabic": "back() مفيدة لفحص الحرف الأخير فقط. للامتدادات متعددة الأحرف استخدم rfind('.') أو substr. back() ليست بديلًا عامًا لـ rfind —各有 استخدام مختلف."
+        },
+        {
+          "titleArabic": "تعديل آخر حرف",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string sentence = \"Hello World\";\n\n    if (!sentence.empty()) {\n        // تعديل آخر حرف مباشرة\n        sentence.back() = '!';\n        std::cout << sentence; // Hello World!\n    }\n\n    // إضافة نقطة إن لم تكن موجودة\n    if (!sentence.empty() && sentence.back() != '.') {\n        sentence.push_back('.');\n    }\n    std::cout << '\\n' << sentence; // Hello World!.\n}",
+          "explanationArabic": "back() تُرجع مرجعًا قابلًا للتعديل مثل front(). التعديل المباشر عبر back() أسرع من erase + insert لأنه لا إزاحة. النمط 'فحص + تعديل/إضافة' شائع مع back()."
+        }
+      ],
+      "related": [
+        "std::string::front",
+        "std::string::pop_back",
+        "std::string::at",
+        "std::string::empty"
+      ]
+    },
+    "std::string::c_str": {
+      "title": "std::string::c_str",
+      "type": "دالة عضو في string",
+      "description": "يُرجع مؤشرًا لسلسلة C منتهية بـ null (const char*). البيانات التي يُشير إليها مطابقة لـ string لكن يُضاف حرف '\\0' في النهاية. المؤشر صالح ما دام السلسلة لم تُعدّل.",
+      "usage": "ضروري عند التفاعل مع واجهات C أو APIs تتطلب const char*: fopen، printf، OpenGL، SDL، أنظمة التشغيل. هو الجسر بين عالم string++ وعالم C-strings.",
+      "example": "FILE* f = fopen(path.c_str(), \"r\");",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدام string مع دوال C",
+          "code": "#include <string>\n#include <cstdio>\n#include <cmath>\n\nint main() {\n    std::string filename = \"data.txt\";\n    std::string format = \"القيمة: %.2f\\n\";\n\n    // fopen تتطلب const char* — c_str يحوّل\n    FILE* f = fopen(filename.c_str(), \"r\");\n    if (f) {\n        // printf تتطلب const char* أيضًا\n        printf(format.c_str(), 3.14159);\n        fclose(f);\n    }\n}",
+          "explanationArabic": "بدون c_str() لا يمكنك تمرير string لأي دالة C تتوقع const char*. المحول الضمني من string إلى const char* غير موجود في C++ — يجب الاستدعاء الصريح. هذا تصميم مقصود لمنع الأخطاء."
+        },
+        {
+          "titleArabic": "استخدام مع مكتبات رسومية (OpenGL/SDL)",
+          "code": "#include <string>\n// #include <GL/gl.h>\n// #include <SDL3/SDL.h>\n\nvoid example() {\n    std::string title = \"نافذة اللعبة\";\n    std::string shader_path = \"shaders/vertex.glsl\";\n\n    // SDL_CreateWindow تتطلب const char*\n    // auto window = SDL_CreateWindow(title.c_str(), 800, 600, 0);\n\n    // OpenGL shader compilation تتطلب const char*\n    // const char* src = shader_code.c_str();\n    // glShaderSource(shader, 1, &src, nullptr);\n}",
+          "explanationArabic": "في البرمجة الرسومية، c_str() يُستخدم مع كل API تعتمد على C-strings: إنشاء النوافذ، تحميل الشيدرز، قراءة الملفات. لا بديل عنه في هذه الحالات — data() لا يضمن null-termination قبل C++17."
+        },
+        {
+          "titleArabic": "محtrap: تعديل string يُبطل المؤشر",
+          "code": "#include <string>\n#include <cstring>\n\nstd::string s = \"hello\";\nconst char* ptr = s.c_str(); // ptr يُشير لبيانات s الداخلية\n\n// ❌ أي تعديل قد يُبطل ptr — realloc داخلي قد يُغيّر العنوان\ns += \" world\"; // ptr الآن قد يكون مُبطَلًا!\n// printf(\"%s\", ptr); // سلوك غير معرّف!\n\n// ✅ استخدم c_str() بعد كل تعديل أو انسخ النص\nstd::string copy = s; // نسخة مستقلة\nconst char* safe = copy.c_str();\n\n// ✅ أو استخدمه مباشرة بدون تخزين المؤشر\nprintf(\"%s\", s.c_str()); // آمن — c_str() يُستدعى بعد التعديل",
+          "explanationArabic": "المؤشر من c_str() صالح فقط ما دامت السلسلة لم تتغير. أي عملية قد تُغيّر السعة (append، insert، +=) قد تُسبّب reallocation مما يُبطل المؤشر. القاعدة: لا تخزّن c_str() في متغير ثم عدّل السلسلة."
+        }
+      ],
+      "related": [
+        "std::string::data",
+        "std::string::operator[]",
+        "std::string_view"
+      ]
+    },
+    "std::string::data": {
+      "title": "std::string::data",
+      "type": "دالة عضو في string",
+      "description": "يُرجع مؤشرًا للبيانات الخام للسلسلة. في C++17 وأحدث: يُرجع char* (قابل للتعديل) للنسخ غير const، مع ضمان null-termination. قبل C++17: يُرجع const char* فقط ولا يضمن null-termination.",
+      "usage": "يظهر عند الحاجة للتعامل مع البيانات الخام: تمريرها لمكتبات C تُعدّل البيانات، نسخ مباشر للذاكرة، أو العمل مع واجهات تتطلب buffer قابل للكتابة.",
+      "example": "char* buf = s.data(); // C++17: قابل للتعديل",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "كتابة مباشرة في buffer السلسلة (C++17)",
+          "code": "#include <string>\n#include <iostream>\n#include <cstring>\n\nint main() {\n    std::string s;\n    s.resize(10); // تخصيص المساحة أولًا\n\n    // data() في C++17 يُرجع char* — يمكن الكتابة مباشرة\n    std::strcpy(s.data(), \"hello\"); // نسخ C مباشرة في buffer\n    std::cout << s; // hello\n\n    // هذا أسرع من s = \"hello\" لأنه لا تخصيص إضافي\n    // مفيد عند بناء نص من مصدر C",
+          "explanationArabic": "data() في C++17 يُرجع مؤشرًا قابلًا للتعديل — هذا يسمح باستخدام دوال C مثل strcpy مباشرة على buffer الـ string. يجب resize() أولًا لضمان وجود مساحة كافية. هذا أنسب من c_str() عند الحاجة للكتابة لأن c_str() يُرجع دائمًا const char*."
+        },
+        {
+          "titleArabic": "data() vs c_str() في C++17",
+          "code": "#include <string>\n\nstd::string s = \"test\";\n\n// في C++17 وأحدث:\n// c_str(): يُرجع const char* — للقراءة فقط\nconst char* c = s.c_str();\n\n// data(): يُرجع char* (قابل للتعديل) أو const char* (حسب constness)\nchar* d = s.data();\nd[0] = 'T'; // تعديل مباشر — يعمل في C++17\n\n// القيمة: كلاهما يُشيران لنفس البيانات\n// كلاهما يضمن null-termination في C++17\n\n// الفرق الوحيد: data() على non-const string تُرجع non-const\n\n// قبل C++17: data() لا يضمن null-termination\n// لذلك كان c_str() ضروريًا للتمرير لدوال C",
+          "explanationArabic": "في C++17، الفرق بين data() و c_str() تقلص بشكل كبير. كلاهما يضمان null-termination وكلاهما يُشيران لنفس الذاكرة. الفرق العملي الوحيد: data() على non-const string تُرجع مؤشرًا قابلًا للتعديل. في كود C++17 حديث، data() يحل محل c_str() في معظم الحالات."
+        },
+        {
+          "titleArabic": "استخدام data() مع recv() لقراءة شبكية",
+          "code": "#include <string>\n// #include <sys/socket.h>\n\nvoid read_from_socket(int sockfd) {\n    std::string buffer;\n    buffer.resize(1024);\n\n    // recv تكتب مباشرة في buffer — تحتاج مؤشرًا قابل للكتابة\n    // int bytes = recv(sockfd, buffer.data(), buffer.size(), 0);\n    // if (bytes > 0) {\n    //     buffer.resize(bytes); // تقليم للحجم الفعلي\n    // }\n\n    // لماذا data() وليس c_str()؟\n    // لأن c_str() يُرجع const char* — recv تحتاج void* قابل للكتابة\n    // data() في C++17 تُرجع char* الذي يتحول لـ void* تلقائيًا\n}",
+          "explanationArabic": "data() أنسب من c_str() عندما تحتاج تمرير buffer قابل للكتابة لدالة C. هذا شائع في عمليات الإدخال/الإخراج منخفضة المستوى: شبكات، ملفات، أجهزة. النمط: resize() لتخصيص → data() للتمرير → resize() مرة أخرى لتقليم الحجم الفعلي."
+        }
+      ],
+      "related": [
+        "std::string::c_str",
+        "std::string::resize",
+        "std::string::operator[]"
+      ]
+    },
+    "std::string::compare": {
+      "title": "std::string::compare",
+      "type": "دالة عضو في string",
+      "description": "تُقارن السلسلة مع نص آخر وترجع قيمة سالبة أو صفرية أو موجبة: سالبة إذا كانت أقل أبجديًا، صفر إذا متساوية، موجبة إذا كانت أكبر. تقارن حرفًا بحرف حسب قيم ASCII.",
+      "usage": "يظهر عند الترتيب الأبجدي، المقارنة الدقيقة بين نصوص، أو المقارنة الجزئية (substring comparison). يختلف عن == في أنه يُرجع ترتيبًا وليس مجرد تساوٍ.",
+      "example": "if (s.compare(other) == 0) { /* متساوية */ }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "المقارنة الأساسية",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string a = \"apple\";\n    std::string b = \"banana\";\n    std::string c = \"apple\";\n\n    // compare تُرجع 0 عند التساوي\n    std::cout << a.compare(c) << '\\n'; // 0\n\n    // سالب: a تأتي قبل b أبجديًا\n    std::cout << a.compare(b) << '\\n'; // قيمة سالبة\n\n    // موجب: b تأتي بعد a\n    std::cout << b.compare(a) << '\\n'; // قيمة موجبة\n\n    // لكن عادةً لا نحتاج القيمة الدقيقة — نحتاج التساوي فقط\n    // لذا operator== أوضح في معظم الحالات\n    if (a == c) { std::cout << \"متساوية\\n\"; }\n}",
+          "explanationArabic": "compare تُرجع ثلاثي القيم مثل strcmp في C. لكن في معظم الحالات operator== أنسب للمقارنة لأنها أوضح. compare تُفيد فعليًا في حالتين: الترتيب (sort) والمقارنة الجزئية."
+        },
+        {
+          "titleArabic": "المقارنة الجزئية (substring compare)",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"Hello, World!\";\n\n    // compare(pos, count, other): يُقارن جزءًا من s مع other كامل\n    // يُقارن s[7..11] = \"World\" مع \"World\"\n    int result = s.compare(7, 5, \"World\");\n    std::cout << (result == 0 ? \"متساوي\" : \"مختلف\") << '\\n'; // متساوي\n\n    // compare(pos, count, other, other_pos, other_count)\n    // يُقارن جزءًا من s مع جزء من other\n    std::string other = \"XXWorldYY\";\n    result = s.compare(7, 5, other, 2, 5); // \"World\" vs \"World\"\n    std::cout << (result == 0 ? \"متساوي\" : \"مختلف\") << '\\n'; // متساوي\n\n    // هذا ما يميز compare عن operator==\n    // operator== يُقارن السلسلة كاملة فقط\n}",
+          "explanationArabic": "الميزة الحقيقية لـ compare هي المقارنة الجزئية بدون إنشاء substrings مؤقتة. compare(pos, count, str) تُقارن جزءًا محددًا مباشرةً — هذا أسرع من substr ثم == لأنه لا تخصيص ذاكرة."
+        },
+        {
+          "titleArabic": "مقارنة غير حساسة لحالة الأحرف",
+          "code": "#include <string>\n#include <iostream>\n#include <algorithm>\n#include <cctype>\n\nint main() {\n    std::string a = \"Hello\";\n    std::string b = \"hello\";\n\n    // ❌ compare حساسة لحالة الأحرف\n    // a.compare(b) != 0 — مختلفان!\n\n    // ✅ مقارنة غير حساسة: حوّل ثم قارن\n    auto to_lower = [](std::string s) {\n        std::transform(s.begin(), s.end(), s.begin(),\n                       [](unsigned char c) { return std::tolower(c); });\n        return s;\n    };\n\n    if (to_lower(a).compare(to_lower(b)) == 0) {\n        std::cout << \"متساويان بغض النظر عن الحالة\\n\";\n    }\n\n    // أو استخدم equal مع custom comparator — أنسب أداءً لأنه لا يُنشئ نسخًا\n    bool same = std::equal(a.begin(), a.end(), b.begin(), b.end(),\n        [](char x, char y) { return std::tolower(x) == std::tolower(y); });\n}",
+          "explanationArabic": "compare لا توفر خيار 'case-insensitive' — يجب التحول يدويًا. لكن إنشاء نسخ محوّلة مكلف. البديل الأنسب هو std::equal مع مقارن مخصص — لا يُنشئ نسخًا ويقف عند أول اختلاف."
+        }
+      ],
+      "related": [
+        "std::string::operator==",
+        "std::string::find",
+        "std::string::substr",
+        "std::strcmp"
+      ]
+    },
+    "std::string::copy": {
+      "title": "std::string::copy",
+      "type": "دالة عضو في string",
+      "description": "ينسخ عددًا محددًا من الأحرف من السلسلة إلى buffer مستهدف (char*). لا يُضيف null-terminator تلقائيًا — يجب إضافته يدويًا إن لزم. يُرجع عدد الأحرف الفعلي المنسوخة.",
+      "usage": "يظهر عند الحاجة لنسخ جزء من string إلى buffer C: التفاعل مع مكتبات قديمة، أو عند الحاجة لنسخ جزئي بدون إنشاء string مؤقت.",
+      "example": "s.copy(buf, count, pos); buf[count] = '\\0';",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ جزء من string إلى buffer C",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"Hello, World!\";\n    char buf[10];\n\n    // copy(dest, count, pos): ينسخ count أحرف من موضع pos\n    // لا يُضيف '\\0' تلقائيًا!\n    size_t copied = s.copy(buf, 5, 7); // ينسخ \"World\"\n    buf[copied] = '\\0'; // إضافة null terminator يدويًا\n\n    std::cout << buf; // World\n}",
+          "explanationArabic": "copy لا تُضيف '\\0' — هذا مختلف عن strcpy. يجب إضافة null terminator يدويًا بعد النسخ. copied يُرجع العدد الفعلي (قد يكون أقل من المطلوب إذا كان المتبقي أقل). استخدم هذا العدد وليس count لتحديد موضع '\\0'."
+        },
+        {
+          "titleArabic": "copy vs substr: متى تستخدم أيهما",
+          "code": "#include <string>\n\nstd::string s = \"Hello, World!\";\n\n// substr: يُنشئ string جديد — أنسب للكود الحديث\nstd::string part1 = s.substr(7, 5); // \"World\"\n// مزايا: آمن، أوضح، لا تحتاج إدارة يدوية\n// عيوب: تخصيص ذاكرة (heap allocation)\n\n// copy: ينسخ لـ buffer موجود — أنسب للأداء الحرج أو APIs قديمة\nchar buf[6];\nsize_t n = s.copy(buf, 5, 7);\nbuf[n] = '\\0'; // \"World\"\n// مزايا: لا تخصيص heap، تحكم كامل بالذاكرة\n// عيوب: غير آمن، يجب إدارة الـ buffer يدويًا\n\n// القاعدة: استخدم substr إلا إذا كان لديك سبب حقيقي لـ copy",
+          "explanationArabic": "في كود C++ الحديث، substr أنسب في 95% من الحالات. copy مفيدة فقط مع APIs تتطلب char* أو في كود حرج الأداء حيث تريد تجنب تخصيص heap. لا تستخدم copy فقط لأنها 'أقرب لـ C' — هذا ليس مبررًا."
+        }
+      ],
+      "related": [
+        "std::string::substr",
+        "std::string::c_str",
+        "std::string::data",
+        "std::memcpy"
+      ]
+    },
+    "std::string::size": {
+      "title": "std::string::size",
+      "type": "دالة عضو في string",
+      "description": "تُرجع عدد الأحرف في السلسلة (نوع size_t). مكافئة لطول السلسلة لكن الاسم متسق مع كل حاويات STL الأخرى. لا تُحتسب حرف null terminator في الطول.",
+      "usage": "الأداة الأساسية لمعرفة طول النص. يظهر في كل حلقة تكرار، فحص فراغ، حساب مواضع، وتخصيص ذاكرة. size() أوضح من length() في الكود العام لأنها تتفق مع vector و array وكل الحاويات.",
+      "example": "for (size_t i = 0; i < s.size(); ++i) { /* ... */ }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "الاستخدام الأساسي في الحلقات",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"Hello\";\n\n    // size() تُرجع size_t (عدد صحيح غير سالب)\n    // استخدم size_t كنوع الفهرس — لا تستخدم int\n    for (size_t i = 0; i < s.size(); ++i) {\n        std::cout << i << \": \" << s[i] << '\\n';\n    }\n    // 0: H, 1: e, 2: l, 3: l, 4: o\n}",
+          "explanationArabic": "size() تُرجع size_t وهو نوع غير سالب. استخدام int للفهرسة قد يُسبب تحذيرات لأن size_t قد يكون أكبر من int. في الحلقات، قارن مع size() وليس رقمًا ثابتًا لتجنب الأخطاء عند تغيير النص."
+        },
+        {
+          "titleArabic": "size() vs length() vs sizeof()",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"hello\";\n\n    // size() و length() متطابقتان تمامًا — نفس القيمة، نفس الأداء\n    std::cout << s.size() << '\\n';    // 5\n    std::cout << s.length() << '\\n';  // 5\n\n    // sizeof() مختلف تمامًا — يُرجع حجم هيكل string في الذاكرة\n    std::cout << sizeof(s) << '\\n';   // عادةً 24 أو 32 بايت (مؤشر + حجم + سعة)\n    // sizeof لا يُرجع طول النص أبدًا!\n\n    // strlen(s.c_str()) تعمل لكنها أبطأ — تُمسح حتى '\\0'\n    // size() تُرجع القيمة المخزنة مباشرة — O(1)\n\n    // القاعدة: استخدم size() دائمًا — لا تستخدم strlen أو sizeof",
+          "explanationArabic": "sizeof(string) يُرجع حجم الهيكل لا طول النص — هذا خطأ شائع جدًا من مبرمجي C. strlen تعمل لكنها O(n) بينما size() O(1). size() vs length(): لا فرق فعلي، لكن size() أنسب لأنها متسقة مع كل حاويات STL."
+        },
+        {
+          "titleArabic": "size مع empty و capacity",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s;\n\n    std::cout << \"empty: \" << s.empty() << '\\n';    // 1 (true)\n    std::cout << \"size: \" << s.size() << '\\n';      // 0\n    std::cout << \"capacity: \" << s.capacity() << '\\n'; // 15 (تنفيذية)\n\n    s = \"Hello\";\n    std::cout << \"size: \" << s.size() << '\\n';      // 5\n    std::cout << \"capacity: \" << s.capacity() << '\\n'; // 15 (لم تتغير)\n\n    // size = عدد الأحرف الفعلية\n    // capacity = المساحة المحجوزة (قد تكون أكبر)\n    // empty() = size() == 0 لكنها أوضح دلاليًا\n\n    // reserve(capacity) تُحجّز مساحة مسبقًا بدون تغيير size\n    // resize(count) تُغيّر size (وقد تُغيّر capacity إن لزم)\n}",
+          "explanationArabic": "size و capacity مفهومان مختلفان: size هو ما تستخدمه فعليًا، capacity هو ما حجزته في الذاكرة. capacity >= size دائمًا. فهم الفرق مهم لتحسين الأداء: reserve تمنع reallocations المتكررة عند البناء التدريجي."
+        }
+      ],
+      "related": [
+        "std::string::length",
+        "std::string::empty",
+        "std::string::capacity",
+        "std::string::resize"
+      ]
+    },
+    "std::string::length": {
+      "title": "std::string::length",
+      "type": "دالة عضو في string",
+      "description": "مكافئة تمامًا لـ size() — تُرجع عدد الأحرف في السلسلة. الوجود التاريخي لأن string ظهرت قبل توحيد STL، فكانت تستخدم length كاسم طول النص. size() أُضيف لاحقًا للتوافق مع حاويات STL.",
+      "usage": "تعمل بالضبط مثل size(). في الكود الحديث يُفضّل size() لأنها متسقة مع vector و array وكل حاويات STL. length() لا تقدم أي ميزة إضافية.",
+      "example": "if (s.length() > 0) { /* ... */ } // نفس s.size() > 0",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "length() و size() متطابقتان",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"Hello, World!\";\n\n    // كل هذه متطابقة:\n    std::cout << s.size() << '\\n';    // 13\n    std::cout << s.length() << '\\n';  // 13\n\n    // لا فرق في الأداء — كلاهما O(1)\n    // كلاهما يُرجع size_t\n    // كلاهما لا يُحسبان '\\0'\n\n    // الاختيار مسألة أسلوب فقط:\n    // size() → متسقة مع STL → أنسب في الكود العام\n    // length() → أقرب دلاليًا لـ 'طول نص' → مقبولة أيضًا",
+          "explanationArabic": "لا يوجد أي فرق تقني بين size() و length(). القرار أسلوبي بحت: بعض الفرق تُفضّل size() للتوافق مع الحاويات، وبعضها تُفضّل length() لأنها أوضح عند التعامل مع النصوص. المهم: لا تخلط بينهما في نفس الملف — اختر واحدًا والتزم به."
+        }
+      ],
+      "related": [
+        "std::string::size",
+        "std::string::empty",
+        "std::string::capacity",
+        "std::string::max_size"
+      ]
+    },
+    "std::string::empty": {
+      "title": "std::string::empty",
+      "type": "دالة عضو في string",
+      "description": "تُرجع true إذا كانت السلسلة لا تحتوي على أي أحرف (طولها صفر)، وfalse خلاف ذلك. مكافئة لـ size() == 0 لكنها أوضح دلاليًا وأحيانًا أسرع لأنها قد تتحقق من حقل داخلي مباشرة.",
+      "usage": "الطريقة القياسية للتحقق من فراغ السلسلة في C++. يظهر قبل أي عملية تفترض وجود محتوى: البحث، الاستخراج، الوصول لحرف. أنسب من مقارنة size() مع صفر لأنها تُعبّر عن النية بوضوح.",
+      "example": "if (!s.empty() && s[0] == '/') { /* مسار مطلق */ }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق قبل الوصول لعناصر السلسلة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string input;\n\n    // ❌ خطأ: ما لو كانت input فارغة؟\n    // char first = input.front(); // سلوك غير معرّف!\n\n    // ✅ تحقق دائمًا قبل الوصول\n    if (!input.empty()) {\n        char first = input.front(); // آمن\n    }\n\n    // النمط الشائع: الدمج مع شرط آخر\n    std::string path = \"/usr/local/bin\";\n    if (!path.empty() && path.front() == '/') {\n        std::cout << \"مسار مطلق\\n\";\n    }\n}",
+          "explanationArabic": "empty() هي خط الدفاع الأول قبل أي عملية على السلسلة. front() و back() و operator[] كلها سلوك غير معرّف على سلسلة فارغة. empty() أوضح من size() == 0 لأنها تُعبّر عن 'هل هناك محتوى؟' بدل 'هل العدد يساوي صفر؟'."
+        },
+        {
+          "titleArabic": "empty مع القراءة من ملف أو مدخل",
+          "code": "#include <string>\n#include <iostream>\n#include <fstream>\n\nint main() {\n    std::ifstream file(\"config.txt\");\n    std::string line;\n\n    // getline تقرأ سطرًا — قد يكون فارغًا (سطر يحتوي فقط على \\n)\n    while (std::getline(file, line)) {\n        // تخطي الأسطر الفارغة\n        if (line.empty()) continue;\n\n        std::cout << line << '\\n';\n    }\n\n    // ملاحظة: getline تُرجع true حتى للأسطر الفارغة\n    // لذلك empty() ضرورية للتخفي وليست اختيارية\n}",
+          "explanationArabic": "getline قد تقرأ سطرًا فارغًا وتُرجع true — هذا يُفاجئ المبرمجين الجدد. السطر الفارغ هنا يعني سطرًا يحتوي فقط على فاصل السطر. empty() هي الطريقة الصحيحة لتخطي هذه الأسطر."
+        },
+        {
+          "titleArabic": "empty vs size() == 0 vs == \"\"",
+          "code": "#include <string>\n\nstd::string s;\n\n// الثلاثة متكافئة منطقيًا:\nbool a = s.empty();       // الأوضح — تتحقق من 'الفراغ'\nbool b = s.size() == 0;   // تعمل لكنها أقل وضوحًا\nbool c = s == \"\";         // تعمل لكنها أنسب — تُنشئ string مؤقت للمقارنة\n\n// لماذا empty() أفضل؟\n// 1. أوضح دلاليًا: 'هل السلسلة فارغة؟'\n// 2. قد تكون أسرع: بعض التطبيقات تتحقق من حقل داخلي مباشرة\n// 3. لا تُنشئ أي كائن مؤقت\n\n// s == \"\" تُنشئ string مؤقت من \"\" ثم تُقارن — حمل زائد بلا فائدة\n// استخدم empty() دائمًا",
+          "explanationArabic": "المقارنة مع \"\" تُنشئ كائن string مؤقت ثم تُقارن — هذا حمل لا داعي له. empty() لا تُنشئ شيئًا وقد تكون O(1) مباشرة من حقل داخلي. القاعدة: empty() للتحقق من الفراغ، == للمقارنة مع محتوى فعلي."
+        }
+      ],
+      "related": [
+        "std::string::size",
+        "std::string::clear",
+        "std::string::front",
+        "std::string::back"
+      ]
+    },
+    "std::string::clear": {
+      "title": "std::string::clear",
+      "type": "دالة عضو في string",
+      "description": "يُزيل كل أحرف السلسلة ويُعيدها لحالة فارغة (size = 0). لا تُغيّر السعة (capacity) — الذاكرة المحجوزة تبقى كما هي. لا تُرجع شيئًا.",
+      "usage": "يظهر عند إعادة استخدام نفس كائن string لنص جديد، تنظيف buffer قبل ملء جديد، أو في دورات معالجة حيث تُفرَّغ السلسلة في كل تكرار.",
+      "example": "buffer.clear(); // إفراغ للملء من جديد",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "إعادة استخدام السلسلة في حلقة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string line;\n    std::string result;\n\n    // محاكاة قراءة أسطر ومعالجتها\n    std::string lines[] = {\"hello\", \"world\", \"test\"};\n\n    for (const auto& l : lines) {\n        line.clear();    // إفراغ لإعادة الاستخدام — لا تخصيص جديد\n        line = l;        // ملء بالنص الجديد\n        result += line + \" \";\n    }\n\n    std::cout << result; // hello world test\n\n    // لماذا clear() وليس إنشاء string جديد في كل تكرار؟\n    // لأن clear() لا تُحرر الذاكرة — capacity تبقى محجوزة\n    // التعيين التالي يستخدم الذاكرة المحجوزة مباشرة بدون تخصيص جديد\n}",
+          "explanationArabic": "clear() تُفرغ المحتوى لكنها تُحافظ على capacity — هذا يعني أن التعيين التالي لن يحتاج تخصيص ذاكرة جديدًا. هذا أنسب من إنشاء string جديد في كل تكرار لأنه يُتجنب تكرار allocate/deallocate."
+        },
+        {
+          "titleArabic": "clear vs إنشاء string جديد vs = \"\"",
+          "code": "#include <string>\n\nstd::string s = \"hello world this is a long string\";\n\n// clear(): تُزيل المحتوى فقط — capacity تبقى\ns.clear();\n// s.size() == 0, s.capacity() > 0 (لا تتغير)\n\n// s = \"\": تُنشئ string مؤقت من \"\" ثم تنقل — حمل زائد\n// قد تُصغّر capacity في بعض التطبيقات\n\n// std::string s2{};: كائن جديد — تخصيص جديد لو احتجت سعة كبيرة لاحقًا\n\n// القاعدة:\n// - تُعيد استخدام نفس الكائن → clear()\n// - لا تحتاج الكائن بعد الآن → دعه يخرج من النطاق (RAII)\n// - تريد تقليل الذاكرة فورًا → clear() + shrink_to_fit()\n\n// للتقليل الفعلي للذاكرة:\ns = \"hello world this is a long string\";\ns.clear();\ns.shrink_to_fit(); // الآن capacity تصبح ~0",
+          "explanationArabic": "clear() وحدها لا تُحرر الذاكرة — هذا تصميم مقصود للأداء. إذا كانت السلسلة كبيرة ولن تُستخدم قريبًا، استخدم clear() + shrink_to_fit() أو دع الكائن يخرج من النطاق. لا تُفرط في shrink_to_fit لأنه قد يُسبب تخصيصات إضافية لاحقًا."
+        },
+        {
+          "titleArabic": "استخدام clear مع buffer إعادة الاستخدام",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string buffer;\n    buffer.reserve(1024); // حجز مسبق — مرة واحدة\n\n    // محاكاة معالجة عدة رسائل\n    auto process = [&](const std::string& msg) {\n        buffer.clear();       // إفراغ — لا تخصيص (capacity = 1024)\n        buffer = \"[LOG] \";\n        buffer += msg;\n        std::cout << buffer << '\\n';\n    };\n\n    process(\"بدء التشغيل\");\n    process(\"تحميل الأصول\");\n    process(\"جاهز\");\n\n    // كل الاستدعاءات استخدمت نفس الذاكرة — صفر تخصيصات إضافية\n}",
+          "explanationArabic": "النمط reserve + clear في حلقة هو واحد من أهم أنماط الأداء مع string. reserve() تُخصص مرة واحدة، clear() تُفرغ بدون تحرير، والتعيينات التالية تستخدم المساحة المحجوزة. هذا يُلغي كل تخصيصات heap في الحلقة."
+        }
+      ],
+      "related": [
+        "std::string::empty",
+        "std::string::resize",
+        "std::string::capacity",
+        "std::string::shrink_to_fit"
+      ]
+    },
+    "std::string::resize": {
+      "title": "std::string::resize",
+      "type": "دالة عضو في string",
+      "description": "تُغيّر عدد أحرف السلسلة. إذا كان الحجم الجديد أكبر تُضيف أحرفًا (null '\\0' افتراضيًا أو حرف محدد). إذا كان أصغر تُزيل الأحرف الزائدة من النهاية. قد تُغيّر السعة (capacity) إن لزم.",
+      "usage": "يظهر عند تخصيص buffer لحساب لاحق، تقليم سلسلة لحجم محدد، أو بناء نص بحجم معروف مسبقًا. أساسي مع data() للكتابة المباشرة في buffer.",
+      "example": "s.resize(1024); std::strcpy(s.data(), \"hello\");",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "تقليم السلسلة لحجم أصغر",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string data = \"Hello, World!\";\n\n    // تقليم لأول 5 أحرف\n    data.resize(5);\n    std::cout << data; // Hello\n\n    // هذا أنسب من erase لأنه لا يحتاج حساب موضع\n    // erase تحتاج: data.erase(5); أو data.erase(5, data.size() - 5);\n    // resize أوضح: 'أريد أن يكون الحجم 5'\n}",
+          "explanationArabic": "resize(n) عندما يكون n < size() تُزيل من النهاية مباشرة — هذا أوضح من erase لأن النية هي 'تغيير الحجم' لا 'حذف جزء'. erase أنسب عندما تريد حذف جزء من الوسط أو بشرط ديناميكي."
+        },
+        {
+          "titleArabic": "توسيع السلسلة مع حرف تعبئة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string label = \"Score\";\n\n    // resize(n, fill_char): يُوسع ويملأ الفراغ بالحرف المحدد\n    label.resize(20, '-');\n    std::cout << label; // Score---------------\n\n    // بدون حرف تعبئة: يملأ بـ '\\0' (null character)\n    std::string buffer;\n    buffer.resize(100); // 100 حرف null\n    // مفيد كـ buffer خام تكتب فيه لاحقًا\n}",
+          "explanationArabic": "resize مع حرف تعبئة مفيد لإنشاء نصوص بعرض ثابت أو فواصل. بدون حرف تعبئة، الأحرف الجديدة تكون '\\0' — هذا يُنشئ buffer خام لكن يجب الانتباه أن السلسلة الآن تحتوي على null bytes في المنتصف، مما قد يُسبب مشاكل مع دوال C."
+        },
+        {
+          "titleArabic": "resize + data للكتابة المباشرة في buffer",
+          "code": "#include <string>\n#include <iostream>\n#include <cstdio>\n\nint main() {\n    // النمط القياسي: resize لتخصيص → data للكتابة → resize لتقليم\n    std::string buffer;\n    buffer.resize(256); // تخصيص مساحة\n\n    // الكتابة مباشرة عبر data() (C++17)\n    std::snprintf(buffer.data(), buffer.size(), \"القيمة: %d\", 42);\n\n    // تقليم للحجم الفعلي بعد الكتابة\n    // strlen لا تعمل مع UTF-8 العربي بشكل موثوق\n    // لذا نبحث عن أول null يدويًا\n    auto null_pos = buffer.find('\\0');\n    if (null_pos != std::string::npos) {\n        buffer.resize(null_pos);\n    }\n\n    std::cout << buffer; // القيمة: 42\n}",
+          "explanationArabic": "النمط resize → data() → resize هو الطريقة المثلى للتعامل مع دوال C تكتب في buffer. resize الأولى تُخصّص، data() تُعطي مؤشرًا قابلًا للكتابة، resize الثانية تُقلم للحجم الفعلي. هذا يُجنّبك تخصيصين: واحد عند الإنشاء وواحد عند التقليم."
+        }
+      ],
+      "related": [
+        "std::string::clear",
+        "std::string::reserve",
+        "std::string::capacity",
+        "std::string::data",
+        "std::string::size"
+      ]
+    },
+    "std::string::swap": {
+      "title": "std::string::swap",
+      "type": "دالة عضو في string",
+      "description": "يُبدّل محتوى سلسلتين بتبادل مؤشراتهما الداخلية فقط — لا يُنسخ أي بيانات. تعقيد O(1) دائمًا بغض النظر عن حجم السلسلة. يُوجد أيضًا كدالة عامة std::swap في <utility>.",
+      "usage": "يظهر عند تبادل قيمتين مؤقتًا، تحسين الأداء بتجنب النسخ، أو إعادة ترتيب عناصر. أساسي في خوارزميات الترتيب والتحسينات التي تحتاج تبادل بدون نسخ.",
+      "example": "a.swap(b); // O(1) — لا نسخ بيانات",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "التبديل الأساسي بين سلسلتين",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string a = \"hello\";\n    std::string b = \"world\";\n\n    a.swap(b); // الآن a = \"world\", b = \"hello\"\n\n    std::cout << \"a: \" << a << '\\n'; // world\n    std::cout << \"b: \" << b << '\\n'; // hello\n\n    // بدلًا من ذلك، std::swap تعمل أيضًا:\n    std::swap(a, b); // الرجوع: a = \"hello\", b = \"world\"\n}",
+          "explanationArabic": "swap تُبدّل المؤشرات الداخلية والطول والسعة — لا تنسخ الأحرف. هذا يعني أن تبديل سلسلتين بحجم 1MB يأخذ نفس وقت تبديل سلسلتين بحجم 5 أحرف. هذا يختلف عن التبديل عبر متغير مؤقت (tmp = a; a = b; b = tmp) الذي ينسخ البيانات."
+        },
+        {
+          "titleArabic": "swap لتجنب النسخ — تحسين أداء مهم",
+          "code": "#include <string>\n#include <iostream>\n\nstd::string build_large_string() {\n    std::string result;\n    result.reserve(1000000);\n    // ... بناء نص كبير ...\n    for (int i = 0; i < 100000; ++i) result += \"data\";\n    return result; // move semantics تحل هذه المشكلة في C++11+\n}\n\nint main() {\n    std::string destination;\n\n    // ❌ قبل C++11: النسخ كان مكلفًا\n    // destination = build_large_string(); // نسخ كامل!\n\n    // ✅ في C++11+: return يتحول لـ move تلقائيًا — لا مشكلة\n    destination = build_large_string(); // move — O(1)\n\n    // ✅ swap أنسب عند التعامل مع كائن موجود:\n    std::string other;\n    // ... بناء نص في other ...\n    destination.swap(other); // O(1) — تبادل المؤشرات فقط\n    // الآن destination تحتوي النص، other فارغة (أو تحتوي القديم)\n}",
+          "explanationArabic": "في C++11 وأحدث، move semantics تُلغي معظم الحاجة لـ swap كحيلة أداء. لكن swap لا تزال مفيدة عندما تريد تبادل محتوى كائنين موجودين بدون move أحدهما (مما يُفرغه). swap تحافظ على كلا الكائنين صالحين بمحتوى مُبدَّل."
+        },
+        {
+          "titleArabic": "swap في خوارزمية الترتيب",
+          "code": "#include <string>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> names = {\"charlie\", \"alice\", \"bob\"};\n\n    // ترتيب فقاعي مبسط — swap تُستخدم للتبديل\n    for (size_t i = 0; i < names.size(); ++i) {\n        for (size_t j = i + 1; j < names.size(); ++j) {\n            if (names[i] > names[j]) {\n                names[i].swap(names[j]); // O(1) بدل النسخ\n            }\n        }\n    }\n\n    for (const auto& n : names) std::cout << n << ' ';\n    // alice bob charlie\n\n    // في الواقع: std::sort تستخدم swap داخليًا — لا تحتاج كتابتها يدويًا\n    // std::sort(names.begin(), names.end());\n}",
+          "explanationArabic": "كل خوارزميات الترتيب في STL تستخدم swap داخليًا — هذا جزء من سبب كفاءتها مع string. swap العضو في string مُحسَّن لـ O(1) بينما std::swap العامة قد تستخدم النسخ لو لم يكن هناك swap عضو. لكن string تملك swap عضو فعّال std::swap تستدعيه."
+        }
+      ],
+      "related": [
+        "std::swap",
+        "std::string::move",
+        "std::string::operator=",
+        "std::string::reserve"
+      ]
+    },
+    "std::string::push_back": {
+      "title": "std::string::push_back",
+      "type": "دالة عضو في string",
+      "description": "يُضيف حرفًا واحدًا في نهاية السلسلة. تزيد size بمقدار 1. إذا كانت capacity غير كافية تُحدث reallocation. مُصممة لإضافة حرف واحد فقط — لا تقبل string أو C-string.",
+      "usage": "يظهر عند بناء نص حرفًا بحرف، إضافة فاصل، أو إلحاق حرف واحد ناتج عن حساب. أوضح من += عند إضافة حرف واحد لأن النية محددة لا لبس فيها.",
+      "example": "result.push_back('\\n'); // إضافة سطر جديد",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء نص حرفًا بحرف",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string result;\n\n    // تحويل رقم إلى نص يدويًا (للتوضيح — استخدم to_string في الواقع)\n    int number = 42;\n    if (number == 0) {\n        result.push_back('0');\n    } else {\n        // بناء الأرقام بالعكس ثم عكس السلسلة\n        while (number > 0) {\n            result.push_back('0' + (number % 10));\n            number /= 10;\n        }\n        std::reverse(result.begin(), result.end());\n    }\n\n    std::cout << result; // 42\n}",
+          "explanationArabic": "push_back تُضيف حرفًا واحدًا في نهاية السلسلة. عندما تبني نصًا حرفًا بحرف في حلقة، reserve() أولًا ثم push_back() هو النمط الأمثل. بدون reserve، كل push_back قد تُسبب reallocation إذا تجاوزت capacity."
+        },
+        {
+          "titleArabic": "push_back vs operator+= مع حرف",
+          "code": "#include <string>\n\nstd::string s;\n\n// كلاهما يضيف حرفًا واحدًا — أداء متقارب\ns.push_back('a');\ns += 'b';\n\n// الفروق:\n// push_back: لا تقبل إلا char — النية أوضح 'إضافة حرف في النهاية'\n// operator+=: يقبل char, string, const char* — أقل تحديدًا\n\n// متى push_back أنسب؟\n// - في حلقة تبني نصًا حرفًا بحرف\n// - عندما تريد أن يفهم القارئ أنك تضيف حرفًا واحدًا فقط\n\n// متى += أنسب؟\n// - عند إضافة نص كامل أو C-string\n// - في السلاسل المختلطة: s += \"hello\" + ' ' + c;\n\n// الفرق الأدائي ضئيل — المُصرّف يُحسّن كلاهما\n// الاختيار أسلوبي في المقام الأول",
+          "explanationArabic": "push_back و += مع حرف واحد أداءًا متقاربان جدًا — المُصرّف عادةً يُحوّل += لاستدعاء داخلي مشابه. الفرق الحقيقي هو الدلالة: push_back تقول 'حرف واحد' بوضوح، بينما += قد تُضيف نصًا كاملًا."
+        },
+        {
+          "titleArabic": "push_back مع reserve لتحسين الأداء",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string result;\n\n    // ❌ بدون reserve: reallocation متعددة محتملة\n    // string تنمو عادةً بمعامل 2x\n    // 1 → 2 → 4 → 8 → 16 → ... → 1000 (حوالي 10 reallocations)\n    // for (int i = 0; i < 1000; ++i) result.push_back('x');\n\n    // ✅ مع reserve: reallocation واحدة فقط\n    result.reserve(1000);\n    for (int i = 0; i < 1000; ++i) {\n        result.push_back('x'); // كلها O(1) بدون reallocation\n    }\n\n    std::cout << result.size(); // 1000\n}",
+          "explanationArabic": "push_back بدون reserve قد تُسبب عدة reallocations مع نمو السلسلة. كل reallocation تنسخ كل البيانات السابقة. reserve(size) تضمن reallocation واحدة فقط. هذا النمط مهم في الحلقات الكبيرة أو في الكود الحرج أداءً."
+        }
+      ],
+      "related": [
+        "std::string::pop_back",
+        "std::string::append",
+        "std::string::operator+=",
+        "std::string::reserve"
+      ]
+    },
+    "std::string::pop_back": {
+      "title": "std::string::pop_back",
+      "type": "دالة عضو في string",
+      "description": "يُزيل آخر حرف من السلسلة. تُنقّص size بمقدار 1. لا تُرجع الحرف المحذوف. سلوك غير معرّف إذا كانت السلسلة فارغة. لا تُغيّر capacity.",
+      "usage": "يظهر عند إزالة فاصل زائد من النهاية، التراجع عن آخر إضافة، أو تنظيف trailing characters. شائع جدًا مع back() للفحص ثم الحذف.",
+      "example": "if (!s.empty() && s.back() == '\\n') s.pop_back();",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "إزالة فاصل السطر الزائد من getline",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    // محاكاة قراءة سطر من ملف\n    std::string line = \"hello world\\n\";\n\n    // النمط الأشهر لـ pop_back: إزالة trailing newline\n    if (!line.empty() && line.back() == '\\n') {\n        line.pop_back();\n    }\n\n    // التعامل مع ملفات Windows (\\r\\n)\n    if (!line.empty() && line.back() == '\\r') {\n        line.pop_back();\n    }\n\n    std::cout << '[' << line << ']'; // [hello world]\n}",
+          "explanationArabic": "back() + pop_back() هو النمط القياسي لإزالة أحرف النهاية. يجب دائمًا فحص empty() قبل back() و pop_back() لأن كليهما سلوك غير معرّف على سلسلة فارغة. التعامل مع \\r\\n يتطلب pop_back مرتين — الأولى لـ \\n والثانية لـ \\r."
+        },
+        {
+          "titleArabic": "بناء نص ثم التراجع عن آخر حرف",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string result;\n\n    // بناء قائمة مفصولة بفواصل\n    std::string items[] = {\"أحمر\", \"أخضر\", \"أزرق\"};\n    for (const auto& item : items) {\n        result += item;\n        result += \", \";\n    }\n    // النتيجة: \"أحمر, أخضر, أزرق, \" — فاصلة زائدة في النهاية\n\n    // إزالة الفاصلة والمسافة الزائدة\n    result.pop_back(); // إزالة المسافة\n    result.pop_back(); // إزالة الفاصلة\n\n    std::cout << result; // أحمر, أخضر, أزرق\n}",
+          "explanationArabic": "نمط 'أضف فاصل بعد كل عنصر ثم أزله في النهاية' شائع لكنه أقل أناقة من 'أضف فاصل قبل كل عنصر ما عدا الأول'. كلاهما يعمل، لكن النمط الثاني لا يحتاج pop_back. مع ذلك، pop_back هنا O(1) ولا تُسبب مشاكل أداء."
+        },
+        {
+          "titleArabic": "تحذير: pop_back على سلسلة فارغة",
+          "code": "#include <string>\n\nstd::string s;\n\n// ❌ سلوك غير معرّف — لا فحص في pop_back\n// s.pop_back();\n\n// ❌ حتى لو بدأت بـ clear، يجب الفحص\n// s.clear();\n// s.pop_back(); // لا يزال UB!\n\n// ✅ الفحص دائمًا قبل pop_back\nif (!s.empty()) {\n    s.pop_back(); // آمن\n}\n\n// pop_back لا تُرجع الحرف المحذوف — لا يمكنك عمل:\n// char c = s.pop_back(); // خطأ تصريف! pop_back تُرجع void\n\n// للحصول على الحرف قبل الحذف:\nif (!s.empty()) {\n    char last = s.back();  // احفظه أولًا\n    s.pop_back();          // ثم احذف\n}",
+          "explanationArabic": "pop_back تُرجع void — لا يمكنك الحصول على الحرف المحذوف منها مباشرة. استخدم back() للحصول عليه ثم pop_back() للحذف. هذا يختلف عن بعض الحاويات في لغات أخرى التي تُرجع العنصر المحذوف."
+        }
+      ],
+      "related": [
+        "std::string::push_back",
+        "std::string::back",
+        "std::string::erase",
+        "std::string::empty"
+      ]
+    },
+    "std::string::begin": {
+      "title": "std::string::begin",
+      "type": "دالة عضو في string",
+      "description": "يُرجع مكرّر (iterator) يُشير لأول حرف في السلسلة. مع for-each و الخوارزميات (<algorithm>) هو نقطة البداية للمعالجة. يوجد أيضًا cbegin() يُرجع مكرّر const.",
+      "usage": "نقطة البداية لكل المعالجة عبر المكرّرات: الخوارزميات، for-each (ضمنيًا)، والوصول المتسلسل. يظهر مع end() دائمًا لتحديد نطاق المعالجة.",
+      "example": "std::transform(s.begin(), s.end(), s.begin(), ::toupper);",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدام begin/end مع خوارزميات STL",
+          "code": "#include <string>\n#include <algorithm>\n#include <cctype>\n#include <iostream>\n\nint main() {\n    std::string s = \"Hello World\";\n\n    // تحويل كل الأحرف لكبيرة عبر transform\n    std::transform(s.begin(), s.end(), s.begin(),\n        [](unsigned char c) { return std::toupper(c); });\n    std::cout << s; // HELLO WORLD\n\n    // عد عدد المسافات\n    auto spaces = std::count(s.begin(), s.end(), ' ');\n    std::cout << '\\n' << spaces; // 1\n\n    // begin/end هما ما يربط string بكل خوارزميات STL\n}",
+          "explanationArabic": "begin() و end() يُحددان 'نطاقًا نصف مفتوح' [begin, end) — يضم begin ولا يضم end. هذا النمط موحد في كل C++ STL. كل خوارزمية في <algorithm> تأخذ هذا النطاق. begin هو المكرّر القياسي الذي يعمل مع أي حاوية."
+        },
+        {
+          "titleArabic": "begin vs فهرسة مباشرة vs for-each",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"hello\";\n\n    // 1. for-each: الأبسط — يستخدم begin/end ضمنيًا\n    for (char c : s) {\n        std::cout << c << ' '; // h e l l o\n    }\n    std::cout << '\\n';\n\n    // 2. begin/end صريح: ضروري مع الخوارزميات\n    for (auto it = s.begin(); it != s.end(); ++it) {\n        *it = std::toupper(*it); // تعديل عبر المكرّر\n    }\n    std::cout << s << '\\n'; // HELLO\n\n    // 3. فهرسة مباشرة: أنسب عند الحاجة للموضع (index)\n    for (size_t i = 0; i < s.size(); ++i) {\n        std::cout << i << ':' << s[i] << ' '; // 0:H 1:E ...\n    }\n\n    // القاعدة: for-each للقراءة، begin/end مع خوارزميات، فهرسة عند الحاجة للموضع",
+          "explanationArabic": "اختيار طريقة التكرار يعتمد على الحاجة: for-each للبساطة، begin/end صريح عند الحاجة لمكرّر (خوارزميات أو تعديل)، فهرسة عند الحاجة لرقم الموضع. for-each تستخدم begin/end ضمنيًا — لا فرق أدائي."
+        },
+        {
+          "titleArabic": "cbegin و rbegin — أنواع مكرّرات مختلفة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"hello\";\n\n    // begin(): مكرّر عادي — يمكن التعديل عبره\n    for (auto it = s.begin(); it != s.end(); ++it) {\n        *it = std::toupper(*it); // تعديل مسموح\n    }\n\n    // cbegin(): مكرّر const — للقراءة فقط\n    // *it = 'x'; // خطأ تصريف! لا يمكن التعديل عبر const_iterator\n    for (auto it = s.cbegin(); it != s.cend(); ++it) {\n        std::cout << *it; // HELLO\n    }\n\n    // rbegin(): مكرّر عكسي — يبدأ من النهاية\n    for (auto it = s.rbegin(); it != s.rend(); ++it) {\n        std::cout << *it; // OLLEH\n    }\n}",
+          "explanationArabic": "begin يُرجع iterator (قابل للتعديل)، cbegin يُرجع const_iterator (قراءة فقط)، rbegin يُرجع reverse_iterator (من النهاية). اختيار النوع المناسب يمنع الأخطاء: cbegin مع خوارزميات لا تُعدّل، rbegin عند الحاجة للمعالجة العكسية."
+        }
+      ],
+      "related": [
+        "std::string::end",
+        "std::string::rbegin",
+        "std::string::cbegin",
+        "std::string::front"
+      ]
+    },
+    "std::string::end": {
+      "title": "std::string::end",
+      "type": "دالة عضو في string",
+      "description": "يُرجع مكرّر (iterator) يُشير إلى ما بعد آخر حرف في السلسلة — 'الحرف' بعد النهاية (past-the-end). لا يُشير لحرف فعلي بل لعنصر مرسل (sentinel) يُحدد نهاية النطاق. يُستخدم دائمًا مع begin() لتحديد نطاق نصف مفتوح [begin, end).",
+      "usage": "يظهر دائمًا مع begin() كزوج: في الخوارزميات، الحلقات، وكل عمليات النطاق. لا يُستخدم وحده أبدًا. هو الحد الأعلى الذي نتوقف عنده — لا نصل إليه ولا نقرأ منه.",
+      "example": "std::sort(s.begin(), s.end()); // ترتيب أبجدي",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "begin/end مع خوارزمية الترتيب",
+          "code": "#include <string>\n#include <algorithm>\n#include <iostream>\n\nint main() {\n    std::string s = \"dcba\";\n\n    // sort تأخذ نطاق [begin, end) — ترتب أبجديًا\n    std::sort(s.begin(), s.end());\n    std::cout << s; // abcd\n\n    // ترتيب عكسي\n    std::sort(s.begin(), s.end(), std::greater<char>());\n    std::cout << '\\n' << s; // dcba\n\n    // end() هو 'ما بعد الأخير' — لا يشمل الحرف الأخير فعليًا\n    // النطاق [begin, end) يعني: من begin حتى end لكن بدون end",
+          "explanationArabic": "end() يُشير لعنصر وهمي بعد الأخير — dereferencingه (*s.end()) سلوك غير معرّف. الخوارزميات تتوقف قبل الوصول لـ end. النطاق النصف مفتوح [begin, end) يعالج كل عنصر من begin حتى العنصر قبل end."
+        },
+        {
+          "titleArabic": "لماذا 'past-the-end' وليس 'last element'؟",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"abc\";\n\n    // لو كان end() يُشير لآخر حرف:\n    // - الحلقات تحتاج معاملة خاصة للعنصر الأخير\n    // - النطاق الفارغ (سلسلة فارغة) يحتاج استثناء\n    // - begin() == end() لا يعني 'فارغ'\n\n    // مع past-the-end:\n    // - الحلقات موحدة: while (it != end) { process(*it); ++it; }\n    // - النطاق الفارغ: begin() == end() — سلسلة فارغة\n    // - عدد العناصر = end - begin — بسيط وموحد\n\n    // هذا التصميم موحد في كل C++: string, vector, array, list...\n    std::cout << \"size: \" << (s.end() - s.begin()) << '\\n'; // 3\n\n    std::string empty;\n    std::cout << \"empty: \" << (empty.begin() == empty.end()) << '\\n'; // 1 (true)\n}",
+          "explanationArabic": "past-the-end هو تصميم أساسي في كل حاويات C++. ميزته: النطاق الفارغ يكون begin() == end() بدون استثناء، وعدد العناصر يُحسب ببساطة end - begin. هذا النمط مأخوذ من المؤشرات في C حيث يُمكن التعبير عن نطاق بمؤشر بداية ومؤشر نهاية."
+        },
+        {
+          "titleArabic": "end مع erase-remove idiom",
+          "code": "#include <string>\n#include <algorithm>\n#include <iostream>\n\nint main() {\n    std::string s = \"h1e2l3l4o5\";\n\n    // remove_if: يُعيد ترتيب ويُرجع مكرّر 'نهاية الأجزاء المطلوبة'\n    // هذا المكرّر هو 'end الجديد' — ما بعده هو القمامة\n    auto new_end = std::remove_if(s.begin(), s.end(),\n        [](char c) { return c >= '0' && c <= '9'; });\n\n    // erase تأخذ 'new_end' كبداية الحذف و end() كنهاية\n    // تحذف كل شيء من new_end حتى end() الأصلي\n    s.erase(new_end, s.end());\n\n    std::cout << s; // hello\n\n    // end() هنا تُحدد 'أين تتوقف عملية الحذف'\n    // بدونها، erase لا تعرف كم تحذف",
+          "explanationArabic": "في erase-remove idiom، end() تُحدد نهاية نطاق الحذف. remove_if تُرجع 'بداية القمامة' و end() هي 'نهاية السلسلة'. erase تحذف كل شيء بينهما. هذا يُوضح دور end() كـ 'حد أعلى مطلق' للنطاق."
+        }
+      ],
+      "related": [
+        "std::string::begin",
+        "std::string::cend",
+        "std::string::rend",
+        "std::string::back"
+      ]
+    },
+    "std::string::find_first_of": {
+      "title": "std::string::find_first_of",
+      "type": "دالة عضو في string",
+      "description": "تبحث عن أول حرف في السلسلة يطابق أي حرف من مجموعة أحرف محددة. تُرجع موضع هذا الحرف أو npos إذا لم تُجد. مختلفة عن find: find تبحث عن نص فرعي متسلسل، أما find_first_of فتبحث عن أي حرف من المجموعة بغض النظر عن ترتيبها.",
+      "usage": "يظهر عند البحث عن أي حرف من مجموعة: فحص وجود أحرف غير صالحة، استخراج جزء حتى فاصل من عدة أنواع، التحقق من وجود رقم أو علامة ترقيم في نص.",
+      "example": "auto pos = s.find_first_of(\".,;!\"); // أول علامة ترقيم",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "البحث عن أول فاصل من عدة أنواع",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string data = \"name:value;type=int,flag=true\";\n\n    // نريد أول فاصل من عدة أنواع: ':' أو ';' أو ','\n    auto pos = data.find_first_of(\":;,\");\n    if (pos != std::string::npos) {\n        std::cout << \"المفتاح: \" << data.substr(0, pos) << '\\n';\n        std::cout << \"الفاصل: \" << data[pos] << '\\n';\n    }\n    // المفتاح: name\n    // الفاصل: :\n}",
+          "explanationArabic": "find_first_of تبحث عن أي حرف من النص الممرر — لا تبحث عن التسلسل ككل. \":;,\" ليست نصًا فرعيًا بل مجموعة أحرف مستقلة. أول حرف من هذه المجموعة يظهر في السلسلة هو ':' عند الموضع 4."
+        },
+        {
+          "titleArabic": "فحص وجود أحرف غير صالحة في نص",
+          "code": "#include <string>\n#include <iostream>\n\nbool has_invalid_chars(const std::string& s) {\n    // الأحرف المسموحة في اسم ملف بسيط\n    const std::string valid = \"abcdefghijklmnopqrstuvwxyz\"\n                             \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n                             \"0123456789_-.\";\n\n    // find_first_not_of (الشقيقة) أنسب هنا لكن نوضح find_first_of:\n    const std::string invalid = \" /\\\\:*?\\\"<>|\";\n    return s.find_first_of(invalid) != std::string::npos;\n}\n\nint main() {\n    std::cout << has_invalid_chars(\"my_file.txt\") << '\\n';   // 0 (صالح)\n    std::cout << has_invalid_chars(\"my file.txt\") << '\\n';   // 1 (مسافة غير صالحة)\n    std::cout << has_invalid_chars(\"file<name>.txt\") << '\\n'; // 1 (< غير صالح)\n}",
+          "explanationArabic": "find_first_of مثالية لفحص 'هل يوجد أي حرف من هذه المجموعة؟' — تحوّلها لـ bool مباشرة. هذا أنسب من التكرار اليدوي على كل حرف. المثال يُظهر فحص صلاحية اسم ملف، وهو نمط شائع في معالجة المدخلات."
+        },
+        {
+          "titleArabic": "find_first_of vs find: الفرق الجوهري",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"hello world\";\n\n    // find: تبحث عن التسلسل كاملًا بالترتيب\n    auto a = s.find(\"lo\");        // 3 — \"lo\" موجود كتسلسل\n    auto b = s.find(\"ol\");        // npos — \"ol\" ليس كتسلسل\n\n    // find_first_of: تبحث عن أي حرف من المجموعة\n    auto c = s.find_first_of(\"ol\"); // 2 — 'l' هو أول حرف من المجموعة\n    auto d = s.find_first_of(\"ow\"); // 4 — 'o' هو أول حرف من المجموعة\n\n    // القاعدة:\n    // find(\"ab\") → يبحث عن 'a' متبوعًا بـ 'b' بالضبط\n    // find_first_of(\"ab\") → يبحث عن 'a' أو 'b' — أيهما يأتي أولًا\n\n    std::cout << c << '\\n'; // 2\n}",
+          "explanationArabic": "الفرق بين find و find_first_of هو مصدر الالتباس الأكبر. find تبحث عن نمط متسلسل، find_first_of تبحث عن مجموعة أحرف منفصلة. الخلط بينهما يُنتج نتائج خاطئة默默ًا — تأكد دائمًا أيهما تحتاج."
+        }
+      ],
+      "related": [
+        "std::string::find",
+        "std::string::find_last_of",
+        "std::string::find_first_not_of"
+      ]
+    },
+    "std::string::find_last_of": {
+      "title": "std::string::find_last_of",
+      "type": "دالة عضو في string",
+      "description": "تبحث عن آخر حرف في السلسلة يطابق أي حرف من مجموعة أحرف محددة. تبحث من النهاية نحو البداية لكن تُرجع الموضع من البداية (index عادي). تُرجع npos إذا لم تُجد.",
+      "usage": "يظهر عند البحث عن آخر فاصل من عدة أنواع، استخراج جزء بعد آخر علامة، أو فحص آخر حرف من مجموعة محددة.",
+      "example": "auto pos = path.find_last_of(\"/\\\\\"); // آخر فاصل مسار",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخراج اسم الملف مع دعم فواصل متعددة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string path1 = \"/usr/local/bin/app\";\n    std::string path2 = \"C:\\\\Users\\\\name\\\\file.txt\";\n\n    // find_last_of تبحث عن آخر '/' أو '\\\\' — يعمل مع مسارات Unix و Windows\n    auto extract_filename = [](const std::string& p) {\n        auto pos = p.find_last_of(\"/\\\\\");\n        if (pos != std::string::npos) {\n            return p.substr(pos + 1);\n        }\n        return p; // لا فاصل → الاسم هو المسار كاملًا\n    };\n\n    std::cout << extract_filename(path1) << '\\n'; // app\n    std::cout << extract_filename(path2) << '\\n'; // file.txt\n}",
+          "explanationArabic": "find_last_of مع مجموعة فواصل هي الطريقة الأنسب لفصل اسم الملف عن المسار لأنها تتعامل مع عدة أنواع فواصل دفعة واحدة. هذا أفضل من rfind('/') وحده التي لا تدعم '\\' في مسارات Windows."
+        },
+        {
+          "titleArabic": "استخراج الامتداد مع دعم نقاط متعددة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string filename = \"archive.tar.gz\";\n\n    // find_last_of('.') يُرجع آخر نقطة — نأخذ ما بعدها\n    auto dot_pos = filename.find_last_of('.');\n    if (dot_pos != std::string::npos) {\n        std::string ext = filename.substr(dot_pos); // \".gz\"\n        std::cout << ext << '\\n';\n    }\n\n    // للحصول على الامتداد الكامل \".tar.gz\":\n    auto first_dot = filename.find('.');\n    if (first_dot != std::string::npos) {\n        std::cout << filename.substr(first_dot) << '\\n'; // \".tar.gz\"\n    }\n}",
+          "explanationArabic": "find_last_of('.') و rfind('.') متكافئتان هنا لأننا نبحث عن حرف واحد. لكن find_last_of تُفيد عندما تريد البحث عن عدة أحرف: مثلاً find_last_of(\".:/\") تجد آخر فاصل من عدة أنواع."
+        },
+        {
+          "titleArabic": "find_last_of vs rfind: متى يختلفان؟",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"abc;def;ghi\";\n\n    // rfind: يبحث عن التسلسل كاملًا من النهاية\n    auto a = s.rfind(\";de\");          // npos — \"de\" بعد آخر ';' لكن \"de\" ليس قبلها ';'\n    auto b = s.rfind(\"ef;gh\");        // 5 — التسلسل موجود\n\n    // find_last_of: يبحث عن أي حرف من المجموعة\n    auto c = s.find_last_of(\";de\");    // 7 — آخر حرف من {;، d، e} هو 'e' عند 7\n    auto d = s.find_last_of(\";\");      // 7 — آخر ';'\n\n    // الفرق يظهر فقط مع مجموعة أحرف (أكثر من حرف واحد)\n    // مع حرف واحد: find_last_of('x') == rfind('x') دائمًا\n\n    std::cout << c << '\\n'; // 7\n}",
+          "explanationArabic": "مع حرف واحد، find_last_of و rfind متكافئتان تمامًا. الفرق يظهر فقط مع مجموعة أحرف: rfind تبحث عن التسلسل ككل، find_last_of تبحث عن أي حرف منفصل من المجموعة."
+        }
+      ],
+      "related": [
+        "std::string::rfind",
+        "std::string::find_first_of",
+        "std::string::find_last_not_of",
+        "std::string::substr"
+      ]
+    },
+    "std::string::find_first_not_of": {
+      "title": "std::string::find_first_not_of",
+      "type": "دالة عضو في string",
+      "description": "تبحث عن أول حرف في السلسلة لا يطابق أي حرف من مجموعة محددة. تُرجع موضع أول حرف 'غريب' أو npos إذا كانت كل الأحرف من المجموعة. عكس find_first_of تمامًا.",
+      "usage": "الأداة المثالية لـ trim النصوص (إزالة المسافات البادئة)، التحقق من صلاحية بادئة، أو إيجاد أول حرف يخرج عن نمط معين.",
+      "example": "auto start = s.find_first_not_of(' '); // أول حرف ليس مسافة",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "trim النص من المسافات البادئة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string text = \"   hello world   \";\n\n    // find_first_not_of تجد أول حرف ليس مسافة = بداية النص الحقيقي\n    auto start = text.find_first_not_of(' ');\n    if (start != std::string::npos) {\n        text = text.substr(start);\n        std::cout << '[' << text << ']'; // [hello world   ]\n    }\n\n    // find_last_not_of تجد آخر حرف ليس مسافة = نهاية النص الحقيقي\n    auto end = text.find_last_not_of(' ');\n    if (end != std::string::npos) {\n        text = text.substr(0, end + 1);\n        std::cout << '\\n' << '[' << text << ']'; // [hello world]\n    }\n}",
+          "explanationArabic": "find_first_not_of + find_last_not_of هما الطريقة القياسية لـ trim في C++. find_first_not_of(' ') تُخبرك أين يبدأ النص الفعلي (بعد المسافات). find_last_not_of(' ') تُخبرك أين ينتهي (قبل المسافات اللاحقة). هذا النمط أساسي في معالجة النصوص."
+        },
+        {
+          "titleArabic": "التحقق من أن كل الأحرف من مجموعة معينة",
+          "code": "#include <string>\n#include <iostream>\n\nbool is_digits_only(const std::string& s) {\n    // لو find_first_not_of لم تُجد شيئًا = كل الأحرف أرقام\n    // npos يعني 'لم يُوجد حرف خارج المجموعة'\n    return s.find_first_not_of(\"0123456789\") == std::string::npos;\n}\n\nbool is_alpha_only(const std::string& s) {\n    return s.find_first_not_of(\n        \"abcdefghijklmnopqrstuvwxyz\"\n        \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\") == std::string::npos;\n}\n\nint main() {\n    std::cout << is_digits_only(\"12345\") << '\\n';   // 1 (true)\n    std::cout << is_digits_only(\"12a45\") << '\\n';   // 0 (false — 'a' ليس رقمًا)\n    std::cout << is_alpha_only(\"Hello\") << '\\n';    // 1 (true)\n    std::cout << is_alpha_only(\"Hello!\") << '\\n';   // 0 (false — '!' ليس حرفًا)\n}",
+          "explanationArabic": "المبدأ العكسي: إذا لم تُجد find_first_not_of أي حرف خارج المجموعة (npos)، فكل الأحرف من المجموعة. هذا أنسب من التكرار اليدوي على كل حرف لأنه مُحسَّن داخليًا وأوضح دلاليًا."
+        },
+        {
+          "titleArabic": "استخراج الجزء المختلف عن البادئة",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string line = \"    #include <iostream>\";\n\n    // تخطي المسافات البادئة\n    auto start = line.find_first_not_of(\" \\t\"); // مسافة أو tab\n    if (start != std::string::npos) {\n        std::string content = line.substr(start);\n\n        // الآن تحقق من نوع السطر\n        if (content.find(\"#include\") == 0) {\n            std::cout << \"سطر تضمين: \" << content << '\\n';\n        }\n    }\n\n    // ملاحظة: في C++20 استخدم starts_with بعد trim\n    // لكن find_first_not_of هي الطريقة قبل C++20",
+          "explanationArabic": "find_first_not_of مع مجموعة \" \\t\" (مسافة وtab) تخطي كل أنواع المسافات البيضاء البادئة دفعة واحدة. هذا أنسب من فحص كل مسافة فردية. النمط شائع في محللات النصوص والـ parsers."
+        }
+      ],
+      "related": [
+        "std::string::find_first_of",
+        "std::string::find_last_not_of",
+        "std::string::substr"
+      ]
+    },
+    "std::string::find_last_not_of": {
+      "title": "std::string::find_last_not_of",
+      "type": "دالة عضو في string",
+      "description": "تبحث عن آخر حرف في السلسلة لا يطابق أي حرف من مجموعة محددة. تبحث من النهاية نحو البداية لكن تُرجع الموضع من البداية. عكس find_last_of تمامًا.",
+      "usage": "الأداة المثالية لـ trim النصوص من المسافات اللاحقة (trailing whitespace)، أو إيجاد آخر حرف يخرج عن نمط معين.",
+      "example": "auto end = s.find_last_not_of(' '); // آخر حرف ليس مسافة",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "trim كامل: إزالة المسافات من الطرفين",
+          "code": "#include <string>\n#include <iostream>\n\nstd::string trim(const std::string& s) {\n    // 1. إيجاد أول حرف ليس مسافة بيضاء\n    auto start = s.find_first_not_of(\" \\t\\n\\r\");\n    if (start == std::string::npos) return \"\"; // كلها مسافات\n\n    // 2. إيجاد آخر حرف ليس مسافة بيضاء\n    auto end = s.find_last_not_of(\" \\t\\n\\r\");\n\n    // 3. استخراج الجزء النظيف\n    return s.substr(start, end - start + 1);\n}\n\nint main() {\n    std::cout << '[' << trim(\"  hello  \") << ']' << '\\n';   // [hello]\n    std::cout << '[' << trim(\"\\t\\nhello\\n\\t\") << ']' << '\\n'; // [hello]\n    std::cout << '[' << trim(\"   \") << ']' << '\\n';           // []\n}",
+          "explanationArabic": "trim الكامل يتطلب الدالتين معًا: find_first_not_of للبادئة و find_last_not_of للاحقة. substr(start, end - start + 1) لأن المعامل الثاني هو العدد لا موضع النهاية. الحالة الخاصة: لو كانت كلها مسافات، find_first_not_of تُرجع npos ويُرجع نصًا فارغًا."
+        },
+        {
+          "titleArabic": "إزالة trailing newline من getline",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string line = \"hello world\\r\\n\";\n\n    // بدل back() + pop_back() التي تتعامل مع حرف واحد\n    // find_last_not_of تُزيل كل أنواع trailing whitespace دفعة واحدة\n    auto end = line.find_last_not_of(\" \\t\\r\\n\");\n    if (end != std::string::npos) {\n        line = line.substr(0, end + 1);\n    } else {\n        line.clear(); // كلها مسافات بيضاء\n    }\n\n    std::cout << '[' << line << ']'; // [hello world]\n}",
+          "explanationArabic": "find_last_not_of أنسب من back()+pop_back() عند التعامل مع أنواع متعددة من trailing whitespace. واحدة تستدعاء تُزيل \\r و \\n والمسافات والتبويبات كلها. back()+pop_back() تحتاج عدة استدعاءات شرطية."
+        },
+        {
+          "titleArabic": "التحقق من أن النص ينتهي بحرف صالح",
+          "code": "#include <string>\n#include <iostream>\n\nbool ends_with_valid_char(const std::string& s) {\n    // آخر حرف ليس من مجموعة الأحرف غير المقبولة\n    const std::string invalid_trailing = \" \\t\\n\\r;,\";\n    auto last_valid = s.find_last_not_of(invalid_trailing);\n\n    // لو آخر حرف صالح هو الأخير فعلاً → النص ينتهي بحرف صالح\n    return last_valid == s.size() - 1;\n}\n\nint main() {\n    std::cout << ends_with_valid_char(\"hello\") << '\\n';     // 1\n    std::cout << ends_with_valid_char(\"hello;\") << '\\n';    // 0 — ينتهي بفاصلة منقوطة\n    std::cout << ends_with_valid_char(\"hello  \") << '\\n';   // 0 — ينتهي بمسافة\n}",
+          "explanationArabic": "find_last_not_of تُخبرك أين آخر حرف 'صالح' — إذا كان هذا الموضع هو الأخير فعلاً، فالنص نظيف في النهاية. هذا نمط فحص أنيق يتعامل مع عدة أحرف غير مقبولة دفعة واحدة."
+        }
+      ],
+      "related": [
+        "std::string::find_last_of",
+        "std::string::find_first_not_of",
+        "std::string::substr",
+        "std::string::pop_back"
+      ]
+    },
+    "std::string::reserve": {
+      "title": "std::string::reserve",
+      "type": "دالة عضو في string",
+      "description": "يُحجّز مساحة ذاكرة كافية لعدد محدد من الأحرف بدون تغيير size. يُغيّر capacity فقط. الهدف هو منع reallocations المتكررة عند البناء التدريجي للنص. إذا كانت capacity الحالية أكبر من المطلوب، لا يُصغّرها.",
+      "usage": "أهم أداة تحسين أداء مع string. يظهر عند بناء نص كبير تدريجيًا في حلقة، قراءة ملف بحجم معروف، أو أي عملية append/insert متكررة. الفرق بين كود بـ reserve وبدونه قد يكون عشرات المرات في النصوص الكبيرة.",
+      "example": "s.reserve(10000);\nfor (int i = 0; i < 10000; ++i) s += 'x'; // صفر reallocations",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء نص كبير في حلقة مع reserve",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string result;\n\n    // ❌ بدون reserve: كل += قد يُسبب reallocation\n    // string تنمو عادةً بمعامل 2x: 1→2→4→8→...→10000\n    // كل reallocation تنسخ كل البيانات السابقة — O(n²) إجمالي!\n\n    // ✅ مع reserve: reallocation واحدة فقط\n    result.reserve(10000);\n    for (int i = 0; i < 10000; ++i) {\n        result += 'x'; // كلها O(1) — لا reallocation\n    }\n\n    std::cout << \"size: \" << result.size() << '\\n';     // 10000\n    std::cout << \"capacity: \" << result.capacity() << '\\n'; // >= 10000\n}",
+          "explanationArabic": "بدون reserve، كل عملية += قد تُسبب reallocation عندما يتجاوز الحجم السعة. كل reallocation تنسخ كل البيانات السابقة لموقع جديد في الذاكرة. مع 10000 حرف، هذا يعني حوالي 14 reallocation ونسخ إجمالي يقارب 10000×14 بايت. reserve تُلغي هذا كله."
+        },
+        {
+          "titleArabic": "قراءة ملف كامل بحجم معروف",
+          "code": "#include <string>\n#include <fstream>\n#include <iostream>\n\nint main() {\n    std::ifstream file(\"data.txt\");\n    if (!file) return 1;\n\n    // معرفة الحجم أولًا\n    file.seekg(0, std::ios::end);\n    auto size = file.tellg();\n    file.seekg(0, std::ios::beg);\n\n    // حجز المساحة قبل القراءة — reallocation واحدة فقط\n    std::string content;\n    content.reserve(static_cast<size_t>(size));\n\n    // القراءة مباشرة في buffer محجوز\n    content.assign(std::istreambuf_iterator<char>(file),\n                   std::istreambuf_iterator<char>());\n\n    std::cout << \"الحجم: \" << content.size() << '\\n';\n    std::cout << \"السعة: \" << content.capacity() << '\\n';\n}",
+          "explanationArabic": "عند قراءة ملف، معرفة الحجم مسبقًا عبر seekg/tellg تسمح بحجز المساحة الدقيقة قبل القراءة. هذا يُلغي كل reallocations أثناء القراءة. النمط: حدد الحجم → reserve → اقرأ."
+        },
+        {
+          "titleArabic": "reserve لا تُغيّر size — خطأ شائع",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s;\n\n    s.reserve(100);\n\n    // ⚠️ reserve لا تُضيف أحرف — size لا يتغير!\n    std::cout << \"size: \" << s.size() << '\\n';     // 0\n    std::cout << \"capacity: \" << s.capacity() << '\\n'; // 100\n    std::cout << \"empty: \" << s.empty() << '\\n';   // 1 (true!)\n\n    // reserve تُحجّز مساحة فقط — النص يبقى فارغًا\n    // للتعامل مع البيانات المحجوزة: استخدم resize + data()\n\n    s.resize(100); // الآن size = 100 ويمكن الوصول للأحرف\n    s[0] = 'H';    // كتابة آمنة — المساحة محجوزة مسبقًا\n}",
+          "explanationArabic": "خطأ شائع: الاعتقاد أن reserve تُنشئ نصًا بالحجم المحدد. reserve تُغيّر capacity فقط — size يبقى صفرًا والنص يبقى فارغًا. إذا أردت مساحة قابلة للكتابة فورًا، استخدم resize (تُغيّر size) لا reserve (تُغيّر capacity فقط)."
+        }
+      ],
+      "related": [
+        "std::string::capacity",
+        "std::string::resize",
+        "std::string::shrink_to_fit",
+        "std::string::push_back"
+      ]
+    },
+    "std::string::capacity": {
+      "title": "std::string::capacity",
+      "type": "دالة عضو في string",
+      "description": "تُرجع عدد الأحرف التي يمكن للسلسلة استيعابها بدون reallocation. دائمًا أكبر من أو تساوي size(). الذاكرة الفعلية المحجوزة قد تكون أكبر قليلاً بسبب overhead التطبيقية. لا تُحتسب null terminator.",
+      "usage": "يظهر عند مراقبة أداء الذاكرة، فحص هل reallocation سيحدث عند الإضافة القادمة، أو التخطيط لتحسينات. مفيد في التطوير والتصحيح أكثر من كونه ضروريًا في الكود الإنتاجي.",
+      "example": "if (s.size() == s.capacity()) { /* الإضافة القادمة قد تُسبب reallocation */ }",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "مراقبة نمو capacity مع الإضافة التدريجية",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s;\n\n    std::cout << \"ابتداءًا: size=\" << s.size() << \" cap=\" << s.capacity() << '\\n';\n\n    // أضف حرفًا تلو الآخر وراقب كيف تنمو capacity\n    for (int i = 1; i <= 20; ++i) {\n        s += 'x';\n        std::cout << \"إضافة \" << i << \": size=\" << s.size()\n                  << \" cap=\" << s.capacity() << '\\n';\n    }\n    // المخرجات (تختلف حسب التطبيقية):\n    // إضافة 1: size=1 cap=15    ← حجز 15 فورًا!\n    // إضافة 2: size=2 cap=15    ← لا تغيير\n    // ...\n    // إضافة 15: size=15 cap=15  ← هنا سيتغير عند الإضافة التالية\n    // إضافة 16: size=16 cap=30  ← مضاعفة تقريبًا\n}",
+          "explanationArabic": "string لا تُنمو بايت بايت — التطبيقية تُضاعف السعة تقريبًا عند الحاجة. هذا يُقلل عدد reallocations لكنه يُهدر ذاكرة. فهم هذا النمط يُفسر لماذا reserve مهمة: تمنع هذا النمو المتدرج المكلف."
+        },
+        {
+          "titleArabic": "size vs capacity: الفرق العملي",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"hello\";\n\n    // size: ما تستخدمه فعليًا — 5 أحرف\n    // capacity: ما حجزته في الذاكرة — قد يكون 15 أو أكثر\n    std::cout << \"size: \" << s.size() << '\\n';       // 5\n    std::cout << \"capacity: \" << s.capacity() << '\\n'; // 15 (مثال)\n\n    // يمكنك إضافة حتى capacity بدون reallocation\n    for (int i = 0; i < 10; ++i) s += '!'; // 10 إضافات بدون reallocation\n    std::cout << \"size: \" << s.size() << '\\n';       // 15\n    std::cout << \"capacity: \" << s.capacity() << '\\n'; // 15 (لم تتغير)\n\n    // الإضافة التالية ستُسبب reallocation\n    s += 'x'; // size=16, capacity=30 (تقريبًا)\n\n    // الفرق = ذاكرة محجوزة لكن غير مستخدمة\n    // هذا مقبول لأن reallocation مكلف أكثر من الذاكرة الزائدة",
+          "explanationArabic": "الفجوة بين size و capacity هي ذاكرة 'مهدرة' مقصودة — تُقلل reallocations. في البرامج العادية هذا لا يهم. في البرامج ذات الذاكرة المحدودة (embedded) أو مع نصوص ضخمة، قد تحتاج shrink_to_fit بعد الانتهاء."
+        },
+        {
+          "titleArabic": "فحص هل الإضافة التالية ستُسبب reallocation",
+          "code": "#include <string>\n\nstd::string s = \"hello\";\n\n// إذا كان size == capacity، الإضافة التالية ستُسبب reallocation\nif (s.size() == s.capacity()) {\n    // ستحتاج reallocation — قد تُريد reserve قبل الإضافة\n    s.reserve(s.capacity() * 2);\n}\n\ns += \" world\"; // آمن — لن يُسبب reallocation\n\n// ملاحظة: هذا الفحص نادرًا ما يكون ضروريًا في الممارسة\n// reserve مسبقًا أنسب من هذا النمط التفاعلي",
+          "explanationArabic": "فحص size == capacity يُخبرك إذا كانت الإضافة التالية ستُسبب reallocation. لكن في الممارسة، reserve مسبقًا بحجم تقديري أنسب من هذا الفحص التفاعلي. هذا الفحص يُفيد في سيناريوهات نادرة مثل محاولة تجنب reallocation في قسم حرج."
+        }
+      ],
+      "related": [
+        "std::string::size",
+        "std::string::reserve",
+        "std::string::shrink_to_fit",
+        "std::string::max_size"
+      ]
+    },
+    "std::string::shrink_to_fit": {
+      "title": "std::string::shrink_to_fit",
+      "type": "دالة عضو في string",
+      "description": "يطلب من التطبيقية تصغير capacity لتقارب size. هذا طلب غير مُلزَم — التطبيقية قد تتجاهله. إذا نفّذته، تُحرر الذاكرة الزائدة وتُحدث reallocation. لا تُغيّر size.",
+      "usage": "يظهر بعد انتهاء من بناء نص كبير وتجميده، أو عندما تريد تحرير ذاكرة مؤقتة. نادرًا ما يُستخدم في الكود العادي لأن reallocation نفسها مكلفة — الفائدة فقط عندما تكون الفجوة بين size و capacity كبيرة جدًا.",
+      "example": "s.shrink_to_fit(); // قد تُصغّر capacity لتقارب size",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحرير ذاكرة بعد بناء نص كبير",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string data;\n    data.reserve(1000000); // حجز ضخم للبناء\n\n    // ... بناء النص ...\n    for (int i = 0; i < 100000; ++i) data += \"data\";\n\n    std::cout << \"قبل: size=\" << data.size()\n              << \" cap=\" << data.capacity() << '\\n';\n    // قبل: size=400000 cap=1048576 (مثال — قد يكون أكبر)\n\n    // بعد الانتهاء: حرر الذاكرة الزائدة\n    data.shrink_to_fit();\n\n    std::cout << \"بعد: size=\" << data.size()\n              << \" cap=\" << data.capacity() << '\\n';\n    // بعد: size=400000 cap=400000 (أو قريبة جدًا)\n}",
+          "explanationArabic": "shrink_to_fit تُلغي الفجوة بين size و capacity. لكنها نفسها تُسبب reallocation (نسخ البيانات لموقع أصغر). لذا لا تستخدمها في حلقة أو بشكل متكرر — استخدمها مرة واحدة بعد الانتهاء من البناء."
+        },
+        {
+          "titleArabic": "shrink_to_fit غير مُلزَم — التطبيقية قد تتجاهلها",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s;\n    s.reserve(1000);\n    s = \"hi\"; // size=2, capacity=1000\n\n    s.shrink_to_fit();\n\n    // قد تُصغّر: capacity ≈ 2\n    // أو قد لا تُغيّر شيئًا: capacity = 1000\n    // هذا يعتمد على التطبيقية (compiler + library)\n    // لا تفترض أن capacity ستصبح == size\n\n    std::cout << \"size=\" << s.size() << \" cap=\" << s.capacity() << '\\n';\n\n    // الطريقة المضمونة (لكنها مكلفة):\n    // std::string(s).swap(s); // copy-and-swap idiom — دائمًا يُصغّر\n}",
+          "explanationArabic": "shrink_to_fit طلب غير مُلزَم حسب المعيار — التطبيقية تختار. في الممارسة، معظم التطبيقات الشائعة (libstdc++, libc++) تُنفّذها. لكن إذا احتجت ضمانًا، استخدم copy-and-swap idiom: string(s).swap(s) تُنشئ نسخة بالحجم الدقيق ثم تُبدّل."
+        },
+        {
+          "titleArabic": "متى تستخدم shrink_to_fit ومتى لا تفعل",
+          "code": "#include <string>\n\n// ✅ استخدمها عندما:\n// 1. بنيت نصًا كبيرًا وانتهيت\n// 2. الفجوة بين size و capacity ضخمة\n// 3. السلسلة ستعيش طويلًا بعد البناء\n// 4. الذاكرة محدودة (embedded, mobile)\n\nstd::string build_response() {\n    std::string result;\n    result.reserve(100000);\n    // ... بناء ... result.size() = 50000\n    result.shrink_to_fit(); // حرر 50000 بايت زائدة\n    return result;\n}\n\n// ❌ لا تستخدمها عندما:\n// 1. ستستمر في الإضافة للنص\n// 2. الفجوة صغيرة (لا تستحق reallocation)\n// 3. السلسلة مؤقتة وستُدمّر قريبًا\n// 4. في حلقة — shrink_to_fit في كل تكرار = كارثة\n\n// ❌ كارثة: shrink_to_fit في حلقة\n// for (...) {\n//     s += data;\n//     s.shrink_to_fit(); // reallocation في كل تكرار!\n// }",
+          "explanationArabic": "shrink_to_fit ليست 'تحسين دائم' — لها تكلفة (reallocation). استخدمها فقط عندما الفائدة (تحرير ذاكرة كبيرة) تتجاوز التكلفة (نسخ البيانات). القاعدة: استخدمها مرة واحدة بعد الانتهاء، لا في حلقة."
+        }
+      ],
+      "related": [
+        "std::string::reserve",
+        "std::string::capacity",
+        "std::string::clear",
+        "std::string::size"
+      ]
+    },
+    "std::string::max_size": {
+      "title": "std::string::max_size",
+      "type": "دالة عضو في string",
+      "description": "تُرجع الحد الأقصى النظري لعدد الأحرف الذي يمكن لسلسلة أن تحمله. هذه قيمة تُحددها التطبيقية (implementation) بناءً على محدوديات الذاكرة ونوع الفهرس الداخلي. لا علاقة لها بالذاكرة المتاحة فعليًا.",
+      "usage": "نادرًا ما يُستخدم في الكود العملي. يظهر أحيانًا في فحوصات سلامة نظرية أو في كود المكتبات العامة التي تريد ضمان عدم تجاوز حد معين. لا يُستخدم لتخصيص ذاكرة أو لتحديد حجم منطقي.",
+      "example": "// نادر الاستخدام العملي — للمعلومات فقط\n// std::cout << s.max_size(); // رقم ضخم مثل 4294967294",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "max_size قيمة نظرية لا عملية",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s;\n\n    // max_size: الحد الأقصى النظري — عادةً قيمة ضخمة جدًا\n    std::cout << \"max_size: \" << s.max_size() << '\\n';\n    // مثال: 4294967294 على 64-bit (يعتمد على التطبيقية)\n\n    // لا تحاول الوصول لهذا الحد!\n    // s.resize(s.max_size()); // سيُفشل — لا توجد ذاكرة كافية\n\n    // max_size ≠ الذاكرة المتاحة\n    // max_size ≠ capacity\n    // max_size = أقصى قيمة يمكن لنوع الفهرس الداخلي تمثيلها\n}",
+          "explanationArabic": "max_size قيمة نظرية محسوبة بناءً على نوع البيانات الداخلي (عادةً size_t) مطروحًا منه بعض البايتات لل overhead. لا علاقة لها بالذاكرة الفعلية المتاحة — محاولة الوصول لها ستُفشل بـ std::bad_alloc."
+        },
+        {
+          "titleArabic": "max_size vs capacity vs size",
+          "code": "#include <string>\n#include <iostream>\n\nint main() {\n    std::string s = \"hello\";\n\n    std::cout << \"size:     \" << s.size() << '\\n';     // 5 — الأحرف الفعلية\n    std::cout << \"capacity: \" << s.capacity() << '\\n';  // ~15 — المساحة المحجوزة\n    std::cout << \"max_size: \" << s.max_size() << '\\n';  // ~4 مليار — الحد النظري\n\n    // العلاقة: size <= capacity << max_size\n    // size: ما تستخدمه الآن\n    // capacity: ما حجزته (قد يزيد مع resize/append)\n    // max_size: ما لا يمكن تجاوزه أبدًا (ثابت لكل تنفيذ)\n\n    // ما تحتاجه فعليًا في 99% من الحالات:\n    // - size(): لمعرفة طول النص\n    // - capacity(): لتحسين الأداء (مع reserve)\n    // - max_size(): نادرًا — فقط في كود مكتبات عامة",
+          "explanationArabic": "الثلاثة مفاهيم مختلفة: size هو الحالي، capacity هو المحجوز، max_size هو النظري الأقصى. في الكود التطبيقي تحتاج size و capacity فقط. max_size للمكتبات العامة التي تريد فحصًا نظريًا صارمًا."
+        },
+        {
+          "titleArabic": "استخدام عملي نادر: فحص قبل تخصيص ضخم",
+          "code": "#include <string>\n#include <iostream>\n\nbool safe_resize(std::string& s, size_t requested) {\n    // فحص نظري أولي — لا يضمن نجاح التخصيص\n    if (requested > s.max_size()) {\n        std::cout << \"الطلب يتجاوز الحد النظري\\n\";\n        return false;\n    }\n\n    // الفحص الحقيقي: try-catch لأن الذاكرة قد لا تكفي\n    try {\n        s.resize(requested);\n        return true;\n    } catch (const std::bad_alloc&) {\n        std::cout << \"لا توجد ذاكرة كافية\\n\";\n        return false;\n    }\n}\n\nint main() {\n    std::string s;\n    // safe_resize(s, 1000000000); // قد ينجح أو يفشل حسب الذاكرة\n}",
+          "explanationArabic": "الفحص بـ max_size يمنع الطلبات المستحيلة (أكبر من ما يمكن تمثيله)، لكنه لا يضمن نجاح التخصيص. الفحص الحقيقي للذاكرة يكون عبر try-catch مع bad_alloc. في الممارسة، فحص max_size قبل تخصيص ضخم هو خط دفاع أولي بسيط."
+        }
+      ],
+      "related": [
+        "std::string::size",
+        "std::string::capacity",
+        "std::string::length",
+        "std::string::reserve"
+      ]
+    }
+  }
+}

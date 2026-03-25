@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "example",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "vaapi_transcode.c",
+    "slug": "vaapi-transcode.c",
+    "titleArabic": "vaapi_transcode.c",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/example/vaapi-transcode.c",
+    "contentPath": "content/reference/ffmpeg/examples/vaapi-transcode.c.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يجمع بين فك وترميز عتادي عبر VAAPI داخل pipeline واحدة.",
+    "actualMeaningArabic": "يجمع بين فك وترميز عتادي عبر VAAPI داخل pipeline واحدة.",
+    "purposeArabic": "يجمع بين فك وترميز عتادي عبر VAAPI داخل pipeline واحدة.",
+    "whyUseArabic": "يجمع بين فك وترميز عتادي عبر VAAPI داخل pipeline واحدة.",
+    "carriedValueArabic": "يجمع بين فك وترميز عتادي عبر VAAPI داخل pipeline واحدة.",
+    "sourceDescription": "يجمع بين فك وترميز عتادي عبر VAAPI داخل pipeline واحدة."
+  },
+  "signature": {
+    "raw": "// vaapi_transcode.c - تحويل ترميز فيديو عبر VAAPI\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp4\";\n    AVFormatContext *fmt_ctx = NULL;\n    AVCodecContext *dec_ctx = NULL;\n    AVCodecContext *enc_ctx = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, 0, NULL);\n    const AVCodec *dec_codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    dec_ctx = avcodec_alloc_context3(dec_codec);\n    avcodec_parameters_to_context(dec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(dec_ctx, dec_codec, NULL);\n\n    const AVCodec *enc_codec = avcodec_find_encoder_by_name(\"h264_vaapi\");\n    enc_ctx = avcodec_alloc_context3(enc_codec);\n    avcodec_parameters_to_context(enc_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(enc_ctx, enc_codec, NULL);\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(dec_ctx, pkt);\n            while (avcodec_receive_frame(dec_ctx, frame) >= 0) {\n                avcodec_send_frame(enc_ctx, frame);\n                while (avcodec_receive_frame(enc_ctx, frame) >= 0) {\n                    printf(\"encoded\\n\");\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&dec_ctx);\n    avcodec_free_context(&enc_ctx);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// vaapi_transcode.c - تحويل ترميز فيديو عبر VAAPI\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp4\";\n    AVFormatContext *fmt_ctx = NULL;\n    AVCodecContext *dec_ctx = NULL;\n    AVCodecContext *enc_ctx = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, 0, NULL);\n    const AVCodec *dec_codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    dec_ctx = avcodec_alloc_context3(dec_codec);\n    avcodec_parameters_to_context(dec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(dec_ctx, dec_codec, NULL);\n\n    const AVCodec *enc_codec = avcodec_find_encoder_by_name(\"h264_vaapi\");\n    enc_ctx = avcodec_alloc_context3(enc_codec);\n    avcodec_parameters_to_context(enc_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(enc_ctx, enc_codec, NULL);\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(dec_ctx, pkt);\n            while (avcodec_receive_frame(dec_ctx, frame) >= 0) {\n                avcodec_send_frame(enc_ctx, frame);\n                while (avcodec_receive_frame(enc_ctx, frame) >= 0) {\n                    printf(\"encoded\n\");\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&dec_ctx);\n    avcodec_free_context(&enc_ctx);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}"
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/vaapi_transcode.c.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "FFmpeg",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

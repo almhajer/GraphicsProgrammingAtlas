@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 35 من 64 • الأسطر 15301-15750 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 35 من 64 • الأسطر 15301-15750</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 35 من 64 • الأسطر 15301-15750</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-34.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-36.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 35/64</span>
+        <span class="source-stat">الأسطر: 15301-15750</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    }
+
+    // wrapper function for command vkGetDeviceProcAddr, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceProcAddr.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE PFN_VoidFunction Device::getProcAddr( const std::string &amp; name ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceProcAddr &amp;&amp; &quot;Function &lt;vkGetDeviceProcAddr&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      PFN_vkVoidFunction result = getDispatcher()-&gt;vkGetDeviceProcAddr( static_cast&lt;VkDevice&gt;( m_device ), name.c_str() );
+
+      return result;
+    }
+
+    // wrapper function for command vkCreateDevice, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDevice.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;Device&gt;::type
+                         PhysicalDevice::createDevice( DeviceCreateInfo const &amp;            createInfo,
+                                    Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateDevice &amp;&amp; &quot;Function &lt;vkCreateDevice&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::Device device;
+      Result                       result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateDevice( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                            reinterpret_cast&lt;const VkDeviceCreateInfo *&gt;( &amp;createInfo ),
+                                                                            reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                            reinterpret_cast&lt;VkDevice *&gt;( &amp;device ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::createDevice&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, Device( *this, *reinterpret_cast&lt;VkDevice *&gt;( &amp;device ), allocator ) );
+    }
+
+    // wrapper function for command vkEnumerateInstanceExtensionProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumerateInstanceExtensionProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;ExtensionProperties&gt;&gt;::type
+                         Context::enumerateInstanceExtensionProperties( Optional&lt;const std::string&gt; layerName ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkEnumerateInstanceExtensionProperties &amp;&amp;
+                         &quot;Function &lt;vkEnumerateInstanceExtensionProperties&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      std::vector&lt;ExtensionProperties&gt; properties;
+      uint32_t                         propertyCount;
+      Result                           result;
+      do
+      {
+        result =
+          static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEnumerateInstanceExtensionProperties( layerName ? layerName-&gt;c_str() : nullptr, &amp;propertyCount, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+        {
+          properties.resize( propertyCount );
+          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEnumerateInstanceExtensionProperties(
+            layerName ? layerName-&gt;c_str() : nullptr, &amp;propertyCount, reinterpret_cast&lt;VkExtensionProperties *&gt;( properties.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Context::enumerateInstanceExtensionProperties&quot; );
+      VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+      if ( propertyCount &lt; properties.size() )
+      {
+        properties.resize( propertyCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( properties ) );
+    }
+
+    // wrapper function for command vkEnumerateDeviceExtensionProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumerateDeviceExtensionProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;ExtensionProperties&gt;&gt;::type
+                         PhysicalDevice::enumerateDeviceExtensionProperties( Optional&lt;const std::string&gt; layerName ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkEnumerateDeviceExtensionProperties &amp;&amp; &quot;Function &lt;vkEnumerateDeviceExtensionProperties&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      std::vector&lt;ExtensionProperties&gt; properties;
+      uint32_t                         propertyCount;
+      Result                           result;
+      do
+      {
+        result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEnumerateDeviceExtensionProperties(
+          static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), layerName ? layerName-&gt;c_str() : nullptr, &amp;propertyCount, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+        {
+          properties.resize( propertyCount );
+          result =
+            static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEnumerateDeviceExtensionProperties( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                                        layerName ? layerName-&gt;c_str() : nullptr,
+                                                                                        &amp;propertyCount,
+                                                                                        reinterpret_cast&lt;VkExtensionProperties *&gt;( properties.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::enumerateDeviceExtensionProperties&quot; );
+      VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+      if ( propertyCount &lt; properties.size() )
+      {
+        properties.resize( propertyCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( properties ) );
+    }
+
+    // wrapper function for command vkEnumerateInstanceLayerProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumerateInstanceLayerProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;LayerProperties&gt;&gt;::type Context::enumerateInstanceLayerProperties() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkEnumerateInstanceLayerProperties &amp;&amp; &quot;Function &lt;vkEnumerateInstanceLayerProperties&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      std::vector&lt;LayerProperties&gt; properties;
+      uint32_t                     propertyCount;
+      Result                       result;
+      do
+      {
+        result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEnumerateInstanceLayerProperties( &amp;propertyCount, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+        {
+          properties.resize( propertyCount );
+          result = static_cast&lt;Result&gt;(
+            getDispatcher()-&gt;vkEnumerateInstanceLayerProperties( &amp;propertyCount, reinterpret_cast&lt;VkLayerProperties *&gt;( properties.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Context::enumerateInstanceLayerProperties&quot; );
+      VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+      if ( propertyCount &lt; properties.size() )
+      {
+        properties.resize( propertyCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( properties ) );
+    }
+
+    // wrapper function for command vkEnumerateDeviceLayerProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumerateDeviceLayerProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;LayerProperties&gt;&gt;::type PhysicalDevice::enumerateDeviceLayerProperties() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkEnumerateDeviceLayerProperties &amp;&amp; &quot;Function &lt;vkEnumerateDeviceLayerProperties&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      std::vector&lt;LayerProperties&gt; properties;
+      uint32_t                     propertyCount;
+      Result                       result;
+      do
+      {
+        result = static_cast&lt;Result&gt;(
+          getDispatcher()-&gt;vkEnumerateDeviceLayerProperties( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;propertyCount, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+        {
+          properties.resize( propertyCount );
+          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEnumerateDeviceLayerProperties(
+            static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;propertyCount, reinterpret_cast&lt;VkLayerProperties *&gt;( properties.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::enumerateDeviceLayerProperties&quot; );
+      VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+      if ( propertyCount &lt; properties.size() )
+      {
+        properties.resize( propertyCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( properties ) );
+    }
+
+    // wrapper function for command vkGetDeviceQueue, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceQueue.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Queue Device::getQueue( uint32_t queueFamilyIndex, uint32_t queueIndex ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceQueue &amp;&amp; &quot;Function &lt;vkGetDeviceQueue&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::Queue queue;
+      getDispatcher()-&gt;vkGetDeviceQueue( static_cast&lt;VkDevice&gt;( m_device ), queueFamilyIndex, queueIndex, reinterpret_cast&lt;VkQueue *&gt;( &amp;queue ) );
+
+      return Queue( *this, *reinterpret_cast&lt;VkQueue *&gt;( &amp;queue ) );
+    }
+
+    // wrapper function for command vkQueueSubmit, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Queue::submit( ArrayProxy&lt;const SubmitInfo&gt; const &amp; submits,
+                                                                          VULKAN_HPP_NAMESPACE::Fence          fence ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkQueueSubmit &amp;&amp; &quot;Function &lt;vkQueueSubmit&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkQueueSubmit(
+        static_cast&lt;VkQueue&gt;( m_queue ), submits.size(), reinterpret_cast&lt;const VkSubmitInfo *&gt;( submits.data() ), static_cast&lt;VkFence&gt;( fence ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Queue::submit&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkQueueWaitIdle, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueWaitIdle.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Queue::waitIdle() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkQueueWaitIdle &amp;&amp; &quot;Function &lt;vkQueueWaitIdle&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkQueueWaitIdle( static_cast&lt;VkQueue&gt;( m_queue ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Queue::waitIdle&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkDeviceWaitIdle, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkDeviceWaitIdle.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Device::waitIdle() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkDeviceWaitIdle &amp;&amp; &quot;Function &lt;vkDeviceWaitIdle&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkDeviceWaitIdle( static_cast&lt;VkDevice&gt;( m_device ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::waitIdle&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkAllocateMemory, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;DeviceMemory&gt;::type
+                         Device::allocateMemory( MemoryAllocateInfo const &amp;          allocateInfo,
+                              Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkAllocateMemory &amp;&amp; &quot;Function &lt;vkAllocateMemory&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::DeviceMemory memory;
+      Result                             result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkAllocateMemory( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                              reinterpret_cast&lt;const VkMemoryAllocateInfo *&gt;( &amp;allocateInfo ),
+                                                                              reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                              reinterpret_cast&lt;VkDeviceMemory *&gt;( &amp;memory ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::allocateMemory&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, DeviceMemory( *this, *reinterpret_cast&lt;VkDeviceMemory *&gt;( &amp;memory ), allocator ) );
+    }
+
+    // wrapper function for command vkMapMemory, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;void *&gt;::type
+                         DeviceMemory::mapMemory( DeviceSize offset, DeviceSize size, MemoryMapFlags flags ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkMapMemory &amp;&amp; &quot;Function &lt;vkMapMemory&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      void * pData;
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkMapMemory( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                         static_cast&lt;VkDeviceMemory&gt;( m_deviceMemory ),
+                                                                         static_cast&lt;VkDeviceSize&gt;( offset ),
+                                                                         static_cast&lt;VkDeviceSize&gt;( size ),
+                                                                         static_cast&lt;VkMemoryMapFlags&gt;( flags ),
+                                                                         &amp;pData ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::DeviceMemory::mapMemory&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( pData ) );
+    }
+
+    // wrapper function for command vkUnmapMemory, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html
+    VULKAN_HPP_INLINE void DeviceMemory::unmapMemory() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkUnmapMemory &amp;&amp; &quot;Function &lt;vkUnmapMemory&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkUnmapMemory( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkDeviceMemory&gt;( m_deviceMemory ) );
+    }
+
+    // wrapper function for command vkFlushMappedMemoryRanges, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkFlushMappedMemoryRanges.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Device::flushMappedMemoryRanges( ArrayProxy&lt;const MappedMemoryRange&gt; const &amp; memoryRanges ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkFlushMappedMemoryRanges &amp;&amp; &quot;Function &lt;vkFlushMappedMemoryRanges&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkFlushMappedMemoryRanges(
+        static_cast&lt;VkDevice&gt;( m_device ), memoryRanges.size(), reinterpret_cast&lt;const VkMappedMemoryRange *&gt;( memoryRanges.data() ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::flushMappedMemoryRanges&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkInvalidateMappedMemoryRanges, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkInvalidateMappedMemoryRanges.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+      Device::invalidateMappedMemoryRanges( ArrayProxy&lt;const MappedMemoryRange&gt; const &amp; memoryRanges ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkInvalidateMappedMemoryRanges &amp;&amp; &quot;Function &lt;vkInvalidateMappedMemoryRanges&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkInvalidateMappedMemoryRanges(
+        static_cast&lt;VkDevice&gt;( m_device ), memoryRanges.size(), reinterpret_cast&lt;const VkMappedMemoryRange *&gt;( memoryRanges.data() ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::invalidateMappedMemoryRanges&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkGetDeviceMemoryCommitment, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceMemoryCommitment.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE DeviceSize DeviceMemory::getCommitment() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceMemoryCommitment &amp;&amp; &quot;Function &lt;vkGetDeviceMemoryCommitment&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      DeviceSize committedMemoryInBytes;
+      getDispatcher()-&gt;vkGetDeviceMemoryCommitment(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkDeviceMemory&gt;( m_deviceMemory ), reinterpret_cast&lt;VkDeviceSize *&gt;( &amp;committedMemoryInBytes ) );
+
+      return committedMemoryInBytes;
+    }
+
+    // wrapper function for command vkBindBufferMemory, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Buffer::bindMemory( VULKAN_HPP_NAMESPACE::DeviceMemory memory, DeviceSize memoryOffset ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkBindBufferMemory &amp;&amp; &quot;Function &lt;vkBindBufferMemory&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkBindBufferMemory( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                static_cast&lt;VkBuffer&gt;( m_buffer ),
+                                                                                static_cast&lt;VkDeviceMemory&gt;( memory ),
+                                                                                static_cast&lt;VkDeviceSize&gt;( memoryOffset ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Buffer::bindMemory&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkBindImageMemory, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindImageMemory.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Image::bindMemory( VULKAN_HPP_NAMESPACE::DeviceMemory memory, DeviceSize memoryOffset ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkBindImageMemory &amp;&amp; &quot;Function &lt;vkBindImageMemory&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkBindImageMemory( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                               static_cast&lt;VkImage&gt;( m_image ),
+                                                                               static_cast&lt;VkDeviceMemory&gt;( memory ),
+                                                                               static_cast&lt;VkDeviceSize&gt;( memoryOffset ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Image::bindMemory&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkGetBufferMemoryRequirements, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetBufferMemoryRequirements.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE MemoryRequirements Buffer::getMemoryRequirements() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetBufferMemoryRequirements &amp;&amp; &quot;Function &lt;vkGetBufferMemoryRequirements&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      MemoryRequirements memoryRequirements;
+      getDispatcher()-&gt;vkGetBufferMemoryRequirements(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkBuffer&gt;( m_buffer ), reinterpret_cast&lt;VkMemoryRequirements *&gt;( &amp;memoryRequirements ) );
+
+      return memoryRequirements;
+    }
+
+    // wrapper function for command vkGetImageMemoryRequirements, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetImageMemoryRequirements.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE MemoryRequirements Image::getMemoryRequirements() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetImageMemoryRequirements &amp;&amp; &quot;Function &lt;vkGetImageMemoryRequirements&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      MemoryRequirements memoryRequirements;
+      getDispatcher()-&gt;vkGetImageMemoryRequirements(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkImage&gt;( m_image ), reinterpret_cast&lt;VkMemoryRequirements *&gt;( &amp;memoryRequirements ) );
+
+      return memoryRequirements;
+    }
+
+    // wrapper function for command vkGetImageSparseMemoryRequirements, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetImageSparseMemoryRequirements.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;SparseImageMemoryRequirements&gt; Image::getSparseMemoryRequirements() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetImageSparseMemoryRequirements &amp;&amp; &quot;Function &lt;vkGetImageSparseMemoryRequirements&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      std::vector&lt;SparseImageMemoryRequirements&gt; sparseMemoryRequirements;
+      uint32_t                                   sparseMemoryRequirementCount;
+      getDispatcher()-&gt;vkGetImageSparseMemoryRequirements(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkImage&gt;( m_image ), &amp;sparseMemoryRequirementCount, nullptr );
+      sparseMemoryRequirements.resize( sparseMemoryRequirementCount );
+      getDispatcher()-&gt;vkGetImageSparseMemoryRequirements( static_cast&lt;VkDevice&gt;( m_device ),
+                                                           static_cast&lt;VkImage&gt;( m_image ),
+                                                           &amp;sparseMemoryRequirementCount,
+                                                           reinterpret_cast&lt;VkSparseImageMemoryRequirements *&gt;( sparseMemoryRequirements.data() ) );
+
+      VULKAN_HPP_ASSERT( sparseMemoryRequirementCount &lt;= sparseMemoryRequirements.size() );
+      if ( sparseMemoryRequirementCount &lt; sparseMemoryRequirements.size() )
+      {
+        sparseMemoryRequirements.resize( sparseMemoryRequirementCount );
+      }
+      return sparseMemoryRequirements;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceSparseImageFormatProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceSparseImageFormatProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;SparseImageFormatProperties&gt; PhysicalDevice::getSparseImageFormatProperties(
+      Format format, ImageType type, SampleCountFlagBits samples, ImageUsageFlags usage, ImageTiling tiling ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceSparseImageFormatProperties &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceSparseImageFormatProperties&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      std::vector&lt;SparseImageFormatProperties&gt; properties;
+      uint32_t                                 propertyCount;
+      getDispatcher()-&gt;vkGetPhysicalDeviceSparseImageFormatProperties( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                       static_cast&lt;VkFormat&gt;( format ),
+                                                                       static_cast&lt;VkImageType&gt;( type ),
+                                                                       static_cast&lt;VkSampleCountFlagBits&gt;( samples ),
+                                                                       static_cast&lt;VkImageUsageFlags&gt;( usage ),
+                                                                       static_cast&lt;VkImageTiling&gt;( tiling ),
+                                                                       &amp;propertyCount,
+                                                                       nullptr );
+      properties.resize( propertyCount );
+      getDispatcher()-&gt;vkGetPhysicalDeviceSparseImageFormatProperties( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                       static_cast&lt;VkFormat&gt;( format ),
+                                                                       static_cast&lt;VkImageType&gt;( type ),
+                                                                       static_cast&lt;VkSampleCountFlagBits&gt;( samples ),
+                                                                       static_cast&lt;VkImageUsageFlags&gt;( usage ),
+                                                                       static_cast&lt;VkImageTiling&gt;( tiling ),
+                                                                       &amp;propertyCount,
+                                                                       reinterpret_cast&lt;VkSparseImageFormatProperties *&gt;( properties.data() ) );
+
+      VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+      if ( propertyCount &lt; properties.size() )
+      {
+        properties.resize( propertyCount );
+      }
+      return properties;
+    }
+
+    // wrapper function for command vkQueueBindSparse, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueBindSparse.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Queue::bindSparse( ArrayProxy&lt;const BindSparseInfo&gt; const &amp; bindInfo,
+                                                                              VULKAN_HPP_NAMESPACE::Fence              fence ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkQueueBindSparse &amp;&amp; &quot;Function &lt;vkQueueBindSparse&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkQueueBindSparse(
+        static_cast&lt;VkQueue&gt;( m_queue ), bindInfo.size(), reinterpret_cast&lt;const VkBindSparseInfo *&gt;( bindInfo.data() ), static_cast&lt;VkFence&gt;( fence ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Queue::bindSparse&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkCreateFence, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFence.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;Fence&gt;::type
+      Device::createFence( FenceCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateFence &amp;&amp; &quot;Function &lt;vkCreateFence&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::Fence fence;
+      Result                      result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateFence( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                           reinterpret_cast&lt;const VkFenceCreateInfo *&gt;( &amp;createInfo ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkFence *&gt;( &amp;fence ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createFence&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, Fence( *this, *reinterpret_cast&lt;VkFence *&gt;( &amp;fence ), allocator ) );
+    }
+
+    // wrapper function for command vkResetFences, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetFences.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Device::resetFences( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Fence&gt; const &amp; fences ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkResetFences &amp;&amp; &quot;Function &lt;vkResetFences&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkResetFences( static_cast&lt;VkDevice&gt;( m_device ), fences.size(), reinterpret_cast&lt;const VkFence *&gt;( fences.data() ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::resetFences&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkGetFenceStatus, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetFenceStatus.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Fence::getStatus() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetFenceStatus &amp;&amp; &quot;Function &lt;vkGetFenceStatus&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetFenceStatus( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkFence&gt;( m_fence ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Fence::getStatus&quot;, { Result::eSuccess, Result::eNotReady } );
+
+      return static_cast&lt;Result&gt;( result );
+    }
+
+    // wrapper function for command vkWaitForFences, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkWaitForFences.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::waitForFences( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Fence&gt; const &amp; fences,
+                                                                         Bool32                                                waitAll,
+                                                                         uint64_t                                              timeout ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkWaitForFences &amp;&amp; &quot;Function &lt;vkWaitForFences&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkWaitForFences(
+        static_cast&lt;VkDevice&gt;( m_device ), fences.size(), reinterpret_cast&lt;const VkFence *&gt;( fences.data() ), static_cast&lt;VkBool32&gt;( waitAll ), timeout ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::waitForFences&quot;, { Result::eSuccess, Result::eTimeout } );</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-34.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-36.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

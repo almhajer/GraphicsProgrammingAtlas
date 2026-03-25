@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_LoadRawAudioNoCopy",
+    "slug": "mix-load-raw-audio-no-copy",
+    "titleArabic": "تحميل raw PCM data الذاكرة المخزن without making copy",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-load-raw-audio-no-copy",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-load-raw-audio-no-copy.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تحميل raw PCM data الذاكرة المخزن without making copy",
+    "actualMeaningArabic": "تحميل raw PCM data الذاكرة المخزن without making copy.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تحميل raw PCM data الذاكرة المخزن without making copy داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( MIX_Audio *) Returns an audio object\nthat can be used to make sound on a mixer, or NULL on failure; call\nSDL_GetError() for more information. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Load raw PCM data from a memory buffer without making a copy."
+  },
+  "signature": {
+    "raw": "MIX_Audio * MIX_LoadRawAudioNoCopy(MIX_Mixer *mixer, const void *data, size_t datalen, const SDL_AudioSpec *spec, bool free_when_done);",
+    "returnType": "MIX_Audio *",
+    "parameters": [
+      "MIX_Mixer *mixer",
+      "const void *data",
+      "size_t datalen",
+      "const SDL_AudioSpec *spec",
+      "bool free_when_done"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "mixer",
+        "type": "MIX_Mixer *",
+        "descriptionArabic": "يمثل المعامل mixer من النوع MIX_Mixer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a mixer this audio is intended to be used with. May be NULL."
+      },
+      {
+        "name": "data",
+        "type": "const void *",
+        "descriptionArabic": "يمثل المعامل data من النوع const void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the buffer where the raw PCM data lives."
+      },
+      {
+        "name": "datalen",
+        "type": "size_t",
+        "descriptionArabic": "يمثل المعامل datalen من النوع size_t القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the size, in bytes, of the buffer."
+      },
+      {
+        "name": "spec",
+        "type": "const SDL_AudioSpec *",
+        "descriptionArabic": "يمثل المعامل spec من النوع const SDL_AudioSpec * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "what format the raw data is in."
+      },
+      {
+        "name": "free_when_done",
+        "type": "bool",
+        "descriptionArabic": "يمثل المعامل free_when_done من النوع bool القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "if true, data will be given to SDL_free() when the MIX_Audio is destroyed."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This buffer must live for the entire time the returned MIX_Audio lives, as the mixer will access the\nbuffer whenever it needs to mix more data.",
+      "This function is meant to maximize efficiency: if the data is already\nin memory and can remain there, don't copy it. But it can also lead to\nsome interesting tricks, like changing the buffer's contents to alter\nmultiple playing tracks at once. (But, of course, be careful when being\ntoo clever.)",
+      "MIX_Audio objects can be shared between\nmultiple mixers. The mixer parameter just suggests the most\nlikely mixer to use this audio, in case some optimization might be\napplied, but this is not required, and a NULL mixer may be\nspecified.",
+      "If free_when_done is true, SDL_mixer will call\n SDL_free(data) when the returned MIX_Audio is eventually destroyed. This can be\nuseful when the data is not static, but rather composed dynamically for\nthis specific MIX_Audio and simply wants to\navoid the extra copy."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( MIX_Audio *) Returns an audio object\nthat can be used to make sound on a mixer, or NULL on failure; call\nSDL_GetError() for more information.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_LoadRawAudioNoCopy",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_DestroyAudio",
+        "route": "#ref/sdl3-mixer/functions/mix-destroy-audio",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_SetTrackAudio",
+        "route": "#ref/sdl3-mixer/functions/mix-set-track-audio",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_LoadRawAudio",
+        "route": "#ref/sdl3-mixer/functions/mix-load-raw-audio",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_LoadRawAudio_IO",
+        "route": "#ref/sdl3-mixer/functions/mix-load-raw-audio-io",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_LoadAudio_IO",
+        "route": "#ref/sdl3-mixer/functions/mix-load-audio-io",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

@@ -1,0 +1,388 @@
+{
+  "key": "windows",
+  "title": "النوافذ والنطاقات",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "windows",
+      "sectionTitle": "النوافذ والنطاقات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::End",
+        "ImGui::Text",
+        "ImGui::Checkbox",
+        "ImGuiWindowFlags",
+        "ImGuiWindowFlags_NoResize"
+      ],
+      "instructions": [
+        "أنشئ متغير حالة خارجي إذا أردت السماح للمستخدم بإغلاق النافذة من الواجهة.",
+        "استدع ImGui::Begin مرةً واحدة لكل نافذة في كل إطار تريد ظهورها فيه.",
+        "وازن النطاق دائماً بـ ImGui::End حتى لو أعادت الدالة `false`."
+      ],
+      "notes": [
+        "الأعلام تمرر مرةً واحدة في بداية النطاق، لذلك هي المكان الصحيح لفرض سلوك النافذة العام.",
+        "اسم النافذة هو جزء من الهوية المنطقية، وليس مجرد عنوان مرئي."
+      ],
+      "lifecycle": [
+        "يبدأ الاستخدام داخل إطار صالح بعد ImGui::NewFrame ومع وجود سياق Dear ImGui منشأ مسبقاً.",
+        "يجب أن يقترن كل استدعاء ناجح أو غير ناجح إلى ImGui::Begin باستدعاء مقابل إلى ImGui::End في الإطار نفسه.",
+        "تنتهي حياة النافذة المنطقية عندما يتوقف التطبيق عن استدعاء ImGui::Begin باسمها أو عندما تمسح حالتها المخزنة صراحة."
+      ],
+      "frameSimulation": [
+        {
+          "title": "الإطار 1",
+          "body": "بعد ImGui::NewFrame يستدعي التطبيق ImGui::Begin فيسجل Dear ImGui النافذة ويعيد `true` لأن محتواها ظاهر."
+        },
+        {
+          "title": "الإطار 2",
+          "body": "إذا نقر المستخدم زر الإغلاق يكتب Dear ImGui القيمة `false` في `p_open` أثناء هذا الإطار قبل أن يصل منطق التطبيق إلى الإطار التالي."
+        },
+        {
+          "title": "الإطار 3",
+          "body": "عندما تصبح حالة الفتح الخارجية `false` يتوقف التطبيق عادة عن استدعاء ImGui::Begin لهذه النافذة فلا يعاد بناؤها."
+        }
+      ],
+      "executionMap": {
+        "steps": [
+          "حالة النافذة الخارجية",
+          "ImGui::Begin",
+          "سجل النوافذ الداخلي",
+          "السياق الحالي للنافذة",
+          "القيمة المعادة bool",
+          "عناصر المحتوى",
+          "أوامر الرسم النهائية"
+        ],
+        "benefit": "توضح هذه الخريطة أن ImGui::Begin لا يرسم مجرد إطار مرئي فقط، بل يحدد أيضاً السياق الذي سيقرأه كل عنصر لاحق داخل النافذة نفسها."
+      },
+      "usageExample": {
+        "code": "bool show_inspector = true;\nif (ImGui::Begin(\"المعاين\", &show_inspector, ImGuiWindowFlags_NoResize)) {\n    ImGui::Text(\"الكائن الحالي: Cube\");\n    ImGui::Checkbox(\"إظهار الحدود\", &show_bounds);\n}\nImGui::End();",
+        "explanation": "يفتح هذا المثال نافذة أدوات ثابتة الحجم، ثم يضع بداخلها نصاً وخانة اختيار. قيمة ImGui::Begin تمنعك من بناء المحتوى إذا لم تكن النافذة في حالة مناسبة لعرضه."
+      },
+      "guiRepresentation": {
+        "title": "التمثيل البصري الناتج",
+        "mockup": "┌ المعاين ──────────────×┐\n│ الكائن الحالي: Cube     │\n│ [ ] إظهار الحدود        │\n└─────────────────────────┘",
+        "explanation": "الاستدعاء ينشئ غلاف النافذة أولاً، ثم تظهر العناصر التي بين ImGui::Begin و ImGui::End داخل هذا الغلاف بالتسلسل."
+      },
+      "parameterExample": "bool show_tools = true;\nif (ImGui::Begin(\"لوحة الأدوات\", &show_tools, ImGuiWindowFlags_NoResize)) {\n    ImGui::Text(\"أوامر سريعة\");\n}\nImGui::End();",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "name",
+          "officialArabicDescription": "اسم النافذة كما يظهر للمستخدم ويستخدم أيضاً كأساس لهويتها الداخلية.",
+          "realRole": "يمثل المعرف النصي الذي يربط بين النافذة الحالية وحالتها المحفوظة مثل الموضع والحجم وحالة الطي.",
+          "whyPassed": "تحتاجه Dear ImGui كي تميز هذه النافذة عن غيرها وتعيد استخدام حالتها عبر الإطارات.",
+          "actualUsage": "مرر عنواناً ثابتاً ومفهوماً، وإذا احتجت لتكرار عنوان مرئي نفسه فاستخدم suffix مخفياً مثل \"الأدوات##left_panel\" لمنع تصادم الهوية."
+        },
+        {
+          "type": "bool*",
+          "name": "p_open",
+          "officialArabicDescription": "مؤشر اختياري إلى حالة تحدد هل تبقى النافذة مفتوحة.",
+          "realRole": "يربط زر الإغلاق في شريط النافذة بمتغير تملكه أنت حتى تعكس الواجهة قرار المستخدم في كود التطبيق.",
+          "whyPassed": "تحتاجه الدالة إذا أردت أن يؤدي إغلاق النافذة من الواجهة إلى تغيير حالة منطقية خارجية يحتفظ بها التطبيق.",
+          "actualUsage": "مرر عنوان متغير منطقي طويل العمر مثل `&show_debug_window`، أو اتركه `nullptr` إذا كانت النافذة لا تملك زر إغلاق خارجي."
+        },
+        {
+          "type": "ImGuiWindowFlags",
+          "name": "flags",
+          "officialArabicDescription": "أعلام تضبط سلوك النافذة وخصائصها المرئية والتفاعلية.",
+          "realRole": "تحدد قيود النافذة مثل منع تغيير الحجم أو منع التحريك أو إخفاء أشرطة معيّنة قبل أن يرسم Dear ImGui النافذة.",
+          "whyPassed": "تحتاجه الدالة لتكوين سلوك النافذة مرةً واحدة في بداية النطاق بدل نشر هذا القرار على عناصر متعددة داخله.",
+          "actualUsage": "ادمج الأعلام المطلوبة مثل `ImGuiWindowFlags_NoResize` عندما تريد فرض سلوك نافذة ثابتة، واترك القيمة `0` إذا أردت السلوك الافتراضي الكامل."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::Begin",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "name"
+          },
+          {
+            "type": "bool*",
+            "name": "p_open",
+            "defaultValue": "nullptr"
+          },
+          {
+            "type": "ImGuiWindowFlags",
+            "name": "flags",
+            "defaultValue": "0"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يكون من المناسب بناء محتوى النافذة الداخلي في هذا الإطار، وتعيد `false` عندما تكون النافذة مطوية أو محجوبة بالطريقة التي تسمح لك بتخطي المحتوى.",
+        "trueMeaning": "تعني أن النافذة فعالة لبناء العناصر الداخلية الآن.",
+        "falseMeaning": "تعني أن Dear ImGui افتتح النطاق شكلياً لكنه يتيح لك تخطي بناء المحتوى لتقليل العمل غير الضروري."
+      },
+      "name": "ImGui::Begin",
+      "kind": "function",
+      "shortTooltip": "دالة تبدأ نافذة Dear ImGui وتعيد حالة ظهور محتواها في هذا الإطار.",
+      "description": "تبدأ نافذة مرئية جديدة في Dear ImGui وتحدد النطاق الذي ستوضع داخله عناصر الواجهة التالية.",
+      "officialArabicDescription": "تبدأ نافذة Dear ImGui جديدة أو تتابع بناؤها في الإطار الحالي، وتعيد حالة تسمح لك بمعرفة هل يجب بناء محتواها الداخلي الآن.",
+      "realMeaning": "تمثل نقطة دخول إلى سجل النافذة الحالية داخل Dear ImGui؛ فهي تنشئ أو تعيد تنشيط بنية النافذة، وتربط أي عناصر ترسم بعدها بهذا النطاق حتى تصل إلى ImGui::End.",
+      "whenToUse": "تستخدم كلما أردت فتح نافذة مستقلة بعنوان وشريط علوي وحالة تخطيط خاصة بها داخل الإطار الحالي.",
+      "practicalBenefit": "تعطيك نطاقاً واضحاً لترتيب عناصر الواجهة وربطها باسم النافذة وأعلامها وحالتها الداخلية من دون إدارة شجرة عناصر دائمة يدوياً.",
+      "misuseImpact": "إذا لم تستدع بعدها ImGui::End ستختل موازنة المكدس الداخلي للنوافذ، وإذا تجاهلت القيمة المعادة وبنيت محتوىً ثقيلاً بينما النافذة مطوية فستنفذ عملاً لا حاجة له."
+    },
+    {
+      "sectionKey": "windows",
+      "sectionTitle": "النوافذ والنطاقات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Begin",
+        "ImGui::BeginChild",
+        "ImGui::BeginPopup",
+        "ImGui::EndPopup"
+      ],
+      "instructions": [
+        "ضعها دائماً بعد كتلة محتوى النافذة حتى لو خرجت مبكراً من بعض الشروط.",
+        "لا تستدعها من دون وجود ImGui::Begin مماثلة في المكدس."
+      ],
+      "notes": [
+        "الخطأ الشائع هو ربط ImGui::End بشرط القيمة المعادة من ImGui::Begin؛ هذا غير صحيح ويكسر التوازن."
+      ],
+      "lifecycle": [
+        "تستدعى بعد ImGui::Begin المقابل لها وفي الإطار نفسه.",
+        "ينتهي بها نطاق النافذة الحالي ويصبح السياق جاهزاً لنافذة أخرى أو لعناصر خارج هذا النطاق.",
+        "لا تحتاج إلى حالة خارجية، لكنها تعتمد كلياً على صحة ترتيب الاستدعاءات قبلها."
+      ],
+      "frameSimulation": [
+        {
+          "title": "الإطار الحالي",
+          "body": "بعد تسجيل آخر عنصر في النافذة يصل التنفيذ إلى ImGui::End فيغلق Dear ImGui نطاق التخطيط الحالي ويعود إلى المستوى الأب."
+        }
+      ],
+      "executionMap": {
+        "steps": [
+          "النافذة الحالية",
+          "ImGui::End",
+          "مكدس النوافذ الداخلي",
+          "السياق الأب أو العام",
+          "متابعة العناصر التالية"
+        ],
+        "benefit": "تساعدك الخريطة على فهم أن هذه الدالة تؤثر في البنية الداخلية للسياق أكثر من تأثيرها في الشكل المرئي المباشر."
+      },
+      "usageExample": {
+        "code": "if (ImGui::Begin(\"التفاصيل\")) {\n    ImGui::Text(\"المستخدم الحالي: Admin\");\n}\nImGui::End();",
+        "explanation": "حتى إذا أعادت ImGui::Begin قيمة `false` يجب استدعاء ImGui::End لإغلاق النطاق الذي فتحته Dear ImGui داخلياً."
+      },
+      "guiRepresentation": {
+        "title": "العلاقة البصرية مع الكود",
+        "mockup": "ImGui::Begin(\"التفاصيل\")   ← بداية الغلاف\n... محتوى النافذة ...\nImGui::End()             ← نهاية الغلاف",
+        "explanation": "لا تنشئ ImGui::End عنصراً مرئياً مستقلاً؛ وظيفتها إغلاق الغلاف الذي بدأه الاستدعاء الافتتاحي."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": {
+        "returnType": "void",
+        "name": "ImGui::End",
+        "params": []
+      },
+      "returns": null,
+      "name": "ImGui::End",
+      "kind": "function",
+      "shortTooltip": "دالة تغلق نطاق النافذة الحالية وتعيد المكدس الداخلي لحالة متوازنة.",
+      "description": "تنهي النافذة أو النطاق الذي بدأته ImGui::Begin في الإطار الحالي.",
+      "officialArabicDescription": "تنهي النافذة الحالية في Dear ImGui وتغلق نطاق التخطيط والرسم الذي بدأته ImGui::Begin أو ما يكافئه.",
+      "realMeaning": "تمثل عملية إغلاق مكدس النافذة الحالي؛ فهي تعيد السياق الداخلي إلى النافذة الأب أو إلى المستوى العام بعد اكتمال تسجيل العناصر الداخلية.",
+      "whenToUse": "تستخدم مباشرة بعد الانتهاء من كل المحتوى الواقع تحت ImGui::Begin أو BeginChild أو BeginPopup في النطاق نفسه.",
+      "practicalBenefit": "تحافظ على توازن البنية الداخلية للسياق، وتضمن أن العناصر التالية لا تُسجّل بالخطأ داخل النافذة السابقة.",
+      "misuseImpact": "نسيانها يفسد مكدس النوافذ وقد يؤدي إلى أخطاء تحقق داخل Dear ImGui أو إلى رسم عناصر في نطاق خاطئ."
+    },
+    {
+      "sectionKey": "windows",
+      "sectionTitle": "النوافذ والنطاقات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Begin",
+        "ImGui::End",
+        "ImGui::Text",
+        "ImVec2",
+        "ImGuiWindowFlags"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [
+        "يبدأ داخل نافذة مفتوحة مسبقاً عبر ImGui::Begin.",
+        "يبقى النطاق فعالاً حتى تصل إلى ImGui::EndChild أو إلى ImGui::End المقابلة حسب واجهة الإصدار المستخدمة.",
+        "تعاد حالة التمرير والتخطيط لهذا الطفل في الإطارات اللاحقة طالما بقي المعرف نفسه."
+      ],
+      "frameSimulation": [
+        {
+          "title": "قبل التمرير",
+          "body": "يبني التطبيق الطفل ويملأه بالعناصر المرئية حتى حد الارتفاع المحدد."
+        },
+        {
+          "title": "أثناء التمرير",
+          "body": "تقرأ Dear ImGui إدخال العجلة أو السحب فوق الطفل وتحدث موضع التمرير الخاص به فقط."
+        },
+        {
+          "title": "بعد التمرير",
+          "body": "في الإطار التالي يعاد بناء نفس العناصر لكن Dear ImGui يعرض الجزء المرئي الموافق لموضع التمرير الجديد."
+        }
+      ],
+      "executionMap": {
+        "steps": [
+          "إدخال التمرير",
+          "ImGuiIO",
+          "ImGui::BeginChild",
+          "حالة Scroll في الطفل",
+          "قص المحتوى",
+          "أوامر الرسم داخل المستطيل الفرعي"
+        ],
+        "benefit": "توضح الخريطة لماذا يفيد الطفل في عزل التمرير والسحب داخل جزء محدد من النافذة الأم."
+      },
+      "usageExample": {
+        "code": "if (ImGui::Begin(\"المشاهد\")) {\n    if (ImGui::BeginChild(\"asset_list\", ImVec2(0.0f, 180.0f), true)) {\n        ImGui::Text(\"Cube.mesh\");\n        ImGui::Text(\"Skybox.ktx2\");\n    }\n    ImGui::EndChild();\n}\nImGui::End();",
+        "explanation": "النطاق الفرعي هنا يسمح بقائمة قابلة للتمرير داخل نافذة أدوات أكبر من دون أن يتحول تمرير النافذة كلها."
+      },
+      "guiRepresentation": {
+        "title": "النتيجة داخل الواجهة",
+        "mockup": "┌ المشاهد ─────────────────────┐\n│ ┌──────── asset_list ──────┐ │\n│ │ Cube.mesh                │ │\n│ │ Skybox.ktx2              │ │\n│ └──────────────────────────┘ │\n└──────────────────────────────┘",
+        "explanation": "تظهر المساحة الفرعية كلوحة داخلية مستقلة يمكن قصها وتمريرها."
+      },
+      "parameterExample": "if (ImGui::BeginChild(\"asset_list\", ImVec2(0.0f, 220.0f), true)) {\n    ImGui::Text(\"الموارد المحملة\");\n}\nImGui::EndChild();",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "str_id",
+          "officialArabicDescription": "معرف النطاق الفرعي داخل النافذة الحالية.",
+          "realRole": "يميز مساحة الطفل عن أي مساحة فرعية أخرى داخل نفس النافذة ويحفظ حالة التمرير الخاصة بها.",
+          "whyPassed": "تحتاجه Dear ImGui لتخزين حالة هذا الطفل بين الإطارات.",
+          "actualUsage": "اختر معرفاً ثابتاً مثل \"asset_list\" أو أضف suffix مخفياً إذا كان العنوان المرئي مكرراً."
+        },
+        {
+          "type": "const ImVec2&",
+          "name": "size",
+          "officialArabicDescription": "الحجم المطلوب للمساحة الفرعية.",
+          "realRole": "يحدد المستطيل الذي سيقص داخله المحتوى وتطبق عليه آلية التمرير.",
+          "whyPassed": "تحتاجه الدالة لتعرف أين تنتهي المنطقة الفرعية داخل تخطيط النافذة الأب.",
+          "actualUsage": "مرر قيمة مثل `ImVec2(0.0f, 220.0f)` لتمدد العرض مع النافذة وتثبت الارتفاع."
+        },
+        {
+          "type": "bool",
+          "name": "border",
+          "officialArabicDescription": "يحدد هل ترسم حدود واضحة حول النطاق الفرعي.",
+          "realRole": "يضيف إطاراً بصرياً يوضح أن هذا الجزء مساحة مستقلة عن بقية النافذة.",
+          "whyPassed": "يفيد عندما تريد تمييز منطقة المحتوى الفرعي بصرياً.",
+          "actualUsage": "فعّل القيمة عند بناء لوحة قوائم أو منطقة معاينة تحتاج حدوداً واضحة."
+        },
+        {
+          "type": "ImGuiWindowFlags",
+          "name": "flags",
+          "officialArabicDescription": "أعلام تضبط سلوك النطاق الفرعي.",
+          "realRole": "تتحكم بخصائص مثل نوع التمرير أو بعض سلوكيات النافذة الفرعية.",
+          "whyPassed": "تحتاجه الدالة لتحديد سلوك الطفل قبل بدء تسجيل عناصره.",
+          "actualUsage": "استخدمه فقط عندما تحتاج سلوكاً مختلفاً عن الافتراضي، وإلا اتركه صفراً."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::BeginChild",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "str_id"
+          },
+          {
+            "type": "const ImVec2&",
+            "name": "size",
+            "defaultValue": "ImVec2(0, 0)"
+          },
+          {
+            "type": "bool",
+            "name": "border",
+            "defaultValue": "false"
+          },
+          {
+            "type": "ImGuiWindowFlags",
+            "name": "flags",
+            "defaultValue": "0"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يكون من المناسب بناء محتوى النطاق الفرعي في هذا الإطار.",
+        "trueMeaning": "المحتوى داخل الطفل يجب أن يبنى الآن.",
+        "falseMeaning": "يمكنك تخطي المحتوى الثقيل مع الاستمرار في موازنة النطاق."
+      },
+      "name": "ImGui::BeginChild",
+      "kind": "function",
+      "shortTooltip": "دالة تبدأ نطاقاً فرعياً قابلاً للتمرير داخل نافذة أو نطاق Dear ImGui قائم.",
+      "description": "تنشئ منطقة فرعية مستقلة داخل النافذة الحالية مع تخطيط وتمرير وحجم خاص بها.",
+      "officialArabicDescription": "تبدأ نافذة فرعية داخل النافذة الحالية بحيث تملك مساحة منفصلة يمكن تمريرها أو قصها عن بقية المحتوى.",
+      "realMeaning": "تضيف عقدة نافذة فرعية إلى شجرة النوافذ الحالية، وتستخدم عندما تحتاج Dear ImGui إلى مستطيل داخلي له قص وتمرير وحالة تخطيط منفصلة عن بقية النافذة.",
+      "whenToUse": "تستخدم عند بناء قوائم طويلة أو ألواح جانبية أو مساحات محتوى منفصلة داخل نافذة رئيسية واحدة.",
+      "practicalBenefit": "تعزل التخطيط والتمرير في مساحة محددة، مما يسمح بإظهار أجزاء كبيرة من المحتوى دون التأثير على تمرير النافذة الأم.",
+      "misuseImpact": "إذا استخدمتها بلا حجم مناسب أو من دون ImGui::EndChild/ImGui::End عبر النطاق الصحيح ستحصل على تخطيط غير متوقع أو مكدس غير متوازن."
+    },
+    {
+      "sectionKey": "windows",
+      "sectionTitle": "النوافذ والنطاقات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGuiConfigFlags_DockingEnable",
+        "ImGui::DockSpaceOverViewport",
+        "ImGui::BeginMainMenuBar",
+        "ImGui::MenuItem",
+        "ImGui::Selectable",
+        "ImGui::ColorEdit4"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي الإرساء والنوافذ المتعددة والـ Toggles في صفحة واحدة مترابطة.",
+        "يمكن توسيع الهيكل نفسه لاحقاً بإضافة Viewports أو Layout presets أو Panels متخصصة.",
+        "اللوحات لا تختفي من منطق التطبيق عند الإخفاء؛ فقط يتوقف بناؤها عندما تصبح Toggle الخاصة بها false."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يفعل التطبيق DockSpaceOverViewport، ثم يبني Main Menu Bar ونوافذ متعددة مثل Scene وHierarchy وInspector وConsole وAssets. كل نافذة يمكن إظهارها أو إخفاؤها عبر Toggle أو MenuItem.",
+        "code": "ImGuiIO& io = ImGui::GetIO();\nio.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\nImGui::DockSpaceOverViewport();\nif (ImGui::BeginMainMenuBar()) {\n    if (ImGui::BeginMenu(\"View\")) {\n        ImGui::MenuItem(\"Scene\", nullptr, &show_scene);\n        ImGui::MenuItem(\"Hierarchy\", nullptr, &show_hierarchy);\n        ImGui::MenuItem(\"Inspector\", nullptr, &show_inspector);\n        ImGui::EndMenu();\n    }\n    ImGui::EndMainMenuBar();\n}",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawProfessionalDockingWorkspace() {\n    static bool show_scene = true;\n    static bool show_hierarchy = true;\n    static bool show_inspector = true;\n    static bool show_console = true;\n    static bool show_assets = true;\n    static bool compact_mode = false;\n    static bool lock_layout = false;\n    static int selected_entity = 0;\n\n    ImGuiIO& io = ImGui::GetIO();\n    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;\n\n    ImGui::DockSpaceOverViewport();\n\n    if (ImGui::BeginMainMenuBar()) {\n        if (ImGui::BeginMenu(\"View\")) {\n            ImGui::MenuItem(\"Scene\", nullptr, &show_scene);\n            ImGui::MenuItem(\"Hierarchy\", nullptr, &show_hierarchy);\n            ImGui::MenuItem(\"Inspector\", nullptr, &show_inspector);\n            ImGui::MenuItem(\"Console\", nullptr, &show_console);\n            ImGui::MenuItem(\"Assets\", nullptr, &show_assets);\n            ImGui::EndMenu();\n        }\n        if (ImGui::BeginMenu(\"Layout\")) {\n            ImGui::MenuItem(\"Compact Mode\", nullptr, &compact_mode);\n            ImGui::MenuItem(\"Lock Docking\", nullptr, &lock_layout);\n            ImGui::EndMenu();\n        }\n        ImGui::EndMainMenuBar();\n    }\n\n    if (show_scene) {\n        ImGui::Begin(\"Scene\");\n        ImGui::Text(\"Viewport overlay\");\n        ImGui::Checkbox(\"Grid\", &compact_mode);\n        ImGui::Button(\"Play\", ImVec2(84.0f, 0.0f));\n        ImGui::SameLine();\n        ImGui::Button(\"Pause\", ImVec2(84.0f, 0.0f));\n        ImGui::End();\n    }\n\n    if (show_hierarchy) {\n        ImGui::Begin(\"Hierarchy\");\n        if (ImGui::Selectable(\"Player\", selected_entity == 0)) selected_entity = 0;\n        if (ImGui::Selectable(\"Vehicle\", selected_entity == 1)) selected_entity = 1;\n        if (ImGui::Selectable(\"Sun Light\", selected_entity == 2)) selected_entity = 2;\n        ImGui::End();\n    }\n\n    if (show_inspector) {\n        static float position[3] = {0.0f, 1.2f, -4.0f};\n        static float tint[4] = {0.28f, 0.62f, 0.96f, 1.0f};\n        ImGui::Begin(\"Inspector\");\n        ImGui::Text(\"Selected entity: %d\", selected_entity);\n        ImGui::DragFloat3(\"Position\", position, 0.05f);\n        ImGui::ColorEdit4(\"Tint\", tint);\n        ImGui::End();\n    }\n\n    if (show_console) {\n        ImGui::Begin(\"Console\");\n        ImGui::Text(\"[Info] Workspace restored.\");\n        ImGui::Text(\"[Info] Docking layout synced.\");\n        ImGui::Text(\"[Warn] Hot-reload is pending.\");\n        ImGui::End();\n    }\n\n    if (show_assets) {\n        ImGui::Begin(\"Assets\");\n        ImGui::Text(\"Meshes\");\n        ImGui::BulletText(\"SportsCar.mesh\");\n        ImGui::BulletText(\"StreetLamp.mesh\");\n        ImGui::Text(\"Textures\");\n        ImGui::BulletText(\"GlowMask.png\");\n        ImGui::BulletText(\"KeyboardAtlas.png\");\n        ImGui::End();\n    }\n}",
+        "explanation": "المثال يوضح أن الإرساء الفعلي في Dear ImGui يأتي من بناء النوافذ نفسها كل Frame مع تفعيل DockSpace، ثم ربط ظهور كل نافذة بـ Toggle أو MenuItem خاص بها.",
+        "expectedResult": "يرى المستخدم مساحة عمل احترافية فيها عدة نوافذ قابلة للإرساء والإخفاء والإظهار، مع تحكم واضح في اللوحات من خلال Toggles وشريط القوائم.",
+        "importantNote": "الإرساء لا يغني عن إدارة حالة النوافذ. يجب أن تبقى متغيرات show_scene وshow_inspector وغيرها مستقرة بين الإطارات حتى يبقى الـ Workspace منطقياً."
+      },
+      "guiRepresentation": {
+        "title": "Docking Studio",
+        "mockup": "DockSpace -> Scene + Hierarchy + Inspector + Console + Assets\nToggle View -> إظهار/إخفاء النوافذ\nLayout -> Compact / Lock Docking\nالنتيجة -> مساحة عمل احترافية متعددة النوافذ",
+        "explanation": "الصورة تركز على فكرة الإرساء والنوافذ المتعددة والتبديل بينها كمساحة عمل واحدة وليست مجموعة نوافذ عشوائية."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "مساحة Docking احترافية مع نوافذ متعددة وToggles",
+      "shortTooltip": "مثال مستقل يبني Workspace احترافية فيها DockSpace ونوافذ متعددة وإظهار/إخفاء عبر Toggles داخل Dear ImGui.",
+      "description": "يجمع هذا المثال ما يطلبه المستخدم عادة من نوافذ الأدوات الاحترافية: إرساء Docking، عدة نوافذ مستقلة، ومفاتيح Toggle تتحكم في ظهور كل نافذة أو لوحة داخل نفس مساحة العمل.",
+      "officialArabicDescription": "بدلاً من نافذة واحدة، يوضح المثال كيف يبني التطبيق سطح عمل كامل داخل Dear ImGui، ثم يوزع عليه Scene وHierarchy وInspector وConsole وAssets، مع ربط ظهور كل نافذة بحالة مستقلة.",
+      "realMeaning": "الإرساء في Dear ImGui لا يعني أن المكتبة تحتفظ بمخطط الواجهة بدلاً عن التطبيق؛ بل يعني أن التطبيق يفعّل Docking ويعيد بناء النوافذ نفسها كل Frame مع حالات show_* وflags مناسبة.",
+      "whenToUse": "استخدم هذا النمط عندما تبني محرر مشاهد أو أدوات إنتاج أو shell احترافي يحتاج نوافذ متعددة قابلة للإرساء وإظهاراً وإخفاءً سريعاً.",
+      "practicalBenefit": "يعطي المستخدم Workflow مألوفاً يشبه المحررات الاحترافية، ويقلل ازدحام الشاشة عبر Toggles واضحة بدلاً من إبقاء كل اللوحات مفتوحة دائماً.",
+      "misuseImpact": "إذا فعّلت Docking من دون حالات مستقرة للنوافذ أو تركت كل Toggle غير مرتبطة بنافذة فعلية، فستصبح مساحة العمل كبيرة شكلياً لكنها غير منضبطة وظيفياً."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_CreateMixerDevice",
+    "slug": "mix-create-mixer-device",
+    "titleArabic": "إنشاء mixer that plays sound directly الصوت الجهاز",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-create-mixer-device",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-create-mixer-device.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "إنشاء mixer that plays sound directly الصوت الجهاز",
+    "actualMeaningArabic": "إنشاء mixer that plays sound directly الصوت الجهاز.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى إنشاء mixer that plays sound directly الصوت الجهاز داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( MIX_Mixer *) Returns a mixer that can\nbe used to play audio, or NULL on failure; call SDL_GetError() for more\ninformation. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Create a mixer that plays sound directly to an audio device."
+  },
+  "signature": {
+    "raw": "MIX_Mixer * MIX_CreateMixerDevice(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec);",
+    "returnType": "MIX_Mixer *",
+    "parameters": [
+      "SDL_AudioDeviceID devid",
+      "const SDL_AudioSpec *spec"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "devid",
+        "type": "SDL_AudioDeviceID",
+        "descriptionArabic": "يمثل المعامل devid من النوع SDL_AudioDeviceID القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the device to open for playback, or\nSDL_AUDIO_DEVICE_DEFAULT_PLAYBACK for the default."
+      },
+      {
+        "name": "spec",
+        "type": "const SDL_AudioSpec *",
+        "descriptionArabic": "يمثل المعامل spec من النوع const SDL_AudioSpec * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the audio format to request from the device. May be NULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This is usually the function you want, vs MIX_CreateMixer ().",
+      "You can choose a specific device ID to open, following SDL's usual\nrules, but often the correct choice is to specify\nSDL_AUDIO_DEVICE_DEFAULT_PLAYBACK and let SDL figure out what device to\nuse (and seamlessly transition you to new hardware if the default\nchanges).",
+      "Only playback devices make sense here. Attempting to open a recording\ndevice will fail.",
+      "This will call SDL_Init(SDL_INIT_AUDIO) internally; it's safe to call\nSDL_Init() before this call, too, if you intend to enumerate audio\ndevices to choose one to open here.",
+      "An audio format can be requested, and the system will try to set the\nhardware to those specifications, or as close as possible, but this is\njust a hint. SDL_mixer will handle all data conversion behind the scenes\nin any case, and specifying a NULL spec is a reasonable choice. The best\nreason to specify a format is because you know all your data is in that\nformat and it might save some unnecessary CPU time on conversion.",
+      "The actual device format chosen is available through MIX_GetMixerFormat ().",
+      "Once a mixer is created, next steps are usually to load audio\n(through MIX_LoadAudio () and friends),\ncreate a track ( MIX_CreateTrack ()),\nand play that audio through that track.",
+      "When done with the mixer, it can be destroyed with MIX_DestroyMixer ()."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( MIX_Mixer *) Returns a mixer that can\nbe used to play audio, or NULL on failure; call SDL_GetError() for more\ninformation.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_CreateMixerDevice",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_CreateMixer",
+        "route": "#ref/sdl3-mixer/functions/mix-create-mixer",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_DestroyMixer",
+        "route": "#ref/sdl3-mixer/functions/mix-destroy-mixer",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

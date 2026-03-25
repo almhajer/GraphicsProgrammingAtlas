@@ -1,0 +1,2012 @@
+{
+  "referenceGuides": {
+    "auto": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، auto ليست اختصارًا شكليًا فقط، بل أداة تقلل التكرار عندما يكون النوع واضحًا من قيمة التهيئة أو من ناتج دالة أو مؤشر مرور على العناصر.",
+      "projectStepsArabic": [
+        "استخدم auto عندما تكون الجهة اليمنى واضحة النوع، مثل ناتج دالة أو مؤشر مرور على العناصر أو دالة مجهولة محفوظة في متغير.",
+        "إذا كان وجود المرجع أو const مهمًا لفهم السطر، فاكتبه صراحة مثل const auto& بدل auto المجرد.",
+        "لا تستخدم auto إذا كان إخفاء النوع سيجعل القارئ يضيع بين قيمة منسوخة ومرجع أو بين نوعين متقاربين."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "استنتاج نوع ناتج دالة",
+          "code": "#include <string>\n\nstd::string get_name() {\n    return \"Atlas\";\n}\n\nint main() {\n    auto name = get_name();\n    return name.empty();\n}",
+          "explanationArabic": "المترجم يستنتج هنا أن name من النوع std::string لأن الدالة تعيد std::string.",
+          "relatedTokens": [
+            "auto",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "استخدامه مع مؤشر مرور على العناصر",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values{1, 2, 3};\n    auto it = values.begin();\n    return *it;\n}",
+          "explanationArabic": "هذا مفيد لأن نوع مؤشر المرور على العناصر غالبًا طويل وغير مريح كتابيًا، بينما المقصود واضح من begin().",
+          "relatedTokens": [
+            "std::vector",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "عدد بسيط من غير تكرار",
+          "code": "int main() {\n    auto count = 5;\n    auto ready = true;\n    return ready ? count : 0;\n}",
+          "explanationArabic": "عندما تكون القيمة واضحة جدًا، يختصر auto الكتابة ويبقي السطر سهل القراءة.",
+          "relatedTokens": [
+            "auto",
+            "bool"
+          ]
+        }
+      ],
+      "followUps": [
+        "const",
+        "std::vector",
+        "std::string"
+      ]
+    },
+    "const": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، const تبني حدود قراءة واضحة بين أجزاء الكود: من يقرأ فقط، ومن يملك حق التعديل، ومن يستقبل بيانات لا يجب العبث بها.",
+      "projectStepsArabic": [
+        "استخدم const في المعاملات والقيم المرجعية التي لا يفترض أن تتغير أثناء التنفيذ.",
+        "اجعل const جزءًا من التعاقد بين الدوال بدل ترك القارئ يكتشف يدويًا أن القيمة لا تتغير.",
+        "انتبه إلى موضع const مع المؤشرات والمراجع لأن المعنى يتغير حسب مكانها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قراءة سلسلة نصية فقط",
+          "code": "#include <string>\n\nvoid print_length(const std::string& text) {\n    (void)text.size();\n}\n\nint main() {\n    std::string value = \"hello\";\n    print_length(value);\n}",
+          "explanationArabic": "المعامل هنا مرجع ثابت، لذلك الدالة تقرأ النص بلا نسخه وبلا السماح بتعديله.",
+          "relatedTokens": [
+            "const",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "ثابت محلي لا يجب تغييره",
+          "code": "int main() {\n    const int max_retries = 3;\n    return max_retries;\n}",
+          "explanationArabic": "هذا يعلن نية واضحة: القيمة اسمية ثابتة داخل هذا النطاق وليست متغيرًا تشغيليًا.",
+          "relatedTokens": [
+            "const",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "قراءة قيمة من دون تعديلها",
+          "code": "bool is_positive(const int value) {\n    return value > 0;\n}",
+          "explanationArabic": "حتى مع الأنواع البسيطة، const يوضح منذ البداية أن الدالة هنا تقرأ ولا تعدل.",
+          "relatedTokens": [
+            "const",
+            "bool"
+          ]
+        }
+      ],
+      "followUps": [
+        "auto",
+        "std::string",
+        "nullptr"
+      ]
+    },
+    "nullptr": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، nullptr تعبّر عن غياب كائن يشير إليه المؤشر، بصياغة لغوية صريحة لا تختلط بالقيم العددية.",
+      "projectStepsArabic": [
+        "مرر nullptr عندما يكون غياب المؤشر جزءًا طبيعيًا من تصميم الدالة.",
+        "استخدمها بدل 0 أو NULL حتى يبقى المقصود واضحًا أنه مؤشر فارغ لا عددًا عاديًا.",
+        "فرّق بين nullptr للمؤشرات وبين القيم الدلالية الخاصة في الأنواع العددية أو المعرفات الخاصة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فحص مؤشر اختياري",
+          "code": "#include <string>\n\nstd::size_t length_or_zero(const std::string* text) {\n    if (text == nullptr) {\n        return 0;\n    }\n    return text->size();\n}",
+          "explanationArabic": "nullptr هنا تعبّر بوضوح أن المعامل قد يكون غائبًا، والدالة تعالج هذا السيناريو صراحة.",
+          "relatedTokens": [
+            "nullptr",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "تهيئة مؤشر قبل الربط",
+          "code": "int main() {\n    int* value = nullptr;\n    int number = 42;\n    value = &number;\n    return *value;\n}",
+          "explanationArabic": "تبدأ القيمة بلا هدف صالح، ثم تُربط بعنوان صحيح لاحقًا.",
+          "relatedTokens": [
+            "nullptr"
+          ]
+        },
+        {
+          "titleArabic": "إرجاع عدم وجود نتيجة",
+          "code": "int* first_even(int* value) {\n    if (value == nullptr) {\n        return nullptr;\n    }\n    return (*value % 2 == 0) ? value : nullptr;\n}",
+          "explanationArabic": "يمكن أن تكون nullptr أيضًا إشارة واضحة إلى أن الدالة لم تجد نتيجة صالحة.",
+          "relatedTokens": [
+            "nullptr"
+          ]
+        }
+      ],
+      "followUps": [
+        "const",
+        "void",
+        "std::unique_ptr"
+      ]
+    },
+    "struct": {
+      "fullProjectNoteArabic": "مع نمو المشروع، تتحول struct من تجميع سريع للحقول إلى عقدة تصميم تحدد معنى البيانات وعمرها ومن يكتبها ومن يقرأها.",
+      "projectStepsArabic": [
+        "اجعل كل struct تمثل فكرة واحدة مثل Vertex أو DeviceSelection أو AppConfig بدل جمع حقول غير متجانسة.",
+        "إذا بدأت تضيف سلوكًا معقدًا وتحققًا داخليًا، راجع إن كان type أنسب كـ class أو builder منفصل.",
+        "وثق الحقول الحساسة التي يجب أن تبقى متسقة مع واجهات خارجية مثل Vulkan structs أو تنسيقات الملفات."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "بنية بيانات بسيطة",
+          "code": "struct Point {\n    int x;\n    int y;\n};\n\nint main() {\n    Point p{2, 3};\n    return p.x + p.y;\n}",
+          "explanationArabic": "struct هنا تجمع بيانات مترابطة تحت اسم واحد واضح بدل نشر المتغيرات منفصلة.",
+          "relatedTokens": [
+            "struct"
+          ]
+        },
+        {
+          "titleArabic": "تمرير البنية إلى دالة",
+          "code": "struct Size {\n    int width;\n    int height;\n};\n\nint area(const Size& size) {\n    return size.width * size.height;\n}",
+          "explanationArabic": "هذا يوضح كيف تصبح البنية عقدة بيانات حقيقية يمكن تمريرها بين الدوال بدل التعامل مع قيم منفصلة.",
+          "relatedTokens": [
+            "struct",
+            "const"
+          ]
+        },
+        {
+          "titleArabic": "تهيئة مباشرة مع أكثر من معنى",
+          "code": "struct User {\n    int id;\n    bool active;\n};\n\nint main() {\n    User user{7, true};\n    return user.active ? user.id : 0;\n}",
+          "explanationArabic": "هذا مثال ذكي يوضح أن struct تجعل العلاقة بين الحقول ظاهرة: المعرّف والحالة ينتميان إلى كيان واحد لا إلى متغيرين منفصلين.",
+          "relatedTokens": [
+            "struct",
+            "bool"
+          ]
+        }
+      ],
+      "followUps": [
+        "namespace",
+        "std::array",
+        "std::vector"
+      ]
+    },
+    "constexpr": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، constexpr ليست زينة لغوية، بل عقدة تقول للمترجم: إذا كان هذا التعبير مستوفيًا للشروط، فثبّت نتيجته وقت الترجمة بدل تركها لوقت التشغيل.",
+      "projectStepsArabic": [
+        "استخدم constexpr عندما يكون الهدف قيمة أو دالة يفترض أن تصمد في سياقات تتطلب قيمة ثابتة وقت الترجمة.",
+        "إذا كانت القراءة أهم من الاختصار، اشرح في الاسم أن القيمة ثابتة ترجميًا لا مجرد const عادي.",
+        "افصل بين الحالات التي تحتاج قيمة ثابتة فعلاً وبين القيم التي لا بأس أن تُحسب وقت التشغيل."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ثابت يحسب قبل التشغيل",
+          "code": "constexpr int page_size() {\n    return 4 * 1024;\n}\n\nint main() {\n    constexpr int bytes = page_size();\n    return bytes;\n}",
+          "explanationArabic": "الدالة هنا صالحة للتقييم وقت الترجمة، لذلك bytes تصبح قيمة ثابتة حقيقية قبل بدء البرنامج.",
+          "relatedTokens": [
+            "constexpr",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "فشل لأن القيمة ليست ثابتة ترجميًا",
+          "code": "int read_from_user() {\n    return 7;\n}\n\nint main() {\n    // constexpr int value = read_from_user();\n    return 0;\n}",
+          "explanationArabic": "هذا المثال يوضح الحد الحقيقي: ليست كل دالة أو قيمة قابلة لأن تصبح constexpr. إذا كان المصدر لا يملك قيمة معروفة وقت الترجمة فلن ينجح السياق الثابت.",
+          "relatedTokens": [
+            "constexpr"
+          ]
+        },
+        {
+          "titleArabic": "دالة ثابتة مع تتبع بسيط",
+          "code": "constexpr int square(int value) {\n    return value * value;\n}\n\nint main() {\n    constexpr int result = square(5);\n    return result;\n}",
+          "explanationArabic": "المترجم يثبت result = 25 أثناء الترجمة لأن الوسيط معروف والدالة نفسها صالحة للتقييم الثابت.",
+          "relatedTokens": [
+            "constexpr",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "const",
+        "auto",
+        "return"
+      ]
+    },
+    "if": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، if ليست مجرد كلمة شرط، بل نقطة قرار تربط استمرار التنفيذ بحقيقة منطقية يجب أن تكون واضحة للقارئ قبل أن يقرأ ما بعدها.",
+      "projectStepsArabic": [
+        "استخدم if عندما يكون الشرط نفسه جزءًا من معنى السطر التالي، لا مجرد فحص عابر.",
+        "اجعل التعبير الشرطي مفهومًا بذاته بدل حشر منطق غامض داخله.",
+        "إذا احتجت أكثر من فرعين متراكبين، فأعد التفكير في تقسيم المنطق أو تسمية الحالة أولًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قرار بسيط بناءً على حالة منطقية",
+          "code": "int main() {\n    bool ready = true;\n    if (ready) {\n        return 0;\n    }\n    return 1;\n}",
+          "explanationArabic": "هذا أبسط وجه: if تربط الانتقال إلى الفرع التالي بحالة منطقية واضحة ومباشرة.",
+          "relatedTokens": [
+            "if",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التحقق من صحة مؤشر قبل الاستعمال",
+          "code": "int read_value(const int* value) {\n    if (value == nullptr) {\n        return 0;\n    }\n    return *value;\n}",
+          "explanationArabic": "الشرط هنا ليس تجميليًا، بل يحمي المعنى الفعلي للدالة: لا قراءة من مؤشر فارغ.",
+          "relatedTokens": [
+            "if",
+            "nullptr",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "ربط الشرط بمعنى النتيجة",
+          "code": "#include <string>\n\nbool has_name(const std::string& name) {\n    if (name.empty()) {\n        return false;\n    }\n    return true;\n}",
+          "explanationArabic": "هذا مثال أوضح يبيّن أن if تقطع الطريق إلى نتيجة مختلفة بحسب حالة المعطى الحالي.",
+          "relatedTokens": [
+            "if",
+            "std::string",
+            "bool",
+            "return",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "else",
+        "bool",
+        "return"
+      ]
+    },
+    "else": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، else ليست تزيينًا بعد if، بل إعلان صريح: إذا لم يتحقق هذا المسار، فالمعنى البديل هو التالي.",
+      "projectStepsArabic": [
+        "استخدم else عندما يكون الفرع البديل له معنى حقيقي واضح، لا لمجرد ملء المساحة.",
+        "إذا كان الفرع الثاني مجرد خروج سريع، فاجعل ذلك واضحًا بدل بناء تداخل زائد.",
+        "احذر من سلاسل if/else الطويلة إذا كانت تخفي حالات متعددة تحتاج تمثيلًا أوضح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فرعان متقابلان بوضوح",
+          "code": "int main() {\n    bool ready = false;\n    if (ready) {\n        return 1;\n    } else {\n        return 0;\n    }\n}",
+          "explanationArabic": "else هنا تعبّر عن النتيجة المقابلة مباشرة بدل ترك القارئ يفترض ما يحدث عند فشل الشرط.",
+          "relatedTokens": [
+            "else",
+            "if",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "بديل لمعنى مختلف لا مجرد استمرار",
+          "code": "int sign_of(int value) {\n    if (value < 0) {\n        return -1;\n    } else {\n        return 1;\n    }\n}",
+          "explanationArabic": "الفرعان هنا يقدمان معنيين متقابلين، لذلك وجود else يوضح أن المسار البديل مقصود لا عرضي.",
+          "relatedTokens": [
+            "else",
+            "if",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين فرع النجاح والبديل",
+          "code": "#include <string>\n\nbool has_text(const std::string& text) {\n    if (text.empty()) {\n        return false;\n    } else {\n        return true;\n    }\n}",
+          "explanationArabic": "هذا المثال يرسخ فكرة أن else ليست شرطًا جديدًا، بل الوجه المقابل للشرط السابق نفسه.",
+          "relatedTokens": [
+            "else",
+            "if",
+            "std::string",
+            "bool",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "if",
+        "return",
+        "bool"
+      ]
+    },
+    "for": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، for هي البنية التي تقول: لدي بداية معروفة، وشرط استمرار واضح، وخطوة انتقال تتكرر بنفس الإيقاع.",
+      "projectStepsArabic": [
+        "استخدم for عندما يكون تقدم الحلقة معروفًا ويمكن قراءته من سطر الترويسة نفسه.",
+        "اجعل شرط التوقف وتحديث العداد صريحين حتى لا يتحول التكرار إلى مسار غامض.",
+        "إذا كان معنى التكرار يعتمد على حالة لا على عداد، فقد تكون while أوضح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عدّاد بسيط حتى حد معروف",
+          "code": "int main() {\n    int sum = 0;\n    for (int i = 0; i < 4; ++i) {\n        sum += i;\n    }\n    return sum;\n}",
+          "explanationArabic": "هذه الصورة الكلاسيكية لـ for: بداية وعدّاد وتحديث وحد إيقاف واضح.",
+          "relatedTokens": [
+            "for",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "المرور على عناصر حاوية",
+          "code": "#include <vector>\n\nint main() {\n    std::vector<int> values{1, 2, 3};\n    int sum = 0;\n    for (int value : values) {\n        sum += value;\n    }\n    return sum;\n}",
+          "explanationArabic": "هنا تحتفظ for بفكرة التكرار المنظم، لكن صياغتها تقرأ العناصر مباشرة بدل عدّاد يدوي.",
+          "relatedTokens": [
+            "for",
+            "std::vector",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تحديث متعدد في نفس الترويسة",
+          "code": "int main() {\n    int left = 0;\n    for (int step = 0; step < 3; ++step) {\n        left += 2;\n    }\n    return left;\n}",
+          "explanationArabic": "هذا مثال أوضح يبين أن for مناسبة عندما تكون فكرة التقدم نفسها جزءًا أساسيًا من منطق الحلقة.",
+          "relatedTokens": [
+            "for",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "while",
+        "return",
+        "std::vector"
+      ]
+    },
+    "while": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، while تعني أن استمرار الحلقة مرتبط بحالة يعاد تقييمها قبل كل دورة، لا بعدد دورات معروف مسبقًا.",
+      "projectStepsArabic": [
+        "استخدم while عندما يكون الشرط هو محور الحلقة الحقيقي.",
+        "تأكد أن شيئًا داخل الحلقة يغيّر الحالة، وإلا ستتحول إلى حلقة لا تنتهي.",
+        "إذا كان لديك عداد وحد علوي واضحان منذ البداية، فغالبًا for أوضح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "التوقف عند انتهاء شرط الحالة",
+          "code": "int main() {\n    int value = 3;\n    while (value > 0) {\n        --value;\n    }\n    return value;\n}",
+          "explanationArabic": "الشرط هنا هو صاحب القرار: ما دام value أكبر من الصفر تستمر الحلقة.",
+          "relatedTokens": [
+            "while",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حلقة تنتظر تحقق حالة",
+          "code": "bool is_ready(int value) {\n    return value == 0;\n}\n\nint main() {\n    int retries = 2;\n    while (!is_ready(retries)) {\n        --retries;\n    }\n    return retries;\n}",
+          "explanationArabic": "هذا وجه أوضح: الحلقة لا تعتمد على رقم مجرد فقط، بل على حالة منطقية تعاد قراءتها كل مرة.",
+          "relatedTokens": [
+            "while",
+            "if",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "المقارنة الذهنية مع for",
+          "code": "int main() {\n    int current = 1;\n    while (current < 10) {\n        current *= 2;\n    }\n    return current;\n}",
+          "explanationArabic": "هذا مثال ذكي لأن معنى الاستمرار هنا متعلق بالحالة الحالية للناتج، لا بعدّاد خطي تقليدي.",
+          "relatedTokens": [
+            "while",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "for",
+        "if",
+        "return"
+      ]
+    },
+    "return": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، return هي لحظة تسليم المعنى النهائي للدالة: النتيجة التي ستغادر بها، أو قرار إنهاء المسار الحالي فورًا.",
+      "projectStepsArabic": [
+        "استخدم return لإظهار نتيجة الدالة بوضوح، أو للخروج المبكر عندما يصبح القرار محسومًا.",
+        "اجعل القيمة المرجعة متسقة مع نوع الدالة ومعناها الفعلي.",
+        "إذا كثرت نقاط return بصورة تربك القراءة، فراجع شكل المنطق قبل زيادة الفروع أكثر."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إرجاع قيمة مباشرة",
+          "code": "int answer() {\n    return 42;\n}\n\nint main() {\n    return answer();\n}",
+          "explanationArabic": "هذا أبسط معنى: return تسلم النتيجة النهائية للدالة الحالية.",
+          "relatedTokens": [
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "خروج مبكر عند فشل الشرط",
+          "code": "int safe_divide(int value, int divisor) {\n    if (divisor == 0) {\n        return 0;\n    }\n    return value / divisor;\n}",
+          "explanationArabic": "هنا return لا تعيد نتيجة فقط، بل تقطع المسار مبكرًا عندما يصبح المسار الطبيعي غير صالح.",
+          "relatedTokens": [
+            "return",
+            "if"
+          ]
+        },
+        {
+          "titleArabic": "إرجاع نتيجة منطقية",
+          "code": "#include <string>\n\nbool has_content(const std::string& text) {\n    return !text.empty();\n}",
+          "explanationArabic": "هذا مثال أذكى قليلًا لأنه يوضح أن return قد تسلم تعبيرًا كاملًا لا متغيرًا مؤقتًا فقط.",
+          "relatedTokens": [
+            "return",
+            "bool",
+            "std::string",
+            "const"
+          ]
+        }
+      ],
+      "followUps": [
+        "if",
+        "bool",
+        "constexpr"
+      ]
+    },
+    "throw": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، throw تعني أن الدالة الحالية لم تعد تملك مسارًا عاديًا صالحًا، وأن المشكلة يجب أن تنتقل إلى طبقة أعلى تتخذ قرار المعالجة أو الإنهاء.",
+      "projectStepsArabic": [
+        "استخدم throw عندما يكون الفشل لا يمكن تجاهله محليًا ولا يريد الكود تحويله إلى قيمة عادية صامتة.",
+        "اجعل نوع الاستثناء ورسالة الخطأ يعكسان المعنى الحقيقي للفشل.",
+        "لا تستخدم throw بدل المنطق العادي إذا كانت الحالة المتوقعة يمكن تمثيلها بإرجاع أو optional أو bool."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إعلان فشل لا يمكن إصلاحه محليًا",
+          "code": "#include <stdexcept>\n\nint positive_only(int value) {\n    if (value < 0) {\n        throw std::runtime_error(\"القيمة يجب أن تكون غير سالبة\");\n    }\n    return value;\n}",
+          "explanationArabic": "throw هنا تقول بوضوح إن المسار الطبيعي للدالة لم يعد صالحًا مع هذا الإدخال.",
+          "relatedTokens": [
+            "throw",
+            "if",
+            "std::runtime_error",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين return و throw",
+          "code": "#include <stdexcept>\n\nint require_non_zero(int value) {\n    if (value == 0) {\n        throw std::runtime_error(\"القيمة صفر\");\n    }\n    return value;\n}",
+          "explanationArabic": "هذا المثال يوضح أن throw لا تعيد بديلًا محليًا؛ بل تقطع المسار وترسل الفشل إلى الخارج.",
+          "relatedTokens": [
+            "throw",
+            "return",
+            "if",
+            "std::runtime_error"
+          ]
+        },
+        {
+          "titleArabic": "دالة لا تتابع بعد throw",
+          "code": "#include <stdexcept>\n\nvoid fail_now() {\n    throw std::runtime_error(\"توقف التنفيذ الحالي\");\n}\n\nint main() {\n    fail_now();\n    return 0;\n}",
+          "explanationArabic": "السطر بعد fail_now لا يمثل استمرارًا طبيعيًا إذا خرج الاستثناء بالفعل، لذلك throw تغيّر مسار التحكم نفسه.",
+          "relatedTokens": [
+            "throw",
+            "void",
+            "std::runtime_error"
+          ]
+        }
+      ],
+      "followUps": [
+        "return",
+        "if",
+        "std::runtime_error"
+      ]
+    },
+    "namespace": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، namespace ليست صندوقًا شكليًا فقط، بل وسيلة لغوية لتنظيم فضاءات الأسماء ومنع تصادم الرموز وتوضيح الجهة التي ينتمي إليها الاسم.",
+      "projectStepsArabic": [
+        "استخدم namespace عندما تريد جمع الأسماء المرتبطة بمجال واحد تحت عنوان واحد واضح.",
+        "اجعلها تخدم التنظيم ومنع التصادم، لا مجرد زيادة تدرج شكلي بلا معنى.",
+        "عند القراءة أو التصدير، كن واعيًا لفرق كتابة الاسم كاملًا وبين using declaration المحدودة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تجميع دالة داخل نطاق اسم",
+          "code": "namespace math {\n    int add(int a, int b) {\n        return a + b;\n    }\n}\n\nint main() {\n    return math::add(2, 3);\n}",
+          "explanationArabic": "namespace هنا تمنع الاسم add من أن يختلط بدالة أخرى تحمل الاسم نفسه في مجال آخر.",
+          "relatedTokens": [
+            "namespace",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تمييز أسماء متشابهة من مجالين مختلفين",
+          "code": "namespace text {\n    int size() {\n        return 4;\n    }\n}\n\nnamespace buffer {\n    int size() {\n        return 8;\n    }\n}\n\nint main() {\n    return text::size() + buffer::size();\n}",
+          "explanationArabic": "هذا يوضح المعنى الحقيقي: namespace تمنع التصادم وتسمح بتكرار الاسم نفسه ما دام الانتماء مختلفًا.",
+          "relatedTokens": [
+            "namespace",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدام using declaration محدود",
+          "code": "namespace math {\n    int add(int a, int b) {\n        return a + b;\n    }\n}\n\nusing math::add;\n\nint main() {\n    return add(1, 2);\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح أن الحاجة ليست دائمًا إلى كتابة الاسم الكامل، لكن الاستيراد المحدود أوضح من فتح فضاء كامل بلا قيد.",
+          "relatedTokens": [
+            "namespace",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "class",
+        "struct",
+        "return"
+      ]
+    },
+    "using": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، using ليست مجرد اختصار شكلي. هي أداة تضبط كيف تريد للقارئ أن يرى الاسم هنا: هل يحتاج كتابة الاسم المؤهل كاملًا كل مرة، أم يكفي استيراد اسم واحد بوضوح، أم أن النوع طويل جدًا ويستحق اسمًا بديلًا أوضح؟",
+      "projectStepsArabic": [
+        "استخدم using declaration عندما تحتاج اسمًا واحدًا محددًا مثل std::cout داخل نطاق ضيق وواضح.",
+        "استخدم using alias عندما يكون النوع طويلًا أو مركبًا وتريد اسمًا يعبّر عن دوره بدل شكله فقط.",
+        "تجنب using namespace في النطاقات الواسعة لأن فائدته السريعة غالبًا تتحول إلى غموض وتصادم أسماء."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "جلب اسم واحد من std بدل فتح النطاق كله",
+          "code": "#include <iostream>\n\nusing std::cout;\nusing std::endl;\n\nint main() {\n    cout << \"Atlas\" << endl;\n    return 0;\n}",
+          "explanationArabic": "هذا أبسط استعمال عملي: أنت لم تفتح std كلها، بل جلبت اسمين محددين فقط إلى هذا النطاق.",
+          "relatedTokens": [
+            "using",
+            "std::cout",
+            "std::endl",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تعريف اسم بديل لنوع طويل",
+          "code": "#include <string>\n#include <vector>\n\nusing NameList = std::vector<std::string>;\n\nint main() {\n    NameList names{\"Ali\", \"Sara\"};\n    return static_cast<int>(names.size());\n}",
+          "explanationArabic": "هنا using لا تجلب اسمًا من نطاق آخر، بل تعطي نوعًا مركبًا اسمًا أوضح عند القراءة. النوع الحقيقي لم يتغير، لكن التعبير عنه صار أخف.",
+          "relatedTokens": [
+            "using",
+            "std::vector",
+            "std::string",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدامها داخل نوع لتوضيح اسم داخلي",
+          "code": "#include <string>\n\nclass User {\npublic:\n    using Name = std::string;\n\n    explicit User(Name value) : name(value) {}\n\n    const Name& get_name() const {\n        return name;\n    }\n\nprivate:\n    Name name;\n};\n\nint main() {\n    User user(\"Atlas\");\n    return static_cast<int>(user.get_name().size());\n}",
+          "explanationArabic": "هذا مثال أذكى: الاسم البديل صار جزءًا من لغة النوع نفسه، فيفهم القارئ أن Name هو الاسم المقصود داخل هذا السياق لا مجرد string عامة.",
+          "relatedTokens": [
+            "using",
+            "class",
+            "const",
+            "std::string",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "namespace",
+        "class",
+        "std::cout"
+      ]
+    },
+    "typedef": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، typedef تعيد تسمية نوع موجود بصياغة قديمة ما زالت تظهر كثيرًا في الشيفرات السابقة أو الواجهات التي تحافظ على أسلوب قديم.",
+      "projectStepsArabic": [
+        "اقرأ typedef بوصفها اسمًا بديلًا لنوع موجود لا نوعًا جديدًا مستقلًا.",
+        "انتبه أن using أوضح غالبًا في الشيفرة الحديثة، خصوصًا مع القوالب.",
+        "تعلم قراءتها لأنك ستراها كثيرًا في أكواد C وC++ الأقدم."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "اسم بديل لنوع بسيط",
+          "code": "typedef unsigned int Index;\n\nint main() {\n    Index value = 4;\n    return static_cast<int>(value);\n}",
+          "explanationArabic": "هذا أبسط استعمال: الاسم Index مجرد بديل مقروء أكثر من كتابة النوع الكامل كل مرة.",
+          "relatedTokens": [
+            "typedef",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قراءة typedef قديمة في نوع مركب",
+          "code": "typedef int Scores[3];\n\nint main() {\n    Scores values{1, 2, 3};\n    return values[1];\n}",
+          "explanationArabic": "هذا يوضح لماذا قد تبدو typedef أصعب قليلًا من using في الشيفرات القديمة، لكنها ما زالت مجرد إعادة تسمية لنوع موجود.",
+          "relatedTokens": [
+            "typedef",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "مقارنة ذهنية مع using",
+          "code": "typedef unsigned int OldIndex;\nusing NewIndex = unsigned int;\n\nint main() {\n    OldIndex first = 1;\n    NewIndex second = 2;\n    return static_cast<int>(first + second);\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يرسخ الفكرة: typedef وusing هنا لا يخلقان نوعين جديدين، بل اسمين بديلين لنفس النوع الأساسي.",
+          "relatedTokens": [
+            "typedef",
+            "using",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "using",
+        "typename",
+        "template"
+      ]
+    },
+    "typename": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، typename تظهر غالبًا عندما تبدأ القوالب. معناها الحقيقي ليس الزخرفة، بل إزالة اللبس وإخبار المترجم أن الاسم المقصود هنا نوع.",
+      "projectStepsArabic": [
+        "استخدمها في معاملات القوالب عندما تريد تعريف نوع عام مثل template <typename T>.",
+        "استعملها قبل الأسماء التابعة داخل القوالب عندما يحتاج المترجم أن يعرف أن هذا الاسم نوع.",
+        "توقع أن ترى أخطاء ترجمة مربكة إذا غابت typename في المواضع التابعة المطلوبة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "معامل قالب بسيط",
+          "code": "template <typename T>\nT add(T a, T b) {\n    return a + b;\n}\n\nint main() {\n    return add<int>(2, 3);\n}",
+          "explanationArabic": "هذا أبسط استعمال شائع: typename تقدم اسم النوع العام T الذي سيستعمل داخل القالب.",
+          "relatedTokens": [
+            "typename",
+            "template",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "اسم نوع تابع داخل قالب",
+          "code": "template <typename T>\nint size_of_value_type() {\n    typename T::value_type value{};\n    return sizeof(value);\n}",
+          "explanationArabic": "هنا typename توضح أن T::value_type اسم نوع تابع لا اسم قيمة أو عضو آخر.",
+          "relatedTokens": [
+            "typename",
+            "template",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق الذهني بين typename وusing",
+          "code": "template <typename T>\nusing Item = T;\n\nint main() {\n    Item<int> value = 7;\n    return value;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يبين أن typename تقدم نوعًا عامًا للقالب، بينما using هنا تبني اسمًا بديلًا فوق ذلك النوع العام.",
+          "relatedTokens": [
+            "typename",
+            "template",
+            "using",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "template",
+        "typedef",
+        "using"
+      ]
+    },
+    "template": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، template تعني أنك لا تكتب دالة أو نوعًا لنسخة واحدة فقط، بل تكتب صياغة عامة يمكن للمترجم أن يولّد منها نسخًا بحسب الأنواع أو القيم.",
+      "projectStepsArabic": [
+        "استخدمها عندما يتكرر المنطق نفسه على أكثر من نوع مع بقاء معنى النوع مهمًا.",
+        "اجعل المثال الأول بسيطًا جدًا قبل الانتقال إلى أنواع أو تراكيب أعقد.",
+        "لا تستعمل القوالب لمجرد الاستعراض إذا كان النوع الواحد يكفي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دالة عامة على أكثر من نوع",
+          "code": "template <typename T>\nT square(T value) {\n    return value * value;\n}\n\nint main() {\n    return square<int>(4);\n}",
+          "explanationArabic": "هذا أبسط معنى للقالب: منطق واحد، لكن نوع القيمة يظل مهمًا ويحدده الاستعمال.",
+          "relatedTokens": [
+            "template",
+            "typename",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "قالب نوع بسيط",
+          "code": "template <typename T>\nstruct Box {\n    T value;\n};\n\nint main() {\n    Box<int> box{5};\n    return box.value;\n}",
+          "explanationArabic": "هذا يوضح أن template لا تخص الدوال فقط، بل يمكن أن تبني أنواعًا عامة أيضًا.",
+          "relatedTokens": [
+            "template",
+            "typename",
+            "struct",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "اسم بديل فوق قالب",
+          "code": "template <typename T>\nusing Ptr = T*;\n\nint main() {\n    int value = 8;\n    Ptr<int> ptr = &value;\n    return *ptr;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يربط template بـ using ويبين كيف تصنع اسمًا عامًّا يعتمد على النوع الداخل.",
+          "relatedTokens": [
+            "template",
+            "typename",
+            "using",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "typename",
+        "using",
+        "class"
+      ]
+    },
+    "static": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، static من أكثر الكلمات التي يسيء المبتدئ فهمها لأنها لا تحمل معنى واحدًا في كل المواضع. ما يجمعها هو التحكم في عمر الاسم أو انتمائه أو رؤيته.",
+      "projectStepsArabic": [
+        "اقرأ static دائمًا بحسب موضعها: هل هي داخل دالة؟ داخل class؟ أم على مستوى أوسع؟",
+        "لا تفترض أنها تخص الأداء أو السرعة؛ المعنى الحقيقي هنا هو العمر أو الربط أو العضوية.",
+        "ابدأ بأمثلة صغيرة تفصل بين static local وstatic member."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "متغير محلي يحتفظ بقيمته بين الاستدعاءات",
+          "code": "int next_id() {\n    static int value = 0;\n    ++value;\n    return value;\n}\n\nint main() {\n    return next_id() + next_id();\n}",
+          "explanationArabic": "هذا أبسط معنى شائع: المتغير المحلي static لا يُنشأ من جديد عند كل استدعاء، بل يحتفظ بقيمته السابقة.",
+          "relatedTokens": [
+            "static",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "عضو تابع للنوع لا للكائن",
+          "code": "class Counter {\npublic:\n    static int value;\n};\n\nint Counter::value = 3;\n\nint main() {\n    return Counter::value;\n}",
+          "explanationArabic": "هنا static تعني أن value تخص النوع كله لا نسخة محددة من الكائنات.",
+          "relatedTokens": [
+            "static",
+            "class",
+            "public",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التفريق الذهني بين الموضعين",
+          "code": "class Sample {\npublic:\n    static int shared;\n};\n\nint Sample::shared = 2;\n\nint local_counter() {\n    static int value = 1;\n    return value++;\n}\n\nint main() {\n    return Sample::shared + local_counter();\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يجمع المعنيين الأشهر: static local لعمر ثابت بين الاستدعاءات، وstatic member لعضوية تتبع النوع نفسه.",
+          "relatedTokens": [
+            "static",
+            "class",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "inline",
+        "class",
+        "const"
+      ]
+    },
+    "inline": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، inline لا ينبغي أن تُفهم اليوم كأمر أداء فقط. معناها العملي الأهم في الشيفرة الحديثة هو السماح بتعريفات منسجمة في أكثر من وحدة ترجمة، خاصة في الرؤوس.",
+      "projectStepsArabic": [
+        "استخدمها مع الدوال الصغيرة أو المتغيرات المعرفة في الرؤوس عندما تحتاج ذلك تنظيميًا.",
+        "لا تشرحها للمبتدئ بوصفها ضمانًا للسرعة؛ هذا ليس معناها المركزي الآن.",
+        "اربطها ذهنيًا بقواعد التعريفات المشتركة أكثر من ربطها بقرار الدمج الفعلي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دالة قصيرة معرفة مباشرة",
+          "code": "inline int add(int a, int b) {\n    return a + b;\n}\n\nint main() {\n    return add(2, 3);\n}",
+          "explanationArabic": "هذا أبسط مثال: دالة قصيرة معرفة مباشرة ويمكن توزيعها بسهولة في الرؤوس عند الحاجة.",
+          "relatedTokens": [
+            "inline",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متغير inline حديث",
+          "code": "inline const int default_value = 7;\n\nint main() {\n    return default_value;\n}",
+          "explanationArabic": "هذا يوضح أن inline لا تخص الدوال فقط في C++ الحديثة، بل يمكن أن تظهر أيضًا مع متغيرات مناسبة.",
+          "relatedTokens": [
+            "inline",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفكرة الأصح من منظور التنظيم لا السرعة فقط",
+          "code": "inline int twice(int value) {\n    return value * 2;\n}\n\nint main() {\n    int result = twice(4);\n    return result;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يرسخ الفكرة الصحيحة: الكلمة هنا تنظم طريقة تعريف الكيان أكثر من كونها وعدًا أكيدًا بتحسين الأداء.",
+          "relatedTokens": [
+            "inline",
+            "static",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "static",
+        "const",
+        "template"
+      ]
+    },
+    "do": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، do تبدأ حلقة do-while التي تضمن تنفيذ الجسم مرة أولى قبل فحص الشرط. هذا هو الفرق الذهني الذي يجب أن يبقى حاضرًا دائمًا عند قراءتها.",
+      "projectStepsArabic": [
+        "استخدم do عندما تكون أول دورة مضمونة ومقصودة قبل فحص الشرط.",
+        "إذا لم تكن هذه الضمانة مطلوبة، فغالبًا while أوضح.",
+        "اربطها ذهنيًا دائمًا بـ while التابعة لها، لأن الكلمتين تعملان معًا كبنية واحدة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تنفيذ أول دورة قبل الفحص",
+          "code": "int main() {\n    int value = 0;\n    do {\n        ++value;\n    } while (value < 3);\n    return value;\n}",
+          "explanationArabic": "هذا أبسط معنى لـ do: الجسم يعمل أولًا ثم يأتي فحص الشرط بعد ذلك.",
+          "relatedTokens": [
+            "do",
+            "while",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن while عندما يبدأ الشرط كاذبًا",
+          "code": "int main() {\n    int value = 5;\n    do {\n        ++value;\n    } while (value < 5);\n    return value;\n}",
+          "explanationArabic": "رغم أن الشرط غير صالح منذ البداية، نفذ الجسم مرة واحدة لأن do-while تؤجل الفحص إلى ما بعد التنفيذ الأول.",
+          "relatedTokens": [
+            "do",
+            "while",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الخروج المبكر من do-while",
+          "code": "int main() {\n    int value = 0;\n    do {\n        ++value;\n        if (value == 1) {\n            break;\n        }\n    } while (value < 5);\n    return value;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يربط do-while مع break: التنفيذ الأول مضمون، لكنك ما زلت تستطيع قطع الحلقة مبكرًا إذا حُسم القرار داخل الجسم.",
+          "relatedTokens": [
+            "do",
+            "while",
+            "break",
+            "if",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "while",
+        "break",
+        "continue"
+      ]
+    },
+    "extern": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، extern تفصل بين الإعلان والتعريف. أنت هنا لا تنشئ الكيان، بل تعلن أن الكيان الحقيقي موجود في مكان آخر.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج اسمًا معرفًا فعليًا خارج الملف الحالي.",
+        "اقرأها دائمًا بوصفها تصريحًا لا تعريفًا جديدًا.",
+        "فرّق بينها وبين static لأن static قد تضيق الربط بينما extern تشير إلى وجود خارجي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "التصريح بمتغير خارجي",
+          "code": "extern int shared_value;\n\nint main() {\n    return shared_value;\n}",
+          "explanationArabic": "هذا أبسط معنى: السطر لا ينشئ shared_value، بل يعلن فقط أنها موجودة ويمكن استعمالها هنا.",
+          "relatedTokens": [
+            "extern",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التصريح بدالة معرفة خارجيًا",
+          "code": "extern int compute();\n\nint main() {\n    return compute();\n}",
+          "explanationArabic": "يمكن أن تظهر extern مع دوال أيضًا حين يكون تعريفها الفعلي في موضع آخر.",
+          "relatedTokens": [
+            "extern",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق الذهني بين الإعلان والتعريف",
+          "code": "extern int shared_value;\nint local_value = 3;\n\nint main() {\n    return local_value;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يثبت الفكرة: local_value تعريف فعلي، أما shared_value فمجرد إعلان عن اسم معرف خارجيًا.",
+          "relatedTokens": [
+            "extern",
+            "static",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "static",
+        "inline",
+        "const"
+      ]
+    },
+    "new": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، new تعني أن الكائن سيبنى على الذاكرة الديناميكية بعمر مستقل عن النطاق المحلي العادي.",
+      "projectStepsArabic": [
+        "استخدمها فقط عندما تحتاج عمرًا ديناميكيًا حقيقيًا للكائن.",
+        "اربطها ذهنيًا دائمًا بمسؤولية الملكية والحذف أو بالمؤشر الذكي الذي سيتولى ذلك.",
+        "لا تقدمها بوصفها الخيار الأول في C++ الحديثة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إنشاء كائن ديناميكي بسيط",
+          "code": "int main() {\n    int* value = new int(7);\n    int result = *value;\n    delete value;\n    return result;\n}",
+          "explanationArabic": "هذا أبسط معنى لـ new: بناء كائن خارج النطاق المحلي وإرجاع مؤشر إليه، مع مسؤولية حذف صريحة هنا.",
+          "relatedTokens": [
+            "new",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "ربط new بالمؤشر الذكي",
+          "code": "#include <memory>\n\nint main() {\n    std::unique_ptr<int> value(new int(9));\n    return *value;\n}",
+          "explanationArabic": "هذا يوضح لماذا لا ينبغي قراءة new وحدها دائمًا؛ غالبًا تريد إدارة ملكية أوضح مباشرة بعدها.",
+          "relatedTokens": [
+            "new",
+            "std::unique_ptr",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تمييز العمر الديناميكي عن المحلي",
+          "code": "int main() {\n    int local = 3;\n    int* dynamic = new int(5);\n    int result = local + *dynamic;\n    delete dynamic;\n    return result;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يقارن ذهنيًا بين كائن محلي ينتهي بنهاية النطاق وكائن ديناميكي يحتاج إدارة مستقلة.",
+          "relatedTokens": [
+            "new",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "this",
+        "std::unique_ptr",
+        "class"
+      ]
+    },
+    "this": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، this هي المؤشر إلى الكائن الحالي داخل دالة عضو غير static، وتستعمل عندما تحتاج هذا الوضوح صراحة.",
+      "projectStepsArabic": [
+        "استخدمها عند إزالة لبس الأسماء بين العضو والمعامل.",
+        "استعملها عند إرجاع الكائن الحالي أو الإشارة الصريحة إلى أعضائه.",
+        "لا تكثر منها بلا حاجة لأن الوصول المباشر إلى الأعضاء يكفي كثيرًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إزالة لبس الاسم داخل الدالة",
+          "code": "class Counter {\npublic:\n    void set(int value) {\n        this->value = value;\n    }\n\nprivate:\n    int value = 0;\n};",
+          "explanationArabic": "هذا أبسط استعمال عملي: this توضح أن الجهة اليسرى هي عضو الكائن الحالي لا المعامل المحلي.",
+          "relatedTokens": [
+            "this",
+            "class",
+            "private"
+          ]
+        },
+        {
+          "titleArabic": "إرجاع الكائن الحالي",
+          "code": "class Counter {\npublic:\n    Counter& self() {\n        return *this;\n    }\n};",
+          "explanationArabic": "هنا this لا تستخدم للوصول إلى عضو، بل لإرجاع الكائن الحالي نفسه.",
+          "relatedTokens": [
+            "this",
+            "class",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "إبراز الانتماء الصريح للعضو",
+          "code": "class Box {\npublic:\n    int current() const {\n        return this->value;\n    }\n\nprivate:\n    int value = 7;\n};",
+          "explanationArabic": "هذا مثال أذكى لأنه يبين أن this أحيانًا تستعمل فقط لتأكيد أن القراءة تخص الكائن الحالي نفسه.",
+          "relatedTokens": [
+            "this",
+            "class",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "class",
+        "return",
+        "static"
+      ]
+    },
+    "friend": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، friend تمثل إذن وصول خاص ومحدود. المعنى هنا ليس توسيع الواجهة العامة، بل منح جهة معينة حق رؤية الداخل لسبب تصميمي واضح.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج تعاونًا داخليًا ضيقًا بين نوعين أو بين نوع ودالة.",
+        "اجعل سبب الصداقة واضحًا ومحدودًا.",
+        "لا تحولها إلى بديل افتراضي عن تصميم الواجهة العامة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "منح نوع آخر وصولًا خاصًا",
+          "code": "class Counter {\n    friend class Inspector;\n\nprivate:\n    int value = 4;\n};",
+          "explanationArabic": "هذا أبسط استعمال: Inspector يمكنه رؤية الداخل دون تحويل value إلى public.",
+          "relatedTokens": [
+            "friend",
+            "private",
+            "class"
+          ]
+        },
+        {
+          "titleArabic": "منح دالة حرة حق الوصول",
+          "code": "class Counter {\n    friend int read_value(const Counter& counter);\n\nprivate:\n    int value = 3;\n};\n\nint read_value(const Counter& counter) {\n    return counter.value;\n}",
+          "explanationArabic": "هنا الصداقة ليست لنوع فقط، بل لدالة محددة تحتاج وصولًا استثنائيًا للداخل.",
+          "relatedTokens": [
+            "friend",
+            "private",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الصداقة ليست واجهة عامة",
+          "code": "class Secret {\n    friend class Reader;\n\nprivate:\n    int code = 9;\n};\n\nclass Reader {\npublic:\n    int read(const Secret& secret) const {\n        return secret.code;\n    }\n};",
+          "explanationArabic": "هذا مثال أذكى لأنه يوضح أن الوصول الاستثنائي منح لجهة محددة فقط، بينما بقي العضو غير مكشوف للعالم الخارجي عمومًا.",
+          "relatedTokens": [
+            "friend",
+            "private",
+            "class",
+            "public",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "private",
+        "protected",
+        "class"
+      ]
+    },
+    "virtual": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، virtual تعني أن الدالة قد تُحسم من النوع الفعلي للكائن وقت التشغيل عند المرور عبر أساس مشترك.",
+      "projectStepsArabic": [
+        "استخدمها عندما تريد واجهة أساس تسمح للأنواع المشتقة بسلوك مختلف فعليًا.",
+        "اربطها دائمًا بفكرة الاستدعاء عبر أساس مشترك.",
+        "لا تدخل الوراثة الديناميكية إذا لم تكن بحاجة حقيقية للتعدد الشكلي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دالة أساس قابلة لإعادة التعريف",
+          "code": "class Shape {\npublic:\n    virtual int area() const {\n        return 0;\n    }\n};",
+          "explanationArabic": "هذا أبسط معنى: الدالة في الأساس ليست نهائية، بل مفتوحة لسلوك مختلف في المشتقات.",
+          "relatedTokens": [
+            "virtual",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "النوع المشتق يقدّم سلوكًا مختلفًا",
+          "code": "class Shape {\npublic:\n    virtual int area() const {\n        return 0;\n    }\n};\n\nclass Square : public Shape {\npublic:\n    int area() const override {\n        return 4;\n    }\n};",
+          "explanationArabic": "هذا يوضح الفكرة العملية: المشتق يقدم تنفيذًا مختلفًا للدالة نفسها.",
+          "relatedTokens": [
+            "virtual",
+            "override",
+            "class",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الربط الذهني بين virtual وoverride",
+          "code": "class Base {\npublic:\n    virtual int value() const {\n        return 1;\n    }\n};\n\nclass Derived : public Base {\npublic:\n    int value() const override {\n        return 2;\n    }\n};",
+          "explanationArabic": "هذا مثال أذكى لأنه يثبت الصورة الكاملة: virtual تفتح باب إعادة التعريف، وoverride تؤكد أنك دخلت هذا الباب بشكل صحيح.",
+          "relatedTokens": [
+            "virtual",
+            "override",
+            "class",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "override",
+        "final",
+        "class"
+      ]
+    },
+    "override": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، override أداة تحقق ترجمي لا زينة شكلية. هي تؤكد أنك تعيد تعريف virtual موروثة فعلًا.",
+      "projectStepsArabic": [
+        "أضفها كلما أعدت تعريف دالة virtual موروثة.",
+        "اقرأها كفحص لنواياك وليس كتعليق فقط.",
+        "استفد منها لمنع الأخطاء الصامتة في التواقيع."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تأكيد إعادة تعريف دالة موروثة",
+          "code": "class Base {\npublic:\n    virtual int value() const {\n        return 1;\n    }\n};\n\nclass Derived : public Base {\npublic:\n    int value() const override {\n        return 2;\n    }\n};",
+          "explanationArabic": "هذا أبسط استعمال: override تؤكد أن الدالة الحالية يجب أن تطابق virtual في الأساس.",
+          "relatedTokens": [
+            "override",
+            "virtual",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الحماية من الخطأ الصامت في التوقيع",
+          "code": "class Base {\npublic:\n    virtual int score() const {\n        return 1;\n    }\n};\n\nclass Derived : public Base {\npublic:\n    int score() const override {\n        return 5;\n    }\n};",
+          "explanationArabic": "الفائدة هنا عملية جدًا: لو اختلف التوقيع فلن يمر الخطأ بصمت لأن override ستكشفه للمترجم.",
+          "relatedTokens": [
+            "override",
+            "virtual",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الربط مع final لإغلاق إعادة التعريف",
+          "code": "class Base {\npublic:\n    virtual int value() const {\n        return 1;\n    }\n};\n\nclass Derived : public Base {\npublic:\n    int value() const override final {\n        return 3;\n    }\n};",
+          "explanationArabic": "هذا مثال أذكى لأنه يجمع المعنيين: override تؤكد إعادة التعريف، وfinal تغلقها بعد هذه النقطة.",
+          "relatedTokens": [
+            "override",
+            "final",
+            "virtual",
+            "class",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "virtual",
+        "final",
+        "class"
+      ]
+    },
+    "final": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، final تعني أن نقطة الامتداد تتوقف هنا: لا اشتقاق أكثر من النوع أو لا إعادة تعريف أكثر للدالة بحسب موضعها.",
+      "projectStepsArabic": [
+        "استخدمها عندما تريد إغلاق مسار امتداد بوضوح.",
+        "فرّق بين وضعها على class ووضعها على دالة virtual.",
+        "لا تستعملها بلا سبب تصميمي حقيقي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نوع نهائي لا يرث منه أحد",
+          "code": "class Leaf final {\npublic:\n    int value() const {\n        return 7;\n    }\n};",
+          "explanationArabic": "هذا أبسط معنى: النوع نفسه مغلق أمام المزيد من الوراثة.",
+          "relatedTokens": [
+            "final",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "دالة نهائية داخل هرم وراثة",
+          "code": "class Base {\npublic:\n    virtual int value() const {\n        return 1;\n    }\n};\n\nclass Derived : public Base {\npublic:\n    int value() const final {\n        return 2;\n    }\n};",
+          "explanationArabic": "هنا final لا تغلق النوع كله، بل تمنع فقط إعادة تعريف هذه الدالة بعد هذا المستوى.",
+          "relatedTokens": [
+            "final",
+            "virtual",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الربط مع override لإغلاق السلوك الحالي",
+          "code": "class Base {\npublic:\n    virtual int score() const {\n        return 1;\n    }\n};\n\nclass Derived : public Base {\npublic:\n    int score() const override final {\n        return 4;\n    }\n};",
+          "explanationArabic": "هذا مثال أذكى لأنه يجمع override مع final: الأولى تؤكد المطابقة، والثانية توقف أي إعادة تعريف لاحقة.",
+          "relatedTokens": [
+            "final",
+            "override",
+            "virtual",
+            "class",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "virtual",
+        "override",
+        "class"
+      ]
+    },
+    "mutable": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، mutable لا تعني إلغاء const على الكائن كله، بل استثناء عضو داخلي محدد من الثبات الظاهري عندما لا يكون هذا العضو جزءًا من المعنى المنطقي للكائن.",
+      "projectStepsArabic": [
+        "استخدمها فقط مع عضو خدمي أو داخلي لا يغير المعنى المنطقي للكائن.",
+        "اربطها ذهنيًا بالفرق بين الثبات المنطقي والثبات الفيزيائي.",
+        "لا تستعملها لإخفاء تغيير حقيقي في حالة الكائن الأساسية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عداد داخلي داخل دالة const",
+          "code": "class Counter {\npublic:\n    int read() const {\n        ++reads;\n        return value;\n    }\n\nprivate:\n    int value = 5;\n    mutable int reads = 0;\n};",
+          "explanationArabic": "هذا أبسط استعمال: القراءة من الخارج ما زالت قراءة، لكن العداد الداخلي يحتاج تحديثًا رغم أن الدالة const.",
+          "relatedTokens": [
+            "mutable",
+            "const",
+            "class",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تخزين مؤقت لنتيجة محسوبة",
+          "code": "class Box {\npublic:\n    int area() const {\n        if (!cached_ready) {\n            cached_area = width * height;\n            cached_ready = true;\n        }\n        return cached_area;\n    }\n\nprivate:\n    int width = 2;\n    int height = 3;\n    mutable bool cached_ready = false;\n    mutable int cached_area = 0;\n};",
+          "explanationArabic": "هنا mutable تخدم فكرة cache داخلية: القيمة المحسوبة لا تغير معنى الصندوق، لكنها توفر إعادة الحساب.",
+          "relatedTokens": [
+            "mutable",
+            "const",
+            "class",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "لماذا لا تصلح لتغيير الحالة الأساسية",
+          "code": "class Score {\npublic:\n    int current() const {\n        return value;\n    }\n\nprivate:\n    mutable int value = 7;\n};",
+          "explanationArabic": "هذا مثال ذكي مضاد: جعل القيمة الأساسية نفسها mutable يربك معنى const، لأن العضو هنا ليس خدميًا بل يمثل حالة الكائن نفسها.",
+          "relatedTokens": [
+            "mutable",
+            "const",
+            "class",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "const",
+        "this",
+        "class"
+      ]
+    },
+    "noexcept": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، noexcept تعبر عن عقد مرتبط بالاستثناءات: هل هذا الاستدعاء أو هذه الدالة يجب أن تبقى بلا رمي أم لا.",
+      "projectStepsArabic": [
+        "استخدمها عندما تكون واثقًا أن المسار لا ينبغي أن يرمي.",
+        "ميز بين noexcept كمحدد للدالة وnoexcept كتعبير فحص.",
+        "لا تضفها لمجرد الزينة إذا كان تنفيذ الدالة قد يرمي فعلًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دالة تعلن عدم الرمي",
+          "code": "class Counter {\npublic:\n    void reset() noexcept {\n        value = 0;\n    }\n\nprivate:\n    int value = 5;\n};",
+          "explanationArabic": "هذا أبسط استعمال: العقد هنا واضح، reset لا يفترض أن ترمي استثناء.",
+          "relatedTokens": [
+            "noexcept",
+            "class"
+          ]
+        },
+        {
+          "titleArabic": "فحص تعبير بواسطة noexcept",
+          "code": "int main() {\n    bool safe = noexcept(1 + 2);\n    return safe ? 1 : 0;\n}",
+          "explanationArabic": "هنا noexcept ليست على دالة، بل تستعمل كتعبير يسأل: هل هذا التعبير معروف بعدم رمي استثناء؟",
+          "relatedTokens": [
+            "noexcept",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الربط الذهني مع النقل الآمن",
+          "code": "class Value {\npublic:\n    Value(Value&& other) noexcept : number(other.number) {\n        other.number = 0;\n    }\n\nprivate:\n    int number = 0;\n};",
+          "explanationArabic": "هذا مثال أذكى لأن noexcept تظهر كثيرًا مع عمليات النقل، حيث يفيد العقد الواضح في اختيار المسار الآمن والأفضل.",
+          "relatedTokens": [
+            "noexcept",
+            "class",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "throw",
+        "try",
+        "catch"
+      ]
+    },
+    "union": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، union ليست struct تجمع أعضاء متعددة معًا، بل نوع يجعل كل الأعضاء يشتركون في نفس مساحة التخزين.",
+      "projectStepsArabic": [
+        "اقرأها دائمًا على أنها مشاركة للذاكرة لا تجميع مستقل للأعضاء.",
+        "حدد ذهنيًا أي عضو هو النشط في كل لحظة.",
+        "لا تستعملها إلا عندما تحتاج هذا المستوى من التحكم فعلًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تمثيلان لنفس مساحة الذاكرة",
+          "code": "union Number {\n    int i;\n    float f;\n};\n\nint main() {\n    Number value;\n    value.i = 7;\n    return value.i;\n}",
+          "explanationArabic": "هذا أبسط استعمال: العضوان يشتركان في نفس التخزين، لكننا هنا نتعامل مع العضو النشط نفسه فقط.",
+          "relatedTokens": [
+            "union",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "التمييز بينها وبين struct",
+          "code": "union Pair {\n    int first;\n    int second;\n};\n\nint main() {\n    Pair value;\n    value.first = 3;\n    value.second = 8;\n    return value.second;\n}",
+          "explanationArabic": "هذا يوضح الفكرة الذهنية: second هنا يكتب فوق نفس الذاكرة التي كانت first تستعملها، بخلاف struct التي تمنح كل عضو مكانه المنفصل.",
+          "relatedTokens": [
+            "union",
+            "struct",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الربط مع وسم يحدد العضو النشط",
+          "code": "enum Kind { IntKind, FloatKind };\n\nunion Value {\n    int i;\n    float f;\n};\n\nstruct TaggedValue {\n    Kind kind;\n    Value value;\n};",
+          "explanationArabic": "هذا مثال أذكى لأن union في الواقع تحتاج غالبًا إلى وسم خارجي يذكرك أي عضو يعد نشطًا ومعنى القراءة الصحيح.",
+          "relatedTokens": [
+            "union",
+            "enum",
+            "struct"
+          ]
+        }
+      ],
+      "followUps": [
+        "struct",
+        "enum",
+        "class"
+      ]
+    },
+    "delete": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، delete هي الطرف المقابل لـ new: إنهاء عمر الكائن الديناميكي ثم تحرير تخزينه.",
+      "projectStepsArabic": [
+        "استخدمها فقط عندما تكون أنت المسؤول مباشرة عن نتيجة new.",
+        "فرّق بين delete وdelete[] عند التعامل مع المصفوفات الديناميكية.",
+        "فضّل أدوات الملكية الواضحة بدل الإدارة اليدوية كلما أمكن."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تحرير كائن أنشئ بـ new",
+          "code": "int main() {\n    int* value = new int(7);\n    int result = *value;\n    delete value;\n    return result;\n}",
+          "explanationArabic": "هذا أبسط معنى: بعد استعمال الكائن الديناميكي، delete تنهيه وتحرر التخزين المرتبط به.",
+          "relatedTokens": [
+            "delete",
+            "new",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تحرير مصفوفة ديناميكية",
+          "code": "int main() {\n    int* values = new int[3]{1, 2, 3};\n    int result = values[1];\n    delete[] values;\n    return result;\n}",
+          "explanationArabic": "هذا يوضح الفرق المهم: المصفوفة الديناميكية تقابلها delete[] لا delete العادية.",
+          "relatedTokens": [
+            "delete",
+            "new",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "لماذا المؤشر الذكي أوضح غالبًا",
+          "code": "#include <memory>\n\nint main() {\n    std::unique_ptr<int> value(new int(9));\n    return *value;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يبين لماذا لا ينبغي أن ترى delete خيارًا افتراضيًا في C++ الحديثة؛ إدارة الملكية قد تكون أوضح عندما تسند المهمة لمالك صريح.",
+          "relatedTokens": [
+            "delete",
+            "new",
+            "std::unique_ptr",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "new",
+        "std::unique_ptr",
+        "class"
+      ]
+    },
+    "operator": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، operator لا تعني صنع رمز جديد، بل ربط عامل لغوي موجود بسلوك طبيعي لنوعك.",
+      "projectStepsArabic": [
+        "حمّل العامل فقط إذا كان المعنى الناتج بديهيًا ومألوفًا.",
+        "اجعل سلوك العامل متسقًا مع توقع القارئ من هذا الرمز.",
+        "لا تستخدم operator لإخفاء منطق غير واضح كان ينبغي أن يكون دالة باسم صريح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عامل جمع لنوع بسيط",
+          "code": "class Point {\npublic:\n    Point(int x, int y) : x(x), y(y) {}\n\n    Point operator+(const Point& other) const {\n        return Point(x + other.x, y + other.y);\n    }\n\nprivate:\n    int x;\n    int y;\n};",
+          "explanationArabic": "هذا أبسط استعمال منطقي: + هنا يبقى محافظًا على معنى الجمع الطبيعي بين قيم مركبة.",
+          "relatedTokens": [
+            "operator",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "عامل فهرسة للوصول إلى عنصر",
+          "code": "class Buffer {\npublic:\n    int operator[](int index) const {\n        return data[index];\n    }\n\nprivate:\n    int data[3] = {1, 2, 3};\n};",
+          "explanationArabic": "هنا operator[] يعطي النوع واجهة تشبه المصفوفات عندما يكون الوصول بالفهرس معنى طبيعيًا له.",
+          "relatedTokens": [
+            "operator",
+            "class",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متى لا يكون التحميل مناسبًا",
+          "code": "class Report {\npublic:\n    int compute() const {\n        return 42;\n    }\n};",
+          "explanationArabic": "هذا مثال أذكى مضاد: لا حاجة لتحميل عامل إذا لم يوجد رمز لغوي طبيعي يعبر عن هذا السلوك. أحيانًا دالة باسم واضح أفضل من operator غامض.",
+          "relatedTokens": [
+            "operator",
+            "class",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "class",
+        "const",
+        "return"
+      ]
+    },
+    "goto": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، goto ليست أداة تنظيم عامة، بل قفزة مباشرة داخل نفس الدالة إلى label محدد.",
+      "projectStepsArabic": [
+        "تعامل معها كاستثناء محدود لا كأسلوب بناء يومي.",
+        "استخدمها فقط إذا جعلت مسار الخروج أو التنظيف أوضح فعلًا من البدائل.",
+        "تأكد أن نقطة القفز تبقى داخل نفس الدالة وأن معناها واضح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قفز بسيط إلى مسار موحد",
+          "code": "int main() {\n    int value = 1;\n    goto done;\n    value = 9;\n\ndone:\n    return value;\n}",
+          "explanationArabic": "هذا أبسط معنى: التنفيذ يقفز مباشرة إلى label المسمى done ويتابع من هناك.",
+          "relatedTokens": [
+            "goto",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تجميع مسار تنظيف محلي",
+          "code": "int main() {\n    int result = 0;\n    bool failed = true;\n\n    if (failed) {\n        goto cleanup;\n    }\n\n    result = 5;\n\ncleanup:\n    return result;\n}",
+          "explanationArabic": "هنا goto تجمع نهاية محلية واحدة بدل تكرار return أو منطق إنهاء في أكثر من مكان.",
+          "relatedTokens": [
+            "goto",
+            "if",
+            "bool",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متى لا تكون goto فكرة جيدة",
+          "code": "int main() {\n    int value = 0;\n    if (value == 0) {\n        value = 1;\n    }\n    return value;\n}",
+          "explanationArabic": "هذا مثال ذكي مضاد: لا حاجة إلى goto عندما يكون if العادي أوضح بكثير ويعبر عن المعنى مباشرة.",
+          "relatedTokens": [
+            "goto",
+            "if",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "if",
+        "break",
+        "return"
+      ]
+    },
+    "sizeof": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، sizeof تسأل عن حجم التمثيل التخزيني بالبايت، لا عن عدد العناصر ولا عن المعنى المنطقي للنوع.",
+      "projectStepsArabic": [
+        "فرّق ذهنيًا بين حجم النوع وحجم ما يشير إليه المؤشر.",
+        "استخدمها عندما تحتاج قياسًا حقيقيًا للتخزين أو للمقارنات المتعلقة به.",
+        "لا تخلط بينها وبين alignof لأن الحجم غير المحاذاة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حجم نوع أساسي",
+          "code": "#include <cstddef>\n\nint main() {\n    std::size_t size = sizeof(int);\n    return static_cast<int>(size);\n}",
+          "explanationArabic": "هذا أبسط استعمال: نسأل عن عدد البايتات التي يمثل بها int في هذا التنفيذ.",
+          "relatedTokens": [
+            "sizeof",
+            "size_t",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "حجم كائن فعلي",
+          "code": "struct Pair {\n    int a;\n    int b;\n};\n\nint main() {\n    Pair value{};\n    return static_cast<int>(sizeof(value));\n}",
+          "explanationArabic": "هنا sizeof تعمل على كائن، لكنها في النهاية تعطي حجم تمثيل هذا الكائن كما يحدده النوع.",
+          "relatedTokens": [
+            "sizeof",
+            "struct",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين المؤشر والشيء المشار إليه",
+          "code": "int main() {\n    int value = 7;\n    int* ptr = &value;\n    return static_cast<int>(sizeof(ptr));\n}",
+          "explanationArabic": "هذا مثال ذكي مهم: sizeof(ptr) تعطي حجم المؤشر نفسه، لا حجم int الذي يشير إليه.",
+          "relatedTokens": [
+            "sizeof",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "alignof",
+        "decltype",
+        "size_t"
+      ]
+    },
+    "alignas": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، alignas تتحكم في محاذاة التخزين، أي أين يجب أن يبدأ الكائن في الذاكرة.",
+      "projectStepsArabic": [
+        "استعملها فقط عندما تكون المحاذاة جزءًا مهمًا من صحة التخزين أو التوافق أو الأداء.",
+        "اربطها دائمًا بمفهوم بداية العنوان وليس بحجم النوع.",
+        "لا تضفها إلى كود عادي لا يحتاج هذا المستوى من التحكم."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "طلب محاذاة مباشرة لمصفوفة",
+          "code": "alignas(16) int values[4] = {1, 2, 3, 4};\n\nint main() {\n    return values[0];\n}",
+          "explanationArabic": "هذا أبسط استعمال: نطلب أن يبدأ التخزين عند حد محاذاة 16 بايت.",
+          "relatedTokens": [
+            "alignas",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "محاذاة نوع كامل",
+          "code": "struct alignas(32) Packet {\n    int data[8];\n};\n\nint main() {\n    Packet packet{};\n    return packet.data[0];\n}",
+          "explanationArabic": "هنا alignas لا تخص كائنًا واحدًا فقط، بل ترفع مطلب المحاذاة للنوع نفسه.",
+          "relatedTokens": [
+            "alignas",
+            "struct",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الربط الذهني بينها وبين alignof",
+          "code": "struct alignas(16) Item {\n    int value;\n};\n\nint main() {\n    return alignof(Item);\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يجمع الأداة التي تطلب المحاذاة مع الأداة التي تقرأ مقدارها لاحقًا.",
+          "relatedTokens": [
+            "alignas",
+            "alignof",
+            "struct",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "alignof",
+        "sizeof",
+        "struct"
+      ]
+    },
+    "alignof": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، alignof لا تسأل عن عدد البايتات التي يشغلها النوع، بل عن الحد الذي يجب أن يحترمه موضع بدايته في الذاكرة.",
+      "projectStepsArabic": [
+        "ميّز بينها وبين sizeof لأنهما يجيبان عن سؤالين مختلفين.",
+        "استخدمها عندما تحتاج فهمًا أدق لتخطيط الذاكرة أو مقارنة متطلبات الأنواع.",
+        "اربطها ذهنيًا بموضع البداية لا بسعة التخزين."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قراءة محاذاة نوع أساسي",
+          "code": "int main() {\n    return alignof(double);\n}",
+          "explanationArabic": "هذا أبسط استعمال: نسأل عن المحاذاة المطلوبة لـ double في التنفيذ الحالي.",
+          "relatedTokens": [
+            "alignof",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "مقارنة نوعين من حيث المحاذاة",
+          "code": "int main() {\n    return alignof(long long) >= alignof(int) ? 1 : 0;\n}",
+          "explanationArabic": "هنا نستعمل alignof للمقارنة بين متطلبات نوعين مختلفين.",
+          "relatedTokens": [
+            "alignof",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "الفرق الذهني بينها وبين sizeof",
+          "code": "struct Pair {\n    char a;\n    int b;\n};\n\nint main() {\n    return alignof(Pair) <= sizeof(Pair) ? 1 : 0;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يضع السؤالين جنبًا إلى جنب: الحجم شيء، والمحاذاة شيء آخر يخص موضع التخزين.",
+          "relatedTokens": [
+            "alignof",
+            "sizeof",
+            "struct",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "alignas",
+        "sizeof",
+        "struct"
+      ]
+    },
+    "decltype": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، decltype لا تخمن النوع كما يفعل auto دائمًا، بل تقرأ نوع التعبير كما تعرفه قواعد اللغة نفسها.",
+      "projectStepsArabic": [
+        "استخدمها عندما تريد النوع الحقيقي لتعبير أو عضو من دون إعادة كتابة النوع.",
+        "فرّق بينها وبين auto لأن قواعد الاستنتاج ليست متطابقة.",
+        "استفد منها خصوصًا عندما يكون النوع طويلًا أو مشتقًا من تعبير."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نسخ نوع متغير موجود",
+          "code": "int main() {\n    int value = 7;\n    decltype(value) copy = value;\n    return copy;\n}",
+          "explanationArabic": "هذا أبسط استعمال: decltype(value) تعطي النوع نفسه الذي يملكه value.",
+          "relatedTokens": [
+            "decltype",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخراج نوع عضو داخل نوع",
+          "code": "struct Box {\n    int value;\n};\n\nint main() {\n    decltype(Box::value) copy = 3;\n    return copy;\n}",
+          "explanationArabic": "هنا decltype تسحب نوع العضو مباشرة من التعريف من دون إعادة كتابة int يدويًا.",
+          "relatedTokens": [
+            "decltype",
+            "struct",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متى تكون أوضح من auto",
+          "code": "int main() {\n    int value = 7;\n    decltype((value)) alias = value;\n    alias = 10;\n    return value;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يبين أن decltype تتبع شكل التعبير بدقة أكبر، ولذلك ليست بديلًا بسيطًا عن auto في كل الحالات.",
+          "relatedTokens": [
+            "decltype",
+            "auto",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "auto",
+        "typename",
+        "using"
+      ]
+    },
+    "consteval": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، consteval تعني أن الدالة يجب أن تحسم أثناء الترجمة، لا أن ذلك مجرد إمكانية إضافية كما في constexpr.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون الاستعمال الصحيح للدالة ترجميًا بالأساس.",
+        "ميز بينها وبين constexpr لأن consteval أشد صرامة.",
+        "لا تضفها إذا كان السماح بالاستدعاء وقت التشغيل ما زال منطقيًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دالة تحسم ترجميًا دائمًا",
+          "code": "consteval int square(int x) {\n    return x * x;\n}\n\nint main() {\n    constexpr int value = square(4);\n    return value;\n}",
+          "explanationArabic": "هذا أبسط استعمال: square لا تُستدعى إلا في سياق يمكن حسمه وقت الترجمة.",
+          "relatedTokens": [
+            "consteval",
+            "constexpr",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استعمالها لبناء حجم ثابت",
+          "code": "consteval int count() {\n    return 3;\n}\n\nint main() {\n    int values[count()] = {1, 2, 3};\n    return values[0];\n}",
+          "explanationArabic": "هنا consteval مناسبة لأن النتيجة مطلوبة بوصفها قيمة ترجميّة لبناء شيء يعتمد على الثبات.",
+          "relatedTokens": [
+            "consteval",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متى تكون constexpr أنسب",
+          "code": "constexpr int add(int a, int b) {\n    return a + b;\n}\n\nint main() {\n    int value = 3;\n    return add(value, 2);\n}",
+          "explanationArabic": "هذا مثال ذكي مضاد: إذا أردت السماح بالاستدعاء وقت التشغيل أيضًا، فـ constexpr غالبًا أنسب من consteval.",
+          "relatedTokens": [
+            "consteval",
+            "constexpr",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "constexpr",
+        "constinit",
+        "return"
+      ]
+    },
+    "constinit": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، constinit تضمن التهيئة الثابتة الأولى فقط؛ لا تجعل المتغير نفسه غير قابل للتعديل لاحقًا.",
+      "projectStepsArabic": [
+        "استخدمها مع متغيرات التخزين الثابت عندما يهمك ضمان التهيئة المبكرة الثابتة.",
+        "لا تخلط بينها وبين const وconstexpr.",
+        "اقرأها دائمًا كسؤال عن البداية لا عن كامل عمر المتغير."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "متغير يبدأ بتهيئة ثابتة",
+          "code": "constinit int start_value = 7;\n\nint main() {\n    return start_value;\n}",
+          "explanationArabic": "هذا أبسط معنى: البداية نفسها يجب أن تكون صالحة للتهيئة الثابتة.",
+          "relatedTokens": [
+            "constinit",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "يمكن التعديل لاحقًا رغم constinit",
+          "code": "constinit int start_value = 3;\n\nint main() {\n    start_value = 5;\n    return start_value;\n}",
+          "explanationArabic": "هذا يوضح الفرق الجوهري: constinit لا تمنع التعديل لاحقًا، بل تضبط فقط طريقة التهيئة الأولى.",
+          "relatedTokens": [
+            "constinit",
+            "const",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متى لا تكفي const وحدها",
+          "code": "constinit int counter = 0;\n\nint main() {\n    ++counter;\n    return counter;\n}",
+          "explanationArabic": "هذا مثال أذكى لأن المتغير يبدأ تهيئة ثابتة لكنه يبقى قابلًا للتغيير، وهو شيء لا يحققه const العادية بالطريقة نفسها.",
+          "relatedTokens": [
+            "constinit",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "constexpr",
+        "consteval",
+        "const"
+      ]
+    },
+    "requires": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، requires تجعل القيد جزءًا مقروءًا من واجهة القالب بدل أن يبقى ضمنيًا حتى تنهار الترجمة لاحقًا.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون القالب يتطلب قدرات معينة يجب إعلانها بوضوح.",
+        "اكتب القيد بلغة مباشرة تصف ما يجب أن يدعمه النوع.",
+        "لا تبالغ في تعقيد القيود إذا كان القالب نفسه بسيطًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قيد مباشر على وجود الجمع",
+          "code": "template <typename T>\nrequires requires(T x) { x + x; }\nT add(T a, T b) {\n    return a + b;\n}",
+          "explanationArabic": "هذا أبسط استعمال: القالب يعلن صراحة أنه يحتاج نوعًا يدعم عملية الجمع.",
+          "relatedTokens": [
+            "requires",
+            "template",
+            "typename",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استخدام requires بعد التوقيع",
+          "code": "template <typename T>\nT twice(T value) requires requires(T x) { x + x; } {\n    return value + value;\n}",
+          "explanationArabic": "هنا القيد ما زال نفسه، لكن الصياغة مختلفة. المهم أن الشرط أصبح جزءًا واضحًا من واجهة القالب.",
+          "relatedTokens": [
+            "requires",
+            "template",
+            "typename",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "لماذا هي أوضح من الخطأ المتأخر",
+          "code": "template <typename T>\nrequires requires(T x) { x < x; }\nbool ordered(T a, T b) {\n    return a < b;\n}",
+          "explanationArabic": "هذا مثال أذكى لأنه يبين أن القيد يشرح المطلوب مسبقًا بدل ترك القارئ يكتشفه من رسالة ترجمة بعيدة داخل جسم القالب.",
+          "relatedTokens": [
+            "requires",
+            "template",
+            "bool",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "concept",
+        "template",
+        "typename"
+      ]
+    },
+    "explicit": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، explicit ليست زينة على الباني، بل حاجز يمنع المترجم من تحويل نوع إلى آخر بصمت عندما يكون هذا التحويل غير مقصود أو خطر.",
+      "projectStepsArabic": [
+        "أضف explicit على كل باني ذي معامل واحد إلا إذا كنت تريد التحويل الضمني فعلًا.",
+        "لا تضيفها على البانيات التي لها أكثر من معامل لأن التحويل الضمني لا يحدث فيها أصلاً.",
+        "انتبه أن explicit في C++11+ تشمل أيضًا عوامل التحويل مثل operator bool."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "منع تحويل ضمني من عدد إلى نوع مخصص",
+          "code": "struct Amount {\n    explicit Amount(int v) : value(v) {}\n    int value;\n};\n\nvoid process(Amount a) {}\n\nint main() {\n    process(Amount(5));  // صحيح: تحويل صريح\n    // process(5);        // خطأ: التحويل الضمني ممنوع\n    return 0;\n}",
+          "explanationArabic": "بدون explicit، المترجم كان سيُحوّل 5 إلى Amount(5) بصمت. explicit تمنع هذا وتُجبر الكاتب على التعبير الصريح عن نيته.",
+          "relatedTokens": [
+            "explicit",
+            "class",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "explicit مع bool لمنع تحويلات خطيرة",
+          "code": "struct Handle {\n    explicit operator bool() const { return valid; }\n    bool valid = true;\n};\n\nint main() {\n    Handle h;\n    if (h) { /* صحيح: التحويل في السياق المنطقي مسموح */ }\n    // int x = h;  // خطأ: لا تحويل ضمني لـ int\n    // bool b = h; // خطأ: لا تحويل ضمني حتى لـ bool\n    return 0;\n}",
+          "explanationArabic": "explicit operator bool تمنع التحويل الضمني لكنها تسمح بالاستخدام في السياقات المنطقية مثل if. هذا يمنع أخطاء مثل if (h == other) حيث كان h يُحوّل لـ int بدل المقارنة الصحيحة.",
+          "relatedTokens": [
+            "explicit",
+            "bool",
+            "class",
+            "if"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان explicit يسبب تحويلات غير مرئية",
+          "code": "struct Meter {\n    // بدون explicit: كل int يتحول تلقائيًا إلى Meter!\n    Meter(double v) : value(v) {}\n    double value;\n};\n\nvoid print(Meter m) {}\n\nint main() {\n    print(10);  // يعمل بصمت: 10 يتحول إلى Meter(10.0)\n    // هذا قد يكون خطأ: هل كان المقصود 10 أم 10.0 أم شيء آخر؟\n    return 0;\n}",
+          "explanationArabic": "بدون explicit، كل دالة تأخذ Meter يمكن أن تُستدعى بأي عدد. هذا يُخفي تحويلات قد تكون أخطاء منطقية. القاعدة: إذا كان الباني يحمل معنى تحويل وليس تهيئة مباشرة، أضف explicit.",
+          "relatedTokens": [
+            "explicit",
+            "class",
+            "double",
+            "int"
+          ]
+        }
+      ],
+      "followUps": [
+        "class",
+        "static_cast",
+        "operator"
+      ]
+    },
+    "export": {
+      "fullProjectNoteArabic": "في برنامج C++ المستقل، export جزء من نظام الوحدات النمطية C++20 الذي يُعلن أن التعريفات في هذا الملف يمكن استيرادها من ملفات أخرى عبر import بدل الاعتماد على #include التقليدي.",
+      "projectStepsArabic": [
+        "استخدم export في بداية ملف الوحدة (.cppm) لجعل تعريفاتها متاحة.",
+        "لا تخلط بين export module و export للأسماء الفردية داخل الوحدة.",
+        "توقع أن دعم الوحدات يختلف بين المترجمات وأن بعضها لا يدعمها بعد."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "وحدة نمطية بسيطة مع تصدير",
+          "code": "export module math_utils;\n\nexport int add(int a, int b) {\n    return a + b;\n}\n\nint internal_helper(int x) {\n    return x * 2;\n    // هذه الدالة غير مصدّرة — لا يمكن استيرادها من خارج الوحدة\n}",
+          "explanationArabic": "export module تعلن بداية الوحدة. export قبل الدالة تجعلها مرئية للمستوردين. الدالة بدون export تبقى داخلية ولا يمكن الوصول إليها من خارج الوحدة.",
+          "relatedTokens": [
+            "export",
+            "module",
+            "import",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "استيراد وحدة من ملف آخر",
+          "code": "import math_utils;\n\nint main() {\n    return add(2, 3);\n    // internal_helper غير متاحة هنا\n}",
+          "explanationArabic": "import يحل محل #include مع فرق جوهري: الوحدة تُحمّل مرة واحدة فقط من المترجم، وليس في كل ملف تضمين. هذا يحسّن سرعة الترجمة ويمنع مشاكل التضمين المتكرر.",
+          "relatedTokens": [
+            "import",
+            "module",
+            "export",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "تصدير نوع واجهة كاملة",
+          "code": "export module geometry;\n\nexport struct Point {\n    double x;\n    double y;\n};\n\nexport double distance(const Point& a, const Point& b);\n\n// يمكن فصل التعريف عن التصريح داخل نفس الوحدة\ninline double distance(const Point& a, const Point& b) {\n    double dx = a.x - b.x;\n    double dy = a.y - b.y;\n    return dx * dx + dy * dy;\n}",
+          "explanationArabic": "export تُطبّق على الأنواع والدوال. النوع المُصدَّر يمكن للمستورد استخدامه كأنواعه الخاصة. ملاحظة: داخل الوحدة النمطية يمكن فصل التصريح عن التعريف بدون الحاجة لـ inline في بعض الحالات.",
+          "relatedTokens": [
+            "export",
+            "module",
+            "struct",
+            "const",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "module",
+        "import",
+        "namespace"
+      ]
+    },
+    "thread_local": {
+      "fullProjectNoteArabic": "في برنامج C++ مستقل، thread_local تجعل لكل خيط نسخته المستقلة من المتغير، فلا يراه أو يُعدّله خيط آخر أبدًا بدون أدوات مزامنة.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج متغيرًا يحافظ على حالته داخل كل خيط على حدة.",
+        "لا تخلط بينها وبين static: static تعني نسخة واحدة مشتركة، thread_local تعني نسخة لكل خيط.",
+        "انتبه أن عمر thread_local قد يكون أطول من عمر الخيط نفسه في بعض الحالات."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عداد مستقل لكل خيط",
+          "code": "#include <thread>\n#include <iostream>\n\nthread_local int counter = 0;\n\nvoid increment() {\n    ++counter;\n    // كل خيط يرى نسخته الخاصة من counter\n}\n\nint main() {\n    std::thread t1(increment);\n    std::thread t2(increment);\n    t1.join();\n    t2.join();\n    // كل خيط عدّ 1 فقط — لا تنافس ولا قفل مطلوب\n}",
+          "explanationArabic": "كل خيط يملك counter خاص به. لا يوجد تنافس على المتغير لأن كل نسخة مستقلة في الذاكرة. هذا يُزيل الحاجة لـ mutex أو atomic في هذه الحالة.",
+          "relatedTokens": [
+            "thread_local",
+            "std::thread",
+            "int",
+            "static"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين static و thread_local",
+          "code": "#include <thread>\n#include <iostream>\n\nint global_var = 0;        // نسخة واحدة مشتركة\nstatic int static_var = 0; // نسخة واحدة مشتركة\nthread_local int tl_var = 0; // نسخة مستقلة لكل خيط\n\nvoid count() {\n    ++global_var;\n    ++static_var;\n    ++tl_var;\n}\n\nint main() {\n    std::thread t1(count);\n    std::thread t2(count);\n    t1.join();\n    t2.join();\n    // global_var = 2, static_var = 2, tl_var = 1 (لكل خيط)\n}",
+          "explanationArabic": "global_var وstatic_var مشتركان — يحتاجان حماية. thread_local مستقل — كل خيط يرى نسخته فقط. القاعدة: استخدم thread_local عندما لا تحتاج المشاركة بين الخيوط فتُزيل الحاجة لأدوات التزامن.",
+          "relatedTokens": [
+            "thread_local",
+            "static",
+            "std::thread",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: الاعتماد على thread_local لحماية مشتركة",
+          "code": "#include <thread>\n#include <vector>\n\nthread_local std::vector<int> buffer;\n\nvoid work() {\n    buffer.clear(); // لا مشكلة: كل خيط يمتلك buffer خاص\n    buffer.push_back(1);\n    // آمن: لا خيط آخر يصل لهذه النسخة\n}\n\nint main() {\n    std::thread t1(work);\n    std::thread t2(work);\n    t1.join();\n    t2.join();\n    // ✅ صحيح: كل خيط عمل على نسخته الخاصة\n\n    // ❌ خطأ شائع: تمرير thread_local بين الخيوط\n    // thread_local int shared = 0;\n    // std::thread t1([&]{ shared = 1; }); // خطر: lambda يلتقط بالمرجع\n    // // المرجع يشير لنسخة الخيط الرئيسي لكن الخيط t1 يرى نسخته الخاصة!\n}",
+          "explanationArabic": "thread_local آمن عندما يصل إليه الخيط الذي يملك النسخة فقط. لكن الالتقاط بالمرجع عبر lambda خطير: الخيط الجديد يرى نسخته الخاصة من المتغير، بينما المرجع يشير لنسخة الخيط الأصلي. القاعدة: لا تمرر thread_local بين الخيوط عبر مراجع.",
+          "relatedTokens": [
+            "thread_local",
+            "std::thread",
+            "std::vector",
+            "static"
+          ]
+        }
+      ],
+      "followUps": [
+        "static",
+        "std::thread",
+        "std::atomic",
+        "std::mutex"
+      ]
+    },
+    "volatile": {
+      "fullProjectNoteArabic": "في برنامج C++ المستقل، volatile ليست أداة تزامن ولا بديلًا عن atomic أو mutex. معناها الحقيقي: أخبر المترجم ألا يُزيل أو يُعيد ترتيب القراءات والكتابات على هذا المتغير. تستخدم في حالات نادرة جدًا مثل التواصل مع سجلات أجهزة أو ذاكرة معيّنة.",
+      "projectStepsArabic": [
+        "لا تستخدم volatile أبدًا للتزامن بين الخيوط — استخدم atomic بدلًا منها.",
+        "استخدمها فقط عند التواصل المباشر مع ذاكرة أجهزة أو سجلات hardware.",
+        "افهم أن volatile لا توفر ذرية ولا ترتيب ذاكرة.",
+        "توقع أن تراها في أكواد embedded أو أنظمة تشغيل قديمة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قراءة سجل جهاز عبر مؤشر volatile",
+          "code": "volatile int* status_register = reinterpret_cast<volatile int*>(0x4000);\n\nint main() {\n    // المترجم لا يحذف هذه القراءة حتى لو بدت غير ضرورية\n    int status = *status_register;\n    return status;\n}",
+          "explanationArabic": "هذا الاستخدام الصحيح لـ volatile: سجل جهاز قد يتغير بواسطة hardware لا يراه المترجم. بدون volatile قد يُزيل المترجم القراءة لأنه لا يرى من يُغيّر القيمة.",
+          "relatedTokens": [
+            "volatile",
+            "int",
+            "reinterpret_cast"
+          ]
+        },
+        {
+          "titleArabic": "لماذا volatile لا تكفي للعدادات بين الخيوط",
+          "code": "#include <thread>\n#include <iostream>\n\n// ❌ خطأ: volatile لا توفر ذرية!\n// volatile int counter = 0;\n// // ++counter يقرأ ثم يزيد ثم يكتب — ثلاث خطوات غير ذرية\n// // خيطان قد يقرآ نفس القيمة فيُزياداها مرة واحدة بدل مرتين\n\n// ✅ الحل الصحيح: atomic\n#include <atomic>\nstd::atomic<int> counter{0};\n\nvoid increment() {\n    counter.fetch_add(1, std::memory_order_relaxed);\n}\n\nint main() {\n    std::thread t1(increment);\n    std::thread t2(increment);\n    t1.join();\n    t2.join();\n    // النتيجة دائمًا 2 مع atomic، لكن قد تكون 1 مع volatile!",
+          "explanationArabic": "volatile تمنع المترجم من إزالة القراءة لكنها لا تجعل ++counter ذرية. العملية تتكون من 3 خطوات منفصلة يمكن تقاطعها. atomic تجعل العملية ذرية واحدة لا يمكن تقاطعها.",
+          "relatedTokens": [
+            "volatile",
+            "std::atomic",
+            "std::thread",
+            "int"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام volatile بدل mutex لبيانات مشتركة",
+          "code": "#include <thread>\n#include <mutex>\n\n// ❌ volatile لا تمنع إعادة ترتيب الذاكرة\n// volatile bool ready = false;\n// int data = 0;\n// // الخيط المنتج:\n// // data = 42;     // قد يُعيد المعالج ترتيب هذا بعد store!\n// // ready = true;  // المستهلك قد يرى ready=true لكن data لا تزال 0\n\n// ✅ الحل الصحيح: atomic مع ترتيب ذاكرة\n#include <atomic>\nstd::atomic<bool> ready{false};\nint data = 0;\n\nvoid producer() {\n    data = 42;\n    ready.store(true, std::memory_order_release);\n    // release يضمن أن data=42 مرئي عند الاستيقاظ\n}\n\nvoid consumer() {\n    while (!ready.load(std::memory_order_acquire)) {}\n    // acquire يضمن رؤية data=42 المكتوب قبل release\n    // data مضمون: 42\n}",
+          "explanationArabic": "volatile لا تمنع المعالج من إعادة ترتيب الكتابات. data=42 قد يُنفَّذ بعد ready=true. atomic مع memory_order_release/acquire تضمن الترتيب الصحيح. القاعدة الذهبية: في C++ لا تستخدم volatile للتزامن أبدًا.",
+          "relatedTokens": [
+            "volatile",
+            "std::atomic",
+            "std::mutex",
+            "bool",
+            "std::thread"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::atomic",
+        "std::mutex",
+        "std::thread",
+        "const"
+      ]
+    },
+    "concept": {
+      "fullProjectNoteArabic": "في برنامج C++ المستقل، concept تسمح لك بتسمية القيد نفسه ثم إعادة استعماله بدل إعادة كتابة requires كل مرة.",
+      "projectStepsArabic": [
+        "عرّف concept عندما يكون القيد سيستخدم أكثر من مرة أو يحتاج اسمًا واضحًا.",
+        "اجعل اسم المفهوم معبرًا عن المعنى لا عن تفاصيل التنفيذ.",
+        "استخدمها لتوضيح واجهة القالب لا لإخفاء كل شيء وراء أسماء غامضة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تعريف مفهوم بسيط قابل لإعادة الاستخدام",
+          "code": "template <typename T>\nconcept Addable = requires(T x) { x + x; };",
+          "explanationArabic": "هذا أبسط معنى: سمّينا القيد نفسه حتى يمكن الإشارة إليه لاحقًا باسم واضح.",
+          "relatedTokens": [
+            "concept",
+            "requires",
+            "template",
+            "typename"
+          ]
+        },
+        {
+          "titleArabic": "استعمال المفهوم في قالب",
+          "code": "template <typename T>\nconcept Addable = requires(T x) { x + x; };\n\ntemplate <Addable T>\nT add(T a, T b) {\n    return a + b;\n}",
+          "explanationArabic": "هنا concept تجعل توقيع القالب أقرب إلى اللغة الطبيعية: هذا القالب يعمل مع نوع يحقق Addable.",
+          "relatedTokens": [
+            "concept",
+            "requires",
+            "template",
+            "return"
+          ]
+        },
+        {
+          "titleArabic": "متى تكون أوضح من requires المكررة",
+          "code": "template <typename T>\nconcept Ordered = requires(T x) { x < x; };\n\ntemplate <Ordered T>\nbool before(T a, T b) {\n    return a < b;\n}",
+          "explanationArabic": "هذا مثال أذكى لأن اسم القيد نفسه صار جزءًا من الواجهة، وهذا أوضح من تكرار شرط طويل في كل قالب ذي معنى واحد.",
+          "relatedTokens": [
+            "concept",
+            "requires",
+            "template",
+            "bool",
+            "return"
+          ]
+        }
+      ],
+      "followUps": [
+        "requires",
+        "template",
+        "typename"
+      ]
+    }
+  }
+}

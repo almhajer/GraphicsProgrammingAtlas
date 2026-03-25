@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "example",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "decode_audio.c",
+    "slug": "decode-audio.c",
+    "titleArabic": "decode_audio.c",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/example/decode-audio.c",
+    "contentPath": "content/reference/ffmpeg/examples/decode-audio.c.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يبين مسار decoder الصوتي من packet مضغوطة إلى samples خامة.",
+    "actualMeaningArabic": "يبين مسار decoder الصوتي من packet مضغوطة إلى samples خامة.",
+    "purposeArabic": "يبين مسار decoder الصوتي من packet مضغوطة إلى samples خامة.",
+    "whyUseArabic": "يبين مسار decoder الصوتي من packet مضغوطة إلى samples خامة.",
+    "carriedValueArabic": "يبين مسار decoder الصوتي من packet مضغوطة إلى samples خامة.",
+    "sourceDescription": "يبين مسار decoder الصوتي من packet مضغوطة إلى samples خامة."
+  },
+  "signature": {
+    "raw": "// decode_audio.c - فك ترميز صوت من FFmpeg\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp3\";\n    AVFormatContext *fmt_ctx = NULL;\n    const AVCodec *codec = NULL;\n    AVCodecContext *codec_ctx = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    int ret;\n\n    // 1. فتح ملف الصوت\n    if (avformat_open_input(&fmt_ctx, filename, NULL, NULL) < 0) {\n        fprintf(stderr, \"فشل فتح الملف\\n\");\n        return 1;\n    }\n\n    // 2. البحث عن stream صوتي\n    ret = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, 0, NULL);\n    if (ret < 0) {\n        fprintf(stderr, \"لا يوجد stream صوتي\\n\");\n        return 1;\n    }\n    int stream_idx = ret;\n\n    // 3. إيجاد الـ decoder وفتحه\n    codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    printf(\"Codec: %s\\n\", codec->long_name);\n    printf(\"Sample Rate: %d\\n\", codec_ctx->sample_rate);\n    printf(\"Channels: %d\\n\", codec_ctx->ch_layout.nb_channels);\n\n    // 4. قراءة packets وفك الترميز\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                // frame->data يحتوي عينات PCM الخام الجاهزة للتشغيل\n                printf(\"frame: samples=%d pts=%ld\\n\",\n                       frame->nb_samples, frame->pts);\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    // 5. التنظيف\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// decode_audio.c - فك ترميز صوت من FFmpeg\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp3\";\n    AVFormatContext *fmt_ctx = NULL;\n    const AVCodec *codec = NULL;\n    AVCodecContext *codec_ctx = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    int ret;\n\n    // 1. فتح ملف الصوت\n    if (avformat_open_input(&fmt_ctx, filename, NULL, NULL) < 0) {\n        fprintf(stderr, \"فشل فتح الملف\n\");\n        return 1;\n    }\n\n    // 2. البحث عن stream صوتي\n    ret = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, 0, NULL);\n    if (ret < 0) {\n        fprintf(stderr, \"لا يوجد stream صوتي\n\");\n        return 1;\n    }\n    int stream_idx = ret;\n\n    // 3. إيجاد الـ decoder وفتحه\n    codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    printf(\"Codec: %s\n\", codec->long_name);\n    printf(\"Sample Rate: %d\n\", codec_ctx->sample_rate);\n    printf(\"Channels: %d\n\", codec_ctx->ch_layout.nb_channels);\n\n    // 4. قراءة packets وفك الترميز\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                // frame->data يحتوي عينات PCM الخام الجاهزة للتشغيل\n                printf(\"frame: samples=%d pts=%ld\n\",\n                       frame->nb_samples, frame->pts);\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    // 5. التنظيف\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}"
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/decode_audio.c.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "FFmpeg",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

@@ -1,0 +1,761 @@
+{
+  "referenceData": {
+    "std::vector": {
+      "title": "std::vector",
+      "type": "حاوية STL",
+      "description": "مصفوفة ديناميكية تنمو تلقائيًا عند الإضافة وتوفر وصولًا عشوائيًا سريعًا O(1). تُخصّص ذاكرة متجاورة وتعيد تخصيصها عند الامتلاء بنسخ العناصر لموقع جديد.",
+      "usage": "الحاوية الأكثر استخدامًا في C++ لتخزين عدد متغير من العناصر. هي الخيار الافتراضي الأول لأي مجموعة عناصر تحتاج وصولًا عشوائيًا.",
+      "example": "std::vector<int> v = {1, 2, 3};\nv.push_back(4);",
+      "includeHeader": "#include <vector>",
+      "usageExamples": [
+        {
+          "titleArabic": "إضافة عناصر والوصول إليها",
+          "code": "#include <vector>\n#include <iostream>\n\nstd::vector<int> scores;\nscores.push_back(90);   // إضافة في النهاية\nscores.push_back(85);\nscores.emplace_back(95); // يبني العنصر في المكان مباشرة (أكفأ للأنواع المعقدة)\n\n// الوصول العشوائي بـ operator[] — لا يتحقق من الحدود\nstd::cout << scores[0]; // 90\n\n// at() يتحقق من الحدود ويرمي out_of_range عند تجاوزها\nstd::cout << scores.at(1); // 85\n\n// size() يُرجع عدد العناصر الحالي (من نوع size_t)\nstd::cout << \"Count: \" << scores.size(); // 3",
+          "explanationArabic": "push_back تنسخ العنصر أو تنقله إلى النهاية. emplace_back تبني العنصر في مكانه مباشرةً داخل الحاوية وتتجنب النسخ المؤقت. operator[] سريع لكنه لا يتحقق من الحدود — استخدمه عندما تكون متأكدًا من صحة الفهرس. at() أبطأ قليلًا لكنه آمن لأنه يتحقق."
+        },
+        {
+          "titleArabic": "reserve + emplace_back: تجنب إعادة التخصيص في حلقة",
+          "code": "#include <vector>\n\n// قراءة عدد العناصر من مكان ما\nconst size_t count = 10000;\n\nstd::vector<float> vertices;\nvertices.reserve(count);  // تخصيص الذاكرة مرة واحدة بدون تهيئة العناصر\n\nfor (size_t i = 0; i < count; ++i) {\n    vertices.emplace_back(static_cast<float>(i));\n    // لا تحدث إعادة تخصيص هنا لأن السعة كافية\n}\n\n// size() = عدد العناصر الفعلي\n// capacity() = المساحة المحجوزة فعليًا\n// بعد reserve: capacity >= count, size = 0 حتى نبدأ الإضافة\nstd::cout << \"size: \" << vertices.size();       // 10000\nstd::cout << \"capacity: \" << vertices.capacity(); // 10000 أو أكثر",
+          "explanationArabic": "بدون reserve، كلما امتلأت الحاوية تُعيد تخصيص ذاكرة أكبر وتنسخ كل العناصر القديمة. في حلقة كبيرة هذا يعني عدة عمليات نسخ مكلفة. reserve تحجز السعة مقدمًا فتُلغي كل إعادة التخصيص. الفرق بين reserve وresize: reserve يُخصّص الذاكرة فقط (size لا يتغير)، أما resize فيغيّر size ويُهيّئ العناصر الجديدة."
+        },
+        {
+          "titleArabic": "خطأ شائع: إبطال المكرر (iterator invalidation)",
+          "code": "#include <vector>\n\nstd::vector<int> v = {10, 20, 30, 40, 50};\n\n// ❌ خطأ: push_back قد يُعيد تخصيص الذاكرة فيُبطل it\n// for (auto it = v.begin(); it != v.end(); ++it) {\n//     if (*it == 30) v.push_back(99); // it أصبح غير صالح!\n// }\n\n// ✅ صحيح: إزالة عنصر مع تحديث المكرر\nfor (auto it = v.begin(); it != v.end(); /* لا نزيد هنا */ ) {\n    if (*it == 30) {\n        it = v.erase(it); // erase يُرجع مكرر العنصر التالي\n    } else {\n        ++it;\n    }\n}\n// v = {10, 20, 40, 50}",
+          "explanationArabic": "إضافة عنصر بـ push_back قد تُسبب إعادة تخصيص if size == capacity. عندئذ كل المكررات والمؤشرات والمراجع للعناصر تصبح غير صالحة (dangling). القاعدة: لا تُضف عناصر لحاوية بينما تُكرر عليها بـ begin/end. erase أكثر أمانًا لأنه يُرجع مكرر العنصر التالي مباشرةً. انتبه: erase يجعل كل المكررات بعد العنصر المحذوف غير صالحة أيضًا."
+        }
+      ],
+      "related": [
+        "std::array",
+        "std::span",
+        "size_t",
+        "std::deque",
+        "std::reserve"
+      ]
+    },
+    "std::string": {
+      "title": "std::string",
+      "type": "حاوية STL",
+      "description": "حاوية سلاسل نصية (تخصّص std::basic_string<char>) تدير الذاكرة تلقائيًا وتوفر عمليات البحث والقطع والدمج والتحويل. عناصرها من نوع char وليس بالضرورة UTF-8 صالحًا.",
+      "usage": "النوع الأساسي للنصوص في C++. لا تمثل بالضرورة نصًا مشفرًا بمعيار معيّن — هي مجرد تسلسل بايتات char.",
+      "example": "std::string name = \"Atlas\";\nname += \" Guide\";",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء وربط واستخراج أجزاء",
+          "code": "#include <string>\n#include <iostream>\n\n// بناء من نص خام\nstd::string path = \"/assets/textures/hero.png\";\n\n// find() يُرجع الموضع أو npos إذا لم يُجد\nauto pos = path.rfind('/');\nif (pos != std::string::npos) {\n    // substr(pos, count) يُرجع سلسلة فرعية\n    std::string filename = path.substr(pos + 1);\n    std::cout << filename; // hero.png\n}\n\n// starts_with و ends_with (C++20) أنظف من المقارنة اليدوية\nif (path.ends_with(\".png\")) {\n    std::cout << \"ملف صورة\";\n}",
+          "explanationArabic": "rfind يبحث من النهاية للخلف — مناسب لفصل اسم الملف من المسار. npos هو ثابت خاص يعني 'لم يُعثر'. substr يأخذ موضع البداية والعدد (ليس النهاية). starts_with/ends_with أوضح من find == 0 أو compare."
+        },
+        {
+          "titleArabic": "تحويل رقم إلى نص وبالعكس",
+          "code": "#include <string>\n#include <string_view>\n\n// C++11: to_string لتحويل الأنواع العددية إلى نص\nstd::string width_str = std::to_string(1920);\nstd::string version = std::to_string(3.14f);\n\n// C++17: stoi / stof / stod لتحويل نص إلى عدد\n// هذه ترمي std::invalid_argument إذا لم يكن النص رقمًا صالحًا\ntry {\n    int w = std::stoi(\"1920\");     // 1920\n    float f = std::stof(\"3.14\");    // 3.14f\n    int base = std::stoi(\"ff\", nullptr, 16); // 255 (أساس 16)\n} catch (const std::invalid_argument&) {\n    // النص ليس رقمًا\n} catch (const std::out_of_range&) {\n    // الرقم أكبر من أن يتسع في النوع المستهدف\n}",
+          "explanationArabic": "to_string بسيطة لكنها لا تتحكم في التنسيق (عدد الخانات العشرية مثلاً). stoi/stof تتجاهل المسافات البادئة وتقرأ حتى أول حرف غير رقمي. المعامل الثالث لـ stoi يحدد أساس العد (2، 8، 10، 16). الانتباه: هذه الدوال ترمي استثناءات — لا تستخدمها على بيانات غير موثوقة دون try/catch."
+        },
+        {
+          "titleArabic": "خطأ شائع: مقارنة نصوص بـ == مع const char* الأداء",
+          "code": "#include <string>\n\nstd::string input = \"save\";\n\n// ✅ صحيح منطقيًا: == يعمل لكنه قد يُنشئ string مؤقت\nif (input == \"save\") { /* ... */ }\n\n// الأفضل أداءً في الحلقات الكثيرة: استخدام string_view\n// لأنه لا يُنشئ نسخة ولا حاوية مؤقتة\n#include <string_view>\nvoid handle(std::string_view command) {\n    if (command == \"save\")   { /* ... */ }\n    if (command == \"load\")   { /* ... */ }\n    if (command == \"quit\")   { /* ... */ }\n}\n\n// الاستدعاء مباشرة — لا نسخة\nhandle(input);         // من string\nhandle(\"save\");       // من const char*\nhandle(std::string_view(\"save\")); // صريح",
+          "explanationArabic": "عند مقارنة std::string بـ const char* عبر ==، يحتاج المُصرِّف أحيانًا لبناء string مؤقت لاستدعاء operator==. في حلقة ضيقة أو مقارنات كثيرة، استخدام string_view في توقيع الدالة يتفادى هذا تمامًا لأن string_view يمكنه الارتباط بـ const char* مباشرةً بدون تخصيص."
+        }
+      ],
+      "related": [
+        "std::string_view",
+        "char",
+        "std::stringstream",
+        "std::stoi",
+        "std::to_string"
+      ]
+    },
+    "std::string_view": {
+      "title": "std::string_view",
+      "type": "عرض (C++17)",
+      "description": "عرض غير مالك لسلسلة نصية — مؤشر للحرف الأول وطول. لا يُخصّص ذاكرة ولا ينسخ. يمكنه الارتباط بـ const char* و std::string و substr. حجمه = مؤشرين (16 بايت عادةً).",
+      "usage": "يُستخدم في تواقيع الدوال التي تقرأ النص فقط دون تعديله. البديل الأكفأ لـ const std::string& في معظم الحالات.",
+      "example": "void print(std::string_view sv) { std::cout << sv; }\nprint(\"hello\");",
+      "includeHeader": "#include <string_view>",
+      "usageExamples": [
+        {
+          "titleArabic": "توقيع دالة يقبل كل أنواع النصوص",
+          "code": "#include <string_view>\n#include <string>\n#include <iostream>\n\n// يقبل: const char*, std::string, std::string_view, substr()\nvoid log(std::string_view tag, std::string_view message) {\n    std::cout << '[' << tag << \"] \" << message << '\\n';\n}\n\nlog(\"INFO\", \"بدء التحميل\");           // const char*\nstd::string module = \"Renderer\";\nlog(module, \"جاهز\");                    // std::string\nlog(\"WARN\", std::string(\"ذاكرة منخفضة\")); // std::string مؤقت\nlog(\"DEBUG\", module.substr(0, 3));        // string_view من substr",
+          "explanationArabic": "string_view يحل مشكلة تضخم التوقيعات. بدل كتابة عدة حمولات لـ const char* و const std::string&، حمولة واحدة تكفي. لا يحدث أي نسخ عند التحويل من أي من هذه الأنواع. substr() على string_view يُرجع string_view آخر — لا يُنشئ string جديدًا."
+        },
+        {
+          "titleArabic": "تجزئة نص بدون نسخ",
+          "code": "#include <string_view>\n#include <vector>\n\nstd::vector<std::string_view> split(std::string_view sv, char delim) {\n    std::vector<std::string_view> parts;\n    while (!sv.empty()) {\n        auto pos = sv.find(delim);\n        if (pos == std::string_view::npos) {\n            parts.push_back(sv);\n            break;\n        }\n        parts.push_back(sv.substr(0, pos));\n        sv.remove_prefix(pos + 1); // يتخطى المُحدِّد بدون نسخ\n    }\n    return parts;\n}\n\n// النتيجة: كل عنصر string_view يشير للنص الأصلي\nauto parts = split(\"red,green,blue\", ',');\n// parts = {\"red\", \"green\", \"blue\"} — صفر نسخ!",
+          "explanationArabic": "remove_prefix و remove_suffix يُعدّلان العرض بدون نسخ — يُزيلان أحرفًا من البداية أو النهاية. هذا يجعل التجزئة خالية من التخصيص تمامًا. انتبه: العناصر المُرجعة تشير للنص الأصلي — إذا أُلغي النص الأصلي تصبح العروض dangling."
+        },
+        {
+          "titleArabic": "خطأ شائع: تخزين string_view لفترة أطول من مصدره",
+          "code": "#include <string_view>\n#include <string>\n\n// ❌ كارثة: sv يشير لـ temp التي تُدمَّر عند نهاية السطر\n// std::string_view sv = std::string(\"temporary\");\n// std::cout << sv; // UB: dangling pointer!\n\n// ❌ نفس المشكلة مع دالة تُرجع string محلي\n// std::string_view bad() {\n//     std::string local = \"hello\";\n//     return local; // local يُدمَّر، sv يشير لمكان محرر\n// }\n\n// ✅ صحيح: النص الأصلي يعيش أطول من العرض\nstd::string name = \"Atlas\";           // يعيش في النطاق\nstd::string_view sv = name;             // آمن: name حي\n\n// ✅ صحيح: string literals تعيش طوال البرنامج\nstd::string_view lit = \"hello\";        // آمن: literal ثابت\n\n// ✅ إذا احتجت ملكية: انسخ لـ string\nstd::string owned = std::string(sv);",
+          "explanationArabic": "string_view لا يملك — هو مجرد نافذة قراءة على ذاكرة شخص آخر. إذا أُلغي المصدر يصبح العرض dangling وقراءته UB. القاعدة الذهبية: لا تُخزّن string_view إلا إذا كنت متأكدًا أن المصدر يعيش أطول. عند الشك، انسخ لـ std::string."
+        }
+      ],
+      "related": [
+        "std::string",
+        "const",
+        "std::span",
+        "std::string"
+      ]
+    },
+    "std::array": {
+      "title": "std::array",
+      "type": "حاوية STL",
+      "description": "غلاف لصفيف C ثابت الحجم يضيف واجهة حاوية قياسية مع معرفة الحجم وقت الترجمة. لا يُخصّص ذاكرة ديناميكية — حجمه يساوي تمامًا sizeof(T) * N. يدعم at() للتحقق من الحدود و size() و begin()/end() وبقية واجهة الحاويات. لا يمكن تغيير حجمه بعد التعريف.",
+      "usage": "البديل الآمن لصفيف C الخام T arr[N] عندما يكون الحجم معلومًا مسبقًا. يُستخدم كثيرًا في رسوميات الحاسوب لمتجهات الألوان (RGB) والإحداثيات (xyzw) والقصاصات.",
+      "example": "std::array<float, 3> pos = {0.0f, 1.0f, 0.0f};",
+      "includeHeader": "#include <array>",
+      "usageExamples": [
+        {
+          "titleArabic": "إحداثيات ثلاثية الأبعاد مع at() الآمن",
+          "code": "#include <array>\n#include <iostream>\n\nstd::array<float, 3> position = {1.0f, 2.0f, 3.0f};\n\n// at() يتحقق من الحدود — أبطأ قليلًا لكنه آمن\nstd::cout << position.at(0); // 1.0f\n\n// operator[] لا يتحقق — أسرع لكن خطر عند فهرس خاطئ\nstd::cout << position[1]; // 2.0f\n\n// size() معروف وقت الترجمة — لا يُحسب في وقت التشغيل\nstd::cout << \"size: \" << position.size(); // 3\n\n// المرور بمدى\nfor (auto& coord : position) {\n    coord *= 2.0f; // تعديل كل عنصر\n}\n// position = {2.0f, 4.0f, 6.0f}",
+          "explanationArabic": "std::array يضيف واجهة حاوية كاملة فوق الصفيف الخام: at() للتحقق، size() للعدد، begin()/end() للمدى. الفرق عن vector: الحجم ثابت — لا يوجد push_back ولا reserve. sizeof(array<float,3>) يساوي sizeof(float)*3 بالضبط (12 بايت) بدون أي حمل إضافي."
+        },
+        {
+          "titleArabic": "fill وتبديل المصفوفات",
+          "code": "#include <array>\n#include <algorithm>\n\n// تهيئة كل العناصر بقيمة واحدة\nstd::array<int, 4> scores;\nscores.fill(0);  // {0, 0, 0, 0}\n\n// التبديل بين مصفوفتين من نفس الحجم والنوع\nstd::array<int, 4> prev = scores;\nscores[0] = 100;\nscores.swap(prev);  // scores تعود {0,0,0,0} و prev تصبح {100,0,0,0}\n\n// std::sort يعمل لأن array لديها begin/end\nstd::array<int, 5> nums = {5, 3, 1, 4, 2};\nstd::sort(nums.begin(), nums.end());\n// nums = {1, 2, 3, 4, 5}",
+          "explanationArabic": "fill تعيّن كل العناصر لقيمة واحدة — مفيد للتهيئة. swap يُبدّل محتويات مصفوفتين بنفس الحجم في O(1) لأنه يُبدّل البيانات الداخلية فقط لا ينسخ عنصرًا عنصرًا. لأن array توفر begin/end، كل خوارزميات STL مثل sort و find و reverse تعمل عليها مباشرة."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان تهيئة عنصر",
+          "code": "#include <array>\n#include <iostream>\n\n// ❌ التهيئة الجزئية: العناصر المتبقية تُهيّأ بصفر (للأنواع العددية فقط)\nstd::array<int, 5> partial = {1, 2};\n// partial = {1, 2, 0, 0, 0} — العناصر الثلاثة الباقية = 0\n\n// ❌ خطأ: بدون أي تهيئة، القيم غير معرّفة (garbage) للأنواع العددية المحلية\n// std::array<int, 3> uninitialized;\n// std::cout << uninitialized[0]; // UB: قيمة عشوائية\n\n// ✅ صحيح: التهيئة الكاملة أو fill\nstd::array<int, 3> safe = {0, 0, 0};\nstd::array<int, 3> safe2 = {};          // كلها صفر\nstd::array<int, 3> safe3;\nsafe3.fill(0);                         // تعيين صريح\n\n// ✅ صحيح: الأنواع التي لديها مُنشئ افتراضي تُهيّأ تلقائيًا\nstd::array<std::string, 2> strs; // كلتاهما سلاسل فارغة \"\"",
+          "explanationArabic": "التهيئة بـ {} تُهيّئ كل العناصر بصفر للأنواع العددية. بدون تهيئة، العناصر العددية المحلية (stack) تكون قيمًا عشوائية — هذا يختلف عن vector التي تُهيّئ بالقيمة الافتراضية. التهيئة الجزئية {1, 2} تضع 1 و 2 ثم تملأ الباقي بصفر. القاعدة: هَيّئ دائمًا array محلي بالكامل أو استخدم fill."
+        }
+      ],
+      "related": [
+        "std::vector",
+        "std::span",
+        "size_t",
+        "std::sort",
+        "std::fill"
+      ]
+    },
+    "std::deque": {
+      "title": "std::deque",
+      "type": "حاوية STL",
+      "description": "حاوية ديناميكية مزدوجة الطرف تسمح بالإدراج والحذف السريع من كلا الطرفين مع وصول عشوائي.",
+      "usage": "حاوية أساسية لـ std::queue. تفيد عند الحاجة لإدراج سريع في كلا الطرفين.",
+      "example": "std::deque<int> dq;\ndq.push_front(1);\ndq.push_back(2);",
+      "related": [
+        "std::vector",
+        "std::list",
+        "std::queue"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إضافة من كلا الطرفين",
+          "code": "#include <deque>\n#include <iostream>\n\nint main() {\n    std::deque<int> dq;\n    dq.push_back(10);\n    dq.push_front(5);\n    dq.push_back(20);\n    for (int x : dq) std::cout << x << \" \"; // 5 10 20\n}",
+          "explanationArabic": "push_front تضيف في البداية وpush_back في النهاية. deque تدعم الوصول العشوائي مثل vector لكنها أبطأ قليلًا."
+        },
+        {
+          "titleArabic": "الوصول العشوائي والحذف",
+          "code": "#include <deque>\n#include <iostream>\n\nint main() {\n    std::deque<int> dq = {1, 2, 3, 4, 5};\n    std::cout << dq[0] << \" \" << dq.at(4); // 1 5\n    dq.pop_front();\n    dq.pop_back();\n    std::cout << dq.size(); // 3\n}",
+          "explanationArabic": "operator[] سريع لكنه لا يتحقق من الحدود. at() آمن. pop_front وpop_back يحذفان من الطرفين."
+        },
+        {
+          "titleArabic": "متى تستخدم deque بدل vector",
+          "code": "#include <deque>\n#include <vector>\n\n// deque أفضل عند كثرة الإدراج في البداية\nstd::deque<int> dq;\nfor (int i = 0; i < 1000; ++i) dq.push_front(i); // سريع\n\n// vector: push_front غير موجود — يجب إزاحة كل العناصر\n// std::vector<int> v;\n// v.insert(v.begin(), i); // O(n) لكل إدراج!",
+          "explanationArabic": "vector أفضل عند الوصول العشوائي الكثيف. deque أفضل عند الإدراج المتكرر في كلا الطرفين. std::queue تستخدم deque داخليًا."
+        }
+      ]
+    },
+    "std::list": {
+      "title": "std::list",
+      "type": "حاوية STL",
+      "description": "قائمة مرتبطة مزدوجة تسمح بالإدراج والحذف السريع في أي موضع لكن بدون وصول عشوائي.",
+      "usage": "تفيد عند كثرة الإدراج والحذف في الوسط لكنها أقل شيوعًا من vector.",
+      "example": "std::list<int> lst = {1, 2, 3};\nlst.insert(++lst.begin(), 10);",
+      "related": [
+        "std::vector",
+        "std::deque",
+        "std::forward_list"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج وحذف في الوسط",
+          "code": "#include <list>\n#include <iostream>\n\nint main() {\n    std::list<int> lst = {10, 30, 50};\n    auto it = lst.begin();\n    ++it;\n    lst.insert(it, 20); // {10, 20, 30, 50}\n    lst.erase(it);       // {10, 20, 50}\n    for (int x : lst) std::cout << x << \" \";\n}",
+          "explanationArabic": "insert وerase في أي موضع بـ O(1) لأن القائمة مرتبطة. لكن الوصول لعنصر بمؤشر N يتطلب المرور خطوة بخطوة."
+        },
+        {
+          "titleArabic": "إزالة عناصر بالقيمة",
+          "code": "#include <list>\n#include <iostream>\n\nint main() {\n    std::list<int> lst = {1, 2, 3, 2, 4};\n    lst.remove(2); // يُزيل كل الـ 2\n    for (int x : lst) std::cout << x << \" \"; // 1 3 4\n}",
+          "explanationArabic": "remove يُزيل كل العناصر المساوية للقيمة المعطاة. يُرجع عدد العناصر المُزالة."
+        },
+        {
+          "titleArabic": "لا يوجد وصول عشوائي",
+          "code": "#include <list>\n\nstd::list<int> lst = {10, 20, 30};\n// lst[1]; // خطأ ترجمة: لا يوجد operator[]\n// lst.at(1); // خطأ ترجمة: لا يوجد at()\n\n// للوصول لعنصر معين يجب المرور بالمكررات\nauto it = lst.begin();\n++it; // يشير لـ 20\nint val = *it;",
+          "explanationArabic": "list لا تدعم الوصول العشوائي لأن العناصر غير متجاورة في الذاكرة. إذا احتجت وصول عشوائي استخدم vector أو deque."
+        }
+      ]
+    },
+    "std::forward_list": {
+      "title": "std::forward_list",
+      "type": "حاوية STL",
+      "description": "قائمة مرتبطة أحادية الارتباط خفيفة الوزن. لا تدعم الوصول العشوائي لكن إدراجها وحذفها سريعان.",
+      "usage": "تفيد عند الحاجة لقائمة خفيفة الذاكرة مع إدراج سريع.",
+      "example": "std::forward_list<int> list;\nlist.push_front(1);",
+      "related": [
+        "std::list",
+        "std::vector",
+        "std::deque"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إضافة في البداية",
+          "code": "#include <forward_list>\n#include <iostream>\n\nint main() {\n    std::forward_list<int> fl = {3, 4, 5};\n    fl.push_front(2);\n    fl.push_front(1);\n    for (int x : fl) std::cout << x << \" \"; // 1 2 3 4 5\n}",
+          "explanationArabic": "push_front هي العملية الأسرع — O(1). لا يوجد push_back لأن القائمة أحادية الارتباط لا تملك مؤشرًا للنهاية."
+        },
+        {
+          "titleArabic": "إدراج بعد عنصر",
+          "code": "#include <forward_list>\n#include <iostream>\n\nint main() {\n    std::forward_list<int> fl = {1, 3, 4};\n    auto it = fl.begin();\n    ++it; // يشير لـ 3\n    fl.insert_after(it, 2); // {1, 3, 2, 4}\n    for (int x : fl) std::cout << x << \" \";\n}",
+          "explanationArabic": "insert_after تُدرج بعد المكرر وليس قبله لأنه لا يوجد مؤشر للعنصر السابق. هذا الفرق الأساسي عن list."
+        },
+        {
+          "titleArabic": "حذف بعد عنصر",
+          "code": "#include <forward_list>\n\nstd::forward_list<int> fl = {1, 2, 3, 4};\nauto it = fl.begin();\n++it; // يشير لـ 2\nfl.erase_after(it); // يُزيل 3 — النتيجة {1, 2, 4}\n\n// لا يوجد erase(it) — فقط erase_after",
+          "explanationArabic": "erase_after يحذف العنصر بعد المكرر. لا يمكن حذف العنصر الذي يشير إليه المكرر مباشرةً. هذا قيد بسبب الارتباط الأحادي."
+        }
+      ]
+    },
+    "std::map": {
+      "title": "std::map",
+      "type": "حاوية STL",
+      "description": "حاوية ترابطية تربط مفتاحًا فريدًا بقيمة مع الحفاظ على الترتيب التصاعدي حسب المفتاح. داخليةً تستخدم شجرة بحث ثنائية متوازنة (غالبًا red-black tree). بحث وإدراج وحذف بتعقيد O(log n). تحتاج المفتاح أن يدعم operator<.",
+      "usage": "تُستخدم عند الحاجة لبحث سريع بمفتاح مع الحفاظ على الترتيب. أنسب من unordered_map عند الحاجة للمرور بالترتيب أو أقرب مفتاح.",
+      "example": "std::map<std::string, int> ages;\nages[\"Ali\"] = 25;",
+      "includeHeader": "#include <map>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج والمرور بالترتيب",
+          "code": "#include <map>\n#include <iostream>\n\nstd::map<std::string, int> scores;\nscores.insert({\"Ali\", 90});\nscores.insert({\"Sara\", 95});\nscores.insert({\"Omar\", 88});\n\n// المرور دائمًا بالترتيب التصاعدي حسب المفتاح\nfor (const auto& [name, score] : scores) {\n    std::cout << name << \": \" << score << '\\n';\n}\n// المخرج مرتب أبجديًا: Ali, Omar, Sara",
+          "explanationArabic": "العناصر في map مرتبة دائمًا حسب المفتاح — هذا الفرق الأساسي عن unordered_map. insert لا يُعدّل القيمة إذا كان المفتاح موجودًا (يُرجع زوجًا فيه مكرر وbool). Structured binding (const auto& [k,v]) يُبسّط المرور على الأزواج."
+        },
+        {
+          "titleArabic": "lower_bound و upper_bound: نطاق مرتب",
+          "code": "#include <map>\n\nstd::map<int, std::string> events;\nevents[10] = \"بدء التحميل\";\nevents[20] = \"اكتمل التحميل\";\nevents[30] = \"بدء المعالجة\";\nevents[40] = \"اكتملت المعالجة\";\n\n// lower_bound: أول عنصر بمفتاح >= 20\nauto low = events.lower_bound(20);\n// upper_bound: أول عنصر بمفتاح > 20\nauto high = events.upper_bound(20);\n\n// النطاق [low, high) يحتوي العناصر بمفتاح 20 فقط\nfor (auto it = low; it != high; ++it) {\n    std::cout << it->second << '\\n'; // \"اكتمل التحميل\"\n}\n\n// استخدام عملي: كل الأحداث بين 15 و35\nfor (auto it = events.lower_bound(15); it != events.upper_bound(35); ++it) {\n    std::cout << it->first << \": \" << it->second << '\\n';\n}",
+          "explanationArabic": "lower_bound/upper_bound يستفيدان من الترتيب الداخلي فيبحثان بـ O(log n). هذا مستحيل في unordered_map. النطاق [lower_bound(x), upper_bound(x)) يُعطي جميع العناصر بمفتاح x (مفيد في multimap). النمط شائع في الأنظمة الزمنية والمعالجة بالأولوية."
+        },
+        {
+          "titleArabic": "خطأ شائع: operator[] للبحث فقط",
+          "code": "#include <map>\n\nstd::map<std::string, int> config;\n\n// ❌ خطأ: operator[] يُنشئ عنصرًا بقيمة 0 إذا لم يكن موجودًا\n// if (config[\"debug\"] == 1) { ... }\n// // الآن config يحتوي {\"debug\": 0} حتى لو لم نرد ذلك!\n\n// ✅ صحيح: استخدم find أو count للبحث فقط\nif (auto it = config.find(\"debug\"); it != config.end()) {\n    if (it->second == 1) { /* ... */ }\n}\n\n// ✅ أو contains (C++20) — الأنظف\nif (config.contains(\"debug\")) {\n    int val = config.at(\"debug\"); // at() آمن ويرمي إن غاب\n}",
+          "explanationArabic": "operator[] في map يُنشئ عنصرًا بقيمة افتراضية (0 للأعداد، فارغ للنصوص) إذا غاب المفتاح. هذا سلوك مدفوع لصالح الإدراج المريح لكنه كارثي عند البحث. استخدم find أو contains (C++20) للبحث، وat() للوصول الآمن الذي يتحقق من الوجود."
+        }
+      ],
+      "related": [
+        "std::unordered_map",
+        "std::set",
+        "std::pair",
+        "std::multimap"
+      ]
+    },
+    "std::set": {
+      "title": "std::set",
+      "type": "حاوية STL",
+      "description": "حاوية تخزن عناصر فريدة مرتبة تصاعديًا تلقائيًا. داخليةً تستخدم شجرة بحث ثنائية متوازنة (red-black tree). البحث والإضافة والحذف بتعقيد O(log n). لا تسمح بالوصول العشوائي — المرور يكون بالترتيب فقط عبر المكررات. تحتاج العنصر أن يدعم operator<.",
+      "usage": "تفيد عند الحاجة لمنع التكرار والحفاظ على الترتيب مع بحث سريع. شائعة لتتبع العناصر الفريدة مثل الأسماء أو المعرفات أو الكلمات المفتاحية.",
+      "example": "std::set<int> s = {3, 1, 2};\ns.insert(4);",
+      "includeHeader": "#include <set>",
+      "usageExamples": [
+        {
+          "titleArabic": "إضافة وبحث ومنع التكرار",
+          "code": "#include <set>\n#include <string>\n#include <iostream>\n\nstd::set<std::string> keywords;\n\n// insert يُرجع زوجًا (مكرر، bool) — bool يُخبرك إن كان أُضيف فعلًا\nauto [it, ok] = keywords.insert(\"render\");\nstd::cout << ok; // true\n\nauto [it2, ok2] = keywords.insert(\"render\");\nstd::cout << ok2; // false — موجود مسبقًا\n\n// find: O(log n) — أسرع من البحث الخطي\nif (keywords.find(\"render\") != keywords.end()) {\n    std::cout << \"موجود\";\n}\n\n// contains (C++20) — أنظف\nif (keywords.contains(\"update\")) { /* ... */ }\n\n// المرور دائمًا بالترتيب التصاعدي\nfor (const auto& kw : keywords) {\n    std::cout << kw << '\\n';\n}",
+          "explanationArabic": "set ترفض التكرار تلقائيًا — insert يُرجع bool يُخبرك إن كان الإدراج حدث. find أسرع من البحث في vector لأنه O(log n) بدل O(n). لا يوجد operator[] لأن العناصر ليست مفاتيح لقيم — العنصر نفسه هو المفتاح والقيمة."
+        },
+        {
+          "titleArabic": "حذف عناصر و count مع lower_bound",
+          "code": "#include <set>\n\nstd::set<int> nums = {10, 20, 30, 40, 50};\n\n// erase بالقيمة — يُرجع عدد العناصر المحذوفة (0 أو 1 في set)\nsize_t removed = nums.erase(30); // removed = 1\n\n// erase بالمكرر — أسرع لأنه لا يبحث\nauto it = nums.find(20);\nif (it != nums.end()) {\n    nums.erase(it); // لا يعيد مكرر في set (عكس vector)\n}\n\n// count دائمًا 0 أو 1 في set (مفيد كـ bool)\nif (nums.count(40)) { /* موجود */ }\n\n// lower_bound: أول عنصر >= 25\nauto lb = nums.lower_bound(25);\n// lb يشير لـ 40",
+          "explanationArabic": "erase بالقيمة يبحث ثم يحذف — إذا كان لديك المكرر فعلًا فاستخدم erase(it) لأنه أسرع. count في set يُرجع 0 أو 1 فقط — استخدم contains (C++20) لأنه أوضح نيةً. lower_bound يستفيد من الترتيب الداخلي للبحث بـ O(log n)."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام set عندما يكفي unordered_set",
+          "code": "#include <set>\n#include <unordered_set>\n#include <string>\n\n// ❌ لا تحتاج الترتيب هنا — unordered_set أسرع\n// std::set<std::string> visited;\n// visited.insert(\"node_a\");\n// if (visited.contains(\"node_a\")) { /* ... */ }\n\n// ✅ الأفضل: unordered_set — بحث O(1) بدل O(log n)\nstd::unordered_set<std::string> visited;\nvisited.insert(\"node_a\");\nif (visited.contains(\"node_a\")) { /* ... */ }\n\n// ✅ استخدم set فقط إذا احتجت:\n// 1. المرور بالترتيب\n// 2. lower_bound / upper_bound (نطاق مرتب)\n// 3. أقرب عنصر لأعلى أو أسفل\nstd::set<int> timeline = {10, 20, 30, 40};\nauto it = timeline.lower_bound(25); // أول عنصر >= 25 → 30",
+          "explanationArabic": "set أبطأ من unordered_set في كل العمليات الأساسية (O(log n) vs O(1)). استخدم set فقط إذا استفدت فعلًا من الترتيب. إذا كنت فقط تتحقق من الوجود أو تمنع التكرار ف unordered_set أنسب. القاعدة: ابدأ بـ unordered_set وانتقل لـ set فقط عند الحاجة الفعلية للترتيب."
+        }
+      ],
+      "related": [
+        "std::map",
+        "std::unordered_set",
+        "std::multiset",
+        "std::less"
+      ]
+    },
+    "std::multimap": {
+      "title": "std::multimap",
+      "type": "حاوية STL",
+      "description": "مثل std::map لكنها تسمح بمفاتيح مكررة مع الحفاظ على الترتيب.",
+      "usage": "تفيد عند ربط عدة قيم بنفس المفتاح مع الحفاظ على الترتيب.",
+      "example": "std::multimap<std::string, int> scores;\nscores.insert({\"Ali\", 90});",
+      "related": [
+        "std::map",
+        "std::set",
+        "std::pair"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج عدة قيم لنفس المفتاح",
+          "code": "#include <map>\n#include <iostream>\n\nint main() {\n    std::multimap<std::string, int> scores;\n    scores.insert({\"Ali\", 90});\n    scores.insert({\"Ali\", 85});\n    scores.insert({\"Sara\", 95});\n    for (const auto& [name, score] : scores)\n        std::cout << name << \": \" << score << \"\\n\";\n}",
+          "explanationArabic": "multimap تسمح بمفاتيح مكررة. insert لا يُعدّل القيمة الموجودة بل يُضيف عنصرًا جديدًا. العناصر مرتبة حسب المفتاح."
+        },
+        {
+          "titleArabic": "البحث عن كل القيم لمفتاح",
+          "code": "#include <map>\n#include <iostream>\n\nint main() {\n    std::multimap<std::string, int> mm;\n    mm.insert({\"x\", 1});\n    mm.insert({\"x\", 2});\n    mm.insert({\"x\", 3});\n    auto [lo, hi] = mm.equal_range(\"x\");\n    for (auto it = lo; it != hi; ++it)\n        std::cout << it->second << \" \"; // 1 2 3\n}",
+          "explanationArabic": "equal_range يُرجع نطاقًا يحتوي كل العناصر بالمفتاح المحدد. هذا أنسب من find لأن find يُرجع العنصر الأول فقط."
+        },
+        {
+          "titleArabic": "لا يوجد operator[]",
+          "code": "#include <map>\n\nstd::multimap<std::string, int> mm;\n    mm.insert({\"key\", 1});\n    mm.insert({\"key\", 2});\n// mm[\"key\"] = 3; // خطأ ترجمة!\n// لا يوجد [] لأن المفتاح ليس فريدًا\n}",
+          "explanationArabic": "operator[] غير موجود لأنه يفترض مفتاحًا فريدًا. استخدم insert للإضافة وfind أو equal_range للبحث."
+        }
+      ]
+    },
+    "std::multiset": {
+      "title": "std::multiset",
+      "type": "حاوية STL",
+      "description": "مثل std::set لكنها تسمح بعناصر مكررة مع الحفاظ على الترتيب.",
+      "usage": "تفيد عند تخزين عناصر مرتبة مع السماح بالتكرار.",
+      "example": "std::multiset<int> values;\nvalues.insert(5);\nvalues.insert(5);",
+      "related": [
+        "std::set",
+        "std::multimap",
+        "std::vector"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تخزين عناصر مكررة مرتبة",
+          "code": "#include <set>\n#include <iostream>\n\nint main() {\n    std::multiset<int> ms = {3, 1, 2, 1, 3};\n    for (int x : ms) std::cout << x << \" \"; // 1 1 2 3 3\n}",
+          "explanationArabic": "multiset تحفظ التكرار وترتب العناصر. كل عنصر يُحفظ بشكل مستقل حتى لو تساوت قيمته مع عنصر آخر."
+        },
+        {
+          "titleArabic": "عد التكرارات والحذف",
+          "code": "#include <set>\n#include <iostream>\n\nint main() {\n    std::multiset<int> ms = {1, 2, 2, 3, 2};\n    std::cout << ms.count(2); // 3\n    ms.erase(2); // يُزيل كل الـ 2\n    std::cout << ms.count(2); // 0\n}",
+          "explanationArabic": "count يُرجع عدد التكرارات الفعلية (ليس 0 أو 1 كـ set). erase بالقيمة يُزيل كل التكرارات."
+        },
+        {
+          "titleArabic": "حذف تكرار واحد فقط",
+          "code": "#include <set>\n#include <iostream>\n\nint main() {\n    std::multiset<int> ms = {1, 2, 2, 3};\n    auto it = ms.find(2);\n    if (it != ms.end()) ms.erase(it); // يُزيل تكرارًا واحدًا فقط\n    for (int x : ms) std::cout << x << \" \"; // 1 2 3\n}",
+          "explanationArabic": "erase بالمكرر يُزيل عنصرًا واحدًا فقط. هذا يختلف عن erase بالقيمة التي تُزيل كل التكرارات."
+        }
+      ]
+    },
+    "std::unordered_map": {
+      "title": "std::unordered_map",
+      "type": "حاوية STL",
+      "description": "حاوية ترابطية تستخدم جدول تجزئة لربط مفتاح بقيمة. بحث متوسط O(1) أسوأ حالة O(n). لا تحافظ على ترتيب العناصر. تحتاج المفتاح أن يدعم std::hash وoperator==.",
+      "usage": "الخيار الأسرع عادةً للبحث بمفتاح عندما لا تحتاج الترتيب. الخيار الافتراضي للكاش والخرائط والمظهرات.",
+      "example": "std::unordered_map<std::string, int> cache;\ncache[\"key\"] = 42;",
+      "includeHeader": "#include <unordered_map>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج والبحث بأمان بـ find",
+          "code": "#include <unordered_map>\n#include <string>\n\nstd::unordered_map<std::string, int> texture_cache;\n\n// إدراج بدون إدراج مزدوج\nauto [it, inserted] = texture_cache.emplace(\"hero\", 1);\nif (!inserted) {\n    // المفتاح موجود مسبقًا — it يشير للعنصر القديم\n}\n\n// البحث بأمان — find لا يُنشئ عنصرًا جديدًا\nauto found = texture_cache.find(\"hero\");\nif (found != texture_cache.end()) {\n    int id = found->second; // first = المفتاح, second = القيمة\n}\n\n// ❌ تحذير: operator[] يُنشئ عنصرًا بقيمة افتراضية إذا لم يُجد المفتاح\n// int id = texture_cache[\"missing\"]; // يُضيف {\"missing\", 0} بدون قصد!",
+          "explanationArabic": "emplace يُرجع زوجًا (مكرر، bool) يُخبرك إن كان الإدراج حدث فعلًا. find يُرجع مكرر ولا يُعدّل الحاوية — استخدمه عند عدم التأكد من وجود المفتاح. operator[] مريح لكنه خطير لأنه يُنشئ عنصرًا جديدًا بصمت إذا غاب المفتاح."
+        },
+        {
+          "titleArabic": "حساب التكرارات (frequency map)",
+          "code": "#include <unordered_map>\n#include <vector>\n#include <string>\n\nstd::vector<std::string> words = {\"gpu\", \"cpu\", \"gpu\", \"ram\", \"cpu\", \"gpu\"};\n\nstd::unordered_map<std::string, int> freq;\nfor (const auto& w : words) {\n    freq[w]++;  // آمن هنا: نريد إنشاء العنصر إذا لم يكن موجودًا\n}\n// freq = {\"gpu\": 3, \"cpu\": 2, \"ram\": 1}\n\n// أو باستخدام try_emplace (C++17) الأوضح:\nstd::unordered_map<std::string, int> freq2;\nfor (const auto& w : words) {\n    auto [it, ok] = freq2.try_emplace(w, 0);\n    it->second++;\n}",
+          "explanationArabic": "operator[] مناسب هنا لأننا نريد فعلًا إنشاء عداد إذا لم يكن موجودًا. try_emplace أوضح: يُدرج فقط إذا غاب المفتاح ويرجع مكررًا للعنصر (الجديد أو الموجود). الفرق عن emplace: try_emplace لا يُعدّل القيمة إذا كان المفتاح موجودًا بينما emplace قد يُعدّلها."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام مفتاح بدون hash",
+          "code": "#include <unordered_map>\n\nstruct Vec2 {\n    float x, y;\n    bool operator==(const Vec2& o) const { return x == o.x && y == o.y; }\n};\n\n// ❌ خطأ ترجمة: Vec2 لا يملك std::hash\n// std::unordered_map<Vec2, int> grid;\n\n// ✅ الحل: تخصيص std::hash للنوع\nnamespace std {\ntemplate<>\nstruct hash<Vec2> {\n    size_t operator()(const Vec2& v) const noexcept {\n        auto hx = std::hash<float>{}(v.x);\n        auto hy = std::hash<float>{}(v.y);\n        return hx ^ (hy << 1); // دمج بسيط\n    }\n};\n}\n\n// الآن يعمل\nstd::unordered_map<Vec2, int> grid;\ngrid[{1.0f, 2.0f}] = 42;",
+          "explanationArabic": "unordered_map يحتاج شيئين من المفتاح: operator== للمقارنة وstd::hash لتوزيع العناصر في الدلو. الأنواع القياسية (int, string) لديها hash جاهز. الأنواع المخصصة تحتاج تخصيصًا صريحًا داخل namespace std. إذا لم تستطع تخصيص hash أو أردت ترتيبًا، استخدم std::map بدلًا من ذلك."
+        }
+      ],
+      "related": [
+        "std::map",
+        "std::unordered_set",
+        "std::hash",
+        "std::pair"
+      ]
+    },
+    "std::unordered_set": {
+      "title": "std::unordered_set",
+      "type": "حاوية STL",
+      "description": "حاوية تخزن قيمًا فريدة باستخدام جدول تجزئة. بحث متوسط O(1) بدون ترتيب.",
+      "usage": "تفيد عند الحاجة لعضوية سريعة وفريدة بدون الحفاظ على الترتيب.",
+      "example": "std::unordered_set<int> seen;\nseen.insert(5);",
+      "related": [
+        "std::set",
+        "std::unordered_map",
+        "std::hash"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "عضوية سريعة بدون ترتيب",
+          "code": "#include <unordered_set>\n#include <iostream>\n\nint main() {\n    std::unordered_set<std::string> visited;\n    visited.insert(\"node_a\");\n    visited.insert(\"node_b\");\n    if (visited.contains(\"node_a\"))\n        std::cout << \"موجود\";\n    std::cout << visited.size(); // 2\n}",
+          "explanationArabic": "unordered_set توفر بحث O(1) متوسطًا. لا تحافظ على ترتيب العناصر. contains (C++20) أنظف من find."
+        },
+        {
+          "titleArabic": "إزالة عناصر",
+          "code": "#include <unordered_set>\n#include <iostream>\n\nint main() {\n    std::unordered_set<int> s = {1, 2, 3, 4, 5};\n    s.erase(3); // يُزيل 3\n    size_t n = s.erase(99); // n = 0 (غير موجود)\n    std::cout << s.size(); // 4\n}",
+          "explanationArabic": "erase يُرجع عدد العناصر المُزالة (0 أو 1). لا توجد مشكلة في محاولة حذف عنصر غير موجود."
+        },
+        {
+          "titleArabic": "لا تستخدمها إذا احتجت الترتيب",
+          "code": "#include <unordered_set>\n#include <set>\n#include <iostream>\n\n// ❌ لا يوجد ترتيب مضمون\nstd::unordered_set<int> us = {3, 1, 2};\nfor (int x : us) std::cout << x << \" \"; // ترتيب غير مضمون\n\n// ✅ استخدم set للترتيب\nstd::set<int> s = {3, 1, 2};\nfor (int x : s) std::cout << x << \" \"; // 1 2 3 دائمًا",
+          "explanationArabic": "unordered_set أسرع في البحث والإضافة لكنها لا تحافظ على ترتيب. إذا احتجت المرور بالترتيب أو lower_bound فاستخدم set."
+        }
+      ]
+    },
+    "std::queue": {
+      "title": "std::queue",
+      "type": "حاوية محولة",
+      "description": "حاوية محولة تتبع مبدأ FIFO (الأول يدخل أول يخرج).",
+      "usage": "تفيد في قائمة انتظار الأوامر أو معالجة الأحداث بالترتيب.",
+      "example": "std::queue<int> tasks;\ntasks.push(1);\nint next = tasks.front();\ntasks.pop();",
+      "related": [
+        "std::deque",
+        "std::stack",
+        "std::priority_queue"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "طابور FIFO أساسي",
+          "code": "#include <queue>\n#include <iostream>\n\nint main() {\n    std::queue<int> q;\n    q.push(10); q.push(20); q.push(30);\n    std::cout << q.front() << \" \"; // 10\n    std::cout << q.back() << \" \";  // 30\n    q.pop();\n    std::cout << q.front(); // 20\n}",
+          "explanationArabic": "push تضيف في الخلف، pop تُزيل من الأمام. front تعطي العنصر التالي بدون إزالته. back تعطي آخر عنصر."
+        },
+        {
+          "titleArabic": "معالجة مهام بالترتيب",
+          "code": "#include <queue>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::queue<std::string> tasks;\n    tasks.push(\"تحميل\");\n    tasks.push(\"معالجة\");\n    tasks.push(\"عرض\");\n    while (!tasks.empty()) {\n        std::cout << tasks.front() << \"\\n\";\n        tasks.pop();\n    }\n}",
+          "explanationArabic": "queue لا تدعم الوصول العشوائي ولا التكرار. pop لا تُرجع العنصر — استخدم front أولًا ثم pop."
+        },
+        {
+          "titleArabic": "التحقق قبل pop",
+          "code": "#include <queue>\n\nstd::queue<int> q;\n// q.front(); // UB إذا كانت فارغة!\n// q.pop();   // UB إذا كانت فارغة!\n\nif (!q.empty()) {\n    int val = q.front();\n    q.pop();\n}",
+          "explanationArabic": "استدعاء front أو pop على طابور فارغ سلوك غير معرّف. تحقق دائمًا بـ empty قبل الوصول."
+        }
+      ]
+    },
+    "std::stack": {
+      "title": "std::stack",
+      "type": "حاوية محولة",
+      "description": "حاوية محولة تتبع مبدأ LIFO (الآخر يدخل أول يخرج).",
+      "usage": "تفيد في خوارزميات التراجع والمكدسات.",
+      "example": "std::stack<int> frames;\nframes.push(1);\nint top = frames.top();\nframes.pop();",
+      "related": [
+        "std::queue",
+        "std::deque",
+        "std::vector"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "مكدس LIFO أساسي",
+          "code": "#include <stack>\n#include <iostream>\n\nint main() {\n    std::stack<int> s;\n    s.push(10); s.push(20); s.push(30);\n    std::cout << s.top() << \" \"; // 30\n    s.pop();\n    std::cout << s.top(); // 20\n}",
+          "explanationArabic": "push تضيف في القمة، pop تُزيل من القمة. top تعطي العنصر العلوي بدون إزالته. الآخر يدخل أولًا يخرج."
+        },
+        {
+          "titleArabic": "عكس سلسلة",
+          "code": "#include <stack>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::string str = \"hello\";\n    std::stack<char> s;\n    for (char c : str) s.push(c);\n    while (!s.empty()) {\n        std::cout << s.top();\n        s.pop();\n    } // olleh\n}",
+          "explanationArabic": "push كل حرف ثم pop يُرجعها بترتيب عكسي. هذا نمط شائع لقلب الترتيب."
+        },
+        {
+          "titleArabic": "التحقق قبل top وpop",
+          "code": "#include <stack>\n\nstd::stack<int> s;\n// s.top(); // UB إذا كانت فارغة!\n// s.pop(); // UB إذا كانت فارغة!\n\nif (!s.empty()) {\n    int val = s.top();\n    s.pop();\n}",
+          "explanationArabic": "استدعاء top أو pop على مكدس فارغ سلوك غير معرّف. تحقق دائمًا بـ empty."
+        }
+      ]
+    },
+    "std::priority_queue": {
+      "title": "std::priority_queue",
+      "type": "حاوية محولة",
+      "description": "حاوية محولة تعطي دائمًا العنصر الأكبر (أو الأصغر) عند القراءة. تستخدم كومة ثنائية داخليًا. الإدراج والقراءة بتعقيد O(log n).",
+      "usage": "تفيد عند معالجة العناصر حسب الأولوية مثل جدولة المهام أو خوارزميات Dijkstra أو اختيار أقصر مسار.",
+      "example": "std::priority_queue<int> pq;\npq.push(3); pq.push(1); pq.push(5);\nstd::cout << pq.top(); // 5",
+      "includeHeader": "#include <queue>",
+      "usageExamples": [
+        {
+          "titleArabic": "min-heap: دمج قوائم مرتبة",
+          "code": "#include <queue>\n#include <vector>\n#include <functional>\n\n// المعامل الثالث std::greater<int> يعكس الكومة فتصبح min-heap\n// الحاوية الداخلية std::vector<int> مطلوبة عند تغيير المقارنة\nstd::priority_queue<int, std::vector<int>, std::greater<int>> min_pq;\n\n// ندفع عناصر من قائمتين مرتبتين مفترضتين\nmin_pq.push(5); min_pq.push(1); min_pq.push(8);  // القائمة الأولى\nmin_pq.push(3); min_pq.push(4);                   // القائمة الثانية\n\nstd::vector<int> merged;\nwhile (!min_pq.empty()) {\n    merged.push_back(min_pq.top());  // top() يُرجع الأصغر في min-heap\n    min_pq.pop();                     // pop() يُزيل الأصغر\n}\n// merged = {1, 3, 4, 5, 8}",
+          "explanationArabic": "بدون std::greater تكون الكومة max-heap (الافتراضي). عند تمرير std::greater كمعامل ثالث تنعكس الأولوية فيصبح top() يُرجع الأصغر. الحاوية الداخلية (المعامل الثاني) يجب تحديدها صراحةً عند تغيير المقارنة لأن المُصرِّف لا يستطيع استنتاجها."
+        },
+        {
+          "titleArabic": "min-heap مع lambda: خوارزمية Dijkstra",
+          "code": "#include <queue>\n#include <vector>\n#include <climits>\n\nstruct Edge { int node; int weight; };\n\n// lambda يعكس الترتيب: الأصغر وزنًا = أعلى أولوية\nauto cmp = [](const Edge& a, const Edge& b) { return a.weight > b.weight; };\n\n// decltype(cmp) يستنتج نوع Lambda وcmp يُمرَّر للمُنشئ\nstd::priority_queue<Edge, std::vector<Edge>, decltype(cmp)> dijkstra(cmp);\n\ndijkstra.push({0, 0}); // العقدة 0 بمسافة 0\nstd::vector<int> dist(5, INT_MAX);\ndist[0] = 0;\n\nwhile (!dijkstra.empty()) {\n    auto [u, d] = dijkstra.top();\n    dijkstra.pop();\n    if (d > dist[u]) continue;  // تخطي النسخ القديمة غير المُحدَّثة\n    // افتراض: graph[u] يحتوي أزواج {جار، وزن}\n    for (auto [v, w] : graph[u]) {\n        if (dist[u] + w < dist[v]) {\n            dist[v] = dist[u] + w;\n            dijkstra.push({v, dist[v]});  // دفع بمسافة جديدة (نسخة أحدث)\n        }\n    }\n}",
+          "explanationArabic": "لا يمكن استخدام std::greater مباشرة لأن البنية Edge لا تدعم operator>. Lambda يحل هذه المشكلة. ملاحظة مهمة: priority_queue لا تدعم تعديل عنصر موجود، لذلك ندفع نسخة جديدة عند تحسن المسافة ونتجاهل النسخ القديمة عبر if (d > dist[u]) continue. هذا يعني أن الكومة قد تحتوي عناصر قديمة لكنها لا تُؤثر على الصحة."
+        },
+        {
+          "titleArabic": "max-heap مع operator<: جدولة مهام",
+          "code": "#include <queue>\n#include <string>\n#include <iostream>\n\nstruct Task {\n    int priority;\n    std::string name;\n    // operator< يجعل العنصر ذو الأولوية الأصغر \"أقل\" في الكومة\n    // فيعني ذلك أن الأعلى أولوية يصعد للقمة (max-heap)\n    bool operator<(const Task& o) const { return priority < o.priority; }\n};\n\n// لا نحتاج تحديد مقارنة: max-heap الافتراضي يستخدم operator<\nstd::priority_queue<Task> scheduler;\n\nscheduler.push({2, \"تحديث شاشة\"});\nscheduler.push({5, \"معالجة إدخال\"});\nscheduler.push({1, \"تسجيل سجل\"});\n\nwhile (!scheduler.empty()) {\n    auto t = scheduler.top();\n    scheduler.pop();\n    std::cout << t.priority << \": \" << t.name << '\\n';\n}\n// المخرج:\n// 5: معالجة إدخال\n// 2: تحديث شاشة\n// 1: تسجيل سجل",
+          "explanationArabic": "max-heap الافتراضي يستدعي operator< داخليًا. عندما نُرجع true عند priority < o.priority فإن العنصر ذو الأولوية الأكبر يُعتبر \"أكبر\" في الكومة فيصعد للقمة. هذا يعني أن كتابة operator< باتجاه واحد تحدد اتجاه الكومة بالكامل. الفائدة: لا حاجة لlambda ولا لتحديد المعاملات الثانية والثالثة."
+        }
+      ],
+      "related": [
+        "std::queue",
+        "std::vector",
+        "std::less",
+        "std::greater"
+      ]
+    },
+    "std::span": {
+      "title": "std::span",
+      "type": "عرض (C++20)",
+      "description": "عرض غير مالك لتسلسل عناصر متجاورة في الذاكرة — مؤشر للعنصر الأول وطول. يوفر وصولًا عشوائيًا O(1) وbegin/end للمدى بدون نسخ أو تخصيص. حجمه ثابت = مؤشرين (16 بايت عادةً). يمكنه الارتباط بـ vector وarray وصفائف C الخام. يمكن جعله للقراءة فقط عبر span<const T>.",
+      "usage": "البديل الأكفأ لتمرير حاويات أو أجزاء منها إلى دوال بدون نسخ. شائع جدًا في البرمجة الرسومية لتمرير بيانات الرؤوس (vertices) والقصاصات (indices) والبيانات الثنائية. هو نظير std::string_view لكن للعناصر العامة بدل النصوص.",
+      "example": "void process(std::span<float> data) {\n    for (auto& v : data) v *= 2.0f;\n}",
+      "includeHeader": "#include <span>",
+      "usageExamples": [
+        {
+          "titleArabic": "دالة تقبل كل أنواع الحاويات المتجاورة",
+          "code": "#include <span>\n#include <vector>\n#include <array>\n#include <iostream>\n\n// تقبل: vector, array, صفيف C خام، جزء من أي منها\nvoid normalize(std::span<float> values) {\n    float max_val = 0.0f;\n    for (float v : values) max_val = std::max(max_val, v);\n    if (max_val > 0.0f) {\n        for (auto& v : values) v /= max_val;\n    }\n}\n\nstd::vector<float> a = {3.0f, 6.0f, 9.0f};\nstd::array<float, 4> b = {2.0f, 4.0f, 6.0f, 8.0f};\nfloat c[] = {5.0f, 10.0f};\n\nnormalize(a);  // من vector — لا نسخ\nnormalize(b);  // من array — لا نسخ\nnormalize(c);  // من صفيف C خام — لا نسخ",
+          "explanationArabic": "span يحل مشكلة تضخم التوقيعات مثل string_view لكن للبيانات العامة. بدل كتابة عدة حمولات لكل حاوية، حمولة واحدة بـ span تكفي. لا يحدث أي نسخ عند التحويل من أي حاوية متجاورة. ملاحظة: span يتطلب عناصر متجاورة في الذاكرة — لا يعمل مع list أو forward_list."
+        },
+        {
+          "titleArabic": "قص جزء من حاوية بدون نسخ",
+          "code": "#include <span>\n#include <vector>\n#include <iostream>\n\nstd::vector<float> vertices = {\n    // x, y, z لكل رأس\n    0.0f, 0.0f, 0.0f,  // رأس 0\n    1.0f, 0.0f, 0.0f,  // رأس 1\n    1.0f, 1.0f, 0.0f,  // رأس 2\n    0.0f, 1.0f, 0.0f   // رأس 3\n};\n\n// subspan(first, count) يُرجع عرضًا لجزء بدون نسخ\nstd::span<float> second_vertex = std::span(vertices).subspan(3, 3);\n// second_vertex = {1.0f, 0.0f, 0.0f}\n\n// first<N>() و last<N>() اختصارات شائعة\nauto first_two = std::span(vertices).first<6>();  // أول رأسين\nauto last_two  = std::span(vertices).last<6>();   // آخر رأسين\n\n// تعديل عبر span يُعدّل الحاوية الأصلية\nsecond_vertex[0] = 99.0f;\nstd::cout << vertices[3]; // 99.0f — التغيير ظهر في الأصل",
+          "explanationArabic": "subspan وfirst وlast تُنشئ عروضًا جزئية بدون نسخ — تشير لنفس الذاكرة. المعامل الأول لـ subspan هو موضع البداية والثاني هو العدد (ليس النهاية). first<N> وlast<N> يأخذان عدد العناصر كقالب. لأن span لا يملك، التعديل عبره يُعدّل البيانات الأصلية مباشرة."
+        },
+        {
+          "titleArabic": "خطأ شائع: تخزين span لفترة أطول من مصدره",
+          "code": "#include <span>\n#include <vector>\n\n// ❌ كارثة: span يشير لـ data التي تُدمَّر عند نهاية الدالة\n// std::span<int> bad_slice() {\n//     std::vector<int> data = {1, 2, 3};\n//     return std::span(data); // data تُدمَّر — span يصبح dangling!\n// }\n\n// ❌ نفس المشكلة مع span محلي\n// {\n//     std::vector<int> v = {1, 2, 3};\n//     std::span<int> s = v;\n// } // v تُدمَّر هنا — s كان سيكون dangling لو استمر\n\n// ✅ صحيح: المصدر يعيش أطول من span\nstd::vector<int> data = {10, 20, 30};\nstd::span<int> s = data; // آمن: data حي\n\n// ✅ صحيح: صفائف C الخام المحلية تعيش في نفس النطاق\nint arr[] = {1, 2, 3};\nstd::span<int> sa = arr; // آمن: نفس النطاق\n\n// ✅ للقراءة فقط: استخدم span<const T>\nvoid read_only(std::span<const int> data) {\n    // data[0] = 5; // ❌ خطأ ترجمة: لا يمكن التعديل\n    int x = data[0]; // ✅ قراءة مسموحة\n}",
+          "explanationArabic": "span مثل string_view: لا يملك — هو مجرد نافذة على ذاكرة شخص آخر. إذا أُلغي المصدر يصبح العرض dangling. القاعدة: لا تُخزّن span ولا تُرجعه من دالة إذا كان المصدر محليًا. استخدم span<const T> عندما لا تحتاج تعديل البيانات — هذا يمنع التعديل العرضي ويُوضح النية."
+        }
+      ],
+      "related": [
+        "std::vector",
+        "std::array",
+        "std::string_view",
+        "const",
+        "std::ranges"
+      ]
+    },
+    "std::vector<bool>": {
+      "title": "std::vector<bool>",
+      "type": "تخصّص حاوية STL",
+      "description": "تخصّص خاص لـ std::vector يُخزّن القيم المنطقية كبتّات مضغوطة (بت واحد لكل عنصر) بدل بايت كامل. لا يوفر مراجع حقيقية لعناصره — عناصره بروكسي.",
+      "usage": "يُستخدم لتوفير الذاكرة عند الحاجة لمجموعة كبيرة من القيم المنطقية.",
+      "example": "std::vector<bool> flags(100);\nflags[42] = true;",
+      "includeHeader": "#include <vector>",
+      "usageExamples": [
+        {
+          "titleArabic": "تخزين أعلام مضغوطة",
+          "code": "#include <vector>\n#include <iostream>\n\nstd::vector<bool> flags(100, false);\nflags[10] = true;\nflags[20] = true;\n\nstd::cout << flags[10] << flags[20] << flags[30];",
+          "explanationArabic": "كل عنصر يستهلك بتًا واحدًا بدل بايت. 100 عنصر = ~13 بايت فقط بدل 100 بايت."
+        },
+        {
+          "titleArabic": "تحذير: لا يُرجع مراجع حقيقية",
+          "code": "#include <vector>\n\nstd::vector<bool> v = {true, false, true};\n// auto& ref = v[0]; // ❌ خطأ ترجمة: لا يُرجع bool&\nauto val = v[0]; // ✅ يُرجع نسخة bool\nv.flip(); // يقلّب كل البتات",
+          "explanationArabic": "operator[] يُرجع كائن بروكسي وليس مرجعًا حقيقيًا. هذا يمنع أخذ عنوان عنصر أو إنشاء مرجع له."
+        },
+        {
+          "titleArabic": "استخدم vector<char> أو bitset بدلًا منه عند الحاجة لمراجع",
+          "code": "#include <vector>\n#include <bitset>\n\n// بدائل أكثر أمانًا:\nstd::vector<char> bools = {0, 1, 0}; // بايت كامل لكن مراجع حقيقية\nstd::bitset<100> bits; // ثابت الحجم، عمليات بت سريعة",
+          "explanationArabic": "إذا احتجت مراجع حقيقية أو عناوين، استخدم vector<char> أو bitset. vector<bool> مفيد فقط لتوفير الذاكرة."
+        }
+      ],
+      "related": ["std::vector", "std::bitset", "std::vector<char>"]
+    },
+    "std::flat_map": {
+      "title": "std::flat_map",
+      "type": "حاوية ترابطية (C++23)",
+      "description": "خريطة مرتّبة تُخزّن المفاتيح والقيم في متجهين منفصلين (sorted vectors). بحث أسرع من map بسبب التخزين المتجاور، لكن إدراج وحذف أبطأ.",
+      "usage": "يُستخدم عندما يكون البحث أكثر بكثير من الإدراج والحذف، ويكون الحجم ثابتًا أو شبه ثابت بعد البناء.",
+      "example": "std::flat_map<std::string, int> m;\nm[\"x\"] = 1;",
+      "includeHeader": "#include <flat_map>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء واستخدام أساسي",
+          "code": "#include <flat_map>\n#include <iostream>\n#include <string>\n\nstd::flat_map<std::string, int> config;\nconfig[\"width\"] = 1920;\nconfig[\"height\"] = 1080;\n\nstd::cout << config[\"width\"]; // 1920\nstd::cout << config.contains(\"depth\"); // 0 (false)",
+          "explanationArabic": "flat_map يُخزّن المفاتيح في متجه مرتّب. البحث بـ operator[] و at() و find() أسرع من map بسبب التخزين المتجاور."
+        },
+        {
+          "titleArabic": "بناء من مصفوفة مرتّبة",
+          "code": "#include <flat_map>\n#include <vector>\n#include <utility>\n\nstd::vector<std::pair<std::string, int>> sorted = {\n    {\"a\", 1}, {\"b\", 2}, {\"c\", 3}\n};\nstd::flat_map<std::string, int> m(sorted.begin(), sorted.end());",
+          "explanationArabic": "يمكن بناؤه من مكررين إذا كانت البيانات مرتّبة مسبقًا — أسرع من الإدراج فرديًا."
+        },
+        {
+          "titleArabic": "مقارنة مع map: بحث أسرح، إدراج أبطأ",
+          "code": "#include <flat_map>\n#include <map>\n\n// map: كل عقدة تخصيص منفصل — بحث عبر مؤشرات\nstd::map<int, int> m;\n\n// flat_map: متجهان — بحث تسلسلي مع بحث ثنائي\nstd::flat_map<int, int> fm;\n// البحث في fm أسرح بسبب التخزين المتجاور في الذاكرة",
+          "explanationArabic": "flat_map أفضل للتخزين المؤقت (cache) بسبب التخزين المتجاور. map أفضل للإدراج والحذف المتكرر. اختر حسب نمط الاستخدام."
+        }
+      ],
+      "related": ["std::map", "std::vector", "std::flat_set"]
+    },
+    "std::flat_set": {
+      "title": "std::flat_set",
+      "type": "حاوية ترابطية (C++23)",
+      "description": "مجموعة مرتّبة تُخزّن العناصر في متجه مرتّب. بحث أسرح من set بسبب التخزين المتجاور، لكن إدراج وحذف أبطأ لأنه يتطلب إزاحة العناصر.",
+      "usage": "يُستخدم عندما يكون البحث أكثر بكثير من الإدراج والحذف.",
+      "example": "std::flat_set<int> s = {3, 1, 2};\ns.contains(2); // true",
+      "includeHeader": "#include <flat_set>",
+      "usageExamples": [
+        {
+          "titleArabic": "مجموعة مرتّبة مع بحث سريع",
+          "code": "#include <flat_set>\n#include <iostream>\n\nstd::flat_set<int> s = {5, 3, 1, 4, 2};\nstd::cout << s.contains(3); // 1 (true)\nstd::cout << s.contains(9); // 0 (false)",
+          "explanationArabic": "العناصر تُرتّب تلقائيًا عند البناء. contains (C++20) أنظف من find() != end()."
+        },
+        {
+          "titleArabic": "بناء من نطاق مرتّب",
+          "code": "#include <flat_set>\n#include <vector>\n\nstd::vector<int> sorted = {1, 2, 3, 4, 5};\nstd::flat_set<int> s(sorted.begin(), sorted.end());\n// أسرع من الإدراج فردي لأن البيانات مرتّبة مسبقًا",
+          "explanationArabic": "إذا كانت البيانات مرتّبة مسبقًا، البناء من مكررين يتخطى عملية الترتيب."
+        },
+        {
+          "titleArabic": "الفرق عن set",
+          "code": "#include <flat_set>\n#include <set>\n\n// set: شجرة حمراء-سوداء — كل عقدة تخصيص منفصل\nstd::set<int> s;\n\n// flat_set: متجه واحد — بحث ثنائي على تخزين متجاور\nstd::flat_set<int> fs;\n// fs أسرح في البحث بسبب التخزين المؤقت (cache locality)",
+          "explanationArabic": "flat_set أفضل للقراءة المتكررة. set أفضل للإدراج والحذف المتكرر. اختر حسب نمط الاستخدام."
+        }
+      ],
+      "related": ["std::set", "std::flat_map", "std::vector"]
+    },
+    "std::inplace_vector": {
+      "title": "std::inplace_vector",
+      "type": "حاوية STL (C++23)",
+      "description": "متجه بتخزين مدمج (inline storage) — لا يُخصّص ذاكرة على الكومة. عدد العناصر الأقصى مُحدّد وقت الترجمة. إذا تجاوزت السعة يُرمي std::bad_alloc.",
+      "usage": "يُستخدم عندما يكون الحجم الأقصى معروفًا مسبقًا وتريد تجنب تخصيص الكومة تمامًا.",
+      "example": "std::inplace_vector<int, 16> v;\nv.push_back(42);",
+      "includeHeader": "#include <inplace_vector>",
+      "usageExamples": [
+        {
+          "titleArabic": "متجه بدون تخصيص كومة",
+          "code": "#include <inplace_vector>\n#include <iostream>\n\nstd::inplace_vector<int, 8> buf;\nbuf.push_back(10);\nbuf.push_back(20);\nstd::cout << buf.size(); // 2\nstd::cout << buf[0]; // 10",
+          "explanationArabic": "الذاكرة مدمجة داخل الكائن نفسه — لا تخصيص على الكومة. مناسب للأنواع الصغيرة ذات الحجم المعروف."
+        },
+        {
+          "titleArabic": "تجاوز السعة يُرمي استثناء",
+          "code": "#include <inplace_vector>\n#include <iostream>\n\nstd::inplace_vector<int, 2> v = {1, 2};\ntry {\n    v.push_back(3); // يرمي bad_alloc — السعة 2 فقط\n} catch (const std::bad_alloc&) {\n    std::cout << \"تجاوز السعة\";\n}",
+          "explanationArabic": "عكس vector، لا ينمو تلقائيًا. السعة ثابتة وقت الترجمة. تجاوزها يُرمي bad_alloc."
+        },
+        {
+          "titleArabic": "استخدام مع try_push_back",
+          "code": "#include <inplace_vector>\n\nstd::inplace_vector<int, 4> v = {1, 2, 3};\nauto result = v.try_push_back(4);\nif (result) {\n    // نجاح\n} else {\n    // السعة ممتلئة\n}",
+          "explanationArabic": "try_push_back يُرجع مكرر أو nullptr بدل رمي استثناء. أنظف من try/catch عند التحقق من السعة."
+        }
+      ],
+      "related": ["std::vector", "std::array", "std::bad_alloc"]
+    },
+    "std::mdspan": {
+      "title": "std::mdspan",
+      "type": "عرض متعدد الأبعاد (C++23)",
+      "description": "عرض (view) متعدد الأبعاد على ذاكرة متجاورة. لا يملك البيانات — يوفر وصولًا بفهرس متعدد الأبعاد مثل [i][j][k] على أي تخزين متجاور.",
+      "usage": "يُستخدم للوصول لمصفوفات متعددة الأبعاد (صور، شبكات، موترات) بدون نسخ.",
+      "example": "std::mdspan<float, std::dextents<int, 2>> m(data, 4, 3);\nm[2][1] = 5.0f;",
+      "includeHeader": "#include <mdspan>",
+      "usageExamples": [
+        {
+          "titleArabic": "عرض ثنائي الأبعاد على ذاكرة مسطحة",
+          "code": "#include <mdspan>\n#include <iostream>\n\nfloat pixels[12] = {};\nstd::mdspan<float, std::dextents<int, 2>> img(pixels, 3, 4);\nimg[1][2] = 255.0f;\nstd::cout << img[1][2]; // 255",
+          "explanationArabic": "mdspan يحوّل فهرس ثنائي الأبعاد إلى فهرس خطي في الذاكرة المتجاورة. لا ينسخ البيانات."
+        },
+        {
+          "titleArabic": "عرض على vector",
+          "code": "#include <mdspan>\n#include <vector>\n\nstd::vector<double> data(100);\nstd::mdspan<double, std::dextents<int, 2>> mat(data.data(), 10, 10);\nmat[5][3] = 3.14;",
+          "explanationArabic": "يمكن إنشاؤه من أي مؤشر لذاكرة متجاورة: vector.data() أو صفيف خام أو unique_ptr."
+        },
+        {
+          "titleArabic": "لا يملك — لا يحرر",
+          "code": "#include <mdspan>\n#include <vector>\n\nstd::vector<int> v(100);\nauto view = std::mdspan<int, std::dextents<int, 2>>(v.data(), 10, 10);\n// view لا يملك v — إذا دُمرت v يصبح view dangling",
+          "explanationArabic": "mdspan مثل span — عرض فقط. تأكد أن البيانات الأصلية تعيش أطول من العرض."
+        }
+      ],
+      "related": ["std::span", "std::vector", "std::array"]
+    },
+    "std::hive": {
+      "title": "std::hive",
+      "type": "حاوية STL (C++26)",
+      "description": "حاوية تسلسلية تحتفظ بالعناصر في كتل وتعيد استخدام أماكن العناصر المحذوفة بدل ضغط كل العناصر بعد كل حذف. هذا يجعل الإزالة المتكررة أقل إهدارًا لإعادة التخصيص من vector، مع بقاء المرور على العناصر منطقيًا كأنه على مجموعة متتابعة.",
+      "usage": "تُستخدم عندما تحتاج حاوية عامة تتعرض لكثير من الحذف والإضافة أثناء عمرها، وتريد تقليل كلفة نقل العناصر أو إعادة تخصيص الذاكرة كل مرة. هي خيار بين vector و list: لا تعطي تخزينًا متجاورًا كاملًا مثل vector، لكنها تتجنب طابع العقد المنفصلة الكامل في list.",
+      "example": "std::hive<int> values = {10, 20, 30};\nvalues.erase(values.begin());\nvalues.insert(values.end(), 40);",
+      "includeHeader": "#include <hive>",
+      "usageExamples": [
+        {
+          "titleArabic": "فكرة الحاوية: حذف ثم إعادة استخدام المكان",
+          "code": "#include <hive>\n#include <iostream>\n\nint main() {\n    std::hive<int> values = {10, 20, 30, 40};\n\n    auto it = values.begin();\n    ++it; // يشير إلى 20\n    values.erase(it); // يحذف 20\n\n    values.insert(values.end(), 50);\n\n    for (int v : values) {\n        std::cout << v << ' '; // 10 30 40 50\n    }\n}",
+          "explanationArabic": "الفكرة الأساسية ليست مجرد 'حاوية جديدة'، بل حاوية تبقي فراغات الحذف قابلة لإعادة الاستخدام داخليًا. لذلك عندما يتكرر حذف عناصر ثم إضافة عناصر جديدة، لا تضطر دائمًا إلى تحريك كل ما بعد العنصر المحذوف كما يحدث في vector."
+        },
+        {
+          "titleArabic": "متى تكون أنسب من vector أو list",
+          "code": "#include <hive>\n#include <vector>\n#include <list>\n\nint main() {\n    std::vector<int> packed = {1, 2, 3};\n    std::list<int> linked = {1, 2, 3};\n    std::hive<int> reusable = {1, 2, 3};\n\n    // vector: ممتاز للوصول المتجاور، لكن الحذف من الوسط مكلف.\n    // list: الحذف رخيص، لكن كل عنصر عقدة منفصلة وتكلفة المرور أعلى.\n    // hive: حل وسط عندما تكون الإزالة والإدراج المتكرر جزءًا من النمط.\n    return 0;\n}",
+          "explanationArabic": "المقارنة الصحيحة ليست على أساس الاسم، بل على شكل الذاكرة وسلوك التعديل. `std::hive` لا تحل محل `vector` في الخوارزميات التي تعتمد على التخزين المتجاور، ولا تحل محل `list` عندما تكون العقد المنفصلة بحد ذاتها مطلوبة. فائدتها الحقيقية تظهر في المجموعات التي يتكرر فيها موت العناصر وولادة عناصر جديدة."
+        },
+        {
+          "titleArabic": "ربطها بفكرة الألعاب أو الأنظمة الحية",
+          "code": "#include <hive>\n#include <string>\n\nstruct Particle {\n    int id;\n    bool alive;\n};\n\nint main() {\n    std::hive<Particle> particles;\n    particles.insert(particles.end(), {1, true});\n    particles.insert(particles.end(), {2, true});\n\n    for (auto it = particles.begin(); it != particles.end(); ) {\n        if (it->id == 1) {\n            it = particles.erase(it);\n        } else {\n            ++it;\n        }\n    }\n\n    particles.insert(particles.end(), {3, true});\n}",
+          "explanationArabic": "هذا النمط شائع في أنظمة الكيانات أو الجزيئات أو المهام المؤقتة: عناصر تُحذف أثناء التشغيل ثم تُستبدل بعناصر جديدة. هنا يكون معنى `std::hive` عمليًا جدًا لأنها مصممة لتقليل كلفة هذا التدوير الداخلي للفتحات."
+        }
+      ],
+      "related": ["<hive>", "std::vector", "std::list", "std::deque", "std::inplace_vector"]
+    },
+    "std::ranges::views": {
+      "title": "std::ranges::views",
+      "type": "محوّلات نطاقات كسولة",
+      "description": "مجموعة محوّلات (adapters) تُنشئ عروضًا كسولة للنطاقات: تصفية، تحويل، أخذ، تخطي، وغيرها. لا تُنفَّذ فعليًا حتى التكرار عليها.",
+      "usage": "يُستخدم لمعالجة تسلسلات بأسلوب إعلاني أنظف من الحلقات التقليدية.",
+      "example": "auto result = nums | std::views::filter([](int x){ return x > 0; });",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "تصفية وتحويل أعداد",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nstd::vector<int> nums = {1, -2, 3, -4, 5};\nauto positive = nums | std::views::filter([](int x) { return x > 0; });\nauto doubled = positive | std::views::transform([](int x) { return x * 2; });\n\nfor (int x : doubled) std::cout << x << ' '; // 2 6 10",
+          "explanationArabic": "filter يُمرّر فقط العناصر المطابقة. transform يُطبّق دالة على كل عنصر. يمكن تسلسل عدة محوّلات بـ |."
+        },
+        {
+          "titleArabic": "أخذ وتخطي",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nstd::vector<int> v = {0, 1, 2, 3, 4, 5};\nauto slice = v | std::views::drop(2) | std::views::take(3);\nfor (int x : slice) std::cout << x << ' '; // 2 3 4",
+          "explanationArabic": "drop(n) يتخطى أول n عنصر. take(n) يأخذ n عنصر فقط. تسلسلهما يُنشئ شريحة (slice)."
+        },
+        {
+          "titleArabic": "تحويل إلى vector",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nstd::vector<int> v = {3, 1, 4, 1, 5};\nauto result = v | std::views::filter([](int x){ return x > 2; })\n               | std::views::transform([](int x){ return x * 10; });\nstd::vector<int> out(result.begin(), result.end());",
+          "explanationArabic": "النطاقات كسولة — لا تُنفَّذ حتى التكرار. لتحويلها لحاوية، أنشئها من المكررين."
+        }
+      ],
+      "related": ["std::vector", "std::span", "std::algorithm"]
+    },
+    "std::unordered_multimap": {
+      "title": "std::unordered_multimap",
+      "type": "حاوية STL",
+      "description": "جدول تجزئة يسمح بمفاتيح مكررة. الوصول O(1) متوسط. لا يحافظ على الترتيب.",
+      "usage": "يُستخدم عند ربط عدة قيم بنفس المفتاح مع الحاجة لبحث سريع بدون الحفاظ على الترتيب.",
+      "example": "std::unordered_multimap<std::string, int> mm;\nmm.insert({\"key\", 1});\nmm.insert({\"key\", 2});",
+      "includeHeader": "#include <unordered_map>",
+      "related": [
+        "std::unordered_map",
+        "std::multimap",
+        "std::hash"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج عدة قيم لنفس المفتاح",
+          "code": "#include <unordered_map>\n#include <iostream>\n\nint main() {\n    std::unordered_multimap<std::string, int> scores;\n    scores.insert({\"Ali\", 90});\n    scores.insert({\"Ali\", 85});\n    scores.insert({\"Sara\", 95});\n    for (const auto& [name, score] : scores)\n        std::cout << name << \": \" << score << \"\\n\";\n}",
+          "explanationArabic": "unordered_multimap تسمح بمفاتيح مكررة. insert لا يُعدّل القيمة الموجودة بل يُضيف عنصرًا جديدًا. العناصر غير مرتبة."
+        },
+        {
+          "titleArabic": "البحث عن كل القيم لمفتاح",
+          "code": "#include <unordered_map>\n#include <iostream>\n\nint main() {\n    std::unordered_multimap<std::string, int> mm;\n    mm.insert({\"x\", 1});\n    mm.insert({\"x\", 2});\n    mm.insert({\"x\", 3});\n    auto [lo, hi] = mm.equal_range(\"x\");\n    for (auto it = lo; it != hi; ++it)\n        std::cout << it->second << \" \"; // 1 2 3 (ترتيب غير مضمون)\n}",
+          "explanationArabic": "equal_range يُرجع نطاقًا يحتوي كل العناصر بالمفتاح المحدد. count يُرجع عدد التكرارات. لا يوجد operator[] لأن المفتاح ليس فريدًا."
+        },
+        {
+          "titleArabic": "متى تستخدمها بدل multimap",
+          "code": "#include <unordered_map>\n#include <map>\n\n// unordered_multimap: بحث O(1) متوسط — لا ترتيب\nstd::unordered_multimap<int, std::string> umm;\n\n// multimap: بحث O(log n) — مرتب حسب المفتاح\nstd::multimap<int, std::string> mm;\n\n// استخدم unordered_multimap إذا:\n// 1. لا تحتاج الترتيب\n// 2. البحث أكثر من الإدراج\n// 3. لا تحتاج lower_bound/upper_bound",
+          "explanationArabic": "unordered_multimap أسرع في البحث والإدراج لكنها لا تحافظ على الترتيب. إذا احتجت الترتيب أو lower_bound فاستخدم multimap."
+        }
+      ]
+    },
+    "std::unordered_multiset": {
+      "title": "std::unordered_multiset",
+      "type": "حاوية STL",
+      "description": "جدول تجزئة يسمح بقيم مكررة. الوصول O(1) متوسط. لا يحافظ على الترتيب.",
+      "usage": "يُستخدم عند تخزين عناصر مع السماح بالتكرار والحاجة لبحث سريع بدون ترتيب.",
+      "example": "std::unordered_multiset<int> ms;\nms.insert(5);\nms.insert(5);",
+      "includeHeader": "#include <unordered_set>",
+      "related": [
+        "std::unordered_set",
+        "std::multiset",
+        "std::hash"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تخزين عناصر مكررة بدون ترتيب",
+          "code": "#include <unordered_set>\n#include <iostream>\n\nint main() {\n    std::unordered_multiset<int> ms = {3, 1, 2, 1, 3};\n    std::cout << ms.count(1) << \"\\n\"; // 2\n    for (int x : ms) std::cout << x << \" \"; // ترتيب غير مضمون",
+          "explanationArabic": "unordered_multiset تحفظ التكرار لكن لا تُرتّب العناصر. count يُرجع عدد التكرارات الفعلية."
+        },
+        {
+          "titleArabic": "حذف تكرار واحد فقط",
+          "code": "#include <unordered_set>\n#include <iostream>\n\nint main() {\n    std::unordered_multiset<int> ms = {1, 2, 2, 3};\n    ms.erase(ms.find(2)); // يُزيل تكرارًا واحدًا فقط\n    std::cout << ms.count(2); // 1",
+          "explanationArabic": "erase بالمكرر يُزيل عنصرًا واحدًا فقط. erase بالقيمة يُزيل كل التكرارات. استخدم find للحصول على مكرر لعنصر محدد."
+        },
+        {
+          "titleArabic": "متى تستخدمها بدل multiset",
+          "code": "#include <unordered_set>\n#include <set>\n\n// unordered_multiset: بحث O(1) متوسط — لا ترتيب\nstd::unordered_multiset<int> ums;\n\n// multiset: بحث O(log n) — مرتب تصاعديًا\nstd::multiset<int> ms;\n\n// استخدم unordered_multiset إذا:\n// 1. لا تحتاج الترتيب\n// 2. تريد بحثًا أسرع\n// 3. لا تحتاج lower_bound/upper_bound",
+          "explanationArabic": "unordered_multiset أسرع من multiset في البحث والإضافة لكنها لا تحافظ على الترتيب. اختر حسب الحاجة الفعلية للترتيب."
+        }
+      ]
+    }
+  }
+}

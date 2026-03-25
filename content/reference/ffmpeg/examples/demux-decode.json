@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "demux_decode.c",
+    "slug": "demux-decode",
+    "titleArabic": "فصل الحاوية ثم فك الصوت والفيديو",
+    "aliases": [
+      "demux_decode",
+      "demux_decode"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/demux-decode",
+    "contentPath": "content/reference/ffmpeg/examples/demux-decode.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "فصل الحاوية ثم فك الصوت والفيديو",
+    "actualMeaningArabic": "يبين الخط الكامل من فتح الحاوية إلى فصل الـ streams ثم فكها.",
+    "purposeArabic": "يبين الخط الكامل من فتح الحاوية إلى فصل الـ streams ثم فكها.",
+    "whyUseArabic": "يبين الخط الكامل من فتح الحاوية إلى فصل الـ streams ثم فكها.",
+    "carriedValueArabic": "يبين الخط الكامل من فتح الحاوية إلى فصل الـ streams ثم فكها.",
+    "sourceDescription": "يبين الخط الكامل من فتح الحاوية إلى فصل الـ streams ثم فكها."
+  },
+  "signature": {
+    "raw": "// demux_decode.c - فصل الـ streams ثم فك الترميز\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mkv\";\n    AVFormatContext *fmt_ctx = NULL;\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *frame = av_frame_alloc();\n\n    // 1. فتح الملف\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    printf(\"Streams: %d\\n\", fmt_ctx->nb_streams);\n\n    // 2. لكل stream: إيجاد decoder وطباعة معلوماته\n    for (unsigned i = 0; i < fmt_ctx->nb_streams; i++) {\n        AVStream *stream = fmt_ctx->streams[i];\n        AVCodecParameters *par = stream->codecpar;\n        const AVCodec *codec = avcodec_find_decoder(par->codec_id);\n        if (!codec) {\n            printf(\"Stream #%d: codec غير مدعوم (id=%d)\\n\", i, par->codec_id);\n            continue;\n        }\n\n        AVCodecContext *ctx = avcodec_alloc_context3(codec);\n        avcodec_parameters_to_context(ctx, par);\nn        avcodec_open2(ctx, codec, NULL);\n\n        printf(\"Stream #%d: %s (%s)\\n\", i, codec->long_name,\n               av_get_media_type_string(par->codec_type));\n\n        // 3. فك الترميز الـ packets الخاصة بهذا الـ stream\n        while (av_read_frame(fmt_ctx, pkt) >= 0) {\n            if (pkt->stream_index == (int)i) {\n                avcodec_send_packet(ctx, pkt);\n                while (avcodec_receive_frame(ctx, frame) >= 0) {\n                    printf(\"  [%s] frame pts=%ld\\n\", codec->long_name, frame->pts);\n                }\n            }\n            av_packet_unref(pkt);\n        }\n\n        avcodec_free_context(&ctx);\n    }\n\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يبين الخط الكامل من فتح الحاوية إلى فصل الـ streams ثم فكها."
+    ],
+    "notes": [
+      "يبين الخط الكامل من فتح الحاوية إلى فصل الـ streams ثم فكها."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// demux_decode.c - فصل الـ streams ثم فك الترميز\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mkv\";\n    AVFormatContext *fmt_ctx = NULL;\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *frame = av_frame_alloc();\n\n    // 1. فتح الملف\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    printf(\"Streams: %d\n\", fmt_ctx->nb_streams);\n\n    // 2. لكل stream: إيجاد decoder وطباعة معلوماته\n    for (unsigned i = 0; i < fmt_ctx->nb_streams; i++) {\n        AVStream *stream = fmt_ctx->streams[i];\n        AVCodecParameters *par = stream->codecpar;\n        const AVCodec *codec = avcodec_find_decoder(par->codec_id);\n        if (!codec) {\n            printf(\"Stream #%d: codec غير مدعوم (id=%d)\n\", i, par->codec_id);\n            continue;\n        }\n\n        AVCodecContext *ctx = avcodec_alloc_context3(codec);\n        avcodec_parameters_to_context(ctx, par);\n        avcodec_open2(ctx, codec, NULL);\n\n        printf(\"Stream #%d: %s (%s)\n\", i, codec->long_name,\n               av_get_media_type_string(par->codec_type));\n\n        // 3. فك الترميز الـ packets الخاصة بهذا الـ stream\n        while (av_read_frame(fmt_ctx, pkt) >= 0) {\n            if (pkt->stream_index == (int)i) {\n                avcodec_send_packet(ctx, pkt);\n                while (avcodec_receive_frame(ctx, frame) >= 0) {\n                    printf(\"  [%s] frame pts=%ld\n\", codec->long_name, frame->pts);\n                }\n            }\n            av_packet_unref(pkt);\n        }\n\n        avcodec_free_context(&ctx);\n    }\n\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "فصل الحاوية ثم فك الصوت والفيديو",
+        "code": "// demux_decode.c - فصل الـ streams ثم فك الترميز\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mkv\";\n    AVFormatContext *fmt_ctx = NULL;\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *frame = av_frame_alloc();\n\n    // 1. فتح الملف\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    printf(\"Streams: %d\n\", fmt_ctx->nb_streams);\n\n    // 2. لكل stream: إيجاد decoder وطباعة معلوماته\n    for (unsigned i = 0; i < fmt_ctx->nb_streams; i++) {\n        AVStream *stream = fmt_ctx->streams[i];\n        AVCodecParameters *par = stream->codecpar;\n        const AVCodec *codec = avcodec_find_decoder(par->codec_id);\n        if (!codec) {\n            printf(\"Stream #%d: codec غير مدعوم (id=%d)\n\", i, par->codec_id);\n            continue;\n        }\n\n        AVCodecContext *ctx = avcodec_alloc_context3(codec);\n        avcodec_parameters_to_context(ctx, par);\n        avcodec_open2(ctx, codec, NULL);\n\n        printf(\"Stream #%d: %s (%s)\n\", i, codec->long_name,\n               av_get_media_type_string(par->codec_type));\n\n        // 3. فك الترميز الـ packets الخاصة بهذا الـ stream\n        while (av_read_frame(fmt_ctx, pkt) >= 0) {\n            if (pkt->stream_index == (int)i) {\n                avcodec_send_packet(ctx, pkt);\n                while (avcodec_receive_frame(ctx, frame) >= 0) {\n                    printf(\"  [%s] frame pts=%ld\n\", codec->long_name, frame->pts);\n                }\n            }\n            av_packet_unref(pkt);\n        }\n\n        avcodec_free_context(&ctx);\n    }\n\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/demux_decode_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "فك الترميز",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

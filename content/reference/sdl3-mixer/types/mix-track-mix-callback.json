@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "types",
+    "displayName": "Types",
+    "displayNameArabic": "الأنواع",
+    "description": "أنواع مجردة أو صريحة تحمل معنى دلالياً وتظهر في التواقيع والبنى."
+  },
+  "identity": {
+    "name": "MIX_TrackMixCallback",
+    "slug": "mix-track-mix-callback",
+    "titleArabic": "A callback that fires when a MIX_Track\nis mixing at various stages",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/types/mix-track-mix-callback",
+    "contentPath": "content/reference/sdl3-mixer/types/mix-track-mix-callback.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "A callback that fires when a MIX_Track\nis mixing at various stages",
+    "actualMeaningArabic": "يمثل هذا النوع نوع MIX Track Mix Callback، أي القيمة أو المقبض أو المؤشر الذي تتعامل معه بقية الواجهة في هذا السياق.",
+    "purposeArabic": "يستخدم هذا النوع عندما تحتاج القيمة أو المقبض أو المؤشر الذي يمثله داخل بقية الواجهة.",
+    "whyUseArabic": "القيمة الحقيقية هنا أنه يمثل نوع القيمة التي تتداولها بقية الواجهة بين الحقول والدوال.",
+    "carriedValueArabic": "يحمل هذا النوع القيمة الفعلية أو المقبض أو المؤشر الذي تمرره بقية الدوال والحقول في هذا المسار.",
+    "sourceDescription": "A callback that fires when a MIX_Track\nis mixing at various stages."
+  },
+  "signature": {
+    "raw": "typedef void (SDLCALL *MIX_TrackMixCallback)(void *userdata, MIX_Track *track, const SDL_AudioSpec *spec, float *pcm, int samples);",
+    "returnType": "typedef",
+    "parameters": [
+      "SDLCALL *MIX_TrackMixCallback)(void *userdata",
+      "MIX_Track *track",
+      "const SDL_AudioSpec *spec",
+      "float *pcm",
+      "int samples"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [
+      "This callback is fired for different parts of the mixing pipeline,\nand gives the app visbility into the audio data that is being generated\nat various stages.",
+      "The audio data passed through here is not const data; the\napp is permitted to change it in any way it likes, and those changes\nwill propagate through the mixing pipeline.",
+      "An audiospec is provided. Different tracks might be in different\nformats, and an app needs to be able to handle that, but SDL_mixer\nalways does its mixing work in 32-bit float samples, even if the inputs\nor final output are not floating point. As such,\n spec->format will always be SDL_AUDIO_F32\nand pcm hardcoded to be a float pointer.",
+      "samples is the number of float values pointed to by\n pcm : samples, not sample frames! There are no promises how\nmany samples will be provided per-callback, and this number can vary\nwildly from call to call, depending on many factors.",
+      "Making changes to the track during this callback is undefined\nbehavior. Change the data in pcm but not the track\nitself."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_TrackMixCallback",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_SetTrackRawCallback",
+        "route": "#ref/sdl3-mixer/functions/mix-set-track-raw-callback",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      },
+      {
+        "name": "MIX_SetTrackCookedCallback",
+        "route": "#ref/sdl3-mixer/functions/mix-set-track-cooked-callback",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "mux.c",
+    "slug": "mux",
+    "titleArabic": "بناء حاوية خرج وكتابة streams إليها",
+    "aliases": [
+      "mux",
+      "mux"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/mux",
+    "contentPath": "content/reference/ffmpeg/examples/mux.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "بناء حاوية خرج وكتابة streams إليها",
+    "actualMeaningArabic": "يبين muxer الإخراجية: إنشاء ملف خرج وتجميع packets فيه.",
+    "purposeArabic": "يبين muxer الإخراجية: إنشاء ملف خرج وتجميع packets فيه.",
+    "whyUseArabic": "يبين muxer الإخراجية: إنشاء ملف خرج وتجميع packets فيه.",
+    "carriedValueArabic": "يبين muxer الإخراجية: إنشاء ملف خرج وتجميع packets فيه.",
+    "sourceDescription": "يبين muxer الإخراجية: إنشاء ملف خرج وتجميع packets فيه."
+  },
+  "signature": {
+    "raw": "// mux.c - تجميع حزم من عدة streams في ملف خرج واحد\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(void) {\n    AVFormatContext *out_fmt = NULL;\nn    const AVOutputFormat *out_fmt_desc = av_guess_format(\"output.mp4\", NULL, \"video/mp4\");\n    avformat_alloc_output_context2(&out_fmt, out_fmt_desc, NULL, \"output.mp4\");\nn\n    // إنشاء streams في ملف الخرج\n    AVStream *video_stream = avformat_new_stream(out_fmt, NULL);\n    video_stream->time_base = (AVRational){1, 25};\n    video_stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;\n    video_stream->codecpar->codec_id = AV_CODEC_ID_H264;\n\n    AVStream *audio_stream = avformat_new_stream(out_fmt, NULL);\n    audio_stream->time_base = (AVRational){1, 44100};\n    audio_stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;\n    audio_stream->codecpar->codec_id = AV_CODEC_ID_AAC;\n\n    avformat_write_header(out_fmt);\n\n    // الآن يمكنك كتابة packets إلى out_fmt\n    // av_interleaved_write_frame(out_fmt, pkt) يجمع الحزم تلقائيًا\n\n    av_write_trailer(out_fmt);\n    avformat_free_context(out_fmt);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يبين muxer الإخراجية: إنشاء ملف خرج وتجميع packets فيه."
+    ],
+    "notes": [
+      "يبين muxer الإخراجية: إنشاء ملف خرج وتجميع packets فيه."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// mux.c - تجميع حزم من عدة streams في ملف خرج واحد\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(void) {\n    AVFormatContext *out_fmt = NULL;\n    const AVOutputFormat *out_fmt_desc = av_guess_format(\"output.mp4\", NULL, \"video/mp4\");\n    avformat_alloc_output_context2(&out_fmt, out_fmt_desc, NULL, \"output.mp4\");\nn\n    // إنشاء streams في ملف الخرج\n    AVStream *video_stream = avformat_new_stream(out_fmt, NULL);\n    video_stream->time_base = (AVRational){1, 25};\n    video_stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;\n    video_stream->codecpar->codec_id = AV_CODEC_ID_H264;\n\n    AVStream *audio_stream = avformat_new_stream(out_fmt, NULL);\n    audio_stream->time_base = (AVRational){1, 44100};\n    audio_stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;\n    audio_stream->codecpar->codec_id = AV_CODEC_ID_AAC;\n\n    avformat_write_header(out_fmt);\n\n    // الآن يمكنك كتابة packets إلى out_fmt\n    // av_interleaved_write_frame(out_fmt, pkt) يجمع الحزم تلقائيًا\n\n    av_write_trailer(out_fmt);\n    avformat_free_context(out_fmt);\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "بناء حاوية خرج وكتابة streams إليها",
+        "code": "// mux.c - تجميع حزم من عدة streams في ملف خرج واحد\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(void) {\n    AVFormatContext *out_fmt = NULL;\n    const AVOutputFormat *out_fmt_desc = av_guess_format(\"output.mp4\", NULL, \"video/mp4\");\n    avformat_alloc_output_context2(&out_fmt, out_fmt_desc, NULL, \"output.mp4\");\nn\n    // إنشاء streams في ملف الخرج\n    AVStream *video_stream = avformat_new_stream(out_fmt, NULL);\n    video_stream->time_base = (AVRational){1, 25};\n    video_stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;\n    video_stream->codecpar->codec_id = AV_CODEC_ID_H264;\n\n    AVStream *audio_stream = avformat_new_stream(out_fmt, NULL);\n    audio_stream->time_base = (AVRational){1, 44100};\n    audio_stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;\n    audio_stream->codecpar->codec_id = AV_CODEC_ID_AAC;\n\n    avformat_write_header(out_fmt);\n\n    // الآن يمكنك كتابة packets إلى out_fmt\n    // av_interleaved_write_frame(out_fmt, pkt) يجمع الحزم تلقائيًا\n\n    av_write_trailer(out_fmt);\n    avformat_free_context(out_fmt);\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/mux_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "الترميز والإخراج",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

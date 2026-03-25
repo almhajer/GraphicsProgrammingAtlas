@@ -1,0 +1,2262 @@
+{
+  "key": "widgets",
+  "title": "عناصر الواجهة التفاعلية",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Begin",
+        "ImGui::SameLine",
+        "ImGui::OpenPopup",
+        "ImVec2"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [
+        "يظهر الزر فقط في الإطارات التي تستدعي فيها ImGui::Button.",
+        "تولد Dear ImGui هويته من النطاق الحالي ومن `label`.",
+        "ينتهي أثر النقر لحظياً في الإطار نفسه، لذلك يعتمد أي سلوك دائم على متغيراتك أنت."
+      ],
+      "frameSimulation": [
+        {
+          "title": "قبل النقر",
+          "body": "يرسم Dear ImGui الزر وتكون القيمة المعادة `false`."
+        },
+        {
+          "title": "أثناء النقر",
+          "body": "عند ضغط الفأرة فوق الزر يسجل Dear ImGui حالة العنصر النشط."
+        },
+        {
+          "title": "عند الإفلات",
+          "body": "إذا تم الإفلات فوق الزر نفسه يعاد `true` في هذا الإطار ثم يعود `false` في الإطار التالي."
+        }
+      ],
+      "executionMap": {
+        "steps": [
+          "إدخال الفأرة",
+          "ImGuiIO",
+          "ImGui::Button",
+          "معرف العنصر",
+          "حالة hover/active",
+          "القيمة المعادة bool",
+          "أوامر الرسم"
+        ],
+        "benefit": "تساعدك الخريطة على وضع منطق التنفيذ في الفرع الذي يعتمد على `true` فقط بدلاً من تخزين حدث النقر يدوياً."
+      },
+      "usageExample": {
+        "code": "if (ImGui::Begin(\"أوامر\")) {\n    if (ImGui::Button(\"إعادة التحميل\", ImVec2(140.0f, 0.0f))) {\n        ReloadAssets();\n    }\n}\nImGui::End();",
+        "explanation": "الزر هنا حدث لحظي: عندما يضغط المستخدم عليه يعاد `true` مرة واحدة في الإطار الذي وقع فيه النقر فقط."
+      },
+      "guiRepresentation": {
+        "title": "شكل العنصر داخل النافذة",
+        "mockup": "┌ أوامر ─────────────────┐\n│ [ إعادة التحميل      ] │\n└───────────────────────┘",
+        "explanation": "المستطيل المرئي نفسه هو أيضاً منطقة التفاعل التي تقرأ Dear ImGui فوقها حالة الفأرة."
+      },
+      "parameterExample": "if (ImGui::Button(\"حفظ\", ImVec2(120.0f, 0.0f))) {\n    SaveDocument();\n}",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "النص الظاهر على الزر ويشارك في هويته عند غياب معرف منفصل.",
+          "realRole": "يشكل النص المرئي للزر ويغذي نظام المعرفات الداخلي للعناصر.",
+          "whyPassed": "تحتاجه Dear ImGui لتمييز هذا الزر عن غيره في النافذة الحالية.",
+          "actualUsage": "اختر نصاً واضحاً، وإذا تكرر العنوان أضف suffix مخفياً مثل \"حفظ##toolbar\"."
+        },
+        {
+          "type": "const ImVec2&",
+          "name": "size",
+          "officialArabicDescription": "الحجم المطلوب للزر.",
+          "realRole": "يحدد مستطيل التفاعل والرسم الذي سيتعامل معه الزر داخل التخطيط الحالي.",
+          "whyPassed": "يسمح لك بضبط أبعاد الزر بدقة بدل الاعتماد دائماً على الحجم المشتق من النص.",
+          "actualUsage": "مرر `ImVec2(0, 0)` للحجم الافتراضي، أو قيمة صريحة عندما تحتاج أزرار شريط أدوات أو أزرار ممتدة العرض."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::Button",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "const ImVec2&",
+            "name": "size",
+            "defaultValue": "ImVec2(0, 0)"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` في الإطار الذي اكتمل فيه النقر على الزر، وتعيد `false` في بقية الإطارات.",
+        "trueMeaning": "يعني أن المستخدم فعّل الزر الآن ويمكنك تنفيذ الأمر المقابل فوراً.",
+        "falseMeaning": "يعني أن الزر لم يفعّل خلال هذا الإطار."
+      },
+      "name": "ImGui::Button",
+      "kind": "function",
+      "shortTooltip": "دالة ترسم زرًا وتعيد حدث النقر خلال الإطار الحالي.",
+      "description": "ترسم زرًا تفاعليًا داخل النافذة الحالية وتعطي التطبيق حدث الضغط عندما يكتمل النقر.",
+      "officialArabicDescription": "ترسم زرًا قابلاً للنقر داخل Dear ImGui وتعيد حالة منطقية تشير إلى تفعيله خلال الإطار الحالي.",
+      "realMeaning": "تسجل عنصر زر في مسار التخطيط الحالي ثم تربطه بحالة التحويم والتنشيط والضغط المخزنة في سياق Dear ImGui.",
+      "whenToUse": "تستخدم عندما تريد تنفيذ أمر لحظي مثل حفظ أو إعادة تحميل أو فتح نافذة منبثقة.",
+      "practicalBenefit": "تختصر التعامل مع الإدخال والهوية والرسم في استدعاء واحد يعيد `true` فقط عند حدوث الفعل المطلوب.",
+      "misuseImpact": "إذا اعتبرت القيمة المعادة حالة دائمة بدل حدث لحظي فسيتكرر تنفيذ الأمر في كل إطار يبقى فيه الشرط صحيحاً من جانبك."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Begin",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [
+        {
+          "title": "قبل التفاعل",
+          "body": "تعرض Dear ImGui الحالة الحالية من المتغير الخارجي."
+        },
+        {
+          "title": "لحظة النقر",
+          "body": "تقلب Dear ImGui القيمة المنطقية وتعيد `true` في هذا الإطار."
+        },
+        {
+          "title": "الإطار التالي",
+          "body": "يعاد رسم الخانة وفق القيمة الجديدة المخزنة في متغير التطبيق."
+        }
+      ],
+      "executionMap": {
+        "steps": [
+          "المتغير الخارجي bool",
+          "ImGui::Checkbox",
+          "حالة العنصر الداخلية",
+          "كتابة القيمة الجديدة في bool*",
+          "القيمة المعادة bool",
+          "الرسم النهائي"
+        ],
+        "benefit": "توضح الخريطة أن قيمة المؤشر هي مصدر الحقيقة، بينما القيمة المعادة مجرد حدث تغيير يمكن أن تبني عليه منطقاً إضافياً."
+      },
+      "usageExample": {
+        "code": "bool show_bounds = false;\nif (ImGui::Begin(\"العرض\")) {\n    if (ImGui::Checkbox(\"إظهار الحدود\", &show_bounds)) {\n        UpdateDebugDraw();\n    }\n}\nImGui::End();",
+        "explanation": "Dear ImGui يقرأ `show_bounds` قبل الرسم ثم يكتب القيمة الجديدة في المتغير نفسه إذا نقر المستخدم الخانة."
+      },
+      "guiRepresentation": {
+        "title": "التمثيل البصري",
+        "mockup": "┌ العرض ───────────────────┐\n│ [x] إظهار الحدود         │\n└──────────────────────────┘",
+        "explanation": "علامة الصح تعكس مباشرة قيمة المتغير المنطقي الذي مررته إلى الدالة."
+      },
+      "parameterExample": "bool show_grid = true;\nif (ImGui::Checkbox(\"إظهار الشبكة\", &show_grid)) {\n    RebuildViewportOverlay();\n}",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "النص الظاهر بجانب خانة الاختيار.",
+          "realRole": "يعرف العنصر بصرياً ومنطقياً داخل النطاق الحالي.",
+          "whyPassed": "تحتاجه Dear ImGui للعرض وبناء الهوية.",
+          "actualUsage": "استخدم نصاً يصف معنى الخيار نفسه لا مجرد اسم تقني داخلي."
+        },
+        {
+          "type": "bool*",
+          "name": "v",
+          "officialArabicDescription": "مؤشر إلى المتغير المنطقي المراد عرضه وتعديله.",
+          "realRole": "يمثل الحالة الفعلية التي يعكسها العنصر على الشاشة ويحدثها عند التفاعل.",
+          "whyPassed": "بدونه لن يكون لدى Dear ImGui مكان تقرأ منه الحالة الحالية أو تكتب إليه الحالة الجديدة.",
+          "actualUsage": "مرر عنوان متغير باقٍ عبر الإطارات مثل `&show_grid` وليس عنوان متغير محلي قصير العمر."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::Checkbox",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "bool*",
+            "name": "v"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يغير المستخدم قيمة الخانة في هذا الإطار.",
+        "trueMeaning": "الحالة المنطقية تغيرت بالفعل ويمكنك تنفيذ منطق تابع لهذا التغيير.",
+        "falseMeaning": "القيمة بقيت كما هي خلال هذا الإطار."
+      },
+      "name": "ImGui::Checkbox",
+      "kind": "function",
+      "shortTooltip": "دالة ترسم خانة اختيار وتكتب الحالة الجديدة في متغير منطقي يمرره التطبيق.",
+      "description": "ترسم خانة اختيار مرتبطة مباشرة بمتغير منطقي يملكه التطبيق.",
+      "officialArabicDescription": "ترسم خانة اختيار تفاعلية وتقرأ أو تعدل قيمة منطقية يمررها التطبيق عبر مؤشر.",
+      "realMeaning": "تمثل عنصر واجهة ثنائي الحالة يربط Dear ImGui حالته المرئية بقيمة منطقية خارجية عبر مؤشر مباشر.",
+      "whenToUse": "تستخدم عندما تريد تمكين خيار أو تعطيله داخل واجهة الأدوات أو الإعدادات.",
+      "practicalBenefit": "تزيل الحاجة إلى مطابقة يدوية بين الحالة المرئية والمتغير المنطقي لأن Dear ImGui يقرأ القيمة ويكتبها مباشرة.",
+      "misuseImpact": "إذا مررت مؤشراً غير صالح أو قصير العمر فقد تكتب Dear ImGui في ذاكرة لم تعد مملوكة لك، وإذا بنيت واجهات كثيرة بمؤشرات لحالات مؤقتة ستفقد التزامن بين الإطار والمنطق."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Begin",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [
+        {
+          "title": "قبل التركيز",
+          "body": "يعرض الحقل النص المخزن حالياً من `buf`."
+        },
+        {
+          "title": "أثناء الكتابة",
+          "body": "يقرأ Dear ImGui الإدخال من ImGuiIO ويطبق المحارف وحركة المؤشر والتحديد على المخزن النصي."
+        },
+        {
+          "title": "بعد التعديل",
+          "body": "يعيد `true` في الإطار الذي تغير فيه النص، ثم يعرض القيمة الجديدة في الإطارات التالية."
+        }
+      ],
+      "executionMap": {
+        "steps": [
+          "لوحة المفاتيح",
+          "ImGuiIO",
+          "ImGui::InputText",
+          "مخزن char*",
+          "القيمة المعادة bool",
+          "الرسم مع المؤشر والنص"
+        ],
+        "benefit": "تفيد هذه الخريطة عند ربط منطق البحث أو التحقق المباشر بحيث تعرف أن التغيير الحقيقي يقع في المخزن الذي تملكه أنت."
+      },
+      "usageExample": {
+        "code": "char search[64] = \"\";\nif (ImGui::Begin(\"الأصول\")) {\n    if (ImGui::InputText(\"بحث\", search, sizeof(search))) {\n        RefilterAssets(search);\n    }\n}\nImGui::End();",
+        "explanation": "الحقل يقرأ النص الحالي من `search`، وعند تعديل المستخدم له يعيد `true` لتعيد بناء نتائج التصفية."
+      },
+      "guiRepresentation": {
+        "title": "شكل حقل الإدخال",
+        "mockup": "┌ الأصول ─────────────────────┐\n│ بحث: [ Cube_______________ ] │\n└──────────────────────────────┘",
+        "explanation": "المستخدم يرى النص الحالي من المخزن ويعدله مباشرة، بينما يبقى المخزن نفسه هو المصدر الفعلي للقيمة."
+      },
+      "parameterExample": "char search[64] = \"\";\nImGui::InputText(\"بحث\", search, sizeof(search));",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "العنوان المرئي لحقل الإدخال.",
+          "realRole": "يعرف الحقل بصرياً ومنطقياً داخل التخطيط الحالي.",
+          "whyPassed": "تحتاجه Dear ImGui للعرض وبناء هوية العنصر.",
+          "actualUsage": "إذا أردت حقلاً بلا عنوان مرئي استخدم suffix مخفياً مثل \"##search\"."
+        },
+        {
+          "type": "char*",
+          "name": "buf",
+          "officialArabicDescription": "المخزن النصي الذي يحوي المحتوى الحالي ويستقبل التعديلات.",
+          "realRole": "هو الذاكرة الفعلية التي يقرأها Dear ImGui قبل الرسم ويكتب إليها التغييرات أثناء التحرير.",
+          "whyPassed": "تحتاجه الدالة كمكان ثابت تخزن فيه السلسلة خارج Dear ImGui.",
+          "actualUsage": "مرر مصفوفة محارف قابلة للكتابة أو استخدم الغلاف الملائم إذا كنت تربط `std::string`."
+        },
+        {
+          "type": "size_t",
+          "name": "buf_size",
+          "officialArabicDescription": "السعة الكلية للمخزن النصي بالحروف.",
+          "realRole": "تحمي Dear ImGui من الكتابة خارج حدود الذاكرة المخصصة للنص.",
+          "whyPassed": "بدونها لا تعرف الدالة الحد الآمن للكتابة والإدراج.",
+          "actualUsage": "مرر `sizeof(buffer)` عند استخدام مصفوفة محارف ثابتة السعة."
+        },
+        {
+          "type": "ImGuiInputTextFlags",
+          "name": "flags",
+          "officialArabicDescription": "أعلام تضبط سلوك التحرير مثل الإدخال العشري أو إدخال السطر الجديد.",
+          "realRole": "تحدد كيف يفسر Dear ImGui الضربات المفاتيحية وبعض قواعد التحرير والتحقق.",
+          "whyPassed": "تمكنك من تخصيص الحقل من دون إنشاء عنصر مختلف لكل نمط تحرير.",
+          "actualUsage": "اتركها صفراً للسلوك الافتراضي، أو أضف أعلاماً متخصصة عندما تحتاج قيداً واضحاً على الإدخال."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::InputText",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "char*",
+            "name": "buf"
+          },
+          {
+            "type": "size_t",
+            "name": "buf_size"
+          },
+          {
+            "type": "ImGuiInputTextFlags",
+            "name": "flags",
+            "defaultValue": "0"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يتغير محتوى الحقل في هذا الإطار.",
+        "trueMeaning": "النص تغير الآن ويمكنك إعادة التصفية أو التحقق أو الحفظ المرحلي.",
+        "falseMeaning": "المخزن بقي كما هو في هذا الإطار."
+      },
+      "name": "ImGui::InputText",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض حقل إدخال نص وتقرأ أو تعدل محتوى مخزن نصي يمرره التطبيق.",
+      "description": "تعرض حقل إدخال نصي يسمح للمستخدم بكتابة أو تعديل سلسلة حروف.",
+      "officialArabicDescription": "ترسم حقل إدخال نص وتربطه بمخزن نصي يمرره التطبيق لقراءة المحتوى وكتابته أثناء التحرير.",
+      "realMeaning": "تمثل عنصر تحرير نص داخل Dear ImGui يقرأ محارف من حالة الإدخال في ImGuiIO ثم يطبقها على مخزن نصي خارجي أو على كائن سلسلة عبر callback خاص.",
+      "whenToUse": "تستخدم عند جمع اسم أو مسار ملف أو مرشح بحث أو أي قيمة نصية يريد المستخدم تعديلها مباشرة.",
+      "practicalBenefit": "توفر سلوك التحرير والتركيز والمؤشر وتحديد النص داخل عنصر واحد بدلاً من كتابة نظام إدخال نص كامل يدوياً.",
+      "misuseImpact": "إذا مررت مخزناً أصغر من النص المتوقع أو لم تتركه قابلاً للكتابة فستحصل على قص للنص أو سلوك غير صحيح؛ وإذا لم تضمن بقاء الذاكرة صالحة طوال الإطار ستعرض نفسك لفساد ذاكرة."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Begin",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [
+        {
+          "title": "قبل السحب",
+          "body": "يعرض المنزلق القيمة الحالية كما هي في المتغير الخارجي."
+        },
+        {
+          "title": "أثناء السحب",
+          "body": "يقرأ Dear ImGui إزاحة الفأرة ويحولها إلى نسبة داخل المجال `[v_min, v_max]` ثم يكتب القيمة الجديدة في `v`."
+        },
+        {
+          "title": "بعد الإفلات",
+          "body": "تستقر القيمة الجديدة في المتغير الخارجي ويعاد رسم المقبض في موضعه الجديد في الإطار التالي."
+        }
+      ],
+      "executionMap": {
+        "steps": [
+          "سحب الفأرة",
+          "ImGuiIO",
+          "ImGui::SliderFloat",
+          "تحويل الموضع إلى نسبة",
+          "كتابة القيمة في float*",
+          "القيمة المعادة bool",
+          "الرسم النهائي للمنزلق"
+        ],
+        "benefit": "توضح الخريطة أين يتحول الإدخال الحركي إلى قيمة عددية، وهو ما يساعدك عند ربط المنزلق بمنطق حسّاس للقيم."
+      },
+      "usageExample": {
+        "code": "float exposure = 1.0f;\nif (ImGui::Begin(\"الإضاءة\")) {\n    if (ImGui::SliderFloat(\"التعريض\", &exposure, 0.1f, 4.0f)) {\n        ApplyExposure(exposure);\n    }\n}\nImGui::End();",
+        "explanation": "Dear ImGui يحول سحب المقبض إلى قيمة `float` ضمن المجال المحدد ثم يكتبها في `exposure`."
+      },
+      "guiRepresentation": {
+        "title": "المنزلق داخل الواجهة",
+        "mockup": "┌ الإضاءة ─────────────────────┐\n│ التعريض: [====●------] 1.0  │\n└──────────────────────────────┘",
+        "explanation": "موضع المقبض على المسار يترجم مباشرة إلى القيمة العددية المعروضة بجانبه."
+      },
+      "parameterExample": "float exposure = 1.0f;\nImGui::SliderFloat(\"التعريض\", &exposure, 0.1f, 4.0f);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "العنوان الظاهر للمنزلق.",
+          "realRole": "يعرف العنصر للمستخدم ويغذي الهوية الداخلية داخل النطاق الحالي.",
+          "whyPassed": "تحتاجه Dear ImGui لتمييز العنصر وعرضه.",
+          "actualUsage": "اجعل العنوان معبراً عن الكمية الحقيقية مثل \"التعريض\" أو \"الشفافية\"."
+        },
+        {
+          "type": "float*",
+          "name": "v",
+          "officialArabicDescription": "مؤشر إلى القيمة العددية التي يعرضها المنزلق ويعدلها.",
+          "realRole": "هو مصدر الحقيقة للقيمة الحالية التي يقرأها Dear ImGui ويكتبها بعد السحب.",
+          "whyPassed": "بدونه لا يوجد متغير خارجي يمثل الكمية المراد ضبطها.",
+          "actualUsage": "مرر عنوان متغير يبقى موجوداً طوال حياة الواجهة أو طوال الإطار على الأقل."
+        },
+        {
+          "type": "float",
+          "name": "v_min",
+          "officialArabicDescription": "الحد الأدنى للمجال المسموح به.",
+          "realRole": "يحدد القيمة المقابلة للطرف الأدنى من مسار السحب.",
+          "whyPassed": "تحتاجه الدالة لتحويل موضع المقبض إلى قيمة عددية ضمن مجال محدد.",
+          "actualUsage": "اختر حداً أدنى يعكس المجال الحقيقي للقيمة بدلاً من قيمة اعتباطية واسعة."
+        },
+        {
+          "type": "float",
+          "name": "v_max",
+          "officialArabicDescription": "الحد الأعلى للمجال المسموح به.",
+          "realRole": "يحدد القيمة المقابلة للطرف الأعلى من المسار.",
+          "whyPassed": "يكمل تعريف المجال العددي الذي يترجمه Dear ImGui إلى حركة سحب.",
+          "actualUsage": "اضبطه بما يلائم المنطق الحقيقي حتى لا يحصل المستخدم على قيم غير مفيدة."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::SliderFloat",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "float*",
+            "name": "v"
+          },
+          {
+            "type": "float",
+            "name": "v_min"
+          },
+          {
+            "type": "float",
+            "name": "v_max"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما تتغير القيمة المرتبطة بالمنزلق في هذا الإطار.",
+        "trueMeaning": "قيمة `float` تغيرت ويجب تحديث أي نظام يعتمد عليها إن لزم.",
+        "falseMeaning": "القيمة بقيت كما هي في هذا الإطار."
+      },
+      "name": "ImGui::SliderFloat",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض منزلقاً عددياً يربط موضع المقبض بقيمة عشرية يملكها التطبيق.",
+      "description": "ترسم منزلقاً لقيمة عشرية ضمن مجال محدد وتكتب القيمة الجديدة في متغير التطبيق.",
+      "officialArabicDescription": "ترسم منزلقاً لقيمة `float` ضمن حدين وتربطه مباشرة بمؤشر إلى القيمة المطلوب تعديلها.",
+      "realMeaning": "تمثل عنصر تحكم مستمر يربط الموضع النسبي للمقبض داخل شريط أفقي بقيمة عددية عشرية في ذاكرة التطبيق.",
+      "whenToUse": "تستخدم عندما يريد المستخدم ضبط قيمة تدريجية مثل الشفافية أو شدة الإضاءة أو سرعة الكاميرا.",
+      "practicalBenefit": "توفر تفاعلاً بصرياً سريعاً للقيم المستمرة مع قيود دنيا وعليا وتنسيق عرض واضح.",
+      "misuseImpact": "إذا مررت حدوداً غير منطقية أو مؤشراً غير صالح ستفقد معنى التفاعل أو تكتب في ذاكرة خاطئة؛ وإذا خلطت بين الوحدات قد يظهر منزلق صحيح شكلياً لكنه يضبط قيمة غير مناسبة للمنطق الفعلي."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::SameLine",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مثال على شريط خيارات يبدل طريقة عرض المشهد بين مضلل وسلكي ونقاط.",
+        "code": "static int display_mode = 0;\n\nif (ImGui::Begin(\"وضع العرض\")) {\n    ImGui::Text(\"طريقة العرض\");\n    ImGui::RadioButton(\"مضلل\", &display_mode, 0);\n    ImGui::SameLine();\n    ImGui::RadioButton(\"سلكي\", &display_mode, 1);\n    ImGui::SameLine();\n    ImGui::RadioButton(\"نقاط\", &display_mode, 2);\n\n    const char* mode_label = display_mode == 0 ? \"مضلل\" : (display_mode == 1 ? \"سلكي\" : \"نقاط\");\n    ImGui::Text(\"الوضع الحالي: %s\", mode_label);\n}\nImGui::End();",
+        "explanation": "جميع الأزرار تشترك في المتغير نفسه، لذلك لا يمكن أن يبقى أكثر من خيار فعال في الوقت نفسه.",
+        "expectedResult": "يظهر خيار واحد محدداً دائماً، ويتغير النص السفلي مباشرة عند تبديل الاختيار.",
+        "importantNote": "لا تنشئ متغيراً مستقلاً لكل زر داخل المجموعة إذا أردت سلوك الاختيار الأحادي الحقيقي."
+      },
+      "guiRepresentation": {
+        "title": "شكل مجموعة Radio Buttons",
+        "mockup": "┌ وضع العرض ─────────────────────┐\n│ طريقة العرض                  │\n│ (●) مضلل   ( ) سلكي   ( ) نقاط │\n│ الوضع الحالي: مضلل           │\n└───────────────────────────────┘",
+        "explanation": "الدائرة الممتلئة توضح الخيار الذي يطابق القيمة الحالية في المتغير المشترك."
+      },
+      "parameterExample": "int display_mode = 0;\nImGui::RadioButton(\"مضلل\", &display_mode, 0);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "العنوان الظاهر بجانب زر الاختيار.",
+          "realRole": "يعرف الخيار للمستخدم ويدخل في هوية العنصر داخل النافذة الحالية.",
+          "whyPassed": "تحتاجه Dear ImGui للعرض وبناء هوية مستقرة لهذا البديل.",
+          "actualUsage": "اكتب اسم الحالة التي سيختارها المستخدم فعلياً مثل \"سلكي\" أو \"مضلل\"."
+        },
+        {
+          "type": "int*",
+          "name": "v",
+          "officialArabicDescription": "مؤشر إلى المتغير الذي يحمل قيمة الخيار النشط حالياً.",
+          "realRole": "يمثل الحالة المشتركة بين جميع أزرار المجموعة، ويحدد أي زر يجب أن يبدو محدداً.",
+          "whyPassed": "بدونه لن تعرف Dear ImGui أي خيار نشط الآن وأين يجب أن تكتب التحديد الجديد.",
+          "actualUsage": "مرر عنوان متغير واحد تشترك فيه جميع أزرار المجموعة نفسها."
+        },
+        {
+          "type": "int",
+          "name": "v_button",
+          "officialArabicDescription": "القيمة التي يكتبها هذا الزر في المتغير المشترك عند اختياره.",
+          "realRole": "تمثل هوية هذا البديل داخل المجموعة لا مجرد رقم عشوائي.",
+          "whyPassed": "تستخدمها Dear ImGui لمقارنة المتغير الحالي بهذا الخيار وتحديثه عند النقر.",
+          "actualUsage": "اجعل لكل خيار قيمة ثابتة واضحة في منطقك مثل 0 و1 و2."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::RadioButton",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "int*",
+            "name": "v"
+          },
+          {
+            "type": "int",
+            "name": "v_button"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يغير المستخدم الخيار النشط إلى هذا الزر في الإطار الحالي.",
+        "trueMeaning": "هذا البديل أصبح هو الاختيار الفعال الآن.",
+        "falseMeaning": "لم يتحول التحديد إلى هذا الزر في هذا الإطار."
+      },
+      "name": "ImGui::RadioButton",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض زر اختيار أحادي يكتب الخيار الفعال في متغير مشترك بين بدائل متعددة.",
+      "description": "ترسم زر اختيار دائرياً يستخدم لاختيار قيمة واحدة من مجموعة خيارات متنافسة.",
+      "officialArabicDescription": "ترسم Radio Button يربط الخيار الحالي بمتغير عددي خارجي، بحيث يصبح هذا الخيار هو النشط عند التفاعل معه.",
+      "realMeaning": "يمثل اختياراً منفرداً داخل مجموعة من البدائل، وتقرأ Dear ImGui القيمة الحالية من المتغير المشترك ثم تقارنها بقيمة هذا الزر لتقرير حالته المرئية.",
+      "whenToUse": "استخدمه عندما تحتاج اختيار نمط واحد فقط مثل وضع العرض أو طريقة الفرز أو نوع الأداة الفعالة.",
+      "practicalBenefit": "يبسط بناء مجموعات الاختيار الحصرية من دون منطق إضافي لمزامنة المظهر مع القيمة الفعلية.",
+      "misuseImpact": "إذا أعطيت كل زر متغيراً مستقلاً فلن تحصل على سلوك اختياري حصري، بل على عدة حالات منفصلة يصعب تفسيرها للمستخدم."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "حقل إعدادات يضبط عدد العينات المستخدمة في المعالجة اللاحقة.",
+        "code": "static int sample_count = 64;\n\nif (ImGui::Begin(\"إعدادات المعالجة\")) {\n    if (ImGui::InputInt(\"عدد العينات\", &sample_count, 8)) {\n        if (sample_count < 8) sample_count = 8;\n        if (sample_count > 256) sample_count = 256;\n    }\n\n    ImGui::Text(\"القيمة المطبقة: %d\", sample_count);\n}\nImGui::End();",
+        "explanation": "الحقل يحرر متغيراً صحيحاً مباشرة، ثم يطبق المثال قصاً للقيمة إلى المجال المسموح به بعد التغيير.",
+        "expectedResult": "يمكن للمستخدم كتابة العدد أو تعديله بخطوات، ثم تظهر القيمة المقيدة في السطر التالي.",
+        "importantNote": "InputInt لا يفرض كل القيود التطبيقية نيابة عنك، لذلك يبقى تحقق المجال النهائي من مسؤولية كودك."
+      },
+      "guiRepresentation": {
+        "title": "حقل إدخال عددي صحيح",
+        "mockup": "┌ إعدادات المعالجة ─────────────┐\n│ عدد العينات: [ 64 ]          │\n│ القيمة المطبقة: 64           │\n└───────────────────────────────┘",
+        "explanation": "القيمة داخل الحقل هي نفسها القيمة الموجودة في متغير التطبيق بعد أي قص أو تحقق لاحق."
+      },
+      "parameterExample": "int sample_count = 64;\nImGui::InputInt(\"عدد العينات\", &sample_count, 8);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "العنوان الظاهر لحقل الإدخال العددي.",
+          "realRole": "يعرف الحقل للمستخدم ويميزه داخل التخطيط الحالي.",
+          "whyPassed": "تحتاجه Dear ImGui للعرض وبناء هوية الحقل.",
+          "actualUsage": "سم الحقل باسم الكمية الفعلية مثل \"عدد العينات\" أو \"حد التكرار\"."
+        },
+        {
+          "type": "int*",
+          "name": "v",
+          "officialArabicDescription": "مؤشر إلى القيمة الصحيحة الحالية التي سيعرضها الحقل ويعدلها.",
+          "realRole": "هو المصدر الفعلي للقيمة الحالية والمكان الذي تكتب فيه Dear ImGui التعديل الناتج.",
+          "whyPassed": "بدونه لا يوجد مكان خارجي تخزن فيه الدالة القيمة المقروءة أو الجديدة.",
+          "actualUsage": "مرر عنوان متغير طويل العمر، ثم نفذ تحقق المجال بعد التعديل إذا كان التطبيق يفرض حدوداً إضافية."
+        },
+        {
+          "type": "int",
+          "name": "step",
+          "officialArabicDescription": "مقدار الزيادة أو النقصان عند استخدام أزرار الخطوة.",
+          "realRole": "يحدد القفزة العددية الافتراضية بدلاً من تغيير وحدة واحدة دائماً.",
+          "whyPassed": "يسمح لك بمواءمة سلوك الإدخال مع مقياس القيمة الفعلية.",
+          "actualUsage": "استخدم 1 للقيم الصغيرة وقيماً أكبر عندما تكون الوحدة الحقيقية عشرات أو مئات."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::InputInt",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "int*",
+            "name": "v"
+          },
+          {
+            "type": "int",
+            "name": "step",
+            "defaultValue": "1"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما تتغير قيمة `int` المرتبطة بالحقل في هذا الإطار.",
+        "trueMeaning": "القيمة الرقمية تغيرت ويمكنك إعادة تطبيق الإعدادات التابعة لها.",
+        "falseMeaning": "لم يتغير العدد خلال هذا الإطار."
+      },
+      "name": "ImGui::InputInt",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض حقلاً رقمياً صحيحاً يقرأ قيمة int ويكتب التعديلات فيها مباشرة.",
+      "description": "ترسم مربع إدخال لعدد صحيح يمكن تعديله بالكتابة أو بأسهم الزيادة والنقصان.",
+      "officialArabicDescription": "ترسم حقل إدخال لقيمة `int` وتربطه مباشرة بمؤشر إلى المتغير العددي الصحيح المطلوب تعديله.",
+      "realMeaning": "تمثل محرراً عددياً صحيحاً يحول ما يكتبه المستخدم أو ينقره إلى قيمة `int` في ذاكرة التطبيق مع احترام خطوة التغيير المحددة.",
+      "whenToUse": "استخدمه لإدخال أعداد صحيحة مثل عدد العينات أو الحد الأقصى للعناصر أو رقم الفهرس النشط.",
+      "practicalBenefit": "يوفر لك تحريراً عددياً مباشراً مع خطوة زيادة واضحة من دون بناء عنصر مخصص للكتابة والتحقق.",
+      "misuseImpact": "إذا مررت قيمة لا يجب أن تغادر مجالاً معيناً من دون التحقق اللاحق فقد تحصل على مدخلات صحيحة شكلياً لكنها غير مقبولة في منطق التطبيق."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::SliderFloat",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "حقل إعدادات يسمح بضبط قيمة gamma بدقة عددية مباشرة.",
+        "code": "static float gamma = 2.2f;\n\nif (ImGui::Begin(\"إعدادات الصورة\")) {\n    if (ImGui::InputFloat(\"Gamma\", &gamma, 0.05f)) {\n        if (gamma < 0.5f) gamma = 0.5f;\n        if (gamma > 4.0f) gamma = 4.0f;\n    }\n\n    ImGui::Text(\"Gamma الحالية: %.2f\", gamma);\n}\nImGui::End();",
+        "explanation": "يوضح المثال أن الإدخال العشري مناسب عندما يحتاج المستخدم قيمة دقيقة لا يلتقطها السحب بسهولة.",
+        "expectedResult": "يمكن تعديل القيمة كتابة أو بخطوة ثابتة، ثم تعرض النتيجة المقيدة في النص السفلي.",
+        "importantNote": "من الشائع دمج InputFloat مع SliderFloat عندما تريد الجمع بين الدقة الكتابية والتحكم البصري السريع."
+      },
+      "guiRepresentation": {
+        "title": "حقل إدخال عشري",
+        "mockup": "┌ إعدادات الصورة ──────────────┐\n│ Gamma: [ 2.20 ]             │\n│ Gamma الحالية: 2.20         │\n└──────────────────────────────┘",
+        "explanation": "الحقل يعرض القيمة العشرية الحالية نفسها التي سيقرأها كودك بعد انتهاء الإطار."
+      },
+      "parameterExample": "float gamma = 2.2f;\nImGui::InputFloat(\"Gamma\", &gamma, 0.05f);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "اسم الحقل العشري الظاهر للمستخدم.",
+          "realRole": "يعرف القيمة التي يحررها المستخدم داخل الواجهة.",
+          "whyPassed": "تستخدمه Dear ImGui للعرض وبناء هوية العنصر.",
+          "actualUsage": "سم الحقل باسم الكمية الفعلية مثل \"Gamma\" أو \"Offset\"."
+        },
+        {
+          "type": "float*",
+          "name": "v",
+          "officialArabicDescription": "مؤشر إلى القيمة العشرية الحالية التي يجب تحريرها.",
+          "realRole": "يمثل موقع القراءة والكتابة للقيمة التي تعكسها الواجهة.",
+          "whyPassed": "بدونه لا يوجد متغير خارجي ترتبط به عملية التحرير.",
+          "actualUsage": "مرر عنوان متغير `float` طويل العمر إذا كانت القيمة تؤثر على الإطار التالي أيضاً."
+        },
+        {
+          "type": "float",
+          "name": "step",
+          "officialArabicDescription": "خطوة الزيادة أو النقصان عند استخدام أسهم الحقل.",
+          "realRole": "تحدد مقدار التغيير التلقائي بدل قيمة افتراضية عامة.",
+          "whyPassed": "تتيح مواءمة القفزة مع دقة الكمية الفعلية.",
+          "actualUsage": "استخدم خطوة صغيرة مثل `0.05f` عندما تكون الحساسية بصرية وواضحة للمستخدم."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::InputFloat",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "float*",
+            "name": "v"
+          },
+          {
+            "type": "float",
+            "name": "step",
+            "defaultValue": "0.0f"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما تتغير القيمة العشرية في هذا الإطار.",
+        "trueMeaning": "تم تعديل القيمة ويمكنك تحديث المعالجة أو العرض المعتمد عليها.",
+        "falseMeaning": "القيمة بقيت كما هي في هذا الإطار."
+      },
+      "name": "ImGui::InputFloat",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض حقلاً عددياً عشرياً لتحرير قيمة float مباشرة من الواجهة.",
+      "description": "ترسم مربع إدخال لقيمة عشرية قابلة للكتابة والتعديل المباشر.",
+      "officialArabicDescription": "ترسم حقل إدخال لقيمة `float` وتربطه مباشرة بمؤشر إلى المتغير العشري المطلوب تعديله.",
+      "realMeaning": "تمثل محرراً رقمياً نصياً لقيمة عشرية، وتحوّل النص أو الخطوات إلى قيمة `float` تكتب في متغير التطبيق.",
+      "whenToUse": "استخدمه عندما تحتاج إدخالاً عددياً دقيقاً لا يناسب المنزلق وحده مثل قيمة gamma أو offset ثابت.",
+      "practicalBenefit": "يعطي المستخدم دقة كتابية مباشرة بدل الاكتفاء بالسحب التقريبي الذي قد لا يكفي لبعض القيم.",
+      "misuseImpact": "إذا عرضته لقيم حساسة من دون تنسيق أو تحقق مناسب فقد يحصل المستخدم على أرقام دقيقة شكلياً لكنها غير مقبولة تنفيذياً."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "قائمة منسدلة تختار جودة الظلال داخل نافذة إعدادات الرسم.",
+        "code": "static int shadow_quality = 1;\nstatic const char* quality_items = \"منخفض\\0متوسط\\0عالٍ\\0فائق\\0\";\nstatic const char* quality_label = \"متوسط\";\n\nif (ImGui::Begin(\"إعدادات الرسم\")) {\n    if (ImGui::Combo(\"جودة الظلال\", &shadow_quality, quality_items)) {\n        quality_label = shadow_quality == 0 ? \"منخفض\" : (shadow_quality == 1 ? \"متوسط\" : (shadow_quality == 2 ? \"عالٍ\" : \"فائق\"));\n    }\n\n    ImGui::Text(\"الاختيار الحالي: %s\", quality_label);\n}\nImGui::End();",
+        "explanation": "القيمة الحقيقية في التطبيق هي فهرس `shadow_quality`، أما النص الظاهر فهو تمثيل بصري لذلك الفهرس.",
+        "expectedResult": "يعرض الحقل الخيار الحالي، وعند فتح القائمة يختار المستخدم قيمة جديدة تنعكس فوراً في السطر التالي.",
+        "importantNote": "إذا تغير ترتيب العناصر النصية يجب أن يتغير تفسير الفهارس معها حتى لا يختل معنى الاختيار."
+      },
+      "guiRepresentation": {
+        "title": "قائمة Combo",
+        "mockup": "┌ إعدادات الرسم ───────────────┐\n│ جودة الظلال: [ متوسط ▾ ]     │\n│ الاختيار الحالي: متوسط       │\n└───────────────────────────────┘",
+        "explanation": "الواجهة تعرض اسماً واحداً فقط في الوضع المغلق، بينما يبقى الفهرس العددي هو القيمة الفعلية في الكود."
+      },
+      "parameterExample": "int quality = 1;\nImGui::Combo(\"الجودة\", &quality, \"منخفض\\0متوسط\\0عالٍ\\0\");",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "العنوان المرئي لصندوق الاختيار.",
+          "realRole": "يعرف الحقل داخل التخطيط الحالي ويصف للمستخدم معنى القيمة المختارة.",
+          "whyPassed": "تحتاجه Dear ImGui للعرض وهوية العنصر.",
+          "actualUsage": "استخدم اسماً يصف الكمية المختارة مثل \"جودة الظلال\" أو \"الكاميرا الفعالة\"."
+        },
+        {
+          "type": "int*",
+          "name": "current_item",
+          "officialArabicDescription": "مؤشر إلى فهرس العنصر المختار حالياً.",
+          "realRole": "يمثل النتيجة الفعلية لاختيار المستخدم داخل التطبيق.",
+          "whyPassed": "بدونه لا تعرف Dear ImGui أي عنصر يجب عرضه على أنه المختار الآن أو أين تكتب الاختيار الجديد.",
+          "actualUsage": "اجعل ترتيب العناصر النصية ثابتاً أو حدث منطق الفهارس معه دائماً."
+        },
+        {
+          "type": "const char*",
+          "name": "items_separated_by_zeros",
+          "officialArabicDescription": "سلسلة نصية تحتوي العناصر مفصولة بمحارف صفرية داخلية.",
+          "realRole": "توفر مصدر النصوص الذي تبني منه Dear ImGui القائمة المنسدلة.",
+          "whyPassed": "تحتاجه الدالة لمعرفة العناصر التي يستطيع المستخدم الاختيار بينها.",
+          "actualUsage": "مرر صيغة مثل `\"منخفض\\0متوسط\\0عالٍ\\0\"` مع صفر مزدوج في النهاية."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::Combo",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "int*",
+            "name": "current_item"
+          },
+          {
+            "type": "const char*",
+            "name": "items_separated_by_zeros"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يختار المستخدم عنصراً مختلفاً في هذا الإطار.",
+        "trueMeaning": "الفهرس الحالي تغير ويجب تحديث الإعدادات التابعة له.",
+        "falseMeaning": "بقي العنصر المختار كما هو."
+      },
+      "name": "ImGui::Combo",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض قائمة منسدلة لاختيار عنصر واحد من مجموعة خيارات مرتبة.",
+      "description": "ترسم صندوق اختيار منسدل يتيح للمستخدم تبديل القيمة الحالية بين عدة عناصر.",
+      "officialArabicDescription": "ترسم Combo يربط الاختيار الحالي بفهرس عددي خارجي، ويعرض العناصر المتاحة داخل قائمة منسدلة عند الفتح.",
+      "realMeaning": "تمثل واجهة لاختيار عنصر واحد من قائمة مغلقة، وتخزن Dear ImGui النتيجة كفهرس للقيمة المختارة داخل متغير التطبيق.",
+      "whenToUse": "استخدمها عندما تكون الخيارات كثيرة نسبياً وتريد توفير مساحة الواجهة مع إبقاء اختيار واحد فعال.",
+      "practicalBenefit": "تحفظ المساحة مقارنة بعرض جميع البدائل دفعة واحدة، مع بقاء قيمة الاختيار ممثلة بفهرس بسيط في كودك.",
+      "misuseImpact": "إذا غيرت ترتيب العناصر من دون تحديث معنى الفهارس في الكود فسيشير الاختيار إلى دلالة مختلفة عن التي يراها المستخدم."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::BeginChild",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "قائمة مرئية لاختيار مشهد جاهز من عدة مشاهد متاحة مباشرة في النافذة.",
+        "code": "static int scene_preset = 0;\nstatic const char* preset_items = \"مدينة\\0صحراء\\0مختبر\\0محطة فضاء\\0\";\nstatic const char* preset_label = \"مدينة\";\n\nif (ImGui::Begin(\"المشاهد الجاهزة\")) {\n    if (ImGui::ListBox(\"المشهد\", &scene_preset, preset_items)) {\n        preset_label = scene_preset == 0 ? \"مدينة\" : (scene_preset == 1 ? \"صحراء\" : (scene_preset == 2 ? \"مختبر\" : \"محطة فضاء\"));\n    }\n\n    ImGui::Text(\"المشهد المختار: %s\", preset_label);\n}\nImGui::End();",
+        "explanation": "تعرض القائمة عدة سطور دفعة واحدة، لذلك يرى المستخدم البدائل قبل النقر بدلاً من فتح قائمة منسدلة.",
+        "expectedResult": "يظهر عنصر واحد محدداً داخل القائمة، ويتغير النص السفلي عند اختيار سطر آخر.",
+        "importantNote": "إذا كانت القائمة طويلة جداً ففكر في استخدام BeginChild أو جداول أو فلترة إضافية بدلاً من حشر عدد ضخم من السطور في ارتفاع صغير."
+      },
+      "guiRepresentation": {
+        "title": "ListBox داخل نافذة",
+        "mockup": "┌ المشاهد الجاهزة ─────────────┐\n│ المشهد                       │\n│ ┌ مدينة                    ┐ │\n│ │ صحراء                   │ │\n│ │ مختبر                   │ │\n│ └ محطة فضاء               ┘ │\n│ المشهد المختار: مدينة      │\n└──────────────────────────────┘",
+        "explanation": "السطر المحدد يبقى مرئياً دائماً، لذلك تناسب ListBox السيناريوهات التي تحتاج مقارنة سريعة بين عدة بدائل."
+      },
+      "parameterExample": "int preset = 0;\nImGui::ListBox(\"المشهد\", &preset, \"مدينة\\0صحراء\\0مختبر\\0\");",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "اسم القائمة المرئي للمستخدم.",
+          "realRole": "يعرف وظيفة القائمة داخل الواجهة ويشارك في هوية العنصر.",
+          "whyPassed": "تحتاجه Dear ImGui للعرض وبناء هوية ثابتة للقائمة.",
+          "actualUsage": "سم القائمة باسم المجموعة المعروضة مثل \"المشاهد الجاهزة\" أو \"الكاميرات\"."
+        },
+        {
+          "type": "int*",
+          "name": "current_item",
+          "officialArabicDescription": "مؤشر إلى فهرس العنصر المختار حالياً من القائمة.",
+          "realRole": "يحمل نتيجة الاختيار الحالية ويحدد السطر الذي يجب أن يبدو محدداً.",
+          "whyPassed": "بدونه لا تعرف Dear ImGui موضع التحديد الحالي وأين تكتب النتيجة الجديدة.",
+          "actualUsage": "مرر متغير فهرس يربط الاختيار بمنطق العرض أو التحميل أو التبديل في التطبيق."
+        },
+        {
+          "type": "const char*",
+          "name": "items_separated_by_zeros",
+          "officialArabicDescription": "النصوص التي ستظهر كأسطر داخل القائمة، مفصولة بمحارف صفرية.",
+          "realRole": "توفر محتوى القائمة الذي تقرؤه Dear ImGui لبناء السطور المرئية.",
+          "whyPassed": "تحتاجه الدالة لمعرفة العناصر الممكنة للاختيار.",
+          "actualUsage": "استخدم سلسلة مجمعة عندما تكون العناصر ثابتة وصغيرة، أو استخدم واجهة callback في السيناريوهات الديناميكية الأكبر."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::ListBox",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "int*",
+            "name": "current_item"
+          },
+          {
+            "type": "const char*",
+            "name": "items_separated_by_zeros"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يتغير السطر المختار في هذا الإطار.",
+        "trueMeaning": "انتقل المستخدم إلى عنصر آخر في القائمة.",
+        "falseMeaning": "لم يتغير الاختيار الحالي."
+      },
+      "name": "ImGui::ListBox",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض قائمة مرئية بعدة أسطر يختار المستخدم منها عنصراً واحداً مباشرة.",
+      "description": "ترسم صندوق قائمة يكشف عدداً من العناصر في وقت واحد بدلاً من إخفائها داخل قائمة منسدلة.",
+      "officialArabicDescription": "ترسم ListBox يربط الاختيار الحالي بفهرس عددي خارجي، ويعرض عدداً من العناصر داخل قائمة مرئية قابلة للنقر.",
+      "realMeaning": "يمثل قائمة اختيار ظاهرة تحتل مساحة عمودية ثابتة وتربط كل سطر بفهرس عنصر داخل التطبيق.",
+      "whenToUse": "استخدمه عندما تريد مقارنة عدة عناصر مرئية في الوقت نفسه مثل المشاهد أو القوائم الجاهزة أو المصادر.",
+      "practicalBenefit": "يقلل عدد النقرات اللازمة مقارنة بـ Combo عندما يحتاج المستخدم رؤية عدة بدائل في اللحظة نفسها.",
+      "misuseImpact": "إذا وضعت فيه قائمة طويلة جداً من دون مساحة مناسبة أو من دون تمرير واضح فستصبح القراءة والاختيار مرهقين بصرياً."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::InputFloat",
+        "ImGui::SliderFloat",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "أداة تحكم سريعة لضبط سرعة الكاميرا داخل نافذة إعدادات الملاحة.",
+        "code": "static float camera_speed = 2.5f;\n\nif (ImGui::Begin(\"الملاحة\")) {\n    if (ImGui::DragFloat(\"سرعة الكاميرا\", &camera_speed, 0.05f, 0.1f, 20.0f)) {\n        ImGui::Text(\"السرعة الحالية: %.2f\", camera_speed);\n    } else {\n        ImGui::Text(\"السرعة الحالية: %.2f\", camera_speed);\n    }\n}\nImGui::End();",
+        "explanation": "السحب فوق القيمة نفسها يغيرها تدريجياً من دون الحاجة إلى مسار منزلق مستقل داخل الواجهة.",
+        "expectedResult": "يمكن للمستخدم سحب الحقل لزيادة السرعة أو خفضها، ثم يرى القيمة الجديدة مباشرة في النص السفلي.",
+        "importantNote": "اختر سرعة سحب مناسبة؛ فالحساسية الخاطئة تجعل الأداة مرهقة أكثر من فائدتها."
+      },
+      "guiRepresentation": {
+        "title": "عنصر DragFloat",
+        "mockup": "┌ الملاحة ──────────────────────┐\n│ سرعة الكاميرا: [ 2.50 ]     │\n│ السرعة الحالية: 2.50        │\n└──────────────────────────────┘",
+        "explanation": "العدد نفسه هو مساحة التفاعل؛ السحب فوقه يغير القيمة بدلاً من فتح قائمة أو كتابة نص فقط."
+      },
+      "parameterExample": "float camera_speed = 2.5f;\nImGui::DragFloat(\"سرعة الكاميرا\", &camera_speed, 0.05f, 0.1f, 20.0f);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "اسم القيمة التي سيعدلها المستخدم.",
+          "realRole": "يعرف العنصر داخل التخطيط ويصف معنى القيمة المعروضة.",
+          "whyPassed": "تستخدمه Dear ImGui للعرض وبناء هوية العنصر.",
+          "actualUsage": "سمه باسم الكمية الفعلية مثل \"سرعة الكاميرا\" أو \"نصف القطر\"."
+        },
+        {
+          "type": "float*",
+          "name": "v",
+          "officialArabicDescription": "مؤشر إلى القيمة العشرية التي تتغير أثناء السحب.",
+          "realRole": "هو المتغير الذي تقرأ منه Dear ImGui القيمة الحالية وتكتب إليه القيمة الجديدة.",
+          "whyPassed": "بدونه لا يوجد مكان خارجي يملك النتيجة العددية النهائية.",
+          "actualUsage": "مرر عنوان متغير `float` تحتاج بقاءه بعد الإطار إذا كان يؤثر على سلوك لاحق."
+        },
+        {
+          "type": "float",
+          "name": "v_speed",
+          "officialArabicDescription": "سرعة تحويل حركة السحب إلى تغير عددي.",
+          "realRole": "تحدد كم تتغير القيمة لكل قدر من حركة المؤشر.",
+          "whyPassed": "تحتاجه الدالة لمواءمة حساسية الأداة مع مقياس الكمية.",
+          "actualUsage": "اضبطه على قيمة صغيرة للقيم الحساسة بصرياً، وأكبر للقيم الواسعة."
+        },
+        {
+          "type": "float",
+          "name": "v_min",
+          "officialArabicDescription": "الحد الأدنى للقيمة أثناء السحب.",
+          "realRole": "يقيد أدنى قيمة يمكن الوصول إليها من هذه الأداة.",
+          "whyPassed": "يمنع استمرار السحب إلى مجال غير مرغوب فيه.",
+          "actualUsage": "ضعه بما يعكس أقل قيمة قابلة للاستخدام فعلياً."
+        },
+        {
+          "type": "float",
+          "name": "v_max",
+          "officialArabicDescription": "الحد الأعلى للقيمة أثناء السحب.",
+          "realRole": "يقيد أعلى قيمة يمكن الوصول إليها من هذه الأداة.",
+          "whyPassed": "يكمل تعريف المجال العملي للتعديل.",
+          "actualUsage": "اجعله مطابقاً للمدى الحقيقي الذي يمكن للنظام استقباله أو عرضه."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::DragFloat",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "float*",
+            "name": "v"
+          },
+          {
+            "type": "float",
+            "name": "v_speed"
+          },
+          {
+            "type": "float",
+            "name": "v_min"
+          },
+          {
+            "type": "float",
+            "name": "v_max"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما تتغير القيمة أثناء السحب أو التحرير في هذا الإطار.",
+        "trueMeaning": "القيمة العددية تغيرت الآن ويجب تحديث ما يعتمد عليها إن لزم.",
+        "falseMeaning": "بقيت القيمة كما هي."
+      },
+      "name": "ImGui::DragFloat",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض قيمة عشرية قابلة للسحب المباشر بدل الكتابة النصية أو المنزلق الصارم.",
+      "description": "ترسم حقلاً رقمياً يسمح بتغيير القيمة بالسحب الأفقي مع تحكم في السرعة والمجال.",
+      "officialArabicDescription": "ترسم عنصر Drag لقيمة `float` يربط حركة السحب الأفقية بقيمة عشرية في متغير التطبيق.",
+      "realMeaning": "يمثل محرك تعديل عددي مستمر يترجم إزاحة الفأرة إلى زيادة أو نقصان تراكمي في قيمة `float` وفق سرعة سحب محددة.",
+      "whenToUse": "استخدمه عندما تريد تعديلاً سريعاً ومرناً لقيم مثل سرعة الكاميرا أو نصف القطر أو شدة مؤثر لا يناسبه منزلق ضيق.",
+      "practicalBenefit": "يجمع بين سرعة التفاعل والدقة المقبولة من دون الحاجة إلى عرض مسار منزلق طويل لكل قيمة.",
+      "misuseImpact": "إذا كانت سرعة السحب أو المجال غير مناسبين فقد تصبح الأداة شديدة الحساسية أو بطيئة لدرجة تعيق الضبط العملي."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::ColorPicker4",
+        "ImGui::ColorButton",
+        "ImGui::SameLine",
+        "ImVec4"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "أداة إعداد لون تمييز واجهة مع معاينة فورية للون الناتج.",
+        "code": "static float accent[4] = {0.20f, 0.55f, 0.90f, 1.0f};\n\nif (ImGui::Begin(\"ألوان الواجهة\")) {\n    ImGui::ColorEdit4(\"لون التمييز\", accent);\n    ImGui::SameLine();\n    ImGui::ColorButton(\"معاينة اللون\", ImVec4(accent[0], accent[1], accent[2], accent[3]));\n    ImGui::Text(\"RGBA: %.2f, %.2f, %.2f, %.2f\", accent[0], accent[1], accent[2], accent[3]);\n}\nImGui::End();",
+        "explanation": "ColorEdit4 مناسب للتعديل اليومي السريع؛ فهو يعرض القنوات ويحدث المعاينة في السطر نفسه تقريباً.",
+        "expectedResult": "يستطيع المستخدم تغيير اللون مباشرة، ثم يرى النتيجة في الزر الملون وفي القيم الرقمية.",
+        "importantNote": "ColorEdit4 للتحرير المختصر، بينما ColorPicker4 أنسب عندما يحتاج المستخدم تحكماً بصرياً أوسع في طيف اللون."
+      },
+      "guiRepresentation": {
+        "title": "محرر لون رباعي القنوات",
+        "mockup": "┌ ألوان الواجهة ───────────────────┐\n│ لون التمييز: [RGBA] [■]       │\n│ RGBA: 0.20, 0.55, 0.90, 1.00  │\n└────────────────────────────────┘",
+        "explanation": "يعرض المحرر قنوات اللون الأساسية، بينما تظهر المعاينة اللونية بجانبه لتوضيح الأثر البصري للقيم الحالية."
+      },
+      "parameterExample": "static float accent[4] = {0.20f, 0.55f, 0.90f, 1.0f};\nImGui::ColorEdit4(\"لون التمييز\", accent);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "اسم اللون أو الخاصية اللونية الظاهرة للمستخدم.",
+          "realRole": "يعرف مورد اللون الذي يحرره المستخدم داخل النافذة الحالية.",
+          "whyPassed": "تحتاجه Dear ImGui للعرض وبناء هوية مستقرة للمحرر.",
+          "actualUsage": "سم اللون باسم استعماله الفعلي مثل \"لون التمييز\" أو \"لون الخلفية\"."
+        },
+        {
+          "type": "float*",
+          "name": "col",
+          "officialArabicDescription": "مؤشر إلى أربع قيم عشرية تمثل قنوات RGBA.",
+          "realRole": "يحمل القيم اللونية الحقيقية التي تقرأها الأداة وتكتب إليها التغييرات.",
+          "whyPassed": "بدونه لا يوجد لون خارجي تستطيع الواجهة عرضه أو تعديله.",
+          "actualUsage": "مرر بداية مصفوفة من أربع قيم بين 0 و1 أو مؤشراً إلى أول قناة في هيكل مكافئ."
+        },
+        {
+          "type": "ImGuiColorEditFlags",
+          "name": "flags",
+          "officialArabicDescription": "أعلام تغير طريقة عرض القنوات وسلوك أداة اللون.",
+          "realRole": "تضبط ما إذا كان المستخدم يرى صيغة معينة مثل RGB أو HSV أو حقولاً محددة فقط.",
+          "whyPassed": "تسمح بتكييف الأداة مع نوع التعديل اللوني المطلوب في الواجهة الحالية.",
+          "actualUsage": "اتركها صفراً للسلوك الافتراضي أو مرر أعلاماً متخصصة عندما تحتاج إخفاء قنوات أو تغيير طريقة العرض."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::ColorEdit4",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "float*",
+            "name": "col"
+          },
+          {
+            "type": "ImGuiColorEditFlags",
+            "name": "flags",
+            "defaultValue": "0"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما تتغير أي قناة من قنوات اللون خلال هذا الإطار.",
+        "trueMeaning": "تم تعديل اللون فعلياً ويجب تحديث المعاينة أو العنصر الذي يعتمد عليه.",
+        "falseMeaning": "بقي اللون كما هو في هذا الإطار."
+      },
+      "name": "ImGui::ColorEdit4",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض محرر RGBA مختصراً لتعديل اللون مباشرة داخل سطر واحد.",
+      "description": "ترسم أداة تحرير لون رباعية القنوات تعرض القيم الأساسية وتربطها مباشرة بمصفوفة ألوان خارجية.",
+      "officialArabicDescription": "ترسم أداة `ColorEdit4` لتعديل قنوات RGBA المرتبطة بقيمة لون يملكها التطبيق، مع واجهة مدمجة مختصرة داخل السطر الحالي.",
+      "realMeaning": "تمثل واجهة تحرير عملية للون تعرض القنوات الأربع في صورة مناسبة للإدخال السريع، وتكتب Dear ImGui القيم الجديدة في الذاكرة الخارجية مباشرة.",
+      "whenToUse": "استخدمها عندما تريد للمستخدم تغيير لون واجهة أو مادة أو تمييز بصري من دون فتح منتقي لون كامل في كل مرة.",
+      "practicalBenefit": "تعطي توازناً جيداً بين سرعة التعديل ورؤية القيم الرقمية ومعاينة اللون داخل مساحة صغيرة.",
+      "misuseImpact": "إذا كان الكود يتوقع ترتيباً لونياً مختلفاً أو يتجاهل قناة alpha فقد يبدو اللون صحيحاً في المحرر لكنه يطبق بشكل غير متوقع في الواجهة أو الرسم."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::ColorEdit4",
+        "ImGui::ColorButton",
+        "ImGui::SameLine",
+        "ImVec4"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "منتقي لون كبير لضبط لون خلفية viewport بدقة بصرية.",
+        "code": "static float clear_color[4] = {0.10f, 0.12f, 0.18f, 1.0f};\n\nif (ImGui::Begin(\"تحرير الألوان\")) {\n    ImGui::ColorPicker4(\"لون الخلفية\", clear_color);\n    ImGui::ColorButton(\"المعاينة\", ImVec4(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));\n    ImGui::SameLine();\n    ImGui::Text(\"RGBA: %.2f, %.2f, %.2f, %.2f\", clear_color[0], clear_color[1], clear_color[2], clear_color[3]);\n}\nImGui::End();",
+        "explanation": "يعطي المنتقي مساحة بصرية أكبر من ColorEdit4، لذلك يناسب اختيار اللون عندما تكون الدرجة الدقيقة مهمة للمستخدم.",
+        "expectedResult": "يرى المستخدم منتقياً واسعاً للون ومعاينة آنية للنتيجة النهائية بعد كل تعديل.",
+        "importantNote": "استخدم ColorPicker4 عندما تكون الدقة البصرية أهم من توفير المساحة؛ أما التعديل السريع داخل القوائم فيناسبه ColorEdit4 أكثر."
+      },
+      "guiRepresentation": {
+        "title": "منتقي لون موسع",
+        "mockup": "┌ تحرير الألوان ─────────────────┐\n│ لون الخلفية                  │\n│ [طيف لون واسع + شريط قناة]   │\n│ [■] RGBA: 0.10, 0.12, 0.18   │\n└───────────────────────────────┘",
+        "explanation": "ColorPicker4 يركز على الاختيار البصري التفصيلي، لذلك يشغل مساحة أكبر لكنه يعطي تحكماً أوضح في طيف اللون."
+      },
+      "parameterExample": "static float clear_color[4] = {0.10f, 0.12f, 0.18f, 1.0f};\nImGui::ColorPicker4(\"لون الخلفية\", clear_color);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "العنوان الظاهر فوق أو بجوار منتقي اللون.",
+          "realRole": "يعرف اللون الجاري اختياره داخل النافذة الحالية.",
+          "whyPassed": "تستخدمه Dear ImGui لتمييز هذه الأداة عن غيرها.",
+          "actualUsage": "استخدم اسماً يصف اللون النهائي مثل \"لون الخلفية\" أو \"لون الضباب\"."
+        },
+        {
+          "type": "float*",
+          "name": "col",
+          "officialArabicDescription": "مؤشر إلى أربع قنوات عشرية للون الحالي.",
+          "realRole": "هو المخزن الفعلي لقيمة اللون التي تتحرك معها المعاينة والطيف البصري.",
+          "whyPassed": "بدونه لا يوجد لون خارجي يمكن مزامنته مع الأداة.",
+          "actualUsage": "مرر بداية مصفوفة RGBA بين 0 و1 حتى تعكس المعاينة والقيم ما سيستخدمه التطبيق فعلاً."
+        },
+        {
+          "type": "ImGuiColorEditFlags",
+          "name": "flags",
+          "officialArabicDescription": "أعلام تغير طريقة عرض طيف اللون أو القنوات المصاحبة له.",
+          "realRole": "تحدد كيف يبنى المنتقي بصرياً وما القيود أو الخيارات الظاهرة فيه.",
+          "whyPassed": "تمكنك من تكييف المنتقي مع مساحة الواجهة أو مستوى التفاصيل المطلوب.",
+          "actualUsage": "مرر أعلاماً مخصصة فقط إذا كنت تريد واجهة لون مضبوطة جداً؛ وإلا فالوضع الافتراضي غالباً كاف."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::ColorPicker4",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "float*",
+            "name": "col"
+          },
+          {
+            "type": "ImGuiColorEditFlags",
+            "name": "flags",
+            "defaultValue": "0"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يتغير اللون المختار عبر المنتقي في هذا الإطار.",
+        "trueMeaning": "تم اختيار درجة جديدة ويجب تحديث المعاينة أو الخلفية المرتبطة بها.",
+        "falseMeaning": "لم يتغير اللون خلال هذا الإطار."
+      },
+      "name": "ImGui::ColorPicker4",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض منتقي لون موسعاً يمنح المستخدم تحكماً بصرياً أدق في RGBA.",
+      "description": "ترسم منتقي لون كاملاً يتيح ضبط اللون عبر طيف بصري ومساحات تحكم متعددة للقنوات الأربع.",
+      "officialArabicDescription": "ترسم أداة `ColorPicker4` لاختيار لون RGBA عبر واجهة بصرية أوسع من ColorEdit4، مع تحديث القيم اللونية المرتبطة مباشرة.",
+      "realMeaning": "تمثل واجهة اختيار بصري تفصيلية للون تسمح بالتنقل في فضاء اللون مباشرة بدلاً من الاقتصار على حقول الإدخال المختصرة.",
+      "whenToUse": "استخدمها عندما يحتاج المستخدم اختيار لون دقيق بصرياً أو ضبط قنوات معقدة مثل لون مؤثر أو خلفية مهمة.",
+      "practicalBenefit": "تجعل اختيار اللون أدق وأسهل من الاعتماد على الحقول الرقمية فقط، خاصة عند البحث عن درجة محددة بصرياً.",
+      "misuseImpact": "إذا وضعتها في مساحة ضيقة أو ربطتها بسياق لا يتحمل واجهة كبيرة فستستهلك مساحة أكثر من اللازم وتربك تخطيط النافذة."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::ColorEdit4",
+        "ImGui::ColorPicker4",
+        "ImGui::SameLine",
+        "ImVec4"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "صف عينات لونية سريعة لاختيار لون التمييز داخل لوحة Theme.",
+        "code": "static ImVec4 accent = ImVec4(0.20f, 0.55f, 0.90f, 1.0f);\n\nif (ImGui::Begin(\"لوحة الألوان\")) {\n    if (ImGui::ColorButton(\"الأزرق\", ImVec4(0.20f, 0.55f, 0.90f, 1.0f))) {\n        accent = ImVec4(0.20f, 0.55f, 0.90f, 1.0f);\n    }\n    ImGui::SameLine();\n    if (ImGui::ColorButton(\"الأخضر\", ImVec4(0.20f, 0.72f, 0.48f, 1.0f))) {\n        accent = ImVec4(0.20f, 0.72f, 0.48f, 1.0f);\n    }\n\n    ImGui::Text(\"لون التمييز الحالي جاهز للتطبيق.\");\n}\nImGui::End();",
+        "explanation": "تعمل العينة هنا كزر بصري لاختيار لون جاهز بسرعة من دون فتح منتقي أوسع.",
+        "expectedResult": "تظهر مربعات ألوان صغيرة متجاورة، ويغير النقر على أي منها اللون النشط في التطبيق.",
+        "importantNote": "ColorButton معاينة أو اختيار سريع، لا بديل كامل عن ColorEdit4 أو ColorPicker4 عندما يحتاج المستخدم تحريراً دقيقاً للقنوات."
+      },
+      "guiRepresentation": {
+        "title": "عينات ألوان قابلة للنقر",
+        "mockup": "┌ لوحة الألوان ────────────────┐\n│ [■] [■]                      │\n│ لون التمييز الحالي جاهز      │\n└───────────────────────────────┘",
+        "explanation": "كل مربع ملون يمثل لوناً نهائياً جاهزاً للاختيار المباشر من دون فتح محرر موسع."
+      },
+      "parameterExample": "ImGui::ColorButton(\"لون الخلفية\", ImVec4(0.20f, 0.55f, 0.90f, 1.0f));",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "desc_id",
+          "officialArabicDescription": "معرف وصفي للزر اللوني.",
+          "realRole": "يبني الهوية الداخلية للعينة حتى لو لم يظهر كنص مرئي طويل.",
+          "whyPassed": "تحتاجه Dear ImGui لتمييز هذه العينة عن غيرها في التخطيط نفسه.",
+          "actualUsage": "استخدم اسماً يوضح دلالة العينة أو suffix مخفياً إذا كان النص الظاهر غير مطلوب."
+        },
+        {
+          "type": "const ImVec4&",
+          "name": "col",
+          "officialArabicDescription": "اللون الذي ستعرضه العينة اللونية.",
+          "realRole": "يمثل القيمة المرئية الفعلية التي يراها المستخدم على هيئة مربع أو زر ملون.",
+          "whyPassed": "بدونه لا تعرف الأداة ما اللون الذي يجب أن تعرضه أو تنقره.",
+          "actualUsage": "مرر قيمة `ImVec4` تطابق اللون الحقيقي المستخدم في الواجهة أو المادة."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::ColorButton",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "desc_id"
+          },
+          {
+            "type": "const ImVec4&",
+            "name": "col"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما ينقر المستخدم العينة اللونية في هذا الإطار.",
+        "trueMeaning": "تم تفعيل العينة ويمكنك استخدامها لاختيار لون أو فتح أداة أوسع.",
+        "falseMeaning": "لم يحدث نقر على العينة خلال هذا الإطار."
+      },
+      "name": "ImGui::ColorButton",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض عينة لونية قابلة للنقر لتمثيل لون حالي أو اختيار من لوحة ألوان.",
+      "description": "ترسم زر معاينة لونية صغيراً يمثل قيمة لون معينة داخل الواجهة.",
+      "officialArabicDescription": "ترسم زر لون يعرض اللون الحالي في مساحة مدمجة، ويمكن استخدامه كمعاينة أو كهدف نقر ضمن لوحات الألوان.",
+      "realMeaning": "يمثل اللون نفسه كعنصر مرئي مضغوط؛ فهو لا يشرح القنوات رقمياً بل يجسد النتيجة اللونية مباشرة داخل التخطيط.",
+      "whenToUse": "استخدمه عندما تريد عرض اللون الحالي بسرعة أو بناء صف من عينات الألوان القابلة للنقر.",
+      "practicalBenefit": "يوفر معاينة بصرية مباشرة للون من دون استهلاك مساحة منتقي أو محرر كامل.",
+      "misuseImpact": "إذا استخدمته وحده من دون نص أو سياق كاف فقد لا يفهم المستخدم معنى العينة أو دورها داخل الواجهة."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImVec2",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "شريط يعرض تقدم رفع الملفات داخل نافذة إدارة الأصول.",
+        "code": "static float upload_progress = 0.72f;\n\nif (ImGui::Begin(\"رفع الأصول\")) {\n    ImGui::ProgressBar(upload_progress, ImVec2(280.0f, 0.0f), \"72%\");\n    ImGui::Text(\"المرحلة الحالية: إرسال البيانات\");\n}\nImGui::End();",
+        "explanation": "الشريط هنا لا يجمع الإدخال؛ بل يعرض النسبة التي يحسبها التطبيق في مكان آخر ثم يترجمها إلى تعبئة مرئية.",
+        "expectedResult": "يرى المستخدم نسبة التقدم بشكل بصري سريع مع نص يوضح المرحلة الحالية.",
+        "importantNote": "ProgressBar أداة عرض فقط؛ مصدر الحقيقة يبقى في المتغير الخارجي الذي يحسبه التطبيق."
+      },
+      "guiRepresentation": {
+        "title": "شريط تقدم",
+        "mockup": "┌ رفع الأصول ───────────────────┐\n│ [███████████────] 72%        │\n│ المرحلة الحالية: إرسال البيانات │\n└───────────────────────────────┘",
+        "explanation": "التعبئة تعكس نسبة الإنجاز الحالية، بينما يضيف النص السفلي سياقاً يوضح ما الذي يتقدم فعلياً."
+      },
+      "parameterExample": "ImGui::ProgressBar(0.72f, ImVec2(260.0f, 0.0f), \"72%\");",
+      "values": [],
+      "parameters": [
+        {
+          "type": "float",
+          "name": "fraction",
+          "officialArabicDescription": "نسبة التقدم الحالية بين 0 و1.",
+          "realRole": "تحدد مقدار الجزء المعبأ فعلياً من الشريط.",
+          "whyPassed": "بدونها لا يعرف الشريط ما نسبة الإنجاز التي يجب أن يمثلها.",
+          "actualUsage": "مرر قيمة مقطوعة بين 0 و1 مثل `uploaded / total` بعد تحويلها إلى عدد عشري."
+        },
+        {
+          "type": "const ImVec2&",
+          "name": "size_arg",
+          "officialArabicDescription": "الحجم المطلوب للشريط.",
+          "realRole": "يضبط العرض والارتفاع المرئيين للشريط داخل التخطيط.",
+          "whyPassed": "يسمح لك بمواءمة حجم الشريط مع كثافة الواجهة أو مع مساحة النافذة المتاحة.",
+          "actualUsage": "استخدم عرضاً مناسباً للمعلومة المعروضة بدلاً من ترك الشريط قصيراً لدرجة لا تقرأ بسهولة."
+        },
+        {
+          "type": "const char*",
+          "name": "overlay",
+          "officialArabicDescription": "نص اختياري يعرض فوق الشريط أو داخله.",
+          "realRole": "يقدم تمثيلاً نصياً مكملاً للنسبة البصرية مثل 72% أو اسم المرحلة الحالية.",
+          "whyPassed": "يسمح للجمع بين القراءة البصرية والقراءة النصية في عنصر واحد.",
+          "actualUsage": "مرر `nullptr` إذا كانت النسبة واضحة بصرياً أو نصاً يشرح المرحلة إذا احتجت مزيداً من الدلالة."
+        }
+      ],
+      "signature": {
+        "returnType": "void",
+        "name": "ImGui::ProgressBar",
+        "params": [
+          {
+            "type": "float",
+            "name": "fraction"
+          },
+          {
+            "type": "const ImVec2&",
+            "name": "size_arg"
+          },
+          {
+            "type": "const char*",
+            "name": "overlay",
+            "defaultValue": "nullptr"
+          }
+        ]
+      },
+      "returns": null,
+      "name": "ImGui::ProgressBar",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض شريط تقدم بصرياً يعكس نسبة إنجاز حالية من 0 إلى 1.",
+      "description": "ترسم شريطاً يوضح مقدار التقدم الحالي لعملية ما داخل الواجهة.",
+      "officialArabicDescription": "ترسم ProgressBar يعتمد على نسبة تقدم عشرية بين 0 و1 لعرض الإنجاز الحالي بصرياً داخل النافذة.",
+      "realMeaning": "تمثل ناتج حالة خارجية محسوبة في التطبيق على هيئة تعبئة مرئية داخل شريط، من دون أن تكون أداة إدخال بحد ذاتها.",
+      "whenToUse": "استخدمها لعرض التقدم في تحميل مورد أو تصدير ملف أو معالجة تستغرق عدة إطارات.",
+      "practicalBenefit": "تمنح المستخدم تغذية راجعة واضحة عن التقدم الحالي من دون حاجته إلى قراءة أرقام مجردة فقط.",
+      "misuseImpact": "إذا مررت نسباً خارج المجال 0..1 أو حدثت الشريط على نحو متقطع وغير صادق فستعطي انطباعاً مضللاً عن حالة العمل الحقيقية."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "قائمة موارد تسمح باختيار المورد النشط من اللوحة الجانبية.",
+        "code": "static bool player_selected = true;\nstatic bool enemy_selected = false;\n\nif (ImGui::Begin(\"الموارد\")) {\n    if (ImGui::Selectable(\"Player.mesh\", &player_selected)) {\n        enemy_selected = false;\n    }\n    if (ImGui::Selectable(\"Enemy.mesh\", &enemy_selected)) {\n        player_selected = false;\n    }\n\n    ImGui::Text(\"العنصر النشط: %s\", player_selected ? \"Player.mesh\" : \"Enemy.mesh\");\n}\nImGui::End();",
+        "explanation": "يوضح المثال أن Selectable يناسب القوائم النصية التي تحتاج سلوك تحديد بصري واضح أكثر من زر تقليدي.",
+        "expectedResult": "يظهر بند واحد محدداً في كل مرة، ويتغير النص السفلي مع العنصر النشط.",
+        "importantNote": "في القوائم الأحادية الكبيرة يكون حفظ فهرس واحد للاختيار غالباً أوضح من حفظ bool مستقل لكل سطر."
+      },
+      "guiRepresentation": {
+        "title": "عنصر Selectable داخل قائمة",
+        "mockup": "┌ الموارد ───────────────────────┐\n│ > Player.mesh               │\n│   Enemy.mesh                │\n│ العنصر النشط: Player.mesh   │\n└──────────────────────────────┘",
+        "explanation": "الصف المحدد يرسم بخلفية أو تمييز بصري مختلف ليعكس حالة الاختيار الفعلية في التطبيق."
+      },
+      "parameterExample": "bool selected = false;\nImGui::Selectable(\"Player.mesh\", &selected);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "النص الذي يمثل السطر أو البند القابل للتحديد.",
+          "realRole": "يعرض اسم العنصر للمستخدم ويعرفه داخل الواجهة.",
+          "whyPassed": "تحتاجه Dear ImGui للرسم وبناء الهوية الداخلية للبند.",
+          "actualUsage": "اجعل النص هو اسم العنصر الحقيقي مثل ملف أو مورد أو طبقة."
+        },
+        {
+          "type": "bool*",
+          "name": "p_selected",
+          "officialArabicDescription": "مؤشر إلى حالة التحديد الحالية لهذا البند.",
+          "realRole": "يمثل ما إذا كان السطر يجب أن يرسم كمحدد الآن، ويستقبل التغيير عند النقر.",
+          "whyPassed": "بدونه لا تعرف الأداة إن كان يجب إظهار السطر على أنه محدد ولا أين تكتب التبديل.",
+          "actualUsage": "استخدمه عندما تريد تفعيل أو إلغاء تفعيل بند مفرد، أو استبدله بمنطق فهرس خارجي عند بناء قوائم اختيار أحادية أكبر."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::Selectable",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "bool*",
+            "name": "p_selected"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما ينقر المستخدم هذا البند في الإطار الحالي.",
+        "trueMeaning": "تم تفعيل البند الآن ويمكنك إظهار تفاصيله أو تحديث الاختيار النشط.",
+        "falseMeaning": "لم يحدث تفعيل لهذا البند خلال الإطار."
+      },
+      "name": "ImGui::Selectable",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض سطراً قابلاً للتحديد داخل القوائم أو الجداول أو اللوحات.",
+      "description": "ترسم عنصراً يمكن تمييزه كمحدد أو غير محدد عند النقر عليه.",
+      "officialArabicDescription": "ترسم Selectable يربط حالة التحديد بمتغير منطقي أو بحالة خارجية يملكها التطبيق، ويعيد حدث التفعيل عند النقر.",
+      "realMeaning": "يمثل صفاً أو بنداً قابلاً للتفعيل داخل واجهة القائمة؛ فهو لا يملك بالضرورة قيمة محتوى مستقلة بل يعبر عن حالة اختيار لعنصر من عناصر التطبيق.",
+      "whenToUse": "استخدمه لبناء قوائم ملفات أو موارد أو صفوف اختيار ضمن لوحات جانبية.",
+      "practicalBenefit": "يوفر سلوك التحديد والتحويم والرسم المناسب للقوائم من دون بناء عناصر نقر مخصصة لكل سطر.",
+      "misuseImpact": "إذا لم تربط التحديد بحالة خارجية واضحة فقد يبدو العنصر محدداً بصرياً في إطار ثم يفقد معناه أو يتعارض مع اختيار آخر في الإطار التالي."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Checkbox",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "قسم إعدادات يفتح فقط عندما يريد المستخدم الوصول إلى الخيارات المتقدمة.",
+        "code": "static bool cast_shadows = true;\n\nif (ImGui::Begin(\"خصائص الإضاءة\")) {\n    if (ImGui::CollapsingHeader(\"الظلال\")) {\n        ImGui::Checkbox(\"تفعيل الظلال\", &cast_shadows);\n        ImGui::Text(\"يظهر هذا المحتوى فقط عندما يكون الرأس مفتوحاً.\");\n    }\n}\nImGui::End();",
+        "explanation": "القيمة المعادة من الرأس هي ما يحدد هل يجب بناء المحتوى الداخلي في هذا الإطار أم يمكن تخطيه.",
+        "expectedResult": "يستطيع المستخدم طي قسم الظلال أو فتحه، وتظهر الخيارات الداخلية فقط عند الفتح.",
+        "importantNote": "تعامل مع CollapsingHeader كبوابة بناء للمحتوى لا كعنصر زخرفي فقط."
+      },
+      "guiRepresentation": {
+        "title": "قسم قابل للطي",
+        "mockup": "┌ خصائص الإضاءة ────────────────┐\n│ ▾ الظلال                    │\n│   [x] تفعيل الظلال          │\n│   يظهر هذا المحتوى الآن     │\n└──────────────────────────────┘",
+        "explanation": "السهم يوضح حالة القسم؛ وعند الطي يختفي المحتوى الداخلي من الواجهة تماماً في ذلك الإطار."
+      },
+      "parameterExample": "if (ImGui::CollapsingHeader(\"الظلال\")) {\n    ImGui::Text(\"إعدادات الظلال\");\n}",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "عنوان القسم القابل للفتح والطي.",
+          "realRole": "يعرف المجموعة التي سيعرضها أو يخفيها هذا الرأس داخل النافذة الحالية.",
+          "whyPassed": "تحتاجه Dear ImGui للعرض وبناء هوية حالة الطي الخاصة بهذا القسم.",
+          "actualUsage": "استخدم عنواناً يصف المجموعة بوضوح مثل \"الظلال\" أو \"إعدادات الخامة\"."
+        },
+        {
+          "type": "ImGuiTreeNodeFlags",
+          "name": "flags",
+          "officialArabicDescription": "أعلام تضبط سلوك الرأس القابل للطي.",
+          "realRole": "تغير طريقة فتح القسم أو مظهره أو شروط التفاعل المرتبطة به.",
+          "whyPassed": "تسمح بتكييف الرأس مع نوع المحتوى أو نمط التفاعل المطلوب.",
+          "actualUsage": "اتركها افتراضياً عندما لا تحتاج سلوكاً خاصاً، وأضف أعلاماً متقدمة فقط عند الحاجة الواضحة."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::CollapsingHeader",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "ImGuiTreeNodeFlags",
+            "name": "flags",
+            "defaultValue": "0"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يكون القسم مفتوحاً في هذا الإطار ويجب بناء محتواه الآن.",
+        "trueMeaning": "المحتوى الداخلي ظاهر ويجب رسم عناصره.",
+        "falseMeaning": "القسم مطوي ويمكنك تخطي بناء العناصر الواقعة تحته."
+      },
+      "name": "ImGui::CollapsingHeader",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض ترويسة قابلة للطي توسع أو تخفي مجموعة عناصر فرعية.",
+      "description": "ترسم عنوان قسم يمكن فتحه أو طيه لإظهار المحتوى الداخلي أو إخفائه.",
+      "officialArabicDescription": "ترسم CollapsingHeader يمثل قسماً قابلاً للفتح والطي، وتعيد حالة منطقية تحدد هل يجب بناء المحتوى الواقع تحته في هذا الإطار.",
+      "realMeaning": "يمثل آلية تنظيم للمحتوى تسمح بتقليل كثافة الواجهة عبر إبقاء التفاصيل مخفية حتى يطلبها المستخدم صراحة.",
+      "whenToUse": "استخدمه عندما تريد تقسيم نافذة كبيرة إلى أقسام إعدادات أو خصائص يمكن فتحها عند الحاجة فقط.",
+      "practicalBenefit": "يحافظ على قابلية المسح البصري للنافذة ويقلل الفوضى عندما يحتوي القسم على خيارات ثانوية أو تفصيلية.",
+      "misuseImpact": "إذا أخفيت تحته إعدادات حيوية يجب أن يراها المستخدم دائماً فقد تجعل الواجهة أقل وضوحاً وتزيد احتمال نسيان الخيارات المهمة."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "شجرة مشهد تعرض العقد الرئيسية والفرعية داخل محرر مستوى.",
+        "code": "if (ImGui::Begin(\"شجرة المشهد\")) {\n    if (ImGui::TreeNode(\"Scene\")) {\n        if (ImGui::TreeNode(\"Lights\")) {\n            ImGui::Text(\"SunLight\");\n            ImGui::TreePop();\n        }\n        if (ImGui::TreeNode(\"Meshes\")) {\n            ImGui::Text(\"Player\");\n            ImGui::Text(\"Ground\");\n            ImGui::TreePop();\n        }\n        ImGui::TreePop();\n    }\n}\nImGui::End();",
+        "explanation": "كل عقدة مفتوحة تعيد `true`، وعندها فقط تبني العقد الأبناء ثم تغلق المستوى المقابل عبر ImGui::TreePop.",
+        "expectedResult": "يمكن للمستخدم توسيع فروع الشجرة أو طيها لرؤية البنية الهرمية للمشهد.",
+        "importantNote": "TreeNode يعمل مع بيانات هرمية حقيقية؛ لا تستخدمه إذا كان المحتوى خطياً بسيطاً لا يحتاج مستويات أب/ابن."
+      },
+      "guiRepresentation": {
+        "title": "بنية شجرية داخل النافذة",
+        "mockup": "┌ شجرة المشهد ──────────────────┐\n│ ▾ Scene                     │\n│   ▾ Lights                  │\n│     SunLight                │\n│   ▸ Meshes                  │\n└──────────────────────────────┘",
+        "explanation": "الأسهم تبيّن أي العقد مفتوح وأيها مطوي، مما يمنح المستخدم قراءة هرمية مباشرة للبنية."
+      },
+      "parameterExample": "if (ImGui::TreeNode(\"Scene\")) {\n    ImGui::TreePop();\n}",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "اسم العقدة الذي يصف العنصر الهرمي الحالي.",
+          "realRole": "يعرف العقدة داخل الشجرة ويظهر للمستخدم اسم الكائن أو المجلد أو المجموعة الحالية.",
+          "whyPassed": "تحتاجه Dear ImGui لعرض العقدة وتخزين حالة فتحها.",
+          "actualUsage": "مرر اسم الكيان نفسه مثل \"Root\" أو \"Mesh\" أو \"Lights\"."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::TreeNode",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما تكون العقدة مفتوحة الآن ويجب بناء الأبناء بعدها مباشرة.",
+        "trueMeaning": "يجب رسم أو بناء الأبناء الآن ثم إغلاق المستوى بـ ImGui::TreePop.",
+        "falseMeaning": "العقدة مطوية ويمكنك تخطي الأبناء في هذا الإطار."
+      },
+      "name": "ImGui::TreeNode",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض عقدة شجرية تمثل بنية هرمية قابلة للتوسيع والطي.",
+      "description": "ترسم رأس عقدة ضمن بنية شجرية يمكن فتحها لإظهار العناصر الأبناء أو طيها لإخفائهم.",
+      "officialArabicDescription": "ترسم TreeNode يربط حالة الفتح والطي بعقدة هرمية، وتعيد حالة منطقية تحدد هل يجب بناء الأبناء في هذا الإطار.",
+      "realMeaning": "تمثل نقطة تنقل في بنية بيانات هرمية مثل شجرة مشهد أو مجلدات موارد، حيث تقرر Dear ImGui عبر حالتها الداخلية إن كان الأبناء مرئيين الآن.",
+      "whenToUse": "استخدمها عند عرض مشهد هرمي أو شجرة ملفات أو بنية عظام أو أي تنظيم أبوي/ابني داخل الواجهة.",
+      "practicalBenefit": "تعطي المستخدم تصوراً واضحاً للعلاقات الهرمية مع تحكم مباشر في كشف العقد أو إخفائها.",
+      "misuseImpact": "إذا نسيت موازنة TreeNode المفتوحة بـ TreePop عند بناء الأبناء فستختلط مستويات الشجرة ويتعطل التخطيط الشجري."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "جدول أصول يعرض الاسم والنوع والحجم في أعمدة واضحة داخل نافذة إدارة الموارد.",
+        "code": "if (ImGui::Begin(\"الأصول\")) {\n    if (ImGui::BeginTable(\"assets_table\", 3)) {\n        ImGui::TableSetupColumn(\"الاسم\");\n        ImGui::TableSetupColumn(\"النوع\");\n        ImGui::TableSetupColumn(\"الحجم\");\n        ImGui::TableHeadersRow();\n\n        ImGui::TableNextRow();\n        ImGui::TableNextColumn(); ImGui::Text(\"Player.mesh\");\n        ImGui::TableNextColumn(); ImGui::Text(\"Mesh\");\n        ImGui::TableNextColumn(); ImGui::Text(\"1.2 MB\");\n\n        ImGui::TableNextRow();\n        ImGui::TableNextColumn(); ImGui::Text(\"Sky.hdr\");\n        ImGui::TableNextColumn(); ImGui::Text(\"Texture\");\n        ImGui::TableNextColumn(); ImGui::Text(\"8.4 MB\");\n\n        ImGui::EndTable();\n    }\n}\nImGui::End();",
+        "explanation": "BeginTable ينشئ سياق الأعمدة، ثم تملأ الصفوف عبر TableNextRow وTableNextColumn قبل إغلاق الجدول.",
+        "expectedResult": "تظهر البيانات في أعمدة محاذاة بوضوح مع صف عنوان في أعلى الجدول.",
+        "importantNote": "الجدول يحتاج دورة كاملة: BeginTable ثم بناء الأعمدة والصفوف ثم EndTable في الإطار نفسه."
+      },
+      "guiRepresentation": {
+        "title": "جدول بيانات داخل Dear ImGui",
+        "mockup": "┌ الأصول ────────────────────────┐\n│ الاسم        | النوع   | الحجم │\n│ Player.mesh  | Mesh    | 1.2MB │\n│ Sky.hdr      | Texture | 8.4MB │\n└───────────────────────────────┘",
+        "explanation": "يعرض الجدول البيانات في أعمدة ثابتة القراءة، وهو أوضح بكثير من رص النصوص أفقياً يدوياً."
+      },
+      "parameterExample": "if (ImGui::BeginTable(\"assets_table\", 3)) {\n    ImGui::EndTable();\n}",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "str_id",
+          "officialArabicDescription": "معرف الجدول الداخلي داخل النافذة الحالية.",
+          "realRole": "يبني هوية الجدول التي تحفظ حالته وتفصله عن أي جداول أخرى.",
+          "whyPassed": "تحتاجه Dear ImGui لتمييز هذا الجدول عن غيره في السياق نفسه.",
+          "actualUsage": "استخدم معرفاً ثابتاً مرتبطاً بنوع البيانات مثل \"assets_table\"."
+        },
+        {
+          "type": "int",
+          "name": "columns",
+          "officialArabicDescription": "عدد الأعمدة التي سيبنيها الجدول.",
+          "realRole": "يحدد الهيكل الأساسي للصفوف قبل إدخال أي محتوى.",
+          "whyPassed": "يحتاجه النظام لتخصيص الأعمدة وتوزيع المحتوى عليها.",
+          "actualUsage": "مرر العدد الحقيقي للأعمدة المنطقية التي ستعرضها لا مجرد عدد تقريبي."
+        },
+        {
+          "type": "ImGuiTableFlags",
+          "name": "flags",
+          "officialArabicDescription": "أعلام تغير سلوك الجدول ومظهره مثل الحدود أو تغيير الحجم.",
+          "realRole": "تضبط خصائص مهمة في بنية الجدول وعرضه.",
+          "whyPassed": "تمكنك من مواءمة الجدول مع كثافة البيانات وطبيعة التفاعل المطلوبة.",
+          "actualUsage": "اتركها صفرية للبنية البسيطة أو فعّل أعلاماً مثل الحدود والعناوين عندما تحتاجها بوضوح."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::BeginTable",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "str_id"
+          },
+          {
+            "type": "int",
+            "name": "columns"
+          },
+          {
+            "type": "ImGuiTableFlags",
+            "name": "flags",
+            "defaultValue": "0"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يكون من المناسب بناء محتوى الجدول الآن في هذا الإطار.",
+        "trueMeaning": "ابدأ في تعريف الأعمدة والصفوف والمحتوى ثم أغلق الجدول بـ ImGui::EndTable.",
+        "falseMeaning": "لا تبن محتوى الجدول في هذا الإطار."
+      },
+      "name": "ImGui::BeginTable",
+      "kind": "function",
+      "shortTooltip": "دالة تبدأ جدولاً منظماً بالأعمدة يمكن ملؤه صفاً بعد صف داخل الواجهة.",
+      "description": "تبدأ جدول Dear ImGui يتيح عرض بيانات صفية أو مصفوفية في أعمدة واضحة.",
+      "officialArabicDescription": "تبدأ جدولاً داخل Dear ImGui وتعيد حالة منطقية تحدد هل يجب بناء محتوى الأعمدة والصفوف الآن، على أن يقابلها ImGui::EndTable.",
+      "realMeaning": "تمثل نقطة دخول إلى نظام الجداول الذي ينظم العرض في أعمدة مستقلة مع عناوين وصفوف وسياق تخطيط خاص بالجدول.",
+      "whenToUse": "استخدمها عند عرض قوائم أصول أو خصائص أو قيم إحصائية متعددة الأعمدة.",
+      "practicalBenefit": "تمنحك محاذاة أعمدة ثابتة ومقروءة بدلاً من محاولة بناء التخطيط الجدولي يدوياً عبر SameLine والمسافات.",
+      "misuseImpact": "إذا لم تستدع ImGui::EndTable بعد جدول مفتوح أو إذا بنيت الأعمدة من دون نظام صفوف واضح فستفسد بنية التخطيط داخل النافذة."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "نافذة خصائص مقسمة إلى تبويبات عام ومواد وتشخيص.",
+        "code": "if (ImGui::Begin(\"المعاين\")) {\n    if (ImGui::BeginTabBar(\"inspector_tabs\")) {\n        if (ImGui::BeginTabItem(\"عام\")) {\n            ImGui::Text(\"معلومات أساسية عن الكائن.\");\n            ImGui::EndTabItem();\n        }\n        if (ImGui::BeginTabItem(\"المواد\")) {\n            ImGui::Text(\"خصائص المادة الحالية.\");\n            ImGui::EndTabItem();\n        }\n        if (ImGui::BeginTabItem(\"تشخيص\")) {\n            ImGui::Text(\"بيانات التصحيح الآنية.\");\n            ImGui::EndTabItem();\n        }\n        ImGui::EndTabBar();\n    }\n}\nImGui::End();",
+        "explanation": "يبني المثال شريط تبويبات يختار المستخدم منه صفحة واحدة، بينما يبقى باقي المحتوى مخفياً حتى ينتقل إليها.",
+        "expectedResult": "تظهر ألسنة التبويبات أعلى القسم، ويعرض محتوى التبويب النشط فقط في المساحة أسفلها.",
+        "importantNote": "ابدأ شريط التبويبات ثم تبويباته الفرعية وأغلق كل مستوى بالمقابل الصحيح في الإطار نفسه."
+      },
+      "guiRepresentation": {
+        "title": "شريط تبويبات",
+        "mockup": "┌ المعاين ───────────────────────┐\n│ [عام] [المواد] [تشخيص]      │\n│ معلومات أساسية عن الكائن     │\n└──────────────────────────────┘",
+        "explanation": "التبويب النشط فقط يحدد المحتوى المرئي تحت الشريط، مما يحافظ على نافذة منظمة وقابلة للمسح."
+      },
+      "parameterExample": "if (ImGui::BeginTabBar(\"inspector_tabs\")) {\n    ImGui::EndTabBar();\n}",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "str_id",
+          "officialArabicDescription": "معرف شريط التبويبات داخل النافذة الحالية.",
+          "realRole": "يفصل حالة هذا الشريط عن أي شريط تبويبات آخر في السياق نفسه.",
+          "whyPassed": "تحتاجه Dear ImGui لحفظ حالة التبويب النشط وتمييز الحاوية.",
+          "actualUsage": "استخدم معرفاً ثابتاً يصف المجموعة مثل \"inspector_tabs\"."
+        },
+        {
+          "type": "ImGuiTabBarFlags",
+          "name": "flags",
+          "officialArabicDescription": "أعلام تغير سلوك شريط التبويبات ومظهره.",
+          "realRole": "تسمح بضبط خصائص مثل إعادة الترتيب أو شكل العرض العام للتبويبات.",
+          "whyPassed": "تمكنك من تكييف الشريط مع كثافة الصفحات ونمط التفاعل المطلوب.",
+          "actualUsage": "اتركها افتراضياً حتى تظهر لك حاجة واضحة إلى سلوك تبويبات خاص."
+        }
+      ],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::BeginTabBar",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "str_id"
+          },
+          {
+            "type": "ImGuiTabBarFlags",
+            "name": "flags",
+            "defaultValue": "0"
+          }
+        ]
+      },
+      "returns": {
+        "type": "bool",
+        "meaning": "تعيد `true` عندما يكون شريط التبويبات جاهزاً لبناء عناصر التبويب التابعة له الآن.",
+        "trueMeaning": "يمكنك بناء BeginTabItem وEndTabItem داخل هذا النطاق.",
+        "falseMeaning": "لا تبن محتوى التبويبات في هذا الإطار."
+      },
+      "name": "ImGui::BeginTabBar",
+      "kind": "function",
+      "shortTooltip": "دالة تبدأ شريط تبويبات يوزع المحتوى على صفحات متبادلة داخل النافذة.",
+      "description": "تبدأ مجموعة تبويبات يمكن للمستخدم التبديل بينها لإظهار محتوى صفحة واحدة في كل مرة.",
+      "officialArabicDescription": "تبدأ Tab Bar داخل Dear ImGui وتعيد حالة منطقية تسمح ببناء عناصر التبويبات التابعة له في هذا الإطار، على أن يقابلها ImGui::EndTabBar.",
+      "realMeaning": "تمثل حاوية تنقل أفقي بين صفحات محتوى مختلفة تشترك في المساحة نفسها داخل النافذة الحالية.",
+      "whenToUse": "استخدمها عندما تحتاج تقسيم نافذة معقدة إلى صفحات مثل عام ومتقدم وتصحيح أو خصائص مختلفة.",
+      "practicalBenefit": "تجعل الواجهة أقل ازدحاماً عبر توزيع المحتوى على صفحات بدلاً من عرض كل شيء دفعة واحدة.",
+      "misuseImpact": "إذا وضعت في التبويبات محتوى مترابطاً يجب أن يرى المستخدم بعضه مع بعض دائماً فقد تجعل التنقل أبطأ وتخفي سياقاً مهماً."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGuiWindowFlags",
+        "ImGuiWindowFlags_MenuBar",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "نافذة رئيسية تحتوي شريط قوائم للأوامر العامة مثل ملف وعرض.",
+        "code": "if (ImGui::Begin(\"المحرر\", nullptr, ImGuiWindowFlags_MenuBar)) {\n    if (ImGui::BeginMenuBar()) {\n        if (ImGui::BeginMenu(\"ملف\")) {\n            ImGui::MenuItem(\"فتح\");\n            ImGui::MenuItem(\"حفظ\");\n            ImGui::EndMenu();\n        }\n        if (ImGui::BeginMenu(\"عرض\")) {\n            ImGui::MenuItem(\"إظهار الشبكة\");\n            ImGui::MenuItem(\"إظهار المعاين\");\n            ImGui::EndMenu();\n        }\n        ImGui::EndMenuBar();\n    }\n\n    ImGui::Text(\"منطقة العمل الأساسية.\");\n}\nImGui::End();",
+        "explanation": "يتطلب MenuBar تفعيل العلم المناسب في Begin للنافذة نفسها، ثم تبنى القوائم داخله فقط عندما يعيد BeginMenuBar القيمة true.",
+        "expectedResult": "يظهر شريط قوائم أعلى النافذة يحتوي القوائم الرئيسة والأوامر التابعة لها.",
+        "importantNote": "لا تنس علم ImGuiWindowFlags_MenuBar في ImGui::Begin، لأنه الشرط الأساسي لظهور شريط القوائم داخل النافذة."
+      },
+      "guiRepresentation": {
+        "title": "شريط قوائم داخل نافذة",
+        "mockup": "┌ المحرر ────────────────────────┐\n│ ملف  عرض                     │\n│ منطقة العمل الأساسية         │\n└──────────────────────────────┘",
+        "explanation": "شريط القوائم يقع في رأس النافذة ويجمع الأوامر العليا في مكان ثابت يسهل اكتشافه."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": {
+        "returnType": "bool",
+        "name": "ImGui::BeginMenuBar",
+        "params": []
+      },
+      "returns": null,
+      "name": "ImGui::BeginMenuBar",
+      "kind": "function",
+      "shortTooltip": "دالة تبدأ شريط قوائم أعلى النافذة لاحتواء القوائم والأوامر المنظمة.",
+      "description": "تبدأ شريط القوائم الخاص بالنافذة الحالية لتضع داخله قوائم وأوامر مثل ملف أو عرض أو أدوات.",
+      "officialArabicDescription": "تبدأ MenuBar داخل النافذة الحالية في Dear ImGui وتعيد حالة منطقية تسمح ببناء القوائم التابعة له الآن، على أن يقابلها ImGui::EndMenuBar.",
+      "realMeaning": "تمثل حاوية أوامر عليا مرتبطة بالنافذة نفسها، وتوفر مكاناً منظماً للأوامر والقوائم الهرمية بدلاً من بعثرة الأزرار في كل المحتوى.",
+      "whenToUse": "استخدمها عندما تحتاج أوامر عليا مثل فتح وحفظ وتبديل اللوحات داخل نافذة رئيسية أو محرر.",
+      "practicalBenefit": "تجمع الأوامر المتصلة في موضع متوقع للمستخدم وتقلل ازدحام منطقة المحتوى الرئيسي.",
+      "misuseImpact": "إذا استخدمتها في نافذة لا تحتاج فعلاً إلى أوامر عليا فقد تضيف شريطاً يستهلك مساحة رأسية من دون فائدة واضحة."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Button"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "إظهار شرح فوري لزر صغير لا يملك مساحة كافية لعنوان طويل.",
+        "code": "if (ImGui::Begin(\"شريط الأدوات\")) {\n    ImGui::Button(\"⚙\");\n    if (ImGui::IsItemHovered()) {\n        ImGui::SetTooltip(\"يفتح إعدادات المشروع الحالية.\");\n    }\n}\nImGui::End();",
+        "explanation": "يبني المثال الزر أولاً، ثم يعتمد على ImGui::IsItemHovered ليظهر Tooltip فقط أثناء تحويم المؤشر فوقه.",
+        "expectedResult": "لا يظهر الشرح إلا عند الوقوف فوق الزر، ثم يختفي عند مغادرة المؤشر.",
+        "importantNote": "أفضل استخدام Tooltip يكون لتعزيز عنصر مرئي موجود بالفعل، لا كبديل عن تسمية أساسية مفقودة."
+      },
+      "guiRepresentation": {
+        "title": "Tooltip مرتبط بعنصر",
+        "mockup": "┌ شريط الأدوات ──────────────────┐\n│ [⚙]                          │\n│  └ Tooltip: يفتح الإعدادات  │\n└──────────────────────────────┘",
+        "explanation": "الشرح يظهر مؤقتاً قرب العنصر الجاري التحويم فوقه، لذلك يجب أن يكون مختصراً ومباشراً."
+      },
+      "parameterExample": "ImGui::SetTooltip(\"يفتح إعدادات المشروع الحالية.\");",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "fmt",
+          "officialArabicDescription": "النص الذي سيظهر داخل Tooltip.",
+          "realRole": "يمثل الشرح السياقي المؤقت الذي يراه المستخدم عند تحقق شرط الإظهار.",
+          "whyPassed": "تحتاجه Dear ImGui لتكوين محتوى Tooltip نفسه.",
+          "actualUsage": "اكتب شرحاً قصيراً يوضح الغرض العملي من العنصر الجاري التحويم فوقه."
+        }
+      ],
+      "signature": {
+        "returnType": "void",
+        "name": "ImGui::SetTooltip",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "fmt"
+          }
+        ]
+      },
+      "returns": null,
+      "name": "ImGui::SetTooltip",
+      "kind": "function",
+      "shortTooltip": "دالة تعرض Tooltip سريعاً يشرح العنصر الحالي عند تحقق شرط التفاعل المناسب.",
+      "description": "تعرض نافذة Tooltip نصية مرتبطة عادة بالعنصر الذي يحوم فوقه المستخدم.",
+      "officialArabicDescription": "تعرض Tooltip نصياً سريعاً في الإطار الحالي، ويستخدم غالباً بعد التحقق من ImGui::IsItemHovered لشرح العنصر المتفاعل معه المستخدم.",
+      "realMeaning": "تمثل أداة شرح سياقي مؤقتة تظهر فقط عندما يسمح منطقك بذلك، وغالباً عند تحويم المؤشر فوق عنصر في الإطار الحالي.",
+      "whenToUse": "استخدمها لشرح معنى زر أو لون أو أيقونة أو خيار لا يكفي عنوانه المختصر وحده.",
+      "practicalBenefit": "توفر شرحاً إضافياً عند الحاجة من دون إثقال الواجهة بنص دائم يستهلك مساحة.",
+      "misuseImpact": "إذا كانت الرسالة طويلة جداً أو متقلبة بسرعة أو تظهر من دون شرط تحويم واضح فستربك المستخدم بدل إفادته."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "مخطط سريع يبين تغير frame time داخل نافذة تشخيص الأداء.",
+        "code": "static float frame_times[8] = {16.3f, 15.9f, 17.1f, 16.0f, 15.7f, 16.5f, 16.1f, 15.8f};\n\nif (ImGui::Begin(\"تشخيص الأداء\")) {\n    ImGui::PlotLines(\"Frame Time\", frame_times, 8);\n    ImGui::Text(\"متوسط الإطار: 16.2 ms\");\n}\nImGui::End();",
+        "explanation": "المخطط هنا لا يقدم تفاعلاً معقداً؛ هدفه إعطاء قراءة بصرية فورية لاتجاه القيم الأخيرة داخل لوحة الأدوات نفسها.",
+        "expectedResult": "يرى المستخدم خطاً بيانياً صغيراً يوضح صعود القيم وهبوطها مع نص يشرح المتوسط الحالي.",
+        "importantNote": "PlotLines مناسب للعرض التشخيصي الخفيف، لا للتحليل البياني المفصل الذي يحتاج محاور وأدوات قراءة متقدمة."
+      },
+      "guiRepresentation": {
+        "title": "مخطط خطي بسيط",
+        "mockup": "┌ تشخيص الأداء ──────────────────┐\n│ /\\/\\_/\\/\\_                   │\n│ متوسط الإطار: 16.2 ms       │\n└──────────────────────────────┘",
+        "explanation": "يعرض المخطط الاتجاه العام للسلسلة بسرعة، بينما يضيف النص السفلي تفسيراً رقمياً مباشراً للبيانات."
+      },
+      "parameterExample": "const float frame_times[] = {16.3f, 15.9f, 17.1f, 16.0f};\nImGui::PlotLines(\"Frame Time\", frame_times, 4);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "label",
+          "officialArabicDescription": "عنوان المخطط الخطي داخل النافذة.",
+          "realRole": "يخبر المستخدم ما السلسلة الرقمية التي يمثلها هذا المخطط.",
+          "whyPassed": "بدونه يصبح الرسم البياني مجرد خط بصري بلا دلالة واضحة.",
+          "actualUsage": "سمه باسم المقياس الفعلي مثل \"Frame Time\" أو \"CPU Load\"."
+        },
+        {
+          "type": "const float*",
+          "name": "values",
+          "officialArabicDescription": "مؤشر إلى مصفوفة القيم العشرية المطلوب رسمها.",
+          "realRole": "هو المصدر العددي الذي تقرؤه Dear ImGui لبناء المسار الخطي.",
+          "whyPassed": "تحتاجه الدالة لمعرفة النقاط التي ستحولها إلى مخطط.",
+          "actualUsage": "مرر مصفوفة ثابتة أو مؤقتة صالحة طوال الإطار الحالي وتحمل القيم بالترتيب الزمني المقصود."
+        },
+        {
+          "type": "int",
+          "name": "values_count",
+          "officialArabicDescription": "عدد القيم الموجودة في المصفوفة.",
+          "realRole": "يحدد طول السلسلة التي سيرسمها المخطط.",
+          "whyPassed": "بدونه لا تعرف الدالة أين تنتهي البيانات الآمنة للقراءة.",
+          "actualUsage": "مرر العدد الحقيقي للقيم المملوءة داخل المصفوفة لا السعة النظرية فقط."
+        }
+      ],
+      "signature": {
+        "returnType": "void",
+        "name": "ImGui::PlotLines",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "label"
+          },
+          {
+            "type": "const float*",
+            "name": "values"
+          },
+          {
+            "type": "int",
+            "name": "values_count"
+          }
+        ]
+      },
+      "returns": null,
+      "name": "ImGui::PlotLines",
+      "kind": "function",
+      "shortTooltip": "دالة ترسم مخططاً خطياً بسيطاً لسلسلة قيم عددية داخل النافذة.",
+      "description": "ترسم تمثيلاً بصرياً خفيفاً لتسلسل من القيم عبر خط بياني صغير داخل الواجهة.",
+      "officialArabicDescription": "ترسم PlotLines لسلسلة قيم عشرية يمررها التطبيق، بهدف عرض تغيرها النسبي بسرعة داخل Dear ImGui.",
+      "realMeaning": "تمثل أداة عرض تشخيصية مختصرة تحول مصفوفة أرقام إلى مخطط خطي فوري داخل الواجهة من دون مكتبة رسوم بيانية مستقلة.",
+      "whenToUse": "استخدمها لعرض frame time أو قيم استهلاك أو بيانات حساسات أو اتجاهات قصيرة الأمد داخل أدوات التصحيح.",
+      "practicalBenefit": "تمنحك نظرة بصرية سريعة على تغير البيانات عبر الزمن من دون مغادرة لوحة الأدوات أو فتح نافذة تحليل منفصلة.",
+      "misuseImpact": "إذا استخدمتها على بيانات كبيرة جداً أو من دون تسمية وسياق فسيصعب على المستخدم معرفة ما الذي يمثله المخطط فعلياً."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Begin",
+        "ImGui::SameLine"
+      ],
+      "instructions": [],
+      "notes": [],
+      "lifecycle": [
+        "يظهر فقط في الإطارات التي تستدعي فيها ImGui::Text.",
+        "لا يحتفظ بحالة تفاعل خاصة به، لذلك لا يعتمد على ذاكرة خارجية إلا لقراءة القيم التي ستنسق داخل النص."
+      ],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "code": "if (ImGui::Begin(\"إحصاءات\")) {\n    ImGui::Text(\"عدد الكائنات المرئية: %d\", visible_count);\n}\nImGui::End();",
+        "explanation": "النص هنا لا يملك حالة تفاعل؛ وظيفته فقط عرض قيمة مقروءة للمستخدم ضمن التخطيط الحالي."
+      },
+      "guiRepresentation": {
+        "title": "كيف يظهر النص",
+        "mockup": "┌ إحصاءات ─────────────────────┐\n│ عدد الكائنات المرئية: 128    │\n└──────────────────────────────┘",
+        "explanation": "يضاف النص كسطر ضمن تدفق التخطيط من دون مقبض تفاعل أو حالة تنشيط."
+      },
+      "parameterExample": "ImGui::Text(\"FPS: %.1f\", io.Framerate);",
+      "values": [],
+      "parameters": [
+        {
+          "type": "const char*",
+          "name": "fmt",
+          "officialArabicDescription": "النص أو صيغة التنسيق المطلوب عرضها.",
+          "realRole": "يمثل السلسلة التي ستنسق ثم ترسم داخل النافذة الحالية.",
+          "whyPassed": "تحتاجه الدالة لمعرفة النص النهائي الذي يجب إضافته إلى قائمة الرسم.",
+          "actualUsage": "مرر نصاً ثابتاً أو صيغة منسقة مثل `\"FPS: %.1f\"` عندما تريد إظهار قيمة رقمية."
+        }
+      ],
+      "signature": {
+        "returnType": "void",
+        "name": "ImGui::Text",
+        "params": [
+          {
+            "type": "const char*",
+            "name": "fmt"
+          }
+        ]
+      },
+      "returns": null,
+      "name": "ImGui::Text",
+      "kind": "function",
+      "shortTooltip": "دالة تضيف سطر نص ثابتاً داخل التخطيط الحالي من دون حالة تفاعل مباشرة.",
+      "description": "تعرض نصاً ثابتاً أو منسقاً داخل النافذة الحالية.",
+      "officialArabicDescription": "ترسم نصاً للقراءة فقط داخل التخطيط الحالي باستخدام تنسيق شبيه `printf` عند الحاجة.",
+      "realMeaning": "تمثل عنصر عرض فقط يرسل سلسلة النص بعد تنسيقها إلى قائمة الرسم الحالية في الموضع الذي يحدده التخطيط الجاري.",
+      "whenToUse": "تستخدم لإظهار معلومات حالة أو عناوين أو قيم تشخيصية لا تحتاج إلى تفاعل مباشر.",
+      "practicalBenefit": "تعطيك وسيلة سريعة لعرض بيانات التشخيص أو أسماء الموارد أو القيم الحالية من دون إنشاء عنصر مخصص للرسم النصي.",
+      "misuseImpact": "إذا بنيت بها نصوصاً ضخمة أو متغيرة بكثرة داخل حلقة غير محسوبة قد تزيد كلفة التنسيق والرسم بلا حاجة، وإذا وضعت نصاً يظنه المستخدم قابلاً للتعديل فستعطي إشارة واجهة مضللة."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::InvisibleButton",
+        "ImDrawList",
+        "ImGui::Text",
+        "ImGui::SameLine"
+      ],
+      "instructions": [],
+      "notes": [
+        "يمكنك إعادة استخدام Toggle switch نفسها في أكثر من نافذة أو Panel.",
+        "هذا المثال يغطي طلب الـ toggle بصيغة مرئية احترافية لا بصيغة Checkbox فقط.",
+        "يفضل إقران كل Toggle بنص حالة واضح عند بناء أدوات تحرير كبيرة."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "تبني النافذة صفاً من Toggles مخصصة تتحكم في Grid وGlow وParticles وSafe Mode، ثم تعرض الحالة الحالية لكل مفتاح في أسفل اللوحة.",
+        "code": "ImGui::InvisibleButton(\"toggle_glow\", ImVec2(58.0f, 30.0f));\nif (ImGui::IsItemClicked()) {\n    glow_enabled = !glow_enabled;\n}\ndraw_list->AddRectFilled(...);\ndraw_list->AddCircleFilled(...);",
+        "fullCode": "#include <imgui.h>\n\nstatic bool DrawToggleSwitch(const char* id, bool value) {\n    ImVec2 pos = ImGui::GetCursorScreenPos();\n    ImGui::InvisibleButton(id, ImVec2(58.0f, 30.0f));\n    if (ImGui::IsItemClicked()) {\n        value = !value;\n    }\n\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n    const ImU32 bg = value ? IM_COL32(82, 169, 255, 255) : IM_COL32(61, 72, 88, 255);\n    const float knob_x = value ? pos.x + 40.0f : pos.x + 18.0f;\n    draw_list->AddRectFilled(pos, ImVec2(pos.x + 58.0f, pos.y + 30.0f), bg, 15.0f);\n    draw_list->AddCircleFilled(ImVec2(knob_x, pos.y + 15.0f), 11.0f, IM_COL32(245, 248, 252, 255));\n    return value;\n}\n\nvoid DrawToggleToolsExample() {\n    static bool grid_enabled = true;\n    static bool glow_enabled = true;\n    static bool particles_enabled = false;\n    static bool safe_mode = false;\n\n    ImGui::Begin(\"Quick Toggles\");\n    ImGui::Text(\"تبديل الحالات السريعة داخل الأدوات.\");\n    ImGui::Separator();\n\n    ImGui::Text(\"Grid\"); ImGui::SameLine(140.0f);\n    grid_enabled = DrawToggleSwitch(\"toggle_grid\", grid_enabled);\n\n    ImGui::Text(\"Glow\"); ImGui::SameLine(140.0f);\n    glow_enabled = DrawToggleSwitch(\"toggle_glow\", glow_enabled);\n\n    ImGui::Text(\"Particles\"); ImGui::SameLine(140.0f);\n    particles_enabled = DrawToggleSwitch(\"toggle_particles\", particles_enabled);\n\n    ImGui::Text(\"Safe Mode\"); ImGui::SameLine(140.0f);\n    safe_mode = DrawToggleSwitch(\"toggle_safe_mode\", safe_mode);\n\n    ImGui::Separator();\n    ImGui::Text(\"Grid=%s | Glow=%s | Particles=%s | Safe=%s\",\n                grid_enabled ? \"On\" : \"Off\",\n                glow_enabled ? \"On\" : \"Off\",\n                particles_enabled ? \"On\" : \"Off\",\n                safe_mode ? \"On\" : \"Off\");\n    ImGui::End();\n}",
+        "explanation": "يبني المثال Toggle مرئية من InvisibleButton وImDrawList، لكن الحالة الحقيقية تبقى bool عادية يملكها التطبيق ويعرض أثرها مباشرة أسفل اللوحة.",
+        "expectedResult": "تظهر مجموعة مفاتيح Toggle حديثة يمكن تشغيلها وإيقافها بسرعة، وتنعكس حالتها فوراً على النصوص والقيم داخل اللوحة.",
+        "importantNote": "مهما بدا الشكل مرسوماً ومخصصاً، تبقى Toggle في النهاية مجرد حالة bool محفوظة بين الإطارات."
+      },
+      "guiRepresentation": {
+        "title": "Quick Toggles",
+        "mockup": "Grid -> On\nGlow -> On\nParticles -> Off\nSafe Mode -> Off",
+        "explanation": "الصورة تعرض مفاتيح تشغيل/إيقاف واضحة، وتربط كل Toggle بوظيفة عملية داخل لوحة أدوات."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "مفاتيح Toggle مخصصة لحالات الأدوات",
+      "shortTooltip": "مثال مستقل يوضح بناء Toggle switches مخصصة للتحكم في حالات الواجهة والمشهد داخل Dear ImGui.",
+      "description": "يقدم هذا المثال شكل Toggle أكثر قرباً من مفاتيح الأنظمة الحديثة بدل الاكتفاء بـ Checkbox التقليدية، مع ربط كل مفتاح بحالة فعلية مثل Grid وGlow وParticles وSafe Mode.",
+      "realMeaning": "Dear ImGui لا تفرض شكلاً واحداً للـ Toggle؛ التطبيق يمكنه استخدام InvisibleButton وImDrawList أو ألوان الأزرار لبناء Toggle مرئي مع الحفاظ على الحالة المنطقية في bool واضح.",
+      "whenToUse": "استخدمه عندما تريد مفاتيح تشغيل/إيقاف سريعة للطبقات والمرشحات وحالات الواجهة داخل لوحة أدوات حديثة.",
+      "practicalBenefit": "يجعل الحالات الثنائية أوضح بصرياً من Checkbox عندما تكون الواجهة موجهة للأدوات السريعة أو لوحات التحكم الجانبية.",
+      "misuseImpact": "إذا بنيت Toggle مخصصة من دون الحفاظ على حالة bool مستقرة أو من دون رد بصري واضح لحالة On/Off، فستصبح الواجهة أجمل شكلياً لكنها أقل وضوحاً وظيفياً."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::TreeNode",
+        "ImGui::InputText",
+        "ImGui::Button",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [
+        "الإضافة تحدث في بنية البيانات أولاً ثم تنعكس على الرسم.",
+        "يمكن استبدال المصفوفة الثابتة لاحقاً ببنية editor state أو std::vector.",
+        "هذا المثال يغطي طلب إضافة عناصر في الشجرة بشكل مباشر."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يكتب المستخدم اسم العقدة الجديدة، يحدد الأب الحالي من الشجرة، ثم يضغط Add Node. بعد ذلك تحدث بنية العقد ويظهر العنصر الجديد فوراً في الإطار التالي.",
+        "code": "if (ImGui::InputText(\"New Node\", new_label, sizeof(new_label))) {}\nif (ImGui::Button(\"Add Node\")) {\n    nodes[node_count].parent = selected_parent;\n    strcpy(nodes[node_count].label, new_label);\n    node_count += 1;\n}",
+        "fullCode": "#include <imgui.h>\n#include <cstring>\n\nstruct UiTreeNode {\n    int id;\n    int parent;\n    char label[32];\n};\n\nvoid DrawTreeInsertExample() {\n    static UiTreeNode nodes[12] = {\n        {1, 0, \"Scene\"},\n        {2, 1, \"Camera\"},\n        {3, 1, \"Lights\"},\n        {4, 1, \"Meshes\"},\n        {5, 4, \"Player\"}\n    };\n    static int node_count = 5;\n    static int selected_parent = 1;\n    static char new_label[32] = \"New Node\";\n\n    ImGui::Begin(\"Tree Editor\");\n    ImGui::Text(\"أضف عناصر جديدة داخل الشجرة نفسها.\");\n    ImGui::InputText(\"New Node\", new_label, sizeof(new_label));\n    if (ImGui::Button(\"Add Node\") && node_count < 12 && new_label[0]) {\n        nodes[node_count].id = node_count + 1;\n        nodes[node_count].parent = selected_parent;\n        std::strncpy(nodes[node_count].label, new_label, sizeof(nodes[node_count].label) - 1);\n        nodes[node_count].label[sizeof(nodes[node_count].label) - 1] = 0;\n        node_count += 1;\n        new_label[0] = 0;\n    }\n    ImGui::Separator();\n\n    for (int i = 0; i < node_count; ++i) {\n        if (nodes[i].parent != 0 && nodes[i].parent != 1) {\n            continue;\n        }\n        bool opened = ImGui::TreeNodeEx(nodes[i].label, ImGuiTreeNodeFlags_OpenOnArrow);\n        if (ImGui::IsItemClicked()) {\n            selected_parent = nodes[i].id;\n        }\n        for (int child = 0; child < node_count; ++child) {\n            if (nodes[child].parent == nodes[i].id) {\n                ImGui::BulletText(\"%s\", nodes[child].label);\n                if (ImGui::IsItemClicked()) {\n                    selected_parent = nodes[child].id;\n                }\n            }\n        }\n        if (opened) {\n            ImGui::TreePop();\n        }\n    }\n\n    ImGui::Separator();\n    ImGui::Text(\"Current parent id: %d\", selected_parent);\n    ImGui::Text(\"Nodes in tree: %d\", node_count);\n    ImGui::End();\n}",
+        "explanation": "يبني المثال الشجرة من بنية بيانات واضحة، ثم يسمح للمستخدم بإدخال اسم جديد وإضافته تحت الأب المحدد. بعد ذلك يعاد الرسم فتظهر العقدة الجديدة فوراً.",
+        "expectedResult": "تظهر شجرة واجهة يمكن توسيعها، ومع كل عملية إضافة تنمو الشجرة بعنصر جديد مرئي داخل الفرع المحدد.",
+        "importantNote": "هذا المثال يوضح إضافة عناصر إلى الشجرة نفسها، لا مجرد فتح TreeNode ثابتة مسبقاً."
+      },
+      "guiRepresentation": {
+        "title": "Tree Editor",
+        "mockup": "Scene\nCamera\nLights\nMeshes\n+ Add Node -> new child",
+        "explanation": "الصورة تبين أن الشجرة هنا حية وقابلة للنمو، وليست مثالاً ثابتاً لعقد موجودة مسبقاً فقط."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "إضافة عناصر جديدة داخل شجرة الواجهة",
+      "shortTooltip": "مثال مستقل يوضح بناء Tree editor يسمح بإضافة عقد وعناصر جديدة داخل الشجرة من النافذة نفسها.",
+      "description": "يركز هذا المثال على سيناريو شائع في المحررات: هناك شجرة، وعقدة محددة، وحقل اسم، وزر إضافة يدرج عنصراً جديداً أسفل العقدة المحددة أو داخل الجذر.",
+      "realMeaning": "Dear ImGui لا تحتفظ بهيكل الشجرة نيابة عنك؛ التطبيق يملك البيانات الفعلية للعقد والأسماء والآباء، ثم يعيد بناء الشجرة كل Frame وفق هذه البيانات.",
+      "whenToUse": "استخدمه في Scene Hierarchy أو Outliner أو Browser يحتاج إضافة Folder أو Entity أو Node مباشرة من واجهة الأدوات.",
+      "practicalBenefit": "يجعل إدارة الشجرة أكثر مباشرة من فتح نافذة منفصلة لكل إضافة، ويبين بوضوح كيف تربط الإدخال النصي ببيانات الشجرة نفسها.",
+      "misuseImpact": "إذا أضفت العنصر بصرياً من دون حفظه في مصفوفة أو بنية مستقرة فسيظهر للحظة ثم يختفي في الإطار التالي لأن Dear ImGui تعيد البناء من الصفر."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Combo",
+        "ImGui::Selectable",
+        "ImGui::Image",
+        "ImGui::SameLine"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي طلب صندوق الاختيار مع الصور بشكل صريح.",
+        "يمكن استخدام النمط نفسه لمواد ومظاهر وواجهات اختيار الثيمات.",
+        "الصورة المصغرة قد تكون Texture حقيقية أو Render target صغيرة بحسب التطبيق."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يعرض التطبيق اسم الأصل الحالي في حقل مغلق، وعند فتح الصندوق تظهر صور مصغرة لكل عنصر مع اسمه. اختيار أي صف يبدل الأصل النشط فوراً.",
+        "code": "if (ImGui::BeginCombo(\"Vehicle\", labels[current_index])) {\n    ImGui::Image(thumbnails[i], ImVec2(56.0f, 40.0f));\n    ImGui::SameLine();\n    if (ImGui::Selectable(labels[i], current_index == i)) {\n        current_index = i;\n    }\n    ImGui::EndCombo();\n}",
+        "fullCode": "#include <imgui.h>\n#include <stdint.h>\n\nvoid DrawThumbnailComboExample() {\n    static const char* labels[] = {\"Sports Car\", \"Truck\", \"Drone\"};\n    static const char* subtitles[] = {\"Fast vehicle\", \"Heavy transport\", \"Flying unit\"};\n    static int current_index = 0;\n    static ImTextureID thumbnails[] = {\n        (ImTextureID)(intptr_t)1,\n        (ImTextureID)(intptr_t)2,\n        (ImTextureID)(intptr_t)3\n    };\n\n    ImGui::Begin(\"Thumbnail Picker\");\n    ImGui::Text(\"اختر العنصر عبر صورته المصغرة.\");\n\n    if (ImGui::BeginCombo(\"Vehicle\", labels[current_index])) {\n        for (int i = 0; i < 3; ++i) {\n            ImGui::PushID(i);\n            ImGui::Image(thumbnails[i], ImVec2(56.0f, 40.0f));\n            ImGui::SameLine();\n            ImGui::BeginGroup();\n            if (ImGui::Selectable(labels[i], current_index == i, 0, ImVec2(180.0f, 18.0f))) {\n                current_index = i;\n            }\n            ImGui::TextDisabled(\"%s\", subtitles[i]);\n            ImGui::EndGroup();\n            ImGui::PopID();\n        }\n        ImGui::EndCombo();\n    }\n\n    ImGui::Separator();\n    ImGui::Text(\"Active: %s\", labels[current_index]);\n    ImGui::Text(\"Preview image id: %d\", current_index + 1);\n    ImGui::End();\n}",
+        "explanation": "المثال يستخدم صوراً مصغرة داخل الصندوق نفسه، لذلك يصبح الاختيار بصرياً لا نصياً فقط. بعد النقر يحفظ التطبيق الفهرس الحالي ويعيد استخدامه في الحقل المغلق والمعاينة.",
+        "expectedResult": "يرى المستخدم صندوق اختيار ببطاقات صغيرة تحتوي صورة واسم ووصف، ويمكنه تبديل العنصر الحالي عبر الصور المصغرة بسهولة.",
+        "importantNote": "لكي يعمل المثال فعلياً يجب أن تكون ImTextureID المصغرات جاهزة من التطبيق أو من backend المستخدم."
+      },
+      "guiRepresentation": {
+        "title": "Thumbnail Picker",
+        "mockup": "Closed Combo -> Sports Car\nDropdown -> [thumb] Sports Car\nDropdown -> [thumb] Truck\nDropdown -> [thumb] Drone",
+        "explanation": "الصورة تبين أن الصندوق لا يعرض أسماء فقط، بل بطاقات مصغرة أشبه بمعرض اختيار صغير."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "صندوق اختيار مع صور مصغرة",
+      "shortTooltip": "مثال مستقل يوضح Combo/Picker يعتمد صوراً مصغرة لاختيار الأصل أو النمط البصري.",
+      "description": "يوضح هذا المثال كيف تبني صندوق اختيار أكثر غنى من Combo النصية عبر إظهار صور مصغرة داخل القائمة مع اسم العنصر ووصفه.",
+      "realMeaning": "المعنى الحقيقي أن Dear ImGui لا تمنعك من جعل عنصر الاختيار غنياً بصرياً؛ يمكنك وضع صور مصغرة ونصوص داخل BeginCombo ثم حفظ الفهرس المختار في حالة مستقرة.",
+      "whenToUse": "استخدمه عند اختيار مواد أو سيارات أو أيقونات أو خلفيات أو شخصيات عندما لا يكفي الاسم النصي وحده لتمييز العنصر.",
+      "practicalBenefit": "يجعل الاختيار أسرع وأكثر دقة عندما تكون الأصول متشابهة نصياً لكن مختلفة بصرياً.",
+      "misuseImpact": "إذا عرضت صوراً كثيرة من دون تنظيم أو من دون إبراز العنصر المختار فسيتحول الصندوق إلى قائمة مزدحمة يصعب مسحها بصرياً."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::InputText",
+        "ImGui::Button",
+        "ImGui::SameLine",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي طلب المحرر النصي بصيغة عملية.",
+        "يمكن توسيعه لاحقاً بترقيم الأسطر أو الإكمال أو إبراز الكلمات.",
+        "المخزن النصي يبقى مملوكاً للتطبيق، لا للواجهة."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يحفظ التطبيق النص داخل مخزن char كبير، ويعرض بجانبه شريط أدوات فيه Save وFormat وFind، ثم يبين عدد الأسطر وحالة التعديل أسفل المحرر.",
+        "code": "ImGui::InputTextMultiline(\"##editor\", buffer, sizeof(buffer), ImVec2(-1.0f, 240.0f));\nif (ImGui::Button(\"Save\")) { dirty = false; }\nImGui::SameLine();\nImGui::InputText(\"Find\", find_text, sizeof(find_text));",
+        "fullCode": "#include <imgui.h>\n#include <cstring>\n\nvoid DrawTextEditorExample() {\n    static char buffer[2048] =\n        \"float exposure = 1.2;\\n\"\n        \"float glow = 0.8;\\n\"\n        \"float scatter = 0.45;\\n\";\n    static char find_text[64] = \"glow\";\n    static bool dirty = false;\n\n    int line_count = 1;\n    for (const char* p = buffer; *p; ++p) {\n        if (*p == '\\n') {\n            line_count += 1;\n        }\n    }\n\n    ImGui::Begin(\"Mini Text Editor\");\n    if (ImGui::Button(\"Save\")) {\n        dirty = false;\n    }\n    ImGui::SameLine();\n    if (ImGui::Button(\"Format\")) {\n        std::strcat(buffer, \"// formatted\\n\");\n        dirty = true;\n    }\n    ImGui::SameLine();\n    ImGui::InputText(\"Find\", find_text, sizeof(find_text));\n    if (ImGui::InputTextMultiline(\"##editor\", buffer, sizeof(buffer), ImVec2(-1.0f, 240.0f))) {\n        dirty = true;\n    }\n    ImGui::Text(\"Lines: %d\", line_count);\n    ImGui::Text(\"Dirty: %s\", dirty ? \"Yes\" : \"No\");\n    ImGui::Text(\"Find: %s\", find_text);\n    ImGui::End();\n}",
+        "explanation": "المثال لا يكتفي بمنطقة تحرير فقط، بل يربطها بأدوات حفظ وبحث وتنسيق وحالة dirty، ولذلك يبدو كمحرر نصي عملي داخل لوحة أدوات حقيقية.",
+        "expectedResult": "تظهر نافذة فيها محرر متعدد الأسطر مع شريط أدوات صغير، ويمكن كتابة النص والبحث وإظهار حالة الحفظ وعدد الأسطر.",
+        "importantNote": "إذا احتجت ميزات محرر برمجي متقدمة جداً مثل syntax highlighting أو undo stacks كبيرة فستحتاج طبقة إضافية فوق Dear ImGui."
+      },
+      "guiRepresentation": {
+        "title": "Mini Text Editor",
+        "mockup": "Toolbar -> Save / Format / Find\nEditor -> multi-line text\nStatus -> Lines + Dirty\nالمعنى -> محرر نصي عملي داخل الأدوات",
+        "explanation": "الصورة تعرض المحرر كأداة متكاملة صغيرة، لا كمجرد InputText طويل."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "محرر نصي متعدد الأسطر مع أدوات حفظ وبحث",
+      "shortTooltip": "مثال مستقل يوضح Text editor صغير داخل Dear ImGui باستخدام InputTextMultiline وأزرار الأدوات.",
+      "description": "يعرض هذا المثال محرراً نصياً عملياً لا يقتصر على حقل إدخال واحد: منطقة تحرير متعددة الأسطر، وزر حفظ، وزر تنسيق، وحقل بحث، وحالة تبين عدد الأسطر.",
+      "realMeaning": "Dear ImGui لا تملك محرراً نصياً احترافياً كاملًا جاهزًا، لكنها تعطيك أساساً عملياً عبر InputTextMultiline يمكن توسيعه بحقول بحث وأدوات وحالة خارجية.",
+      "whenToUse": "استخدمه في أدوات السطور البرمجية، أو تحرير أوصاف المواد، أو ملفات إعدادات نصية، أو نوافذ ملاحظات داخل المحرر.",
+      "practicalBenefit": "يوضح كيف يتحول عنصر النص إلى أداة عمل حقيقية داخل Dear ImGui عندما تربطه بحالة تحرير، أزرار، وعدد أسطر أو حالة حفظ.",
+      "misuseImpact": "إذا اعتمدت على النص داخل الواجهة فقط من دون مخزن ثابت أو من دون سعة واضحة، فقد تفقد المحتوى أو تقطع النص عند أول توسع فعلي للحجم."
+    },
+    {
+      "sectionKey": "widgets",
+      "sectionTitle": "عناصر الواجهة التفاعلية",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Button",
+        "ImGui::InputText",
+        "ImGui::SameLine",
+        "ImGui::Text"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي طلب إنشاء كيبورد داخل ImGui بشكل مباشر.",
+        "يمكن تعديل الحروف والصفوف لتناسب العربية أو الإنجليزية أو أي Layout آخر.",
+        "يبقى النص النهائي محفوظاً داخل مخزن يملكه التطبيق."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "تبني النافذة صفوفاً من الأزرار تمثل الحروف والأوامر الخاصة. عند الضغط على أي زر يضاف الحرف إلى النص أو ينفذ أمر مثل الحذف.",
+        "code": "if (ImGui::Button(\"Q\", key_size)) { AppendKey(buffer, \"Q\"); }\nif (ImGui::Button(\"Backspace\", wide_key)) { RemoveLastChar(buffer); }\nImGui::InputText(\"Text\", buffer, sizeof(buffer));",
+        "fullCode": "#include <imgui.h>\n#include <cstring>\n\nstatic void AppendVirtualKey(char* buffer, size_t size, const char* token) {\n    std::strncat(buffer, token, size - std::strlen(buffer) - 1);\n}\n\nstatic void RemoveLastVirtualChar(char* buffer) {\n    size_t len = std::strlen(buffer);\n    if (len > 0) {\n        buffer[len - 1] = 0;\n    }\n}\n\nvoid DrawVirtualKeyboardExample() {\n    static char buffer[128] = \"HELLO\";\n    static const char* row1[] = {\"Q\",\"W\",\"E\",\"R\",\"T\",\"Y\",\"U\",\"I\",\"O\",\"P\"};\n    static const char* row2[] = {\"A\",\"S\",\"D\",\"F\",\"G\",\"H\",\"J\",\"K\",\"L\"};\n    static const char* row3[] = {\"Z\",\"X\",\"C\",\"V\",\"B\",\"N\",\"M\"};\n    const ImVec2 key_size(36.0f, 34.0f);\n\n    ImGui::Begin(\"Virtual Keyboard\");\n    ImGui::InputText(\"Text\", buffer, sizeof(buffer));\n    ImGui::Separator();\n\n    for (int i = 0; i < 10; ++i) {\n        if (i > 0) ImGui::SameLine();\n        if (ImGui::Button(row1[i], key_size)) AppendVirtualKey(buffer, sizeof(buffer), row1[i]);\n    }\n    for (int i = 0; i < 9; ++i) {\n        if (i > 0) ImGui::SameLine();\n        if (ImGui::Button(row2[i], key_size)) AppendVirtualKey(buffer, sizeof(buffer), row2[i]);\n    }\n    for (int i = 0; i < 7; ++i) {\n        if (i > 0) ImGui::SameLine();\n        if (ImGui::Button(row3[i], key_size)) AppendVirtualKey(buffer, sizeof(buffer), row3[i]);\n    }\n\n    if (ImGui::Button(\"Space\", ImVec2(120.0f, 34.0f))) AppendVirtualKey(buffer, sizeof(buffer), \" \");\n    ImGui::SameLine();\n    if (ImGui::Button(\"Backspace\", ImVec2(120.0f, 34.0f))) RemoveLastVirtualChar(buffer);\n    ImGui::SameLine();\n    if (ImGui::Button(\"Enter\", ImVec2(90.0f, 34.0f))) AppendVirtualKey(buffer, sizeof(buffer), \"\\n\");\n\n    ImGui::Text(\"Length: %d\", (int)std::strlen(buffer));\n    ImGui::End();\n}",
+        "explanation": "يبني المثال لوحة مفاتيح واضحة من أزرار متجاورة ويجمع الناتج في مخزن نص أعلى النافذة. كما يضيف مفاتيح خاصة لازمة لتجربة عملية.",
+        "expectedResult": "يرى المستخدم كيبورد افتراضية كاملة تقريباً، ويمكنه كتابة نص داخل الحقل من دون استخدام لوحة مفاتيح النظام.",
+        "importantNote": "المثال يركز على الفكرة العملية، ويمكنك لاحقاً إضافة طبقات لغة أو Shift أو Layouts مخصصة حسب المشروع."
+      },
+      "guiRepresentation": {
+        "title": "Virtual Keyboard",
+        "mockup": "Text -> HELLO\nQ W E R T Y U I O P\nA S D F G H J K L\nZ X C V B N M\nSpace / Backspace / Enter",
+        "explanation": "الصورة تبين الكيبورد كأداة مرئية كاملة وليست مجرد صف أزرار متقطع."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "كيبورد افتراضي على الشاشة",
+      "shortTooltip": "مثال مستقل يوضح إنشاء لوحة مفاتيح افتراضية داخل Dear ImGui وبناء النص الناتج منها.",
+      "description": "يبين هذا المثال كيف ينشئ التطبيق لوحة مفاتيح مرئية من أزرار متتابعة، ثم يجمّع الأحرف في حقل نص علوي مع مفاتيح خاصة مثل Backspace وSpace وEnter.",
+      "realMeaning": "Dear ImGui لا تقدم كيبورد جاهزة افتراضياً، لكن Immediate Mode تجعل بناء واحدة أمراً مباشراً: أزرار، صفوف، ومخزن نص يملكه التطبيق.",
+      "whenToUse": "استخدمه في شاشات اللمس، أو لوحات الإعداد داخل المحاكيات، أو أدوات الكشك، أو الواجهات التي لا تعتمد دائماً على لوحة مفاتيح فعلية.",
+      "practicalBenefit": "يوضح كيف تبني إدخالاً مرئياً مخصصاً بالكامل داخل نفس الواجهة، مع الحفاظ على النص الناتج في مخزن واضح.",
+      "misuseImpact": "إذا لم تضبط سعة النص أو أزرار الحذف والإدخال بشكل واضح، فستصبح لوحة المفاتيح مزعجة أو ناقصة الاستخدام العملي."
+    }
+  ]
+}

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ملف مساعد ضمن vulkan/utility يضيف طبقة خدمية فوق تعريفات Vulkan الأساسية لتبسيط مهام متكررة أو داخلية.">
+  <title>vk_sparse_range_map.hpp • القسم 5 من 5 • الأسطر 1801-2034 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/utility/vk_sparse_range_map.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vk_sparse_range_map.hpp.html">vk_sparse_range_map.hpp</a> /
+        <span>القسم 5 من 5 • الأسطر 1801-2034</span>
+      </nav>
+      <h1 class="page-title">📄 vk_sparse_range_map.hpp</h1>
+      <p class="page-description">القسم 5 من 5 • الأسطر 1801-2034</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-4.html">القسم السابق</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم لاحق</span>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vk_sparse_range_map.hpp</span>
+        <span class="source-stat">القسم: 5/5</span>
+        <span class="source-stat">الأسطر: 1801-2034</span>
+        <span class="source-stat">حجم الملف: 87.8 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-02-24</span>
+      </div>
+      <pre class="source-block"><code>        assert(pos_A_-&gt;index == pos_B_-&gt;index);
+        return *this;
+    }
+
+    // Invalidates the lower_bound caches, reseting range.  Cannot guarantee range.begin is on edge boundary,
+    // but range.end will be.
+    parallel_iterator &amp;invalidate() {
+        const index_type start = range_.begin;
+        seek(start);
+        return *this;
+    }
+
+    parallel_iterator &amp;invalidate_A() {
+        const index_type index = range_.begin;
+        pos_A_.invalidate(static_cast&lt;index_type_A&gt;(index));
+        range_ = key_type(index, index + compute_delta());
+        return *this;
+    }
+
+    parallel_iterator &amp;invalidate_A(const iterator_A &amp;hint) {
+        const index_type index = range_.begin;
+        pos_A_.invalidate(hint, static_cast&lt;index_type_A&gt;(index));
+        range_ = key_type(index, index + compute_delta());
+        return *this;
+    }
+
+    parallel_iterator &amp;invalidate_B() {
+        const index_type index = range_.begin;
+        pos_B_.invalidate(static_cast&lt;index_type_B&gt;(index));
+        range_ = key_type(index, index + compute_delta());
+        return *this;
+    }
+
+    parallel_iterator &amp;invalidate_B(const iterator_B &amp;hint) {
+        const index_type index = range_.begin;
+        pos_B_.invalidate(hint, static_cast&lt;index_type_B&gt;(index));
+        range_ = key_type(index, index + compute_delta());
+        return *this;
+    }
+
+    parallel_iterator &amp;trim_A() {
+        if (pos_A_-&gt;valid &amp;&amp; (range_ != pos_A_-&gt;lower_bound-&gt;first)) {
+            split(pos_A_-&gt;lower_bound, pos_A_.map(), range_);
+            invalidate_A();
+        }
+        return *this;
+    }
+
+    // The return is const because we are sharing the internal state directly.
+    const value_type &amp;operator*() const { return pos_; }
+    const value_type *operator-&gt;() const { return &amp;pos_; }
+};
+
+template &lt;typename DstRangeMap, typename SrcRangeMap, typename Updater,
+          typename SourceIterator = typename SrcRangeMap::const_iterator&gt;
+bool splice(DstRangeMap &amp;to, const SrcRangeMap &amp;from, SourceIterator begin, SourceIterator end, const Updater &amp;updater) {
+    if (from.empty() || (begin == end) || (begin == from.cend())) return false;  // nothing to merge.
+
+    using ParallelIterator = parallel_iterator&lt;DstRangeMap, const SrcRangeMap&gt;;
+    using Key = typename SrcRangeMap::key_type;
+    using CachedLowerBound = cached_lower_bound_impl&lt;DstRangeMap&gt;;
+    using ConstCachedLowerBound = cached_lower_bound_impl&lt;const SrcRangeMap&gt;;
+    ParallelIterator par_it(to, from, begin-&gt;first.begin);
+    bool updated = false;
+    while (par_it-&gt;range.non_empty() &amp;&amp; par_it-&gt;pos_B-&gt;lower_bound != end) {
+        const Key &amp;range = par_it-&gt;range;
+        const CachedLowerBound &amp;to_lb = par_it-&gt;pos_A;
+        const ConstCachedLowerBound &amp;from_lb = par_it-&gt;pos_B;
+        if (from_lb-&gt;valid) {
+            auto read_it = from_lb-&gt;lower_bound;
+            auto write_it = to_lb-&gt;lower_bound;
+            // Because of how the parallel iterator walk, &quot;to&quot; is valid over the whole range or it isn&#39;t (ranges don&#39;t span
+            // transitions between map entries or between valid and invalid ranges)
+            if (to_lb-&gt;valid) {
+                if (write_it-&gt;first == range) {
+                    // if the source and destination ranges match we can overwrite everything
+                    updated |= updater.update(write_it-&gt;second, read_it-&gt;second);
+                } else {
+                    // otherwise we need to split the destination range.
+                    auto value_to_update = write_it-&gt;second;  // intentional copy
+                    updated |= updater.update(value_to_update, read_it-&gt;second);
+                    auto intersected_range = write_it-&gt;first &amp; range;
+                    to.overwrite_range(to_lb-&gt;lower_bound, std::make_pair(intersected_range, value_to_update));
+                    par_it.invalidate_A();  // we&#39;ve changed map &#39;to&#39; behind to_lb&#39;s back... let it know.
+                }
+            } else {
+                // Insert into the gap.
+                auto opt = updater.insert(read_it-&gt;second);
+                if (opt) {
+                    to.insert(write_it, std::make_pair(range, std::move(*opt)));
+                    updated = true;
+                    par_it.invalidate_A();  // we&#39;ve changed map &#39;to&#39; behind to_lb&#39;s back... let it know.
+                }
+            }
+        }
+        ++par_it;  // next range over which both &#39;to&#39; and &#39;from&#39; stay constant
+    }
+    return updated;
+}
+// And short hand for &quot;from begin to end&quot;
+template &lt;typename DstRangeMap, typename SrcRangeMap, typename Updater&gt;
+bool splice(DstRangeMap &amp;to, const SrcRangeMap &amp;from, const Updater &amp;updater) {
+    return splice(to, from, from.cbegin(), from.cend(), updater);
+}
+
+template &lt;typename T&gt;
+struct update_prefer_source {
+    bool update(T &amp;dst, const T &amp;src) const {
+        if (dst != src) {
+            dst = src;
+            return true;
+        }
+        return false;
+    }
+
+    std::optional&lt;T&gt; insert(const T &amp;src) const { return std::optional&lt;T&gt;(std::in_place, src); }
+};
+
+template &lt;typename T&gt;
+struct update_prefer_dest {
+    bool update([[maybe_unused]] T &amp;dst, [[maybe_unused]] const T &amp;src) const { return false; }
+
+    std::optional&lt;T&gt; insert(const T &amp;src) const { return std::optional&lt;T&gt;(std::in_place, src); }
+};
+
+template &lt;typename RangeMap, typename SourceIterator = typename RangeMap::const_iterator&gt;
+bool splice(RangeMap &amp;to, const RangeMap &amp;from, value_precedence arbiter, [[maybe_unused]] SourceIterator begin,
+            [[maybe_unused]] SourceIterator end) {
+    if (arbiter == value_precedence::prefer_source) {
+        return splice(to, from, from.cbegin(), from.cend(), update_prefer_source&lt;typename RangeMap::mapped_type&gt;());
+    } else {
+        return splice(to, from, from.cbegin(), from.cend(), update_prefer_dest&lt;typename RangeMap::mapped_type&gt;());
+    }
+}
+
+// And short hand for &quot;from begin to end&quot;
+template &lt;typename RangeMap&gt;
+bool splice(RangeMap &amp;to, const RangeMap &amp;from, value_precedence arbiter) {
+    return splice(to, from, arbiter, from.cbegin(), from.cend());
+}
+
+template &lt;typename Map, typename Range = typename Map::key_type, typename MapValue = typename Map::mapped_type&gt;
+bool update_range_value(Map &amp;map, const Range &amp;range, MapValue &amp;&amp;value, value_precedence precedence) {
+    using CachedLowerBound = typename vku::sparse::cached_lower_bound_impl&lt;Map&gt;;
+    CachedLowerBound pos(map, range.begin);
+
+    bool updated = false;
+    while (range.includes(pos-&gt;index)) {
+        if (!pos-&gt;valid) {
+            if (precedence == value_precedence::prefer_source) {
+                // We can convert this into and overwrite...
+                map.overwrite_range(pos-&gt;lower_bound, std::make_pair(range, std::forward&lt;MapValue&gt;(value)));
+                return true;
+            }
+            // Fill in the leading space (or in the case of pos at end the trailing space
+            const auto start = pos-&gt;index;
+            auto it = pos-&gt;lower_bound;
+            const auto limit = (it != map.end()) ? std::min(it-&gt;first.begin, range.end) : range.end;
+            map.insert(it, std::make_pair(Range(start, limit), value));
+            // We inserted before pos-&gt;lower_bound, so pos-&gt;lower_bound isn&#39;t invalid, but the associated index *is* and seek
+            // will fix this (and move the state to valid)
+            pos.seek(limit);
+            updated = true;
+        }
+        // Note that after the &quot;fill&quot; operation pos may have become valid so we check again
+        if (pos-&gt;valid) {
+            if ((precedence == value_precedence::prefer_source) &amp;&amp; (pos-&gt;lower_bound-&gt;second != value)) {
+                // We&#39;ve found a place where we&#39;re changing the value, at this point might as well simply over write the range
+                // and be done with it. (save on later merge operations....)
+                pos.seek(range.begin);
+                map.overwrite_range(pos-&gt;lower_bound, std::make_pair(range, std::forward&lt;MapValue&gt;(value)));
+                return true;
+
+            } else {
+                // &quot;prefer_dest&quot; means don&#39;t overwrite existing values, so we&#39;ll skip this interval.
+                // Point just past the end of this section,  if it&#39;s within the given range, it will get filled next iteration
+                // ++pos could move us past the end of range (which would exit the loop) so we don&#39;t use it.
+                pos.seek(pos-&gt;lower_bound-&gt;first.end);
+            }
+        }
+    }
+    return updated;
+}
+
+//  combines directly adjacent ranges with equal RangeMap::mapped_type .
+template &lt;typename RangeMap&gt;
+void consolidate(RangeMap &amp;map) {
+    using Value = typename RangeMap::value_type;
+    using Key = typename RangeMap::key_type;
+    using It = typename RangeMap::iterator;
+
+    It current = map.begin();
+    const It map_end = map.end();
+
+    // To be included in a merge range there must be no gap in the Key space, and the mapped_type values must match
+    auto can_merge = [](const It &amp;last, const It &amp;cur) {
+        return cur-&gt;first.begin == last-&gt;first.end &amp;&amp; cur-&gt;second == last-&gt;second;
+    };
+
+    while (current != map_end) {
+        // Establish a trival merge range at the current location, advancing current. Merge range is inclusive of merge_last
+        const It merge_first = current;
+        It merge_last = current;
+        ++current;
+
+        // Expand the merge range as much as possible
+        while (current != map_end &amp;&amp; can_merge(merge_last, current)) {
+            merge_last = current;
+            ++current;
+        }
+
+        // Current isn&#39;t in the active merge range. If there is a non-trivial merge range, we resolve it here.
+        if (merge_first != merge_last) {
+            // IFF there is more than one range in (merge_first, merge_last)  &lt;- again noting the *inclusive* last
+            // Create a new Val spanning (first, last), substitute it for the multiple entries.
+            Value merged_value = std::make_pair(Key(merge_first-&gt;first.begin, merge_last-&gt;first.end), merge_last-&gt;second);
+            // Note that current points to merge_last + 1, and is valid even if at map_end for these operations
+            map.erase(merge_first, current);
+            map.insert(current, std::move(merged_value));
+        }
+    }
+}
+
+// Returns the intersection of the ranges [x, x + x_size) and [y, y + y_size)
+static inline range&lt;int64_t&gt; GetRangeIntersection(int64_t x, uint64_t x_size, int64_t y, uint64_t y_size) {
+    int64_t intersection_min = std::max(x, y);
+    int64_t intersection_max = std::min(x + static_cast&lt;int64_t&gt;(x_size), y + static_cast&lt;int64_t&gt;(y_size));
+
+    return {intersection_min, intersection_max};
+}
+
+}  // namespace sparse
+}  // namespace vku
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vk_sparse_range_map.hpp--section-4.html">القسم السابق</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم لاحق</span>
+    </div>
+  
+  </main>
+</body>
+</html>

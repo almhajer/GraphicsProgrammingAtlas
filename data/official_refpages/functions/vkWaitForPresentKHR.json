@@ -1,0 +1,89 @@
+{
+  "name": "vkWaitForPresentKHR",
+  "returnType": "VkResult",
+  "signature": "VkResult vkWaitForPresentKHR(\n VkDevice device,\n VkSwapchainKHR swapchain,\n uint64_t presentId,\n uint64_t timeout);",
+  "description": "الوصف الرسمي: دالة مرجعية من Vulkan. الشرح التفصيلي الكامل غير متوفر محلياً بعد، لذا أُضيف لها وصف عملي مختصر.",
+  "usage": [
+    "تُستخدم هذه الدالة من أجل: Wait for presentation..",
+    "The call to vkWaitForPresentKHR will block until either the presentId associated مع سلسلة التبديل is greater than or equal to presentId , or timeout nanoseconds passes. When the سلسلة التبديل becomes OUT_OF_DATE, the call will either يعيد VK_SUCCESS (if the الصورة was delivered to the presentation engine and may have been presented to the user) or will يعيد early مع status VK_ERROR_OUT_OF_DATE_KHR (if the الصورة could not be presented to the user).",
+    "There is no requirement for any precise timing relationship between the presentation of the الصورة to the user and the update of the presentId value, but implementations should make this as close as possible to the presentation of the first pixel in the next الصورة being presented to the user.",
+    "بعد الاستدعاء افحص القيمة المرجعة وتعامل مع حالات النجاح أو الخطأ المناسبة قبل متابعة التنفيذ."
+  ],
+  "parameters": [
+    {
+      "name": "device",
+      "type": "VkDevice",
+      "description": "الجهاز المنطقي الذي ستُنفذ عليه هذه العملية."
+    },
+    {
+      "name": "swapchain",
+      "type": "VkSwapchainKHR",
+      "description": "سلسلة التبديل التي تعمل عليها الدالة أو تستخرج منها الصور."
+    },
+    {
+      "name": "presentId",
+      "type": "uint64_t",
+      "description": "قيمة عددية من النوع uint64_t تستخدمها الدالة ضمن هذا الاستدعاء."
+    },
+    {
+      "name": "timeout",
+      "type": "uint64_t",
+      "description": "مهلة الانتظار الخاصة بهذا الاستدعاء، وغالباً تكون بالنانوثانية."
+    }
+  ],
+  "returnValues": [
+    {
+      "value": "VK_SUBOPTIMAL_KHR",
+      "description": "نجحت العملية لكن النتيجة ليست بالحالة المثالية الحالية."
+    },
+    {
+      "value": "VK_SUCCESS",
+      "description": "تم تنفيذ العملية بنجاح."
+    },
+    {
+      "value": "VK_TIMEOUT",
+      "description": "انتهت المهلة المحددة قبل اكتمال العملية."
+    },
+    {
+      "value": "VK_ERROR_DEVICE_LOST",
+      "description": "فُقد الاتصال بالجهاز المنطقي أو أصبح غير صالح."
+    },
+    {
+      "value": "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT",
+      "description": "رمز فشل من Vulkan. راجع المواصفة لمعنى هذه الحالة بدقة."
+    },
+    {
+      "value": "VK_ERROR_OUT_OF_DATE_KHR",
+      "description": "المورد المرتبط بالعرض أصبح قديماً ويحتاج إعادة إنشاء."
+    },
+    {
+      "value": "VK_ERROR_OUT_OF_DEVICE_MEMORY",
+      "description": "فشل بسبب نفاد ذاكرة الجهاز."
+    },
+    {
+      "value": "VK_ERROR_OUT_OF_HOST_MEMORY",
+      "description": "فشل بسبب نفاد ذاكرة المضيف."
+    },
+    {
+      "value": "VK_ERROR_SURFACE_LOST_KHR",
+      "description": "فُقد سطح العرض المرتبط بالعملية."
+    },
+    {
+      "value": "VK_ERROR_UNKNOWN",
+      "description": "حدث خطأ غير محدد من تعريف Vulkan أو المنصة."
+    },
+    {
+      "value": "VK_ERROR_VALIDATION_FAILED",
+      "description": "فشلت التحققّات القياسية الخاصة بصحة الاستخدام."
+    }
+  ],
+  "notes": [
+    "تتطلب هذه الدالة توفر الامتداد أو الميزة: VK_KHR_present_wait."
+  ],
+  "example": "",
+  "seeAlso": [
+    "VkDevice",
+    "VkSwapchainKHR"
+  ],
+  "parserVersion": 3
+}

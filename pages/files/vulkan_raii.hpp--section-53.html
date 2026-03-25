@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 53 من 64 • الأسطر 23401-23850 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 53 من 64 • الأسطر 23401-23850</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 53 من 64 • الأسطر 23401-23850</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-52.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-54.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 53/64</span>
+        <span class="source-stat">الأسطر: 23401-23850</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>      getDispatcher()-&gt;vkGetQueueCheckpointData2NV( static_cast&lt;VkQueue&gt;( m_queue ), &amp;checkpointDataCount, nullptr );
+      checkpointData.resize( checkpointDataCount );
+      getDispatcher()-&gt;vkGetQueueCheckpointData2NV(
+        static_cast&lt;VkQueue&gt;( m_queue ), &amp;checkpointDataCount, reinterpret_cast&lt;VkCheckpointData2NV *&gt;( checkpointData.data() ) );
+
+      VULKAN_HPP_ASSERT( checkpointDataCount &lt;= checkpointData.size() );
+      if ( checkpointDataCount &lt; checkpointData.size() )
+      {
+        checkpointData.resize( checkpointDataCount );
+      }
+      return checkpointData;
+    }
+
+    //=== VK_KHR_timeline_semaphore ===
+
+    // wrapper function for command vkGetSemaphoreCounterValueKHR, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSemaphoreCounterValueKHR.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;uint64_t&gt;::type Semaphore::getCounterValueKHR() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetSemaphoreCounterValueKHR &amp;&amp;
+                         &quot;Function &lt;vkGetSemaphoreCounterValueKHR&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      uint64_t value;
+      Result   result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetSemaphoreCounterValueKHR( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkSemaphore&gt;( m_semaphore ), &amp;value ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Semaphore::getCounterValueKHR&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( value ) );
+    }
+
+    // wrapper function for command vkWaitSemaphoresKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkWaitSemaphoresKHR.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::waitSemaphoresKHR( const SemaphoreWaitInfo &amp; waitInfo, uint64_t timeout ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkWaitSemaphoresKHR &amp;&amp; &quot;Function &lt;vkWaitSemaphoresKHR&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkWaitSemaphoresKHR( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkSemaphoreWaitInfo *&gt;( &amp;waitInfo ), timeout ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck(
+        result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::waitSemaphoresKHR&quot;, { Result::eSuccess, Result::eTimeout } );
+
+      return static_cast&lt;Result&gt;( result );
+    }
+
+    // wrapper function for command vkSignalSemaphoreKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSignalSemaphoreKHR.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Device::signalSemaphoreKHR( const SemaphoreSignalInfo &amp; signalInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkSignalSemaphoreKHR &amp;&amp; &quot;Function &lt;vkSignalSemaphoreKHR&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkSignalSemaphoreKHR( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkSemaphoreSignalInfo *&gt;( &amp;signalInfo ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::signalSemaphoreKHR&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    //=== VK_EXT_present_timing ===
+
+    // wrapper function for command vkSetSwapchainPresentTimingQueueSizeEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetSwapchainPresentTimingQueueSizeEXT.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result SwapchainKHR::setPresentTimingQueueSizeEXT( uint32_t size ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkSetSwapchainPresentTimingQueueSizeEXT &amp;&amp;
+                         &quot;Function &lt;vkSetSwapchainPresentTimingQueueSizeEXT&gt; requires &lt;VK_EXT_present_timing&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkSetSwapchainPresentTimingQueueSizeEXT( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkSwapchainKHR&gt;( m_swapchainKHR ), size ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck(
+        result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::SwapchainKHR::setPresentTimingQueueSizeEXT&quot;, { Result::eSuccess, Result::eNotReady } );
+
+      return static_cast&lt;Result&gt;( result );
+    }
+
+    // wrapper function for command vkGetSwapchainTimingPropertiesEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSwapchainTimingPropertiesEXT.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::pair&lt;SwapchainTimingPropertiesEXT, uint64_t&gt;&gt; SwapchainKHR::getTimingPropertiesEXT() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetSwapchainTimingPropertiesEXT &amp;&amp;
+                         &quot;Function &lt;vkGetSwapchainTimingPropertiesEXT&gt; requires &lt;VK_EXT_present_timing&gt;&quot; );
+
+      std::pair&lt;SwapchainTimingPropertiesEXT, uint64_t&gt; data_;
+      SwapchainTimingPropertiesEXT &amp;                    swapchainTimingProperties        = data_.first;
+      uint64_t &amp;                                        swapchainTimingPropertiesCounter = data_.second;
+      Result                                            result                           = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetSwapchainTimingPropertiesEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                            static_cast&lt;VkSwapchainKHR&gt;( m_swapchainKHR ),
+                                                            reinterpret_cast&lt;VkSwapchainTimingPropertiesEXT *&gt;( &amp;swapchainTimingProperties ),
+                                                            &amp;swapchainTimingPropertiesCounter ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck(
+        result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::SwapchainKHR::getTimingPropertiesEXT&quot;, { Result::eSuccess, Result::eNotReady } );
+
+      return ResultValue&lt;std::pair&lt;SwapchainTimingPropertiesEXT, uint64_t&gt;&gt;( result, std::move( data_ ) );
+    }
+
+    // wrapper function for command vkGetSwapchainTimeDomainPropertiesEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSwapchainTimeDomainPropertiesEXT.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result SwapchainKHR::getTimeDomainPropertiesEXT( SwapchainTimeDomainPropertiesEXT * pSwapchainTimeDomainProperties,
+                                                                                            uint64_t * pTimeDomainsCounter ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetSwapchainTimeDomainPropertiesEXT &amp;&amp;
+                         &quot;Function &lt;vkGetSwapchainTimeDomainPropertiesEXT&gt; requires &lt;VK_EXT_present_timing&gt;&quot; );
+      return static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetSwapchainTimeDomainPropertiesEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                static_cast&lt;VkSwapchainKHR&gt;( m_swapchainKHR ),
+                                                                reinterpret_cast&lt;VkSwapchainTimeDomainPropertiesEXT *&gt;( pSwapchainTimeDomainProperties ),
+                                                                pTimeDomainsCounter ) );
+    }  // wrapper function for command vkGetPastPresentationTimingEXT, see
+       // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPastPresentationTimingEXT.html
+
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result
+      Device::getPastPresentationTimingEXT( const PastPresentationTimingInfoEXT * pPastPresentationTimingInfo,
+                                            PastPresentationTimingPropertiesEXT * pPastPresentationTimingProperties ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPastPresentationTimingEXT &amp;&amp; &quot;Function &lt;vkGetPastPresentationTimingEXT&gt; requires &lt;VK_EXT_present_timing&gt;&quot; );
+      return static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetPastPresentationTimingEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                         reinterpret_cast&lt;const VkPastPresentationTimingInfoEXT *&gt;( pPastPresentationTimingInfo ),
+                                                         reinterpret_cast&lt;VkPastPresentationTimingPropertiesEXT *&gt;( pPastPresentationTimingProperties ) ) );
+    }
+
+    //=== VK_INTEL_performance_query ===
+
+    // wrapper function for command vkInitializePerformanceApiINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkInitializePerformanceApiINTEL.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+      Device::initializePerformanceApiINTEL( const InitializePerformanceApiInfoINTEL &amp; initializeInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkInitializePerformanceApiINTEL &amp;&amp;
+                         &quot;Function &lt;vkInitializePerformanceApiINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkInitializePerformanceApiINTEL(
+        static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkInitializePerformanceApiInfoINTEL *&gt;( &amp;initializeInfo ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::initializePerformanceApiINTEL&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkUninitializePerformanceApiINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkUninitializePerformanceApiINTEL.html
+    VULKAN_HPP_INLINE void Device::uninitializePerformanceApiINTEL() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkUninitializePerformanceApiINTEL &amp;&amp;
+                         &quot;Function &lt;vkUninitializePerformanceApiINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+
+      getDispatcher()-&gt;vkUninitializePerformanceApiINTEL( static_cast&lt;VkDevice&gt;( m_device ) );
+    }
+
+    // wrapper function for command vkCmdSetPerformanceMarkerINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceMarkerINTEL.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type CommandBuffer::setPerformanceMarkerINTEL( const PerformanceMarkerInfoINTEL &amp; markerInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdSetPerformanceMarkerINTEL &amp;&amp; &quot;Function &lt;vkCmdSetPerformanceMarkerINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCmdSetPerformanceMarkerINTEL(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkPerformanceMarkerInfoINTEL *&gt;( &amp;markerInfo ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::CommandBuffer::setPerformanceMarkerINTEL&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkCmdSetPerformanceStreamMarkerINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceStreamMarkerINTEL.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+      CommandBuffer::setPerformanceStreamMarkerINTEL( const PerformanceStreamMarkerInfoINTEL &amp; markerInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdSetPerformanceStreamMarkerINTEL &amp;&amp;
+                         &quot;Function &lt;vkCmdSetPerformanceStreamMarkerINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCmdSetPerformanceStreamMarkerINTEL(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkPerformanceStreamMarkerInfoINTEL *&gt;( &amp;markerInfo ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::CommandBuffer::setPerformanceStreamMarkerINTEL&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkCmdSetPerformanceOverrideINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPerformanceOverrideINTEL.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type CommandBuffer::setPerformanceOverrideINTEL( const PerformanceOverrideInfoINTEL &amp; overrideInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdSetPerformanceOverrideINTEL &amp;&amp;
+                         &quot;Function &lt;vkCmdSetPerformanceOverrideINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCmdSetPerformanceOverrideINTEL(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkPerformanceOverrideInfoINTEL *&gt;( &amp;overrideInfo ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::CommandBuffer::setPerformanceOverrideINTEL&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkAcquirePerformanceConfigurationINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquirePerformanceConfigurationINTEL.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;PerformanceConfigurationINTEL&gt;::type
+      Device::acquirePerformanceConfigurationINTEL( PerformanceConfigurationAcquireInfoINTEL const &amp; acquireInfo ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkAcquirePerformanceConfigurationINTEL &amp;&amp;
+                         &quot;Function &lt;vkAcquirePerformanceConfigurationINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::PerformanceConfigurationINTEL configuration;
+      Result                                              result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkAcquirePerformanceConfigurationINTEL( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                 reinterpret_cast&lt;const VkPerformanceConfigurationAcquireInfoINTEL *&gt;( &amp;acquireInfo ),
+                                                                 reinterpret_cast&lt;VkPerformanceConfigurationINTEL *&gt;( &amp;configuration ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::acquirePerformanceConfigurationINTEL&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType(
+        result, PerformanceConfigurationINTEL( *this, *reinterpret_cast&lt;VkPerformanceConfigurationINTEL *&gt;( &amp;configuration ) ) );
+    }
+
+    // wrapper function for command vkQueueSetPerformanceConfigurationINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSetPerformanceConfigurationINTEL.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+      Queue::setPerformanceConfigurationINTEL( VULKAN_HPP_NAMESPACE::PerformanceConfigurationINTEL configuration ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkQueueSetPerformanceConfigurationINTEL &amp;&amp;
+                         &quot;Function &lt;vkQueueSetPerformanceConfigurationINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkQueueSetPerformanceConfigurationINTEL(
+        static_cast&lt;VkQueue&gt;( m_queue ), static_cast&lt;VkPerformanceConfigurationINTEL&gt;( configuration ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Queue::setPerformanceConfigurationINTEL&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkGetPerformanceParameterINTEL, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPerformanceParameterINTEL.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;PerformanceValueINTEL&gt;::type
+                         Device::getPerformanceParameterINTEL( PerformanceParameterTypeINTEL parameter ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPerformanceParameterINTEL &amp;&amp; &quot;Function &lt;vkGetPerformanceParameterINTEL&gt; requires &lt;VK_INTEL_performance_query&gt;&quot; );
+
+      PerformanceValueINTEL value;
+      Result                result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetPerformanceParameterINTEL(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkPerformanceParameterTypeINTEL&gt;( parameter ), reinterpret_cast&lt;VkPerformanceValueINTEL *&gt;( &amp;value ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::getPerformanceParameterINTEL&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( value ) );
+    }
+
+    //=== VK_AMD_display_native_hdr ===
+
+    // wrapper function for command vkSetLocalDimmingAMD, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetLocalDimmingAMD.html
+    VULKAN_HPP_INLINE void SwapchainKHR::setLocalDimmingAMD( Bool32 localDimmingEnable ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkSetLocalDimmingAMD &amp;&amp; &quot;Function &lt;vkSetLocalDimmingAMD&gt; requires &lt;VK_AMD_display_native_hdr&gt;&quot; );
+
+      getDispatcher()-&gt;vkSetLocalDimmingAMD(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkSwapchainKHR&gt;( m_swapchainKHR ), static_cast&lt;VkBool32&gt;( localDimmingEnable ) );
+    }
+
+#  if defined( VK_USE_PLATFORM_FUCHSIA )
+    //=== VK_FUCHSIA_imagepipe_surface ===
+
+    // wrapper function for command vkCreateImagePipeSurfaceFUCHSIA, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImagePipeSurfaceFUCHSIA.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;SurfaceKHR&gt;::type
+                         Instance::createImagePipeSurfaceFUCHSIA( ImagePipeSurfaceCreateInfoFUCHSIA const &amp; createInfo,
+                                               Optional&lt;const AllocationCallbacks&gt;       allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateImagePipeSurfaceFUCHSIA &amp;&amp;
+                         &quot;Function &lt;vkCreateImagePipeSurfaceFUCHSIA&gt; requires &lt;VK_FUCHSIA_imagepipe_surface&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::SurfaceKHR surface;
+      Result                           result =
+        static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateImagePipeSurfaceFUCHSIA( static_cast&lt;VkInstance&gt;( m_instance ),
+                                                                               reinterpret_cast&lt;const VkImagePipeSurfaceCreateInfoFUCHSIA *&gt;( &amp;createInfo ),
+                                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                               reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Instance::createImagePipeSurfaceFUCHSIA&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, SurfaceKHR( *this, *reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ), allocator ) );
+    }
+#  endif /*VK_USE_PLATFORM_FUCHSIA*/
+
+#  if defined( VK_USE_PLATFORM_METAL_EXT )
+    //=== VK_EXT_metal_surface ===
+
+    // wrapper function for command vkCreateMetalSurfaceEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateMetalSurfaceEXT.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;SurfaceKHR&gt;::type
+                         Instance::createMetalSurfaceEXT( MetalSurfaceCreateInfoEXT const &amp;   createInfo,
+                                       Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateMetalSurfaceEXT &amp;&amp; &quot;Function &lt;vkCreateMetalSurfaceEXT&gt; requires &lt;VK_EXT_metal_surface&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::SurfaceKHR surface;
+      Result                           result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateMetalSurfaceEXT( static_cast&lt;VkInstance&gt;( m_instance ),
+                                                                                     reinterpret_cast&lt;const VkMetalSurfaceCreateInfoEXT *&gt;( &amp;createInfo ),
+                                                                                     reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                                     reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Instance::createMetalSurfaceEXT&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, SurfaceKHR( *this, *reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ), allocator ) );
+    }
+#  endif /*VK_USE_PLATFORM_METAL_EXT*/
+
+    //=== VK_KHR_fragment_shading_rate ===
+
+    // wrapper function for command vkGetPhysicalDeviceFragmentShadingRatesKHR, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceFragmentShadingRatesKHR.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;PhysicalDeviceFragmentShadingRateKHR&gt;&gt;::type
+                         PhysicalDevice::getFragmentShadingRatesKHR() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceFragmentShadingRatesKHR &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceFragmentShadingRatesKHR&gt; requires &lt;VK_KHR_fragment_shading_rate&gt;&quot; );
+
+      std::vector&lt;PhysicalDeviceFragmentShadingRateKHR&gt; fragmentShadingRates;
+      uint32_t                                          fragmentShadingRateCount;
+      Result                                            result;
+      do
+      {
+        result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetPhysicalDeviceFragmentShadingRatesKHR(
+          static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;fragmentShadingRateCount, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; fragmentShadingRateCount )
+        {
+          fragmentShadingRates.resize( fragmentShadingRateCount );
+          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetPhysicalDeviceFragmentShadingRatesKHR(
+            static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+            &amp;fragmentShadingRateCount,
+            reinterpret_cast&lt;VkPhysicalDeviceFragmentShadingRateKHR *&gt;( fragmentShadingRates.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::getFragmentShadingRatesKHR&quot; );
+      VULKAN_HPP_ASSERT( fragmentShadingRateCount &lt;= fragmentShadingRates.size() );
+      if ( fragmentShadingRateCount &lt; fragmentShadingRates.size() )
+      {
+        fragmentShadingRates.resize( fragmentShadingRateCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( fragmentShadingRates ) );
+    }
+
+    // wrapper function for command vkCmdSetFragmentShadingRateKHR, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetFragmentShadingRateKHR.html
+    VULKAN_HPP_INLINE void CommandBuffer::setFragmentShadingRateKHR( const Extent2D &amp;                       fragmentSize,
+                                                                     const FragmentShadingRateCombinerOpKHR combinerOps[2] ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdSetFragmentShadingRateKHR &amp;&amp;
+                         &quot;Function &lt;vkCmdSetFragmentShadingRateKHR&gt; requires &lt;VK_KHR_fragment_shading_rate&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdSetFragmentShadingRateKHR( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                       reinterpret_cast&lt;const VkExtent2D *&gt;( &amp;fragmentSize ),
+                                                       reinterpret_cast&lt;const VkFragmentShadingRateCombinerOpKHR *&gt;( combinerOps ) );
+    }
+
+    //=== VK_KHR_dynamic_rendering_local_read ===
+
+    // wrapper function for command vkCmdSetRenderingAttachmentLocationsKHR, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetRenderingAttachmentLocationsKHR.html
+    VULKAN_HPP_INLINE void CommandBuffer::setRenderingAttachmentLocationsKHR( const RenderingAttachmentLocationInfo &amp; locationInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdSetRenderingAttachmentLocationsKHR &amp;&amp;
+                         &quot;Function &lt;vkCmdSetRenderingAttachmentLocationsKHR&gt; requires &lt;VK_KHR_dynamic_rendering_local_read&gt; or &lt;VK_VERSION_1_4&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdSetRenderingAttachmentLocationsKHR( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                                reinterpret_cast&lt;const VkRenderingAttachmentLocationInfo *&gt;( &amp;locationInfo ) );
+    }
+
+    // wrapper function for command vkCmdSetRenderingInputAttachmentIndicesKHR, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetRenderingInputAttachmentIndicesKHR.html
+    VULKAN_HPP_INLINE void
+      CommandBuffer::setRenderingInputAttachmentIndicesKHR( const RenderingInputAttachmentIndexInfo &amp; inputAttachmentIndexInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdSetRenderingInputAttachmentIndicesKHR &amp;&amp;
+                         &quot;Function &lt;vkCmdSetRenderingInputAttachmentIndicesKHR&gt; requires &lt;VK_KHR_dynamic_rendering_local_read&gt; or &lt;VK_VERSION_1_4&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdSetRenderingInputAttachmentIndicesKHR( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                                   reinterpret_cast&lt;const VkRenderingInputAttachmentIndexInfo *&gt;( &amp;inputAttachmentIndexInfo ) );
+    }
+
+    //=== VK_EXT_buffer_device_address ===
+
+    // wrapper function for command vkGetBufferDeviceAddressEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetBufferDeviceAddressEXT.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE DeviceAddress Device::getBufferAddressEXT( const BufferDeviceAddressInfo &amp; info ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT(
+        getDispatcher()-&gt;vkGetBufferDeviceAddressEXT &amp;&amp;
+        &quot;Function &lt;vkGetBufferDeviceAddressEXT&gt; requires &lt;VK_EXT_buffer_device_address&gt; or &lt;VK_KHR_buffer_device_address&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      VkDeviceAddress result =
+        getDispatcher()-&gt;vkGetBufferDeviceAddressEXT( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkBufferDeviceAddressInfo *&gt;( &amp;info ) );
+
+      return static_cast&lt;DeviceAddress&gt;( result );
+    }
+
+    //=== VK_EXT_tooling_info ===
+
+    // wrapper function for command vkGetPhysicalDeviceToolPropertiesEXT, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceToolPropertiesEXT.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;PhysicalDeviceToolProperties&gt;&gt;::type
+                         PhysicalDevice::getToolPropertiesEXT() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceToolPropertiesEXT &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceToolPropertiesEXT&gt; requires &lt;VK_EXT_tooling_info&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      std::vector&lt;PhysicalDeviceToolProperties&gt; toolProperties;
+      uint32_t                                  toolCount;
+      Result                                    result;
+      do
+      {
+        result = static_cast&lt;Result&gt;(
+          getDispatcher()-&gt;vkGetPhysicalDeviceToolPropertiesEXT( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;toolCount, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; toolCount )
+        {
+          toolProperties.resize( toolCount );
+          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetPhysicalDeviceToolPropertiesEXT(
+            static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;toolCount, reinterpret_cast&lt;VkPhysicalDeviceToolProperties *&gt;( toolProperties.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::getToolPropertiesEXT&quot; );
+      VULKAN_HPP_ASSERT( toolCount &lt;= toolProperties.size() );
+      if ( toolCount &lt; toolProperties.size() )
+      {
+        toolProperties.resize( toolCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( toolProperties ) );
+    }
+
+    //=== VK_KHR_present_wait ===
+
+    // wrapper function for command vkWaitForPresentKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkWaitForPresentKHR.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result SwapchainKHR::waitForPresent( uint64_t presentId, uint64_t timeout ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkWaitForPresentKHR &amp;&amp; &quot;Function &lt;vkWaitForPresentKHR&gt; requires &lt;VK_KHR_present_wait&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkWaitForPresentKHR( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkSwapchainKHR&gt;( m_swapchainKHR ), presentId, timeout ) );
+
+#  if defined( VULKAN_HPP_HANDLE_ERROR_OUT_OF_DATE_AS_SUCCESS )
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result,
+                                                 VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::SwapchainKHR::waitForPresent&quot;,
+                                                 { Result::eSuccess, Result::eTimeout, Result::eSuboptimalKHR, Result::eErrorOutOfDateKHR } );
+#  else
+      VULKAN_HPP_NAMESPACE::detail::resultCheck(
+        result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::SwapchainKHR::waitForPresent&quot;, { Result::eSuccess, Result::eTimeout, Result::eSuboptimalKHR } );
+#  endif
+
+      return static_cast&lt;Result&gt;( result );
+    }
+
+    //=== VK_NV_cooperative_matrix ===
+
+    // wrapper function for command vkGetPhysicalDeviceCooperativeMatrixPropertiesNV, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceCooperativeMatrixPropertiesNV.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;CooperativeMatrixPropertiesNV&gt;&gt;::type
+                         PhysicalDevice::getCooperativeMatrixPropertiesNV() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceCooperativeMatrixPropertiesNV &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceCooperativeMatrixPropertiesNV&gt; requires &lt;VK_NV_cooperative_matrix&gt;&quot; );
+
+      std::vector&lt;CooperativeMatrixPropertiesNV&gt; properties;
+      uint32_t                                   propertyCount;
+      Result                                     result;
+      do
+      {
+        result = static_cast&lt;Result&gt;(
+          getDispatcher()-&gt;vkGetPhysicalDeviceCooperativeMatrixPropertiesNV( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;propertyCount, nullptr ) );</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-52.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-54.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

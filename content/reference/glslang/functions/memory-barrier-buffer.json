@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "glslang",
+    "displayName": "GLSLang",
+    "displayNameArabic": "GLSLang",
+    "description": "مرجع عربي لعناصر GLSL وGLSLang من التوجيهات حتى الدوال والعناصر المضمنة."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "memoryBarrierBuffer",
+    "slug": "memory-barrier-buffer",
+    "titleArabic": "تفرض ترتيبًا لوصولات الذاكرة الخاصة بمتغيرات buffer قبل متابعة التعليمات اللاحقة في نفس الـ",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/glslang/functions/memory-barrier-buffer",
+    "contentPath": "content/reference/glslang/functions/memory-barrier-buffer.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تفرض ترتيبًا لوصولات الذاكرة الخاصة بمتغيرات buffer قبل متابعة التعليمات اللاحقة في نفس الـ",
+    "actualMeaningArabic": "تفرض ترتيبًا لوصولات الذاكرة الخاصة بمتغيرات buffer قبل متابعة التعليمات اللاحقة في نفس الـ invocation.",
+    "purposeArabic": "تستخدم عندما تكتب الشيدر إلى buffer-backed resources ثم تريد التأكد من ترتيب هذه الكتابات قبل قراءات لاحقة مرتبطة بها.",
+    "whyUseArabic": "تمنع بعض صور إعادة الترتيب التي قد تكسر اعتماد القراءة اللاحقة على كتابة buffer سابقة.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء ليست نصاً أو تعريفاً فقط، بل الأثر الذي يحدثه على الحالة أو المورد المستهدف.",
+    "sourceDescription": "تفرض ترتيبًا لوصولات الذاكرة الخاصة بمتغيرات buffer قبل متابعة التعليمات اللاحقة في نفس الـ invocation."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "تستخدم عندما تكتب الشيدر إلى buffer-backed resources ثم تريد التأكد من ترتيب هذه الكتابات قبل قراءات لاحقة مرتبطة بها."
+    ],
+    "notes": [
+      "تؤثر على visibility/order لوصولات buffer الصادرة من invocation الحالية.",
+      "تمنع بعض صور إعادة الترتيب التي قد تكسر اعتماد القراءة اللاحقة على كتابة buffer سابقة.",
+      "تكمل مزامنات Vulkan الخارجية لكنها تركز على buffer accesses داخل الشيدر نفسه."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "#version 460\nlayout(local_size_x = 64) in;\nlayout(set = 0, binding = 0) buffer OutputBuffer {\n float values[];\n} outputBuffer;\n\nvoid main() {\n uint index = gl_GlobalInvocationID.x;\n outputBuffer.values[index] = float(index);\n memoryBarrierBuffer();\n}"
+  },
+  "links": {
+    "officialUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/glsl/reference/functions.json",
+    "category": "الدوال المضمنة",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

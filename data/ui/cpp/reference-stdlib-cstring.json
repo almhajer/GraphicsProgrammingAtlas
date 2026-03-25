@@ -1,0 +1,631 @@
+{
+  "referenceGuides": {
+    "std::strcpy": {
+      "fullProjectNoteArabic": "std::strcpy تنسخ نصًا منتهيًا بـ \\0 من مصفوفة char إلى أخرى. المعنى الحقيقي أنها تنسخ كل شيء حتى تصل إلى المحرف الفارغ، وتضعه في الوجهة أيضًا. لا تتحقق من حجم الوجهة أصلًا، لذلك إذا كان المصدر أطول من الوجهة فستكتب خارج الحدود وهذا خطأ خطير.",
+      "projectStepsArabic": [
+        "تأكد دائمًا أن مصفوفة الوجهة تتسع لنص المصدر كاملًا بما فيه \\0 قبل استدعاء strcpy.",
+        "فضّل strncpy مع تحديد الحجم عند الشك، أو استخدم std::string التي تتعامل مع الحجم تلقائيًا.",
+        "لا تستخدم strcpy أبدًا على نصوص من مصادر خارجية (مدخلات مستخدم، شبكة، ملفات) لأنها نقطة انطلاق شائعة لثغرات تجاوز المخزن."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نسخ نص بسيط",
+          "code": "#include <cstring>\n\nint main() {\n    char src[] = \"Hello\";\n    char dst[10];\n    std::strcpy(dst, src);\n    return dst[0] == 'H' ? 1 : 0;\n}",
+          "explanationArabic": "strcpy تنسخ الأحرف واحدة واحدة حتى تجد \\0 فتنسخه وتتوقف. dst يجب أن تكون كبيرة كفاية.",
+          "relatedTokens": ["std::strcpy", "char"]
+        },
+        {
+          "titleArabic": "خطأ شائع: تجاوز المخزن",
+          "code": "#include <cstring>\n\nint main() {\n    char src[] = \"This is too long\";\n    char dst[6]; // صغيرة جدًا!\n    // ❌ std::strcpy(dst, src); // يكتب خارج الحدود — سلوك غير محدد\n    // ✅ استخدم strncpy أو std::string بدلًا من ذلك\n    return 0;\n}",
+          "explanationArabic": "strcpy لا تعرف حجم الوجهة. إذا كان النص أطول من المساحة المتاحة، تكتب خارج المصفوفة وهذا قد يُفسد الذاكرة أو يُنهي البرنامج.",
+          "relatedTokens": ["std::strcpy", "std::strncpy"]
+        },
+        {
+          "titleArabic": "الفرق عن std::string",
+          "code": "#include <cstring>\n#include <string>\n\nint main() {\n    // strcpy: عليك إدارة الحجم يدويًا\n    char a[20];\n    std::strcpy(a, \"safe\");\n\n    // std::string: تدير الحذر تلقائيًا\n    std::string b = \"safe\";\n\n    return a[0] == b[0] ? 1 : 0;\n}",
+          "explanationArabic": "std::string تدير الذاكرة تلقائيًا وتُلغي الحاجة ل strcpy في معظم الحالات. استخدم strcpy فقط عند الحاجة للتعامل مع مصفوفات char مباشرة مثل واجهات C.",
+          "relatedTokens": ["std::strcpy", "std::string"]
+        }
+      ],
+      "followUps": ["std::strncpy", "std::memcpy", "std::string"]
+    },
+    "std::strncpy": {
+      "fullProjectNoteArabic": "std::strncpy مثل strcpy لكنها تأخذ حدًا أقصى لعدد الأحرف المنسوخة. المشكلة الشائعة أنها لا تضمن إضافة \\0 في نهاية الوجهة إذا كان المصدر أطول من الحد المحدد، لذلك يجب التعامل معها بحذر.",
+      "projectStepsArabic": [
+        "حدّد الحد الأقصى بعدد عناصر الوجهة مطروحًا منه 1، ثم أضف \\0 يدويًا كضمانة.",
+        "تذكر أن strncpy تملأ الباقي بأصفار إذا كان المصدر أقصر من الحد، وهذا بطيء عند مخازن كبيرة.",
+        "لا تعتمد عليها كحل أمني كامل؛ std::string أنسب للتعامل العام مع النصوص."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نسخ محدود بحد أقصى",
+          "code": "#include <cstring>\n\nint main() {\n    char src[] = \"Hello World\";\n    char dst[6];\n    std::strncpy(dst, src, 5);\n    dst[5] = '\\0'; // ضروري! strncpy لا تضيف \\0 تلقائيًا\n    return dst[0] == 'H' ? 1 : 0;\n}",
+          "explanationArabic": "نسخنا 5 أحرف فقط ثم أضفنا \\0 يدويًا. بدون هذا الإضافة، dst لن تكون نصًا صالحًا منتهيًا.",
+          "relatedTokens": ["std::strncpy", "char"]
+        },
+        {
+          "titleArabic": "سلوك مختلف عن المتوقع عند نص قصير",
+          "code": "#include <cstring>\n\nint main() {\n    char src[] = \"Hi\";\n    char dst[6] = {};\n    std::strncpy(dst, src, 5);\n    // dst الآن: {'H','i','\\0','\\0','\\0'}\n    // strncpy تملأ الباقي بأصفار إذا كان المصدر أقصر\n    return dst[2] == '\\0' ? 1 : 0;\n}",
+          "explanationArabic": "هذا سلوك مفاجئ لكثيرين: strncpy لا تتوقف عند \\0 بل تستمر بملء الأصفار حتى تصل للحد. هذا بطيء عند مخازن كبيرة.",
+          "relatedTokens": ["std::strncpy"]
+        },
+        {
+          "titleArabic": "استخدام آمن كعامل نسخ",
+          "code": "#include <cstring>\n\nvoid safe_copy(char* dst, const char* src, std::size_t dst_size) {\n    if (dst_size == 0) return;\n    std::strncpy(dst, src, dst_size - 1);\n    dst[dst_size - 1] = '\\0';\n}\n\nint main() {\n    char buf[10];\n    safe_copy(buf, \"Testing\", 10);\n    return buf[0] == 'T' ? 1 : 0;\n}",
+          "explanationArabic": "هذا النمط يلف strncpy بدالة تضمن دائمًا الإنهاء بـ \\0. هذا أنسب للاستخدام في المشاريع الحقيقية من استدعاء strncpy مباشرة.",
+          "relatedTokens": ["std::strncpy", "std::size_t"]
+        }
+      ],
+      "followUps": ["std::strcpy", "std::strncat", "std::snprintf"]
+    },
+    "std::strcat": {
+      "fullProjectNoteArabic": "std::strcat تضيف نصًا إلى نهاية نص آخر. تبدأ البحث عن \\0 في الوجهة ثم تنسخ المصدر مكانه. لا تتحقق من الحجم، لذلك إذا لم يكن في الوجهة مساحة كافية فستكتب خارج الحدود.",
+      "projectStepsArabic": [
+        "تأكد أن الوجهة تتسع لنصها الحالي plus نص المصدر plus \\0 قبل الاستدعاء.",
+        "فضّل std::string وعميلتها + لأنها تدير الذاكرة تلقائيًا.",
+        "لا تستخدم strcat في حلقات تكرارية لأن كل استدعاء يعيد البحث عن النهاية مما يجعل الأداء O(n²)."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "دمج نصين",
+          "code": "#include <cstring>\n\nint main() {\n    char dst[20] = \"Hello \";\n    std::strcat(dst, \"World\");\n    return dst[5] == ' ' ? 1 : 0;\n}",
+          "explanationArabic": "strcat تبحث عن \\0 في dst ثم تبدأ النسخ من تلك النقطة. النتيجة: \"Hello World\".",
+          "relatedTokens": ["std::strcat", "char"]
+        },
+        {
+          "titleArabic": "خطأ شائع: تجاوز في حلقة",
+          "code": "#include <cstring>\n\nint main() {\n    char dst[10] = \"Start\";\n    // ❌ strcat في حلقة: كل استدعاء يعيد مسح النص كاملًا\n    // for (int i = 0; i < 100; ++i)\n    //     std::strcat(dst, \"x\"); // سريعًا يتجاوز الحدود!\n    // ✅ استخدم std::string بدلًا من ذلك\n    return 0;\n}",
+          "explanationArabic": "strcat لا تتحقق من الحدود، وفي الحلقات يتجاوز الحد بسرعة. std::string أنسب وأأمن.",
+          "relatedTokens": ["std::strcat", "std::string"]
+        },
+        {
+          "titleArabic": "مقارنة مع std::string",
+          "code": "#include <cstring>\n#include <string>\n\nint main() {\n    // strcat: يدوي وخطر\n    char a[20] = \"Hi \";\n    std::strcat(a, \"there\");\n\n    // string: آمن وتلقائي\n    std::string b = \"Hi \" + std::string(\"there\");\n\n    return a[0] == b[0] ? 1 : 0;\n}",
+          "explanationArabic": "std::string تعيد تخصيص الذاكرة تلقائيًا عند الحاجة. هذا يُلغي أخطار تجاوز المخزن تمامًا.",
+          "relatedTokens": ["std::strcat", "std::string"]
+        }
+      ],
+      "followUps": ["std::strncat", "std::strcpy", "std::string"]
+    },
+    "std::strncat": {
+      "fullProjectNoteArabic": "std::strncat مثل strcat لكنها تحدد حدًا أقصى للأحرف المضافة. الفرق المهم عن strncpy أن strncat تضيف دائمًا \\0 في النهاية حتى لو وصلت للحد الأقصى.",
+      "projectStepsArabic": [
+        "مرّر الحد الأقصى بعدد عناصر الوجهة المتبقية مطروحًا منه 1.",
+        "استفد من أن strncat تضيف \\0 تلقائيًا، على عكس strncpy التي لا تفعل ذلك.",
+        "فضّل std::string عند الإمكان لأنها تُلغي الحاجة لحساب المساحات يدويًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إلحاق محدود بحد أقصى",
+          "code": "#include <cstring>\n\nint main() {\n    char dst[10] = \"Hi \";\n    std::strncat(dst, \"World!!!\", 4); // يضيف 4 أحرف فقط\n    // dst الآن: \"Hi Worl\\0\"\n    return dst[5] == 'W' ? 1 : 0;\n}",
+          "explanationArabic": "strncat أضفت 4 أحرف فقط من المصدر ثم أضافت \\0 تلقائيًا. هذا أنسب من strncpy لأنها تضمن الإنهاء.",
+          "relatedTokens": ["std::strncat", "char"]
+        },
+        {
+          "titleArabic": "حساب المساحة المتبقية",
+          "code": "#include <cstring>\n\nint main() {\n    char dst[20] = \"Start\";\n    std::size_t remaining = sizeof(dst) - std::strlen(dst) - 1;\n    std::strncat(dst, \" and more text\", remaining);\n    return dst[5] == ' ' ? 1 : 0;\n}",
+          "explanationArabic": "حساب المساحة المتبقية بهذه الطريقة يضمن عدم التجاوز. strlen تعطي الطول الحالي، ونطرح 1 لـ \\0.",
+          "relatedTokens": ["std::strncat", "std::strlen", "std::size_t"]
+        },
+        {
+          "titleArabic": "الفرق عن strncpy في معاملة \\0",
+          "code": "#include <cstring>\n\nint main() {\n    char a[6] = \"AB\";\n    // strncat تضيف \\0 دائمًا حتى لو وصلت للحد\n    std::strncat(a, \"CDEF\", 3);\n    // a الآن: \"ABC\\0F\" (أضافت 3 أحرف + \\0 تلقائيًا)\n    return a[3] == '\\0' ? 1 : 0;\n}",
+          "explanationArabic": "هذا الفرق الجوهري: strncat تضمن \\0 في النهاية بينما strncpy قد لا تفعل. هذا يجعل strncat أنسب قليلًا عند الإلحاق.",
+          "relatedTokens": ["std::strncat", "std::strncpy"]
+        }
+      ],
+      "followUps": ["std::strcat", "std::strncpy", "std::strlen"]
+    },
+    "std::strcmp": {
+      "fullProjectNoteArabic": "std::strcmp تقارن نصين محرفًا محرفًا باستخدام قيم ASCII. تعيد 0 إذا تساويا، قيمة سالبة إذا كان الأول أصغر، وقيمة موجبة إذا كان الأول أكبر. المعنى الحقيقي أنها تقارن النصوص كتسلسلات بايتات لا ككلمات ذات معنى.",
+      "projectStepsArabic": [
+        "استخدمها للمقارنة البسيطة: if (strcmp(a, b) == 0) يعني تساويًا.",
+        "لا تقارن النتيجة بـ 1 أو −1 لأن المعيار يضمن فقط الإشارة لا القيمة الدقيقة.",
+        "فضّل مقارنة std::string بالعامل == لأنها أوضح وأأمن."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فحص التساوي",
+          "code": "#include <cstring>\n\nint main() {\n    const char* a = \"hello\";\n    const char* b = \"hello\";\n    return std::strcmp(a, b) == 0 ? 1 : 0;\n}",
+          "explanationArabic": "strcmp تعيد 0 فقط عند التساوي الكامل. انتبه: لا تستخدم == على مؤشرات char لأنها تقارن العناوين لا المحتوى.",
+          "relatedTokens": ["std::strcmp", "const char*"]
+        },
+        {
+          "titleArabic": "الترتيب المعجمي",
+          "code": "#include <cstring>\n\nint main() {\n    // 'A' (65) أقل من 'a' (97) في ASCII\n    int result = std::strcmp(\"Apple\", \"apple\");\n    return result < 0 ? 1 : 0;\n}",
+          "explanationArabic": "strcmp تقارن بقيم ASCII. الحرف الكبير أقل من الصغير. هذا يعني الترتيب يختلف عن الترتيب الأبجدي الاعتيادي.",
+          "relatedTokens": ["std::strcmp"]
+        },
+        {
+          "titleArabic": "خطأ شائع: مقارنة المؤشرات بدل المحتوى",
+          "code": "#include <cstring>\n\nint main() {\n    const char* a = \"test\";\n    const char* b = \"test\";\n    // ❌ a == b قد يعمل صدفة لكنه يقارن العناوين لا المحتوى\n    // ✅ std::strcmp(a, b) == 0 يقارن المحتوى فعليًا\n    return std::strcmp(a, b) == 0 ? 1 : 0;\n}",
+          "explanationArabic": "المؤشران قد يشيران لنفس المكان في الذاكرة (string literal pooling) فيعمل == صدفة، لكن مع مصفوفات منفصلة لن يعمل. strcmp تقارن المحتوى دائمًا.",
+          "relatedTokens": ["std::strcmp", "const char*"]
+        }
+      ],
+      "followUps": ["std::strncmp", "std::string", "std::strcoll"]
+    },
+    "std::strncmp": {
+      "fullProjectNoteArabic": "std::strncmp مثل strcmp لكنها تقارن عددًا محددًا من الأحرف فقط. مفيدة لمقارنة بادئات أو عند نصوص طويلة لا تحتاج مقارنتها كاملة.",
+      "projectStepsArabic": [
+        "استخدمها عند مقارنة بادئة مثل التحقق من أن النص يبدأ بكلمة معينة.",
+        "مرّر عدد الأحرف المطلوب مقارنتها كمعامل ثالث.",
+        "تذكر أنها تعيد 0 إذا تساوت الأحرف المحددة حتى لو كان باقي النص مختلفًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "مقارنة بادئة",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"hello world\";\n    // هل يبدأ بـ \"hello\"؟\n    return std::strncmp(text, \"hello\", 5) == 0 ? 1 : 0;\n}",
+          "explanationArabic": "strncmp تقارن أول 5 أحرف فقط. هذا أنسب من strcmp عند التحقق من بادئة لأن strcmp تقارن النص كاملًا.",
+          "relatedTokens": ["std::strncmp", "const char*"]
+        },
+        {
+          "titleArabic": "مقارنة أول حرفين فقط",
+          "code": "#include <cstring>\n\nint main() {\n    // مقارنة اختصارات أوامر\n    return std::strncmp(\"quit\", \"qu\", 2) == 0 ? 1 : 0;\n}",
+          "explanationArabic": "هذا نمط شائع في برامج سطر الأوامر: مقارنة أول حرفين لتحديد الأمر المختصر.",
+          "relatedTokens": ["std::strncmp"]
+        },
+        {
+          "titleArabic": "الفرق عن strcmp عند نصوص مختلفة بعد الحد",
+          "code": "#include <cstring>\n\nint main() {\n    const char* a = \"helloABC\";\n    const char* b = \"helloXYZ\";\n    // strncmp تقول: متساويان (أول 5 أحرف فقط)\n    // strcmp تقول: مختلفان\n    int partial = std::strncmp(a, b, 5);\n    int full = std::strcmp(a, b);\n    return (partial == 0 && full != 0) ? 1 : 0;\n}",
+          "explanationArabic": "هذا يوضح الفرق بوضوح: strncmp تتجاهل ما بعد الحد المحدد بينما strcmp تقارن كل شيء.",
+          "relatedTokens": ["std::strncmp", "std::strcmp"]
+        }
+      ],
+      "followUps": ["std::strcmp", "std::strstr", "std::strchr"]
+    },
+    "std::strlen": {
+      "fullProjectNoteArabic": "std::strlen تعيد عدد الأحرف في النص قبل \\0. المعنى الحقيقي أنها تمسح الذاكرة محرفًا محرفًا حتى تجد \\0، لذا تعقيدها O(n) حيث n طول النص. لا تعرف حجم المصفوفة، بل تعتمد فقط على موقع \\0.",
+      "projectStepsArabic": [
+        "استخدمها لمعرفة طول النص عند الحاجة، لكن تذكر أنها تُعاد حسابها كل مرة.",
+        "لا تمرر مؤشرًا NULL لأن ذلك سلوك غير محدد.",
+        "إذا كنت تحتاج الطول مرارًا، خزّنه في متغير بدل استدعاء strlen كل مرة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "طول نص بسيط",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"Hello\";\n    return static_cast<int>(std::strlen(text)); // 5\n}",
+          "explanationArabic": "strlen تعيد 5 لأنها تحسب الأحرف قبل \\0. لا تحسب \\0 نفسه.",
+          "relatedTokens": ["std::strlen", "const char*"]
+        },
+        {
+          "titleArabic": "حساب المساحة المتبقية في مخزن",
+          "code": "#include <cstring>\n\nint main() {\n    char buffer[100] = \"Start\";\n    std::size_t used = std::strlen(buffer);\n    std::size_t free_space = sizeof(buffer) - used - 1;\n    return static_cast<int>(free_space); // 94\n}",
+          "explanationArabic": "نطرح 1 لترك مكان لـ \\0. هذا النمط شائع عند بناء نصوص تدريجيًا في مخزن ثابت.",
+          "relatedTokens": ["std::strlen", "std::size_t", "sizeof"]
+        },
+        {
+          "titleArabic": "عدم إعادة الحساب في الحلقة",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"Hello World\";\n    // ❌ سيئ: strlen تُحسب في كل تكرار\n    // for (std::size_t i = 0; i < std::strlen(text); ++i)\n\n    // ✅ جيد: خزّن الطول مرة واحدة\n    std::size_t len = std::strlen(text);\n    for (std::size_t i = 0; i < len; ++i) {\n        // معالجة text[i]\n    }\n    return static_cast<int>(len);\n}",
+          "explanationArabic": "strlen تمسح النص كاملًا في كل استدعاء. في الحلقات هذا يعني O(n²) بدل O(n). خزّن النتيجة إذا كنت تحتاجها أكثر من مرة.",
+          "relatedTokens": ["std::strlen", "std::size_t"]
+        }
+      ],
+      "followUps": ["std::strcpy", "std::strcat", "std::strncpy"]
+    },
+    "std::strchr": {
+      "fullProjectNoteArabic": "std::strchr تبحث عن أول ظهور لمحرف في النص وتُعيد مؤشرًا إلى موضعه. المعنى الحقيقي أنها تفحص كل محرف من البداية وتتوقف عند أول تطابق. مفيدة لتحديد موضع محرف أو تقسيم النص عند فاصل.",
+      "projectStepsArabic": [
+        "استخدمها للبحث عن محرف واحد مثل فاصل أو مسافة.",
+        "تحقق أن النتيجة ليست NULL قبل استخدامها لأن المحرف قد لا يكون موجودًا.",
+        "لاحظ أن strchr تبحث أيضًا عن \\0 إذا مررته، وتُعيد مؤشرًا لنهاية النص."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "البحث عن محرف",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"Hello World\";\n    const char* found = std::strchr(text, 'W');\n    return (found != nullptr && *found == 'W') ? 1 : 0;\n}",
+          "explanationArabic": "strchr تعيد مؤشرًا إلى أول 'W' أو nullptr إذا لم تجده. المؤشر يشير داخل النص الأصلي لا نسخة منه.",
+          "relatedTokens": ["std::strchr", "const char*"]
+        },
+        {
+          "titleArabic": "حساب موضع المحرف",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"Hello World\";\n    const char* pos = std::strchr(text, 'o');\n    if (pos) {\n        // الموضع = الفرق بين المؤشرين\n        return static_cast<int>(pos - text); // 4\n    }\n    return -1;\n}",
+          "explanationArabic": "طرح المؤشرات يعطي الفرق بالعدد من العناصر. هذا يُعطي موضع المحرف داخل النص.",
+          "relatedTokens": ["std::strchr"]
+        },
+        {
+          "titleArabic": "تقسيم النص عند فاصل",
+          "code": "#include <cstring>\n\nint main() {\n    char text[] = \"name=value\";\n    char* eq = std::strchr(text, '=');\n    if (eq) {\n        *eq = '\\0'; // يُقسّم النص إلى \"name\" و \"value\"\n        // text الآن: \"name\"\n        // eq + 1 الآن: \"value\"\n    }\n    return eq != nullptr ? 1 : 0;\n}",
+          "explanationArabic": "هذا نمط شائع لتحليل نصوص بسيطة: البحث عن فاصل ثم استبداله بـ \\0 لتقسيم النص إلى قسمين.",
+          "relatedTokens": ["std::strchr", "std::strrchr"]
+        }
+      ],
+      "followUps": ["std::strrchr", "std::strstr", "std::strtok"]
+    },
+    "std::strrchr": {
+      "fullProjectNoteArabic": "std::strrchr مثل strchr لكنها تبدأ البحث من النهاية وتُعيد مؤشرًا إلى آخر ظهور للمحرف. مفيدة مثلًا عند البحث عن امتداد ملف (آخر نقطة) أو آخر فاصل في مسار.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج آخر ظهور لمحرف لا أول ظهور.",
+        "شائعة في تحليل مسارات الملفات: strrchr(path, '/') تعطي اسم الملف.",
+        "تحقق من nullptr قبل استخدام النتيجة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "البحث عن آخر ظهور",
+          "code": "#include <cstring>\n\nint main() {\n    const char* path = \"/usr/local/bin/app\";\n    const char* last_slash = std::strrchr(path, '/');\n    return (last_slash != nullptr && *(last_slash + 1) == 'a') ? 1 : 0;\n}",
+          "explanationArabic": "strrchr تعيد مؤشرًا إلى آخر '/' وهو قبل 'app'. هذا أنسب من strchr لاستخراج اسم الملف من مسار.",
+          "relatedTokens": ["std::strrchr", "const char*"]
+        },
+        {
+          "titleArabic": "استخراج امتداد ملف",
+          "code": "#include <cstring>\n\nint main() {\n    const char* filename = \"image.png\";\n    const char* dot = std::strrchr(filename, '.');\n    if (dot) {\n        // dot يشير إلى \".png\"\n        return (dot - filename) == 5 ? 1 : 0; // النقطة في الموضع 5\n    }\n    return 0;\n}",
+          "explanationArabic": "strrchr تجد آخر نقطة وهي الامتداد الحقيقي. لو استخدمت strchr ستجد أول نقطة وقد تكون داخل اسم الملف.",
+          "relatedTokens": ["std::strrchr", "std::strchr"]
+        },
+        {
+          "titleArabic": "الفرق عن strchr",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"a.b.c\";\n    const char* first = std::strchr(text, '.');  // يشير إلى أول '.'\n    const char* last = std::strrchr(text, '.');   // يشير إلى آخر '.'\n    return (first != last) ? 1 : 0; // مختلفان لأن هناك أكثر من نقطة\n}",
+          "explanationArabic": "هذا يوضح الفرق بوضوح: strchr تعطي الأول و strrchr تعطي الأخير. اختيارهما يعتمد على ما تحتاج تحليله.",
+          "relatedTokens": ["std::strrchr", "std::strchr"]
+        }
+      ],
+      "followUps": ["std::strchr", "std::strstr", "std::strtok"]
+    },
+    "std::strstr": {
+      "fullProjectNoteArabic": "std::strstr تبحث عن أول ظهور لنص داخل نص آخر وتُعيد مؤشرًا إلى بداية الوجود. المعنى الحقيقي أنها تبحث عن تسلسل محارف كامل لا محرفًا واحدًا. مفيدة للبحث عن كلمة أو عبارة ضمن نص أكبر.",
+      "projectStepsArabic": [
+        "استخدمها للبحث عن كلمة أو جزء نص داخل نص أكبر.",
+        "تحقق من nullptr قبل استخدام النتيجة.",
+        "لاحظ أن البحث حساس لحالة الأحرف (case-sensitive)."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "البحث عن كلمة",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"Hello World\";\n    const char* found = std::strstr(text, \"World\");\n    return (found != nullptr) ? 1 : 0;\n}",
+          "explanationArabic": "strstr تعيد مؤشرًا إلى بداية \"World\" داخل text. nullptr تعني عدم الوجود.",
+          "relatedTokens": ["std::strstr", "const char*"]
+        },
+        {
+          "titleArabic": "استبدال بسيط",
+          "code": "#include <cstring>\n\nint main() {\n    char text[20] = \"I like cats\";\n    char* pos = std::strstr(text, \"cats\");\n    if (pos) {\n        std::strcpy(pos, \"dogs\"); // يستبدل starting from pos\n        // text الآن: \"I like dogs\"\n    }\n    return pos != nullptr ? 1 : 0;\n}",
+          "explanationArabic": "بما أن strstr تعيد مؤشرًا داخل النص الأصلي، يمكن استخدام strcpy من تلك النقطة للاستبدال. هذا يعمل فقط إذا كان البديل بنفس الطول أو أقصر.",
+          "relatedTokens": ["std::strstr", "std::strcpy"]
+        },
+        {
+          "titleArabic": "البحث حساس لحالة الأحرف",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"Hello World\";\n    // حساس لحالة الأحرف — لن يجد \"world\"\n    const char* not_found = std::strstr(text, \"world\");\n    const char* found = std::strstr(text, \"World\");\n    return (not_found == nullptr && found != nullptr) ? 1 : 0;\n}",
+          "explanationArabic": "strstr تفرق بين الأحرف الكبيرة والصغيرة. إذا كنت تحتاج بحثًا غير حساس، تحتاج تحويل النصين لنفس الحالة أولًا أو استخدام دالة مخصصة.",
+          "relatedTokens": ["std::strstr"]
+        }
+      ],
+      "followUps": ["std::strchr", "std::strtok", "std::strncmp"]
+    },
+    "std::strtok": {
+      "fullProjectNoteArabic": "std::strtok تقسم النص إلى أجزاء (tokens) بناءً على محارف فاصلة محددة. المعنى الحقيقي أنها تُعدّل النص الأصلي باستبدال الفواصل بـ \\0 وتتذكر موضعها الداخلي للاستدعاء التالي. هذا يجعلها غير آمنة للخيوط وغير قابلة لإعادة الاستخدام على نصوص متعددة في نفس الوقت.",
+      "projectStepsArabic": [
+        "استدعِ strtok أول مرة بالنص، ثم بـ nullptr للاستمرار من حيث توقفت.",
+        "لا تستخدم strtok في برامج متعددة الخيوط لأنها تستخدم حالة داخلية مشتركة. استخدم strtok_r بدلًا.",
+        "تذكر أن strtok تُعدّل النص الأصلي. إذا احتجت النص الأصلي سليمًا، انسخه أولًا.",
+        "فضّل std::string و find/substr للتقسيم لأنها آمنة ولا تُعدّل البيانات."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تقسيم نص بكلمات",
+          "code": "#include <cstring>\n\nint main() {\n    char text[] = \"Hello World C++\";\n    char* token = std::strtok(text, \" \");\n    int count = 0;\n    while (token != nullptr) {\n        count++;\n        token = std::strtok(nullptr, \" \");\n    }\n    return count; // 3\n}",
+          "explanationArabic": "الاستدعاء الأول بالنص يبدأ التقسيم. الاستدعاءات التالية بـ nullptr تكمل من حيث توقفت. كل فاصل يُستبدل بـ \\0 داخليًا.",
+          "relatedTokens": ["std::strtok", "char", "nullptr"]
+        },
+        {
+          "titleArabic": "تقسيم بعدة فواصل",
+          "code": "#include <cstring>\n\nint main() {\n    char text[] = \"name:age,city\";\n    char* token = std::strtok(text, \":,\");\n    int count = 0;\n    while (token) {\n        count++;\n        token = std::strtok(nullptr, \":,\");\n    }\n    return count; // 3\n}",
+          "explanationArabic": "معامل الفواصل هو نص يحتوي كل المحارف الفاصلة. هنا : و , كلاهما يُعتبر فاصلًا.",
+          "relatedTokens": ["std::strtok"]
+        },
+        {
+          "titleArabic": "تُعدّل النص الأصلي",
+          "code": "#include <cstring>\n\nint main() {\n    char text[] = \"a,b,c\";\n    std::strtok(text, \",\");\n    // بعد strtok: text أصبحت \"a\\0b\\0c\"\n    // النص الأصلي تغيّر!\n    return text[1] == '\\0' ? 1 : 0;\n}",
+          "explanationArabic": "هذا تحذير مهم: strtok تستبدل الفواصل بـ \\0 في النص الأصلي. إذا احتجت النص لاحقًا، انسخه أولًا.",
+          "relatedTokens": ["std::strtok", "std::strcpy"]
+        }
+      ],
+      "followUps": ["std::strchr", "std::strstr", "std::string"]
+    },
+    "std::memset": {
+      "fullProjectNoteArabic": "std::memset تملأ كتلة ذاكرة بقيمة واحدة (بايت واحد) مكررة. المعنى الحقيقي أنها تتعامل مع الذاكرة كبايتات خام، لذلك تُستخدم لتهيئة مخازن أو تصفير مصفوفات أو تعبئة بيانات ثنائية.",
+      "projectStepsArabic": [
+        "استخدم memset(buf, 0, size) لتصفير مخزن كامل. هذا شائع جدًا في تهيئة البُنى والمخازن.",
+        "لا تستخدم memset لتهيئة أرقام بغير الصفر لأنها تضع نفس البايت في كل موضع. مثلًا memset(arr, 1, sizeof(arr)) لا تعطي 1 في كل عنصر.",
+        "لا تستخدم memset على كائنات C++ تحتوي مؤشرات أو كائنات فرعية لأنها تُبطل البنية الداخلية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تصفير مصفوفة",
+          "code": "#include <cstring>\n\nint main() {\n    int arr[5];\n    std::memset(arr, 0, sizeof(arr));\n    return arr[0] == 0 && arr[4] == 0 ? 1 : 0;\n}",
+          "explanationArabic": "memset مع 0 تضبط كل بايت إلى صفر. مع الأعداد الصحيحة هذا يعني تصفير كامل لأن تمثيل الصفر هو كل البايتات صفر.",
+          "relatedTokens": ["std::memset", "sizeof"]
+        },
+        {
+          "titleArabic": "خطأ شائع: تهيئة بغير الصفر",
+          "code": "#include <cstring>\n#include <cstdint>\n\nint main() {\n    int arr[2];\n    std::memset(arr, 1, sizeof(arr));\n    // arr[0] ليس 1! بل 0x01010101 = 16843009\n    return static_cast<int>(arr[0] != 1); // 1 (صحيح، ليس 1)\n}",
+          "explanationArabic": "memset تضع نفس البايت (1) في كل موضع. في int (4 بايتات) هذا يعني 0x01010101 لا 1. هذا خطأ شائع جدًا.",
+          "relatedTokens": ["std::memset"]
+        },
+        {
+          "titleArabic": "تصفير بنية بيانات",
+          "code": "#include <cstring>\n\nstruct Config {\n    int width;\n    int height;\n    bool fullscreen;\n};\n\nint main() {\n    Config cfg;\n    std::memset(&cfg, 0, sizeof(cfg));\n    return cfg.width == 0 && cfg.fullscreen == false ? 1 : 0;\n}",
+          "explanationArabic": "memset مع 0 على بنية بسيطة (POD) يضبط كل حقولها إلى صفر. هذا أنسب من تذكر تهيئة كل حقل يدويًا.",
+          "relatedTokens": ["std::memset", "sizeof"]
+        }
+      ],
+      "followUps": ["std::memcpy", "std::memmove", "std::memcmp"]
+    },
+    "std::memcpy": {
+      "fullProjectNoteArabic": "std::memcpy تنسخ عددًا محددًا من البايتات من مصدر إلى وجهة. المعنى الحقيقي أنها نسخ خام لا يفهم نوع البيانات، فقط ينسخ البايتات كما هي. سريعة جدًا لأنها قد تُترجم لتعليمة آلة واحدة، لكنها خطرة لأنها لا تتحقق من التداخل ولا تستدعي مُنشئات نسخ.",
+      "projectStepsArabic": [
+        "تأكد أن المصدر والوجهة لا يتداخلان. إذا كان هناك تداخل، استخدم memmove بدلًا.",
+        "استخدمها فقط على أنواع بسيطة (POD) مثل الأعداد والبُنى التي لا تحتوي مؤشرات أو موارد.",
+        "لا تستخدمها على كائنات std::string أو std::vector أو أي كائن يملك موارد لأنها تنسخ البايتات فقط دون استدعاء مُنشئ نسخ."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نسخ مصفوفة أعداد",
+          "code": "#include <cstring>\n\nint main() {\n    int source[3] = {1, 2, 3};\n    int target[3] = {};\n    std::memcpy(target, source, sizeof(source));\n    return target[2]; // 3\n}",
+          "explanationArabic": "sizeof(source) يُرجع الحجم الكلي بالبايتات (12). memcpy تنسخ هذه البايتات كما هي.",
+          "relatedTokens": ["std::memcpy", "sizeof"]
+        },
+        {
+          "titleArabic": "نسخ بيانات ثنائية خام",
+          "code": "#include <cstring>\n#include <cstdint>\n\nint main() {\n    uint8_t vertex_data[8] = {1, 0, 0, 0, 0, 0, 128, 63};\n    uint8_t staging[8] = {};\n    std::memcpy(staging, vertex_data, sizeof(vertex_data));\n    return static_cast<int>(staging[0]); // 1\n}",
+          "explanationArabic": "memcpy تتعامل مع الذاكرة كبايتات خام بغض النظر عن المعنى. هذا شائع مع vertex buffers وبيانات الرسوميات.",
+          "relatedTokens": ["std::memcpy", "uint8_t"]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسخ كائنات تحتاج semantics أعلى",
+          "code": "#include <cstring>\n#include <string>\n\nstruct Vertex { float x, y, z; };\n\nint main() {\n    // ❌ memcpy على string تنسخ المؤشر الداخلي لا النص\n    // std::string a = \"hello\";\n    // std::string b;\n    // std::memcpy(&b, &a, sizeof(std::string));\n    // الآن a و b يشيران لنفس الذاكرة — تدمير أحدهما يُبطل الآخر\n\n    // ✅ memcpy مناسب فقط لأنواع POD\n    Vertex src{1, 2, 3};\n    Vertex dst{};\n    std::memcpy(&dst, &src, sizeof(Vertex));\n    return static_cast<int>(dst.z); // 3\n}",
+          "explanationArabic": "memcpy تنسخ البايتات فقط دون استدعاء مُنشئ نسخ. على أنواع تمتلك موارد تُسبب سلوكًا غير محدد.",
+          "relatedTokens": ["std::memcpy", "std::memmove"]
+        }
+      ],
+      "followUps": ["std::memmove", "std::memset", "std::memcmp"]
+    },
+    "std::memmove": {
+      "fullProjectNoteArabic": "std::memmove مثل memcpy لكنها تتعامل بشكل صحيح مع التداخل بين المصدر والوجهة. المعنى الحقيقي أنها تتحقق أولاً: إذا كان هناك تداخل وتحتاج نسخًا للأمام، تستخدم مخزنًا مؤقتًا داخليًا. هذا يجعلها أبطأ قليلًا من memcpy لكنها آمنة في جميع الحالات.",
+      "projectStepsArabic": [
+        "استخدم memmove بدل memcpy عندما قد يتداخل المصدر والوجهة.",
+        "التداخل يحدث مثلًا عند إزاحة عناصر داخل نفس المصفوفة.",
+        "إذا كنت متأكدًا من عدم التداخل، فضّل memcpy لأنها قد تكون أسرع."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إزاحة عناصر داخل نفس المصفوفة",
+          "code": "#include <cstring>\n\nint main() {\n    char text[] = \"Hello World\";\n    // إزاحة \"World\" لموضع \"Hello\"\n    std::memmove(text, text + 6, 5);\n    // text الآن: \"World World\"\n    return text[0] == 'W' ? 1 : 0;\n}",
+          "explanationArabic": "هنا المصدر (text+6) والوجهة (text) يتداخلان. memcpy قد تُعطي نتيجة خاطئة هنا لكن memmove تتعامل معها بشكل صحيح.",
+          "relatedTokens": ["std::memmove", "char"]
+        },
+        {
+          "titleArabic": "حذف عنصر من مصفوفة",
+          "code": "#include <cstring>\n\nint main() {\n    int arr[] = {1, 2, 3, 4, 5};\n    // حذف العنصر في الموضع 2 (القيمة 3)\n    std::memmove(arr + 2, arr + 3, 2 * sizeof(int));\n    // arr الآن: {1, 2, 4, 5, 5}\n    return arr[2] == 4 ? 1 : 0;\n}",
+          "explanationArabic": "memmove تنسخ العناصر 4 و 5 إلى موضع 3 و 4. التداخل هنا حقيقي لأن المصدر داخل نفس المصفوفة.",
+          "relatedTokens": ["std::memmove", "sizeof"]
+        },
+        {
+          "titleArabic": "متى memcpy تكفي ومتى تحتاج memmove",
+          "code": "#include <cstring>\n\nint main() {\n    int a[4] = {1, 2, 3, 4};\n    int b[4];\n\n    // ✅ memcpy: لا تداخل — آمنة وأسرع\n    std::memcpy(b, a, sizeof(a));\n\n    // ✅ memmove: تداخل محتمل — ضرورية\n    // std::memmove(a + 1, a, 3 * sizeof(int));\n\n    return b[0] == 1 ? 1 : 0;\n}",
+          "explanationArabic": "القاعدة: إذا كان المصدر والوجهة في مناطق ذاكرة مختلفة تمامًا، memcpy تكفي. إذا كانا قد يتداخلان (حتى جزئيًا)، استخدم memmove.",
+          "relatedTokens": ["std::memmove", "std::memcpy"]
+        }
+      ],
+      "followUps": ["std::memcpy", "std::memset", "std::memcmp"]
+    },
+    "std::memchr": {
+      "fullProjectNoteArabic": "std::memchr تبحث عن أول ظهور لقيمة بايت واحدة داخل كتلة ذاكرة محددة الحجم. المعنى الحقيقي أنها مثل strchr لكنها تعمل على أي ذاكرة لا على نصوص فقط، وتأخذ حجمًا صريحًا بدل الاعتماد على \\0.",
+      "projectStepsArabic": [
+        "استخدمها للبحث في مخازن ثنائية أو بيانات خام لا تنتهي بـ \\0.",
+        "القيمة المبحوث عنها تُحوّل إلى unsigned char قبل المقارنة.",
+        "مفيدة في تحليل بيانات الشبكات أو ملفات الصور أو أي بيانات ثنائية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "البحث في مصفوفة بايتات",
+          "code": "#include <cstring>\n#include <cstdint>\n\nint main() {\n    uint8_t data[5] = {0x10, 0x20, 0xFF, 0x40, 0x50};\n    const uint8_t* found = static_cast<const uint8_t*>(\n        std::memchr(data, 0xFF, 5)\n    );\n    return (found != nullptr && *found == 0xFF) ? 1 : 0;\n}",
+          "explanationArabic": "memchr تبحث عن البايت 0xFF في أول 5 بايتات من data. تعيد مؤشرًا للموضع أو nullptr.",
+          "relatedTokens": ["std::memchr", "uint8_t"]
+        },
+        {
+          "titleArabic": "البحث عن فاصل في بيانات خام",
+          "code": "#include <cstring>\n\nint main() {\n    char packet[] = \"HDR\\0DATA\\0END\";\n    const char* sep = static_cast<const char*>(\n        std::memchr(packet, '\\0', sizeof(packet))\n    );\n    return (sep != nullptr && sep == packet + 3) ? 1 : 0;\n}",
+          "explanationArabic": "memchr يمكنها البحث عن \\0 نفسه، على عكس strstr أو strchr التي تتوقف عنده. هذا مفيد في بروتوكولات تستخدم \\0 كفاصل.",
+          "relatedTokens": ["std::memchr", "sizeof"]
+        },
+        {
+          "titleArabic": "الفرق عن strchr",
+          "code": "#include <cstring>\n\nint main() {\n    // strchr: تتوقف عند \\0 ولا يمكن البحث عنها\n    // memchr: تبحث في عدد محدد من البايتات ويمكنها إيجاد \\0\n    char data[] = {'A', '\\0', 'B', 'C'};\n    // strchr(data, '\\0') ستجده فورًا عند الموضع 1\n    // memchr(data, 'B', 4) ستجد 'B' رغم وجود \\0 قبله\n    const char* found = static_cast<const char*>(\n        std::memchr(data, 'B', 4)\n    );\n    return (found != nullptr) ? 1 : 0;\n}",
+          "explanationArabic": "memchr لا تهتم بـ \\0 بينما strchr تتوقف عنده. هذا الفرق مهم عند العمل مع بيانات ثنائية قد تحتوي \\0 كجزء من المحتوى.",
+          "relatedTokens": ["std::memchr", "std::strchr"]
+        }
+      ],
+      "followUps": ["std::strchr", "std::memcmp", "std::memcpy"]
+    },
+    "std::memcmp": {
+      "fullProjectNoteArabic": "std::memcmp تقارن كتلتين من الذاكرة بايتًا بايت لعدد محدد. المعنى الحقيقي أنها مثل strcmp لكنها تعمل على أي ذاكرة لا على نصوص فقط، ولا تتوقف عند \\0.",
+      "projectStepsArabic": [
+        "استخدمها لمقارنة بيانات ثنائية أو مخازن خام لا يمكن مقارنتها بـ strcmp.",
+        "تعيد 0 عند التساوي، سالبة إذا الأولى أصغر، موجبة إذا الأولى أكبر.",
+        "مفيدة في التحقق من توقيعات الملفات أو مقارنة هياكل بيانات ثنائية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "مقارنة مخزنين",
+          "code": "#include <cstring>\n\nint main() {\n    char a[] = \"ABC\";\n    char b[] = \"ABC\";\n    return std::memcmp(a, b, 3) == 0 ? 1 : 0;\n}",
+          "explanationArabic": "memcmp تقارن أول 3 بايتات. هنا متساويان فتعيد 0.",
+          "relatedTokens": ["std::memcmp"]
+        },
+        {
+          "titleArabic": "مقارنة بيانات ثنائية",
+          "code": "#include <cstring>\n#include <cstdint>\n\nint main() {\n    uint8_t header[4] = {0x89, 0x50, 0x4E, 0x47}; // توقيع PNG\n    uint8_t file[4] = {0x89, 0x50, 0x4E, 0x47};\n    return std::memcmp(header, file, 4) == 0 ? 1 : 0;\n}",
+          "explanationArabic": "memcmp مثالية لمقارنة توقيعات الملفات الثنائية لأنها لا تتوقف عند \\0 مثل strcmp.",
+          "relatedTokens": ["std::memcmp", "uint8_t"]
+        },
+        {
+          "titleArabic": "الفرق عن strcmp",
+          "code": "#include <cstring>\n\nint main() {\n    char a[] = {'A', 'B', '\\0', 'C'}; // 4 بايتات\n    char b[] = {'A', 'B', '\\0', 'D'}; // 4 بايتات\n    // strcmp تتوقف عند \\0 وتقول: متساويان\n    int cmp_str = std::strcmp(a, b); // 0\n    // memcmp تقارن كل 4 بايتات وتقول: مختلفان\n    int cmp_mem = std::memcmp(a, b, 4); // سالب (C < D)\n    return (cmp_str == 0 && cmp_mem != 0) ? 1 : 0;\n}",
+          "explanationArabic": "هذا يوضح الفرق الجوهري: strcmp تتوقف عند أول \\0 بينما memcmp تقارن العدد المحدد كاملًا. اختر بناءً على ما تحتاج مقارنته.",
+          "relatedTokens": ["std::memcmp", "std::strcmp"]
+        }
+      ],
+      "followUps": ["std::strcmp", "std::memchr", "std::memcpy"]
+    },
+    "std::strerror": {
+      "fullProjectNoteArabic": "std::strerror تحوّل رقم خطأ (errno) إلى نص وصفي يشرح الخطأ. المعنى الحقيقي أنها واجهة لرسائل النظام عن الأخطاء، مفيدة عند عرض سبب فشل عملية مثل فتح ملف أو اتصال شبكة.",
+      "projectStepsArabic": [
+        "استخدمها بعد فشل دالة تضع errno لمعرفة سبب الفشل.",
+        "لا تستخدمها في برامج متعددة الخيوط لأنها قد تستخدم مخزنًا مشتركًا. استخدم strerror_r بدلًا.",
+        "النص المعاد يختلف بين المنصات واللغات، لذلك لا تعتمد عليه في المقارنة النصية."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "شرح خطأ فتح ملف",
+          "code": "#include <cstring>\n#include <cstdio>\n\nint main() {\n    FILE* f = std::fopen(\"nonexistent.txt\", \"r\");\n    if (!f) {\n        // strerror تحوّل errno إلى نص مقروء\n        const char* msg = std::strerror(2); // ENOENT\n        return msg != nullptr ? 1 : 0;\n    }\n    std::fclose(f);\n    return 0;\n}",
+          "explanationArabic": "عند فشل fopen، يُوضع رقم الخطأ في errno. strerror تحوّله لنص يشرح المشكلة مثل \"No such file or directory\".",
+          "relatedTokens": ["std::strerror", "FILE"]
+        },
+        {
+          "titleArabic": "مع errno",
+          "code": "#include <cerrno>\n#include <cstring>\n\nint main() {\n    errno = 0;\n    // محاكاة خطأ\n    errno = 22; // EINVAL\n    const char* desc = std::strerror(errno);\n    return desc != nullptr ? 1 : 0;\n}",
+          "explanationArabic": "errno متغير عام يُحدَّث تلقائيًا عند فشل دوال النظام. strerror تأخذه وتُعيد وصفًا نصيًا.",
+          "relatedTokens": ["std::strerror", "errno"]
+        },
+        {
+          "titleArabic": "النص يختلف بين المنصات",
+          "code": "#include <cstring>\n\nint main() {\n    // نص strerror يختلف حسب نظام التشغيل واللغة\n    // لا تعتمد على المقارنة النصية معه\n    const char* msg = std::strerror(2);\n    // ✅ صح: اعرضه للمستخدم\n    // ❌ خطأ: قارنه بنص ثابت\n    return msg != nullptr ? 1 : 0;\n}",
+          "explanationArabic": "strerror تعيد نصًا من النظام وقد يكون بأي لغة. استخدمها للعرض فقط لا للمقارنة أو اتخاذ قرارات منطقية.",
+          "relatedTokens": ["std::strerror"]
+        }
+      ],
+      "followUps": ["errno", "std::perror", "<cerrno>"]
+    },
+    "std::strspn": {
+      "fullProjectNoteArabic": "std::strspn تعيد طول أطول بادئة من النص تتكون حصريًا من محارف مجموعة معينة. المعنى الحقيقي أنها تُحصي من البداية كم محرفًا متتاليًا ينتمي للمجموعة حتى تصادف محرفًا خارجها فتتوقف.",
+      "projectStepsArabic": [
+        "استخدمها لمعرفة طول الجزء الأولي المقبول من نص مثل الأرقام أو الحروف في البداية.",
+        "النتيجة هي عدد المحارف لا مؤشر، لذا أضفها لبداية النص للحصول على موضع التوقف.",
+        "مفيدة في تحليل المدخلات مثل تخطي المسافات البادئة أو استخراج رقم من بداية نص."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عد الأرقام في البداية",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"123abc\";\n    std::size_t digits = std::strspn(text, \"0123456789\");\n    return static_cast<int>(digits); // 3\n}",
+          "explanationArabic": "strspn بدأت من البداية وحسبت: 1, 2, 3 كلها أرقام، ثم a ليس رقمًا فتوقفت عند 3.",
+          "relatedTokens": ["std::strspn", "std::size_t"]
+        },
+        {
+          "titleArabic": "تخطي مسافات بادئة",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"   hello\";\n    std::size_t spaces = std::strspn(text, \" \\t\\n\");\n    const char* start = text + spaces; // يشير إلى 'h'\n    return *start == 'h' ? 1 : 0;\n}",
+          "explanationArabic": "strspn تحسب عدد المسافات البادئة. إضافتها للمؤشر الأصلي تعطي بداية النص الفعلي. هذا أنسب من حلقة يدوية.",
+          "relatedTokens": ["std::strspn"]
+        },
+        {
+          "titleArabic": "الفرق عن strcspn",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"abc123\";\n    // strspn: طول البادئة المقبولة (أحرف فقط)\n    std::size_t spn = std::strspn(text, \"abcdefghijklmnopqrstuvwxyz\"); // 3\n    // strcspn: طول البادئة قبل أول محرف مرفوض\n    std::size_t cspn = std::strcspn(text, \"0123456789\"); // 3\n    // هنا النتيجتان متساويتان لكن المعنى مختلف\n    return (spn == cspn && spn == 3) ? 1 : 0;\n}",
+          "explanationArabic": "strspn تحسب كم محرف من البداية ينتمي للمجموعة. strcspn تحسب كم محرف قبل أول ظهور لمحرف من المجموعة. كلاهما مفيد لكن من زاويتين مختلفتين.",
+          "relatedTokens": ["std::strspn", "std::strcspn"]
+        }
+      ],
+      "followUps": ["std::strcspn", "std::strpbrk", "std::strtok"]
+    },
+    "std::strcspn": {
+      "fullProjectNoteArabic": "std::strcspn تعيد طول أطول بادئة من النص لا تحتوي أيًا من محارف مجموعة معينة. المعنى الحقيقي أنها تبحث عن أول ظهور لأي محرف من المجموعة وتُعيد عدد المحارف قبله.",
+      "projectStepsArabic": [
+        "استخدمها لمعرفة كم محرفًا قبل أول فاصل أو محرف غير مقبول.",
+        "شائعة في البحث عن نهاية كلمة أو رقم قبل فاصل.",
+        "النتيجة 0 تعني أن أول محرف في النص ينتمي للمجموعة المرفوضة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "البحث عن أول فاصل",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"name,value,extra\";\n    std::size_t pos = std::strcspn(text, \",\");\n    return static_cast<int>(pos); // 4 (قبل الفاصلة الأولى)\n}",
+          "explanationArabic": "strcspn بحثت عن أول فاصلة ووجدتها في الموضع 4. النتيجة هي عدد المحارف قبلها.",
+          "relatedTokens": ["std::strcspn", "std::size_t"]
+        },
+        {
+          "titleArabic": "استخراج كلمة قبل فاصل",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"hello world\";\n    std::size_t word_len = std::strcspn(text, \" \\t\");\n    // word_len = 5 (\"hello\")\n    return static_cast<int>(word_len);\n}",
+          "explanationArabic": "strcspn تعطي طول الكلمة الأولى قبل أي مسافة. هذا أنسب من كتابة حلقة يدوية للبحث عن مسافة.",
+          "relatedTokens": ["std::strcspn"]
+        },
+        {
+          "titleArabic": "الفاصل في البداية",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \",starts with comma\";\n    std::size_t pos = std::strcspn(text, \",\");\n    return static_cast<int>(pos); // 0 (الفاصلة في البداية)\n}",
+          "explanationArabic": "إذا كان أول محرف هو الفاصل نفسه، strcspn تعيد 0. هذا يعني لا توجد بادئة صالحة قبل الفاصل.",
+          "relatedTokens": ["std::strcspn"]
+        }
+      ],
+      "followUps": ["std::strspn", "std::strpbrk", "std::strstr"]
+    },
+    "std::strpbrk": {
+      "fullProjectNoteArabic": "std::strpbrk تبحث عن أول ظهور لأي محرف من مجموعة محارف داخل النص وتُعيد مؤشرًا إلى موضعه. المعنى الحقيقي أنها مثل strchr لكنها تبحث عن عدة محارف في نفس الوقت لا محرفًا واحدًا.",
+      "projectStepsArabic": [
+        "استخدمها للبحث عن أي فاصل من مجموعة فواصل مثل المسافة والتبويب والسطر الجديد معًا.",
+        "تحقق من nullptr قبل استخدام النتيجة.",
+        "يمكن معرفة أي محرف من المجموعة وُجد بفحص القيمة في المؤشر المعاد."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "البحث عن أي فاصل",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"hello\\tworld\";\n    const char* found = std::strpbrk(text, \" \\t\\n\");\n    return (found != nullptr && *found == '\\t') ? 1 : 0;\n}",
+          "explanationArabic": "strpbrk وجدت أول محرف من المجموعة {مسافة، تبويب، سطر جديد} وهو التبويب. أعادت مؤشرًا لموضعه.",
+          "relatedTokens": ["std::strpbrk", "const char*"]
+        },
+        {
+          "titleArabic": "معرفة أي محرف وُجد",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"name:value\";\n    const char* sep = std::strpbrk(text, \":=,\");\n    if (sep) {\n        char found_char = *sep; // ':'\n        return found_char == ':' ? 1 : 0;\n    }\n    return 0;\n}",
+          "explanationArabic": "strpbrk تجد أول فاصل من عدة فواصل. فحص *sep يُخبرك أي فاصل تحديدًا وُجد.",
+          "relatedTokens": ["std::strpbrk"]
+        },
+        {
+          "titleArabic": "الفرق عن strchr",
+          "code": "#include <cstring>\n\nint main() {\n    const char* text = \"a,b;c\";\n    // strchr: تبحث عن محرف واحد\n    const char* r1 = std::strchr(text, ',');\n    // strpbrk: تبحث عن أي محرف من مجموعة\n    const char* r2 = std::strpbrk(text, \",;\");\n    // كلاهما يشيران لنفس الموضع هنا لأن الفاصلة أولاً\n    return (r1 == r2) ? 1 : 0;\n}",
+          "explanationArabic": "strchr تبحث عن محرف واحد. strpbrk تبحث عن أي محرف من عدة محارف. إذا كان المحرف المفرد موجودًا أولًا، النتيجة متطابقة.",
+          "relatedTokens": ["std::strpbrk", "std::strchr"]
+        }
+      ],
+      "followUps": ["std::strchr", "std::strcspn", "std::strstr"]
+    },
+    "std::strcoll": {
+      "fullProjectNoteArabic": "std::strcoll تقارن نصين حسب ترتيب اللغة المحلية (locale) لا حسب قيم ASCII. المعنى الحقيقي أنها مثل strcmp لكنها تحترم قواعد الترتيب الخاصة باللغة المحددة، مثل ترتيب الحروف المعدّلة في اللغات الأوروبية.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج ترتيبًا صحيحًا حسب اللغة لا حسب ASCII.",
+        "تأكد من تعيين locale المناسب قبل الاستخدام عبر setlocale.",
+        "للترتيب العام في البرامج، strcmp أنسب وأسرع. strcoll للعرض المرتب بلغة المستخدم فقط."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "مقارنة حسب اللغة المحلية",
+          "code": "#include <cstring>\n#include <clocale>\n\nint main() {\n    std::setlocale(LC_COLLATE, \"\");\n    const char* a = \"ä\";\n    const char* b = \"z\";\n    // strcmp تقارن بـ ASCII: ä (228) > z (122)\n    // strcoll قد تعتبر ä قبل z حسب اللغة الألمانية\n    int cmp = std::strcoll(a, b);\n    return cmp != std::strcmp(a, b) ? 1 : 0; // قد تختلف\n}",
+          "explanationArabic": "strcoll تحترم ترتيب اللغة. في الألمانية مثلًا ä تُعامل كـ a معدّلة وتأتي قبل z، بينما strcmp ترتيبها بالقيمة العددية فقط.",
+          "relatedTokens": ["std::strcoll", "std::strcmp", "std::setlocale"]
+        },
+        {
+          "titleArabic": "الفرق عن strcmp في الترتيب",
+          "code": "#include <cstring>\n\nint main() {\n    // strcmp دائمًا بالبايتات — سريع ومحدد\n    // strcoll باللغة المحلية — أبطأ لكن أدق للعرض\n    const char* words[] = {\"cafe\", \"café\"};\n    int ascii_order = std::strcmp(words[0], words[1]);\n    // strcoll قد تُغيّر الترتيب حسب اللغة\n    return ascii_order < 0 ? 1 : 0;\n}",
+          "explanationArabic": "strcmp تعطي ترتيبًا ثابتًا عبر كل المنصات. strcoll قد تعطي ترتيبًا مختلفًا حسب اللغة. اختر بناءً على السياق.",
+          "relatedTokens": ["std::strcoll", "std::strcmp"]
+        }
+      ],
+      "followUps": ["std::strcmp", "std::strxfrm", "std::setlocale"]
+    },
+    "std::strxfrm": {
+      "fullProjectNoteArabic": "std::strxfrm تحوّل نصًا إلى شكل يمكن مقارنته بـ strcmp بحيث تعطي نفس نتيجة strcoll. المعنى الحقيقي أنها تُعدّل النص ليصبح ترتيبه بالبايتات مطابقًا لترتيبه حسب اللغة، مما يسمح بمقارنات متعددة بكفاءة.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج مقارنات متكررة بنفس الـ locale. حوّل النصوص مرة واحدة ثم استخدم strcmp.",
+        "التحويل يحتاج مخزنًا كافيًا. استخدم strxfrm(nullptr, src, 0) لمعرفة الحجم المطلوب.",
+        "لا تستخدمها لمقارنة واحدة فقط؛ strcoll أنسب في تلك الحالة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تحويل لمقارنة فعّالة",
+          "code": "#include <cstring>\n#include <clocale>\n\nint main() {\n    std::setlocale(LC_COLLATE, \"\");\n    char transformed[50];\n    const char* text = \"äbc\";\n    std::size_t len = std::strxfrm(transformed, text, sizeof(transformed));\n    // الآن transformed يمكن مقارنتها بـ strcmp بدل strcoll\n    return static_cast<int>(len);\n}",
+          "explanationArabic": "strxfrm تحوّل النص لشكل يمكن مقارنته بـ strcmp مع نفس نتيجة strcoll. هذا أسرع عند مقارنات متكررة.",
+          "relatedTokens": ["std::strxfrm", "std::strcmp", "std::strcoll"]
+        },
+        {
+          "titleArabic": "معرفة الحجم المطلوب",
+          "code": "#include <cstring>\n#include <clocale>\n\nint main() {\n    std::setlocale(LC_COLLATE, \"\");\n    const char* text = \"café\";\n    // استدعاء بـ nullptr يعطي الحجم المطلوب دون كتابة\n    std::size_t needed = std::strxfrm(nullptr, text, 0) + 1;\n    return static_cast<int>(needed);\n}",
+          "explanationArabic": "strxfrm(nullptr, src, 0) تعيد طول النص المحوّل بدون فعليًا كتابته. أضف 1 لـ \\0. هذا يسمح بتخصيص دقيق.",
+          "relatedTokens": ["std::strxfrm", "std::size_t"]
+        }
+      ],
+      "followUps": ["std::strcoll", "std::strcmp", "std::setlocale"]
+    }
+  }
+}

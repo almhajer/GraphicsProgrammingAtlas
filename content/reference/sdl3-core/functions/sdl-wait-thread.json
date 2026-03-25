@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_WaitThread",
+    "slug": "sdl-wait-thread",
+    "titleArabic": "انتظار الخيط finish",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-wait-thread",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-wait-thread.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "انتظار الخيط finish",
+    "actualMeaningArabic": "انتظار الخيط finish.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى انتظار الخيط finish داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه void وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Wait for a thread to finish."
+  },
+  "signature": {
+    "raw": "void SDL_WaitThread(SDL_Thread *thread, int *status);",
+    "returnType": "void",
+    "parameters": [
+      "SDL_Thread *thread",
+      "int *status"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_thread.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "thread",
+        "type": "SDL_Thread *",
+        "descriptionArabic": "يمثل المعامل thread من النوع SDL_Thread * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the SDL_Thread pointer that was\nreturned from the SDL_CreateThread ()\ncall that started this thread."
+      },
+      {
+        "name": "status",
+        "type": "int *",
+        "descriptionArabic": "يمثل المعامل status من النوع int * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled in with the value returned from the thread function\nby its 'return', or -1 if the thread has been detached or isn't valid,\nmay be NULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Threads that haven't been detached will remain until this function\ncleans them up. Not doing so is a resource leak.",
+      "Once a thread has been cleaned up through this function, the SDL_Thread that references it becomes invalid\nand should not be referenced again. As such, only one thread may call SDL_WaitThread () on another.",
+      "The return code from the thread function is placed in the area\npointed to by status , if status is not\nNULL.",
+      "You may not wait on a thread that has been used in a call to SDL_DetachThread (). Use either that\nfunction or this one, but not both, or behavior is undefined.",
+      "It is safe to pass a NULL thread to this function; it is a no-op.",
+      "Note that the thread pointer is freed by this function and is not\nvalid afterward."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "It is safe to call this function from any thread, but only a single\nthread can wait any specific thread to finish.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_WaitThread",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_CreateThread",
+        "route": "#ref/sdl3-core/functions/sdl-create-thread",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_DetachThread",
+        "route": "#ref/sdl3-core/functions/sdl-detach-thread",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Thread Management",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

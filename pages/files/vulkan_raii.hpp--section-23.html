@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 23 من 64 • الأسطر 9901-10350 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 23 من 64 • الأسطر 9901-10350</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 23 من 64 • الأسطر 9901-10350</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-22.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-24.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 23/64</span>
+        <span class="source-stat">الأسطر: 9901-10350</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>#  if defined( VK_USE_PLATFORM_WIN32_KHR )
+      //=== VK_NV_external_memory_win32 ===
+
+      // wrapper function for command vkGetMemoryWin32HandleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetMemoryWin32HandleNV.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;HANDLE&gt;::type getMemoryWin32HandleNV( ExternalMemoryHandleTypeFlagsNV handleType ) const;
+#  endif /*VK_USE_PLATFORM_WIN32_KHR*/
+
+      //=== VK_EXT_pageable_device_local_memory ===
+
+      // wrapper function for command vkSetDeviceMemoryPriorityEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetDeviceMemoryPriorityEXT.html
+      void setPriorityEXT( float priority ) const VULKAN_HPP_NOEXCEPT;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device       m_device       = {};
+      VULKAN_HPP_NAMESPACE::DeviceMemory m_deviceMemory = {};
+      const AllocationCallbacks *        m_allocator    = {};
+      detail::DeviceDispatcher const *   m_dispatcher   = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;DeviceMemory&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkDisplayKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDisplayKHR.html
+    class DisplayKHR
+    {
+    public:
+      using CType   = VkDisplayKHR;
+      using CppType = VULKAN_HPP_NAMESPACE::DisplayKHR;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDisplayKHR;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eDisplayKHR;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DisplayKHR( PhysicalDevice const &amp; physicalDevice, int32_t drmFd, uint32_t connectorId )
+      {
+        *this = physicalDevice.getDrmDisplayEXT( drmFd, connectorId );
+      }
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+#    if defined( VK_USE_PLATFORM_XLIB_XRANDR_EXT )
+      DisplayKHR( PhysicalDevice const &amp; physicalDevice, Display &amp; dpy, RROutput rrOutput )
+      {
+        *this = physicalDevice.getRandROutputDisplayEXT( dpy, rrOutput );
+      }
+#    endif /*VK_USE_PLATFORM_XLIB_XRANDR_EXT*/
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+#    if defined( VK_USE_PLATFORM_WIN32_KHR )
+      DisplayKHR( PhysicalDevice const &amp; physicalDevice, uint32_t deviceRelativeId )
+      {
+        *this = physicalDevice.getWinrtDisplayNV( deviceRelativeId );
+      }
+#    endif /*VK_USE_PLATFORM_WIN32_KHR*/
+#  endif
+
+      DisplayKHR( PhysicalDevice const &amp; physicalDevice, VkDisplayKHR display )
+        : m_physicalDevice( physicalDevice ), m_displayKHR( display ), m_dispatcher( physicalDevice.getDispatcher() )
+      {
+      }
+
+      DisplayKHR( std::nullptr_t ) {}
+
+      ~DisplayKHR()
+      {
+        clear();
+      }
+
+      DisplayKHR()                     = delete;
+      DisplayKHR( DisplayKHR const &amp; ) = delete;
+
+      DisplayKHR( DisplayKHR &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_physicalDevice( exchange( rhs.m_physicalDevice, {} ) )
+        , m_displayKHR( exchange( rhs.m_displayKHR, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      DisplayKHR &amp; operator=( DisplayKHR const &amp; ) = delete;
+
+      DisplayKHR &amp; operator=( DisplayKHR &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_physicalDevice, rhs.m_physicalDevice );
+          std::swap( m_displayKHR, rhs.m_displayKHR );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::DisplayKHR const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_displayKHR;
+      }
+
+      VULKAN_HPP_NAMESPACE::DisplayKHR const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_displayKHR );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::DisplayKHR() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_displayKHR;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_displayKHR )
+        {
+          getDispatcher()-&gt;vkReleaseDisplayEXT( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), static_cast&lt;VkDisplayKHR&gt;( m_displayKHR ) );
+        }
+        m_physicalDevice = nullptr;
+        m_displayKHR     = nullptr;
+        m_dispatcher     = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::DisplayKHR release()
+      {
+        m_physicalDevice = nullptr;
+        m_dispatcher     = nullptr;
+        return exchange( m_displayKHR, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::PhysicalDevice getPhysicalDevice() const
+      {
+        return m_physicalDevice;
+      }
+
+      detail::InstanceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( DisplayKHR &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_physicalDevice, rhs.m_physicalDevice );
+        std::swap( m_displayKHR, rhs.m_displayKHR );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_KHR_display ===
+
+      // wrapper function for command vkGetDisplayModePropertiesKHR, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayModePropertiesKHR.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;std::vector&lt;DisplayModePropertiesKHR&gt;&gt;::type getModeProperties() const;
+
+      // wrapper function for command vkCreateDisplayModeKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDisplayModeKHR.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;DisplayModeKHR&gt;::type
+        createMode( DisplayModeCreateInfoKHR const &amp;    createInfo,
+                    Optional&lt;const AllocationCallbacks&gt; allocator = nullptr ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS;
+
+      //=== VK_KHR_get_display_properties2 ===
+
+      // wrapper function for command vkGetDisplayModeProperties2KHR, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayModeProperties2KHR.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;std::vector&lt;DisplayModeProperties2KHR&gt;&gt;::type getModeProperties2() const;
+
+      // wrapper function for command vkGetDisplayModeProperties2KHR, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayModeProperties2KHR.html
+      template &lt;typename StructureChain&gt;
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;std::vector&lt;StructureChain&gt;&gt;::type getModeProperties2() const;
+
+#  if defined( VK_USE_PLATFORM_WIN32_KHR )
+      //=== VK_NV_acquire_winrt_display ===
+
+      // wrapper function for command vkAcquireWinrtDisplayNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquireWinrtDisplayNV.html
+      typename ResultValueType&lt;void&gt;::type acquireWinrtNV() const;
+#  endif /*VK_USE_PLATFORM_WIN32_KHR*/
+
+    private:
+      VULKAN_HPP_NAMESPACE::PhysicalDevice m_physicalDevice = {};
+      VULKAN_HPP_NAMESPACE::DisplayKHR     m_displayKHR     = {};
+      detail::InstanceDispatcher const *   m_dispatcher     = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;DisplayKHR&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    class DisplayKHRs : public std::vector&lt;DisplayKHR&gt;
+    {
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DisplayKHRs( PhysicalDevice const &amp; physicalDevice, uint32_t planeIndex )
+      {
+        *this = physicalDevice.getDisplayPlaneSupportedDisplaysKHR( planeIndex );
+      }
+#  endif
+
+      DisplayKHRs( std::nullptr_t ) {}
+
+      DisplayKHRs()                                  = delete;
+      DisplayKHRs( DisplayKHRs const &amp; )             = delete;
+      DisplayKHRs( DisplayKHRs &amp;&amp; rhs )              = default;
+      DisplayKHRs &amp; operator=( DisplayKHRs const &amp; ) = delete;
+      DisplayKHRs &amp; operator=( DisplayKHRs &amp;&amp; rhs )  = default;
+
+      DisplayKHRs( std::vector&lt;DisplayKHR&gt; &amp;&amp; rhs )
+      {
+        std::swap( *this, rhs );
+      }
+    };
+
+    // wrapper class for handle VkDisplayModeKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDisplayModeKHR.html
+    class DisplayModeKHR
+    {
+    public:
+      using CType   = VkDisplayModeKHR;
+      using CppType = VULKAN_HPP_NAMESPACE::DisplayModeKHR;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDisplayModeKHR;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eDisplayModeKHR;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DisplayModeKHR( DisplayKHR const &amp; display, DisplayModeCreateInfoKHR const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = display.createMode( createInfo, allocator );
+      }
+#  endif
+
+      DisplayModeKHR( DisplayKHR const &amp; display, VkDisplayModeKHR displayModeKHR )
+        : m_physicalDevice( display.getPhysicalDevice() ), m_displayModeKHR( displayModeKHR ), m_dispatcher( display.getDispatcher() )
+      {
+      }
+
+      DisplayModeKHR( std::nullptr_t ) {}
+
+      ~DisplayModeKHR()
+      {
+        clear();
+      }
+
+      DisplayModeKHR() = delete;
+
+      DisplayModeKHR( DisplayModeKHR const &amp; rhs ) : m_displayModeKHR( rhs.m_displayModeKHR ), m_dispatcher( rhs.m_dispatcher ) {}
+
+      DisplayModeKHR( DisplayModeKHR &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_physicalDevice( exchange( rhs.m_physicalDevice, {} ) )
+        , m_displayModeKHR( exchange( rhs.m_displayModeKHR, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      DisplayModeKHR &amp; operator=( DisplayModeKHR const &amp; rhs )
+      {
+        m_displayModeKHR = rhs.m_displayModeKHR;
+        m_dispatcher     = rhs.m_dispatcher;
+        return *this;
+      }
+
+      DisplayModeKHR &amp; operator=( DisplayModeKHR &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_physicalDevice, rhs.m_physicalDevice );
+          std::swap( m_displayModeKHR, rhs.m_displayModeKHR );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::DisplayModeKHR const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_displayModeKHR;
+      }
+
+      VULKAN_HPP_NAMESPACE::DisplayModeKHR const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_displayModeKHR );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::DisplayModeKHR() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_displayModeKHR;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        m_physicalDevice = nullptr;
+        m_displayModeKHR = nullptr;
+        m_dispatcher     = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::DisplayModeKHR release()
+      {
+        m_physicalDevice = nullptr;
+        m_dispatcher     = nullptr;
+        return exchange( m_displayModeKHR, nullptr );
+      }
+
+      detail::InstanceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( DisplayModeKHR &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_physicalDevice, rhs.m_physicalDevice );
+        std::swap( m_displayModeKHR, rhs.m_displayModeKHR );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_KHR_display ===
+
+      // wrapper function for command vkGetDisplayPlaneCapabilitiesKHR, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayPlaneCapabilitiesKHR.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;DisplayPlaneCapabilitiesKHR&gt;::type getDisplayPlaneCapabilities( uint32_t planeIndex ) const;
+
+    private:
+      VULKAN_HPP_NAMESPACE::PhysicalDevice m_physicalDevice = {};
+      VULKAN_HPP_NAMESPACE::DisplayModeKHR m_displayModeKHR = {};
+      detail::InstanceDispatcher const *   m_dispatcher     = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;DisplayModeKHR&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkEvent.html
+    class Event
+    {
+    public:
+      using CType   = VkEvent;
+      using CppType = VULKAN_HPP_NAMESPACE::Event;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eEvent;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eEvent;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Event( Device const &amp; device, EventCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createEvent( createInfo, allocator );
+      }
+#  endif
+
+      Event( Device const &amp; device, VkEvent event, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device ), m_event( event ), m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) ), m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      Event( std::nullptr_t ) {}
+
+      ~Event()
+      {
+        clear();
+      }
+
+      Event()                = delete;
+      Event( Event const &amp; ) = delete;
+
+      Event( Event &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_event( exchange( rhs.m_event, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      Event &amp; operator=( Event const &amp; ) = delete;
+
+      Event &amp; operator=( Event &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_event, rhs.m_event );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::Event const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_event;
+      }
+
+      VULKAN_HPP_NAMESPACE::Event const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_event );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::Event() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_event;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_event )
+        {
+          getDispatcher()-&gt;vkDestroyEvent(
+            static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkEvent&gt;( m_event ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device     = nullptr;
+        m_event      = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::Event release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_event, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( Event &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_event, rhs.m_event );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_VERSION_1_0 ===
+
+      // wrapper function for command vkGetEventStatus, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetEventStatus.html
+      VULKAN_HPP_NODISCARD Result getStatus() const;
+
+      // wrapper function for command vkSetEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetEvent.html
+      typename ResultValueType&lt;void&gt;::type set() const;
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-22.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-24.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_funcs.hpp • القسم 36 من 73 • الأسطر 15751-16200 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_funcs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_funcs.hpp.html">vulkan_funcs.hpp</a> /
+        <span>القسم 36 من 73 • الأسطر 15751-16200</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_funcs.hpp</h1>
+      <p class="page-description">القسم 36 من 73 • الأسطر 15751-16200</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-35.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-37.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_funcs.hpp</span>
+        <span class="source-stat">القسم: 36/73</span>
+        <span class="source-stat">الأسطر: 15751-16200</span>
+        <span class="source-stat">حجم الملف: 2.19 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    VULKAN_HPP_ASSERT( d.vkGetPhysicalDeviceDisplayPlaneProperties2KHR &amp;&amp;
+                       &quot;Function &lt;vkGetPhysicalDeviceDisplayPlaneProperties2KHR&gt; requires &lt;VK_KHR_get_display_properties2&gt;&quot; );
+#  endif
+
+    std::vector&lt;DisplayPlaneProperties2KHR, DisplayPlaneProperties2KHRAllocator&gt; properties;
+    uint32_t                                                                     propertyCount;
+    Result                                                                       result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetPhysicalDeviceDisplayPlaneProperties2KHR( m_physicalDevice, &amp;propertyCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+      {
+        properties.resize( propertyCount );
+        result = static_cast&lt;Result&gt;( d.vkGetPhysicalDeviceDisplayPlaneProperties2KHR(
+          m_physicalDevice, &amp;propertyCount, reinterpret_cast&lt;VkDisplayPlaneProperties2KHR *&gt;( properties.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getDisplayPlaneProperties2KHR&quot; );
+    VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+    if ( propertyCount &lt; properties.size() )
+    {
+      properties.resize( propertyCount );
+    }
+    return detail::createResultValueType( result, std::move( properties ) );
+  }
+
+  // wrapper function for command vkGetPhysicalDeviceDisplayPlaneProperties2KHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceDisplayPlaneProperties2KHR.html
+  template &lt;typename DisplayPlaneProperties2KHRAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename DisplayPlaneProperties2KHRAllocator::value_type, DisplayPlaneProperties2KHR&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetPhysicalDeviceDisplayPlaneProperties2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;DisplayPlaneProperties2KHR, DisplayPlaneProperties2KHRAllocator&gt;&gt;::type
+    PhysicalDevice::getDisplayPlaneProperties2KHR( DisplayPlaneProperties2KHRAllocator const &amp; displayPlaneProperties2KHRAllocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetPhysicalDeviceDisplayPlaneProperties2KHR &amp;&amp;
+                       &quot;Function &lt;vkGetPhysicalDeviceDisplayPlaneProperties2KHR&gt; requires &lt;VK_KHR_get_display_properties2&gt;&quot; );
+#  endif
+
+    std::vector&lt;DisplayPlaneProperties2KHR, DisplayPlaneProperties2KHRAllocator&gt; properties( displayPlaneProperties2KHRAllocator );
+    uint32_t                                                                     propertyCount;
+    Result                                                                       result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetPhysicalDeviceDisplayPlaneProperties2KHR( m_physicalDevice, &amp;propertyCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+      {
+        properties.resize( propertyCount );
+        result = static_cast&lt;Result&gt;( d.vkGetPhysicalDeviceDisplayPlaneProperties2KHR(
+          m_physicalDevice, &amp;propertyCount, reinterpret_cast&lt;VkDisplayPlaneProperties2KHR *&gt;( properties.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getDisplayPlaneProperties2KHR&quot; );
+    VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+    if ( propertyCount &lt; properties.size() )
+    {
+      properties.resize( propertyCount );
+    }
+    return detail::createResultValueType( result, std::move( properties ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetDisplayModeProperties2KHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayModeProperties2KHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetDisplayModeProperties2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result PhysicalDevice::getDisplayModeProperties2KHR( DisplayKHR                  display,
+                                                                                              uint32_t *                  pPropertyCount,
+                                                                                              DisplayModeProperties2KHR * pProperties,
+                                                                                              Dispatch const &amp;            d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                  static_cast&lt;VkDisplayKHR&gt;( display ),
+                                                                  pPropertyCount,
+                                                                  reinterpret_cast&lt;VkDisplayModeProperties2KHR *&gt;( pProperties ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetDisplayModeProperties2KHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayModeProperties2KHR.html
+  template &lt;typename DisplayModeProperties2KHRAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename DisplayModeProperties2KHRAllocator::value_type, DisplayModeProperties2KHR&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetDisplayModeProperties2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;DisplayModeProperties2KHR, DisplayModeProperties2KHRAllocator&gt;&gt;::type
+                       PhysicalDevice::getDisplayModeProperties2KHR( DisplayKHR display, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetDisplayModeProperties2KHR &amp;&amp; &quot;Function &lt;vkGetDisplayModeProperties2KHR&gt; requires &lt;VK_KHR_get_display_properties2&gt;&quot; );
+#  endif
+
+    std::vector&lt;DisplayModeProperties2KHR, DisplayModeProperties2KHRAllocator&gt; properties;
+    uint32_t                                                                   propertyCount;
+    Result                                                                     result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR( m_physicalDevice, static_cast&lt;VkDisplayKHR&gt;( display ), &amp;propertyCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+      {
+        properties.resize( propertyCount );
+        result = static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR(
+          m_physicalDevice, static_cast&lt;VkDisplayKHR&gt;( display ), &amp;propertyCount, reinterpret_cast&lt;VkDisplayModeProperties2KHR *&gt;( properties.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getDisplayModeProperties2KHR&quot; );
+    VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+    if ( propertyCount &lt; properties.size() )
+    {
+      properties.resize( propertyCount );
+    }
+    return detail::createResultValueType( result, std::move( properties ) );
+  }
+
+  // wrapper function for command vkGetDisplayModeProperties2KHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayModeProperties2KHR.html
+  template &lt;typename DisplayModeProperties2KHRAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename DisplayModeProperties2KHRAllocator::value_type, DisplayModeProperties2KHR&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetDisplayModeProperties2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;DisplayModeProperties2KHR, DisplayModeProperties2KHRAllocator&gt;&gt;::type
+                       PhysicalDevice::getDisplayModeProperties2KHR( DisplayKHR                                 display,
+                                                  DisplayModeProperties2KHRAllocator const &amp; displayModeProperties2KHRAllocator,
+                                                  Dispatch const &amp;                           d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetDisplayModeProperties2KHR &amp;&amp; &quot;Function &lt;vkGetDisplayModeProperties2KHR&gt; requires &lt;VK_KHR_get_display_properties2&gt;&quot; );
+#  endif
+
+    std::vector&lt;DisplayModeProperties2KHR, DisplayModeProperties2KHRAllocator&gt; properties( displayModeProperties2KHRAllocator );
+    uint32_t                                                                   propertyCount;
+    Result                                                                     result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR( m_physicalDevice, static_cast&lt;VkDisplayKHR&gt;( display ), &amp;propertyCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+      {
+        properties.resize( propertyCount );
+        result = static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR(
+          m_physicalDevice, static_cast&lt;VkDisplayKHR&gt;( display ), &amp;propertyCount, reinterpret_cast&lt;VkDisplayModeProperties2KHR *&gt;( properties.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getDisplayModeProperties2KHR&quot; );
+    VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+    if ( propertyCount &lt; properties.size() )
+    {
+      properties.resize( propertyCount );
+    }
+    return detail::createResultValueType( result, std::move( properties ) );
+  }
+
+  // wrapper function for command vkGetDisplayModeProperties2KHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayModeProperties2KHR.html
+  template &lt;typename StructureChain,
+            typename StructureChainAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename StructureChainAllocator::value_type, StructureChain&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetDisplayModeProperties2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;StructureChain, StructureChainAllocator&gt;&gt;::type
+                       PhysicalDevice::getDisplayModeProperties2KHR( DisplayKHR display, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetDisplayModeProperties2KHR &amp;&amp; &quot;Function &lt;vkGetDisplayModeProperties2KHR&gt; requires &lt;VK_KHR_get_display_properties2&gt;&quot; );
+#  endif
+
+    std::vector&lt;StructureChain, StructureChainAllocator&gt; structureChains;
+    std::vector&lt;DisplayModeProperties2KHR&gt;               properties;
+    uint32_t                                             propertyCount;
+    Result                                               result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR( m_physicalDevice, static_cast&lt;VkDisplayKHR&gt;( display ), &amp;propertyCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+      {
+        structureChains.resize( propertyCount );
+        properties.resize( propertyCount );
+        for ( uint32_t i = 0; i &lt; propertyCount; i++ )
+        {
+          properties[i].pNext = structureChains[i].template get&lt;DisplayModeProperties2KHR&gt;().pNext;
+        }
+        result = static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR(
+          m_physicalDevice, static_cast&lt;VkDisplayKHR&gt;( display ), &amp;propertyCount, reinterpret_cast&lt;VkDisplayModeProperties2KHR *&gt;( properties.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getDisplayModeProperties2KHR&quot; );
+    VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+    if ( propertyCount &lt; properties.size() )
+    {
+      structureChains.resize( propertyCount );
+    }
+    for ( uint32_t i = 0; i &lt; propertyCount; i++ )
+    {
+      structureChains[i].template get&lt;DisplayModeProperties2KHR&gt;() = properties[i];
+    }
+    return detail::createResultValueType( result, std::move( structureChains ) );
+  }
+
+  // wrapper function for command vkGetDisplayModeProperties2KHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayModeProperties2KHR.html
+  template &lt;typename StructureChain,
+            typename StructureChainAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename StructureChainAllocator::value_type, StructureChain&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetDisplayModeProperties2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;StructureChain, StructureChainAllocator&gt;&gt;::type
+    PhysicalDevice::getDisplayModeProperties2KHR( DisplayKHR display, StructureChainAllocator &amp; structureChainAllocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetDisplayModeProperties2KHR &amp;&amp; &quot;Function &lt;vkGetDisplayModeProperties2KHR&gt; requires &lt;VK_KHR_get_display_properties2&gt;&quot; );
+#  endif
+
+    std::vector&lt;StructureChain, StructureChainAllocator&gt; structureChains( structureChainAllocator );
+    std::vector&lt;DisplayModeProperties2KHR&gt;               properties;
+    uint32_t                                             propertyCount;
+    Result                                               result;
+    do
+    {
+      result = static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR( m_physicalDevice, static_cast&lt;VkDisplayKHR&gt;( display ), &amp;propertyCount, nullptr ) );
+      if ( ( result == Result::eSuccess ) &amp;&amp; propertyCount )
+      {
+        structureChains.resize( propertyCount );
+        properties.resize( propertyCount );
+        for ( uint32_t i = 0; i &lt; propertyCount; i++ )
+        {
+          properties[i].pNext = structureChains[i].template get&lt;DisplayModeProperties2KHR&gt;().pNext;
+        }
+        result = static_cast&lt;Result&gt;( d.vkGetDisplayModeProperties2KHR(
+          m_physicalDevice, static_cast&lt;VkDisplayKHR&gt;( display ), &amp;propertyCount, reinterpret_cast&lt;VkDisplayModeProperties2KHR *&gt;( properties.data() ) ) );
+      }
+    } while ( result == Result::eIncomplete );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getDisplayModeProperties2KHR&quot; );
+    VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+    if ( propertyCount &lt; properties.size() )
+    {
+      structureChains.resize( propertyCount );
+    }
+    for ( uint32_t i = 0; i &lt; propertyCount; i++ )
+    {
+      structureChains[i].template get&lt;DisplayModeProperties2KHR&gt;() = properties[i];
+    }
+    return detail::createResultValueType( result, std::move( structureChains ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetDisplayPlaneCapabilities2KHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayPlaneCapabilities2KHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetDisplayPlaneCapabilities2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result PhysicalDevice::getDisplayPlaneCapabilities2KHR( const DisplayPlaneInfo2KHR *   pDisplayPlaneInfo,
+                                                                                                 DisplayPlaneCapabilities2KHR * pCapabilities,
+                                                                                                 Dispatch const &amp;               d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetDisplayPlaneCapabilities2KHR( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                     reinterpret_cast&lt;const VkDisplayPlaneInfo2KHR *&gt;( pDisplayPlaneInfo ),
+                                                                     reinterpret_cast&lt;VkDisplayPlaneCapabilities2KHR *&gt;( pCapabilities ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetDisplayPlaneCapabilities2KHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDisplayPlaneCapabilities2KHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetDisplayPlaneCapabilities2KHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;DisplayPlaneCapabilities2KHR&gt;::type
+                       PhysicalDevice::getDisplayPlaneCapabilities2KHR( const DisplayPlaneInfo2KHR &amp; displayPlaneInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetDisplayPlaneCapabilities2KHR &amp;&amp; &quot;Function &lt;vkGetDisplayPlaneCapabilities2KHR&gt; requires &lt;VK_KHR_get_display_properties2&gt;&quot; );
+#  endif
+
+    DisplayPlaneCapabilities2KHR capabilities;
+    Result                       result = static_cast&lt;Result&gt;( d.vkGetDisplayPlaneCapabilities2KHR( m_physicalDevice,
+                                                                              reinterpret_cast&lt;const VkDisplayPlaneInfo2KHR *&gt;( &amp;displayPlaneInfo ),
+                                                                              reinterpret_cast&lt;VkDisplayPlaneCapabilities2KHR *&gt;( &amp;capabilities ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::PhysicalDevice::getDisplayPlaneCapabilities2KHR&quot; );
+
+    return detail::createResultValueType( result, std::move( capabilities ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+#if defined( VK_USE_PLATFORM_IOS_MVK )
+  //=== VK_MVK_ios_surface ===
+
+  // wrapper function for command vkCreateIOSSurfaceMVK, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateIOSSurfaceMVK.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateIOSSurfaceMVK ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Instance::createIOSSurfaceMVK( const IOSSurfaceCreateInfoMVK * pCreateInfo,
+                                                                               const AllocationCallbacks *     pAllocator,
+                                                                               SurfaceKHR *                    pSurface,
+                                                                               Dispatch const &amp;                d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCreateIOSSurfaceMVK( static_cast&lt;VkInstance&gt;( m_instance ),
+                                                         reinterpret_cast&lt;const VkIOSSurfaceCreateInfoMVK *&gt;( pCreateInfo ),
+                                                         reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                         reinterpret_cast&lt;VkSurfaceKHR *&gt;( pSurface ) ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreateIOSSurfaceMVK, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateIOSSurfaceMVK.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateIOSSurfaceMVK ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;SurfaceKHR&gt;::type
+    Instance::createIOSSurfaceMVK( const IOSSurfaceCreateInfoMVK &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateIOSSurfaceMVK &amp;&amp; &quot;Function &lt;vkCreateIOSSurfaceMVK&gt; requires &lt;VK_MVK_ios_surface&gt;&quot; );
+#    endif
+
+    SurfaceKHR surface;
+    Result     result = static_cast&lt;Result&gt;( d.vkCreateIOSSurfaceMVK( m_instance,
+                                                                  reinterpret_cast&lt;const VkIOSSurfaceCreateInfoMVK *&gt;( &amp;createInfo ),
+                                                                  reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                  reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Instance::createIOSSurfaceMVK&quot; );
+
+    return detail::createResultValueType( result, std::move( surface ) );
+  }
+
+#    ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkCreateIOSSurfaceMVK, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateIOSSurfaceMVK.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateIOSSurfaceMVK ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;UniqueHandle&lt;SurfaceKHR, Dispatch&gt;&gt;::type
+    Instance::createIOSSurfaceMVKUnique( const IOSSurfaceCreateInfoMVK &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#      if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateIOSSurfaceMVK &amp;&amp; &quot;Function &lt;vkCreateIOSSurfaceMVK&gt; requires &lt;VK_MVK_ios_surface&gt;&quot; );
+#      endif
+
+    SurfaceKHR surface;
+    Result     result = static_cast&lt;Result&gt;( d.vkCreateIOSSurfaceMVK( m_instance,
+                                                                  reinterpret_cast&lt;const VkIOSSurfaceCreateInfoMVK *&gt;( &amp;createInfo ),
+                                                                  reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                  reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Instance::createIOSSurfaceMVKUnique&quot; );
+
+    return detail::createResultValueType( result,
+                                          UniqueHandle&lt;SurfaceKHR, Dispatch&gt;( surface, detail::ObjectDestroy&lt;Instance, Dispatch&gt;( *this, allocator, d ) ) );
+  }
+#    endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#  endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+#endif     /*VK_USE_PLATFORM_IOS_MVK*/
+
+#if defined( VK_USE_PLATFORM_MACOS_MVK )
+  //=== VK_MVK_macos_surface ===
+
+  // wrapper function for command vkCreateMacOSSurfaceMVK, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateMacOSSurfaceMVK.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateMacOSSurfaceMVK ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Instance::createMacOSSurfaceMVK( const MacOSSurfaceCreateInfoMVK * pCreateInfo,
+                                                                                 const AllocationCallbacks *       pAllocator,
+                                                                                 SurfaceKHR *                      pSurface,
+                                                                                 Dispatch const &amp;                  d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCreateMacOSSurfaceMVK( static_cast&lt;VkInstance&gt;( m_instance ),
+                                                           reinterpret_cast&lt;const VkMacOSSurfaceCreateInfoMVK *&gt;( pCreateInfo ),
+                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                           reinterpret_cast&lt;VkSurfaceKHR *&gt;( pSurface ) ) );
+  }
+
+#  ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreateMacOSSurfaceMVK, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateMacOSSurfaceMVK.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateMacOSSurfaceMVK ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;SurfaceKHR&gt;::type
+    Instance::createMacOSSurfaceMVK( const MacOSSurfaceCreateInfoMVK &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateMacOSSurfaceMVK &amp;&amp; &quot;Function &lt;vkCreateMacOSSurfaceMVK&gt; requires &lt;VK_MVK_macos_surface&gt;&quot; );
+#    endif
+
+    SurfaceKHR surface;
+    Result     result = static_cast&lt;Result&gt;( d.vkCreateMacOSSurfaceMVK( m_instance,
+                                                                    reinterpret_cast&lt;const VkMacOSSurfaceCreateInfoMVK *&gt;( &amp;createInfo ),
+                                                                    reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                    reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Instance::createMacOSSurfaceMVK&quot; );
+
+    return detail::createResultValueType( result, std::move( surface ) );
+  }
+
+#    ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkCreateMacOSSurfaceMVK, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateMacOSSurfaceMVK.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateMacOSSurfaceMVK ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;UniqueHandle&lt;SurfaceKHR, Dispatch&gt;&gt;::type Instance::createMacOSSurfaceMVKUnique(
+    const MacOSSurfaceCreateInfoMVK &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#      if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateMacOSSurfaceMVK &amp;&amp; &quot;Function &lt;vkCreateMacOSSurfaceMVK&gt; requires &lt;VK_MVK_macos_surface&gt;&quot; );
+#      endif
+
+    SurfaceKHR surface;
+    Result     result = static_cast&lt;Result&gt;( d.vkCreateMacOSSurfaceMVK( m_instance,
+                                                                    reinterpret_cast&lt;const VkMacOSSurfaceCreateInfoMVK *&gt;( &amp;createInfo ),
+                                                                    reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                    reinterpret_cast&lt;VkSurfaceKHR *&gt;( &amp;surface ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Instance::createMacOSSurfaceMVKUnique&quot; );
+
+    return detail::createResultValueType( result,
+                                          UniqueHandle&lt;SurfaceKHR, Dispatch&gt;( surface, detail::ObjectDestroy&lt;Instance, Dispatch&gt;( *this, allocator, d ) ) );
+  }
+#    endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#  endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+#endif     /*VK_USE_PLATFORM_MACOS_MVK*/
+
+  //=== VK_EXT_debug_utils ===
+
+  // wrapper function for command vkSetDebugUtilsObjectNameEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetDebugUtilsObjectNameEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSetDebugUtilsObjectNameEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::setDebugUtilsObjectNameEXT( const DebugUtilsObjectNameInfoEXT * pNameInfo,
+                                                                                    Dispatch const &amp;                    d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;(
+      d.vkSetDebugUtilsObjectNameEXT( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkDebugUtilsObjectNameInfoEXT *&gt;( pNameInfo ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkSetDebugUtilsObjectNameEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetDebugUtilsObjectNameEXT.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSetDebugUtilsObjectNameEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+                                          Device::setDebugUtilsObjectNameEXT( const DebugUtilsObjectNameInfoEXT &amp; nameInfo, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkSetDebugUtilsObjectNameEXT &amp;&amp; &quot;Function &lt;vkSetDebugUtilsObjectNameEXT&gt; requires &lt;VK_EXT_debug_utils&gt;&quot; );
+#  endif
+
+    Result result = static_cast&lt;Result&gt;( d.vkSetDebugUtilsObjectNameEXT( m_device, reinterpret_cast&lt;const VkDebugUtilsObjectNameInfoEXT *&gt;( &amp;nameInfo ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::setDebugUtilsObjectNameEXT&quot; );
+
+    return detail::createResultValueType( result );
+  }
+
+  // wrapper function for command vkSetDebugUtilsObjectNameEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetDebugUtilsObjectNameEXT.html
+  template &lt;typename HandleType, typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkSetDebugUtilsObjectNameEXT ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD_WHEN_NO_EXCEPTIONS VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+                                          Device::setDebugUtilsObjectNameEXT( HandleType const &amp; handle, std::string const &amp; name, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_STATIC_ASSERT( VULKAN_HPP_NAMESPACE::isVulkanHandleType&lt;HandleType&gt;::value, &quot;HandleType must be a Vulkan handle type&quot; );
+    // It might be, that neither constructors, nor setters, nor designated initializers are available... need to explicitly set member by member
+    VULKAN_HPP_NAMESPACE::DebugUtilsObjectNameInfoEXT nameInfo;
+    nameInfo.objectType   = handle.objectType;
+    nameInfo.objectHandle = reinterpret_cast&lt;uint64_t&gt;( static_cast&lt;typename HandleType::CType&gt;( handle ) );
+    nameInfo.pObjectName  = name.c_str();</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-35.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-37.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

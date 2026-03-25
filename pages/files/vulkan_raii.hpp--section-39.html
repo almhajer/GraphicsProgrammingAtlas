@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 39 من 64 • الأسطر 17101-17550 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 39 من 64 • الأسطر 17101-17550</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 39 من 64 • الأسطر 17101-17550</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-38.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-40.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 39/64</span>
+        <span class="source-stat">الأسطر: 17101-17550</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>                                                            &amp;sparseMemoryRequirementCount,
+                                                            reinterpret_cast&lt;VkSparseImageMemoryRequirements2 *&gt;( sparseMemoryRequirements.data() ) );
+
+      VULKAN_HPP_ASSERT( sparseMemoryRequirementCount &lt;= sparseMemoryRequirements.size() );
+      if ( sparseMemoryRequirementCount &lt; sparseMemoryRequirements.size() )
+      {
+        sparseMemoryRequirements.resize( sparseMemoryRequirementCount );
+      }
+      return sparseMemoryRequirements;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceFeatures2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceFeatures2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE PhysicalDeviceFeatures2 PhysicalDevice::getFeatures2() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceFeatures2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceFeatures2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      PhysicalDeviceFeatures2 features;
+      getDispatcher()-&gt;vkGetPhysicalDeviceFeatures2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                     reinterpret_cast&lt;VkPhysicalDeviceFeatures2 *&gt;( &amp;features ) );
+
+      return features;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceFeatures2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceFeatures2.html
+    template &lt;typename X, typename Y, typename... Z&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE StructureChain&lt;X, Y, Z...&gt; PhysicalDevice::getFeatures2() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceFeatures2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceFeatures2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      StructureChain&lt;X, Y, Z...&gt; structureChain;
+      PhysicalDeviceFeatures2 &amp;  features = structureChain.template get&lt;PhysicalDeviceFeatures2&gt;();
+      getDispatcher()-&gt;vkGetPhysicalDeviceFeatures2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                     reinterpret_cast&lt;VkPhysicalDeviceFeatures2 *&gt;( &amp;features ) );
+
+      return structureChain;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceProperties2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE PhysicalDeviceProperties2 PhysicalDevice::getProperties2() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      PhysicalDeviceProperties2 properties;
+      getDispatcher()-&gt;vkGetPhysicalDeviceProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                       reinterpret_cast&lt;VkPhysicalDeviceProperties2 *&gt;( &amp;properties ) );
+
+      return properties;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceProperties2.html
+    template &lt;typename X, typename Y, typename... Z&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE StructureChain&lt;X, Y, Z...&gt; PhysicalDevice::getProperties2() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      StructureChain&lt;X, Y, Z...&gt;  structureChain;
+      PhysicalDeviceProperties2 &amp; properties = structureChain.template get&lt;PhysicalDeviceProperties2&gt;();
+      getDispatcher()-&gt;vkGetPhysicalDeviceProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                       reinterpret_cast&lt;VkPhysicalDeviceProperties2 *&gt;( &amp;properties ) );
+
+      return structureChain;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceFormatProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceFormatProperties2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE FormatProperties2 PhysicalDevice::getFormatProperties2( Format format ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceFormatProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceFormatProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      FormatProperties2 formatProperties;
+      getDispatcher()-&gt;vkGetPhysicalDeviceFormatProperties2(
+        static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), static_cast&lt;VkFormat&gt;( format ), reinterpret_cast&lt;VkFormatProperties2 *&gt;( &amp;formatProperties ) );
+
+      return formatProperties;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceFormatProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceFormatProperties2.html
+    template &lt;typename X, typename Y, typename... Z&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE StructureChain&lt;X, Y, Z...&gt; PhysicalDevice::getFormatProperties2( Format format ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceFormatProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceFormatProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      StructureChain&lt;X, Y, Z...&gt; structureChain;
+      FormatProperties2 &amp;        formatProperties = structureChain.template get&lt;FormatProperties2&gt;();
+      getDispatcher()-&gt;vkGetPhysicalDeviceFormatProperties2(
+        static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), static_cast&lt;VkFormat&gt;( format ), reinterpret_cast&lt;VkFormatProperties2 *&gt;( &amp;formatProperties ) );
+
+      return structureChain;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceImageFormatProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceImageFormatProperties2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result PhysicalDevice::getImageFormatProperties2(
+      const PhysicalDeviceImageFormatInfo2 * pImageFormatInfo, ImageFormatProperties2 * pImageFormatProperties ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceImageFormatProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceImageFormatProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+      return static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetPhysicalDeviceImageFormatProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                    reinterpret_cast&lt;const VkPhysicalDeviceImageFormatInfo2 *&gt;( pImageFormatInfo ),
+                                                                    reinterpret_cast&lt;VkImageFormatProperties2 *&gt;( pImageFormatProperties ) ) );
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceImageFormatProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceImageFormatProperties2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;ImageFormatProperties2&gt;::type
+                         PhysicalDevice::getImageFormatProperties2( const PhysicalDeviceImageFormatInfo2 &amp; imageFormatInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceImageFormatProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceImageFormatProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      ImageFormatProperties2 imageFormatProperties;
+      Result                 result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetPhysicalDeviceImageFormatProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                    reinterpret_cast&lt;const VkPhysicalDeviceImageFormatInfo2 *&gt;( &amp;imageFormatInfo ),
+                                                                    reinterpret_cast&lt;VkImageFormatProperties2 *&gt;( &amp;imageFormatProperties ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::getImageFormatProperties2&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( imageFormatProperties ) );
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceImageFormatProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceImageFormatProperties2.html
+    template &lt;typename X, typename Y, typename... Z&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;StructureChain&lt;X, Y, Z...&gt;&gt;::type
+                         PhysicalDevice::getImageFormatProperties2( const PhysicalDeviceImageFormatInfo2 &amp; imageFormatInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceImageFormatProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceImageFormatProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      StructureChain&lt;X, Y, Z...&gt; structureChain;
+      ImageFormatProperties2 &amp;   imageFormatProperties = structureChain.template get&lt;ImageFormatProperties2&gt;();
+      Result                     result                = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetPhysicalDeviceImageFormatProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                    reinterpret_cast&lt;const VkPhysicalDeviceImageFormatInfo2 *&gt;( &amp;imageFormatInfo ),
+                                                                    reinterpret_cast&lt;VkImageFormatProperties2 *&gt;( &amp;imageFormatProperties ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::getImageFormatProperties2&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( structureChain ) );
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceQueueFamilyProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceQueueFamilyProperties2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;QueueFamilyProperties2&gt; PhysicalDevice::getQueueFamilyProperties2() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceQueueFamilyProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceQueueFamilyProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      std::vector&lt;QueueFamilyProperties2&gt; queueFamilyProperties;
+      uint32_t                            queueFamilyPropertyCount;
+      getDispatcher()-&gt;vkGetPhysicalDeviceQueueFamilyProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;queueFamilyPropertyCount, nullptr );
+      queueFamilyProperties.resize( queueFamilyPropertyCount );
+      getDispatcher()-&gt;vkGetPhysicalDeviceQueueFamilyProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                  &amp;queueFamilyPropertyCount,
+                                                                  reinterpret_cast&lt;VkQueueFamilyProperties2 *&gt;( queueFamilyProperties.data() ) );
+
+      VULKAN_HPP_ASSERT( queueFamilyPropertyCount &lt;= queueFamilyProperties.size() );
+      if ( queueFamilyPropertyCount &lt; queueFamilyProperties.size() )
+      {
+        queueFamilyProperties.resize( queueFamilyPropertyCount );
+      }
+      return queueFamilyProperties;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceQueueFamilyProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceQueueFamilyProperties2.html
+    template &lt;typename StructureChain&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;StructureChain&gt; PhysicalDevice::getQueueFamilyProperties2() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceQueueFamilyProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceQueueFamilyProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      std::vector&lt;StructureChain&gt;         structureChains;
+      std::vector&lt;QueueFamilyProperties2&gt; queueFamilyProperties;
+      uint32_t                            queueFamilyPropertyCount;
+      getDispatcher()-&gt;vkGetPhysicalDeviceQueueFamilyProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;queueFamilyPropertyCount, nullptr );
+      structureChains.resize( queueFamilyPropertyCount );
+      queueFamilyProperties.resize( queueFamilyPropertyCount );
+      for ( uint32_t i = 0; i &lt; queueFamilyPropertyCount; i++ )
+      {
+        queueFamilyProperties[i].pNext = structureChains[i].template get&lt;QueueFamilyProperties2&gt;().pNext;
+      }
+      getDispatcher()-&gt;vkGetPhysicalDeviceQueueFamilyProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                  &amp;queueFamilyPropertyCount,
+                                                                  reinterpret_cast&lt;VkQueueFamilyProperties2 *&gt;( queueFamilyProperties.data() ) );
+
+      VULKAN_HPP_ASSERT( queueFamilyPropertyCount &lt;= queueFamilyProperties.size() );
+      if ( queueFamilyPropertyCount &lt; queueFamilyProperties.size() )
+      {
+        structureChains.resize( queueFamilyPropertyCount );
+      }
+      for ( uint32_t i = 0; i &lt; queueFamilyPropertyCount; i++ )
+      {
+        structureChains[i].template get&lt;QueueFamilyProperties2&gt;() = queueFamilyProperties[i];
+      }
+      return structureChains;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceMemoryProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceMemoryProperties2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE PhysicalDeviceMemoryProperties2 PhysicalDevice::getMemoryProperties2() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceMemoryProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceMemoryProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      PhysicalDeviceMemoryProperties2 memoryProperties;
+      getDispatcher()-&gt;vkGetPhysicalDeviceMemoryProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                             reinterpret_cast&lt;VkPhysicalDeviceMemoryProperties2 *&gt;( &amp;memoryProperties ) );
+
+      return memoryProperties;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceMemoryProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceMemoryProperties2.html
+    template &lt;typename X, typename Y, typename... Z&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE StructureChain&lt;X, Y, Z...&gt; PhysicalDevice::getMemoryProperties2() const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceMemoryProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceMemoryProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      StructureChain&lt;X, Y, Z...&gt;        structureChain;
+      PhysicalDeviceMemoryProperties2 &amp; memoryProperties = structureChain.template get&lt;PhysicalDeviceMemoryProperties2&gt;();
+      getDispatcher()-&gt;vkGetPhysicalDeviceMemoryProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                             reinterpret_cast&lt;VkPhysicalDeviceMemoryProperties2 *&gt;( &amp;memoryProperties ) );
+
+      return structureChain;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceSparseImageFormatProperties2, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceSparseImageFormatProperties2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;SparseImageFormatProperties2&gt;
+                                           PhysicalDevice::getSparseImageFormatProperties2( const PhysicalDeviceSparseImageFormatInfo2 &amp; formatInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceSparseImageFormatProperties2 &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceSparseImageFormatProperties2&gt; requires &lt;VK_KHR_get_physical_device_properties2&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      std::vector&lt;SparseImageFormatProperties2&gt; properties;
+      uint32_t                                  propertyCount;
+      getDispatcher()-&gt;vkGetPhysicalDeviceSparseImageFormatProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                        reinterpret_cast&lt;const VkPhysicalDeviceSparseImageFormatInfo2 *&gt;( &amp;formatInfo ),
+                                                                        &amp;propertyCount,
+                                                                        nullptr );
+      properties.resize( propertyCount );
+      getDispatcher()-&gt;vkGetPhysicalDeviceSparseImageFormatProperties2( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                        reinterpret_cast&lt;const VkPhysicalDeviceSparseImageFormatInfo2 *&gt;( &amp;formatInfo ),
+                                                                        &amp;propertyCount,
+                                                                        reinterpret_cast&lt;VkSparseImageFormatProperties2 *&gt;( properties.data() ) );
+
+      VULKAN_HPP_ASSERT( propertyCount &lt;= properties.size() );
+      if ( propertyCount &lt; properties.size() )
+      {
+        properties.resize( propertyCount );
+      }
+      return properties;
+    }
+
+    // wrapper function for command vkTrimCommandPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkTrimCommandPool.html
+    VULKAN_HPP_INLINE void CommandPool::trim( CommandPoolTrimFlags flags ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkTrimCommandPool &amp;&amp; &quot;Function &lt;vkTrimCommandPool&gt; requires &lt;VK_KHR_maintenance1&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      getDispatcher()-&gt;vkTrimCommandPool(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkCommandPool&gt;( m_commandPool ), static_cast&lt;VkCommandPoolTrimFlags&gt;( flags ) );
+    }
+
+    // wrapper function for command vkGetDeviceQueue2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceQueue2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Queue Device::getQueue2( DeviceQueueInfo2 const &amp; queueInfo ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceQueue2 &amp;&amp; &quot;Function &lt;vkGetDeviceQueue2&gt; requires &lt;VK_VERSION_1_1&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::Queue queue;
+      getDispatcher()-&gt;vkGetDeviceQueue2(
+        static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkDeviceQueueInfo2 *&gt;( &amp;queueInfo ), reinterpret_cast&lt;VkQueue *&gt;( &amp;queue ) );
+
+      return Queue( *this, *reinterpret_cast&lt;VkQueue *&gt;( &amp;queue ) );
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceExternalBufferProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceExternalBufferProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ExternalBufferProperties
+      PhysicalDevice::getExternalBufferProperties( const PhysicalDeviceExternalBufferInfo &amp; externalBufferInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceExternalBufferProperties &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceExternalBufferProperties&gt; requires &lt;VK_KHR_external_memory_capabilities&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      ExternalBufferProperties externalBufferProperties;
+      getDispatcher()-&gt;vkGetPhysicalDeviceExternalBufferProperties( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                    reinterpret_cast&lt;const VkPhysicalDeviceExternalBufferInfo *&gt;( &amp;externalBufferInfo ),
+                                                                    reinterpret_cast&lt;VkExternalBufferProperties *&gt;( &amp;externalBufferProperties ) );
+
+      return externalBufferProperties;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceExternalFenceProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceExternalFenceProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ExternalFenceProperties
+      PhysicalDevice::getExternalFenceProperties( const PhysicalDeviceExternalFenceInfo &amp; externalFenceInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceExternalFenceProperties &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceExternalFenceProperties&gt; requires &lt;VK_KHR_external_fence_capabilities&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      ExternalFenceProperties externalFenceProperties;
+      getDispatcher()-&gt;vkGetPhysicalDeviceExternalFenceProperties( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+                                                                   reinterpret_cast&lt;const VkPhysicalDeviceExternalFenceInfo *&gt;( &amp;externalFenceInfo ),
+                                                                   reinterpret_cast&lt;VkExternalFenceProperties *&gt;( &amp;externalFenceProperties ) );
+
+      return externalFenceProperties;
+    }
+
+    // wrapper function for command vkGetPhysicalDeviceExternalSemaphoreProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceExternalSemaphoreProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ExternalSemaphoreProperties
+      PhysicalDevice::getExternalSemaphoreProperties( const PhysicalDeviceExternalSemaphoreInfo &amp; externalSemaphoreInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceExternalSemaphoreProperties &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceExternalSemaphoreProperties&gt; requires &lt;VK_KHR_external_semaphore_capabilities&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      ExternalSemaphoreProperties externalSemaphoreProperties;
+      getDispatcher()-&gt;vkGetPhysicalDeviceExternalSemaphoreProperties(
+        static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ),
+        reinterpret_cast&lt;const VkPhysicalDeviceExternalSemaphoreInfo *&gt;( &amp;externalSemaphoreInfo ),
+        reinterpret_cast&lt;VkExternalSemaphoreProperties *&gt;( &amp;externalSemaphoreProperties ) );
+
+      return externalSemaphoreProperties;
+    }
+
+    // wrapper function for command vkCmdDispatchBase, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDispatchBase.html
+    VULKAN_HPP_INLINE void CommandBuffer::dispatchBase( uint32_t baseGroupX,
+                                                        uint32_t baseGroupY,
+                                                        uint32_t baseGroupZ,
+                                                        uint32_t groupCountX,
+                                                        uint32_t groupCountY,
+                                                        uint32_t groupCountZ ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdDispatchBase &amp;&amp; &quot;Function &lt;vkCmdDispatchBase&gt; requires &lt;VK_KHR_device_group&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdDispatchBase(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ );
+    }
+
+    // wrapper function for command vkCreateDescriptorUpdateTemplate, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorUpdateTemplate.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;DescriptorUpdateTemplate&gt;::type
+                         Device::createDescriptorUpdateTemplate( DescriptorUpdateTemplateCreateInfo const &amp; createInfo,
+                                              Optional&lt;const AllocationCallbacks&gt;        allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateDescriptorUpdateTemplate &amp;&amp;
+                         &quot;Function &lt;vkCreateDescriptorUpdateTemplate&gt; requires &lt;VK_KHR_descriptor_update_template&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate descriptorUpdateTemplate;
+      Result                                         result =
+        static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateDescriptorUpdateTemplate( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                reinterpret_cast&lt;const VkDescriptorUpdateTemplateCreateInfo *&gt;( &amp;createInfo ),
+                                                                                reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                                reinterpret_cast&lt;VkDescriptorUpdateTemplate *&gt;( &amp;descriptorUpdateTemplate ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createDescriptorUpdateTemplate&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType(
+        result, DescriptorUpdateTemplate( *this, *reinterpret_cast&lt;VkDescriptorUpdateTemplate *&gt;( &amp;descriptorUpdateTemplate ), allocator ) );
+    }
+
+    // wrapper function for command vkUpdateDescriptorSetWithTemplate, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSetWithTemplate.html
+    template &lt;typename DataType&gt;
+    VULKAN_HPP_INLINE void DescriptorSet::updateWithTemplate( VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate descriptorUpdateTemplate,
+                                                              DataType const &amp;                               data ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkUpdateDescriptorSetWithTemplate &amp;&amp;
+                         &quot;Function &lt;vkUpdateDescriptorSetWithTemplate&gt; requires &lt;VK_KHR_descriptor_update_template&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      getDispatcher()-&gt;vkUpdateDescriptorSetWithTemplate( static_cast&lt;VkDevice&gt;( m_device ),
+                                                          static_cast&lt;VkDescriptorSet&gt;( m_descriptorSet ),
+                                                          static_cast&lt;VkDescriptorUpdateTemplate&gt;( descriptorUpdateTemplate ),
+                                                          reinterpret_cast&lt;const void *&gt;( &amp;data ) );
+    }
+
+    // wrapper function for command vkGetDescriptorSetLayoutSupport, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDescriptorSetLayoutSupport.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE DescriptorSetLayoutSupport
+      Device::getDescriptorSetLayoutSupport( const DescriptorSetLayoutCreateInfo &amp; createInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDescriptorSetLayoutSupport &amp;&amp;
+                         &quot;Function &lt;vkGetDescriptorSetLayoutSupport&gt; requires &lt;VK_KHR_maintenance3&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      DescriptorSetLayoutSupport support;
+      getDispatcher()-&gt;vkGetDescriptorSetLayoutSupport( static_cast&lt;VkDevice&gt;( m_device ),
+                                                        reinterpret_cast&lt;const VkDescriptorSetLayoutCreateInfo *&gt;( &amp;createInfo ),
+                                                        reinterpret_cast&lt;VkDescriptorSetLayoutSupport *&gt;( &amp;support ) );
+
+      return support;
+    }
+
+    // wrapper function for command vkGetDescriptorSetLayoutSupport, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDescriptorSetLayoutSupport.html
+    template &lt;typename X, typename Y, typename... Z&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE StructureChain&lt;X, Y, Z...&gt;
+                                           Device::getDescriptorSetLayoutSupport( const DescriptorSetLayoutCreateInfo &amp; createInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDescriptorSetLayoutSupport &amp;&amp;
+                         &quot;Function &lt;vkGetDescriptorSetLayoutSupport&gt; requires &lt;VK_KHR_maintenance3&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      StructureChain&lt;X, Y, Z...&gt;   structureChain;
+      DescriptorSetLayoutSupport &amp; support = structureChain.template get&lt;DescriptorSetLayoutSupport&gt;();
+      getDispatcher()-&gt;vkGetDescriptorSetLayoutSupport( static_cast&lt;VkDevice&gt;( m_device ),
+                                                        reinterpret_cast&lt;const VkDescriptorSetLayoutCreateInfo *&gt;( &amp;createInfo ),
+                                                        reinterpret_cast&lt;VkDescriptorSetLayoutSupport *&gt;( &amp;support ) );
+
+      return structureChain;
+    }
+
+    // wrapper function for command vkCreateSamplerYcbcrConversion, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSamplerYcbcrConversion.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;SamplerYcbcrConversion&gt;::type
+                         Device::createSamplerYcbcrConversion( SamplerYcbcrConversionCreateInfo const &amp; createInfo,
+                                            Optional&lt;const AllocationCallbacks&gt;      allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateSamplerYcbcrConversion &amp;&amp;
+                         &quot;Function &lt;vkCreateSamplerYcbcrConversion&gt; requires &lt;VK_KHR_sampler_ycbcr_conversion&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::SamplerYcbcrConversion ycbcrConversion;
+      Result                                       result =
+        static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateSamplerYcbcrConversion( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                              reinterpret_cast&lt;const VkSamplerYcbcrConversionCreateInfo *&gt;( &amp;createInfo ),
+                                                                              reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                              reinterpret_cast&lt;VkSamplerYcbcrConversion *&gt;( &amp;ycbcrConversion ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createSamplerYcbcrConversion&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType(
+        result, SamplerYcbcrConversion( *this, *reinterpret_cast&lt;VkSamplerYcbcrConversion *&gt;( &amp;ycbcrConversion ), allocator ) );
+    }
+
+    //=== VK_VERSION_1_2 ===
+
+    // wrapper function for command vkResetQueryPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetQueryPool.html
+    VULKAN_HPP_INLINE void QueryPool::reset( uint32_t firstQuery, uint32_t queryCount ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkResetQueryPool &amp;&amp; &quot;Function &lt;vkResetQueryPool&gt; requires &lt;VK_EXT_host_query_reset&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      getDispatcher()-&gt;vkResetQueryPool( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkQueryPool&gt;( m_queryPool ), firstQuery, queryCount );
+    }
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-38.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-40.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

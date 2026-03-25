@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "example",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "show_metadata.c",
+    "slug": "show-metadata.c",
+    "titleArabic": "show_metadata.c",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/example/show-metadata.c",
+    "contentPath": "content/reference/ffmpeg/examples/show-metadata.c.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يبين قراءة metadata النصية من الحاوية والـ streams.",
+    "actualMeaningArabic": "يبين قراءة metadata النصية من الحاوية والـ streams.",
+    "purposeArabic": "يبين قراءة metadata النصية من الحاوية والـ streams.",
+    "whyUseArabic": "يبين قراءة metadata النصية من الحاوية والـ streams.",
+    "carriedValueArabic": "يبين قراءة metadata النصية من الحاوية والـ streams.",
+    "sourceDescription": "يبين قراءة metadata النصية من الحاوية والـ streams."
+  },
+  "signature": {
+    "raw": "// show_metadata.c - قراءة metadata النصية من ملف وسائط\n#include <libavformat/avformat.h>\n#include <stdio.h>\n#include <string.h>\n\nstatic void print_metadata(const char *key, const char *value) {\n    if (value && value[0]) {\n        printf(\"  %s: %s\\n\", key, value);\n    }\n}\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp3\";\n    AVFormatContext *fmt_ctx = NULL;\n\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\nn    avformat_find_stream_info(fmt_ctx, NULL);\n\n    // طباعة metadata على مستوى الحاوي\n    print_metadata(\"title\", fmt_ctx->metadata->title);\n    print_metadata(\"artist\", fmt_ctx->metadata->artist);\n    print_metadata(\"album\", fmt_ctx->metadata->album);\n    print_metadata(\"genre\", fmt_ctx->metadata->genre);\n    print_metadata(\"date\", fmt_ctx->metadata->date);\n    print_metadata(\"track\", fmt_ctx->metadata->track);\n\n    // طباعة metadata لكل stream\n    for (unsigned i = 0; i < fmt_ctx->nb_streams; i++) {\n        AVDictionaryEntry *tag = NULL;\nn        while ((tag = av_dict_iter(fmt_ctx->metadata, &tag)) != NULL) {\n            printf(\"  [%d] %s: %s\\n\", i, tag->key, tag->value);\n        }\n    }\n\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// show_metadata.c - قراءة metadata النصية من ملف وسائط\n#include <libavformat/avformat.h>\n#include <stdio.h>\n#include <string.h>\n\nstatic void print_metadata(const char *key, const char *value) {\n    if (value && value[0]) {\n        printf(\"  %s: %s\n\", key, value);\n    }\n}\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp3\";\n    AVFormatContext *fmt_ctx = NULL;\n\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    // طباعة metadata على مستوى الحاوي\n    print_metadata(\"title\", fmt_ctx->metadata->title);\n    print_metadata(\"artist\", fmt_ctx->metadata->artist);\n    print_metadata(\"album\", fmt_ctx->metadata->album);\n    print_metadata(\"genre\", fmt_ctx->metadata->genre);\n    print_metadata(\"date\", fmt_ctx->metadata->date);\n    print_metadata(\"track\", fmt_ctx->metadata->track);\n\n    // طباعة metadata لكل stream\n    for (unsigned i = 0; i < fmt_ctx->nb_streams; i++) {\n        AVDictionaryEntry *tag = NULL;\n        while ((tag = av_dict_iter(fmt_ctx->metadata, &tag)) != NULL) {\n            printf(\"  [%d] %s: %s\n\", i, tag->key, tag->value);\n        }\n    }\n\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}"
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/show_metadata.c.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "FFmpeg",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

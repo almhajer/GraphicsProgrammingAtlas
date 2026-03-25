@@ -1,0 +1,1901 @@
+{
+  "referenceData": {
+    "std::for_each": {
+      "title": "std::for_each",
+      "type": "خوارزمية",
+      "description": "تُنفّذ دالة على كل عنصر في نطاق. تُرجع الدالة المُمرّرة (منذ C++11) مما يسمح بتجميع النتائج.",
+      "usage": "يظهر عند الحاجة لتطبيق عملية على كل عنصر دون تعديل النطاق نفسه. مفيد مع lambdas للطباعة أو التسجيل أو التهيئة.",
+      "example": "std::vector<int> v = {1, 2, 3};\nstd::for_each(v.begin(), v.end(), [](int x) { std::cout << x << ' '; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "طباعة كل عنصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30};\n    std::for_each(v.begin(), v.end(), [](int x) {\n        std::cout << x << ' ';\n    });\n    // المخرجات: 10 20 30\n}",
+          "explanationArabic": "for_each يمر على كل عنصر وينفذ lambda عليه. لا يُعدّل النطاق — فقط يقرأ. البديل الأبسط هو range-for لكن for_each مفيد عندما تريد تمرير callable كمعامل."
+        },
+        {
+          "titleArabic": "تعديل عناصر عبر مرجع في lambda",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    std::for_each(v.begin(), v.end(), [](int& x) {\n        x *= 2; // تعديل فعلي عبر مرجع\n    });\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 2 4 6 8 10\n}",
+          "explanationArabic": "عند تمرير المعامل بمرجع (int&) في lambda، يُمكن لـ for_each تعديل العناصر فعليًا. هذا مشابه لـ transform لكن أبسط عندما لا تحتاج نطاق ناتج."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان المرجع عند التعديل",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    // ❌ بدون & — x نسخة، التعديل لا يؤثر على الأصل\n    std::for_each(v.begin(), v.end(), [](int x) {\n        x *= 10; // يُعدّل النسخة المحلية فقط\n    });\n    // v لا تزال {1, 2, 3}\n\n    // ✅ مع & — x مرجع للعنصر الأصلي\n    std::for_each(v.begin(), v.end(), [](int& x) {\n        x *= 10;\n    });\n    // v الآن {10, 20, 30}\n}",
+          "explanationArabic": "lambda تأخذ المعاملات بالقيمة افتراضيًا. بدون & تُعدّل نسخة محلية ولا يتغير شيء في الحاوية. القاعدة: أضف & لكل معامل تريد تعديله فعليًا."
+        }
+      ],
+      "related": [
+        "std::transform",
+        "std::count_if",
+        "std::find_if"
+      ]
+    },
+    "std::count_if": {
+      "title": "std::count_if",
+      "type": "خوارزمية",
+      "description": "يُرجع عدد العناصر في نطاق التي تحقّق شرطًا مُمرّرًا كدالة مسند (predicate).",
+      "usage": "يظهر عند الحاجة لمعرفة كم عنصر يحقق شرطًا معينًا.",
+      "example": "int n = std::count_if(v.begin(), v.end(), [](int x) { return x > 0; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "عدّ الأعداد الموجبة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {-3, 0, 5, -1, 7, 2};\n    int positives = std::count_if(v.begin(), v.end(), [](int x) {\n        return x > 0;\n    });\n    std::cout << positives; // 3\n}",
+          "explanationArabic": "count_if يمر على كل عنصر ويتحقق من الشرط. يُرجع عدد العناصر التي أعادت true. هذا أنظف من كتابة حلقة يدوية مع عداد."
+        },
+        {
+          "titleArabic": "عدّ النصوص الطويلة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> words = {\"hi\", \"world\", \"cpp\", \"programming\"};\n    auto long_words = std::count_if(words.begin(), words.end(),\n        [](const std::string& s) { return s.size() > 3; });\n    std::cout << long_words; // 2 (\"world\", \"programming\")\n}",
+          "explanationArabic": "count_if يعمل مع أي نوع وشرط. تمرير النص بمرجع ثابت (const std::string&) يمنع النسخ غير الضروري عند فحص كل عنصر."
+        },
+        {
+          "titleArabic": "استخدامه كشرط للتأكد من وجود عنصر",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3};\nbool has_negative = std::count_if(v.begin(), v.end(), [](int x) { return x < 0; }) > 0;\n// has_negative == false\n\n// البديل الأنظف: std::any_of\n// bool has_negative2 = std::any_of(v.begin(), v.end(), [](int x) { return x < 0; });",
+          "explanationArabic": "count_if > 0 يعمل لكن any_of أنسب دلاليًا وأسرع لأنه يتوقف عند أول عنصر يحقق الشرط. count_if يفحص كل العناصر دائمًا. استخدم count_if فقط عندما تحتاج العدد الفعلي."
+        }
+      ],
+      "related": [
+        "std::count",
+        "std::any_of",
+        "std::find_if"
+      ]
+    },
+    "std::min_element": {
+      "title": "std::min_element",
+      "type": "خوارزمية",
+      "description": "يُرجع مُكرّر (iterator) يشير لأصغر عنصر في النطاق. لا يُرجع القيمة بل مكرّر إليها.",
+      "usage": "يظهر عند الحاجة لمعرفة موضع أو قيمة أصغر عنصر.",
+      "example": "auto it = std::min_element(v.begin(), v.end());\nint min_val = *it;",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "إيجاد أصغر عنصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {40, 10, 30, 20};\n    auto it = std::min_element(v.begin(), v.end());\n    std::cout << *it;       // 10\n    std::cout << (it - v.begin()); // 1 (الموضع)\n}",
+          "explanationArabic": "min_element يُرجع مكرّر لا قيمة. *it تحصل على القيمة. it - v.begin() يعطي الفهرس. هذا يختلف عن std::min(a, b) الذي يأخذ قيمتين ويُرجع الأصغر."
+        },
+        {
+          "titleArabic": "أصغر عنصر بحسب خاصية مخصصة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> words = {\"banana\", \"apple\", \"cherry\"};\n    auto it = std::min_element(words.begin(), words.end(),\n        [](const std::string& a, const std::string& b) {\n            return a.size() < b.size();\n        });\n    std::cout << *it; // \"apple\" (الأقصر)\n}",
+          "explanationArabic": "معامل ثالث اختياري هو دالة مقارنة مخصصة. هنا نقارن بالطول بدل الترتيب المعجمي. المُقارنة يجب أن تُرجع true إذا كان a 'أقل من' b."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان فحص النطاق الفارغ",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {};\n\n// ❌ لو كان النطاق فارغًا، min_element يُرجع end()\n// *it سلوك غير معرّف!\nauto it = std::min_element(v.begin(), v.end());\n// if (v.empty()) return; // تحقق أولًا\n// int min_val = *it;\n\n// ✅ تحقق دائمًا قبل فك المكرّر\nif (it != v.end()) {\n    int min_val = *it;\n}",
+          "explanationArabic": "min_element على نطاق فارغ يُرجع end() — فك المكرّر (*it) في هذه الحالة سلوك غير معرّف. تحقق دائمًا أن النطاق ليس فارغًا أو أن المكرّر لا يساوي end()."
+        }
+      ],
+      "related": [
+        "std::max_element",
+        "std::minmax_element",
+        "std::min"
+      ]
+    },
+    "std::max_element": {
+      "title": "std::max_element",
+      "type": "خوارزمية",
+      "description": "يُرجع مُكرّر يشير لأكبر عنصر في النطاق. لا يُرجع القيمة بل مكرّر إليها.",
+      "usage": "يظهر عند الحاجة لمعرفة موضع أو قيمة أكبر عنصر.",
+      "example": "auto it = std::max_element(v.begin(), v.end());\nint max_val = *it;",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "إيجاد أكبر عنصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 50, 30, 70, 20};\n    auto it = std::max_element(v.begin(), v.end());\n    std::cout << *it; // 70\n}",
+          "explanationArabic": "max_element يُرجع مكرّر لأكبر عنصر. نفس نمط min_element لكن للقيمة الأكبر. يفحص كل العناصر مرة واحدة — تعقيد O(n)."
+        },
+        {
+          "titleArabic": "إيجاد أكبر عنصر بحسب خاصية",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nstruct Player { std::string name; int score; };\n\nint main() {\n    std::vector<Player> players = {\n        {\"Ali\", 80}, {\"Sara\", 95}, {\"Omar\", 70}\n    };\n    auto it = std::max_element(players.begin(), players.end(),\n        [](const Player& a, const Player& b) {\n            return a.score < b.score;\n        });\n    std::cout << it->name; // \"Sara\"\n}",
+          "explanationArabic": "مع مقارنة مخصصة، max_element يُرجع العنصر الأكبر بحسب أي معيار تختاره — هنا النتيجة (score). it->name يصل لحقل الاسم عبر المكرّر."
+        },
+        {
+          "titleArabic": "خطأ: استخدام max_element على نطاق فارغ",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> empty_v = {};\nauto it = std::max_element(empty_v.begin(), empty_v.end());\n// it == empty_v.end() — لا تفك المكرّر!\n\nif (it != empty_v.end()) {\n    std::cout << *it; // آمن\n}",
+          "explanationArabic": "نفس تحذير min_element: على نطاق فارغ يُرجع end(). تحقق دائمًا قبل فك المكرّر."
+        }
+      ],
+      "related": [
+        "std::min_element",
+        "std::minmax_element",
+        "std::max"
+      ]
+    },
+    "std::swap": {
+      "title": "std::swap",
+      "type": "دالة أداة",
+      "description": "يُبدل قيمتين باستخدام move semantics. متاح لكل الأنواع القياسية ويمكن تخصيصه لنوعك عبر ADL.",
+      "usage": "يظهر عند الحاجة لتبديل قيمتين بدون متغير مؤقت. شائع في الخوارزميات والتحريك.",
+      "example": "int a = 1, b = 2;\nstd::swap(a, b); // a=2, b=1",
+      "includeHeader": "#include <utility>",
+      "usageExamples": [
+        {
+          "titleArabic": "تبديل قيمتين بسيط",
+          "code": "#include <utility>\n#include <iostream>\n\nint main() {\n    int a = 10, b = 20;\n    std::swap(a, b);\n    std::cout << a << ' ' << b; // 20 10\n}",
+          "explanationArabic": "std::swap يأخذ المراجع ويُبدل القيمتين. في C++11 وما بعده يستخدم move semantics — لا نسخ كامل عند التبديل. هذا يعني أن تبديل حاويات كبيرة (مثل vector) سريع لأنه يُبدل المؤشرات الداخلية فقط."
+        },
+        {
+          "titleArabic": "تبديل حاويات — سريع بفضل move",
+          "code": "#include <utility>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3};\n    std::vector<int> b = {100, 200};\n    std::swap(a, b);\n    // a = {100, 200}, b = {1, 2, 3}\n    // التبديل كان O(1) — فقط تبديل المؤشرات الداخلية\n    std::cout << a.size(); // 2\n}",
+          "explanationArabic": "تبديل حاويات STL سريع (O(1)) لأن std::swap يستخدم move semantics. لا يُنسخ أي عنصر — فقط تُبدل المؤشرات الداخلية والأحجام. هذا مفيد جدًا في خوارزميات الفرز والتحريك."
+        },
+        {
+          "titleArabic": "خطأ شائع: تمرير قيم بدل مراجع",
+          "code": "#include <utility>\n\nint a = 1, b = 2;\n// ❌ لا يُترجم — swap يأخذ مراجع\n// std::swap(a + 0, b); // خطأ: لا يمكن ربط rvalue بمرجع غير ثابت\n\n// ✅ صحيح — تمرير متغيرات (lvalues)\nstd::swap(a, b); // يعمل\n\n// ✅ للثوابت: لا يمكن التبديل — منطقي لأن الثابت لا يُعدّل\n// const int c = 5;\n// std::swap(c, a); // خطأ",
+          "explanationArabic": "std::swap يأخذ مراجع غير ثابتة (T&) — لا يمكن تبديل ثوابت أو قيم مؤقتة. هذا منطقي لأن التبديل يعني التعديل والثوابت لا تُعدّل."
+        }
+      ],
+      "related": [
+        "std::exchange",
+        "std::move",
+        "std::iter_swap"
+      ]
+    },
+    "std::advance": {
+      "title": "std::advance",
+      "type": "دالة مكرّرات",
+      "description": "يُحرّك مكرّر بعدد خطوات للأمام. مع مكرّرات الوصول العشوائي O(1)، ومع المكرّرات الأخرى O(n).",
+      "usage": "يظهر عند الحاجة لتقديم مكرّر بعدد خطوات محدد.",
+      "example": "std::vector<int>::iterator it = v.begin();\nstd::advance(it, 3);",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "تقديم مكرّر 3 خطوات",
+          "code": "#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40, 50};\n    auto it = v.begin();\n    std::advance(it, 3);\n    std::cout << *it; // 40\n}",
+          "explanationArabic": "advance يُحرّك المكرّر 3 خطوات للأمام. مع vector (وصول عشوائي) يكون O(1) مثل it += 3. مع list (وصول تسلسلي) يكون O(n) لأنه يحتاج المرور خطوة بخطوة."
+        },
+        {
+          "titleArabic": "تخطي أول عنصرين",
+          "code": "#include <iterator>\n#include <list>\n#include <iostream>\n\nint main() {\n    std::list<int> lst = {1, 2, 3, 4, 5};\n    auto it = lst.begin();\n    std::advance(it, 2); // يتخطى 1 و2\n    for (; it != lst.end(); ++it) {\n        std::cout << *it << ' '; // 3 4 5\n    }\n}",
+          "explanationArabic": "مع list لا يمكنك استخدام it + 2 (لا يدعم +). advance يعمل مع كل أنواع المكرّرات. البديل الأحدث في C++11 هو std::next(it, 2) الذي يُرجع مكرّرًا جديدًا بدل تعديل الأصلي."
+        },
+        {
+          "titleArabic": "advance يُعدّل المكرّر الأصلي — لا يُرجع قيمة",
+          "code": "#include <iterator>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3};\nauto it = v.begin();\nstd::advance(it, 2);\n// it الآن يشير للعنصر الثالث — advance لا يُرجع شيئًا\n\n// البديل std::next يُرجع مكرّرًا جديدًا:\n// auto it2 = std::next(v.begin(), 2); // لا يُعدّل begin()\n// auto it3 = std::prev(v.end(), 1);  // خطوة للخلف",
+          "explanationArabic": "advance يُعدّل المكرّر في مكانه ولا يُرجع قيمة. next و prev (C++11) يُرجعان مكرّرًا جديدًا ويتركان الأصلي كما هو — أنظف في التعبيرات. استخدم next/prev عندما تريد مكرّرًا جديدًا، وadvance عندما تريد تحريك المكرّر الحالي."
+        }
+      ],
+      "related": [
+        "std::next",
+        "std::prev",
+        "std::distance"
+      ]
+    },
+    "std::distance": {
+      "title": "std::distance",
+      "type": "دالة مكرّرات",
+      "description": "يُرجع عدد الخطوات بين مكرّرين. مع مكرّرات الوصول العشوائي O(1)، ومع البقية O(n).",
+      "usage": "يظهر عند الحاجة لمعرفة عدد العناصر بين مكرّرين أو فهرس عنصر.",
+      "example": "auto idx = std::distance(v.begin(), found_it);",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "معرفة فهرس عنصر بعد find",
+          "code": "#include <algorithm>\n#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40, 50};\n    auto it = std::find(v.begin(), v.end(), 30);\n    if (it != v.end()) {\n        auto idx = std::distance(v.begin(), it);\n        std::cout << idx; // 2\n    }\n}",
+          "explanationArabic": "distance يحسب الفرق بين مكرّرين. مع vector يكون O(1) لأنه طرح مؤشرات. مفيد لمعرفة فهرس عنصر بعد find أو lower_bound."
+        },
+        {
+          "titleArabic": "حساب عدد العناصر بين مكرّرين",
+          "code": "#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5, 6, 7};\n    auto first = v.begin() + 2;\n    auto last = v.begin() + 5;\n    std::cout << std::distance(first, last); // 3\n}",
+          "explanationArabic": "distance(first, last) يُرجع عدد الخطوات من first للوصول إلى last — هنا 3 (العناصر 3, 4, 5). نفس فكرة last - first لكنه يعمل مع كل أنواع المكرّرات."
+        },
+        {
+          "titleArabic": "distance مع list — O(n) ليس O(1)",
+          "code": "#include <iterator>\n#include <list>\n#include <iostream>\n\nint main() {\n    std::list<int> lst = {1, 2, 3, 4, 5};\n    auto it = lst.begin();\n    std::advance(it, 3);\n    // distance على list يعدّ خطوة بخطوة — O(n)\n    auto d = std::distance(lst.begin(), it);\n    std::cout << d; // 3\n}",
+          "explanationArabic": "مع list وغيرها من المكرّرات التسلسلية، distance يعدّ خطوة بخطوة — مكلف على نطاقات كبيرة. مع vector وdeque يكون O(1). إذا كنت تحتاج المسافة كثيرًا مع حاويات تسلسلية، فكّر في استخدام vector بدلًا من ذلك."
+        }
+      ],
+      "related": [
+        "std::advance",
+        "std::next",
+        "std::prev"
+      ]
+    },
+    "std::next": {
+      "title": "std::next",
+      "type": "دالة مكرّرات",
+      "description": "يُرجع مكرّرًا متقدمًا بعدد خطوات من المكرّر الأصلي. لا يُعدّل المكرّر المُمرّر.",
+      "usage": "يظهر عند الحاجة لمكرّر عند موضع متقدم دون تعديل الأصلي.",
+      "example": "auto it = std::next(v.begin(), 2); // العنصر الثالث",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "الحصول على مكرّر للعنصر التالي",
+          "code": "#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40};\n    auto it = std::next(v.begin(), 2);\n    std::cout << *it; // 30\n    // v.begin() لم يتغير\n}",
+          "explanationArabic": "next يُرجع مكرّرًا جديدًا متقدمًا خطوتين — لا يُعدّل begin(). هذا أنظف من advance لأنه لا يُغيّر المكرّر الأصلي ويمكن استخدامه داخل تعبيرات."
+        },
+        {
+          "titleArabic": "استخدامه في التعبيرات",
+          "code": "#include <iterator>\n#include <vector>\n#include <algorithm>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 3, 1, 4, 2};\n    // فرز من العنصر الثاني حتى النهاية\n    std::sort(std::next(v.begin()), v.end());\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 5 1 2 3 4\n}",
+          "explanationArabic": "next مفيد في التعبيرات لأنه يُرجع مكرّرًا. هنا نُمرّر next(v.begin()) كبداية النطاق لـ sort — فرز كل شيء ما عدا العنصر الأول."
+        },
+        {
+          "titleArabic": "next بدون خطوات = العنصر التالي",
+          "code": "#include <iterator>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3};\nauto it = v.begin();\nauto next_it = std::next(it); // خطوة واحدة افتراضيًا\n// *next_it == 2\n\n// البديل: std::prev للخلف\n// auto prev_it = std::prev(v.end()); // *prev_it == 3",
+          "explanationArabic": "next(it) بدون معامل ثانٍ يتقدم خطوة واحدة فقط. prev(it) يرجع خطوة للخلف. كلاهما لا يُعدّل المكرّر الأصلي."
+        }
+      ],
+      "related": [
+        "std::prev",
+        "std::advance",
+        "std::distance"
+      ]
+    },
+    "std::prev": {
+      "title": "std::prev",
+      "type": "دالة مكرّرات",
+      "description": "يُرجع مكرّرًا متأخرًا بعدد خطوات من المكرّر الأصلي. لا يُعدّل المكرّر المُمرّر.",
+      "usage": "يظهر عند الحاجة للرجوع خطوة أو أكثر للخلف من مكرّر.",
+      "example": "auto it = std::prev(v.end()); // آخر عنصر",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "الوصول لآخر عنصر عبر end()",
+          "code": "#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30};\n    auto last = std::prev(v.end());\n    std::cout << *last; // 30\n}",
+          "explanationArabic": "v.end() يشير بعد آخر عنصر. prev(v.end()) يُرجع مكرّر لآخر عنصر فعلي. هذا أنظف من v.end() - 1 لأنه يعمل مع كل أنواع المكرّرات الثنائية."
+        },
+        {
+          "titleArabic": "الوصول لقبل الأخير",
+          "code": "#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    auto second_last = std::prev(v.end(), 2);\n    std::cout << *second_last; // 4\n}",
+          "explanationArabic": "prev(v.end(), 2) يرجع خطوتين للخلف من end() — يشير للعنصر قبل الأخير. المعامل الثاني اختياري، خطوة واحدة افتراضيًا."
+        },
+        {
+          "titleArabic": "لا تستخدم prev على begin()",
+          "code": "#include <iterator>\n#include <vector>\n\nstd::vector<int> v = {1, 2};\n// ❌ سلوك غير معرّف: لا يمكن الرجوع قبل البداية\n// auto bad = std::prev(v.begin());\n\n// ✅ تحقق قبل الاستخدام\nauto it = v.begin();\nif (it != v.begin()) {\n    auto p = std::prev(it); // آمن\n}",
+          "explanationArabic": "prev على begin() سلوك غير معرّف. تحقق دائمًا أن المكرّر ليس عند البداية قبل استخدام prev بخطوات."
+        }
+      ],
+      "related": [
+        "std::next",
+        "std::advance",
+        "std::distance"
+      ]
+    },
+    "std::replace": {
+      "title": "std::replace",
+      "type": "خوارزمية",
+      "description": "يُبدل كل عنصر يساوي قيمة محددة بقيمة أخرى في النطاق.",
+      "usage": "يظهر عند الحاجة لتغيير كل occurrence لقيمة معينة بقيمة جديدة.",
+      "example": "std::replace(v.begin(), v.end(), 0, -1); // استبدل كل صفر بـ -1",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "استبدال كل الأصفار بـ -1",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {0, 3, 0, 7, 0, 2};\n    std::replace(v.begin(), v.end(), 0, -1);\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: -1 3 -1 7 -1 2\n}",
+          "explanationArabic": "replace يُعدّل العناصر في مكانها (in-place). يفحص كل عنصر ويُبدل المطابق. تعقيد O(n) — يمر على النطاق مرة واحدة."
+        },
+        {
+          "titleArabic": "استبدال قيمة نصية",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> v = {\"red\", \"blue\", \"red\", \"green\"};\n    std::replace(v.begin(), v.end(), std::string(\"red\"), std::string(\"yellow\"));\n    for (const auto& s : v) std::cout << s << ' ';\n    // المخرجات: yellow blue yellow green\n}",
+          "explanationArabic": "replace يعمل مع أي نوع يدعم ==. مع النصوص، المقارنة تكون بالقيمة. البديل replace_if يسمح بشرط مخصص بدل المساواة."
+        },
+        {
+          "titleArabic": "replace_if للشرط المخصص",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, -2, 3, -4, 5};\n    std::replace_if(v.begin(), v.end(), [](int x) { return x < 0; }, 0);\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 1 0 3 0 5\n}",
+          "explanationArabic": "replace_if يأخذ predicate بدل قيمة — أنسب عندما يكون الشرط أكثر تعقيدًا من المساواة. هنا نستبدل كل سالب بصفر."
+        }
+      ],
+      "related": [
+        "std::replace_if",
+        "std::transform",
+        "std::remove_if"
+      ]
+    },
+    "std::replace_if": {
+      "title": "std::replace_if",
+      "type": "خوارزمية",
+      "description": "يُبدل كل عنصر يحقق شرطًا محددًا بقيمة جديدة في النطاق.",
+      "usage": "يظهر عند الحاجة لاستبدال عناصر بحسب شرط وليس قيمة ثابتة.",
+      "example": "std::replace_if(v.begin(), v.end(), [](int x) { return x < 0; }, 0);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "استبدال كل السالب بصفر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, -3, 7, -1, 0, -8};\n    std::replace_if(v.begin(), v.end(), [](int x) { return x < 0; }, 0);\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 5 0 7 0 0 0\n}",
+          "explanationArabic": "replace_if يفحص كل عنصر بالشرط المُمرّر. إذا أعاد الشرط true يُبدل العنصر بالقيمة الجديدة. أنسب من replace عندما يكون الشرط أكثر من مجرد مساواة."
+        },
+        {
+          "titleArabic": "استبدال النصوص الطويلة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> words = {\"hi\", \"world\", \"cpp\", \"programming\"};\n    std::replace_if(words.begin(), words.end(),\n        [](const std::string& s) { return s.size() > 4; },\n        std::string(\"[long]\"));\n    for (const auto& w : words) std::cout << w << ' ';\n    // المخرجات: hi world cpp [long]\n}",
+          "explanationArabic": "الشرط يمكن أن يكون أي callable — lambda، دالة عادية، أو functor. هنا نستبدل كل نص أطول من 4 أحرف بـ \"[long]\"."
+        },
+        {
+          "titleArabic": "replace_if يُعدّل في المكان — لا يُرجع شيئًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3};\nstd::replace_if(v.begin(), v.end(), [](int x) { return x > 1; }, 99);\n// v الآن = {1, 99, 99}\n// لا يُرجع مكرّر — التعديل في المكان مباشرة",
+          "explanationArabic": "replace_if لا يُرجع قيمة — يُعدّل النطاق في مكانه. إذا احتجت نسخة معدّلة مع بقاء الأصل، استخدم replace_copy_if."
+        }
+      ],
+      "related": [
+        "std::replace",
+        "std::transform",
+        "std::remove_if"
+      ]
+    },
+    "std::partition": {
+      "title": "std::partition",
+      "type": "خوارزمية",
+      "description": "يُعيد ترتيب العناصر بحيث تظهر العناصر التي تحقّق الشرط قبل التي لا تحققه. يُرجع مكرّرًا عند نقطة التقسيم.",
+      "usage": "يظهر عند الحاجة لفصل عناصر بحسب شرط مع الحفاظ على عددها.",
+      "example": "auto mid = std::partition(v.begin(), v.end(), [](int x) { return x > 0; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "فصل الموجب عن السالب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {-3, 5, -1, 7, 0, -8, 2};\n    auto mid = std::partition(v.begin(), v.end(), [](int x) { return x > 0; });\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات (الترتيب النسبي غير مضمون): 5 7 2 -3 -1 0 -8\n    std::cout << \"\\nالموجبة: \" << std::distance(v.begin(), mid); // 3\n}",
+          "explanationArabic": "partition يفصل العناصر لمجموعتين: الموجبة أولاً ثم البقية. الترتيب النسبي داخل كل مجموعة غير مضمون — استخدم stable_partition إذا كنت تحتاجه. المكرّر المُرجع يشير لبداية المجموعة الثانية."
+        },
+        {
+          "titleArabic": "حذف سريع عبر partition + erase",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5, 6};\n    // نقل الأزواج للنهاية\n    auto mid = std::partition(v.begin(), v.end(), [](int x) { return x % 2 != 0; });\n    v.erase(mid, v.end());\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 1 3 5 (أو ترتيب آخر للأفراد)\n}",
+          "explanationArabic": "partition + erase نمط شائع للحذف الفعلي. partition يُعيد ترتيب ثم erase يُزيل النصف الثاني. هذا أسرع من remove_if + erase في بعض الحالات لأنه يقلل عمليات النقل."
+        },
+        {
+          "titleArabic": "partition لا يحافظ على الترتيب النسبي",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 1, 4, 1, 5, 9};\n    std::partition(v.begin(), v.end(), [](int x) { return x < 4; });\n    // النتيجة تحتوي على {3,1,1} ثم {4,5,9}\n    // لكن ترتيب 3,1,1 قد يختلف عن الأصلي\n\n    // ✅ للحفاظ على الترتيب النسبي:\n    // std::stable_partition(v.begin(), v.end(), [](int x) { return x < 4; });\n}",
+          "explanationArabic": "partition أسرع من stable_partition لكنه لا يضمن ترتيب العناصر النسبي داخل كل مجموعة. stable_partition يحافظ على الترتيب لكنه أبطأ ويحتاج ذاكرة إضافية O(n)."
+        }
+      ],
+      "related": [
+        "std::stable_partition",
+        "std::remove_if",
+        "std::sort"
+      ]
+    },
+    "std::generate": {
+      "title": "std::generate",
+      "type": "خوارزمية",
+      "description": "يُعيّن كل عنصر في النطاق بالقيمة المُرجعة من دالة تُستدعى لكل عنصر.",
+      "usage": "يظهر عند الحاجة لملء حاوية بقيم مُولّدة مثل تسلسل أو قيم عشوائية.",
+      "example": "std::generate(v.begin(), v.end(), []() { return rand() % 100; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "ملء حاوية بأعداد عشوائية",
+          "code": "#include <algorithm>\n#include <vector>\n#include <random>\n#include <iostream>\n\nint main() {\n    std::vector<int> v(10);\n    std::mt19937 rng(42);\n    std::generate(v.begin(), v.end(), [&rng]() { return rng() % 100; });\n    for (int x : v) std::cout << x << ' ';\n}",
+          "explanationArabic": "generate يستدعي الدالة لكل عنصر ويعيّن النتيجة. مع random engine يُنتج قيمًا عشوائية مختلفة لكل عنصر. أنظف من حلقة يدوية."
+        },
+        {
+          "titleArabic": "تسلسل أرقام متزايدة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v(5);\n    int counter = 0;\n    std::generate(v.begin(), v.end(), [&counter]() { return counter++; });\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 0 1 2 3 4\n}",
+          "explanationArabic": "generate مع lambda تحتفظ بحالة عبر مرجع [&counter] تُنتج تسلسلًا. البديل الأبسط للتسلسل هو std::iota لكن generate أكثر مرونة لأي نمط."
+        },
+        {
+          "titleArabic": "generate_n لعدد محدد",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v(10, 0);\n    // مُعيّن أول 3 عناصر فقط\n    std::generate_n(v.begin(), 3, []() { return 42; });\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 42 42 42 0 0 0 0 0 0 0\n}",
+          "explanationArabic": "generate_n يأخذ عددًا بدل نطاق كامل — يُولّد فقط العدد المحدد من القيم. مفيد عند ملء جزء من حاوية."
+        }
+      ],
+      "related": [
+        "std::fill",
+        "std::iota",
+        "std::transform"
+      ]
+    },
+    "std::back_inserter": {
+      "title": "std::back_inserter",
+      "type": "مكرّر مُكيّف",
+      "description": "يُنشئ مكرّر إدراج خلفي يُضيف عناصر في نهاية الحاوية عبر push_back عند الكتابة عليه.",
+      "usage": "يظهر عند نسخ أو تحويل عناصر إلى حاوية فارغة أو مختلفة.",
+      "example": "std::copy(src.begin(), src.end(), std::back_inserter(dest));",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ عناصر إلى حاوية فارغة",
+          "code": "#include <algorithm>\n#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {1, 2, 3};\n    std::vector<int> dest; // فارغة\n    std::copy(src.begin(), src.end(), std::back_inserter(dest));\n    for (int x : dest) std::cout << x << ' ';\n    // المخرجات: 1 2 3\n}",
+          "explanationArabic": "back_inserter(dest) يُنشئ مكرّرًا عند كل كتابة عليه يستدعي dest.push_back. هذا يسمح لـ copy بالعمل على حاوية فارغة — بدون back_inserter سيتعطل البرنامج لأن dest لا تملك مساحة."
+        },
+        {
+          "titleArabic": "تحويل ونسخ في خطوة واحدة",
+          "code": "#include <algorithm>\n#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    std::vector<int> squared;\n    std::transform(v.begin(), v.end(), std::back_inserter(squared),\n        [](int x) { return x * x; });\n    for (int x : squared) std::cout << x << ' ';\n    // المخرجات: 1 4 9 16 25\n}",
+          "explanationArabic": "transform مع back_inserter نمط شائع: يأخذ من مصدر ويكتب في نهاية حاوية وجهة. هذا أنظف من reserve + index يدوي."
+        },
+        {
+          "titleArabic": "فلترة ونسخ عبر copy_if + back_inserter",
+          "code": "#include <algorithm>\n#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, -2, 3, -4, 5};\n    std::vector<int> positives;\n    std::copy_if(v.begin(), v.end(), std::back_inserter(positives),\n        [](int x) { return x > 0; });\n    for (int x : positives) std::cout << x << ' ';\n    // المخرجات: 1 3 5\n}",
+          "explanationArabic": "copy_if + back_inserter نمط قوي: ينسخ فقط العناصر التي تحقّق الشرط إلى حاوية جديدة. هذا أنظف من حلقة مع push_back و if."
+        }
+      ],
+      "related": [
+        "std::front_inserter",
+        "std::inserter",
+        "std::copy",
+        "std::transform"
+      ]
+    },
+    "std::find_first_of": {
+      "title": "std::find_first_of",
+      "type": "خوارزمية",
+      "description": "يبحث في نطاق عن أول عنصر يطابق أي عنصر من مجموعة مرشّحة.",
+      "usage": "يظهر عند البحث عن أي عنصر من مجموعة في نطاق آخر.",
+      "example": "auto it = std::find_first_of(text.begin(), text.end(), vowels.begin(), vowels.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "البحث عن أول حرف متحرك",
+          "code": "#include <algorithm>\n#include <string>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::string text = \"hello world\";\n    std::string vowels = \"aeiou\";\n    auto it = std::find_first_of(text.begin(), text.end(),\n        vowels.begin(), vowels.end());\n    if (it != text.end()) {\n        std::cout << \"first vowel: \" << *it << \" at \" << (it - text.begin());\n        // first vowel: e at 1\n    }\n}",
+          "explanationArabic": "find_first_of يبحث عن أول عنصر في النطاق الأول يوجد في النطاق الثاني. مفيد للبحث عن أي عنصر من مجموعة. يُرجع مكرّر لأول تطابق أو end() إذا لم يجد."
+        },
+        {
+          "titleArabic": "فحص وجود أي حرف غير مسموح",
+          "code": "#include <algorithm>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::string input = \"user@name!\";\n    std::string forbidden = \"@!#$\";\n    auto it = std::find_first_of(input.begin(), input.end(),\n        forbidden.begin(), forbidden.end());\n    if (it != input.end()) {\n        std::cout << \"forbidden char: \" << *it;\n    }\n}",
+          "explanationArabic": "find_first_of أنسب من البحث المتعدد عندما تريد معرفة هل يوجد أي عنصر مشترك بين مجموعتين."
+        },
+        {
+          "titleArabic": "find_first_of لا يُرجع موضعًا في المجموعة الثانية",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3};\nstd::vector<int> targets = {5, 2, 8};\nauto it = std::find_first_of(v.begin(), v.end(), targets.begin(), targets.end());\n// *it == 2 — لكن لا يُخبرك أي عنصر من targets طابقه\n// يُرجع مكرّر في النطاق الأول فقط",
+          "explanationArabic": "find_first_of يُرجع مكرّرًا في النطاق الأول فقط — لا يُخبرك أي عنصر من المجموعة الثانية هو الذي طابقه. إذا احتجت هذه المعلومة، استخدم بحث يدوي."
+        }
+      ],
+      "related": [
+        "std::find",
+        "std::find_if",
+        "std::search"
+      ]
+    },
+    "std::minmax_element": {
+      "title": "std::minmax_element",
+      "type": "خوارزمية",
+      "description": "يُرجع زوج مكرّرات يشيران لأصغر وأكبر عنصر في نطاق واحد. يفحص النطاق مرة واحدة فقط.",
+      "usage": "يظهر عند الحاجة لأصغر وأكبر عنصر معًا — أنسب من استدعاء min_element وmax_element منفصلين.",
+      "example": "auto [min_it, max_it] = std::minmax_element(v.begin(), v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "إيجاد الأصغر والأكبر معًا",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {40, 10, 70, 20, 50};\n    auto [min_it, max_it] = std::minmax_element(v.begin(), v.end());\n    std::cout << \"min: \" << *min_it << \"\\n\"; // 10\n    std::cout << \"max: \" << *max_it;             // 70\n}",
+          "explanationArabic": "minmax_element يفحص النطاق مرة واحدة فقط (n-1 مقارنة تقريبًا) بدل مرتين عند استدعاء min_element ثم max_element. يُرجع pair من المكرّرات."
+        },
+        {
+          "titleArabic": "استخدامه مع مقارنة مخصصة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> words = {\"a\", \"zzz\", \"bb\", \"ccc\"};\n    auto [shortest, longest] = std::minmax_element(words.begin(), words.end(),\n        [](const std::string& a, const std::string& b) {\n            return a.size() < b.size();\n        });\n    std::cout << \"shortest: \" << *shortest << \"\\n\"; // a\n    std::cout << \"longest: \" << *longest;              // zzz\n}",
+          "explanationArabic": "مع مقارنة مخصصة، minmax_element يُرجع الأصغر والأكبر بحسب المعيار المحدد — هنا بطول النص."
+        },
+        {
+          "titleArabic": "نطاق فارغ يُرجع end(), end()",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> empty = {};\nauto [min_it, max_it] = std::minmax_element(empty.begin(), empty.end());\n// كلاهما == empty.end() — لا تفك المكرّر!\nif (min_it != empty.end()) {\n    // آمن\n}",
+          "explanationArabic": "على نطاق فارغ يُرجع زوجًا من end(). تحقق دائمًا قبل فك أي مكرّر."
+        }
+      ],
+      "related": [
+        "std::min_element",
+        "std::max_element",
+        "std::min"
+      ]
+    },
+    "std::partial_sort": {
+      "title": "std::partial_sort",
+      "type": "خوارزمية",
+      "description": "يُرتّب أول عناصر النطاق بالترتيب الصحيح دون الاهتمام بترتيب البقية. العناصر بعد middle لا تكون مرتبة لكنها كلها أكبر من العناصر المرتبة.",
+      "usage": "يظهر عند الحاجة لأصغر k عنصر مرتبة دون تكلفة فرز كامل. مفيد في لوحات المتصدرين أو اختيار أفضل النتائج.",
+      "example": "std::partial_sort(v.begin(), v.begin() + 3, v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "إيجاد أصغر 3 عناصر مرتبة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {7, 2, 9, 1, 5, 3, 8};\n    std::partial_sort(v.begin(), v.begin() + 3, v.end());\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 1 2 3 9 7 8 5\n    // أول 3 مرتبة (1,2,3) والبقية غير مرتبة لكنها أكبر\n}",
+          "explanationArabic": "partial_sort يُرتّب فقط أول middle - first عناصر. البقية لا يضمن ترتيبها لكنها أكبر من المرتبة. تعقيد O(n log k) حيث k عدد العناصر المرتبة — أنسب من sort الكامل O(n log n) عند الحاجة لعدد قليل فقط."
+        },
+        {
+          "titleArabic": "أكبر k عنصر عبر greater",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 1, 4, 1, 5, 9, 2, 6};\n    std::partial_sort(v.begin(), v.begin() + 3, v.end(), std::greater<>());\n    for (int i = 0; i < 3; ++i) std::cout << v[i] << ' ';\n    // المخرجات: 9 6 5\n}",
+          "explanationArabic": "مع greater<> يُرتّب الأكبر أولًا. مفيد لأفضل k نتيجة. فقط أول 3 عناصر موثوقة — لا تعتمد على بقية النطاق."
+        },
+        {
+          "titleArabic": "partial_sort vs nth_element vs sort",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {5, 3, 1, 4, 2};\n\n// sort: يُرتّب الكل — O(n log n)\n// std::sort(v.begin(), v.end());\n// النتيجة: 1 2 3 4 5\n\n// partial_sort: يُرتّب أول k فقط — O(n log k)\n// std::partial_sort(v.begin(), v.begin() + 3, v.end());\n// النتيجة: 1 2 3 ... (البقية غير مرتبة)\n\n// nth_element: يضع عنصرًا واحدًا في موضعه الصحيح — O(n)\n// std::nth_element(v.begin(), v.begin() + 2, v.end());\n// العنصر الثالث صحيح لكن لا يضمن ترتيب البقية",
+          "explanationArabic": "اختر حسب الحاجة: sort للترتيب الكامل، partial_sort لأول k مرتبة، nth_element لعنصر واحد في موضعه. nth_element الأسرع لكنه لا يُرتّب حتى أول k عنصرًا."
+        }
+      ],
+      "related": [
+        "std::sort",
+        "std::nth_element",
+        "std::stable_sort"
+      ]
+    },
+    "std::merge": {
+      "title": "std::merge",
+      "type": "خوارزمية",
+      "description": "يُدمج نطاقين مرتبين في نطاق واحد مرتب. كل عنصر من النطاقين يُنسخ للنتيجة بالترتيب الصحيح.",
+      "usage": "يظهر عند دمج قائمتين مرتبتين مثل دمج نتائج بحث أو دمج ملفات مرتبة.",
+      "example": "std::merge(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(result));",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "دمج قائمتين مرتبتين",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 3, 5};\n    std::vector<int> b = {2, 4, 6};\n    std::vector<int> result;\n    std::merge(a.begin(), a.end(), b.begin(), b.end(),\n        std::back_inserter(result));\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 1 2 3 4 5 6\n}",
+          "explanationArabic": "merge يفترض أن النطاقين مرتبان مسبقًا. يمر عليهما معًا ويختار الأصغر في كل خطوة. تعقيد O(n+m) — خطي في حجم النطاقين. إذا لم يكونا مرتبين، النتيجة خاطئة."
+        },
+        {
+          "titleArabic": "دمج مع مقارنة مخصصة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> a = {\"apple\", \"cherry\"};\n    std::vector<std::string> b = {\"banana\", \"date\"};\n    std::vector<std::string> result;\n    std::merge(a.begin(), a.end(), b.begin(), b.end(),\n        std::back_inserter(result));\n    for (const auto& s : result) std::cout << s << ' ';\n    // المخرجات: apple banana cherry date\n}",
+          "explanationArabic": "merge يعمل مع أي نوع يدعم <. مع النصوص يستخدم الترتيب المعجمي. يمكنك تمرير مقارنة مخصصة كمعامل خامس."
+        },
+        {
+          "titleArabic": "merge لا يُعدّل النطاقين الأصليين",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> a = {1, 3, 5};\nstd::vector<int> b = {2, 4, 6};\nstd::vector<int> result;\nstd::merge(a.begin(), a.end(), b.begin(), b.end(),\n    std::back_inserter(result));\n// a لا تزال {1, 3, 5}\n// b لا تزال {2, 4, 6}\n// result = {1, 2, 3, 4, 5, 6}\n\n// للدمج في المكان: std::inplace_merge (يحتاج نطاق واحد متصل)",
+          "explanationArabic": "merge يكتب في نطاق ثالث ولا يُعدّل المصادر. هذا آمن لكن يحتاج ذاكرة للنتيجة. inplace_merge يدمج في المكان لكنه أبطأ ويحتاج أن يكون النطاقان متصلين."
+        }
+      ],
+      "related": [
+        "std::sort",
+        "std::inplace_merge",
+        "std::back_inserter"
+      ]
+    },
+    "std::inner_product": {
+      "title": "std::inner_product",
+      "type": "خوارزمية",
+      "description": "يحسب الجداء الداخلي (inner product) لنطاقين: مجموع حاصل ضرب العناصر المتقابلة. يمكن تخصيص عمليتي الضرب والجمع.",
+      "usage": "يظهر في حسابات الجبر الخطي والرسوميات مثل حاصل ضرب المتجهات وتحويلات المصفوفات.",
+      "example": "int dot = std::inner_product(a.begin(), a.end(), b.begin(), 0);",
+      "includeHeader": "#include <numeric>",
+      "usageExamples": [
+        {
+          "titleArabic": "حاصل ضرب متجهين (dot product)",
+          "code": "#include <numeric>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3};\n    std::vector<int> b = {4, 5, 6};\n    int dot = std::inner_product(a.begin(), a.end(), b.begin(), 0);\n    std::cout << dot; // 1*4 + 2*5 + 3*6 = 32\n}",
+          "explanationArabic": "inner_product يضرب العناصر المتقابلة ويجمع النتائج. المعامل الرابع هو القيمة الابتدائية (0 للجمع). هذا هو dot product الأساسي في الجبر الخطي — أساسي في الإضاءة والتحويلات في الرسوميات."
+        },
+        {
+          "titleArabic": "تخصيص عمليتي الضرب والجمع",
+          "code": "#include <numeric>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3};\n    std::vector<int> b = {1, 2, 3};\n    // عدّ العناصر المتساوية بدل الجداء الداخلي\n    int matches = std::inner_product(a.begin(), a.end(), b.begin(), 0,\n        std::plus<>(), std::equal_to<>());\n    std::cout << matches; // 3 (كل العناصر متساوية)\n}",
+          "explanationArabic": "inner_product يأخذ عمليتين مخصصتين: الأولى بدل الجمع والثانية بدل الضرب. هنا نستخدم equal_to بدل الضرب وplus بدل الجمع — النتيجة عدد العناصر المتساوية. هذا يُظهر مرونة inner_product خارج الجبر الخطي."
+        },
+        {
+          "titleArabic": "خطأ شائع: أطوال مختلفة",
+          "code": "#include <numeric>\n#include <vector>\n\nstd::vector<int> a = {1, 2, 3, 4, 5};\nstd::vector<int> b = {10, 20};\n// ❌ inner_product يعالج فقط min(a.size(), b.size()) عنصرًا\n// لا يتحقق من تساوي الأطوال!\nint result = std::inner_product(a.begin(), a.end(), b.begin(), 0);\n// result = 1*10 + 2*20 = 50 (عنصران فقط)\n\n// ✅ تحقق من الأطوال قبل الاستخدام\n// if (a.size() != b.size()) { /* خطأ */ }",
+          "explanationArabic": "inner_product لا يتحقق من تساوي الأطوال — يعالج أصغر نطاق فقط. هذا سلوك صامت قد يُنتج نتيجة خاطئة. تحقق دائمًا من الأطوال عند الحاجة لجداء كامل."
+        }
+      ],
+      "related": [
+        "std::accumulate",
+        "std::transform",
+        "std::partial_sum"
+      ]
+    },
+    "std::partial_sum": {
+      "title": "std::partial_sum",
+      "type": "خوارزمية",
+      "description": "يحسب المجاميع التراكمية للنطاق: كل عنصر ناتج هو مجموع كل العناصر من البداية حتى هذا الموضع.",
+      "usage": "يظهر عند الحاجة لمجاميع تراكمية مثل حساب المسافات التراكمية أو التوزيع التراكمي.",
+      "example": "std::partial_sum(v.begin(), v.end(), result.begin());",
+      "includeHeader": "#include <numeric>",
+      "usageExamples": [
+        {
+          "titleArabic": "مجاميع تراكمية بسيطة",
+          "code": "#include <numeric>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    std::vector<int> result(v.size());\n    std::partial_sum(v.begin(), v.end(), result.begin());\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 1 3 6 10 15\n}",
+          "explanationArabic": "partial_sum يكتب في كل موضع مجموع العناصر حتى ذلك الموضع: 1, 1+2, 1+2+3, ... النتيجة نفس حجم المدخل. يمكن الكتابة في نفس النطاق (in-place) إذا لم تعتمد على القيم السابقة."
+        },
+        {
+          "titleArabic": "حساب مواضع تراكمية من أطوال",
+          "code": "#include <numeric>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> lengths = {3, 5, 2, 4};\n    std::vector<int> offsets(lengths.size());\n    std::partial_sum(lengths.begin(), lengths.end() - 1, offsets.begin());\n    offsets.insert(offsets.begin(), 0);\n    for (int x : offsets) std::cout << x << ' ';\n    // المخرجات: 0 3 8 10 14\n}",
+          "explanationArabic": "استخدام شائع: تحويل أطوال أقسام إلى مواضع بداية. كل قسم يبدأ من حيث انتهى السابق. هذا نمط مفيد في تخطيط الذاكرة ومعالجة البيانات المتسلسلة."
+        },
+        {
+          "titleArabic": "استخدامه مع عملية مخصصة",
+          "code": "#include <numeric>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {2, 3, 4};\n    std::vector<int> result(v.size());\n    // حاصل ضرب تراكمي بدل مجموع تراكمي\n    std::partial_sum(v.begin(), v.end(), result.begin(), std::multiplies<>());\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 2 6 24\n}",
+          "explanationArabic": "partial_sum يأخذ عملية مخصصة كمعامل رابع. مع multiplies ينتج حاصل ضرب تراكمي. مع أي عملية ثنائية يُنتج تطبيقًا تراكميًا عامًا."
+        }
+      ],
+      "related": [
+        "std::accumulate",
+        "std::inner_product",
+        "std::iota"
+      ]
+    },
+    "std::equal_range": {
+      "title": "std::equal_range",
+      "type": "خوارزمية",
+      "description": "يُرجع زوج مكرّرات يُحدّدان النطاق الذي يحتوي كل العناصر المساوية للقيمة المطلوبة في نطاق مرتب.",
+      "usage": "يظهر عند الحاجة لمعرفة كل مواضع عنصر مكرر في نطاق مرتب. يُرجع lower_bound وupper_bound معًا.",
+      "example": "auto [lo, hi] = std::equal_range(v.begin(), v.end(), 42);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "عدّ عدد مرات ظهور عنصر في نطاق مرتب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 2, 2, 3, 4, 5};\n    auto [lo, hi] = std::equal_range(v.begin(), v.end(), 2);\n    std::cout << \"count: \" << (hi - lo); // 3\n    std::cout << \"\\nfirst at: \" << (lo - v.begin()); // 1\n}",
+          "explanationArabic": "equal_range يُرجع lower_bound وupper_bound معًا في استدعاء واحد. hi - lo يعطي عدد التكرارات. هذا أنسب من count على نطاق مرتب لأنه O(log n) بدل O(n)."
+        },
+        {
+          "titleArabic": "استخدامه مع binary_search",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {1, 3, 5, 5, 5, 7, 9};\n\n// binary_search يُرجع true/false فقط\nbool exists = std::binary_search(v.begin(), v.end(), 5);\n\n// equal_range يُرجع النطاق الكامل + يُخبرك كم مرة ظهر\nauto [lo, hi] = std::equal_range(v.begin(), v.end(), 5);\n// lo != hi يعني موجود\n// hi - lo = 3 (عدد التكرارات)\n// lo - v.begin() = 2 (أول موضع)",
+          "explanationArabic": "equal_range أقوى من binary_search لأنه يُعطي الموضع والعدد. binary_search أنسب فقط عندما تحتاج yes/no. equal_range يُنفذ بحثين ثنائيين داخليًا لكنهما متوازيان — تعقيد O(log n) أيضًا."
+        },
+        {
+          "titleArabic": "يجب أن يكون النطاق مرتبًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {5, 1, 3, 2, 4};\n// ❌ النطاق غير مرتب — النتيجة غير صحيحة\n// auto [lo, hi] = std::equal_range(v.begin(), v.end(), 3);\n\n// ✅ رتّب أولًا\nstd::sort(v.begin(), v.end());\nauto [lo, hi] = std::equal_range(v.begin(), v.end(), 3);\n// الآن النتيجة صحيحة",
+          "explanationArabic": "equal_range يتطلب نطاقًا مرتبًا مثل lower_bound وupper_bound. على نطاق غير مرتب النتيجة غير محددة. رتّب أولًا أو استخدم find/count بدلًا من ذلك."
+        }
+      ],
+      "related": [
+        "std::lower_bound",
+        "std::upper_bound",
+        "std::binary_search"
+      ]
+    },
+    "std::minmax": {
+      "title": "std::minmax",
+      "type": "دالة أداة",
+      "description": "يُرجع زوجًا يحتوي القيمتين الأصغر والأكبر من قيمتين أو قائمة قيم. يُنفذ مقارنة واحدة فقط لكل زوج.",
+      "usage": "يظهر عند الحاجة لأصغر وأكبر قيمة من قيمتين أو أكثر. يختلف عن minmax_element بأنه يعمل على قيم مباشرة لا على نطاق عبر مكرّرات.",
+      "example": "auto [mn, mx] = std::minmax(a, b);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "أصغر وأكبر قيمتين",
+          "code": "#include <algorithm>\n#include <iostream>\n\nint main() {\n    auto [mn, mx] = std::minmax(3, 7);\n    std::cout << \"min: \" << mn << \"\\n\"; // 3\n    std::cout << \"max: \" << mx;           // 7\n}",
+          "explanationArabic": "minmax يُرجع pair<const T&, const T&> — مراجع للقيمتين الأصغر والأكبر. أنسب من استدعاء min وmax منفصلين لأنه يُنفذ مقارنة واحدة فقط."
+        },
+        {
+          "titleArabic": "minmax مع initializer_list",
+          "code": "#include <algorithm>\n#include <iostream>\n\nint main() {\n    auto [mn, mx] = std::minmax({5, 2, 8, 1, 9, 3});\n    std::cout << \"min: \" << mn << \"\\n\"; // 1\n    std::cout << \"max: \" << mx;           // 9\n}",
+          "explanationArabic": "minmax مع initializer_list يفحص كل القيم ويُرجع الأصغر والأكبر. هذا يختلف عن minmax_element الذي يعمل على نطاق عبر مكرّرات. minmax أبسط للقيم المباشرة."
+        },
+        {
+          "titleArabic": "minmax vs minmax_element",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {5, 1, 9, 3};\n\n// minmax: يعمل على قيم مباشرة — يُرجع القيم\nauto [mn, mx] = std::minmax(v[0], v[2]);\n// mn = 5, mx = 9\n\n// minmax_element: يعمل على نطاق — يُرجع مكرّرات\nauto [min_it, max_it] = std::minmax_element(v.begin(), v.end());\n// *min_it = 1, *max_it = 9\n// min_it - v.begin() = 1 (الموضع)",
+          "explanationArabic": "minmax للقيم المباشرة (1-2 قيم أو initializer_list)، minmax_element للنطاقات (يُرجع مكرّرات ومواضع). استخدم minmax عند المقارنة البسيطة وminmax_element عند العمل مع حاويات."
+        }
+      ],
+      "related": [
+        "std::min",
+        "std::max",
+        "std::minmax_element"
+      ]
+    },
+    "std::is_sorted": {
+      "title": "std::is_sorted",
+      "type": "خوارزمية",
+      "description": "يتحقق مما إذا كان النطاق مرتبًا تصاعديًا. يُرجع true إذا كان كل عنصر أصغر من أو يساوي التالي.",
+      "usage": "يظهر عند الحاجة للتأكد من أن نطاق مرتب قبل استخدام خوارزميات تتطلب ترتيبًا مثل binary_search أو lower_bound.",
+      "example": "bool ok = std::is_sorted(v.begin(), v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق من ترتيب vector",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v1 = {1, 2, 3, 4, 5};\n    std::vector<int> v2 = {1, 3, 2, 4};\n    std::cout << std::is_sorted(v1.begin(), v1.end()); // true (1)\n    std::cout << std::is_sorted(v2.begin(), v2.end()); // false (0)\n}",
+          "explanationArabic": "is_sorted يفحص كل زوج متجاور — يتوقف عند أول زوج خارج الترتيب. تعقيد O(n) في أسوأ حالة لكنه يتوقف مبكرًا عند وجود خلل."
+        },
+        {
+          "titleArabic": "is_sorted_until لإيجاد موضع الخلل",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 5, 4, 6};\n    auto it = std::is_sorted_until(v.begin(), v.end());\n    if (it != v.end()) {\n        std::cout << \"not sorted at index: \" << (it - v.begin());\n        // المخرجات: not sorted at index: 4 (العنصر 4)\n    }\n}",
+          "explanationArabic": "is_sorted_until يُرجع مكرّر لأول عنصر يكسر الترتيب. مفيد لمعرفة أين بدأ الخلل بدل معرفة هل يوجد خلل فقط."
+        },
+        {
+          "titleArabic": "التحقق من ترتيب تنازلي",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {9, 7, 5, 3, 1};\n    bool desc = std::is_sorted(v.begin(), v.end(), std::greater<>());\n    std::cout << desc; // true (1)\n}",
+          "explanationArabic": "مع مقارنة مخصصة، is_sorted يتحقق من أي ترتيب. مع greater<> يتحقق من التنازلي. مفيد قبل استخدام lower_bound مع مقارنة مخصصة."
+        }
+      ],
+      "related": [
+        "std::sort",
+        "std::binary_search",
+        "std::lower_bound"
+      ]
+    },
+    "std::find_if_not": {
+      "title": "std::find_if_not",
+      "type": "خوارزمية",
+      "description": "يُرجع مكرّر لأول عنصر لا يحقق الشرط المُمرّر. العكس المنطقي لـ find_if.",
+      "usage": "يظهر عند الحاجة لإيجاد أول عنصر يفشل في شرط ما. أنسب من find_if مع negation لأنه أوضح دلاليًا.",
+      "example": "auto it = std::find_if_not(v.begin(), v.end(), [](int x) { return x > 0; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "إيجاد أول عنصر سالب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 3, 7, -1, 2, 9};\n    auto it = std::find_if_not(v.begin(), v.end(), [](int x) { return x > 0; });\n    if (it != v.end()) {\n        std::cout << \"first non-positive: \" << *it; // -1\n    }\n}",
+          "explanationArabic": "find_if_not يبحث عن أول عنصر يُرجع false من الشرط. هذا أنظف من find_if مع ! لأنك لا تحتاج لعكس المنطق. مفيد عند التحقق من صحة تسلسل — أول عنصر يكسر القاعدة."
+        },
+        {
+          "titleArabic": "التحقق من أن كل العناصر تحقق شرطًا",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {2, 4, 6, 8, 10};\n    bool all_even = (std::find_if_not(v.begin(), v.end(),\n        [](int x) { return x % 2 == 0; }) == v.end());\n    std::cout << all_even; // true (1)\n\n    // البديل الأوضح: std::all_of\n    // bool all_even2 = std::all_of(v.begin(), v.end(), [](int x) { return x % 2 == 0; });",
+          "explanationArabic": "find_if_not == end() يعني أن كل العناصر تحققت. هذا يُحقق نفس وظيفة all_of لكن all_of أوضح دلاليًا. استخدم find_if_not عندما تحتاج المكرّر نفسه لا فقط نتيجة boolean."
+        },
+        {
+          "titleArabic": "find_if_not vs find_if مع negation",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3, 4, 5};\n\n// find_if مع negation — يقلب المنطق\nauto it1 = std::find_if(v.begin(), v.end(), [](int x) { return !(x < 3); });\n// *it1 = 3\n\n// find_if_not — أوضح لأن الشرط يقرأ طبيعيًا\nauto it2 = std::find_if_not(v.begin(), v.end(), [](int x) { return x < 3; });\n// *it2 = 3\n\n// كلاهما يُرجع نفس النتيجة لكن find_if_not أسهل في القراءة",
+          "explanationArabic": "find_if_not يُزيل الحاجة لعكس المنطق يدويًا. الشرط يُكتب بالشكل الطبيعي (ما تبحث عنه فعليًا) لا بشكله المقلوب. هذا يُقلل الأخطاء المنطقية."
+        }
+      ],
+      "related": [
+        "std::find_if",
+        "std::find",
+        "std::all_of"
+      ]
+    },
+    "std::adjacent_find": {
+      "title": "std::adjacent_find",
+      "type": "خوارزمية",
+      "description": "يبحث عن أول زوج من العناصر المتجاورة المتساوية (أو التي تحقّق شرطًا مخصصًا).",
+      "usage": "يظهر عند البحث عن تكرارات متجاورة أو كشف تغييرات في تسلسل مرتب.",
+      "example": "auto it = std::adjacent_find(v.begin(), v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "إيجاد أول عنصر مكرر متجاور",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 2, 3, 4, 4, 4, 5};\n    auto it = std::adjacent_find(v.begin(), v.end());\n    if (it != v.end()) {\n        std::cout << \"duplicate: \" << *it << \" at index \" << (it - v.begin());\n        // duplicate: 2 at index 1\n    }\n}",
+          "explanationArabic": "adjacent_find يفحص كل زوج متجاور ويتوقف عند أول تطابق. يُرجع مكرّر لأول عنصر في الزوج المتطابق. مفيد للكشف عن تكرارات في بيانات يُفترض أنها فريدة."
+        },
+        {
+          "titleArabic": "كشف نقطة التغيير في تسلسل مرتب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 1, 1, 2, 2, 3, 3, 3};\n    // ابحث عن أول زيج غير متساوٍ (نقطة التغيير)\n    auto it = std::adjacent_find(v.begin(), v.end(), std::not_equal_to<>());\n    if (it != v.end()) {\n        std::cout << \"change at index: \" << (it - v.begin());\n        // change at index: 2 (من 1 إلى 2)\n    }\n}",
+          "explanationArabic": "مع not_equal_to يبحث عن أول نقطة تغيير في التسلسل. مفيد في معالجة البيانات لمعرفة أين يتغير النمط. it يشير لآخر عنصر قبل التغيير."
+        },
+        {
+          "titleArabic": "التحقق من عدم وجود تكرارات متجاورة",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3, 4, 5};\nbool no_adjacent_dups = (std::adjacent_find(v.begin(), v.end()) == v.end());\n// true — لا تكرارات متجاورة\n\n// ملاحظة: هذا لا يكشف التكرارات غير المتجاورة مثل {1, 2, 1}\n// للكشف عن كل التكرارات: رتّب ثم adjacent_find",
+          "explanationArabic": "adjacent_find يكشف التكرارات المتجاورة فقط. للكشف عن كل التكرارات (بما فيها غير المتجاورة)، رتّب النطاق أولًا ثم استخدم adjacent_find. هذا أسرع من البحث المزدوج."
+        }
+      ],
+      "related": [
+        "std::unique",
+        "std::find",
+        "std::search"
+      ]
+    },
+    "std::search": {
+      "title": "std::search",
+      "type": "خوارزمية",
+      "description": "يبحث عن أول ظهور لنطاق (subrange) داخل نطاق آخر. مثل البحث عن نص داخل نص لكنه يعمل مع أي نوع.",
+      "usage": "يظهر عند البحث عن تسلسل عناصر داخل تسلسل أكبر. يشبه strstr لكن يعمل مع أي حاوية.",
+      "example": "auto it = std::search(haystack.begin(), haystack.end(), needle.begin(), needle.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "البحث عن تسلسل داخل vector",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> haystack = {1, 2, 3, 4, 5, 6};\n    std::vector<int> needle = {3, 4, 5};\n    auto it = std::search(haystack.begin(), haystack.end(),\n        needle.begin(), needle.end());\n    if (it != haystack.end()) {\n        std::cout << \"found at index: \" << (it - haystack.begin()); // 2\n    }\n}",
+          "explanationArabic": "search يبحث عن النطاق الثاني داخل الأول. يُرجع مكرّر لبداية أول تطابق أو end() إذا لم يجد. تعقيد O(n*m) في أسوأ حالة."
+        },
+        {
+          "titleArabic": "البحث في نصوص",
+          "code": "#include <algorithm>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::string text = \"hello world hello\";\n    std::string pattern = \"world\";\n    auto it = std::search(text.begin(), text.end(),\n        pattern.begin(), pattern.end());\n    if (it != text.end()) {\n        std::cout << \"found at: \" << (it - text.begin()); // 6\n    }\n}",
+          "explanationArabic": "search يعمل مع string مثلما يعمل مع vector. لكن string::find أنسب للنصوص البسيطة لأنه أسرع وأبسط. search أقوى عندما تحتاج بحثًا عامًا عبر حاويات مختلفة."
+        },
+        {
+          "titleArabic": "search_n للبحث عن تكرار عنصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 3, 3, 4, 5};\n    auto it = std::search_n(v.begin(), v.end(), 3, 3);\n    // يبحث عن 3 عناصر متتالية كل منها يساوي 3\n    if (it != v.end()) {\n        std::cout << \"found at index: \" << (it - v.begin()); // 2\n    }\n}",
+          "explanationArabic": "search_n يبحث عن count عناصر متتالية تساوي value. أنسب من search عندما تبحث عن تكرار عنصر واحد لا عن تسلسل مختلف."
+        }
+      ],
+      "related": [
+        "std::find",
+        "std::find_first_of",
+        "std::find_end"
+      ]
+    },
+    "std::next_permutation": {
+      "title": "std::next_permutation",
+      "type": "خوارزمية",
+      "description": "يُحوّل النطاق إلى التبديل (permutation) التالي بترتيب معجمي. يُرجع false عندما يكون النطاق في آخر تبديل (تنازلي كامل).",
+      "usage": "يظهر عند الحاجة لتوليد كل التبديلات الممكنة أو عند الحاجة للترتيب المعجمي التالي.",
+      "example": "do { /* use v */ } while (std::next_permutation(v.begin(), v.end()));",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "توليد كل التبديلات",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    do {\n        for (int x : v) std::cout << x << ' ';\n        std::cout << '\\n';\n    } while (std::next_permutation(v.begin(), v.end()));\n    // 1 2 3\n    // 1 3 2\n    // 2 1 3\n    // 2 3 1\n    // 3 1 2\n    // 3 2 1\n}",
+          "explanationArabic": "next_permutation يُعدّل النطاق في مكانه ويُرجع true حتى يصل للتبديل الأخير. do-while يضمن معالجة التبديل الأولي قبل التحريك. النطاق يجب أن يكون مرتبًا تصاعديًا أولًا لضمان البدء من أول تبديل."
+        },
+        {
+          "titleArabic": "العدد الإجمالي للتبديلات",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4};\n    int count = 0;\n    do {\n        ++count;\n    } while (std::next_permutation(v.begin(), v.end()));\n    std::cout << count; // 24 (= 4! = 4×3×2×1)\n}",
+          "explanationArabic": "عدد تبديلات n عنصر فريد هو n! (عاملي). مع عناصر مكررة يكون أقل. next_permutation يُرجع false بعد آخر تبديل — النطاق يصبح مرتبًا تنازليًا."
+        },
+        {
+          "titleArabic": "يجب ترتيب النطاق أولًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {3, 1, 2};\n\n// ❌ بدون ترتيب — لن يولّد كل التبديلات\n// سيتخطى التبديلات التي قبل الترتيب الحالي\n// do { ... } while (std::next_permutation(v.begin(), v.end()));\n\n// ✅ رتّب أولًا لتبدأ من أول تبديل\nstd::sort(v.begin(), v.end());\ndo {\n    // يولّد كل 6 تبديلات\n} while (std::next_permutation(v.begin(), v.end()));",
+          "explanationArabic": "next_permutation يولّد التبديلات من النقطة الحالية فصاعدًا. إذا لم يكن النطاق مرتبًا تصاعديًا، سيتخطى التبديلات السابقة. sort أولًا يضمن البدء من أول تبديل."
+        }
+      ],
+      "related": [
+        "std::prev_permutation",
+        "std::sort",
+        "std::is_sorted"
+      ]
+    },
+    "std::swap_ranges": {
+      "title": "std::swap_ranges",
+      "type": "خوارزمية",
+      "description": "تُبدّل العناصر عنصرًا بعنصر بين نطاقين. لا تبدّل الحاويتين نفسيهما، بل محتوى كل موضع مع نظيره في النطاق الآخر.",
+      "usage": "تظهر عندما تريد تبادل جزء من مصفوفتين أو vectorين متساويي الطول من دون إنشاء نسخة وسيطة.",
+      "example": "std::swap_ranges(a.begin(), a.end(), b.begin());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "تبديل محتوى vectorين عنصرًا بعنصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> left = {1, 2, 3};\n    std::vector<int> right = {10, 20, 30};\n\n    std::swap_ranges(left.begin(), left.end(), right.begin());\n\n    for (int x : left) std::cout << x << ' ';   // 10 20 30\n    std::cout << '\\n';\n    for (int x : right) std::cout << x << ' ';  // 1 2 3\n}",
+          "explanationArabic": "swap_ranges يمر على النطاقين معًا ويستدعي swap لكل زوج عناصر متقابل. هذا مختلف عن std::swap(left, right) الذي يبدّل الحاويتين نفسيهما غالبًا في O(1). هنا أنت تبدّل المحتوى الموضعي عنصرًا بعنصر."
+        },
+        {
+          "titleArabic": "تبديل جزء فقط من الحاوية",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> first = {1, 2, 3, 4, 5};\n    std::vector<int> second = {10, 20, 30, 40, 50};\n\n    std::swap_ranges(first.begin() + 1, first.begin() + 4, second.begin() + 1);\n    // first  = {1, 20, 30, 40, 5}\n    // second = {10, 2, 3, 4, 50}\n}",
+          "explanationArabic": "القوة الحقيقية هنا أنك لا تحتاج تبديل الحاوية كلها. يمكنك تبديل subrange محدد داخل بنية أكبر، وهذا مفيد في الخوارزميات التي تعيد ترتيب شرائح من البيانات."
+        },
+        {
+          "titleArabic": "خطأ شائع: تجاهل طول النطاق الثاني",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> a = {1, 2, 3, 4};\n    std::vector<int> b = {10, 20};\n\n    // ❌ خطأ: النطاق الثاني لا يملك 4 عناصر قابلة للتبديل\n    // std::swap_ranges(a.begin(), a.end(), b.begin());\n\n    // ✅ يجب أن يكون النطاق الثاني بطولٍ كافٍ على الأقل\n    std::swap_ranges(a.begin(), a.begin() + 2, b.begin());\n}",
+          "explanationArabic": "swap_ranges لا يعرف حجم النطاق الثاني من المعاملات الممررة له. هو يفترض ضمنيًا أن `first2` يشير إلى نطاق يملك على الأقل نفس عدد عناصر النطاق الأول. إذا لم يتحقق هذا، ستدخل في سلوك غير معرّف."
+        }
+      ],
+      "related": [
+        "std::swap",
+        "std::iter_swap",
+        "std::copy"
+      ]
+    },
+    "std::copy_n": {
+      "title": "std::copy_n",
+      "type": "خوارزمية",
+      "description": "ينسخ عددًا محددًا من العناصر بدءًا من مكرّر البداية. هو الصياغة الأنسب عندما تعرف عدد العناصر المطلوب نسخه بدل حساب مكرّر نهاية يدويًا.",
+      "usage": "يظهر عند نسخ أول N عنصر من نطاق، أو عند تقسيم البيانات إلى دفعات صغيرة، أو عند التعامل مع buffers ذات حجم معروف.",
+      "example": "std::copy_n(src.begin(), 3, dst.begin());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ أول ثلاثة عناصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {5, 10, 15, 20, 25};\n    std::vector<int> dst(3);\n\n    std::copy_n(src.begin(), 3, dst.begin());\n    for (int x : dst) std::cout << x << ' '; // 5 10 15\n}",
+          "explanationArabic": "copy_n أوضح من `copy(begin, begin + n, ...)` عندما تكون نيتك الحقيقية هي التعامل مع عدد عناصر، لا مع موضع نهاية. هذا يقلل أخطاء الحساب اليدوي لمكرّر النهاية."
+        },
+        {
+          "titleArabic": "نسخ دفعة إلى حاوية تنمو تلقائيًا",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iterator>\n\nint main() {\n    std::vector<int> src = {1, 2, 3, 4, 5, 6};\n    std::vector<int> first_chunk;\n\n    std::copy_n(src.begin(), 4, std::back_inserter(first_chunk));\n    // first_chunk = {1, 2, 3, 4}\n}",
+          "explanationArabic": "المخرج لا يجب أن يكون نطاقًا محجوزًا دائمًا. مع back_inserter يتحول copy_n إلى أداة لبناء حاوية جديدة من أول N عنصر من المصدر من دون resize مسبق."
+        },
+        {
+          "titleArabic": "خطأ شائع: n أكبر من العناصر المتاحة",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> src = {1, 2, 3};\n    std::vector<int> dst(5);\n\n    // ❌ خطأ: المصدر لا يحتوي 5 عناصر أصلًا\n    // std::copy_n(src.begin(), 5, dst.begin());\n\n    // ✅ تأكد أن n لا يتجاوز ما هو متاح\n    std::copy_n(src.begin(), src.size(), dst.begin());\n}",
+          "explanationArabic": "copy_n يفترض أن هناك على الأقل n عنصرًا قابلًا للقراءة من المصدر. إذا كان n أكبر من طول المصدر، فالمشكلة ليست في الخوارزمية بل في العقد الذي كسرتَه أنت. استخدم min أو تحقق مسبقًا عند العمل مع مدخلات غير موثوقة."
+        }
+      ],
+      "related": [
+        "std::copy",
+        "std::copy_backward",
+        "std::back_inserter"
+      ]
+    },
+    "std::fill_n": {
+      "title": "std::fill_n",
+      "type": "خوارزمية",
+      "description": "يكتب نفس القيمة في عدد محدد من المواضع بدءًا من مكرّر البداية. هو المقابل العددي لـ fill عندما تتعامل مع طول معروف بدل مكرّر نهاية.",
+      "usage": "يظهر عند تهيئة أول N عنصر من buffer أو عند إعادة ضبط جزء محدد من الحاوية بسرعة ووضوح.",
+      "example": "std::fill_n(v.begin(), 5, 42);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "تهيئة أول خمسة عناصر فقط",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> values(8, 0);\n    std::fill_n(values.begin(), 5, 42);\n    // values = {42, 42, 42, 42, 42, 0, 0, 0}\n}",
+          "explanationArabic": "fill_n مناسب عندما يكون الجزء المطلوب معروفًا بعدد عناصر لا بحد نهاية. هذا شائع في الـ buffers حيث تكتب جزءًا صالحًا ثم تترك الباقي كما هو."
+        },
+        {
+          "titleArabic": "كتابة قيمة افتراضية في بداية مصفوفة خام",
+          "code": "#include <algorithm>\n#include <array>\n\nint main() {\n    std::array<float, 16> weights{};\n    std::fill_n(weights.begin(), 4, 1.0f);\n    // أول أربعة عناصر = 1.0f، والبقية تبقى 0.0f\n}",
+          "explanationArabic": "fill_n لا يقتصر على vector. أي مكرّر إخراج صالح يكفي. مع array أو raw buffer يكون أوضح من حلقة يدوية لأن نيتك هنا ليست التكرار بل التهيئة الموحدة."
+        },
+        {
+          "titleArabic": "خطأ شائع: خلطه مع resize",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v;\n\n    // ❌ fill_n لا يضيف عناصر جديدة إذا كانت الحاوية فارغة\n    // std::fill_n(v.begin(), 3, 7); // begin غير صالح للكتابة هنا\n\n    // ✅ إمّا resize أولًا\n    v.resize(3);\n    std::fill_n(v.begin(), 3, 7);\n\n    // ✅ أو استخدم back_inserter مع fill_n غير ممكن مباشرة — الأفضل std::fill بعد resize\n}",
+          "explanationArabic": "fill_n يكتب في نطاق موجود بالفعل، ولا يقوم بتوسيع الحاوية. هذا فرق جوهري بينه وبين push_back أو insert. إذا كانت الحاوية لا تملك عناصر فعلية بعد، يجب إنشاء المساحة أولًا."
+        }
+      ],
+      "related": [
+        "std::fill",
+        "std::generate",
+        "std::iota"
+      ]
+    },
+    "std::remove_copy_if": {
+      "title": "std::remove_copy_if",
+      "type": "خوارزمية",
+      "description": "ينسخ العناصر التي لا تحقق الشرط إلى نطاق جديد، ويترك المصدر كما هو. فكر فيه كمرشّح filter يكتب النتيجة في مكان آخر بدل تعديل النطاق الأصلي.",
+      "usage": "يظهر عندما تريد إنتاج نسخة منظّفة من البيانات من دون لمس المصدر، مثل حذف القيم غير الصالحة أو تجاهل العناصر المخفية أثناء التصدير.",
+      "example": "std::remove_copy_if(src.begin(), src.end(), std::back_inserter(dst), pred);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ العناصر الموجبة فقط",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iterator>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {-3, 4, 0, 7, -1, 5};\n    std::vector<int> dst;\n\n    std::remove_copy_if(src.begin(), src.end(), std::back_inserter(dst),\n        [](int x) { return x <= 0; });\n\n    for (int x : dst) std::cout << x << ' '; // 4 7 5\n}",
+          "explanationArabic": "الشرط هنا يحدد ما يجب استبعاده لا ما يجب الاحتفاظ به. هذه نقطة مهمة: إذا أعاد predicate قيمة true فالعنصر يُحذف من النسخة الناتجة. العناصر المنسوخة هي التي فشلَت في الشرط."
+        },
+        {
+          "titleArabic": "تنظيف النصوص الفارغة مع الحفاظ على المصدر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iterator>\n\nint main() {\n    std::vector<std::string> names = {\"Ali\", \"\", \"Sara\", \"\", \"Omar\"};\n    std::vector<std::string> cleaned;\n\n    std::remove_copy_if(names.begin(), names.end(), std::back_inserter(cleaned),\n        [](const std::string& s) { return s.empty(); });\n    // cleaned = {\"Ali\", \"Sara\", \"Omar\"}\n    // names تبقى كما هي\n}",
+          "explanationArabic": "إذا كنت تحتاج نسخة جديدة فقط، remove_copy_if أنسب من `remove_if + erase` لأنه لا يغيّر المصدر. هذا مهم عندما يكون المصدر ما يزال مطلوبًا في مكان آخر أو يمثل بيانات قراءة فقط."
+        },
+        {
+          "titleArabic": "الفرق عن remove_if",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> src = {1, 2, 3, 4, 5, 6};\n    std::vector<int> dst;\n\n    // remove_copy_if: يُنتج نسخة جديدة\n    std::remove_copy_if(src.begin(), src.end(), std::back_inserter(dst),\n        [](int x) { return x % 2 == 0; });\n\n    // remove_if: يعيد ترتيب src داخليًا ويحتاج erase لاحقًا\n    auto new_end = std::remove_if(src.begin(), src.end(),\n        [](int x) { return x % 2 == 0; });\n    src.erase(new_end, src.end());\n}",
+          "explanationArabic": "remove_copy_if يُستخدم عندما تريد مسار إخراج منفصل. remove_if يُستخدم عندما تريد تنظيف الحاوية نفسها. الخلط بينهما شائع لأن الاسمين متقاربين، لكن أثرهما مختلف جذريًا على البيانات الأصلية."
+        }
+      ],
+      "related": [
+        "std::remove_if",
+        "std::copy_if",
+        "std::back_inserter"
+      ]
+    },
+    "std::reverse_copy": {
+      "title": "std::reverse_copy",
+      "type": "خوارزمية",
+      "description": "ينسخ النطاق بترتيب معكوس إلى وجهة جديدة. يختلف عن reverse لأنه لا يعكس المصدر في مكانه، بل يبني نسخة معكوسة منفصلة.",
+      "usage": "يظهر عندما تحتاج ترتيبًا معكوسًا للعرض أو التصدير أو المعالجة مع الاحتفاظ بالمصدر الأصلي كما هو.",
+      "example": "std::reverse_copy(v.begin(), v.end(), out.begin());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء نسخة معكوسة من vector",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {1, 2, 3, 4};\n    std::vector<int> dst(src.size());\n\n    std::reverse_copy(src.begin(), src.end(), dst.begin());\n    // src = {1, 2, 3, 4}\n    // dst = {4, 3, 2, 1}\n}",
+          "explanationArabic": "الفائدة الأساسية هنا أنك تحصل على ترتيب معكوس من دون المساس بالمصدر. هذا مهم عندما يكون المصدر مطلوبًا بترتيبه الطبيعي في مكان آخر أو عندما يكون نطاق قراءة فقط."
+        },
+        {
+          "titleArabic": "إخراج معكوس إلى حاوية تنمو تلقائيًا",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iterator>\n\nint main() {\n    std::vector<int> frames = {10, 20, 30, 40};\n    std::vector<int> reversed;\n\n    std::reverse_copy(frames.begin(), frames.end(), std::back_inserter(reversed));\n    // reversed = {40, 30, 20, 10}\n}",
+          "explanationArabic": "مثل copy وcopy_n، يمكن استخدام back_inserter لتجنب الحجز المسبق. هذا يجعل reverse_copy مناسبًا لبناء قائمة عرض مؤقتة أو سجل زمني مقلوب بسرعة."
+        },
+        {
+          "titleArabic": "الفرق عن reverse",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> a = {1, 2, 3};\n    std::vector<int> b(3);\n\n    std::reverse_copy(a.begin(), a.end(), b.begin());\n    // a تبقى {1, 2, 3}\n    // b تصبح {3, 2, 1}\n\n    std::reverse(a.begin(), a.end());\n    // الآن a نفسها أصبحت {3, 2, 1}\n}",
+          "explanationArabic": "reverse_copy = نسخة معكوسة. reverse = تعديل في المكان. اختيار واحد منهما يعتمد على سؤال بسيط: هل أريد الحفاظ على الأصل أم تغييره؟"
+        }
+      ],
+      "related": [
+        "std::reverse",
+        "std::copy_backward",
+        "std::copy"
+      ]
+    },
+    "std::copy": {
+      "title": "std::copy",
+      "type": "خوارزمية",
+      "description": "ينسخ عناصر من نطاق إلى نطاق آخر. الخوارزمية الأساسية للنسخ في STL — تعمل مع أي نوع حاوية توفر مكرّرات.",
+      "usage": "يظهر عند نسخ بيانات من حاوية إلى أخرى أو من جزء من حاوية إلى جزء آخر. هو الأساس الذي تُبنى عليه copy_if وcopy_n وcopy_backward.",
+      "example": "std::copy(src.begin(), src.end(), dst.begin());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ vector بالكامل",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {10, 20, 30, 40};\n    std::vector<int> dst(src.size()); // يجب حجز المساحة أولًا\n\n    std::copy(src.begin(), src.end(), dst.begin());\n\n    for (int x : dst) std::cout << x << ' ';\n    // المخرجات: 10 20 30 40\n}",
+          "explanationArabic": "copy ينسخ كل عنصر من النطاق المصدر إلى النطاق الوجهة. الوجهة يجب أن تكون كبيرة بما يكفي — إذا كانت أصغر فالسلوك غير معرّف. هذا هو الفرق الجوهري عن back_inserter الذي يُضيف تلقائيًا."
+        },
+        {
+          "titleArabic": "نسخ جزء من حاوية",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5, 6, 7};\n    std::vector<int> middle(3);\n\n    // نسخ العناصر من الموضع 2 إلى 4 (3 عناصر)\n    std::copy(v.begin() + 2, v.begin() + 5, middle.begin());\n\n    for (int x : middle) std::cout << x << ' ';\n    // المخرجات: 3 4 5\n}",
+          "explanationArabic": "copy لا يقتصر على النسخ الكامل. بتحديد مكرّرات البداية والنهاية يمكنك نسخ أي شريحة من الحاوية. هذا أنظف من حلقة يدوية مع فهرس."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسخ إلى حاوية فارغة بدون back_inserter",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> src = {1, 2, 3};\nstd::vector<int> dst; // فارغة — لا تملك مساحة!\n\n// ❌ سلوك غير معرّف: dst.begin() لا يشير لمساحة صالحة للكتابة\n// std::copy(src.begin(), src.end(), dst.begin());\n\n// ✅ الحل الأول: احجز المساحة قبل النسخ\n// dst.resize(src.size());\n// std::copy(src.begin(), src.end(), dst.begin());\n\n// ✅ الحل الثاني: استخدم back_inserter لإضافة تلقائي\n// std::copy(src.begin(), src.end(), std::back_inserter(dst));",
+          "explanationArabic": "copy لا يُضيف عناصر جديدة — يكتب في مواضع موجودة فعلًا. هذا الفهم خاطئ شائع: الناس تتوقع أن copy يعمل مثل push_back لكنه لا يفعل. إمّا احجز المساحة مسبقًا أو استخدم back_inserter."
+        }
+      ],
+      "related": [
+        "std::copy_n",
+        "std::copy_if",
+        "std::copy_backward",
+        "std::back_inserter"
+      ]
+    },
+    "std::find": {
+      "title": "std::find",
+      "type": "خوارزمية",
+      "description": "يبحث عن أول عنصر يساوي قيمة محددة في نطاق. يُرجع مكرّر إليه أو end() إذا لم يُجد.",
+      "usage": "يظهر عند البحث الخطي عن قيمة في أي حاوية. هو الأبسط والأكثر مباشرة — استخدمه عندما لا تحتاج شرطًا مخصصًا (في تلك الحالة استخدم find_if).",
+      "example": "auto it = std::find(v.begin(), v.end(), 42);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "البحث عن قيمة في vector",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 25, 30, 45, 60};\n\n    auto it = std::find(v.begin(), v.end(), 30);\n    if (it != v.end()) {\n        std::cout << \"وُجد: \" << *it << '\\n';          // 30\n        std::cout << \"الموضع: \" << (it - v.begin()) << '\\n'; // 2\n    } else {\n        std::cout << \"لم يُوجد\\n\";\n    }\n}",
+          "explanationArabic": "find يفحص العناصر واحدًا تلو الآخر O(n). يُرجع مكرّر لأول عنصر يساوي القيمة. الفحص it != v.end() ضروري دائمًا لأن القيمة قد لا تكون موجودة. it - v.begin() يعطي الفهرس لكنه يعمل فقط مع مكرّرات الوصول العشوائي."
+        },
+        {
+          "titleArabic": "find مع المصفوفات الخام",
+          "code": "#include <algorithm>\n#include <iostream>\n\nint main() {\n    int arr[] = {5, 10, 15, 20, 25};\n    int n = sizeof(arr) / sizeof(arr[0]);\n\n    int* ptr = std::find(arr, arr + n, 15);\n    if (ptr != arr + n) {\n        std::cout << \"وُجد في الموضع: \" << (ptr - arr); // 2\n    }\n}",
+          "explanationArabic": "find يعمل مع المصفوفات الخام لأن المؤشرات هي مكرّرات. arr يعمل كـ begin وarr + n كـ end. هذا مفيد عند العمل مع كود C أو مع buffers."
+        },
+        {
+          "titleArabic": "متى تستخدم find vs member find",
+          "code": "#include <algorithm>\n#include <vector>\n#include <set>\n#include <unordered_set>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    std::set<int> s = {1, 2, 3, 4, 5};\n    std::unordered_set<int> us = {1, 2, 3, 4, 5};\n\n    // vector: std::find — O(n) بحث خطي\n    auto it = std::find(v.begin(), v.end(), 3);\n\n    // set: member find — O(log n) بحث ثنائي داخلي\n    auto sit = s.find(3);\n\n    // unordered_set: member find — O(1) في المتوسط\n    auto usit = us.find(3);\n\n    // ❌ لا تستخدم std::find مع set أو unordered_set\n    // لأنك ستخسر الأداء الداخلي وتُجبرها على بحث خطي\n}",
+          "explanationArabic": "std::find بحث خطي دائمًا O(n). الحاويات الترابطية (set، map، unordered_set) توفر member find() أسرع بكثير. القاعدة: استخدم std::find مع vector وarray وlist، واستخدم member find مع الحاويات الترابطية."
+        }
+      ],
+      "related": [
+        "std::find_if",
+        "std::find_if_not",
+        "std::find_first_of",
+        "std::binary_search"
+      ]
+    },
+    "std::upper_bound": {
+      "title": "std::upper_bound",
+      "type": "خوارزمية",
+      "description": "يُرجع مكرّر لأول عنصر أكبر من القيمة المطلوبة في نطاق مرتب. يختلف عن lower_bound الذي يُرجع أول عنصر أكبر من أو يساوي.",
+      "usage": "يظهر عند الحاجة لموضع الإدراج بحيث يأتي بعد كل التكرارات الموجودة، أو عند عدّ تكرارات عنصر في نطاق مرتب مع lower_bound.",
+      "example": "auto it = std::upper_bound(v.begin(), v.end(), 5);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "الفرق بين lower_bound وupper_bound مع تكرارات",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 4, 4, 4, 6, 8};\n\n    auto lo = std::lower_bound(v.begin(), v.end(), 4);\n    auto hi = std::upper_bound(v.begin(), v.end(), 4);\n\n    std::cout << \"lower_bound يشير لـ: \" << *lo << '\\n'; // 4 (أول >= 4)\n    std::cout << \"upper_bound يشير لـ: \" << *hi << '\\n'; // 6 (أول > 4)\n    std::cout << \"عدد التكرارات: \" << (hi - lo) << '\\n';   // 3\n}",
+          "explanationArabic": "lower_bound يُرجع أول عنصر >= القيمة (يشمل المساوي). upper_bound يُرجع أول عنصر > القيمة (لا يشمل المساوي). الفرق بينهما هو عدد التكرارات. هذا الفرق مهم فقط مع عناصر مكررة — مع عناصر فريدة كلاهما يُرجع نفس الموضع."
+        },
+        {
+          "titleArabic": "إدراج بعد كل التكرارات الموجودة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 3, 5, 5, 5, 7, 9};\n\n    // lower_bound: يُدرج قبل التكرارات (أول موضع صالح)\n    v.insert(std::lower_bound(v.begin(), v.end(), 5), 5);\n    // v = {1, 3, 5, 5, 5, 5, 5, 7, 9}\n\n    // upper_bound: يُدرج بعد كل التكرارات\n    v.insert(std::upper_bound(v.begin(), v.end(), 5), 5);\n    // v = {1, 3, 5, 5, 5, 5, 5, 5, 7, 9}\n}",
+          "explanationArabic": "عند الإدراج مع الحفاظ على الترتيب: استخدم lower_bound إذا تريد الإدراج في أول موضع صالح، وupper_bound إذا تريد الإدراج بعد كل التكرارات الحالية. الاختيار يؤثر على ترتيب العناصر المتساوية."
+        },
+        {
+          "titleArabic": "يجب أن يكون النطاق مرتبًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {5, 1, 4, 2, 3};\n\n// ❌ النطاق غير مرتب — النتيجة غير صحيحة\n// auto it = std::upper_bound(v.begin(), v.end(), 3);\n\n// ✅ رتّب أولًا\nstd::sort(v.begin(), v.end());\nauto it = std::upper_bound(v.begin(), v.end(), 3);\n// it يشير لـ 4 (أول عنصر > 3)\n\n// البديل الأحدث في C++20:\n// auto it = std::ranges::upper_bound(v, 3);\n// ranges لا تتطلب ترتيبًا مسبقًا عند تمرير مكرّرات مباشرة",
+          "explanationArabic": "upper_bound مثل lower_bound يتطلب نطاقًا مرتبًا. على نطاق غير مرتب النتيجة غير مضمونة. هذه قاعدة عامة لكل خوارزميات البحث الثنائي في STL."
+        }
+      ],
+      "related": [
+        "std::lower_bound",
+        "std::equal_range",
+        "std::binary_search"
+      ]
+    },
+    "std::none_of": {
+      "title": "std::none_of",
+      "type": "خوارزمية",
+      "description": "يُرجع true إذا لم يُحقق أي عنصر في النطاق الشرط المُمرّر. هو العكس المنطقي الكامل لـ any_of.",
+      "usage": "يظهر عند التحقق من سلامة بيانات أو من عدم وجود عنصر غير مرغوب. مثلًا: التأكد من عدم وجود أعداد سالبة أو عدم وجود قيم فارغة.",
+      "example": "bool clean = std::none_of(v.begin(), v.end(), [](int x) { return x < 0; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "التأكد من عدم وجود أعداد سالبة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 7, 1, 9, 4};\n\n    bool no_negatives = std::none_of(v.begin(), v.end(), [](int x) {\n        return x < 0;\n    });\n    std::cout << std::boolalpha << no_negatives; // true\n\n    v.push_back(-5);\n    no_negatives = std::none_of(v.begin(), v.end(), [](int x) {\n        return x < 0;\n    });\n    std::cout << '\\n' << no_negatives; // false\n}",
+          "explanationArabic": "none_of يتوقف عند أول عنصر يُحقق الشرط ويُرجع false. إذا مر على كل العناصر دون أن يجد واحدًا يُحقق الشرط، يُرجع true. هذا أنظف من count_if == 0 لأنه يتوقف مبكرًا."
+        },
+        {
+          "titleArabic": "التحقق من صحة مدخلات",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> names = {\"Ali\", \"Sara\", \"Omar\"};\n\n    // التأكد من عدم وجود اسم فارغ\n    bool all_valid = std::none_of(names.begin(), names.end(),\n        [](const std::string& s) { return s.empty(); });\n    std::cout << std::boolalpha << all_valid; // true\n\n    // التأكد من عدم وجود اسم طويل جدًا\n    bool no_long = std::none_of(names.begin(), names.end(),\n        [](const std::string& s) { return s.size() > 20; });\n    std::cout << '\\n' << no_long; // true\n}",
+          "explanationArabic": "none_of مثالي لفحوصات السلامة (validation): 'هل لا يوجد عنصر يكسر القاعدة؟'. هذا أوضح من كتابة 'هل كل العناصر تُحقق العكس?' لأن الشرط يُكتب بالشكل الطبيعي."
+        },
+        {
+          "titleArabic": "none_of vs !any_of vs all_of مع نفي",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {2, 4, 6, 8};\nauto pred = [](int x) { return x % 2 != 0; }; // هل فردي؟\n\n// الثلاثة تُرجع نفس النتيجة لكن بقراءات مختلفة:\nbool a = std::none_of(v.begin(), v.end(), pred);   // \"لا يوجد فردي\"\nbool b = !std::any_of(v.begin(), v.end(), pred);   // \"ليس صحيحًا أن يوجد فردي\"\nbool c = std::all_of(v.begin(), v.end(), [](int x) { return x % 2 == 0; }); // \"كلها زوجية\"\n\n// a == b == c == true\n// none_of أوضح دلاليًا لأنه يقرأ: \"لا يوجد عنصر يُحقق الشرط\"",
+          "explanationArabic": "none_of و!any_of وall_of مع نفي الشرط يُرجعون نفس النتيجة. لكن none_of أوضح لأنه يُعبّر عن النية مباشرة: 'أريد التأكد من عدم وجود شيء'. استخدم none_of عندما سؤالك الحقيقي هو 'هل لا يوجد؟'."
+        }
+      ],
+      "related": [
+        "std::any_of",
+        "std::all_of",
+        "std::find_if"
+      ]
+    },
+    "std::for_each_n": {
+      "title": "std::for_each_n",
+      "type": "خوارزمية",
+      "description": "ينفّذ دالة على أول N عنصر بدءًا من مكرّر البداية. هو النسخة العددية من for_each عندما يكون الحد الذي يهمك هو عدد العناصر لا مكرّر النهاية.",
+      "usage": "يظهر عند معالجة أول دفعة من البيانات أو أول N عنصر صالح من buffer أو queue من دون الحاجة لبناء مكرّر نهاية يدويًا.",
+      "example": "std::for_each_n(v.begin(), 3, [](int& x) { x *= 2; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "معالجة أول ثلاثة عناصر فقط",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> values = {1, 2, 3, 4, 5};\n    std::for_each_n(values.begin(), 3, [](int& x) {\n        x *= 10;\n    });\n    // values = {10, 20, 30, 4, 5}\n}",
+          "explanationArabic": "بدل كتابة `for_each(begin, begin + 3, ...)` أو حلقة يدوية مع عداد، for_each_n تقول بوضوح: طبّق العملية على أول ثلاثة عناصر فقط. هذا أوضح دلاليًا عندما تكون الدفعة محددة بالعدد."
+        },
+        {
+          "titleArabic": "التعامل مع دفعة أولية من الأحداث",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n\nint main() {\n    std::vector<std::string> events = {\"spawn\", \"move\", \"shoot\", \"render\"};\n    std::for_each_n(events.begin(), 2, [](const std::string& e) {\n        // عالج أول حدثين فقط في هذه الدورة\n        (void)e;\n    });\n}",
+          "explanationArabic": "هذا النمط شائع في المعالجة الدفعية: خذ أول N عنصر من الصف الحالي، عالجها، ثم أكمل لاحقًا. for_each_n يعبّر عن هذا مباشرة بدل خلط منطق التكرار مع منطق المعالجة."
+        },
+        {
+          "titleArabic": "خطأ شائع: افتراض وجود N عنصر دائمًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2};\n\n    // ❌ خطأ: لا يوجد 5 عناصر يمكن المرور عليها\n    // std::for_each_n(v.begin(), 5, [](int& x) { x++; });\n\n    // ✅ استخدم الأصغر بين المطلوب والمتاح\n    auto n = std::min<std::size_t>(5, v.size());\n    std::for_each_n(v.begin(), n, [](int& x) { x++; });\n}",
+          "explanationArabic": "for_each_n لا يتحقق من طول النطاق. هو يفترض أن البداية تملك على الأقل N عنصرًا صالحًا. عند العمل مع بيانات قد تكون أقصر من المتوقع، احسب العدد الفعلي أولًا."
+        }
+      ],
+      "related": [
+        "std::for_each",
+        "std::transform",
+        "std::copy_n"
+      ]
+    },
+    "std::remove_copy": {
+      "title": "std::remove_copy",
+      "type": "خوارزمية",
+      "description": "ينسخ كل العناصر من النطاق المصدر إلى نطاق الوجهة باستثناء تلك التي تساوي قيمة محددة. يترك المصدر كما هو دون تعديل.",
+      "usage": "يظهر عند الحاجة لنسخ بيانات مع استبعاد قيمة معينة دون المساس بالأصل. مثلًا: نسخ قائمة بدون عنصر حذف أو تصدير بيانات بدون قيمة افتراضية.",
+      "example": "std::remove_copy(v.begin(), v.end(), std::back_inserter(result), 0);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ قائمة بدون الأصفار",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iterator>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {0, 3, 0, 7, 5, 0, 2};\n    std::vector<int> dst;\n    std::remove_copy(src.begin(), src.end(), std::back_inserter(dst), 0);\n    for (int x : dst) std::cout << x << ' ';\n    // المخرجات: 3 7 5 2\n    // src لا تزال {0, 3, 0, 7, 5, 0, 2}\n}",
+          "explanationArabic": "remove_copy ينسخ كل عنصر لا يساوي القيمة المحددة (هنا 0) إلى الوجهة. المصدر يبقى كما هو. هذا يختلف عن remove الذي يُعدّل النطاق في المكان. مع back_inserter لا تحتاج حجز مسبق."
+        },
+        {
+          "titleArabic": "remove_copy_if للشرط المخصص",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iterator>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {1, -2, 3, -4, 5, -6};\n    std::vector<int> positives;\n    std::remove_copy_if(src.begin(), src.end(), std::back_inserter(positives),\n        [](int x) { return x < 0; });\n    for (int x : positives) std::cout << x << ' ';\n    // المخرجات: 1 3 5\n}",
+          "explanationArabic": "remove_copy_if يأخذ predicate بدل قيمة — أنسب عند الشرط المعقد. هنا نستبعد كل السالب. remove_copy للقيمة الثابتة وremove_copy_if للشرط المخصص."
+        },
+        {
+          "titleArabic": "remove_copy vs remove — أيهما تستخدم؟",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> data = {1, 0, 2, 0, 3};\n\n// remove: يُعدّل في المكان + يحتاج erase\nauto new_end = std::remove(data.begin(), data.end(), 0);\ndata.erase(new_end, data.end());\n// data الآن = {1, 2, 3}\n\n// remove_copy: يبني نسخة جديدة ويترك الأصل\nstd::vector<int> original = {1, 0, 2, 0, 3};\nstd::vector<int> clean;\nstd::remove_copy(original.begin(), original.end(), std::back_inserter(clean), 0);\n// original لا تزال {1, 0, 2, 0, 3}\n// clean = {1, 2, 3}",
+          "explanationArabic": "استخدم remove + erase عندما لا تحتاج الأصل. استخدم remove_copy عندما تحتاج الأصل كما هو. remove_copy يستهلك ذاكرة إضافية للنسخة الجديدة لكنه يحافظ على البيانات الأصلية."
+        }
+      ],
+      "related": [
+        "std::remove",
+        "std::remove_copy_if",
+        "std::copy_if"
+      ]
+    },
+    "std::includes": {
+      "title": "std::includes",
+      "type": "خوارزمية",
+      "description": "يتحقق مما إذا كان كل عنصر في النطاق الثاني موجودًا أيضًا في النطاق الأول. كلا النطاقين يجب أن يكونا مرتبين.",
+      "usage": "يظهر عند الحاجة للتأكد من أن مجموعة فرعية (subset) مُحتواة بالكامل في مجموعة أكبر. مفيد في فحص الصلاحيات أو التحقق من تغطية المتطلبات.",
+      "example": "bool has_all = std::includes(all.begin(), all.end(), subset.begin(), subset.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق من أن مجموعة فرعية مُحتواة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> all = {1, 2, 3, 4, 5, 6, 7};\n    std::vector<int> subset = {2, 4, 6};\n    std::vector<int> not_subset = {2, 4, 8};\n\n    std::cout << std::boolalpha;\n    std::cout << std::includes(all.begin(), all.end(), subset.begin(), subset.end()); // true\n    std::cout << '\\n';\n    std::cout << std::includes(all.begin(), all.end(), not_subset.begin(), not_subset.end()); // false\n}",
+          "explanationArabic": "includes يفحص هل كل عنصر في النطاق الثاني موجود في الأول. كلاهما يجب أن يكون مرتبًا. تعقيد O(n+m) — خطي في مجموع الحجمين. لا يتحقق من التكرارات (عدد الظهور) بل من الوجود فقط."
+        },
+        {
+          "titleArabic": "فحص صلاحيات المستخدم",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> user_perms = {\"read\", \"write\"};\n    std::vector<std::string> required = {\"read\", \"write\", \"execute\"};\n\n    bool authorized = std::includes(user_perms.begin(), user_perms.end(),\n        required.begin(), required.end());\n    std::cout << std::boolalpha << authorized; // false — ينقص execute\n}",
+          "explanationArabic": "includes مفيد لفحص الصلاحيات: هل يملك المستخدم كل الصلاحيات المطلوبة؟ النتيجة false تعني أن بعض المتطلبات مفقودة. هذا أنظف من حلقة تدقق يدوية."
+        },
+        {
+          "titleArabic": "يجب أن يكون كلا النطاقين مرتبين",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> a = {3, 1, 4};\nstd::vector<int> b = {1, 3};\n\n// ❌ النطاقان غير مرتبين — النتيجة غير مضمونة\n// std::includes(a.begin(), a.end(), b.begin(), b.end());\n\n// ✅ رتّب أولًا\nstd::sort(a.begin(), a.end());\nstd::sort(b.begin(), b.end());\nbool result = std::includes(a.begin(), a.end(), b.begin(), b.end());\n// result = true",
+          "explanationArabic": "includes يتطلب ترتيبًا تصاعديًا لكلا النطاقين. على نطاق غير مرتب قد يُرجع نتيجة خاطئة. هذه قاعدة عامة لكل خوارزميات المجموعات المرتبة في STL."
+        }
+      ],
+      "related": [
+        "std::set_intersection",
+        "std::set_union",
+        "std::set_difference"
+      ]
+    },
+    "std::is_permutation": {
+      "title": "std::is_permutation",
+      "type": "خوارزمية",
+      "description": "يتحقق مما إذا كان النطاق الثاني هو تبديل (permutation) للنطاق الأول — أي يحتوي نفس العناصر بنفس عدد التكرارات بغض النظر عن الترتيب.",
+      "usage": "يظهر عند الحاجة لمقارنة مجموعتين من العناصر دون الاهتمام بالترتيب. مثلًا: التحقق من أن نتيجة خوارزمية تحتوي نفس العناصر المتوقعة.",
+      "example": "bool same = std::is_permutation(a.begin(), a.end(), b.begin());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "مقارنة مجموعتين بغض النظر عن الترتيب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3, 4};\n    std::vector<int> b = {4, 3, 2, 1};\n    std::vector<int> c = {1, 2, 2, 4};\n\n    std::cout << std::boolalpha;\n    std::cout << std::is_permutation(a.begin(), a.end(), b.begin()); // true\n    std::cout << '\\n';\n    std::cout << std::is_permutation(a.begin(), a.end(), c.begin()); // false\n}",
+          "explanationArabic": "is_permutation يتحقق أن كلا النطاقين يحتويان نفس العناصر بنفس التكرارات. الترتيب غير مهم. {1,2,3,4} و{4,3,2,1} هما نفس التبديل. {1,2,2,4} مختلف لأن 2 تكررت مرتين بدل مرة."
+        },
+        {
+          "titleArabic": "التحقق من أن خوارزمية لم تفقد أو تضيف عناصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> original = {5, 3, 1, 4, 2};\n    std::vector<int> result = original;\n    std::sort(result.begin(), result.end());\n\n    bool same_elements = std::is_permutation(original.begin(), original.end(),\n        result.begin());\n    std::cout << std::boolalpha << same_elements; // true — sort لا يُفقد عناصر\n}",
+          "explanationArabic": "is_permutation مفيد للاختبار: بعد تطبيق خوارزمية (sort, unique, partition)، تحقق أن العناصر لم تتغير — فقط أُعيد ترتيبها. هذا نمط اختبار شائع."
+        },
+        {
+          "titleArabic": "is_permutation لا يتطلب ترتيبًا مسبقًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> a = {3, 1, 2};\nstd::vector<int> b = {2, 3, 1};\n\n// ✅ يعمل حتى بدون ترتيب — يفحص العناصر لا الترتيب\nbool same = std::is_permutation(a.begin(), a.end(), b.begin());\n// same = true\n\n// ملاحظة: يجب أن يكون النطاقان بنفس الطول\n// إذا كان الثاني أقصر، مرر النهاية صراحةً:\n// std::is_permutation(a.begin(), a.end(), b.begin(), b.end());",
+          "explanationArabic": "عكس includes وset_difference، is_permutation لا يتطلب ترتيبًا. لكنه يتطلب أن يكون النطاقان بنفس الطول (أو مرر النهاية صراحةً). تعقيد O(n²) في أسوأ حالة لكنه عادةً أسرع."
+        }
+      ],
+      "related": [
+        "std::sort",
+        "std::next_permutation",
+        "std::equal"
+      ]
+    },
+    "std::partition_point": {
+      "title": "std::partition_point",
+      "type": "خوارزمية",
+      "description": "يُرجع مكرّر لنقطة التقسيم في نطاق مُقسَّم مسبقًا بـ partition أو stable_partition. كل العناصر قبل النقطة تحققت بالشرط وكل ما بعدها لم تتحقق.",
+      "usage": "يظهر عند الحاجة لإيجاد نقطة التقسيم بعد استدعاء partition. مفيد لمعرفة عدد العناصر في كل مجموعة بعد التقسيم.",
+      "example": "auto mid = std::partition_point(v.begin(), v.end(), pred);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "معرفة عدد العناصر في كل مجموعة بعد التقسيم",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, -3, 7, -1, 2, -8, 4};\n    auto pred = [](int x) { return x > 0; };\n\n    std::partition(v.begin(), v.end(), pred);\n    auto mid = std::partition_point(v.begin(), v.end(), pred);\n\n    std::cout << \"positives: \" << std::distance(v.begin(), mid); // 4\n    std::cout << \"\\nnegatives: \" << std::distance(mid, v.end()); // 3\n}",
+          "explanationArabic": "partition_point يُرجع مكرّرًا عند نقطة التقسيم. المسافة من begin لهذا المكرّر = عدد العناصر التي حققت الشرط. هذا يُتيح معرفة حجم كل مجموعة بعد التقسيم."
+        },
+        {
+          "titleArabic": "البحث الثنائي في نطاق مُقسَّم",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {2, 4, 6, 1, 3, 5};\n    auto pred = [](int x) { return x % 2 == 0; };\n\n    // بعد partition: {2,4,6,1,3,5} → الأزواج أولاً\n    std::partition(v.begin(), v.end(), pred);\n    auto mid = std::partition_point(v.begin(), v.end(), pred);\n\n    // الآن يمكنك البحث في كل قسم على حدة\n    bool found_even = std::binary_search(v.begin(), mid, 4);\n    bool found_odd = std::binary_search(mid, v.end(), 3);\n    std::cout << std::boolalpha << found_even << ' ' << found_odd; // true true\n}",
+          "explanationArabic": "partition_point يُتيح تقسيم النطاق لقسمين مستقلين يمكن البحث فيهما بشكل منفصل. هذا مفيد عندما يكون الشرط يُنتج مجموعتين تريدهما مرتبتين بشكل مستقل."
+        },
+        {
+          "titleArabic": "يجب أن يكون النطاق مُقسَّمًا مسبقًا",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3, 4, 5};\n\n// ❌ بدون partition مسبق — النتيجة غير مضمونة\n// auto mid = std::partition_point(v.begin(), v.end(), [](int x) { return x > 3; });\n\n// ✅ قسّم أولًا ثم أوجد النقطة\nstd::partition(v.begin(), v.end(), [](int x) { return x > 3; });\nauto mid = std::partition_point(v.begin(), v.end(), [](int x) { return x > 3; });\n// mid يشير لبداية المجموعة الثانية",
+          "explanationArabic": "partition_point يفترض أن النطاق مُقسَّم بالفعل. بدون partition مسبق، السلوك غير معرَّف. هذا مثل lower_bound الذي يفترض ترتيبًا مسبقًا."
+        }
+      ],
+      "related": [
+        "std::partition",
+        "std::stable_partition",
+        "std::binary_search"
+      ]
+    },
+    "std::set_difference": {
+      "title": "std::set_difference",
+      "type": "خوارزمية",
+      "description": "يُنشئ نطاقًا يحتوي العناصر الموجودة في النطاق الأول لكن غير الموجودة في الثاني. كلا النطاقين يجب أن يكونا مرتبين.",
+      "usage": "يظهر عند الحاجة لمعرفة ما يملكه A ولا يملكه B. مثلًا: ملفات في المجلد A وليس في B، أو صلاحيات مفقودة، أو عناصر حُذفت من قائمة.",
+      "example": "std::set_difference(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(result));",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "العناصر في A وليس في B",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3, 4, 5};\n    std::vector<int> b = {3, 4, 5, 6, 7};\n    std::vector<int> diff;\n\n    std::set_difference(a.begin(), a.end(), b.begin(), b.end(),\n        std::back_inserter(diff));\n    for (int x : diff) std::cout << x << ' ';\n    // المخرجات: 1 2 (في A وليس في B)\n}",
+          "explanationArabic": "set_difference يُنتج A - B: العناصر الموجودة في A فقط. كلا النطاقين يجب أن يكونا مرتبين. تعقيد O(n+m) — خطي. العناصر المكررة تُحترم: إذا كان 2 يظهر مرتين في A ومرة في B، يظهر مرة في النتيجة."
+        },
+        {
+          "titleArabic": "العناصر المفقودة من قائمة المتطلبات",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> required = {\"auth\", \"db\", \"cache\", \"logger\"};\n    std::vector<std::string> installed = {\"auth\", \"db\", \"mailer\"};\n    std::vector<std::string> missing;\n\n    std::set_difference(required.begin(), required.end(),\n        installed.begin(), installed.end(), std::back_inserter(missing));\n    for (const auto& m : missing) std::cout << m << ' ';\n    // المخرجات: cache logger\n}",
+          "explanationArabic": "set_difference يُخبرك ما ينقص: المطلوب وليس المُثبَّت. هذا النمط شائع في مديري الحزم وأنظمة التحقق من المتطلبات."
+        },
+        {
+          "titleArabic": "set_difference ليس متماثلًا",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3};\n    std::vector<int> b = {2, 3, 4};\n    std::vector<int> a_minus_b, b_minus_a;\n\n    std::set_difference(a.begin(), a.end(), b.begin(), b.end(),\n        std::back_inserter(a_minus_b)); // {1}\n    std::set_difference(b.begin(), b.end(), a.begin(), a.end(),\n        std::back_inserter(b_minus_a)); // {4}\n\n    std::cout << \"A-B: \";\n    for (int x : a_minus_b) std::cout << x << ' '; // 1\n    std::cout << \"\\nB-A: \";\n    for (int x : b_minus_a) std::cout << x << ' '; // 4\n}",
+          "explanationArabic": "set_difference(A,B) != set_difference(B,A). A-B تعطي ما في A وليس في B، وB-A تعطي العكس. للفرق المتماثل (ما في أحدهما وليس في الآخر) استخدم set_symmetric_difference."
+        }
+      ],
+      "related": [
+        "std::set_intersection",
+        "std::set_union",
+        "std::set_symmetric_difference",
+        "std::includes"
+      ]
+    },
+    "std::set_intersection": {
+      "title": "std::set_intersection",
+      "type": "خوارزمية",
+      "description": "يُنشئ نطاقًا يحتوي العناصر المشتركة بين نطاقين مرتبين. كل عنصر يظهر في النتيجة بعدد مرات وجوده في كلا النطاقين (الحد الأدنى للتكرار).",
+      "usage": "يظهر عند الحاجة لمعرفة التقاطع بين مجموعتين. مثلًا: المهارات المشتركة بين مرشحين، أو العناصر الموجودة في كلتا القائمتين.",
+      "example": "std::set_intersection(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(result));",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "العناصر المشتركة بين مجموعتين",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3, 4, 5};\n    std::vector<int> b = {3, 4, 5, 6, 7};\n    std::vector<int> common;\n\n    std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),\n        std::back_inserter(common));\n    for (int x : common) std::cout << x << ' ';\n    // المخرجات: 3 4 5\n}",
+          "explanationArabic": "set_intersection يُنتج التقاطع: العناصر الموجودة في A وB معًا. تعقيد O(n+m) خطي. النتيجة مرتبة لأن كلا المدخلين مرتبان."
+        },
+        {
+          "titleArabic": "المهارات المشتركة بين مرشحين",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> dev = {\"C++\", \"Python\", \"Git\", \"SQL\"};\n    std::vector<std::string> devops = {\"Python\", \"Docker\", \"Git\", \"AWS\"};\n    std::vector<std::string> shared;\n\n    std::set_intersection(dev.begin(), dev.end(),\n        devops.begin(), devops.end(), std::back_inserter(shared));\n    for (const auto& s : shared) std::cout << s << ' ';\n    // المخرجات: Git Python\n}",
+          "explanationArabic": "set_intersection مع النصوص يستخدم الترتيب المعجمي. النتيجة مرتبة معجميًا. مفيد لمقارنة مجموعات مهارات أو سمات."
+        },
+        {
+          "titleArabic": "set_intersection مع التكرارات",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 2, 3};\n    std::vector<int> b = {2, 2, 2, 4};\n    std::vector<int> result;\n\n    std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),\n        std::back_inserter(result));\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 2 2 (الحد الأدنى: 2 في A و3 في B → 2)\n}",
+          "explanationArabic": "set_intersection يأخذ الحد الأدنى للتكرار. إذا كان العنصر يظهر مرتين في A وثلاث مرات في B، يظهر مرتين في النتيجة. هذا يختلف عن unordered_set الذي يحتوي كل عنصر مرة واحدة فقط."
+        }
+      ],
+      "related": [
+        "std::set_difference",
+        "std::set_union",
+        "std::set_symmetric_difference"
+      ]
+    },
+    "std::set_union": {
+      "title": "std::set_union",
+      "type": "خوارزمية",
+      "description": "يُنشئ نطاقًا يحتوي اتحاد نطاقين مرتبين: كل عنصر من كلاهما بدون تكرار زائد. كل عنصر يظهر بعدد مرات وجوده في أكبر نطاق (الحد الأقصى للتكرار).",
+      "usage": "يظهر عند الحاجة لدمج مجموعتين مرتبتين في مجموعة واحدة. مثلًا: دمج قائمتين مرتبتين من جهات اتصال أو دمج ملفات مرتبة.",
+      "example": "std::set_union(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(result));",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "دمج مجموعتين مرتبتين",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 4, 6};\n    std::vector<int> b = {2, 3, 5, 6};\n    std::vector<int> result;\n\n    std::set_union(a.begin(), a.end(), b.begin(), b.end(),\n        std::back_inserter(result));\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 1 2 3 4 5 6\n}",
+          "explanationArabic": "set_union يدمج النطاقين مع إزالة التكرارات الزائدة. النتيجة مرتبة. تعقيد O(n+m). هذا يختلف عن merge الذي يحتفظ بكل التكرارات."
+        },
+        {
+          "titleArabic": "set_union vs merge",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3};\n    std::vector<int> b = {2, 3, 4};\n    std::vector<int> merged, united;\n\n    std::merge(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(merged));\n    // merged = {1, 2, 2, 3, 3, 4} — يحتفظ بكل التكرارات\n\n    std::set_union(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(united));\n    // united = {1, 2, 3, 4} — يُزيل التكرارات الزائدة\n\n    for (int x : merged) std::cout << x << ' ';\n    std::cout << \"\\n\";\n    for (int x : united) std::cout << x << ' ';\n}",
+          "explanationArabic": "merge يحتفظ بكل العناصر بما فيها التكرارات. set_union يُزيل التكرارات الزائدة (يأخذ الحد الأقصى لكل عنصر). استخدم merge عند الحاجة لكل البيانات، وset_union عند الحاجة لمجموعة فريدة."
+        },
+        {
+          "titleArabic": "دمج قوائم مرتبة من مصادر مختلفة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n\nint main() {\n    std::vector<std::string> list_a = {\"alice\", \"charlie\", \"eve\"};\n    std::vector<std::string> list_b = {\"bob\", \"charlie\", \"dave\"};\n    std::vector<std::string> combined;\n\n    std::set_union(list_a.begin(), list_a.end(),\n        list_b.begin(), list_b.end(), std::back_inserter(combined));\n    // combined = {\"alice\", \"bob\", \"charlie\", \"dave\", \"eve\"}\n}",
+          "explanationArabic": "set_union مثالي لدمج قوائم مرتبة من مصادر مختلفة مع إزالة التكرارات. النتيجة مرتبة تلقائيًا — لا تحتاج sort بعد الدمج."
+        }
+      ],
+      "related": [
+        "std::set_intersection",
+        "std::set_difference",
+        "std::set_symmetric_difference",
+        "std::merge"
+      ]
+    },
+    "std::set_symmetric_difference": {
+      "title": "std::set_symmetric_difference",
+      "type": "خوارزمية",
+      "description": "يُنشئ نطاقًا يحتوي العناصر الموجودة في أحد النطاقين لكن غير الموجودة في كليهما معًا. هو الفرق المتماثل (XOR) بين المجموعتين.",
+      "usage": "يظهر عند الحاجة لمعرفة ما يختلف بين مجموعتين. مثلًا: الملفات المختلفة بين مجلدين، أو التغييرات بين نسختين.",
+      "example": "std::set_symmetric_difference(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(result));",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "العناصر المختلفة بين مجموعتين",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3, 4};\n    std::vector<int> b = {3, 4, 5, 6};\n    std::vector<int> diff;\n\n    std::set_symmetric_difference(a.begin(), a.end(), b.begin(), b.end(),\n        std::back_inserter(diff));\n    for (int x : diff) std::cout << x << ' ';\n    // المخرجات: 1 2 5 6 (في أحدهما وليس في كليهما)\n}",
+          "explanationArabic": "set_symmetric_difference يُرجع (A-B) ∪ (B-A): العناصر الفريدة لكل مجموعة. العناصر المشتركة (3, 4) لا تظهر. هذا هو XOR المنطقي للمجموعات."
+        },
+        {
+          "titleArabic": "مقارنة ملفات بين مجلدين",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> dir_a = {\"main.cpp\", \"util.h\", \"test.cpp\"};\n    std::vector<std::string> dir_b = {\"main.cpp\", \"util.h\", \"build.cpp\"};\n    std::vector<std::string> changed;\n\n    std::set_symmetric_difference(dir_a.begin(), dir_a.end(),\n        dir_b.begin(), dir_b.end(), std::back_inserter(changed));\n    for (const auto& f : changed) std::cout << f << ' ';\n    // المخرجات: build.cpp test.cpp (الملفات المختلفة)\n}",
+          "explanationArabic": "set_symmetric_difference مفيد لمقارنة: يُظهر الملفات الموجودة في أحد المجلدين دون الآخر. الملفات المشتركة لا تظهر في النتيجة."
+        },
+        {
+          "titleArabic": "العلاقة بين عمليات المجموعات",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iterator>\n\nstd::vector<int> a = {1, 2, 3};\nstd::vector<int> b = {2, 3, 4};\n\n// intersection: {2, 3}\n// union: {1, 2, 3, 4}\n// difference A-B: {1}\n// difference B-A: {4}\n// symmetric_difference: {1, 4} = (A-B) ∪ (B-A)\n\nstd::vector<int> a_b, b_a, sym;\nstd::set_difference(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(a_b));\nstd::set_difference(b.begin(), b.end(), a.begin(), a.end(), std::back_inserter(b_a));\nstd::set_symmetric_difference(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(sym));\n// sym == a_b + b_a",
+          "explanationArabic": "set_symmetric_difference = set_difference(A,B) + set_difference(B,A). يمكنك بناؤه يدويًا لكن الدالة المخصصة أنظف وأسرع لأنها تمر على النطاقين مرة واحدة."
+        }
+      ],
+      "related": [
+        "std::set_difference",
+        "std::set_intersection",
+        "std::set_union"
+      ]
+    },
+    "std::partial_sort_copy": {
+      "title": "std::partial_sort_copy",
+      "type": "خوارزمية",
+      "description": "ينسخ ويرتّب أصغر N عنصر من النطاق المصدر إلى نطاق الوجهة. يختلف عن partial_sort بأنه لا يُعدّل المصدر ويكتب النتيجة في حاوية مختلفة.",
+      "usage": "يظهر عند الحاجة لأفضل N عنصر مرتبة مع الحفاظ على المصدر الأصلي. مثلًا: أفضل 10 نتائج من قائمة كبيرة دون تعديلها.",
+      "example": "std::partial_sort_copy(src.begin(), src.end(), dst.begin(), dst.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "أفضل 3 نتائج من قائمة كبيرة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> scores = {85, 42, 97, 63, 91, 28, 76, 55};\n    std::vector<int> top3(3);\n\n    std::partial_sort_copy(scores.begin(), scores.end(),\n        top3.begin(), top3.end(), std::greater<>());\n    for (int x : top3) std::cout << x << ' ';\n    // المخرجات: 97 91 85 (أعلى 3 مرتبة)\n    // scores لا تزال كما هي\n}",
+          "explanationArabic": "partial_sort_copy يأخذ من المصدر ويكتب في الوجهة. حجم الوجهة يُحدد عدد العناصر المرتبة. مع greater<> يُرتّب تنازليًا. المصدر لا يتغير."
+        },
+        {
+          "titleArabic": "partial_sort_copy vs partial_sort",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> data = {5, 1, 9, 3, 7, 2, 8, 4, 6};\n\n    // partial_sort: يُعدّل المصدر في المكان\n    std::vector<int> a = data;\n    std::partial_sort(a.begin(), a.begin() + 3, a.end());\n    // a = {1, 2, 3, ...البقية غير مرتبة}\n\n    // partial_sort_copy: يكتب في وجهة جديدة\n    std::vector<int> b(3);\n    std::partial_sort_copy(data.begin(), data.end(), b.begin(), b.end());\n    // b = {1, 2, 3}\n    // data لا تزال {5, 1, 9, 3, 7, 2, 8, 4, 6}\n}",
+          "explanationArabic": "partial_sort يُعدّل الحاوية في المكان. partial_sort_copy يحافظ على المصدر ويكتب في حاوية أخرى. استخدم partial_sort_copy عندما تحتاج الأصل كما هو."
+        },
+        {
+          "titleArabic": "حجم الوجهة يُحدد عدد النتائج",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {9, 3, 7, 1, 5};\n\n    // أخذ أصغر عنصرين فقط\n    std::vector<int> smallest(2);\n    std::partial_sort_copy(v.begin(), v.end(), smallest.begin(), smallest.end());\n    for (int x : smallest) std::cout << x << ' ';\n    // المخرجات: 1 3\n\n    // أخذ أصغر 4 عناصر\n    std::vector<int> smallest4(4);\n    std::partial_sort_copy(v.begin(), v.end(), smallest4.begin(), smallest4.end());\n    for (int x : smallest4) std::cout << x << ' ';\n    // المخرجات: 1 3 5 7\n}",
+          "explanationArabic": "عدد العناصر في الوجهة يُحدد عدد النتائج المرتبة. لا تحتاج تحديد middle مثل partial_sort — حجم الوجهة هو middle. هذا أبسط وأوضح."
+        }
+      ],
+      "related": [
+        "std::partial_sort",
+        "std::nth_element",
+        "std::sort"
+      ]
+    },
+    "std::make_heap": {
+      "title": "std::make_heap",
+      "type": "خوارزمية",
+      "description": "يُحوّل نطاقًا إلى كومة ثنائية (max-heap) في المكان. في الكومة، العنصر الأول هو الأكبر دائمًا. يُستخدم مع push_heap وpop_heap لإدارة قائمة أولوية.",
+      "usage": "يظهر عند بناء قائمة أولوية (priority queue) يدويًا. مفيد عندما تريد التحكم الكامل بالكومة بدل استخدام std::priority_queue.",
+      "example": "std::make_heap(v.begin(), v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء كومة من vector",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 1, 4, 1, 5, 9};\n    std::make_heap(v.begin(), v.end());\n\n    std::cout << \"max: \" << v.front(); // 9 (الأكبر دائمًا في الأقدم)\n}",
+          "explanationArabic": "make_heap يُعيد ترتيب العناصر في المكان لتحقيق خاصية الكومة: v.front() هو الأكبر دائمًا. تعقيد O(n) — أسرع من إدراج عنصر عنصر. لا يُرتّب النطاق بالكامل، فقط يضمن خاصية الكومة."
+        },
+        {
+          "titleArabic": "بناء min-heap مع greater",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 3, 8, 1, 9, 2};\n    std::make_heap(v.begin(), v.end(), std::greater<>());\n\n    std::cout << \"min: \" << v.front(); // 1 (الأصغر في الأقدم)\n}",
+          "explanationArabic": "مع greater<> تُبنى min-heap بدل max-heap. v.front() يكون الأصغر. هذا مثل priority_queue مع greater لكنك تتحكم بالحاوية مباشرة."
+        },
+        {
+          "titleArabic": "make_heap + push_heap + pop_heap",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 1, 4};\n    std::make_heap(v.begin(), v.end()); // كومة: {4, 1, 3}\n\n    v.push_back(7);\n    std::push_heap(v.begin(), v.end()); // أضف 7: {7, 4, 3, 1}\n\n    std::pop_heap(v.begin(), v.end());  // انقل الأكبر للنهاية\n    int max_val = v.back();             // max_val = 7\n    v.pop_back();                       // أزل من الحاوية\n\n    std::cout << \"extracted: \" << max_val; // 7\n}",
+          "explanationArabic": "make_heap يبني الكومة. push_heap يُدرج عنصر جديد (بعد push_back). pop_heap ينقل الأكبر للنهاية (ثم pop_back). هذه الدوال الثلاث تُشكّل واجهة كاملة لإدارة قائمة أولوية يدويًا."
+        }
+      ],
+      "related": [
+        "std::push_heap",
+        "std::pop_heap",
+        "std::sort_heap",
+        "std::is_heap",
+        "std::priority_queue"
+      ]
+    },
+    "std::push_heap": {
+      "title": "std::push_heap",
+      "type": "خوارزمية",
+      "description": "يُدرج العنصر الأخير في النطاق في الكومة الموجودة. يُفترض أن النطاق [begin, end-1) كومة بالفعل وأن العنصر الجديد في end-1.",
+      "usage": "يظهر بعد push_back لإعادة بناء خاصية الكومة. يجب استدعاء make_heap أولًا لبناء الكومة الأولية.",
+      "example": "v.push_back(new_val);\nstd::push_heap(v.begin(), v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج عنصر جديد في الكومة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 3, 1};\n    std::make_heap(v.begin(), v.end()); // كومة: {5, 3, 1}\n\n    v.push_back(8);\n    std::push_heap(v.begin(), v.end()); // كومة: {8, 5, 1, 3}\n\n    std::cout << \"max: \" << v.front(); // 8\n}",
+          "explanationArabic": "push_heap يفترض أن العنصر الجديد في نهاية النطاق (بعد push_back). يُعيد بناء الكومة ليشمل العنصر الجديد. تعقيد O(log n). بدون push_heap، العنصر الجديد موجود في الحاوية لكنه ليس جزءًا من الكومة."
+        },
+        {
+          "titleArabic": "إدراج عدة عناصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v;\n    v.push_back(3); std::push_heap(v.begin(), v.end());\n    v.push_back(1); std::push_heap(v.begin(), v.end());\n    v.push_back(7); std::push_heap(v.begin(), v.end());\n    v.push_back(4); std::push_heap(v.begin(), v.end());\n\n    std::cout << \"max: \" << v.front(); // 7\n}",
+          "explanationArabic": "يمكنك البدء من حاوية فارغة وإدراج عنصر عنصر. لكن make_heap على مجموعة كاملة أسرع من إدراج عنصر عنصر. استخدم make_heap عند توفر كل البيانات مسبقًا."
+        },
+        {
+          "titleArabic": "push_heap يفترض كومة صالحة",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {5, 3, 1};\n// ❌ بدون make_heap — النطاق ليس كومة\n// v.push_back(8);\n// std::push_heap(v.begin(), v.end()); // سلوك غير مضمون\n\n// ✅ ابنِ الكومة أولًا\nstd::make_heap(v.begin(), v.end());\nv.push_back(8);\nstd::push_heap(v.begin(), v.end()); // صحيح",
+          "explanationArabic": "push_heap يفترض أن كل شيء ما عدا العنصر الأخير كومة صالحة. بدون make_heap أولًا، السلوك غير مضمون. القاعدة: make_heap مرة واحدة ثم push_heap لكل إدراج جديد."
+        }
+      ],
+      "related": [
+        "std::make_heap",
+        "std::pop_heap",
+        "std::sort_heap"
+      ]
+    },
+    "std::pop_heap": {
+      "title": "std::pop_heap",
+      "type": "خوارزمية",
+      "description": "ينقل أكبر عنصر من الكومة (الأول) إلى نهاية النطاق ثم يُعيد بناء الكومة على الباقي. لا يُزيل العنصر من الحاوية — تحتاج pop_back يدويًا.",
+      "usage": "يظهر عند استخراج العنصر الأكبر (أو الأصغر في min-heap) من قائمة أولوية. يتبعه pop_back لإزالة العنصر فعليًا.",
+      "example": "std::pop_heap(v.begin(), v.end());\nint max_val = v.back();\nv.pop_back();",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخراج الأكبر من الكومة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 3, 1, 9, 7};\n    std::make_heap(v.begin(), v.end());\n\n    std::pop_heap(v.begin(), v.end());\n    int max_val = v.back(); // 9\n    v.pop_back();\n\n    std::cout << \"extracted: \" << max_val; // 9\n    std::cout << \"\\nnew max: \" << v.front(); // 7\n}",
+          "explanationArabic": "pop_heap ينقل v.front() (الأكبر) إلى v.back() ثم يُعيد بناء الكومة. pop_back يُزيله فعليًا. بعد pop_heap، v.front() يشير لثاني أكبر عنصر."
+        },
+        {
+          "titleArabic": "استخراج كل العناصر مرتبة (sort_heap)",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 1, 4, 1, 5, 9};\n    std::make_heap(v.begin(), v.end());\n\n    while (!v.empty()) {\n        std::pop_heap(v.begin(), v.end());\n        std::cout << v.back() << ' ';\n        v.pop_back();\n    }\n    // المخرجات: 9 5 4 3 1 1 (مرتبة تنازليًا)\n}",
+          "explanationArabic": "pop_heap متكرر يُنتج ترتيبًا تنازليًا. هذا بالضبط ما يفعله sort_heap. استخدم sort_heap بدلًا من الحلقة لأنه أوضح وأبسط."
+        },
+        {
+          "titleArabic": "pop_heap لا يُزيل العنصر",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {5, 3, 1};\nstd::make_heap(v.begin(), v.end());\n\nstd::pop_heap(v.begin(), v.end());\n// v الآن = {3, 1, 5} — الأكبر (5) انتقل للنهاية\n// لكنه لا يزال في الحاوية!\n\n// ✅ أزل يدويًا\nint max_val = v.back(); // 5\nv.pop_back(); // v الآن = {3, 1}",
+          "explanationArabic": "pop_heap ينقل فقط — لا يُزيل. هذا مقصود لأن pop_heap يعمل على نطاق وليس حاوية (لا يعرف عن push_back/pop_back). تابع دائمًا بـ pop_back."
+        }
+      ],
+      "related": [
+        "std::make_heap",
+        "std::push_heap",
+        "std::sort_heap"
+      ]
+    },
+    "std::sort_heap": {
+      "title": "std::sort_heap",
+      "type": "خوارزمية",
+      "description": "يُرتّب كومة ثنائية في مكانها لتصبح نطاقًا مرتبًا تصاعديًا. يُنفذ pop_heap متكررًا حتى يصبح النطاق مرتبًا.",
+      "usage": "يظهر عند الحاجة لتحويل كومة إلى نطاق مرتب. مفيد عند بناء كومة ثم الحاجة للنتائج مرتبة.",
+      "example": "std::sort_heap(v.begin(), v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحويل كومة إلى نطاق مرتب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 1, 4, 1, 5, 9};\n    std::make_heap(v.begin(), v.end());\n    // الكومة: v.front() = 9\n\n    std::sort_heap(v.begin(), v.end());\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 1 1 3 4 5 9 (مرتب تصاعديًا)\n}",
+          "explanationArabic": "sort_heap يُحوّل الكومة إلى نطاق مرتب تصاعديًا. تعقيد O(n log n) — نفس sort تقريبًا. لكن make_heap + sort_heap أبطأ من sort مباشرًا. استخدم sort_heap فقط عندما تملك كومة بالفعل."
+        },
+        {
+          "titleArabic": "make_heap + sort_heap vs sort مباشر",
+          "code": "#include <algorithm>\n#include <vector>\n\nstd::vector<int> v = {5, 3, 1, 4, 2};\n\n// ✅ الأسرع: sort مباشر — O(n log n)\nstd::sort(v.begin(), v.end());\n\n// ❌ أبطأ: make_heap ثم sort_heap — O(n) + O(n log n)\n// std::make_heap(v.begin(), v.end());\n// std::sort_heap(v.begin(), v.end());",
+          "explanationArabic": "sort مباشر أسرع من make_heap + sort_heap. استخدم خوارزميات الكومة فقط عندما تحتاج عمليات مختلطة: إدراج واستخراج بينيّين. إذا كنت تحتاج فرزًا نهائيًا فقط، استخدم sort."
+        },
+        {
+          "titleArabic": "sort_heap يُفقد خاصية الكومة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {9, 5, 3, 1, 7};\n    std::make_heap(v.begin(), v.end());\n\n    std::sort_heap(v.begin(), v.end());\n    // v الآن مرتبة: {1, 3, 5, 7, 9}\n    // لكنها لم تعد كومة — push_heap/pop_heap لن تعمل بشكل صحيح\n\n    // ✅ إذا احتجت الكومة مرة أخرى:\n    // std::make_heap(v.begin(), v.end());",
+          "explanationArabic": "sort_heap يُدمر خاصية الكومة ويحول النطاق لنطاق مرتب عادي. بعد sort_heap، تحتاج make_heap لاستعادة خاصية الكومة."
+        }
+      ],
+      "related": [
+        "std::make_heap",
+        "std::push_heap",
+        "std::pop_heap",
+        "std::is_heap",
+        "std::sort"
+      ]
+    },
+    "std::is_heap": {
+      "title": "std::is_heap",
+      "type": "خوارزمية",
+      "description": "يتحقق مما إذا كان النطاق كومة ثنائية صالحة. يُرجع true إذا كان كل عقدة أب أكبر من أو تساوي أبنائها (max-heap).",
+      "usage": "يظهر عند التحقق من صحة كومة بعد عمليات يدوية، أو في الاختبارات للتأكد من أن خوارزمية الكومة تعمل بشكل صحيح.",
+      "example": "bool valid = std::is_heap(v.begin(), v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق من كومة صالحة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {9, 5, 7, 1, 3};\n    std::cout << std::boolalpha << std::is_heap(v.begin(), v.end()); // true\n\n    v.push_back(10);\n    std::cout << '\\n' << std::is_heap(v.begin(), v.end()); // false (10 في النهاية يكسر الكومة)\n}",
+          "explanationArabic": "is_heap يتحقق من خاصية الكومة: كل أب أكبر من أبنائه. بعد push_back بدون push_heap، الخاصية تُكسر. is_heap يكشف هذا."
+        },
+        {
+          "titleArabic": "is_heap_until لإيجاد موضع الخلل",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {9, 5, 7, 1, 3, 10};\n    auto it = std::is_heap_until(v.begin(), v.end());\n    if (it != v.end()) {\n        std::cout << \"heap valid until index: \" << (it - v.begin());\n        // المخرجات: heap valid until index: 5 (العنصر 10)\n    }\n}",
+          "explanationArabic": "is_heap_until يُرجع مكرّر لأول عنصر يكسر خاصية الكومة. مفيد لمعرفة أين بدأ الخلل. النطاق [begin, it) كومة صالحة."
+        },
+        {
+          "titleArabic": "التحقق من min-heap",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 3, 2, 5, 9};\n    bool is_min = std::is_heap(v.begin(), v.end(), std::greater<>());\n    std::cout << std::boolalpha << is_min; // true\n}",
+          "explanationArabic": "مع greater<> يتحقق من min-heap بدل max-heap. مفيد عند التحقق من كومة مبنية بمعيار مخصص."
+        }
+      ],
+      "related": [
+        "std::make_heap",
+        "std::push_heap",
+        "std::pop_heap",
+        "std::sort_heap",
+        "std::is_heap_until"
+      ]
+    },
+    "std::reverse_iterator": {
+      "title": "std::reverse_iterator",
+      "type": "مكرّر عكسي",
+      "description": "مكرّر مُكيّف يمر على النطاق بترتيب عكسي. عند فك المكرّر (*it) يُرجع العنصر السابق في النطاق الأصلي، لا العنصر الذي يشير إليه فعليًا. هذا لأنه يعمل كطبقة تغليف حول مكرّر عادي وتُعدّل العمليات لتعكس الاتجاه.",
+      "usage": "يظهر عند الحاجة لمرور على نطاق من النهاية للبداية — مثل الطباعة بترتيب عكسي أو البحث من الخلف. الحاويات توفر rbegin()/rend() اللتان تُرجعان reverse_iterator تلقائيًا.",
+      "example": "std::vector<int>::reverse_iterator rit = v.rbegin();\n// *rit يُرجع آخر عنصر",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "المرور على vector بترتيب عكسي",
+          "code": "#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    // rbegin() وrend() يُرجعان reverse_iterator تلقائيًا\n    for (auto rit = v.rbegin(); rit != v.rend(); ++rit) {\n        std::cout << *rit << ' ';\n    }\n    // المخرجات: 5 4 3 2 1\n}",
+          "explanationArabic": "rbegin() يُرجع reverse_iterator يشير لآخر عنصر. ++rit يتحرك للخلف (نحو البداية). rend() يشير قبل أول عنصر. هذا أنظف من إنشاء reverse_iterator يدويًا."
+        },
+        {
+          "titleArabic": "إنشاء reverse_iterator من مكرّر عادي",
+          "code": "#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40, 50};\n    // إنشاء reverse_iterator يدويًا من مكرّر عادي\n    std::reverse_iterator<std::vector<int>::iterator> rit(v.end());\n    std::reverse_iterator<std::vector<int>::iterator> rend(v.begin());\n\n    for (; rit != rend; ++rit) {\n        std::cout << *rit << ' ';\n    }\n    // المخرجات: 50 40 30 20 10\n}",
+          "explanationArabic": "reverse_iterator يأخذ مكرّر عادي ويُعكس اتجاهه. المُمرَّر لـ reverse_iterator هو end() للبداية وbegin() للنهاية. هذا مفيد عند بناء دوال عامة تعمل باتجاهين."
+        },
+        {
+          "titleArabic": "reverse_iterator مع خوارزميات STL",
+          "code": "#include <iterator>\n#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 1, 4, 1, 5};\n    // البحث عن أول 1 من الخلف (آخر 1 في الترتيب الطبيعي)\n    auto rit = std::find(v.rbegin(), v.rend(), 1);\n    if (rit != v.rend()) {\n        // rit.base() يُرجع المكرّر العادي المقابل\n        auto normal_it = rit.base();\n        std::cout << \"found at index: \" << (normal_it - v.begin() - 1);\n        // المخرجات: 3 (فهرس آخر 1)\n    }\n}",
+          "explanationArabic": "reverse_iterator يعمل مع كل خوارزميات STL. rit.base() يُرجع المكرّر العادي المقابل — مفيد عند الحاجة لتحويل الاتجاه. لاحظ أن base() يشير لعنصر واحد بعد العنصر الذي يشير إليه reverse_iterator."
+        }
+      ],
+      "related": [
+        "std::make_reverse_iterator",
+        "std::back_inserter",
+        "std::next",
+        "std::prev"
+      ]
+    },
+    "std::ostream_iterator": {
+      "title": "std::ostream_iterator",
+      "type": "مكرّر إخراج",
+      "description": "مكرّر إخراج يكتب العناصر إلى تيار (ostream) عبر عامل <<. كل عملية كتابة تُنفّذ out << value. يمكن تحديد فاصل يُكتب بين العناصر.",
+      "usage": "يظهر عند الحاجة لكتابة عناصر حاوية إلى تيار إخراج (مثل cout أو ofstream) باستخدام خوارزميات STL مثل copy.",
+      "example": "std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, \" \"));",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "طباعة عناصر vector عبر copy",
+          "code": "#include <iterator>\n#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40};\n    // copy يكتب كل عنصر إلى cout مع فاصل مسافة\n    std::copy(v.begin(), v.end(),\n        std::ostream_iterator<int>(std::cout, \" \"));\n    // المخرجات: 10 20 30 40\n}",
+          "explanationArabic": "ostream_iterator يحوّل cout إلى مكرّر إخراج. copy تكتب كل عنصر عبر <<. الفاصل (\" \") يُكتب بين العناصر. هذا أنظف من حلقة طباعة يدوية."
+        },
+        {
+          "titleArabic": "كتابة عناصر إلى ملف",
+          "code": "#include <iterator>\n#include <algorithm>\n#include <vector>\n#include <fstream>\n\nint main() {\n    std::vector<int> data = {1, 2, 3, 4, 5};\n    std::ofstream file(\"output.txt\");\n    // كتابة كل عنصر في سطر منفصل\n    std::copy(data.begin(), data.end(),\n        std::ostream_iterator<int>(file, \"\\n\"));\n}",
+          "explanationArabic": "ostream_iterator يعمل مع أي ostream — cout أو ofstream أو stringstream. هذا مفيد لتصدير بيانات حاويات إلى ملفات أو سلاسل نصية باستخدام نفس خوارزميات STL."
+        },
+        {
+          "titleArabic": "ostream_iterator مع أنواع مخصصة",
+          "code": "#include <iterator>\n#include <algorithm>\n#include <vector>\n#include <iostream>\n\nstruct Point { int x, y; };\nstd::ostream& operator<<(std::ostream& out, const Point& p) {\n    return out << \"(\" << p.x << \",\" << p.y << \")\";\n}\n\nint main() {\n    std::vector<Point> pts = {{1,2}, {3,4}, {5,6}};\n    std::copy(pts.begin(), pts.end(),\n        std::ostream_iterator<Point>(std::cout, \" \"));\n    // المخرجات: (1,2) (3,4) (5,6)\n}",
+          "explanationArabic": "ostream_iterator يستخدم عامل << للنوع. يجب أن يكون عامل << معرَّفًا للنوع المُخرج. مع الأنواع المخصصة، عرّف operator<< حتى يعمل ostream_iterator تلقائيًا."
+        }
+      ],
+      "related": [
+        "std::istream_iterator",
+        "std::back_inserter",
+        "std::copy"
+      ]
+    },
+    "std::move_iterator": {
+      "title": "std::move_iterator",
+      "type": "مكرّر نقل",
+      "description": "مكرّر مُكيّف يُحوّل قراءة العناصر عبر *it إلى move بدل نسخ. عند فك المكرّر يُرجع rvalue reference (T&&) مما يُفعّل move semantics.",
+      "usage": "يظهر عند نقل عناصر من حاوية إلى أخرى بدل نسخها. مفيد مع حاويات تحتوي أنواعًا مكلفة في النسخ مثل string أو vector أو كائنات تملك موارد.",
+      "example": "std::vector<std::string> dst(std::make_move_iterator(src.begin()), std::make_move_iterator(src.end()));",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "نقل عناصر string بدل نسخها",
+          "code": "#include <iterator>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> src = {\"hello\", \"world\", \"cpp\"};\n    std::vector<std::string> dst;\n    dst.reserve(src.size());\n\n    // نقل كل عنصر بدل نسخه — src تصبح فارغة بعد النقل\n    std::move_iterator<std::vector<std::string>::iterator>\n        move_begin(src.begin());\n    std::move_iterator<std::vector<std::string>::iterator>\n        move_end(src.end());\n    dst.insert(dst.end(), move_begin, move_end);\n\n    for (const auto& s : dst) std::cout << s << ' ';\n    // المخرجات: hello world cpp\n}",
+          "explanationArabic": "move_iterator يُحوّل *it إلى std::move(*it). هذا يُفعّل move constructor للعناصر بدل copy constructor. بعد النقل، العناصر في src تكون في حالة غير محددة لكن صالحة للتهيئة."
+        },
+        {
+          "titleArabic": "make_move_iterator — الأنظف",
+          "code": "#include <iterator>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> src = {\"alpha\", \"beta\", \"gamma\"};\n    // make_move_iterator يُنشئ move_iterator من مكرّر عادي\n    std::vector<std::string> dst(\n        std::make_move_iterator(src.begin()),\n        std::make_move_iterator(src.end()));\n\n    for (const auto& s : dst) std::cout << s << ' ';\n    // المخرجات: alpha beta gamma\n    // src الآن تحتوي سلاسل فارغة (تم نقل محتواها)\n}",
+          "explanationArabic": "make_move_iterator أنظف من إنشاء move_iterator يدويًا. يُستخدم غالبًا مع مُنشئ الحاوية لملء حاوية جديدة بنقل العناصر من حاوية أخرى. هذا أسرع بكثير من النسخ مع الأنواع المكلفة."
+        },
+        {
+          "titleArabic": "تحذير: لا تستخدم العناصر المنقولة بعد النقل",
+          "code": "#include <iterator>\n#include <vector>\n#include <string>\n\nint main() {\n    std::vector<std::string> src = {\"data\"};\n    std::vector<std::string> dst(\n        std::make_move_iterator(src.begin()),\n        std::make_move_iterator(src.end()));\n    // dst[0] = \"data\"\n    // src[0] = \"\" (فارغة — تم نقل محتواها)\n\n    // ❌ لا تعتمد على قيمة src[0] بعد النقل\n    // ✅ يمكن إعادة تعيينها: src[0] = \"new data\";\n    // ✅ أو تدميرها: src.clear();\n}",
+          "explanationArabic": "بعد النقل، العنصر المصدر في حالة صالحة لكن غير محددة. مع string تصبح فارغة، مع vector تصبح فارغة. لا تعتمد على قيمتها — إمّا أعد تعيينها أو أزلها."
+        }
+      ],
+      "related": [
+        "std::make_reverse_iterator",
+        "std::move",
+        "std::back_inserter"
+      ]
+    },
+    "std::make_reverse_iterator": {
+      "title": "std::make_reverse_iterator",
+      "type": "دالة مكرّرات",
+      "description": "يُنشئ reverse_iterator من مكرّر عادي. هو دالة مساعدة تُغني عن كتابة النوع الطويل يدويًا. متاح منذ C++14.",
+      "usage": "يظهر عند الحاجة لإنشاء reverse_iterator من مكرّر عادي — مثل عكس اتجاه جزء من نطاق.",
+      "example": "auto rit = std::make_reverse_iterator(v.end());",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "عكس جزء من vector",
+          "code": "#include <iterator>\n#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    // عكس آخر 3 عناصر فقط\n    std::reverse(\n        std::make_reverse_iterator(v.end()),\n        std::make_reverse_iterator(v.end() - 3));\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 1 2 5 4 3\n}",
+          "explanationArabic": "make_reverse_iterator يحوّل end() إلى rbegin() و end()-3 إلى rbegin()+3. مع reverse يُنتج عكسًا لجزء محدد من النطاق. هذا أنظف من كتابة النوع يدويًا."
+        },
+        {
+          "titleArabic": "make_reverse_iterator vs rbegin()/rend()",
+          "code": "#include <iterator>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n\n    // الطريقة المباشرة: rbegin()/rend() — أنظم للحاوية كاملة\n    for (auto rit = v.rbegin(); rit != v.rend(); ++rit) {\n        std::cout << *rit << ' ';\n    }\n    // المخرجات: 3 2 1\n\n    // make_reverse_iterator: أنسب عند العمل مع مكرّرات جزئية\n    auto mid = v.begin() + 1;\n    auto rit = std::make_reverse_iterator(mid);\n    std::cout << *rit; // 1 (العنصر قبل mid)\n}",
+          "explanationArabic": "rbegin()/rend() للمرور الكامل. make_reverse_iterator أنسب عند الحاجة لعكس جزء من النطاق أو عند العمل مع مكرّرات مُمرَّرة كمعاملات. كلاهما يُرجع reverse_iterator لكن make_reverse_iterator أكثر مرونة."
+        },
+        {
+          "titleArabic": "البحث من الخلف باستخدام make_reverse_iterator",
+          "code": "#include <iterator>\n#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 2, 1};\n    // البحث عن آخر 2 في النطاق\n    auto rit = std::find(\n        std::make_reverse_iterator(v.end()),\n        std::make_reverse_iterator(v.begin()), 2);\n    if (rit != std::make_reverse_iterator(v.begin())) {\n        // base() يُرجع المكرّر العادي\n        std::cout << \"last 2 at index: \" << (rit.base() - v.begin() - 1);\n        // المخرجات: 3\n    }\n}",
+          "explanationArabic": "make_reverse_iterator مع find يبحث من الخلف. rit.base() - 1 يُعطي الفهرس الصحيح في النطاق الأصلي. هذا نمط مفيد للبحث عن آخر occurrence."
+        }
+      ],
+      "related": [
+        "std::reverse_iterator",
+        "std::next",
+        "std::prev",
+        "std::reverse"
+      ]
+    },
+    "std::copy_backward": {
+      "title": "std::copy_backward",
+      "type": "خوارزمية",
+      "description": "ينسخ عناصر من نطاق إلى آخر بالبدء من النهاية. يُستخدم عندما تتداخل النطاقات المصدر والهدف ويتوجب النسخ من الخلف لضمان عدم تلف البيانات قبل قراءتها.",
+      "usage": "يظهر عند النسخ داخل نفس الحاوية مع تداخل النطاقات، مثل إزاحة عناصر لليمين داخل vector.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    // إزاحة آخر 3 عناصر موضعًا لليمين\n    std::copy_backward(v.end() - 3, v.end(), v.end());\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 1 2 3 3 4\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::copy", "std::move_backward", "std::shift_right"]
+    },
+    "std::copy_if": {
+      "title": "std::copy_if",
+      "type": "خوارزمية",
+      "description": "ينسخ العناصر التي تحقّق شرطًا محددًا فقط. يُرجع مكرّرًا إلى نهاية النطاق المنسوخ في الهدف.",
+      "usage": "يظهر عند تصفية عناصر حاوية ونسخ النتائج إلى حاوية أخرى، مثل استخراج الأعداد الموجبة فقط.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {-3, 1, -2, 5, 0, 4};\n    std::vector<int> dst;\n    std::copy_if(src.begin(), src.end(), std::back_inserter(dst),\n        [](int x) { return x > 0; });\n    for (int x : dst) std::cout << x << ' ';\n    // المخرجات: 1 5 4\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::copy", "std::remove_copy_if", "std::partition_copy"]
+    },
+    "std::find_end": {
+      "title": "std::find_end",
+      "type": "خوارزمية",
+      "description": "يبحث عن آخر ظهور لتتابع (subsequence) داخل نطاق. يُرجع مكرّرًا إلى بداية آخر تطابق.",
+      "usage": "يظهر عند البحث عن آخر ظهور لنمط داخل نص أو بيانات، مثل إيجاد آخر كلمة في جملة.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> data = {1, 2, 3, 1, 2, 3, 1, 2};\n    std::vector<int> pattern = {1, 2, 3};\n    auto it = std::find_end(data.begin(), data.end(),\n                            pattern.begin(), pattern.end());\n    if (it != data.end())\n        std::cout << \"found at index: \" << (it - data.begin());\n    // المخرجات: found at index: 3\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::search", "std::find_first_of", "std::mismatch"]
+    },
+    "std::search_n": {
+      "title": "std::search_n",
+      "type": "خوارزمية",
+      "description": "يبحث عن n نسخة متتالية من قيمة محددة داخل النطاق. يُرجع مكرّرًا إلى بداية أول تطابق.",
+      "usage": "يظهر عند البحث عن تكرار متتالي لقيمة معينة، مثل إيجاد 3 أصفار متتالية في بيانات.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 0, 0, 0, 3, 0, 0};\n    auto it = std::search_n(v.begin(), v.end(), 3, 0);\n    if (it != v.end())\n        std::cout << \"3 zeros at index: \" << (it - v.begin());\n    // المخرجات: 3 zeros at index: 1\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::search", "std::find", "std::adjacent_find"]
+    },
+    "std::generate_n": {
+      "title": "std::generate_n",
+      "type": "خوارزمية",
+      "description": "يُعيّن قيم لعدد n من العناصر بدءًا من مكرّر معيّن باستخدام دالة توليد. أنسب من generate عند معرفة العدد المطلوب مسبقًا.",
+      "usage": "يظهر عند ملء حاوية بقيم مُولَّدة مثل أرقام عشوائية أو تسلسل رياضي دون الحاجة لنطاق نهاية.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v;\n    int counter = 1;\n    std::generate_n(std::back_inserter(v), 5, [&counter]() { return counter++ * 10; });\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 10 20 30 40 50\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::generate", "std::fill_n", "std::transform"]
+    },
+    "std::inplace_merge": {
+      "title": "std::inplace_merge",
+      "type": "خوارزمية",
+      "description": "يدمج نطاقين متتاليين مرتّبين داخل نفس الحاوية إلى نطاق واحد مرتّب. يُنفّذ الدمج في المكان بدون حاوية إضافية كبيرة.",
+      "usage": "يظهر عند دمج جزئين مرتّبين من نفس الحاوية، مثل دمج نتيجتين فرعيتين في خوارزمية دمج-ترتيب.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 3, 5, 2, 4, 6};\n    // النصف الأول والثاني كل مرتّب — دمجهما\n    std::inplace_merge(v.begin(), v.begin() + 3, v.end());\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 1 2 3 4 5 6\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::merge", "std::sort", "std::stable_sort"]
+    },
+    "std::is_heap_until": {
+      "title": "std::is_heap_until",
+      "type": "خوارزمية",
+      "description": "يُرجع مكرّرًا إلى أول عنصر يكسر خاصية الكومة (heap property) في النطاق. إذا كان النطاق كومة كاملة يُرجع end().",
+      "usage": "يظهر عند التحقق من مدى امتداد خاصية الكومة في نطاق، مفيد للتصحيح بعد عمليات تعديل يدوية.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {9, 5, 8, 3, 2, 7, 1};\n    auto it = std::is_heap_until(v.begin(), v.end());\n    std::cout << \"heap ends at index: \" << (it - v.begin());\n    // الكومة صحيحة حتى الفهرس 5 (7 يكسر الخاصية)\n    // المخرجات: heap ends at index: 5\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::is_heap", "std::make_heap", "std::push_heap"]
+    },
+    "std::is_partitioned": {
+      "title": "std::is_partitioned",
+      "type": "خوارزمية",
+      "description": "يتحقق مما إذا كان النطاق مقسّمًا بحيث تأتي كل العناصر المحققة للشرط قبل غير المحققة. لا يُرتّب بل يفحص فقط.",
+      "usage": "يظهر للتأكد من أن partition أو stable_partition نجحت، أو قبل استدعاء خوارزميات تفترض التقسيم مثل partition_point.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {2, 4, 6, 1, 3, 5};\n    bool ok = std::is_partitioned(v.begin(), v.end(),\n        [](int x) { return x % 2 == 0; });\n    std::cout << std::boolalpha << ok;\n    // المخرجات: true (الزوجية كلها قبل الفردية)\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::partition", "std::stable_partition", "std::partition_point"]
+    },
+    "std::is_sorted_until": {
+      "title": "std::is_sorted_until",
+      "type": "خوارزمية",
+      "description": "يُرجع مكرّرًا إلى أول عنصر يكسر الترتيب التصاعدي في النطاق. إذا كان مرتّبًا بالكامل يُرجع end().",
+      "usage": "يظهر لمعرفة أين ينتهي الترتيب في نطاق جزئي، أو للتحقق من صحة ترتيب بعد تعديلات محدودة.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 5, 3, 4};\n    auto it = std::is_sorted_until(v.begin(), v.end());\n    std::cout << \"sorted until index: \" << (it - v.begin());\n    // المخرجات: sorted until index: 3 (3 يكسر الترتيب)\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::is_sorted", "std::sort", "std::partial_sort"]
+    },
+    "std::iter_swap": {
+      "title": "std::iter_swap",
+      "type": "خوارزمية",
+      "description": "يبدّل القيم التي يشير إليها مكرّران. يفصل عملية البدل عن نوع الحاوية ويعمل مع أي مكرّر قابل للكتابة.",
+      "usage": "يظهر عند الحاجة لتبديل عنصرين عبر مكرّرات من حاويات مختلفة أو نفس الحاوية دون استخدام الفهارس.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3};\n    std::vector<int> b = {10, 20, 30};\n    std::iter_swap(a.begin() + 1, b.begin() + 2);\n    // a = {1, 30, 3}, b = {10, 20, 2}\n    std::cout << a[1] << ' ' << b[2];\n    // المخرجات: 30 2\n}",
+      "includeHeader": "#include <utility>",
+      "related": ["std::swap", "std::swap_ranges", "std::reverse"]
+    },
+    "std::lexicographical_compare": {
+      "title": "std::lexicographical_compare",
+      "type": "خوارزمية",
+      "description": "يقارن نطاقين عنصرًا بعنصر بالترتيب المعجمي (كما تُقارن الكلمات في القاموس). يُرجع true إذا كان النطاق الأول أصغر.",
+      "usage": "يظهر عند مقارنة حاويات غير قابلة للمقارنة مباشرة بـ <، أو عند مقارنة أجزاء من حاويات.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> a = {1, 2, 3};\n    std::vector<int> b = {1, 2, 4};\n    bool less = std::lexicographical_compare(a.begin(), a.end(),\n                                             b.begin(), b.end());\n    std::cout << std::boolalpha << less;\n    // المخرجات: true (a أصغر معجميًا لأن 3 < 4)\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::equal", "std::mismatch", "std::transform"]
+    },
+    "std::move_backward": {
+      "title": "std::move_backward",
+      "type": "خوارزمية",
+      "description": "ينقل عناصر من نطاق إلى آخر بالبدء من النهاية باستخدام دلالات النقل (move semantics). ضروري عند تداخل النطاقات وإزاحة العناصر لليمين.",
+      "usage": "يظهر عند إزاحة عناصر داخل نفس الحاوية لليمين مع استغلال move semantics لتجنّب النسخ المكلف.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> v = {\"a\", \"b\", \"c\", \"d\", \"e\"};\n    // إزاحة آخر عنصرين موضعًا لليمين (مع نقل لا نسخ)\n    std::move_backward(v.end() - 2, v.end(), v.end());\n    for (auto& s : v) std::cout << s << ' ';\n    // المخرجات: a b c c d\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::move", "std::copy_backward", "std::shift_right"]
+    },
+    "std::move_if_noexcept": {
+      "title": "std::move_if_noexcept",
+      "type": "دالة مساعدة",
+      "description": "يُرجع مرجع rvalue إذا كان نوع العنصر لديه noexcept move constructor، وإلا يُرجع مرجع lvalue ثابت. يحمي من فقدان البيانات أثناء الاستثناءات.",
+      "usage": "يُستخدم داخليًا في تنفيذ std::vector و std::basic_string عند إعادة التخصيص لضمان الاستثناء القوي (strong exception guarantee).",
+      "example": "#include <utility>\n#include <iostream>\n\nstruct Safe {\n    Safe() = default;\n    Safe(Safe&&) noexcept { std::cout << \"move\\n\"; }\n    Safe(const Safe&) { std::cout << \"copy\\n\"; }\n};\n\nint main() {\n    Safe s;\n    auto&& ref = std::move_if_noexcept(s);\n    // إذا كان move noexcept: ref هو rvalue → يستخدم move\n    // إذا لم يكن noexcept: ref هو const lvalue → يستخدم copy\n}",
+      "includeHeader": "#include <utility>",
+      "related": ["std::move", "std::forward", "std::swap"]
+    },
+    "std::partition_copy": {
+      "title": "std::partition_copy",
+      "type": "خوارزمية",
+      "description": "ينسخ عناصر النطاق إلى حاويتين: واحدة للعناصر المحققة للشرط وأخرى للباقي. لا يُعدّل النطاق الأصلي.",
+      "usage": "يظهر عند تقسيم بيانات إلى مجموعتين مع الحفاظ على الأصل، مثل فصل الأعداد الموجبة والسالبة.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {-3, 1, -1, 4, 0, 5};\n    std::vector<int> pos, neg;\n    std::partition_copy(v.begin(), v.end(),\n        std::back_inserter(pos), std::back_inserter(neg),\n        [](int x) { return x >= 0; });\n    for (int x : pos) std::cout << x << ' ';\n    // المخرجات: 1 4 0 5\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::partition", "std::copy_if", "std::stable_partition"]
+    },
+    "std::prev_permutation": {
+      "title": "std::prev_permutation",
+      "type": "خوارزمية",
+      "description": "يُحوّل النطاق إلى التبديل السابق في الترتيب المعجمي. يُرجع false إذا كان النطاق بالفعل في أصغر تبديل ممكن (مرتّب تصاعديًا).",
+      "usage": "يظهر عند الحاجة لتوليد كل التباديل بترتيب عكسي، أو للبحث عن تبديل سابق لقيمة معينة.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {3, 2, 1};\n    do {\n        for (int x : v) std::cout << x << ' ';\n        std::cout << '\\n';\n    } while (std::prev_permutation(v.begin(), v.end()));\n    // المخرجات: 3 2 1 / 3 1 2 / 2 3 1 / 2 1 3 / 1 3 2 / 1 2 3\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::next_permutation", "std::sort", "std::is_permutation"]
+    },
+    "std::replace_copy": {
+      "title": "std::replace_copy",
+      "type": "خوارزمية",
+      "description": "ينسخ عناصر النطاق إلى هدف مع استبدال كل عنصر يساوي قيمة محددة بقيمة بديلة. لا يُعدّل النطاق الأصلي.",
+      "usage": "يظهر عند نسخ بيانات مع تعديل قيم محددة مثل استبدال القيم السلبية بصفر.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {1, -2, 3, -4, 5};\n    std::vector<int> dst;\n    std::replace_copy(src.begin(), src.end(), std::back_inserter(dst), -1, 0);\n    for (int x : dst) std::cout << x << ' ';\n    // المخرجات: 1 -2 3 -4 5 (لم يتغير شيء لأن -1 غير موجودة)\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::replace", "std::replace_copy_if", "std::transform"]
+    },
+    "std::replace_copy_if": {
+      "title": "std::replace_copy_if",
+      "type": "خوارزمية",
+      "description": "ينسخ عناصر النطاق إلى هدف مع استبدال العناصر التي تحقّق شرطًا محددًا. يجمع بين copy_if وreplace دون تعديل الأصل.",
+      "usage": "يظهر عند نسخ بيانات مع تصفية واستبدال، مثل استبدال كل الأعداد السالبة بصفر أثناء النسخ.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {1, -2, 3, -4, 5};\n    std::vector<int> dst;\n    std::replace_copy_if(src.begin(), src.end(), std::back_inserter(dst),\n        [](int x) { return x < 0; }, 0);\n    for (int x : dst) std::cout << x << ' ';\n    // المخرجات: 1 0 3 0 5\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::replace_copy", "std::replace_if", "std::copy_if"]
+    },
+    "std::rotate_copy": {
+      "title": "std::rotate_copy",
+      "type": "خوارزمية",
+      "description": "ينسخ النطاق بعد تطبيق دوران (rotation) عليه. العنصر في middle يصبح أول عنصر في النسخة دون تعديل الأصل.",
+      "usage": "يظهر عند الحاجة لنسخ نطاق بعد إزاحة دائرية مثل عرض عناصر قائمة من موضع مختلف.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    std::vector<int> result;\n    std::rotate_copy(v.begin(), v.begin() + 2, v.end(),\n                     std::back_inserter(result));\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 3 4 5 1 2\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::rotate", "std::shift_left", "std::shift_right"]
+    },
+    "std::sample": {
+      "title": "std::sample",
+      "type": "خوارزمية",
+      "description": "يختار عشوائيًا عددًا محددًا من العناصر من النطاق. يختار كل عنصر بنسبة احتمال متساوية بغض النظر عن حجم النطاق (C++17).",
+      "usage": "يظهر عند الحاجة لعينة عشوائية من بيانات مثل اختيار عناصر لاختبار أو استطلاع من مجموعة كبيرة.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <random>\n#include <iostream>\n\nint main() {\n    std::vector<int> data = {10, 20, 30, 40, 50, 60, 70, 80};\n    std::vector<int> result;\n    std::sample(data.begin(), data.end(), std::back_inserter(result),\n                3, std::mt19937{std::random_device{}()});\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 3 قيم عشوائية مختلفة في كل تشغيل\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::shuffle", "std::random_shuffle", "std::partial_sort_copy"]
+    },
+    "std::stable_partition": {
+      "title": "std::stable_partition",
+      "type": "خوارزمية",
+      "description": "يُقسّم النطاق بحيث تأتي العناصر المحققة للشرط قبل غيرها مع الحفاظ على الترتيب النسبي داخل كل مجموعة. أبطأ من partition لكن يحافظ على الاستقرار.",
+      "usage": "يظهر عندما يحتاج التقسيم مع الحفاظ على ترتيب العناصر الأصلية، مثل ترتيب سجلات حسب نوع معين دون إعادة ترتيب داخل النوع.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> v = {\"cat\", \"ant\", \"dog\", \"bee\"};\n    std::stable_partition(v.begin(), v.end(), [](const std::string& s) {\n        return s.size() == 3;\n    });\n    for (auto& s : v) std::cout << s << ' ';\n    // المخرجات: cat dog ant bee (3 حروف أولاً مع حفظ ترتيبهم)\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::partition", "std::is_partitioned", "std::partition_copy"]
+    },
+    "std::unique_copy": {
+      "title": "std::unique_copy",
+      "type": "خوارزمية",
+      "description": "ينسخ العناصر مع حذف التكرارات المتتالية فقط في النسخة. لا يُعدّل النطاق الأصلي. يفترض أن النطاق مرتّب لضمان حذف كل التكرارات.",
+      "usage": "يظهر عند إنشاء نسخة خالية من التكرارات المتتالية، مثل إزالة أسطر مكررة متجاورة من تقرير.",
+      "example": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 1, 2, 2, 2, 3, 1, 1};\n    std::vector<int> result;\n    std::unique_copy(v.begin(), v.end(), std::back_inserter(result));\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 1 2 3 1 (يحذف التكرار المتتالي فقط)\n}",
+      "includeHeader": "#include <algorithm>",
+      "related": ["std::unique", "std::copy", "std::sort"]
+    },
+    "std::InputIterator": {
+      "title": "std::InputIterator",
+      "type": "متطلب مكرر",
+      "description": "متطلب مكرر: يقرأ للأمام مرورًا واحدًا فقط (single-pass). الأبسط. يوفر ++, *, ==, !=.",
+      "usage": "يظهر كمتطلب لمعظم خوارزميات القراءة مثل std::find وstd::count. istream_iterator يُحقّق هذا المتطلب.",
+      "example": "// InputIterator يقرأ للأمام فقط ولا يضمن إمكانية المرور مرة أخرى\n// std::istream_iterator<int> is(cin);\n// int val = *is; // قراءة قيمة\n// ++is;         // التقدم للأمام",
+      "includeHeader": "مضمن — يُعرّف في <iterator>",
+      "related": ["std::ForwardIterator", "std::OutputIterator", "std::istream_iterator"]
+    },
+    "std::OutputIterator": {
+      "title": "std::OutputIterator",
+      "type": "متطلب مكرر",
+      "description": "متطلب مكرر: يكتب للأمام مرورًا واحدًا فقط. يوفر ++, *.",
+      "usage": "يظهر كمتطلب لمعامل الإخراج في خوارزميات الكتابة مثل std::copy وstd::transform. ostream_iterator وback_inserter يُحقّقان هذا المتطلب.",
+      "example": "// OutputIterator يكتب للأمام فقط\n// std::ostream_iterator<int> out(cout, \" \");\n// *out = 42; // كتابة قيمة\n// ++out;     // التقدم للأمام",
+      "includeHeader": "مضمن — يُعرّف في <iterator>",
+      "related": ["std::InputIterator", "std::back_inserter", "std::ostream_iterator"]
+    },
+    "std::ForwardIterator": {
+      "title": "std::ForwardIterator",
+      "type": "متطلب مكرر",
+      "description": "متطلب مكرر: يقرأ ويكتب للأمام مرورًا متعدد (multi-pass). يرث InputIterator.",
+      "usage": "يظهر كمتطلب لخوارزميات تحتاج مرورًا متعددًا مثل std::unordered_set وstd::list. مكرّرات forward_list وunordered_map تُحقّق هذا المتطلب.",
+      "example": "// ForwardIterator يسمح بالمرور المتعدد على نفس العناصر\n// std::forward_list<int>::iterator it = fl.begin();\n// int a = *it; ++it;\n// int b = *it; ++it;\n// it = fl.begin(); // يمكن العودة للبداية والمرور مجددًا",
+      "includeHeader": "مضمن — يُعرّف في <iterator>",
+      "related": ["std::InputIterator", "std::BidirectionalIterator", "std::forward_list"]
+    },
+    "std::BidirectionalIterator": {
+      "title": "std::BidirectionalIterator",
+      "type": "متطلب مكرر",
+      "description": "متطلب مكرر: يتحرك للأمام والخلف. يرث ForwardIterator ويضيف --.",
+      "usage": "يظهر كمتطلب لخوارزميات تحتاج حركة للخلف مثل std::reverse وstd::list. مكرّرات list وmap وset تُحقّق هذا المتطلب.",
+      "example": "// BidirectionalIterator يدعم الحركة للخلف\n// std::list<int>::iterator it = lst.begin();\n// ++it;  // للأمام\n// --it;  // للخلف — هذا ما يميزه عن ForwardIterator\n// std::reverse(lst.begin(), lst.end()); // تحتاج BidirectionalIterator",
+      "includeHeader": "مضمن — يُعرّف في <iterator>",
+      "related": ["std::ForwardIterator", "std::RandomAccessIterator", "std::list", "std::map"]
+    },
+    "std::RandomAccessIterator": {
+      "title": "std::RandomAccessIterator",
+      "type": "متطلب مكرر",
+      "description": "متطلب مكرر: وصول عشوائي بـ +, -, [] مثل المؤشرات. يرث BidirectionalIterator. الأقوى.",
+      "usage": "يظهر كمتطلب لخوارزميات تحتاج وصولًا عشوائيًا مثل std::sort وstd::binary_search. مكرّرات vector وdeque وarray والمؤشرات الخام تُحقّق هذا المتطلب.",
+      "example": "// RandomAccessIterator يدعم الوصول العشوائي مثل المؤشرات\n// std::vector<int>::iterator it = v.begin();\n// it + 5;    // قفز 5 خطوات للأمام\n// it - 2;    // خطوتين للخلف\n// it[3];     // وصول مباشر مثل المصفوفات\n// v.end() - v.begin(); // عدد العناصر",
+      "includeHeader": "مضمن — يُعرّف في <iterator>",
+      "related": ["std::BidirectionalIterator", "std::vector", "std::deque", "std::sort"]
+    }
+  }
+}

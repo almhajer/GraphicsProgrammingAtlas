@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 26 من 64 • الأسطر 11251-11700 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 26 من 64 • الأسطر 11251-11700</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 26 من 64 • الأسطر 11251-11700</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-25.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-27.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 26/64</span>
+        <span class="source-stat">الأسطر: 11251-11700</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>#  endif
+
+      IndirectCommandsLayoutNV( Device const &amp;                      device,
+                                VkIndirectCommandsLayoutNV          indirectCommandsLayout,
+                                Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_indirectCommandsLayoutNV( indirectCommandsLayout )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      IndirectCommandsLayoutNV( std::nullptr_t ) {}
+
+      ~IndirectCommandsLayoutNV()
+      {
+        clear();
+      }
+
+      IndirectCommandsLayoutNV()                                   = delete;
+      IndirectCommandsLayoutNV( IndirectCommandsLayoutNV const &amp; ) = delete;
+
+      IndirectCommandsLayoutNV( IndirectCommandsLayoutNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_indirectCommandsLayoutNV( exchange( rhs.m_indirectCommandsLayoutNV, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      IndirectCommandsLayoutNV &amp; operator=( IndirectCommandsLayoutNV const &amp; ) = delete;
+
+      IndirectCommandsLayoutNV &amp; operator=( IndirectCommandsLayoutNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_indirectCommandsLayoutNV, rhs.m_indirectCommandsLayoutNV );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::IndirectCommandsLayoutNV const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_indirectCommandsLayoutNV;
+      }
+
+      VULKAN_HPP_NAMESPACE::IndirectCommandsLayoutNV const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_indirectCommandsLayoutNV );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::IndirectCommandsLayoutNV() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_indirectCommandsLayoutNV;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_indirectCommandsLayoutNV )
+        {
+          getDispatcher()-&gt;vkDestroyIndirectCommandsLayoutNV( static_cast&lt;VkDevice&gt;( m_device ),
+                                                              static_cast&lt;VkIndirectCommandsLayoutNV&gt;( m_indirectCommandsLayoutNV ),
+                                                              reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device                   = nullptr;
+        m_indirectCommandsLayoutNV = nullptr;
+        m_allocator                = nullptr;
+        m_dispatcher               = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::IndirectCommandsLayoutNV release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_indirectCommandsLayoutNV, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( IndirectCommandsLayoutNV &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_indirectCommandsLayoutNV, rhs.m_indirectCommandsLayoutNV );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device                   m_device                   = {};
+      VULKAN_HPP_NAMESPACE::IndirectCommandsLayoutNV m_indirectCommandsLayoutNV = {};
+      const AllocationCallbacks *                    m_allocator                = {};
+      detail::DeviceDispatcher const *               m_dispatcher               = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;IndirectCommandsLayoutNV&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkIndirectExecutionSetEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkIndirectExecutionSetEXT.html
+    class IndirectExecutionSetEXT
+    {
+    public:
+      using CType   = VkIndirectExecutionSetEXT;
+      using CppType = VULKAN_HPP_NAMESPACE::IndirectExecutionSetEXT;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eIndirectExecutionSetEXT;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      IndirectExecutionSetEXT( Device const &amp;                            device,
+                               IndirectExecutionSetCreateInfoEXT const &amp; createInfo,
+                               Optional&lt;const AllocationCallbacks&gt;       allocator = nullptr )
+      {
+        *this = device.createIndirectExecutionSetEXT( createInfo, allocator );
+      }
+#  endif
+
+      IndirectExecutionSetEXT( Device const &amp; device, VkIndirectExecutionSetEXT indirectExecutionSet, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_indirectExecutionSetEXT( indirectExecutionSet )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      IndirectExecutionSetEXT( std::nullptr_t ) {}
+
+      ~IndirectExecutionSetEXT()
+      {
+        clear();
+      }
+
+      IndirectExecutionSetEXT()                                  = delete;
+      IndirectExecutionSetEXT( IndirectExecutionSetEXT const &amp; ) = delete;
+
+      IndirectExecutionSetEXT( IndirectExecutionSetEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_indirectExecutionSetEXT( exchange( rhs.m_indirectExecutionSetEXT, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      IndirectExecutionSetEXT &amp; operator=( IndirectExecutionSetEXT const &amp; ) = delete;
+
+      IndirectExecutionSetEXT &amp; operator=( IndirectExecutionSetEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_indirectExecutionSetEXT, rhs.m_indirectExecutionSetEXT );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::IndirectExecutionSetEXT const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_indirectExecutionSetEXT;
+      }
+
+      VULKAN_HPP_NAMESPACE::IndirectExecutionSetEXT const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_indirectExecutionSetEXT );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::IndirectExecutionSetEXT() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_indirectExecutionSetEXT;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_indirectExecutionSetEXT )
+        {
+          getDispatcher()-&gt;vkDestroyIndirectExecutionSetEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                             static_cast&lt;VkIndirectExecutionSetEXT&gt;( m_indirectExecutionSetEXT ),
+                                                             reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device                  = nullptr;
+        m_indirectExecutionSetEXT = nullptr;
+        m_allocator               = nullptr;
+        m_dispatcher              = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::IndirectExecutionSetEXT release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_indirectExecutionSetEXT, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( IndirectExecutionSetEXT &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_indirectExecutionSetEXT, rhs.m_indirectExecutionSetEXT );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_EXT_device_generated_commands ===
+
+      // wrapper function for command vkUpdateIndirectExecutionSetPipelineEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateIndirectExecutionSetPipelineEXT.html
+      void updatePipeline( ArrayProxy&lt;const WriteIndirectExecutionSetPipelineEXT&gt; const &amp; executionSetWrites ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkUpdateIndirectExecutionSetShaderEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateIndirectExecutionSetShaderEXT.html
+      void updateShader( ArrayProxy&lt;const WriteIndirectExecutionSetShaderEXT&gt; const &amp; executionSetWrites ) const VULKAN_HPP_NOEXCEPT;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device                  m_device                  = {};
+      VULKAN_HPP_NAMESPACE::IndirectExecutionSetEXT m_indirectExecutionSetEXT = {};
+      const AllocationCallbacks *                   m_allocator               = {};
+      detail::DeviceDispatcher const *              m_dispatcher              = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;IndirectExecutionSetEXT&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkMicromapEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkMicromapEXT.html
+    class MicromapEXT
+    {
+    public:
+      using CType   = VkMicromapEXT;
+      using CppType = VULKAN_HPP_NAMESPACE::MicromapEXT;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eMicromapEXT;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      MicromapEXT( Device const &amp; device, MicromapCreateInfoEXT const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createMicromapEXT( createInfo, allocator );
+      }
+#  endif
+
+      MicromapEXT( Device const &amp; device, VkMicromapEXT micromap, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_micromapEXT( micromap )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      MicromapEXT( std::nullptr_t ) {}
+
+      ~MicromapEXT()
+      {
+        clear();
+      }
+
+      MicromapEXT()                      = delete;
+      MicromapEXT( MicromapEXT const &amp; ) = delete;
+
+      MicromapEXT( MicromapEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_micromapEXT( exchange( rhs.m_micromapEXT, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      MicromapEXT &amp; operator=( MicromapEXT const &amp; ) = delete;
+
+      MicromapEXT &amp; operator=( MicromapEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_micromapEXT, rhs.m_micromapEXT );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::MicromapEXT const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_micromapEXT;
+      }
+
+      VULKAN_HPP_NAMESPACE::MicromapEXT const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_micromapEXT );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::MicromapEXT() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_micromapEXT;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_micromapEXT )
+        {
+          getDispatcher()-&gt;vkDestroyMicromapEXT(
+            static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkMicromapEXT&gt;( m_micromapEXT ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device      = nullptr;
+        m_micromapEXT = nullptr;
+        m_allocator   = nullptr;
+        m_dispatcher  = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::MicromapEXT release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_micromapEXT, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( MicromapEXT &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_micromapEXT, rhs.m_micromapEXT );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device      m_device      = {};
+      VULKAN_HPP_NAMESPACE::MicromapEXT m_micromapEXT = {};
+      const AllocationCallbacks *       m_allocator   = {};
+      detail::DeviceDispatcher const *  m_dispatcher  = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;MicromapEXT&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkOpticalFlowSessionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkOpticalFlowSessionNV.html
+    class OpticalFlowSessionNV
+    {
+    public:
+      using CType   = VkOpticalFlowSessionNV;
+      using CppType = VULKAN_HPP_NAMESPACE::OpticalFlowSessionNV;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eOpticalFlowSessionNV;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      OpticalFlowSessionNV( Device const &amp; device, OpticalFlowSessionCreateInfoNV const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createOpticalFlowSessionNV( createInfo, allocator );
+      }
+#  endif
+
+      OpticalFlowSessionNV( Device const &amp; device, VkOpticalFlowSessionNV session, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_opticalFlowSessionNV( session )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      OpticalFlowSessionNV( std::nullptr_t ) {}
+
+      ~OpticalFlowSessionNV()
+      {
+        clear();
+      }
+
+      OpticalFlowSessionNV()                               = delete;
+      OpticalFlowSessionNV( OpticalFlowSessionNV const &amp; ) = delete;
+
+      OpticalFlowSessionNV( OpticalFlowSessionNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_opticalFlowSessionNV( exchange( rhs.m_opticalFlowSessionNV, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      OpticalFlowSessionNV &amp; operator=( OpticalFlowSessionNV const &amp; ) = delete;
+
+      OpticalFlowSessionNV &amp; operator=( OpticalFlowSessionNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_opticalFlowSessionNV, rhs.m_opticalFlowSessionNV );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::OpticalFlowSessionNV const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_opticalFlowSessionNV;
+      }
+
+      VULKAN_HPP_NAMESPACE::OpticalFlowSessionNV const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_opticalFlowSessionNV );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::OpticalFlowSessionNV() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_opticalFlowSessionNV;
+      }</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-25.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-27.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

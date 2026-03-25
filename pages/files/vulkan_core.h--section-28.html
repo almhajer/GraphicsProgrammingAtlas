@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="يحتوي على النواة الأساسية لواجهة Vulkan: الأنواع، الهياكل، التعدادات، وتصريحات الدوال العامة بعيداً عن ترويسات المنصات.">
+  <title>vulkan_core.h • القسم 28 من 57 • الأسطر 12151-12600 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_core.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_core.h.html">vulkan_core.h</a> /
+        <span>القسم 28 من 57 • الأسطر 12151-12600</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_core.h</h1>
+      <p class="page-description">القسم 28 من 57 • الأسطر 12151-12600</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-27.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-29.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_core.h</span>
+        <span class="source-stat">القسم: 28/57</span>
+        <span class="source-stat">الأسطر: 12151-12600</span>
+        <span class="source-stat">حجم الملف: 1.21 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    VkVideoEncodeUsageFlagsKHR      videoUsageHints;
+    VkVideoEncodeContentFlagsKHR    videoContentHints;
+    VkVideoEncodeTuningModeKHR      tuningMode;
+} VkVideoEncodeUsageInfoKHR;
+
+typedef struct VkVideoEncodeRateControlLayerInfoKHR {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint64_t           averageBitrate;
+    uint64_t           maxBitrate;
+    uint32_t           frameRateNumerator;
+    uint32_t           frameRateDenominator;
+} VkVideoEncodeRateControlLayerInfoKHR;
+
+typedef struct VkVideoEncodeRateControlInfoKHR {
+    VkStructureType                                sType;
+    const void*                                    pNext;
+    VkVideoEncodeRateControlFlagsKHR               flags;
+    VkVideoEncodeRateControlModeFlagBitsKHR        rateControlMode;
+    uint32_t                                       layerCount;
+    const VkVideoEncodeRateControlLayerInfoKHR*    pLayers;
+    uint32_t                                       virtualBufferSizeInMs;
+    uint32_t                                       initialVirtualBufferSizeInMs;
+} VkVideoEncodeRateControlInfoKHR;
+
+typedef struct VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR {
+    VkStructureType                 sType;
+    const void*                     pNext;
+    const VkVideoProfileInfoKHR*    pVideoProfile;
+    uint32_t                        qualityLevel;
+} VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR;
+
+typedef struct VkVideoEncodeQualityLevelPropertiesKHR {
+    VkStructureType                            sType;
+    void*                                      pNext;
+    VkVideoEncodeRateControlModeFlagBitsKHR    preferredRateControlMode;
+    uint32_t                                   preferredRateControlLayerCount;
+} VkVideoEncodeQualityLevelPropertiesKHR;
+
+typedef struct VkVideoEncodeQualityLevelInfoKHR {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           qualityLevel;
+} VkVideoEncodeQualityLevelInfoKHR;
+
+typedef struct VkVideoEncodeSessionParametersGetInfoKHR {
+    VkStructureType                sType;
+    const void*                    pNext;
+    VkVideoSessionParametersKHR    videoSessionParameters;
+} VkVideoEncodeSessionParametersGetInfoKHR;
+
+typedef struct VkVideoEncodeSessionParametersFeedbackInfoKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           hasOverrides;
+} VkVideoEncodeSessionParametersFeedbackInfoKHR;
+
+typedef VkResult (VKAPI_PTR *PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo, VkVideoEncodeQualityLevelPropertiesKHR* pQualityLevelProperties);
+typedef VkResult (VKAPI_PTR *PFN_vkGetEncodedVideoSessionParametersKHR)(VkDevice device, const VkVideoEncodeSessionParametersGetInfoKHR* pVideoSessionParametersInfo, VkVideoEncodeSessionParametersFeedbackInfoKHR* pFeedbackInfo, size_t* pDataSize, void* pData);
+typedef void (VKAPI_PTR *PFN_vkCmdEncodeVideoKHR)(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
+    VkVideoEncodeQualityLevelPropertiesKHR*     pQualityLevelProperties);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkGetEncodedVideoSessionParametersKHR(
+    VkDevice                                    device,
+    const VkVideoEncodeSessionParametersGetInfoKHR* pVideoSessionParametersInfo,
+    VkVideoEncodeSessionParametersFeedbackInfoKHR* pFeedbackInfo,
+    size_t*                                     pDataSize,
+    void*                                       pData);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdEncodeVideoKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkVideoEncodeInfoKHR*                 pEncodeInfo);
+#endif
+#endif
+
+
+// VK_KHR_synchronization2 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_synchronization2 1
+#define VK_KHR_SYNCHRONIZATION_2_SPEC_VERSION 1
+#define VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME &quot;VK_KHR_synchronization2&quot;
+typedef VkPipelineStageFlags2 VkPipelineStageFlags2KHR;
+
+typedef VkPipelineStageFlagBits2 VkPipelineStageFlagBits2KHR;
+
+typedef VkAccessFlags2 VkAccessFlags2KHR;
+
+typedef VkAccessFlagBits2 VkAccessFlagBits2KHR;
+
+typedef VkSubmitFlagBits VkSubmitFlagBitsKHR;
+
+typedef VkSubmitFlags VkSubmitFlagsKHR;
+
+typedef VkMemoryBarrier2 VkMemoryBarrier2KHR;
+
+typedef VkBufferMemoryBarrier2 VkBufferMemoryBarrier2KHR;
+
+typedef VkImageMemoryBarrier2 VkImageMemoryBarrier2KHR;
+
+typedef VkDependencyInfo VkDependencyInfoKHR;
+
+typedef VkSubmitInfo2 VkSubmitInfo2KHR;
+
+typedef VkSemaphoreSubmitInfo VkSemaphoreSubmitInfoKHR;
+
+typedef VkCommandBufferSubmitInfo VkCommandBufferSubmitInfoKHR;
+
+typedef VkPhysicalDeviceSynchronization2Features VkPhysicalDeviceSynchronization2FeaturesKHR;
+
+typedef void (VKAPI_PTR *PFN_vkCmdSetEvent2KHR)(VkCommandBuffer                   commandBuffer, VkEvent                                             event, const VkDependencyInfo*                             pDependencyInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdResetEvent2KHR)(VkCommandBuffer                   commandBuffer, VkEvent                                             event, VkPipelineStageFlags2               stageMask);
+typedef void (VKAPI_PTR *PFN_vkCmdWaitEvents2KHR)(VkCommandBuffer                   commandBuffer, uint32_t                                            eventCount, const VkEvent*                     pEvents, const VkDependencyInfo*            pDependencyInfos);
+typedef void (VKAPI_PTR *PFN_vkCmdPipelineBarrier2KHR)(VkCommandBuffer                   commandBuffer, const VkDependencyInfo*                             pDependencyInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdWriteTimestamp2KHR)(VkCommandBuffer                   commandBuffer, VkPipelineStageFlags2               stage, VkQueryPool                                         queryPool, uint32_t                                            query);
+typedef VkResult (VKAPI_PTR *PFN_vkQueueSubmit2KHR)(VkQueue                          queue, uint32_t                            submitCount, const VkSubmitInfo2*              pSubmits, VkFence           fence);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkEvent                                     event,
+    const VkDependencyInfo*                     pDependencyInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkEvent                                     event,
+    VkPipelineStageFlags2                       stageMask);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents2KHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    eventCount,
+    const VkEvent*                              pEvents,
+    const VkDependencyInfo*                     pDependencyInfos);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkDependencyInfo*                     pDependencyInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineStageFlags2                       stage,
+    VkQueryPool                                 queryPool,
+    uint32_t                                    query);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit2KHR(
+    VkQueue                                     queue,
+    uint32_t                                    submitCount,
+    const VkSubmitInfo2*                        pSubmits,
+    VkFence                                     fence);
+#endif
+#endif
+
+
+// VK_KHR_fragment_shader_barycentric is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_fragment_shader_barycentric 1
+#define VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_SPEC_VERSION 1
+#define VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME &quot;VK_KHR_fragment_shader_barycentric&quot;
+typedef struct VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           fragmentShaderBarycentric;
+} VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR;
+
+typedef struct VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           triStripVertexOrderIndependentOfProvokingVertex;
+} VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR;
+
+
+
+// VK_KHR_shader_subgroup_uniform_control_flow is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_shader_subgroup_uniform_control_flow 1
+#define VK_KHR_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_SPEC_VERSION 1
+#define VK_KHR_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_EXTENSION_NAME &quot;VK_KHR_shader_subgroup_uniform_control_flow&quot;
+typedef struct VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           shaderSubgroupUniformControlFlow;
+} VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR;
+
+
+
+// VK_KHR_zero_initialize_workgroup_memory is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_zero_initialize_workgroup_memory 1
+#define VK_KHR_ZERO_INITIALIZE_WORKGROUP_MEMORY_SPEC_VERSION 1
+#define VK_KHR_ZERO_INITIALIZE_WORKGROUP_MEMORY_EXTENSION_NAME &quot;VK_KHR_zero_initialize_workgroup_memory&quot;
+typedef VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR;
+
+
+
+// VK_KHR_workgroup_memory_explicit_layout is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_workgroup_memory_explicit_layout 1
+#define VK_KHR_WORKGROUP_MEMORY_EXPLICIT_LAYOUT_SPEC_VERSION 1
+#define VK_KHR_WORKGROUP_MEMORY_EXPLICIT_LAYOUT_EXTENSION_NAME &quot;VK_KHR_workgroup_memory_explicit_layout&quot;
+typedef struct VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           workgroupMemoryExplicitLayout;
+    VkBool32           workgroupMemoryExplicitLayoutScalarBlockLayout;
+    VkBool32           workgroupMemoryExplicitLayout8BitAccess;
+    VkBool32           workgroupMemoryExplicitLayout16BitAccess;
+} VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR;
+
+
+
+// VK_KHR_copy_commands2 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_copy_commands2 1
+#define VK_KHR_COPY_COMMANDS_2_SPEC_VERSION 1
+#define VK_KHR_COPY_COMMANDS_2_EXTENSION_NAME &quot;VK_KHR_copy_commands2&quot;
+typedef VkCopyBufferInfo2 VkCopyBufferInfo2KHR;
+
+typedef VkCopyImageInfo2 VkCopyImageInfo2KHR;
+
+typedef VkCopyBufferToImageInfo2 VkCopyBufferToImageInfo2KHR;
+
+typedef VkCopyImageToBufferInfo2 VkCopyImageToBufferInfo2KHR;
+
+typedef VkBlitImageInfo2 VkBlitImageInfo2KHR;
+
+typedef VkResolveImageInfo2 VkResolveImageInfo2KHR;
+
+typedef VkBufferCopy2 VkBufferCopy2KHR;
+
+typedef VkImageCopy2 VkImageCopy2KHR;
+
+typedef VkImageBlit2 VkImageBlit2KHR;
+
+typedef VkBufferImageCopy2 VkBufferImageCopy2KHR;
+
+typedef VkImageResolve2 VkImageResolve2KHR;
+
+typedef void (VKAPI_PTR *PFN_vkCmdCopyBuffer2KHR)(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdCopyImage2KHR)(VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdCopyBufferToImage2KHR)(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdCopyImageToBuffer2KHR)(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdBlitImage2KHR)(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo);
+typedef void (VKAPI_PTR *PFN_vkCmdResolveImage2KHR)(VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyBufferInfo2*                    pCopyBufferInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyImageInfo2*                     pCopyImageInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBlitImageInfo2*                     pBlitImageInfo);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkResolveImageInfo2*                  pResolveImageInfo);
+#endif
+#endif
+
+
+// VK_KHR_format_feature_flags2 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_format_feature_flags2 1
+#define VK_KHR_FORMAT_FEATURE_FLAGS_2_SPEC_VERSION 2
+#define VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME &quot;VK_KHR_format_feature_flags2&quot;
+typedef VkFormatFeatureFlags2 VkFormatFeatureFlags2KHR;
+
+typedef VkFormatFeatureFlagBits2 VkFormatFeatureFlagBits2KHR;
+
+typedef VkFormatProperties3 VkFormatProperties3KHR;
+
+
+
+// VK_KHR_ray_tracing_maintenance1 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_ray_tracing_maintenance1 1
+#define VK_KHR_RAY_TRACING_MAINTENANCE_1_SPEC_VERSION 1
+#define VK_KHR_RAY_TRACING_MAINTENANCE_1_EXTENSION_NAME &quot;VK_KHR_ray_tracing_maintenance1&quot;
+typedef struct VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           rayTracingMaintenance1;
+    VkBool32           rayTracingPipelineTraceRaysIndirect2;
+} VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR;
+
+typedef struct VkTraceRaysIndirectCommand2KHR {
+    VkDeviceAddress    raygenShaderRecordAddress;
+    VkDeviceSize       raygenShaderRecordSize;
+    VkDeviceAddress    missShaderBindingTableAddress;
+    VkDeviceSize       missShaderBindingTableSize;
+    VkDeviceSize       missShaderBindingTableStride;
+    VkDeviceAddress    hitShaderBindingTableAddress;
+    VkDeviceSize       hitShaderBindingTableSize;
+    VkDeviceSize       hitShaderBindingTableStride;
+    VkDeviceAddress    callableShaderBindingTableAddress;
+    VkDeviceSize       callableShaderBindingTableSize;
+    VkDeviceSize       callableShaderBindingTableStride;
+    uint32_t           width;
+    uint32_t           height;
+    uint32_t           depth;
+} VkTraceRaysIndirectCommand2KHR;
+
+typedef void (VKAPI_PTR *PFN_vkCmdTraceRaysIndirect2KHR)(VkCommandBuffer commandBuffer, VkDeviceAddress indirectDeviceAddress);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysIndirect2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             indirectDeviceAddress);
+#endif
+#endif
+
+
+// VK_KHR_shader_untyped_pointers is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_shader_untyped_pointers 1
+#define VK_KHR_SHADER_UNTYPED_POINTERS_SPEC_VERSION 1
+#define VK_KHR_SHADER_UNTYPED_POINTERS_EXTENSION_NAME &quot;VK_KHR_shader_untyped_pointers&quot;
+typedef struct VkPhysicalDeviceShaderUntypedPointersFeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           shaderUntypedPointers;
+} VkPhysicalDeviceShaderUntypedPointersFeaturesKHR;
+
+
+
+// VK_KHR_portability_enumeration is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_portability_enumeration 1
+#define VK_KHR_PORTABILITY_ENUMERATION_SPEC_VERSION 1
+#define VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME &quot;VK_KHR_portability_enumeration&quot;
+
+
+// VK_KHR_maintenance4 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_maintenance4 1
+#define VK_KHR_MAINTENANCE_4_SPEC_VERSION 2
+#define VK_KHR_MAINTENANCE_4_EXTENSION_NAME &quot;VK_KHR_maintenance4&quot;
+typedef VkPhysicalDeviceMaintenance4Features VkPhysicalDeviceMaintenance4FeaturesKHR;
+
+typedef VkPhysicalDeviceMaintenance4Properties VkPhysicalDeviceMaintenance4PropertiesKHR;
+
+typedef VkDeviceBufferMemoryRequirements VkDeviceBufferMemoryRequirementsKHR;
+
+typedef VkDeviceImageMemoryRequirements VkDeviceImageMemoryRequirementsKHR;
+
+typedef void (VKAPI_PTR *PFN_vkGetDeviceBufferMemoryRequirementsKHR)(VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements);
+typedef void (VKAPI_PTR *PFN_vkGetDeviceImageMemoryRequirementsKHR)(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements);
+typedef void (VKAPI_PTR *PFN_vkGetDeviceImageSparseMemoryRequirementsKHR)(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements);
+
+#ifndef VK_NO_PROTOTYPES
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetDeviceBufferMemoryRequirementsKHR(
+    VkDevice                                    device,
+    const VkDeviceBufferMemoryRequirements*     pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageMemoryRequirementsKHR(
+    VkDevice                                    device,
+    const VkDeviceImageMemoryRequirements*      pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements);
+#endif
+
+#ifndef VK_ONLY_EXPORTED_PROTOTYPES
+VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSparseMemoryRequirementsKHR(
+    VkDevice                                    device,
+    const VkDeviceImageMemoryRequirements*      pInfo,
+    uint32_t*                                   pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2*           pSparseMemoryRequirements);
+#endif
+#endif
+
+
+// VK_KHR_shader_subgroup_rotate is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_shader_subgroup_rotate 1
+#define VK_KHR_SHADER_SUBGROUP_ROTATE_SPEC_VERSION 2
+#define VK_KHR_SHADER_SUBGROUP_ROTATE_EXTENSION_NAME &quot;VK_KHR_shader_subgroup_rotate&quot;
+typedef VkPhysicalDeviceShaderSubgroupRotateFeatures VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR;
+
+
+
+// VK_KHR_shader_maximal_reconvergence is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_shader_maximal_reconvergence 1
+#define VK_KHR_SHADER_MAXIMAL_RECONVERGENCE_SPEC_VERSION 1
+#define VK_KHR_SHADER_MAXIMAL_RECONVERGENCE_EXTENSION_NAME &quot;VK_KHR_shader_maximal_reconvergence&quot;
+typedef struct VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           shaderMaximalReconvergence;
+} VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR;
+
+
+
+// VK_KHR_maintenance5 is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_maintenance5 1
+#define VK_KHR_MAINTENANCE_5_SPEC_VERSION 1
+#define VK_KHR_MAINTENANCE_5_EXTENSION_NAME &quot;VK_KHR_maintenance5&quot;
+typedef VkPipelineCreateFlags2 VkPipelineCreateFlags2KHR;
+
+typedef VkPipelineCreateFlagBits2 VkPipelineCreateFlagBits2KHR;
+
+typedef VkBufferUsageFlags2 VkBufferUsageFlags2KHR;
+
+typedef VkBufferUsageFlagBits2 VkBufferUsageFlagBits2KHR;
+
+typedef VkPhysicalDeviceMaintenance5Features VkPhysicalDeviceMaintenance5FeaturesKHR;
+
+typedef VkPhysicalDeviceMaintenance5Properties VkPhysicalDeviceMaintenance5PropertiesKHR;
+
+typedef VkRenderingAreaInfo VkRenderingAreaInfoKHR;
+
+typedef VkDeviceImageSubresourceInfo VkDeviceImageSubresourceInfoKHR;
+
+typedef VkImageSubresource2 VkImageSubresource2KHR;
+
+typedef VkSubresourceLayout2 VkSubresourceLayout2KHR;</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-27.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-29.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

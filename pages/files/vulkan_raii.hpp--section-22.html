@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 22 من 64 • الأسطر 9451-9900 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 22 من 64 • الأسطر 9451-9900</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 22 من 64 • الأسطر 9451-9900</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-21.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-23.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 22/64</span>
+        <span class="source-stat">الأسطر: 9451-9900</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+      // wrapper function for command vkUpdateDescriptorSetWithTemplate, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSetWithTemplate.html
+      template &lt;typename DataType&gt;
+      void updateWithTemplate( VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate descriptorUpdateTemplate, DataType const &amp; data ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_KHR_descriptor_update_template ===
+
+      // wrapper function for command vkUpdateDescriptorSetWithTemplateKHR, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSetWithTemplateKHR.html
+      template &lt;typename DataType&gt;
+      void updateWithTemplateKHR( VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate descriptorUpdateTemplate, DataType const &amp; data ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_VALVE_descriptor_set_host_mapping ===
+
+      // wrapper function for command vkGetDescriptorSetHostMappingVALVE, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDescriptorSetHostMappingVALVE.html
+      VULKAN_HPP_NODISCARD void * getHostMappingVALVE() const VULKAN_HPP_NOEXCEPT;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device         m_device         = {};
+      VULKAN_HPP_NAMESPACE::DescriptorPool m_descriptorPool = {};
+      VULKAN_HPP_NAMESPACE::DescriptorSet  m_descriptorSet  = {};
+      detail::DeviceDispatcher const *     m_dispatcher     = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;DescriptorSet&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    class DescriptorSets : public std::vector&lt;DescriptorSet&gt;
+    {
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DescriptorSets( Device const &amp; device, DescriptorSetAllocateInfo const &amp; allocateInfo )
+      {
+        *this = device.allocateDescriptorSets( allocateInfo );
+      }
+#  endif
+
+      DescriptorSets( std::nullptr_t ) {}
+
+      DescriptorSets()                                     = delete;
+      DescriptorSets( DescriptorSets const &amp; )             = delete;
+      DescriptorSets( DescriptorSets &amp;&amp; rhs )              = default;
+      DescriptorSets &amp; operator=( DescriptorSets const &amp; ) = delete;
+      DescriptorSets &amp; operator=( DescriptorSets &amp;&amp; rhs )  = default;
+
+      DescriptorSets( std::vector&lt;DescriptorSet&gt; &amp;&amp; rhs )
+      {
+        std::swap( *this, rhs );
+      }
+    };
+
+    // wrapper class for handle VkDescriptorSetLayout, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDescriptorSetLayout.html
+    class DescriptorSetLayout
+    {
+    public:
+      using CType   = VkDescriptorSetLayout;
+      using CppType = VULKAN_HPP_NAMESPACE::DescriptorSetLayout;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDescriptorSetLayout;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eDescriptorSetLayout;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DescriptorSetLayout( Device const &amp; device, DescriptorSetLayoutCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createDescriptorSetLayout( createInfo, allocator );
+      }
+#  endif
+
+      DescriptorSetLayout( Device const &amp; device, VkDescriptorSetLayout descriptorSetLayout, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_descriptorSetLayout( descriptorSetLayout )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      DescriptorSetLayout( std::nullptr_t ) {}
+
+      ~DescriptorSetLayout()
+      {
+        clear();
+      }
+
+      DescriptorSetLayout()                              = delete;
+      DescriptorSetLayout( DescriptorSetLayout const &amp; ) = delete;
+
+      DescriptorSetLayout( DescriptorSetLayout &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_descriptorSetLayout( exchange( rhs.m_descriptorSetLayout, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      DescriptorSetLayout &amp; operator=( DescriptorSetLayout const &amp; ) = delete;
+
+      DescriptorSetLayout &amp; operator=( DescriptorSetLayout &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_descriptorSetLayout, rhs.m_descriptorSetLayout );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::DescriptorSetLayout const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_descriptorSetLayout;
+      }
+
+      VULKAN_HPP_NAMESPACE::DescriptorSetLayout const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_descriptorSetLayout );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::DescriptorSetLayout() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_descriptorSetLayout;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_descriptorSetLayout )
+        {
+          getDispatcher()-&gt;vkDestroyDescriptorSetLayout( static_cast&lt;VkDevice&gt;( m_device ),
+                                                         static_cast&lt;VkDescriptorSetLayout&gt;( m_descriptorSetLayout ),
+                                                         reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device              = nullptr;
+        m_descriptorSetLayout = nullptr;
+        m_allocator           = nullptr;
+        m_dispatcher          = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::DescriptorSetLayout release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_descriptorSetLayout, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( DescriptorSetLayout &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_descriptorSetLayout, rhs.m_descriptorSetLayout );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_EXT_descriptor_buffer ===
+
+      // wrapper function for command vkGetDescriptorSetLayoutSizeEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDescriptorSetLayoutSizeEXT.html
+      VULKAN_HPP_NODISCARD DeviceSize getSizeEXT() const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkGetDescriptorSetLayoutBindingOffsetEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDescriptorSetLayoutBindingOffsetEXT.html
+      VULKAN_HPP_NODISCARD DeviceSize getBindingOffsetEXT( uint32_t binding ) const VULKAN_HPP_NOEXCEPT;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device              m_device              = {};
+      VULKAN_HPP_NAMESPACE::DescriptorSetLayout m_descriptorSetLayout = {};
+      const AllocationCallbacks *               m_allocator           = {};
+      detail::DeviceDispatcher const *          m_dispatcher          = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;DescriptorSetLayout&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkDescriptorUpdateTemplate, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDescriptorUpdateTemplate.html
+    class DescriptorUpdateTemplate
+    {
+    public:
+      using CType   = VkDescriptorUpdateTemplate;
+      using CppType = VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDescriptorUpdateTemplate;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eDescriptorUpdateTemplate;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DescriptorUpdateTemplate( Device const &amp;                             device,
+                                DescriptorUpdateTemplateCreateInfo const &amp; createInfo,
+                                Optional&lt;const AllocationCallbacks&gt;        allocator = nullptr )
+      {
+        *this = device.createDescriptorUpdateTemplate( createInfo, allocator );
+      }
+#  endif
+
+      DescriptorUpdateTemplate( Device const &amp;                      device,
+                                VkDescriptorUpdateTemplate          descriptorUpdateTemplate,
+                                Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_descriptorUpdateTemplate( descriptorUpdateTemplate )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      DescriptorUpdateTemplate( std::nullptr_t ) {}
+
+      ~DescriptorUpdateTemplate()
+      {
+        clear();
+      }
+
+      DescriptorUpdateTemplate()                                   = delete;
+      DescriptorUpdateTemplate( DescriptorUpdateTemplate const &amp; ) = delete;
+
+      DescriptorUpdateTemplate( DescriptorUpdateTemplate &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_descriptorUpdateTemplate( exchange( rhs.m_descriptorUpdateTemplate, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      DescriptorUpdateTemplate &amp; operator=( DescriptorUpdateTemplate const &amp; ) = delete;
+
+      DescriptorUpdateTemplate &amp; operator=( DescriptorUpdateTemplate &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_descriptorUpdateTemplate, rhs.m_descriptorUpdateTemplate );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_descriptorUpdateTemplate;
+      }
+
+      VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_descriptorUpdateTemplate );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_descriptorUpdateTemplate;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_descriptorUpdateTemplate )
+        {
+          getDispatcher()-&gt;vkDestroyDescriptorUpdateTemplate( static_cast&lt;VkDevice&gt;( m_device ),
+                                                              static_cast&lt;VkDescriptorUpdateTemplate&gt;( m_descriptorUpdateTemplate ),
+                                                              reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device                   = nullptr;
+        m_descriptorUpdateTemplate = nullptr;
+        m_allocator                = nullptr;
+        m_dispatcher               = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_descriptorUpdateTemplate, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( DescriptorUpdateTemplate &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_descriptorUpdateTemplate, rhs.m_descriptorUpdateTemplate );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device                   m_device                   = {};
+      VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate m_descriptorUpdateTemplate = {};
+      const AllocationCallbacks *                    m_allocator                = {};
+      detail::DeviceDispatcher const *               m_dispatcher               = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;DescriptorUpdateTemplate&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkDeviceMemory, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDeviceMemory.html
+    class DeviceMemory
+    {
+    public:
+      using CType   = VkDeviceMemory;
+      using CppType = VULKAN_HPP_NAMESPACE::DeviceMemory;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDeviceMemory;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eDeviceMemory;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DeviceMemory( Device const &amp; device, MemoryAllocateInfo const &amp; allocateInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.allocateMemory( allocateInfo, allocator );
+      }
+#  endif
+
+      DeviceMemory( Device const &amp; device, VkDeviceMemory memory, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_deviceMemory( memory )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      DeviceMemory( std::nullptr_t ) {}
+
+      ~DeviceMemory()
+      {
+        clear();
+      }
+
+      DeviceMemory()                       = delete;
+      DeviceMemory( DeviceMemory const &amp; ) = delete;
+
+      DeviceMemory( DeviceMemory &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_deviceMemory( exchange( rhs.m_deviceMemory, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      DeviceMemory &amp; operator=( DeviceMemory const &amp; ) = delete;
+
+      DeviceMemory &amp; operator=( DeviceMemory &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_deviceMemory, rhs.m_deviceMemory );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::DeviceMemory const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_deviceMemory;
+      }
+
+      VULKAN_HPP_NAMESPACE::DeviceMemory const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_deviceMemory );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::DeviceMemory() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_deviceMemory;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_deviceMemory )
+        {
+          getDispatcher()-&gt;vkFreeMemory(
+            static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkDeviceMemory&gt;( m_deviceMemory ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device       = nullptr;
+        m_deviceMemory = nullptr;
+        m_allocator    = nullptr;
+        m_dispatcher   = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::DeviceMemory release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_deviceMemory, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( DeviceMemory &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_deviceMemory, rhs.m_deviceMemory );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_VERSION_1_0 ===
+
+      // wrapper function for command vkMapMemory, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;void *&gt;::type
+        mapMemory( DeviceSize offset, DeviceSize size, MemoryMapFlags flags VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const;
+
+      // wrapper function for command vkUnmapMemory, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html
+      void unmapMemory() const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkGetDeviceMemoryCommitment, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceMemoryCommitment.html
+      VULKAN_HPP_NODISCARD DeviceSize getCommitment() const VULKAN_HPP_NOEXCEPT;
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-21.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-23.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

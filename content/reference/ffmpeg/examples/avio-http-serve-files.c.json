@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "example",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "avio_http_serve_files.c",
+    "slug": "avio-http-serve-files.c",
+    "titleArabic": "avio_http_serve_files.c",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/example/avio-http-serve-files.c",
+    "contentPath": "content/reference/ffmpeg/examples/avio-http-serve-files.c.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يبين أن طبقة AVIO لا تقتصر على قراءة الملفات، بل يمكنها أيضًا تقديم ملفات عبر HTTP داخل مثال صغير.",
+    "actualMeaningArabic": "يبين أن طبقة AVIO لا تقتصر على قراءة الملفات، بل يمكنها أيضًا تقديم ملفات عبر HTTP داخل مثال صغير.",
+    "purposeArabic": "يبين أن طبقة AVIO لا تقتصر على قراءة الملفات، بل يمكنها أيضًا تقديم ملفات عبر HTTP داخل مثال صغير.",
+    "whyUseArabic": "يبين أن طبقة AVIO لا تقتصر على قراءة الملفات، بل يمكنها أيضًا تقديم ملفات عبر HTTP داخل مثال صغير.",
+    "carriedValueArabic": "يبين أن طبقة AVIO لا تقتصر على قراءة الملفات، بل يمكنها أيضًا تقديم ملفات عبر HTTP داخل مثال صغير.",
+    "sourceDescription": "يبين أن طبقة AVIO لا تقتصر على قراءة الملفات، بل يمكنها أيضًا تقديم ملفات عبر HTTP داخل مثال صغير."
+  },
+  "signature": {
+    "raw": "// avio_http_serve_files.c - خادم HTTP صغير يقدّم ملفات عبر AVIO\n#include <libavformat/avformat.h>\n#include <libavformat/avio.h>\n#include <libavutil/opt.h>\n\nint main(int argc, char **argv) {\n    const char *root = argv[1] ? argv[1] : \".\";\n    const char *port = argv[2] ? argv[2] : \"8080\";\n\n    AVIODirContext *dir = NULL;\n    if (avio_open_dir(&dir, root, NULL) < 0) {\n        fprintf(stderr, \"فشل فتح المجلد: %s\\n\", root);\n        return 1;\n    }\n\n    // إنشاء AVIOContext مخصص لقراءة الطلبات\n    uint8_t *buf = av_malloc(4096);\n    AVIOContext *server = avio_alloc_context(\n        NULL, 4096, 0,\n        NULL,  // opaque\n        NULL, 0, NULL,  // read_packet\n        NULL,  // write_packet\n        NULL   // seek\n    );\n\n    // هنا تُضيف منطق قراءة HTTP الفعلية\n    // avio_accept(server, NULL) تنتظر اتصال عميل\n    // ثم تقرأ الطلب وتُرجع الملف المطلوب\n\n    avio_close_dir(&dir);\n    av_freep(&buf);\n    avio_context_free(&server);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// avio_http_serve_files.c - خادم HTTP صغير يقدّم ملفات عبر AVIO\n#include <libavformat/avformat.h>\n#include <libavformat/avio.h>\n#include <libavutil/opt.h>\n\nint main(int argc, char **argv) {\n    const char *root = argv[1] ? argv[1] : \".\";\n    const char *port = argv[2] ? argv[2] : \"8080\";\n\n    AVIODirContext *dir = NULL;\n    if (avio_open_dir(&dir, root, NULL) < 0) {\n        fprintf(stderr, \"فشل فتح المجلد: %s\n\", root);\n        return 1;\n    }\n\n    // إنشاء AVIOContext مخصص لقراءة الطلبات\n    uint8_t *buf = av_malloc(4096);\n    AVIOContext *server = avio_alloc_context(\n        NULL, 4096, 0,\n        NULL,  // opaque\n        NULL, 0, NULL,  // read_packet\n        NULL,  // write_packet\n        NULL   // seek\n    );\n\n    // هنا تُضيف منطق قراءة HTTP الفعلية\n    // avio_accept(server, NULL) تنتظر اتصال عميل\n    // ثم تقرأ الطلب وتُرجع الملف المطلوب\n\n    avio_close_dir(&dir);\n    av_freep(&buf);\n    avio_context_free(&server);\n    return 0;\n}"
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/avio_http_serve_files.c.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "FFmpeg",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

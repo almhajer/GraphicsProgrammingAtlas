@@ -1,0 +1,206 @@
+{
+  "key": "qualifiers",
+  "title": "المحددات والواجهات",
+  "icon": "🏷️",
+  "description": "",
+  "items": [
+    {
+      "name": "layout",
+      "kind": "Layout Qualifier",
+      "description": "يحدد موضع الربط الصريح لمورد أو متغير واجهة أو إعداد بنية ذاكرة داخل الشيدر.",
+      "usage": "يظهر في صيغ مثل `layout(location = 0)` و`layout(set = 0, binding = 1)` و`layout(push_constant)`.",
+      "execution": "يؤثر في كيفية مطابقة الشيدر مع توصيفات الواجهة والموارد قبل التنفيذ الفعلي.",
+      "effect": "بدون مطابقة هذه القيم مع توصيفات Vulkan قد يفشل إنشاء الـ pipeline أو يقرأ الشيدر موردًا خاطئًا.",
+      "vulkanBridge": "يرتبط مباشرة بـ VkVertexInputAttributeDescription وVkDescriptorSetLayoutBinding وVkPipelineLayout.",
+      "example": "layout(location = 0) in vec3 inPosition;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "location",
+      "kind": "Layout Key",
+      "description": "مفتاح داخل layout يحدد رقم موضع واجهة متغير إدخال أو إخراج.",
+      "usage": "يستخدم لربط Vertex Attributes أو مخرجات الـ stages ومدخلاتها بمواضع صريحة.",
+      "execution": "يبني واجهة stage صريحة يطابقها المترجم وبقية الـ pipeline.",
+      "effect": "تغيير الرقم يبدل القناة التي يمر عبرها المتغير بين المراحل أو بين الـ Vertex Input والشيدر.",
+      "vulkanBridge": "يجب أن يطابق VkVertexInputAttributeDescription أو واجهة المرحلة التالية.",
+      "example": "layout(location = 0) out vec4 outColor;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "binding",
+      "kind": "Layout Key",
+      "description": "مفتاح داخل layout يحدد فهرس الربط للمورد داخل Descriptor Set.",
+      "usage": "يظهر مع uniform samplers وuniform blocks وstorage buffers.",
+      "execution": "يبني نقطة الربط التي يستخدمها الشيدر للوصول إلى descriptor محدد.",
+      "effect": "تغيير binding يغير descriptor الذي سيقرأه الشيدر أثناء التنفيذ.",
+      "vulkanBridge": "يجب أن يطابق VkDescriptorSetLayoutBinding عند إنشاء layout وكتابة الـ descriptors.",
+      "example": "layout(set = 0, binding = 1) uniform sampler2D texSampler;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "set",
+      "kind": "Layout Key",
+      "description": "مفتاح داخل layout يحدد رقم Descriptor Set الذي ينتمي إليه المورد.",
+      "usage": "يستخدم في Vulkan GLSL لفصل الموارد إلى مجموعات Descriptor Sets متعددة.",
+      "execution": "يحدد من أي مجموعة سيقرأ الشيدر الـ descriptor وقت التنفيذ.",
+      "effect": "تغيير set يغير رقم المجموعة المطلوب ربطها عبر vkCmdBindDescriptorSets.",
+      "vulkanBridge": "يجب أن يطابق ترتيب Descriptor Sets داخل VkPipelineLayout واستدعاء vkCmdBindDescriptorSets.",
+      "example": "layout(set = 0, binding = 0) uniform UniformBufferObject { mat4 mvp; } ubo;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "push_constant",
+      "kind": "Layout Key",
+      "description": "مفتاح layout يستخدم لتعريف block يمثل Push Constants بدلاً من Uniform Buffer.",
+      "usage": "يستخدم للبيانات الصغيرة التي يريد التطبيق دفعها مباشرة إلى الشيدر بدون Descriptor.",
+      "execution": "تُقرأ القيم من مساحة Push Constants المرتبطة بالـ pipeline layout أثناء التنفيذ.",
+      "effect": "يسمح بتحديث بيانات صغيرة بكلفة ربط أقل من Descriptor Set كامل.",
+      "vulkanBridge": "يرتبط مباشرة بـ VkPushConstantRange وvkCmdPushConstants.",
+      "example": "layout(push_constant) uniform PushData { mat4 model; } pushData;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "in",
+      "kind": "Storage Qualifier",
+      "description": "يعلن أن المتغير هو دخل لهذه المرحلة، قادم من Stage سابقة أو من Vertex Input.",
+      "usage": "في Vertex Shader يربط Vertex Attributes، وفي Fragment Shader يستقبل القيم interpolated.",
+      "execution": "يحدد اتجاه تدفق البيانات الذي يبني عليه المترجم واجهة المرحلة.",
+      "effect": "تغيير نوع أو location أو عدد المداخل يغيّر الواجهة التي يجب أن يطابقها Vulkan أو المرحلة السابقة.",
+      "vulkanBridge": "في ربط Vulkan يجب أن يطابق توصيف الإدخال الرأسي أو خرج الـ stage السابق داخل VkPipelineShaderStageCreateInfo.",
+      "example": "layout(location = 0) in vec2 inPosition;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "out",
+      "kind": "Storage Qualifier",
+      "description": "يعلن أن المتغير يخرج من المرحلة الحالية إلى Stage لاحقة أو إلى مرفق لوني.",
+      "usage": "يظهر في Vertex Shader لتمرير القيم، وفي Fragment Shader لكتابة اللون النهائي.",
+      "execution": "يوجه المترجم إلى بناء واجهة خرج ثابتة يمكن للمرحلة التالية أو الـ render target قراءتها.",
+      "effect": "تغييره يغيّر ما الذي سيصل فعليًا إلى Fragment Shader أو Color Attachment.",
+      "vulkanBridge": "في Fragment Shader يرتبط بالخروج إلى VkRenderPass ومرفقاته، وفي Vertex Shader يجب أن يطابق Inputs المرحلة التالية.",
+      "example": "layout(location = 0) out vec4 outColor;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "uniform",
+      "kind": "Storage Qualifier",
+      "description": "يصف موردًا يقرأه الشيدر من خارج الشيدر نفسه مثل uniform blocks أو samplers.",
+      "usage": "يستخدم لربط مصفوفات التحويل أو الخامات أو ثوابت المشهد.",
+      "execution": "تقرأه المرحلة من الذاكرة أو من descriptors أثناء التنفيذ، ولا يُكتب إليه من الشيدر.",
+      "effect": "اختيار نوع المورد وموقعه يحدد ما الذي سيقرأه الشيدر في كل invocation.",
+      "vulkanBridge": "يرتبط بـ VkDescriptorSetLayoutBinding وVkWriteDescriptorSet وvkCmdBindDescriptorSets.",
+      "example": "layout(set = 0, binding = 0) uniform UniformBufferObject { mat4 mvp; } ubo;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "buffer",
+      "kind": "Storage Qualifier",
+      "description": "يعلن Shader Storage Block يسمح للشيدر بقراءة أو كتابة بيانات عامة عبر SSBO.",
+      "usage": "شائع في Compute Shaders أو مسارات الرسوميات التي تحتاج وصولًا عامًا إلى arrays كبيرة.",
+      "execution": "يقرأه أو يكتب إليه الشيدر مباشرة أثناء التنفيذ وفق نوع الوصول المسموح.",
+      "effect": "ينقل الشيدر من قراءة موارد ثابتة إلى التعامل مع ذاكرة عامة قابلة للتحديث.",
+      "vulkanBridge": "يرتبط بوصف موارد Storage Buffer في VkDescriptorSetLayoutBinding وبالاستخدامات التي تسمح بها VkBufferUsageFlagBits.",
+      "example": "layout(set = 0, binding = 2) buffer ParticleBuffer { vec4 positions[]; } particles;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "const",
+      "kind": "Qualifier",
+      "description": "يحدد أن القيمة ثابتة بعد التهيئة في الشيدر الحالي.",
+      "usage": "يستخدم للثوابت المحلية أو القيم التي يجب أن يعاملها المترجم كثابتة.",
+      "execution": "يسمح للمترجم بإجراء constant folding وتقليل العمل المنفذ فعليًا.",
+      "effect": "قد يحسن الترجمة ويزيل تعليمات runtime عندما تكون القيم معروفة مسبقًا.",
+      "vulkanBridge": "لا يقابله كيان Vulkan مستقل، لكنه يؤثر في SPIR-V الناتج وفي التعليمات التي ينفذها GPU.",
+      "example": "const float gamma = 2.2;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "flat",
+      "kind": "Interpolation Qualifier",
+      "description": "يمنع interpolation للقيمة بين رؤوس الـ Primitive، فتصل القيمة نفسها إلى كل Fragment من نفس الـ Primitive.",
+      "usage": "يستخدم مع المعرفات أو الفهارس أو القيم التي يجب ألا تمر بترشيح كسري بين الرؤوس.",
+      "execution": "يغيّر كيف تنقل مرحلة Rasterization القيمة من خرج المرحلة السابقة إلى مدخل Fragment Shader.",
+      "effect": "يمنع توليد قيم وسطية بين الرؤوس، لذلك يكون كل Fragment داخل الـ Primitive نفسه متلقيًا للقيمة نفسها.",
+      "vulkanBridge": "أثره يظهر في واجهة المراحل وفي القيم التي يستهلكها Fragment Shader بعد Rasterization.",
+      "example": "layout(location = 1) flat out int materialIndex;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "smooth",
+      "kind": "Interpolation Qualifier",
+      "description": "يطلب interpolation الافتراضي المنظوري للقيم بين رؤوس الـ Primitive.",
+      "usage": "يستخدم مع الألوان والإحداثيات ومعظم القيم التي تحتاج انتقالًا سلسًا بين الرؤوس.",
+      "execution": "تولد المراحل الثابتة قيمًا متدرجة لكل Fragment قبل دخول Fragment Shader.",
+      "effect": "تجعل القيم القادمة من المرحلة السابقة تتغير تدريجيًا عبر مساحة الـ Primitive.",
+      "vulkanBridge": "تمثل السلوك الاعتيادي لتمرير varyings من Vertex Shader إلى Fragment Shader في pipeline الرسومي.",
+      "example": "layout(location = 0) smooth in vec2 fragUv;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "readonly",
+      "kind": "Memory Qualifier",
+      "description": "يحدد أن المورد المعلن لا يجب الكتابة إليه من الشيدر، بل يقرأ فقط.",
+      "usage": "يستخدم مع image variables أو بعض الموارد التي تريد تثبيت الوصول إليها كقراءة فقط.",
+      "execution": "يساعد المترجم والسائق على افتراض نمط وصول أوضح عند بناء تعليمات القراءة والكتابة.",
+      "effect": "منع الكتابة يضيق السلوك المسموح على المورد وقد يحسن التحليل أو التحقق.",
+      "vulkanBridge": "يجب أن يتسق مع كيفية تهيئة المورد والوصول المتوقع داخل التطبيق والوصف المرتبط به.",
+      "example": "layout(set = 0, binding = 0, rgba8) readonly uniform image2D srcImage;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "writeonly",
+      "kind": "Memory Qualifier",
+      "description": "يحدد أن المورد المعلن يكتب إليه الشيدر فقط ولا يقرأ منه.",
+      "usage": "شائع في مسارات Compute أو image store عندما يكون المورد وجهة إخراج فقط.",
+      "execution": "يوجه المترجم والسائق إلى أن التعليمات المرتبطة بهذا المورد لن تحتاج عمليات قراءة منه.",
+      "effect": "يحد من السلوك المسموح على المورد، ويمنع خلط القراءة والكتابة عليه داخل نفس الإعلان.",
+      "vulkanBridge": "يظهر كثيرًا مع موارد image storage ووصفات الوصول الكتابي في التطبيقات التي تستخدم Compute أو post-processing.",
+      "example": "layout(set = 0, binding = 1, rgba8) writeonly uniform image2D dstImage;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "shared",
+      "kind": "Storage Qualifier",
+      "description": "يعلن أن المتغير يعيش في shared memory داخل Workgroup واحدة، بحيث تستطيع invocations التعاون عليه.",
+      "usage": "يستخدم في Compute Shader عندما تحتاج invocations داخل Workgroup إلى تبادل نتائج أو بناء tiles محلية.",
+      "execution": "تقرأه وتكتبه invocations متعددة ضمن المجموعة نفسها، وغالبًا يقترن مع barrier وmemoryBarrierShared.",
+      "effect": "يسمح ببناء خوارزميات تعاونية سريعة محليًا بدل العودة المستمرة إلى Buffers أو images العالمية.",
+      "vulkanBridge": "يرتبط مباشرة بطريقة تصميم Compute Shader، لكنه يظل محليًا داخل Workgroup ولا يحتاج Descriptor مستقل.",
+      "example": "shared vec4 tileCache[256];",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "local_size_x",
+      "kind": "Layout Key",
+      "description": "مفتاح داخل layout يحدد عدد invocations في البعد x لكل Workgroup داخل Compute Shader.",
+      "usage": "يستخدم مع local_size_y وlocal_size_z لتحديد شكل المجموعة المحلية التي ستنفذها GPU لكل Workgroup.",
+      "execution": "يقرأه المترجم لبناء القيمة الثابتة لـ gl_WorkGroupSize ولتحديد شكل التوزيع المحلي للتنفيذ.",
+      "effect": "تغييره يبدل عدد invocations داخل كل Workgroup، ما يؤثر في التوازي واستهلاك shared memory.",
+      "vulkanBridge": "يرتبط مباشرة بكيفية تقسيم العمل عند استدعاء vkCmdDispatch أو vkCmdDispatchIndirect.",
+      "example": "layout(local_size_x = 16, local_size_y = 16) in;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "local_size_y",
+      "kind": "Layout Key",
+      "description": "مفتاح layout يحدد عدد invocations في البعد y لكل Workgroup.",
+      "usage": "يستخدم مع local_size_x وlocal_size_z لبناء شبكة العمل المحلية المناسبة للمشكلة الحسابية.",
+      "execution": "يحدد الجزء العمودي من gl_WorkGroupSize ومن توزيع invocations المحلية داخل Workgroup.",
+      "effect": "يزيد أو يقلل عرض المجموعة في البعد y، ما يغير كثافة العمل المحلي وحدود الخوارزمية.",
+      "vulkanBridge": "مهم في Compute Shaders التي تعالج صورًا أو Tiles ثنائية الأبعاد أو بيانات شبكية.",
+      "example": "layout(local_size_x = 16, local_size_y = 16) in;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    },
+    {
+      "name": "local_size_z",
+      "kind": "Layout Key",
+      "description": "مفتاح layout يحدد عدد invocations في البعد z لكل Workgroup.",
+      "usage": "يفيد في المسائل الحجمية أو ثلاثية الأبعاد أو عندما تريد بناء Workgroups ذات عمق فعلي.",
+      "execution": "يدخل في القيمة الثابتة gl_WorkGroupSize وفي فهرسة invocations ثلاثية الأبعاد.",
+      "effect": "يغير عمق Workgroup وعدد invocations الكلي داخلها في السيناريوهات ثلاثية الأبعاد.",
+      "vulkanBridge": "يرتبط مباشرة بتقسيم work dispatch في Compute Pipelines ثلاثية الأبعاد.",
+      "example": "layout(local_size_x = 4, local_size_y = 4, local_size_z = 4) in;",
+      "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html"
+    }
+  ]
+}

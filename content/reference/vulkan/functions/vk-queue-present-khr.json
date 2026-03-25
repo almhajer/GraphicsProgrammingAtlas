@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "vulkan",
+    "displayName": "Vulkan",
+    "displayNameArabic": "فولكان",
+    "description": "طبقة المرجع العربية لعناصر Vulkan منخفضة المستوى: الدوال والبنى والتعدادات والثوابت والأنواع."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "vkQueuePresentKHR",
+    "slug": "vk-queue-present-khr",
+    "titleArabic": "يعرض الصورة المرسومة على الشاشة",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/vulkan/functions/vk-queue-present-khr",
+    "contentPath": "content/reference/vulkan/functions/vk-queue-present-khr.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يعرض الصورة المرسومة على الشاشة",
+    "actualMeaningArabic": "يعرض الصورة المرسومة على الشاشة.",
+    "purposeArabic": "المعنى الأساسي لهذه الدالة: يعرض الصورة المرسومة على الشاشة.",
+    "whyUseArabic": "قبل الاستدعاء جهّز المعاملات الأساسية بالشكل الصحيح، وأهمها: queue: يمثل المقبض VkQueue الذي يحدد الطابور الذي سيستقبل هذا العمل أو هذه المزامنة عند التنفيذ، pPresentInfo: معلومات العرض.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه VkResult وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "يعرض الصورة المرسومة على الشاشة."
+  },
+  "signature": {
+    "raw": "VkResult vkQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)",
+    "returnType": "VkResult",
+    "parameters": [
+      "VkQueue queue",
+      "const VkPresentInfoKHR* pPresentInfo"
+    ],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "queue",
+        "type": "VkQueue",
+        "descriptionArabic": "يمثل المقبض VkQueue الذي يحدد الطابور الذي سيستقبل هذا العمل أو هذه المزامنة عند التنفيذ.",
+        "originalDescription": "يمثل المقبض VkQueue الذي يحدد الطابور الذي سيستقبل هذا العمل أو هذه المزامنة عند التنفيذ."
+      },
+      {
+        "name": "pPresentInfo",
+        "type": "const VkPresentInfoKHR*",
+        "descriptionArabic": "معلومات العرض.",
+        "originalDescription": "معلومات العرض."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "المعنى الأساسي لهذه الدالة: يعرض الصورة المرسومة على الشاشة.",
+      "قبل الاستدعاء جهّز المعاملات الأساسية بالشكل الصحيح، وأهمها: queue: يمثل المقبض VkQueue الذي يحدد الطابور الذي سيستقبل هذا العمل أو هذه المزامنة عند التنفيذ، pPresentInfo: معلومات العرض.",
+      "هذه الدالة مرتبطة بالامتداد KHR أو إحدى صيغ الامتداد الخاصة به، لذلك يجب التأكد من دعم الامتداد وتفعيله قبل الاستخدام.",
+      "تعيد الدالة VkResult لتوضح هل اكتملت العملية بنجاح أو أعادت نتائج جزئية أو فشلت، لذلك تعتمد عليها في تحديد الخطوة التالية في الكود."
+    ],
+    "notes": [
+      "ينتظر إشارة renderFinishedSemaphore.",
+      "يمكن عرض عدة سلاسل دفعة واحدة.",
+      "يجب معالجة OUT_OF_DATE و SUBOPTIMAL."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// عرض الصورة\nVkPresentInfoKHR presentInfo = {};\npresentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;\npresentInfo.waitSemaphoreCount = 1;\npresentInfo.pWaitSemaphores = &renderFinishedSemaphore;\npresentInfo.swapchainCount = 1;\npresentInfo.pSwapchains = &swapchain;\npresentInfo.pImageIndices = &imageIndex;\n\nVkResult result = vkQueuePresentKHR(presentQueue, &presentInfo);\n\nif (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {\n recreateSwapchain();\n}"
+  },
+  "links": {
+    "officialUrl": "https://docs.vulkan.org/refpages/latest/refpages/source/vkQueuePresentKHR.html",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "vkAcquireNextImageKHR",
+        "route": "#ref/vulkan/functions/vk-acquire-next-image-khr",
+        "libraryId": "vulkan",
+        "kindId": "functions"
+      },
+      {
+        "name": "vkQueueSubmit",
+        "route": "#ref/vulkan/functions/vk-queue-submit",
+        "libraryId": "vulkan",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/vulkan_site_data.json",
+    "category": "الطوابير",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

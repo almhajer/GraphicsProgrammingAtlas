@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "example",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "resample_audio.c",
+    "slug": "resample-audio.c",
+    "titleArabic": "resample_audio.c",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/example/resample-audio.c",
+    "contentPath": "content/reference/ffmpeg/examples/resample-audio.c.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يبين كيف تغيّر sample rate أو sample format أو channel layout.",
+    "actualMeaningArabic": "يبين كيف تغيّر sample rate أو sample format أو channel layout.",
+    "purposeArabic": "يبين كيف تغيّر sample rate أو sample format أو channel layout.",
+    "whyUseArabic": "يبين كيف تغيّر sample rate أو sample format أو channel layout.",
+    "carriedValueArabic": "يبين كيف تغيّر sample rate أو sample format أو channel layout.",
+    "sourceDescription": "يبين كيف تغيّر sample rate أو sample format أو channel layout."
+  },
+  "signature": {
+    "raw": "// resample_audio.c - تغيير sample rate أو channel layout باستخدام libswresample\n#include <libswresample/swresample.h>\n#include <stdio.h>\n\nint main(void) {\nn    SwrContext *swr = swr_alloc();\nn    int64_t src_ch_layout = AV_CH_LAYOUT_STEREO;\nn    int64_t dst_ch_layout = AV_CH_LAYOUT_MONO;\n    int src_rate = 44100;\nn    int dst_rate = 22050;\n    enum AVSampleFormat src_fmt = AV_SAMPLE_FMT_FLT;\nn    enum AVSampleFormat dst_fmt = AV_SAMPLE_FMT_S16;\n\n    av_opt_set_int(swr, \"in_channel_layout\", src_ch_layout, 0);\nn    av_opt_set_int(swr, \"out_channel_layout\", dst_ch_layout, 0);\nn    av_opt_set_int(swr, \"in_sample_rate\", src_rate, 0);\nn    av_opt_set_int(swr, \"out_sample_rate\", dst_rate, 0);\nn    av_opt_set_sample_fmt(swr, \"in_sample_fmt\", src_fmt, 0);\nn    av_opt_set_sample_fmt(swr, \"out_sample_fmt\", dst_fmt, 0);\nn    swr_init(swr);\n\n    // التحويل: 44100Hz stereo -> 22050Hz mono\n    uint8_t *src_buf[2] = {0};\n    uint8_t *dst_buf[1] = {0};\n    int src_nb_samples = 1024;\n    int src_linesize = src_nb_samples * av_get_bytes_per_sample(src_fmt) * 2; // stereo\n    int dst_linesize = src_nb_samples * av_get_bytes_per_sample(dst_fmt);     // mono\n\n    // av_samples_alloc_and_fill يُملأ buffer بالقيمة الصامتية\n    av_samples_alloc_and_fill(src_buf, src_linesize, src_fmt, 0.0f);\nn    av_samples_alloc_and_fill(dst_buf, dst_linesize, dst_fmt, 0.0f);\n\n    // التحويل الفعلي\n    int dst_nb_samples = swr_convert(swr, dst_buf, dst_linesize,\n        src_buf, src_linesize, src_nb_samples);\n    printf(\"تحويل: %d -> %d عينة\\n\", src_nb_samples, dst_nb_samples);\n\n    av_freep(&src_buf[0]);\n    av_freep(&dst_buf[0]);\nn    swr_free(&swr);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// resample_audio.c - تغيير sample rate أو channel layout باستخدام libswresample\n#include <libswresample/swresample.h>\n#include <stdio.h>\n\nint main(void) {\n    SwrContext *swr = swr_alloc();\n    int64_t src_ch_layout = AV_CH_LAYOUT_STEREO;\n    int64_t dst_ch_layout = AV_CH_LAYOUT_MONO;\n    int src_rate = 44100;\n    int dst_rate = 22050;\n    enum AVSampleFormat src_fmt = AV_SAMPLE_FMT_FLT;\n    enum AVSampleFormat dst_fmt = AV_SAMPLE_FMT_S16;\n\n    av_opt_set_int(swr, \"in_channel_layout\", src_ch_layout, 0);\n    av_opt_set_int(swr, \"out_channel_layout\", dst_ch_layout, 0);\n    av_opt_set_int(swr, \"in_sample_rate\", src_rate, 0);\n    av_opt_set_int(swr, \"out_sample_rate\", dst_rate, 0);\n    av_opt_set_sample_fmt(swr, \"in_sample_fmt\", src_fmt, 0);\n    av_opt_set_sample_fmt(swr, \"out_sample_fmt\", dst_fmt, 0);\n    swr_init(swr);\n\n    // التحويل: 44100Hz stereo -> 22050Hz mono\n    uint8_t *src_buf[2] = {0};\n    uint8_t *dst_buf[1] = {0};\n    int src_nb_samples = 1024;\n    int src_linesize = src_nb_samples * av_get_bytes_per_sample(src_fmt) * 2; // stereo\n    int dst_linesize = src_nb_samples * av_get_bytes_per_sample(dst_fmt);     // mono\n\n    // av_samples_alloc_and_fill يُملأ buffer بالقيمة الصامتية\n    av_samples_alloc_and_fill(src_buf, src_linesize, src_fmt, 0.0f);\n    av_samples_alloc_and_fill(dst_buf, dst_linesize, dst_fmt, 0.0f);\n\n    // التحويل الفعلي\n    int dst_nb_samples = swr_convert(swr, dst_buf, dst_linesize,\n        src_buf, src_linesize, src_nb_samples);\n    printf(\"تحويل: %d -> %d عينة\n\", src_nb_samples, dst_nb_samples);\n\n    av_freep(&src_buf[0]);\n    av_freep(&dst_buf[0]);\n    swr_free(&swr);\n    return 0;\n}"
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/resample_audio.c.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "FFmpeg",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

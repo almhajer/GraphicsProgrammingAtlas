@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_SetTrackAudio",
+    "slug": "mix-set-track-audio",
+    "titleArabic": "ضبط MIX_Track 's الإدخال MIX_Audio",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-set-track-audio",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-set-track-audio.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "ضبط MIX_Track 's الإدخال MIX_Audio",
+    "actualMeaningArabic": "ضبط MIX_Track 's الإدخال MIX_Audio.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى ضبط MIX_Track 's الإدخال MIX_Audio داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success, false on error; call SDL_GetError()\nfor details. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Set a MIX_Track 's input to a MIX_Audio ."
+  },
+  "signature": {
+    "raw": "bool MIX_SetTrackAudio(MIX_Track *track, MIX_Audio *audio);",
+    "returnType": "bool",
+    "parameters": [
+      "MIX_Track *track",
+      "MIX_Audio *audio"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "track",
+        "type": "MIX_Track *",
+        "descriptionArabic": "يمثل المعامل track من النوع MIX_Track * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the track on which to set a new audio input."
+      },
+      {
+        "name": "audio",
+        "type": "MIX_Audio *",
+        "descriptionArabic": "يمثل المعامل audio من النوع MIX_Audio * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new audio input to set. May be NULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "A MIX_Audio is audio data stored in RAM\n(possibly still in a compressed form). One MIX_Audio can be assigned to multiple tracks\nat once.",
+      "Once a track has a valid input, it can start mixing sound by calling\n MIX_PlayTrack (), or possibly MIX_PlayTag ().",
+      "Calling this function with a NULL audio input is legal, and removes\nany input from the track. If the track was currently playing, the next\ntime the mixer runs, it'll notice this and mark the track as stopped,\ncalling any assigned MIX_TrackStoppedCallback .",
+      "It is legal to change the input of a track while it's playing,\nhowever some states, like loop points, may cease to make sense with the\nnew audio. In such a case, one can call MIX_PlayTrack again to adjust\nparameters.",
+      "The track will hold a reference to the provided MIX_Audio , so it is safe to call MIX_DestroyAudio () on it while the\ntrack is still using it. The track will drop its reference (and possibly\nfree the resources) once it is no longer using the MIX_Audio ."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success, false on error; call SDL_GetError()\nfor details.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_SetTrackAudio",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

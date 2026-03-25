@@ -1,0 +1,1659 @@
+{
+  "referenceData": {
+    "std::enable_if": {
+      "title": "std::enable_if",
+      "type": "type trait",
+      "description": "يُفعّل أو يُعطّل overload أو تخصيص قالب شرطيًا بناءً على شرط نوعي (type trait). يُستخدم في SFINAE.",
+      "usage": "يظهر عند الحاجة لتخصيص قالب لأنواع معينة فقط أو لمنع instantiation لنوع خاطئ.",
+      "example": "template<typename T, typename = std::enable_if_t<std::is_integral_v<T>>>\nvoid func(T x) {}",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "تقييد دالة للأعداد الصحيحة فقط",
+          "code": "#include <type_traits>\n#include <iostream>\n\ntemplate<typename T>\nstd::enable_if_t<std::is_integral_v<T>, T> safe_mod(T a, T b) {\n    if (b == 0) throw \"division by zero\";\n    return a % b;\n}\n\nint main() {\n    std::cout << safe_mod(10, 3);  // 1 — int: يعمل\n    // safe_mod(10.0, 3.0);        // خطأ ترجمة: double ليس int\n}",
+          "explanationArabic": "enable_if_t يتحقق من is_integral_v<T>. إذا كان true، يُفعّل الدالة. إذا كان false، يُزيلها من المرشحين (SFINAE). هذا يمنع استدعاء الدالة بأنواع خاطئة في وقت الترجمة."
+        },
+        {
+          "titleArabic": "overload مختلف لأنواع مختلفة",
+          "code": "#include <type_traits>\n#include <iostream>\n\ntemplate<typename T>\nstd::enable_if_t<std::is_arithmetic_v<T>>\nvoid process(T val) {\n    std::cout << \"numeric: \" << val << '\\n';\n}\n\ntemplate<typename T>\nstd::enable_if_t<std::is_same_v<T, std::string>>\nvoid process(T val) {\n    std::cout << \"string: \" << val << '\\n';\n}",
+          "explanationArabic": "enable_if يسمح بـ overload مختلفة لنوعين مختلفين. بدون enable_if، المُصرِّف لا يستطيع التمييز بين process<int> وprocess<string> لأن كلاهما قالب واحد. مع enable_if، كل overload يُفعّل لنوعه فقط."
+        },
+        {
+          "titleArabic": "في C++20: concepts أنظم من enable_if",
+          "code": "#include <type_traits>\n#include <concepts>\n\n// C++17: enable_if — مطوّل\n// template<typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>\n// void old_func(T x) {}\n\n// C++20: concepts — أنظم وأوضح\ntemplate<std::integral T>\nvoid new_func(T x) {\n    // يعمل فقط مع الأعداد الصحيحة\n}",
+          "explanationArabic": "concepts في C++20 تحل محل enable_if بشكل أنظف وأوضح. std::integral هو concept جاهز. استخدم concepts عند توفر C++20، وenable_if عند الحاجة لدعم C++17 أو أقدم."
+        }
+      ],
+      "related": [
+        "std::is_integral_v",
+        "std::conditional_t",
+        "std::void_t",
+        "std::is_same_v"
+      ]
+    },
+    "std::conditional_t": {
+      "title": "std::conditional_t",
+      "type": "type trait",
+      "description": "يختار نوعًا من نوعين بناءً على شرط ثابت (bool). يعمل في وقت الترجمة.",
+      "usage": "يظهر عند الحاجة لاختيار نوع مختلف حسب المنصة أو سياق القالب. شائع: اختيار int vs long long بناءً على sizeof، أو اختيار نوع إرجاع مختلف في تخصيص قالب.",
+      "example": "using MyInt = std::conditional_t<sizeof(int) >= 4, int, long>;",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "اختيار نوع بناءً على حجم",
+          "code": "#include <type_traits>\n#include <iostream>\n\nint main() {\n    using SafeInt = std::conditional_t<sizeof(int) >= 4, int, long long>;\n    SafeInt x = 42;\n    std::cout << sizeof(x); // 4 على معظم الأنظمة\n}",
+          "explanationArabic": "conditional_t<شرط, نوع_إن_صح, نوع_إن_خطأ> يختار نوعًا في وقت الترجمة. إذا كان sizeof(int) >= 4 يختار int، وإلا long long."
+        },
+        {
+          "titleArabic": "اختيار نوع إرجاع",
+          "code": "#include <type_traits>\n#include <vector>\n#include <string>\n\ntemplate<typename T>\nusing Container = std::conditional_t<\n    std::is_same_v<T, std::string>,\n    std::vector<std::string>,\n    std::vector<T>\n>;\n\nContainer<int> vi;           // vector<int>\nContainer<std::string> vs;  // vector<string>",
+          "explanationArabic": "conditional_t مفيد في القوالب لاختيار أنواع مختلفة بناءً على معامل القالب. هنا نختار vector<string> أو vector<T> بحسب نوع T."
+        },
+        {
+          "titleArabic": "conditional_t vs if-else",
+          "code": "#include <type_traits>\n\n// ❌ لا يمكنك استخدام if-else لاختيار أنواع\n// if (sizeof(int) >= 4)\n//     using Type = int;  // خطأ: using داخل if\n\n// ✅ conditional_t يعمل في وقت الترجمة\nusing Type = std::conditional_t<sizeof(int) >= 4, int, long>;\n\n// ✅ في C++17: if constexpr مع auto\n// auto get_type() {\n//     if constexpr (sizeof(int) >= 4) return int{};\n//     else return long{};\n// }",
+          "explanationArabic": "conditional_t يعمل على الأنواع في وقت الترجمة — لا يمكن استخدام if-else العادي لأنه يعمل على القيم في وقت التشغيل. في C++17، if constexpr يوفر بديلًا في بعض الحالات."
+        }
+      ],
+      "related": [
+        "std::enable_if",
+        "std::is_same_v",
+        "std::underlying_type_t"
+      ]
+    },
+    "std::void_t": {
+      "title": "std::void_t",
+      "type": "type trait",
+      "description": "يُرجع void دائمًا مهما كانت الأنواع المُمرّرة. يُستخدم في SFINAE للتحقق من وجود نوع أو عضو.",
+      "usage": "يظهر عند اكتشاف خصائص نوع في وقت الترجمة (type detection idiom).",
+      "example": "template<typename T, typename = void>\nstruct has_size : std::false_type {};\ntemplate<typename T>\nstruct has_size<T, std::void_t<decltype(std::declval<T>().size())>> : std::true_type {};",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق من وجود دالة size في نوع",
+          "code": "#include <type_traits>\n#include <vector>\n#include <iostream>\n\ntemplate<typename T, typename = void>\nstruct has_size : std::false_type {};\n\ntemplate<typename T>\nstruct has_size<T, std::void_t<decltype(std::declval<T>().size())>> : std::true_type {};\n\nint main() {\n    std::cout << has_size<std::vector<int>>::value; // 1 (true)\n    std::cout << has_size<int>::value;               // 0 (false)\n}",
+          "explanationArabic": "void_t هو أداة SFINAE قوية. إذا كان T::size() موجودًا، void_t يُرجع void والنسخة المتخصصة (true_type) تُستخدم. إذا لم يكن موجودًا، SFINAE يُزيل النسخة المتخصصة والنسخة الأساسية (false_type) تُستخدم."
+        },
+        {
+          "titleArabic": "في C++20: concepts أنظم",
+          "code": "#include <type_traits>\n#include <concepts>\n\n// C++17: void_t + SFINAE — معقد\n// template<typename T, typename = void>\n// struct has_size : std::false_type {};\n// template<typename T>\n// struct has_size<T, std::void_t<decltype(std::declval<T>().size())>> : std::true_type {};\n\n// C++20: concept — أنظم وأوضح\ntemplate<typename T>\nconcept HasSize = requires(T t) { t.size(); };\n\nstatic_assert(HasSize<std::vector<int>>);\nstatic_assert(!HasSize<int>);",
+          "explanationArabic": "concepts في C++20 تحل محل void_t + SFINAE بشكل كبير. requires أنظم وأوضح بكثير. استخدم concepts عند توفر C++20."
+        },
+        {
+          "titleArabic": "void_t يُرجع void دائمًا",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_same_v<std::void_t<int>, void>);         // true\nstatic_assert(std::is_same_v<std::void_t<int, double>, void>); // true\nstatic_assert(std::is_same_v<std::void_t<void>, void>);        // true\n// void_t يتجاهل الأنواع ويُرجع void دائمًا",
+          "explanationArabic": "void_t يتجاهل كل الأنواع المُمرّرة ويُرجع void. قيمته ليست في ما يُرجعه بل في SFINAE: إذا كانت الأنواع المُمرّرة غير صالحة، يُزيل التخصيص من المرشحين."
+        }
+      ],
+      "related": [
+        "std::enable_if",
+        "std::is_same_v",
+        "std::conditional_t"
+      ]
+    },
+    "std::is_integral_v": {
+      "title": "std::is_integral_v",
+      "type": "type trait",
+      "description": "ثابت ترجمة يُرجع true إذا كان النوع عددًا صحيحًا (int, char, bool, long, إلخ). اختصار لـ is_integral<T>::value.",
+      "usage": "يظهر في القوالب عند التحقق من أن المعامل نوع صحيح.",
+      "example": "static_assert(std::is_integral_v<int>); // true",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق من أنواع صحيحة",
+          "code": "#include <type_traits>\n#include <iostream>\n\nint main() {\n    std::cout << std::is_integral_v<int> << '\\n';      // 1\n    std::cout << std::is_integral_v<char> << '\\n';     // 1\n    std::cout << std::is_integral_v<bool> << '\\n';     // 1\n    std::cout << std::is_integral_v<float> << '\\n';    // 0\n    std::cout << std::is_integral_v<double> << '\\n';   // 0\n    std::cout << std::is_integral_v<std::string> << '\\n'; // 0\n}",
+          "explanationArabic": "is_integral_v يتحقق من أن النوع عدد صحيح. char و bool يُعتبران أعدادًا صحيحة لأنها تُمثّل كأعداد في الذاكرة. float و double لا."
+        },
+        {
+          "titleArabic": "تقييد قالب للأعداد الصحيحة",
+          "code": "#include <type_traits>\n#include <iostream>\n\ntemplate<typename T>\nvoid print_int(T val) {\n    static_assert(std::is_integral_v<T>, \"T must be integral\");\n    std::cout << val;\n}\n\nint main() {\n    print_int(42);    // يعمل\n    // print_int(3.14); // خطأ ترجمة: static_assert يفشل\n}",
+          "explanationArabic": "static_assert مع is_integral_v يوقف الترجمة فورًا عند استخدام نوع خاطئ. رسالة الخطأ واضحة. البديل: enable_if أو concepts."
+        },
+        {
+          "titleArabic": "bool و char أعداد صحيحة",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_integral_v<bool>);  // true — bool يُخزّن كـ 0 أو 1\nstatic_assert(std::is_integral_v<char>);  // true — char هو بايت صحيح\nstatic_assert(std::is_integral_v<wchar_t>); // true\n// هذا مقصود: char يُمثّل حرفًا لكنه نوع صحيح في الذاكرة",
+          "explanationArabic": "bool و char أعداد صحيحة في C++ لأنها تُخزّن كقيم رقمية. char يُستخدم للنصوص لكنه نوع صحيح أساسًا."
+        }
+      ],
+      "related": [
+        "std::enable_if",
+        "std::is_same_v",
+        "std::is_pointer_v"
+      ]
+    },
+    "std::is_pointer_v": {
+      "title": "std::is_pointer_v",
+      "type": "type trait",
+      "description": "ثابت ترجمة يُرجع true إذا كان النوع مؤشرًا (خامًا). لا يشمل المؤشرات الذكية.",
+      "usage": "يظهر عند التحقق من أن المعامل مؤشر خام.",
+      "example": "static_assert(std::is_pointer_v<int*>); // true",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق من أنواع مؤشرات",
+          "code": "#include <type_traits>\n#include <iostream>\n\nint main() {\n    std::cout << std::is_pointer_v<int*> << '\\n';    // 1\n    std::cout << std::is_pointer_v<int**> << '\\n';   // 1\n    std::cout << std::is_pointer_v<const char*> << '\\n'; // 1\n    std::cout << std::is_pointer_v<int&> << '\\n';    // 0 — مرجع ليس مؤشرًا\n    std::cout << std::is_pointer_v<int> << '\\n';     // 0\n}",
+          "explanationArabic": "is_pointer_v يتحقق من المؤشرات الخام فقط. المراجع (int&) والمؤشرات الذكية لا تعتبر مؤشرات."
+        },
+        {
+          "titleArabic": "حذف مؤشرات تلقائيًا",
+          "code": "#include <type_traits>\n#include <vector>\n#include <iostream>\n\ntemplate<typename T>\nvoid cleanup(T& item) {\n    if constexpr (std::is_pointer_v<T>) {\n        delete item;\n        item = nullptr;\n        std::cout << \"deleted pointer\\n\";\n    } else {\n        std::cout << \"not a pointer\\n\";\n    }\n}\n\nint main() {\n    int* p = new int(42);\n    int x = 10;\n    cleanup(p); // deleted pointer\n    cleanup(x); // not a pointer\n}",
+          "explanationArabic": "if constexpr (C++17) مع is_pointer_v يسمح بكتابة فرعين في وقت الترجمة. الفرع غير المنفذ لا يُترجم أصلاً."
+        },
+        {
+          "titleArabic": "المؤشرات الذكية ليست مؤشرات",
+          "code": "#include <type_traits>\n#include <memory>\n\nstatic_assert(!std::is_pointer_v<std::unique_ptr<int>>);  // false\nstatic_assert(!std::is_pointer_v<std::shared_ptr<int>>); // false\n// is_pointer_v يتحقق من المؤشرات الخام فقط\n// استخدم is_smart_pointer مخصص أو concepts للمؤشرات الذكية",
+          "explanationArabic": "is_pointer_v لا يتعرف على المؤشرات الذكية. إذا احتجت التحقق من مؤشرات ذكية، استخدم concept مخصص أو تحقق يدوي."
+        }
+      ],
+      "related": [
+        "std::is_integral_v",
+        "nullptr",
+        "std::enable_if"
+      ]
+    },
+    "std::underlying_type_t": {
+      "title": "std::underlying_type_t",
+      "type": "type trait",
+      "description": "يُرجع النوع الأساسي لـ enum (enum class أو enum عادي).",
+      "usage": "يظهر عند الحاجة للتعامل مع القيم الرقمية لـ enum class.",
+      "example": "using UT = std::underlying_type_t<Color>; // int",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "معرفة النوع الأساسي لـ enum class",
+          "code": "#include <type_traits>\n#include <iostream>\n\nenum class Color : uint8_t { Red = 1, Green, Blue };\n\nint main() {\n    using UT = std::underlying_type_t<Color>;\n    static_assert(std::is_same_v<UT, uint8_t>);\n    Color c = Color::Green;\n    UT val = static_cast<UT>(c);\n    std::cout << static_cast<int>(val); // 2\n}",
+          "explanationArabic": "underlying_type_t يُرجع النوع الذي يُخزّن به enum. Color محدد كـ uint8_t فيُرجع uint8_t. مفيد للتحويل بين enum وقيمته الرقمية."
+        },
+        {
+          "titleArabic": "التحويل الآمن بين enum وعدد",
+          "code": "#include <type_traits>\n\nenum class Flags : uint32_t { Read = 1, Write = 2, Exec = 4 };\n\nuint32_t to_value(Flags f) {\n    return static_cast<std::underlying_type_t<Flags>>(f);\n}\n\nFlags from_value(uint32_t v) {\n    return static_cast<Flags>(v);\n}",
+          "explanationArabic": "underlying_type_t يضمن التحويل الصحيح بين enum class ونوعه الأساسي. بدونه تحتاج معرفة النوع يدويًا."
+        },
+        {
+          "titleArabic": "enum عادي vs enum class",
+          "code": "#include <type_traits>\n\nenum OldEnum { A, B, C };\nenum class NewEnum : int8_t { X, Y, Z };\n\nstatic_assert(std::is_same_v<std::underlying_type_t<OldEnum>, int>);\nstatic_assert(std::is_same_v<std::underlying_type_t<NewEnum>, int8_t>);\n// enum عادي: النوع الأساسي يُحدد بالتنفيذ (غالبًا int)\n// enum class: النوع الأساسي int افتراضيًا أو كما تُحدد",
+          "explanationArabic": "enum عادي يحدد النوع الأساسي بالمُصرِّف (غالبًا int). enum class يحدده المبرمج أو int افتراضيًا. underlying_type_t يعمل مع كليهما."
+        }
+      ],
+      "related": [
+        "enum",
+        "static_cast",
+        "std::is_same_v"
+      ]
+    },
+    "std::is_same_v": {
+      "title": "std::is_same_v",
+      "type": "type trait",
+      "description": "ثابت ترجمة يُرجع true إذا كان النوعان متطابقين تمامًا.",
+      "usage": "يظهر في القوالب عند التحقق من تطابق نوعين.",
+      "example": "static_assert(std::is_same_v<int, int>); // true",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "مقارنة أنواع",
+          "code": "#include <type_traits>\n#include <iostream>\n\nint main() {\n    std::cout << std::is_same_v<int, int> << '\\n';         // 1\n    std::cout << std::is_same_v<int, unsigned> << '\\n';     // 0\n    std::cout << std::is_same_v<int, const int> << '\\n';   // 0\n    std::cout << std::is_same_v<int, int&> << '\\n';        // 0\n    std::cout << std::is_same_v<int, int32_t> << '\\n';     // يعتمد على النظام\n}",
+          "explanationArabic": "is_same_v يتحقق من تطابق تام. int و const int نوعان مختلفان. int و int& نوعان مختلفان. const وvolatile يُحدثان فرقًا."
+        },
+        {
+          "titleArabic": "تخصيص قالب لنوع محدد",
+          "code": "#include <type_traits>\n#include <iostream>\n\ntemplate<typename T>\nstd::enable_if_t<std::is_same_v<T, std::string>>\nvoid process(T val) {\n    std::cout << \"string: \" << val;\n}",
+          "explanationArabic": "is_same_v مع enable_if يُفعّل overload لنوع محدد فقط. مفيد لتخصيص سلوك لأنواع معينة في القوالب."
+        },
+        {
+          "titleArabic": "is_same_v لا يحول الأنواع",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_same_v<int, int>);\nstatic_assert(!std::is_same_v<int, signed int>); // قد يكون true أو false حسب النظام\nstatic_assert(!std::is_same_v<int, int32_t>);    // يعتمد — int قد لا يكون 32-bit\n// is_same_v يتحقق من تطابق تام — لا يحول أو يُطابق بالمعنى",
+          "explanationArabic": "is_same_v لا يحول الأنواع. int و int32_t قد يكونان نفس النوع أو لا — يعتمد على النظام. استخدم is_same_v فقط عندما تحتاج تطابقًا تامًا."
+        }
+      ],
+      "related": [
+        "std::enable_if",
+        "std::conditional_t",
+        "std::is_integral_v"
+      ]
+    },
+    "std::is_const_v": {
+      "title": "std::is_const_v",
+      "type": "type trait",
+      "description": "ثابت ترجمة يتحقق هل النوع نفسه `const` أم لا. فائدته الحقيقية أنه يجيب عن سؤال على مستوى النوع المعلن، لا على مستوى الكائن أو القيمة أثناء التشغيل.",
+      "usage": "يظهر عند كتابة قوالب تريد تغيير السلوك إذا كان النوع ثابتًا فعليًا، أو عند التحقق من صحة واجهة template تتعامل مع const-correctness.",
+      "example": "static_assert(std::is_const_v<const int>);",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "الفرق بين const على النوع وعدم وجوده",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_const_v<const int>);\nstatic_assert(!std::is_const_v<int>);\nstatic_assert(!std::is_const_v<const int&>);",
+          "explanationArabic": "أهم نقطة تعليمية هنا أن `const int&` ليس نوعًا const بالمعنى الذي يفحصه `is_const_v`، بل مرجع إلى نوع const. هذا الالتباس شائع جدًا عند قراءة التراكيب النوعية."
+        },
+        {
+          "titleArabic": "مع remove_reference لفحص النوع المشار إليه",
+          "code": "#include <type_traits>\n\ntemplate<typename T>\nconstexpr bool points_to_const_v = std::is_const_v<std::remove_reference_t<T>>;\n\nstatic_assert(points_to_const_v<const int&>);\nstatic_assert(!points_to_const_v<int&>);",
+          "explanationArabic": "إذا كان النوع يصل إليك كمرجع، فقد تحتاج إزالة المرجع أولًا حتى تختبر const الحقيقية على النوع الداخلي. هذا هو الاستخدام العملي الأكثر شيوعًا لـ `is_const_v`."
+        },
+        {
+          "titleArabic": "لا علاقة له بقابلية تعديل الكائن وقت التشغيل",
+          "code": "#include <type_traits>\n\nint main() {\n    const int x = 42;\n    auto y = x; // y من النوع int لا const\n\n    static_assert(!std::is_const_v<decltype(y)>);\n}",
+          "explanationArabic": "الـ trait يفحص النوع بعد قواعد الاستنتاج. في المثال، `auto` أسقط const من النسخة الجديدة. لذا `is_const_v` أداة لفهم type deduction بقدر ما هي أداة لفحص const نفسها."
+        }
+      ],
+      "related": [
+        "std::remove_cv_t",
+        "std::is_same_v",
+        "std::is_reference_v"
+      ]
+    },
+    "std::is_reference_v": {
+      "title": "std::is_reference_v",
+      "type": "type trait",
+      "description": "ثابت ترجمة يُرجع true إذا كان النوع مرجعًا، سواء كان `T&` أو `T&&`. قيمته العملية أنه يميز الأنواع التي لا تملك تخزينًا مستقلًا بل تعيد ربطك بكائن موجود أصلًا.",
+      "usage": "يظهر عند التعامل مع perfect forwarding أو تحليل deduced types أو بناء شروط مختلفة بين القيم والمرجعيات.",
+      "example": "static_assert(std::is_reference_v<int&>);",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "التحقق من lvalue وrvalue references معًا",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_reference_v<int&>);\nstatic_assert(std::is_reference_v<int&&>);\nstatic_assert(!std::is_reference_v<int>);",
+          "explanationArabic": "الميزة هنا أن `is_reference_v` يجمع نوعي المراجع تحت سؤال واحد. إذا كنت تحتاج التمييز بينهما تحديدًا فهناك `is_lvalue_reference_v` و`is_rvalue_reference_v`."
+        },
+        {
+          "titleArabic": "فهم نتيجة decltype",
+          "code": "#include <type_traits>\n\nint value = 0;\ndecltype((value)) ref_like = value; // النوع int&\nstatic_assert(std::is_reference_v<decltype((value))>);",
+          "explanationArabic": "هذا مثال مهم لأن كثيرًا من الالتباس في templates يأتي من `decltype`. الأقواس الزائدة قد تحول النتيجة إلى مرجع، و`is_reference_v` طريقة سريعة لكشف هذا."
+        },
+        {
+          "titleArabic": "مع remove_reference لتطبيع النوع",
+          "code": "#include <type_traits>\n\ntemplate<typename T>\nusing bare_t = std::remove_reference_t<T>;\n\nstatic_assert(std::is_same_v<bare_t<int&>, int>);\nstatic_assert(std::is_same_v<bare_t<int&&>, int>);",
+          "explanationArabic": "عندما يهمك النوع الأساسي لا طريقة تمريره، `is_reference_v` يكشف الحالة و`remove_reference_t` يزيلها. هذا النمط أساسي في كتابة قوالب عامة تفهم forwarding والربط المرجعي."
+        }
+      ],
+      "related": [
+        "std::remove_reference_t",
+        "std::is_const_v",
+        "std::is_pointer_v"
+      ]
+    },
+    "std::is_floating_point_v": {
+      "title": "std::is_floating_point_v",
+      "type": "type trait",
+      "description": "ثابت ترجمة يتحقق هل النوع عدد عشري حقيقي مثل `float` أو `double` أو `long double`. معناه الحقيقي أنه يميز الأنواع التي تدعم الكسور والدلالة التقريبية، لا مجرد الأرقام عمومًا.",
+      "usage": "يظهر عندما تحتاج سلوكًا مختلفًا للأعداد العشرية عن الأعداد الصحيحة، مثل اختيار خوارزمية تقريب أو رفض `%` أو تفعيل tolerances للمقارنة.",
+      "example": "static_assert(std::is_floating_point_v<double>);",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "تمييز الأنواع العشرية عن الصحيحة",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_floating_point_v<float>);\nstatic_assert(std::is_floating_point_v<double>);\nstatic_assert(std::is_floating_point_v<long double>);\nstatic_assert(!std::is_floating_point_v<int>);",
+          "explanationArabic": "هذا trait لا يسأل: هل النوع رقمي؟ بل يسأل: هل هو من عائلة الأعداد العشرية تحديدًا؟ لذلك `int` و`bool` و`char` كلها false رغم أنها أنواع عددية بمعنى أوسع."
+        },
+        {
+          "titleArabic": "اختيار مقارنة تقريبية للأعداد العشرية",
+          "code": "#include <type_traits>\n#include <cmath>\n\ntemplate<typename T>\nbool almost_equal(T a, T b) {\n    if constexpr (std::is_floating_point_v<T>) {\n        return std::fabs(a - b) < static_cast<T>(1e-6);\n    } else {\n        return a == b;\n    }\n}",
+          "explanationArabic": "هذا استخدام عملي جدًا: الأعداد العشرية تحتاج غالبًا مقارنة تقريبية بسبب أخطاء التمثيل، بينما الأنواع الصحيحة تُقارن بالمساواة المباشرة."
+        },
+        {
+          "titleArabic": "ليس بديلًا عن is_arithmetic_v",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_arithmetic_v<int>);\nstatic_assert(!std::is_floating_point_v<int>);\n",
+          "explanationArabic": "إذا كانت حاجتك هي \"أي نوع رقمي\" فـ `is_floating_point_v` ضيقة أكثر مما تريد. استخدمها فقط عندما يكون السلوك متعلقًا تحديدًا بطبيعة الأعداد العشرية."
+        }
+      ],
+      "related": [
+        "std::is_arithmetic_v",
+        "std::is_integral_v",
+        "std::enable_if"
+      ]
+    },
+    "std::is_arithmetic_v": {
+      "title": "std::is_arithmetic_v",
+      "type": "type trait",
+      "description": "ثابت ترجمة يُرجع true للأنواع العددية القياسية كلها: الصحيحة والعشرية معًا. هو trait أوسع من `is_integral_v` و`is_floating_point_v` ويعبّر عن سؤال: هل هذا النوع يمثل قيمة عددية أساسية؟",
+      "usage": "يظهر عندما تريد السماح لأي نوع رقمي قياسي في القوالب، مثل حسابات عامة أو تحويلات أو دوال utility تعمل على الأرقام لا على الحاويات أو المؤشرات.",
+      "example": "static_assert(std::is_arithmetic_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "الأنواع العددية المقبولة",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_arithmetic_v<int>);\nstatic_assert(std::is_arithmetic_v<double>);\nstatic_assert(std::is_arithmetic_v<bool>);\nstatic_assert(!std::is_arithmetic_v<int*>);\nstatic_assert(!std::is_arithmetic_v<std::nullptr_t>);",
+          "explanationArabic": "هذا trait يشمل الأنواع العددية القياسية فقط. من النقاط المهمة أن `bool` يُعتبر arithmetic في C++ لأنه نوع عددي أساسي، حتى لو كان استخدامه الحسابي محدودًا دلاليًا."
+        },
+        {
+          "titleArabic": "تقييد قالب لأي نوع رقمي",
+          "code": "#include <type_traits>\n\ntemplate<typename T>\nT clamp_zero_to_one(T x) {\n    static_assert(std::is_arithmetic_v<T>, \"T must be arithmetic\");\n    if (x < static_cast<T>(0)) return static_cast<T>(0);\n    if (x > static_cast<T>(1)) return static_cast<T>(1);\n    return x;\n}",
+          "explanationArabic": "إذا كانت الدالة تقبل أرقامًا صحيحة وعشرية معًا، فـ `is_arithmetic_v` أوضح من محاولة الجمع اليدوي بين `is_integral_v` و`is_floating_point_v`."
+        },
+        {
+          "titleArabic": "ليس مناسبًا دائمًا لواجهات المستخدم",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_arithmetic_v<bool>);\n",
+          "explanationArabic": "هذه ملاحظة مهمة تعليميًا: إذا لم تكن تريد قبول `bool` ضمن الواجهة، فـ `is_arithmetic_v` قد يكون أوسع من المطلوب. عندها اجمع trait أكثر تحديدًا أو استبعد `bool` صراحة."
+        }
+      ],
+      "related": [
+        "std::is_integral_v",
+        "std::is_floating_point_v",
+        "std::enable_if"
+      ]
+    },
+    "std::integral_constant": {
+      "title": "std::integral_constant",
+      "type": "type trait",
+      "description": "فئة أساسية لكل type traits التي تُرجع قيمة bool. يحمل نوعًا ثابتًا وقيمة ثابتة معًا، وكل الـ traits مثل true_type و false_type تُبنى عليه.",
+      "usage": "يظهر عند بناء type trait مخصص أو عند فهم كيف تعمل traits القياسية تحت الغطاء.",
+      "example": "template<int V>\nusing IntConstant = std::integral_constant<int, V>;\nusing Five = IntConstant<5>; // Five::value == 5",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::true_type",
+        "std::false_type",
+        "std::bool_constant"
+      ]
+    },
+    "std::true_type": {
+      "title": "std::true_type",
+      "type": "type trait",
+      "description": "اختصار لـ integral_constant<bool, true>. يُستخدم كنوع مرجعي في تخصيص القوالب للدلالة على أن شرطًا ما محقّق.",
+      "usage": "يظهر في SFINAE وتخصيص القوالب كقاعدة فئة (base class) للtraits المخصصة.",
+      "example": "struct my_trait : std::true_type {};\nstatic_assert(my_trait::value);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::false_type",
+        "std::integral_constant",
+        "std::bool_constant"
+      ]
+    },
+    "std::false_type": {
+      "title": "std::false_type",
+      "type": "type trait",
+      "description": "اختصار لـ integral_constant<bool, false>. يُستخدم كقاعدة فئة في تخصيص القوالب للدلالة على أن شرطًا ما غير محقّق.",
+      "usage": "يظهر في SFINAE كحالة افتراضية في القوالب المتعددة التخصصات.",
+      "example": "template<typename T, typename = void>\nstruct has_foo : std::false_type {};",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::true_type",
+        "std::integral_constant",
+        "std::bool_constant"
+      ]
+    },
+    "std::bool_constant": {
+      "title": "std::bool_constant",
+      "type": "type trait",
+      "description": "integral_constant<bool, B> مبسّط. أُضيف في C++17 لتجنّب تكرار bool عند تعريف constant منطقي. true_type و false_type هما تخصيصان منه.",
+      "usage": "يظهر عند بناء type traits مخصصة تُرجع قيمة bool في C++17 وما بعده.",
+      "example": "template<typename T>\nusing is_my_type = std::bool_constant<std::is_same_v<T, int>>;",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::true_type",
+        "std::false_type",
+        "std::integral_constant"
+      ]
+    },
+    "std::is_same": {
+      "title": "std::is_same",
+      "type": "type trait",
+      "description": "يتحقق من تطابق نوعين تمامًا في وقت الترجمة. النسخة الأساسية تُنتج struct به ::value، والنسخة المختصرة _v تُرجع bool مباشرة.",
+      "usage": "يظهر في القوالب والـ SFINAE عند الحاجة لمقارنة أنواع أو تخصيص قالب لنوع محدد.",
+      "example": "static_assert(std::is_same<int, int>::value);\nstatic_assert(!std::is_same<int, double>::value);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_same_v",
+        "std::enable_if",
+        "std::conditional"
+      ]
+    },
+    "std::is_integral": {
+      "title": "std::is_integral",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع عددًا صحيحًا (int, char, bool, long, إلخ). النسخة الأساسية تُنتج struct به ::value.",
+      "usage": "يظهر في القوالب عند الحاجة للتحقق من نوع صحيح باستخدام الصيغة الكاملة ::value بدلًا من _v.",
+      "example": "static_assert(std::is_integral<int>::value);\nstatic_assert(!std::is_integral<float>::value);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_integral_v",
+        "std::is_floating_point",
+        "std::is_arithmetic"
+      ]
+    },
+    "std::is_floating_point": {
+      "title": "std::is_floating_point",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع عددًا عشريًا (float, double, long double). النسخة الأساسية تُنتج struct به ::value.",
+      "usage": "يظهر عند الحاجة للتحقق من الأعداد العشرية باستخدام الصيغة الكاملة ::value.",
+      "example": "static_assert(std::is_floating_point<double>::value);\nstatic_assert(!std::is_floating_point<int>::value);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_floating_point_v",
+        "std::is_integral",
+        "std::is_arithmetic"
+      ]
+    },
+    "std::is_void": {
+      "title": "std::is_void",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع void. مفيد في القوالب لمعالجة الحالات الخاصة حيث قد يكون نوع الإرجاع أو المعامل void.",
+      "usage": "يظهر عند كتابة قوالب تتعامل مع أنواع إرجاع متنوعة وتحتاج معاملة void بشكل خاص.",
+      "example": "static_assert(std::is_void_v<void>);\nstatic_assert(!std::is_void_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_null_pointer",
+        "std::is_fundamental",
+        "std::conditional"
+      ]
+    },
+    "std::is_null_pointer": {
+      "title": "std::is_null_pointer",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع std::nullptr_t. مفيد للتمييز بين nullptr والمؤشرات الفارغة الأخرى.",
+      "usage": "يظهر عند التحقق من أن معامل ما هو nullptr_t وليس مؤشرًا عاديًا.",
+      "example": "static_assert(std::is_null_pointer_v<std::nullptr_t>);\nstatic_assert(!std::is_null_pointer_v<int*>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_void",
+        "std::is_pointer",
+        "std::is_fundamental"
+      ]
+    },
+    "std::is_array": {
+      "title": "std::is_array",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مصفوفة (array) بأي عدد من الأبعاد. لا يشمل std::array أو vector.",
+      "usage": "يظهر عند كتابة قوالب تحتاج معاملة المصفوفات بشكل مختلف عن الأنواع الأخرى.",
+      "example": "static_assert(std::is_array_v<int[5]>);\nstatic_assert(std::is_array_v<int[]>);\nstatic_assert(!std::is_array_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_extent",
+        "std::rank",
+        "std::extent"
+      ]
+    },
+    "std::is_pointer": {
+      "title": "std::is_pointer",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مؤشرًا خامًا بأي مستوى (T*, T**, const T*). لا يشمل المؤشرات الذكية.",
+      "usage": "يظهر عند التحقق من المؤشرات الخام في القوالب، مثل تحديد ما إذا كان يجب استدعاء delete.",
+      "example": "static_assert(std::is_pointer<int*>::value);\nstatic_assert(std::is_pointer<int**>::value);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_pointer_v",
+        "std::remove_pointer",
+        "std::is_member_pointer"
+      ]
+    },
+    "std::is_lvalue_reference": {
+      "title": "std::is_lvalue_reference",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مرجعًا يساريًا (T&). مفيد للتمييز بين lvalue و rvalue references في القوالب.",
+      "usage": "يظهر في perfect forwarding وتحليل أنواع المعاملات لتحديد سلوك مختلف حسب نوع المرجع.",
+      "example": "static_assert(std::is_lvalue_reference_v<int&>);\nstatic_assert(!std::is_lvalue_reference_v<int&&>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_rvalue_reference",
+        "std::is_reference",
+        "std::remove_reference"
+      ]
+    },
+    "std::is_rvalue_reference": {
+      "title": "std::is_rvalue_reference",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مرجعًا يمينيًا (T&&). مفيد في move semantics و perfect forwarding.",
+      "usage": "يظهر عند كتابة قوالب تحتاج التمييز بين القيم المؤقتة والمراجع الثابتة.",
+      "example": "static_assert(std::is_rvalue_reference_v<int&&>);\nstatic_assert(!std::is_rvalue_reference_v<int&>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_lvalue_reference",
+        "std::is_reference",
+        "std::add_rvalue_reference"
+      ]
+    },
+    "std::is_reference": {
+      "title": "std::is_reference",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع أي نوع مرجع (lvalue أو rvalue). يجمع السؤالين في سؤال واحد.",
+      "usage": "يظهر عند التحقق من أن المعامل يُمرّر بالمرجع لا بالقيمة، مثل في تحليل deduced types.",
+      "example": "static_assert(std::is_reference<int&>::value);\nstatic_assert(std::is_reference<int&&>::value);\nstatic_assert(!std::is_reference<int>::value);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_reference_v",
+        "std::is_lvalue_reference",
+        "std::is_rvalue_reference"
+      ]
+    },
+    "std::is_member_object_pointer": {
+      "title": "std::is_member_object_pointer",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مؤشرًا إلى عضو بيانات (data member pointer) مثل int MyClass::*.",
+      "usage": "يظهر عند كتابة قوالب تتعامل مع التأمل (reflection) أو serialization أو ORM.",
+      "example": "struct S { int x; };\nstatic_assert(std::is_member_object_pointer_v<int S::*>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_member_function_pointer",
+        "std::is_member_pointer"
+      ]
+    },
+    "std::is_member_function_pointer": {
+      "title": "std::is_member_function_pointer",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مؤشرًا إلى دالة عضو (member function pointer) مثل void (MyClass::*)().",
+      "usage": "يظهر عند بناء أنظمة أحداث (event systems) أو استدعاء دوال أعضاء عبر مؤشرات.",
+      "example": "struct S { void f(); };\nstatic_assert(std::is_member_function_pointer_v<void (S::*)()>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_member_object_pointer",
+        "std::is_member_pointer",
+        "std::invoke"
+      ]
+    },
+    "std::is_member_pointer": {
+      "title": "std::is_member_pointer",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع أي مؤشر عضو (سواء لبيانات أو لدالة عضو). يجمع النوعين تحت سؤال واحد.",
+      "usage": "يظهر عند التحقق العام من مؤشرات الأعضاء دون تمييز بين بيانات ودوال.",
+      "example": "struct S { int x; void f(); };\nstatic_assert(std::is_member_pointer_v<int S::*>);\nstatic_assert(std::is_member_pointer_v<void (S::*)()>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_member_object_pointer",
+        "std::is_member_function_pointer"
+      ]
+    },
+    "std::is_const": {
+      "title": "std::is_const",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع نفسه مُؤهَّلًا بـ const. لا يتحقق من المراجع إلى const بل من النوع المعلن مباشرة.",
+      "usage": "يظهر عند كتابة قوالب تحتاج تغيير سلوكها إذا كان النوع ثابتًا.",
+      "example": "static_assert(std::is_const<const int>::value);\nstatic_assert(!std::is_const<int>::value);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_const_v",
+        "std::remove_const",
+        "std::add_const"
+      ]
+    },
+    "std::is_volatile": {
+      "title": "std::is_volatile",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مُؤهَّلًا بـ volatile. نادر الاستخدام في C++ الحديث لكنه موجود للتكامل.",
+      "usage": "يظهر عند كتابة قوالب تتعامل مع أنواع volatile، غالبًا في برمجة الأنظمة المضمّنة.",
+      "example": "static_assert(std::is_volatile_v<volatile int>);\nstatic_assert(!std::is_volatile_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_volatile",
+        "std::add_volatile",
+        "std::remove_cv"
+      ]
+    },
+    "std::is_signed": {
+      "title": "std::is_signed",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع المُوقَّع (signed) أي يمكنه حمل قيم سالبة. يشمل الأنواع الصحيحة الموقعة والعشرية.",
+      "usage": "يظهر عند الحاجة لتجنب overflow في العمليات الحسابية أو لاختيار خوارزمية مناسبة حسب الإشارة.",
+      "example": "static_assert(std::is_signed_v<int>);\nstatic_assert(std::is_signed_v<float>);\nstatic_assert(!std::is_signed_v<unsigned int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_unsigned",
+        "std::make_signed",
+        "std::make_unsigned"
+      ]
+    },
+    "std::is_unsigned": {
+      "title": "std::is_unsigned",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع غير المُوقَّع (unsigned). مفيد لمنع سلوك غير متوقع مع الأعداد السالبة.",
+      "usage": "يظهر عند الحاجة لضمان أن نوع ما لا يحمل قيم سالبة، مثل في فهارس المصفوفات.",
+      "example": "static_assert(std::is_unsigned_v<unsigned int>);\nstatic_assert(!std::is_unsigned_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_signed",
+        "std::make_signed",
+        "std::make_unsigned"
+      ]
+    },
+    "std::is_arithmetic": {
+      "title": "std::is_arithmetic",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع عددًا صحيحًا أو عشريًا. هو اتحاد is_integral و is_floating_point. النسخة الأساسية تُنتج struct به ::value.",
+      "usage": "يظهر عند الحاجة لقبول أي نوع رقمي قياسي في القوالب باستخدام الصيغة الكاملة ::value.",
+      "example": "static_assert(std::is_arithmetic<int>::value);\nstatic_assert(std::is_arithmetic<double>::value);\nstatic_assert(!std::is_arithmetic<int*>::value);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_arithmetic_v",
+        "std::is_integral",
+        "std::is_floating_point"
+      ]
+    },
+    "std::is_fundamental": {
+      "title": "std::is_fundamental",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع أساسيًا (arithmetic أو void أو nullptr_t). هو أوسع من is_arithmetic لأنه يشمل void و nullptr_t.",
+      "usage": "يظهر عند التحقق من أنواع لا تُبنى من أنواع أخرى، مثل في serialization أو memory layout.",
+      "example": "static_assert(std::is_fundamental_v<int>);\nstatic_assert(std::is_fundamental_v<void>);\nstatic_assert(!std::is_fundamental_v<std::string>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_arithmetic",
+        "std::is_compound",
+        "std::is_void"
+      ]
+    },
+    "std::is_object": {
+      "title": "std::is_object",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع نوع كائن (object type) وليس مرجعًا أو دالة أو void. معظم الأنواع هي object types.",
+      "usage": "يظهر في البرمجة العامة للتمييز بين الأنواع التي لها تمثيل في الذاكرة وتلك التي لا تملك.",
+      "example": "static_assert(std::is_object_v<int>);\nstatic_assert(!std::is_object_v<int&>);\nstatic_assert(!std::is_object_v<void>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_reference",
+        "std::is_function",
+        "std::is_scalar"
+      ]
+    },
+    "std::is_scalar": {
+      "title": "std::is_scalar",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع عدديًا (scalar): arithmetic أو enum أو مؤشر أو member pointer أو nullptr_t. الأنواع العددية قابلة للنسخ بالبت.",
+      "usage": "يظهر عند تحسين النسخ أو التبديل بين الأنواع، لأن الأنواع العددية تُنسخ ببساطة عبر memcpy.",
+      "example": "static_assert(std::is_scalar_v<int>);\nstatic_assert(std::is_scalar_v<int*>);\nstatic_assert(!std::is_scalar_v<std::string>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_arithmetic",
+        "std::is_trivially_copyable",
+        "std::is_object"
+      ]
+    },
+    "std::is_compound": {
+      "title": "std::is_compound",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مركّبًا (compound) أي ليس fundamental. يشمل المصفوفات، المؤشرات، المراجع، الأصناف، إلخ.",
+      "usage": "يظهر عند التمييز بين الأنواع الأساسية والمركّبة في القوالب.",
+      "example": "static_assert(std::is_compound_v<int*>);\nstatic_assert(std::is_compound_v<std::string>);\nstatic_assert(!std::is_compound_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_fundamental",
+        "std::is_object",
+        "std::is_class"
+      ]
+    },
+    "std::is_function": {
+      "title": "std::is_function",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع نوع دالة (function type) وليس مؤشر دالة. مفيد للتمييز بين void(*)() و void().",
+      "usage": "يظهر عند كتابة قوالب تتعامل مع الدوال كأنواع أول-class، مثل في std::function أو type erasure.",
+      "example": "static_assert(std::is_function_v<void(int)>);\nstatic_assert(!std::is_function_v<void(*)(int)>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_object",
+        "std::is_pointer",
+        "std::decay"
+      ]
+    },
+    "std::is_class": {
+      "title": "std::is_class",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع صنفًا (class أو struct) وليس union أو enum أو نوع أساسي. يشمل الأصناف مع الأعضاء الخاصين.",
+      "usage": "يظهر عند كتابة قوالب تحتاج التمييز بين الأصناف والأنواع الأخرى، مثل في serialization.",
+      "example": "struct S {};\nenum E {};\nstatic_assert(std::is_class_v<S>);\nstatic_assert(!std::is_class_v<E>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_union",
+        "std::is_enum",
+        "std::is_compound"
+      ]
+    },
+    "std::is_union": {
+      "title": "std::is_union",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع union. مفيد في serialization أو memory layout حيث يتطلب union معاملة خاصة.",
+      "usage": "يظهر عند كتابة أنظمة serialization أو عند التعامل مع memory-mapped structures.",
+      "example": "union U { int a; float b; };\nstatic_assert(std::is_union_v<U>);\nstatic_assert(!std::is_union_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_class",
+        "std::is_compound",
+        "std::is_standard_layout"
+      ]
+    },
+    "std::is_enum": {
+      "title": "std::is_enum",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع enum (scoped أو unscoped). مفيد للتحقق قبل استخدام underlying_type.",
+      "usage": "يظهر عند كتابة قوالب تحتاج معاملة enum بشكل مختلف عن الأنواع الأخرى.",
+      "example": "enum E { A, B };\nenum class EC { X, Y };\nstatic_assert(std::is_enum_v<E>);\nstatic_assert(std::is_enum_v<EC>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::underlying_type",
+        "std::is_class",
+        "std::is_integral"
+      ]
+    },
+    "std::is_polymorphic": {
+      "title": "std::is_polymorphic",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع polymorphic أي يحتوي على دالة افتراضية (virtual function) أو يرث من صنف يحتوي.",
+      "usage": "يظهر عند تحسين الأداء لأن الأنواع polymorphic لها vtable تُضيف overhead للنسخ والتخزين.",
+      "example": "struct Base { virtual void f(); };\nstruct Derived : Base {};\nstatic_assert(std::is_polymorphic_v<Base>);\nstatic_assert(!std::is_polymorphic_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::has_virtual_destructor",
+        "std::is_abstract",
+        "std::is_final"
+      ]
+    },
+    "std::is_abstract": {
+      "title": "std::is_abstract",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع abstract أي يحتوي على دالة افتراضية خالصة (pure virtual) ولا يمكن إنشاء كائن منه مباشرة.",
+      "usage": "يظهر عند كتابة قوالب تحتاج التحقق من إمكانية إنشاء كائن من نوع ما.",
+      "example": "struct Abstract { virtual void f() = 0; };\nstatic_assert(std::is_abstract_v<Abstract>);\nstatic_assert(!std::is_abstract_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_polymorphic",
+        "std::is_constructible",
+        "std::is_final"
+      ]
+    },
+    "std::is_final": {
+      "title": "std::is_final",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع مُعلَنًا كـ final (C++14). الأنواع final لا يمكن وراثتها.",
+      "usage": "يظهر عند كتابة قوالب تحتاج معرفة ما إذا كان النوع قابلًا للوراثة.",
+      "example": "struct FinalType final {};\nstatic_assert(std::is_final_v<FinalType>);\nstatic_assert(!std::is_final_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_polymorphic",
+        "std::is_abstract",
+        "std::is_class"
+      ]
+    },
+    "std::is_aggregate": {
+      "title": "std::is_aggregate",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع aggregate (C++17) أي يمكن تهيئته بـ aggregate initialization بدون مُنشئ.",
+      "usage": "يظهر عند كتابة قوالب تحتاج تهيئة أنواع بـ brace initialization أو عند بناء أنواع شبيهة بالـ tuples.",
+      "example": "struct Point { int x, y; };\nstatic_assert(std::is_aggregate_v<Point>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivial",
+        "std::is_standard_layout",
+        "std::is_constructible"
+      ]
+    },
+    "std::is_standard_layout": {
+      "title": "std::is_standard_layout",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع ذو تخطيط قياسي (standard layout) أي يمكن تحويله إلى/p من مصفوفة بايتات بـ memcpy.",
+      "usage": "يظهر عند التفاعل مع C أو عند كتابة binary serialization أو network protocols.",
+      "example": "struct SL { int a; double b; };\nstatic_assert(std::is_standard_layout_v<SL>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivial",
+        "std::is_pod",
+        "std::is_aggregate"
+      ]
+    },
+    "std::is_trivial": {
+      "title": "std::is_trivial",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع trivial أي مُنشئه و مُدمّره ونسخه كلها trivial. الأنواع trivial يمكن نسخها بـ memcpy.",
+      "usage": "يظهر عند تحسين الأداء لأن الأنواع trivial لا تحتاج مُنشئات أو مُدمّرات مخصصة.",
+      "example": "struct Trivial { int x; };\nstatic_assert(std::is_trivial_v<Trivial>);\nstatic_assert(std::is_trivial_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_copyable",
+        "std::is_standard_layout",
+        "std::is_pod"
+      ]
+    },
+    "std::is_trivially_copyable": {
+      "title": "std::is_trivially_copyable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع قابلًا للنسخ بـ memcpy. أضعف من is_trivial لأنه لا يتطلب مُنشئ افتراضي trivial.",
+      "usage": "يظهر عند تحسين النسخ والنقل لأن الأنواع trivially copyable تُنسخ بالبايت مباشرة.",
+      "example": "struct TC { int x; ~TC() {} };\nstatic_assert(std::is_trivially_copyable_v<TC>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivial",
+        "std::is_trivially_copy_constructible",
+        "std::is_trivially_move_constructible"
+      ]
+    },
+    "std::is_trivially_default_constructible": {
+      "title": "std::is_trivially_default_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن تهيئته افتراضيًا بدون أي عمل (مُنشئ افتراضي trivial).",
+      "usage": "يظهر عند تحسين إنشاء مصفوفات أو حاويات كبيرة من الأنواع trivial.",
+      "example": "struct T { int x; };\nstatic_assert(std::is_trivially_default_constructible_v<T>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_constructible",
+        "std::is_trivial",
+        "std::is_default_constructible"
+      ]
+    },
+    "std::is_trivially_constructible": {
+      "title": "std::is_trivially_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن تهيئته trivially من أنواع مُعطاة. المُنشئ لا يفعل شيئًا غير نسخ البايتات.",
+      "usage": "يظهر عند تحسين placement new أو إنشاء كائنات في مخازن مؤقتة.",
+      "example": "struct T { int x; };\nstatic_assert(std::is_trivially_constructible_v<T, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_copy_constructible",
+        "std::is_trivially_move_constructible",
+        "std::is_constructible"
+      ]
+    },
+    "std::is_trivially_copy_constructible": {
+      "title": "std::is_trivially_copy_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن نسخه trivially عبر مُنشئ النسخ. يعني النسخ يتم بـ memcpy.",
+      "usage": "يظهر عند تحسين عمليات النسخ في الحاويات والخوارزميات.",
+      "example": "struct T { int x; };\nstatic_assert(std::is_trivially_copy_constructible_v<T>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_copyable",
+        "std::is_trivially_move_constructible",
+        "std::is_copy_constructible"
+      ]
+    },
+    "std::is_trivially_move_constructible": {
+      "title": "std::is_trivially_move_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن نقله trivially عبر مُنشئ النقل. غالبًا يعادل is_trivially_copy_constructible.",
+      "usage": "يظهر عند تحسين عمليات النقل في الحاويات مثل std::vector.",
+      "example": "struct T { int x; };\nstatic_assert(std::is_trivially_move_constructible_v<T>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_copy_constructible",
+        "std::is_trivially_copyable",
+        "std::is_move_constructible"
+      ]
+    },
+    "std::is_trivially_copy_assignable": {
+      "title": "std::is_trivially_copy_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن إسناده trivially عبر عامل الإسناد للنسخ. يعني الإسناد يتم بـ memcpy.",
+      "usage": "يظهر عند تحسين عمليات الإسناد في الحاويات والخوارزميات.",
+      "example": "struct T { int x; };\nstatic_assert(std::is_trivially_copy_assignable_v<T>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_move_assignable",
+        "std::is_trivially_copyable",
+        "std::is_copy_assignable"
+      ]
+    },
+    "std::is_trivially_move_assignable": {
+      "title": "std::is_trivially_move_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن إسناده trivially عبر عامل إسناد النقل.",
+      "usage": "يظهر عند تحسين عمليات النقل والإسناد في الحاويات.",
+      "example": "struct T { int x; };\nstatic_assert(std::is_trivially_move_assignable_v<T>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_copy_assignable",
+        "std::is_trivially_copyable",
+        "std::is_move_assignable"
+      ]
+    },
+    "std::is_trivially_destructible": {
+      "title": "std::is_trivially_destructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن تدميره trivially أي لا يحتاج مُدمّر مخصص. الأنواع trivially destructible لا تحتاج استدعاء مُدمّر.",
+      "usage": "يظهر عند تحسين تدمير المصفوفات والحاويات لأنه يمكن تجاهل استدعاء المُدمّر.",
+      "example": "struct T { int x; };\nstatic_assert(std::is_trivially_destructible_v<T>);\nstatic_assert(std::is_trivially_destructible_v<int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_copyable",
+        "std::is_trivial",
+        "std::is_destructible"
+      ]
+    },
+    "std::is_trivially_assignable": {
+      "title": "std::is_trivially_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان يمكن إسناد نوع إلى آخر trivially. يأخذ نوعين: الهدف والقيمة.",
+      "usage": "يظهر عند التحقق من إمكانية الإسناد البسيط بين نوعين في القوالب.",
+      "example": "static_assert(std::is_trivially_assignable_v<int&, int>);\nstatic_assert(!std::is_trivially_assignable_v<int&, void>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivially_copy_assignable",
+        "std::is_assignable",
+        "std::is_trivially_move_assignable"
+      ]
+    },
+    "std::is_nothrow_constructible": {
+      "title": "std::is_nothrow_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن تهيئته من أنواع مُعطاة بدون إطلاق استثناءات. مهم في أنظمة real-time و embedded.",
+      "usage": "يظهر عند الحاجة لضمان عدم إطلاق استثناءات أثناء التهيئة، مثل في destructors أو noexcept functions.",
+      "example": "struct NoThrow { NoThrow() noexcept {} };\nstatic_assert(std::is_nothrow_constructible_v<NoThrow>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_nothrow_default_constructible",
+        "std::is_constructible",
+        "std::is_nothrow_destructible"
+      ]
+    },
+    "std::is_nothrow_default_constructible": {
+      "title": "std::is_nothrow_default_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن تهيئته افتراضيًا بدون إطلاق استثناءات. مهم في حاويات مثل std::vector.",
+      "usage": "يظهر عند حاجة الحاوية لضمان أن تهيئة العناصر الافتراضية لن تُطلق استثناء.",
+      "example": "struct NT { NT() noexcept = default; };\nstatic_assert(std::is_nothrow_default_constructible_v<NT>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_nothrow_constructible",
+        "std::is_default_constructible",
+        "std::is_nothrow_destructible"
+      ]
+    },
+    "std::is_nothrow_copy_constructible": {
+      "title": "std::is_nothrow_copy_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن نسخه عبر مُنشئ النسخ بدون إطلاق استثناءات.",
+      "usage": "يظهر عند تحسين عمليات النسخ في الحاويات noexcept أو في strong exception guarantee.",
+      "example": "struct NT { NT(const NT&) noexcept = default; };\nstatic_assert(std::is_nothrow_copy_constructible_v<NT>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_nothrow_move_constructible",
+        "std::is_copy_constructible",
+        "std::is_nothrow_constructible"
+      ]
+    },
+    "std::is_nothrow_move_constructible": {
+      "title": "std::is_nothrow_move_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن نقله عبر مُنشئ النقل بدون إطلاق استثناءات. مهم في std::vector reallocation.",
+      "usage": "يظهر عند تحسين عمليات النقل في الحاويات لأن النقل بدون استثناء يسمح باستخدام realloc بدلًا من copy.",
+      "example": "struct NT { NT(NT&&) noexcept = default; };\nstatic_assert(std::is_nothrow_move_constructible_v<NT>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_nothrow_copy_constructible",
+        "std::is_move_constructible",
+        "std::is_nothrow_constructible"
+      ]
+    },
+    "std::is_nothrow_assignable": {
+      "title": "std::is_nothrow_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان يمكن إسناد نوع إلى آخر بدون إطلاق استثناءات.",
+      "usage": "يظهر عند التحقق من أن عمليات الإسناد لن تُطلق استثناءات في القوالب.",
+      "example": "static_assert(std::is_nothrow_assignable_v<int&, int>);\nstatic_assert(!std::is_nothrow_assignable_v<int&, std::string>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_nothrow_copy_assignable",
+        "std::is_assignable",
+        "std::is_nothrow_constructible"
+      ]
+    },
+    "std::is_nothrow_copy_assignable": {
+      "title": "std::is_nothrow_copy_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن إسناده نسخيًا بدون إطلاق استثناءات.",
+      "usage": "يظهر عند تحسين عمليات الإسناد النسخي في الحاويات والخوارزميات.",
+      "example": "struct NT { NT& operator=(const NT&) noexcept = default; };\nstatic_assert(std::is_nothrow_copy_assignable_v<NT>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_nothrow_move_assignable",
+        "std::is_copy_assignable",
+        "std::is_nothrow_assignable"
+      ]
+    },
+    "std::is_nothrow_move_assignable": {
+      "title": "std::is_nothrow_move_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن إسناده نقليًا بدون إطلاق استثناءات.",
+      "usage": "يظهر عند تحسين عمليات النقل والإسناد في الحاويات.",
+      "example": "struct NT { NT& operator=(NT&&) noexcept = default; };\nstatic_assert(std::is_nothrow_move_assignable_v<NT>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_nothrow_copy_assignable",
+        "std::is_move_assignable",
+        "std::is_nothrow_assignable"
+      ]
+    },
+    "std::is_nothrow_destructible": {
+      "title": "std::is_nothrow_destructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان تدمير النوع لا يُطلق استثناءات. مهم لأن المُدمّرات يجب أن تكون noexcept دائمًا.",
+      "usage": "يظهر عند التحقق من أن تدمير كائن آمن في سياقات noexcept.",
+      "example": "static_assert(std::is_nothrow_destructible_v<int>);\nstatic_assert(std::is_nothrow_destructible_v<std::string>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_destructible",
+        "std::is_nothrow_constructible",
+        "std::is_trivially_destructible"
+      ]
+    },
+    "std::is_constructible": {
+      "title": "std::is_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن تهيئته من أنواع مُعطاة. يأخذ النوع ومعاملات التهيئة.",
+      "usage": "يظهر في SFINAE و Concepts للتحقق من إمكانية إنشاء كائن من نوع ما.",
+      "example": "struct S { S(int); };\nstatic_assert(std::is_constructible_v<S, int>);\nstatic_assert(!std::is_constructible_v<S, std::string>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_default_constructible",
+        "std::is_copy_constructible",
+        "std::is_nothrow_constructible"
+      ]
+    },
+    "std::is_default_constructible": {
+      "title": "std::is_default_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن تهيئته افتراضيًا (بدون معاملات). مهم في الحاويات التي تحتاج إنشاء عناصر افتراضية.",
+      "usage": "يظهر عند كتابة حاويات أو قوالب تحتاج إنشاء كائنات بدون معاملات.",
+      "example": "struct S { S() = default; };\nstatic_assert(std::is_default_constructible_v<S>);\nstruct NoDefault { NoDefault(int); };\nstatic_assert(!std::is_default_constructible_v<NoDefault>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_constructible",
+        "std::is_trivially_default_constructible",
+        "std::is_nothrow_default_constructible"
+      ]
+    },
+    "std::is_copy_constructible": {
+      "title": "std::is_copy_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن نسخه عبر مُنشئ النسخ. مهم في الحاويات والخوارزميات التي تنسخ كائنات.",
+      "usage": "يظهر عند التحقق من إمكانية نسخ كائن في قوالب أو حاويات.",
+      "example": "struct S { int x; };\nstatic_assert(std::is_copy_constructible_v<S>);\nstruct NoCopy { NoCopy(const NoCopy&) = delete; };\nstatic_assert(!std::is_copy_constructible_v<NoCopy>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_move_constructible",
+        "std::is_trivially_copy_constructible",
+        "std::is_constructible"
+      ]
+    },
+    "std::is_move_constructible": {
+      "title": "std::is_move_constructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن نقله عبر مُنشئ النقل. مهم في std::move و reallocation.",
+      "usage": "يظهر عند تحسين عمليات النقل في الحاويات والخوارزميات.",
+      "example": "struct S { int x; };\nstatic_assert(std::is_move_constructible_v<S>);\nstruct NoMove { NoMove(NoMove&&) = delete; };\nstatic_assert(!std::is_move_constructible_v<NoMove>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_copy_constructible",
+        "std::is_trivially_move_constructible",
+        "std::is_nothrow_move_constructible"
+      ]
+    },
+    "std::is_copy_assignable": {
+      "title": "std::is_copy_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن إسناده نسخيًا عبر عامل operator=. مهم في الخوارزميات التي تعدّل العناصر.",
+      "usage": "يظهر عند التحقق من إمكانية إسناد نسخي في القوالب.",
+      "example": "struct S { int x; };\nstatic_assert(std::is_copy_assignable_v<S>);\nstruct NoAssign { NoAssign& operator=(const NoAssign&) = delete; };\nstatic_assert(!std::is_copy_assignable_v<NoAssign>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_move_assignable",
+        "std::is_trivially_copy_assignable",
+        "std::is_assignable"
+      ]
+    },
+    "std::is_move_assignable": {
+      "title": "std::is_move_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن إسناده نقليًا عبر عامل operator=. مهم في std::swap و reallocation.",
+      "usage": "يظهر عند تحسين عمليات النقل في الحاويات والخوارزميات.",
+      "example": "struct S { int x; };\nstatic_assert(std::is_move_assignable_v<S>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_copy_assignable",
+        "std::is_trivially_move_assignable",
+        "std::is_nothrow_move_assignable"
+      ]
+    },
+    "std::is_destructible": {
+      "title": "std::is_destructible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يمكن تدميره. كل الأنواع يمكن تدميرها إلا إذا كان المُدمّر محذوفًا أو غير قابل للوصول.",
+      "usage": "يظهر عند التحقق من إمكانية تدمير كائن في القوالب والحاويات.",
+      "example": "static_assert(std::is_destructible_v<int>);\nstatic_assert(std::is_destructible_v<std::string>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_nothrow_destructible",
+        "std::is_trivially_destructible",
+        "std::is_constructible"
+      ]
+    },
+    "std::is_assignable": {
+      "title": "std::is_assignable",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان يمكن إسناد تعبير من نوع إلى آخر. يأخذ نوعين: نوع الهدف ونوع القيمة.",
+      "usage": "يظهر عند التحقق من إمكانية الإسناد بين نوعين في القوالب.",
+      "example": "static_assert(std::is_assignable_v<int&, int>);\nstatic_assert(!std::is_assignable_v<int, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_copy_assignable",
+        "std::is_move_assignable",
+        "std::is_nothrow_assignable"
+      ]
+    },
+    "std::is_convertible": {
+      "title": "std::is_convertible",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان يمكن التحويل الضمني (implicit conversion) من نوع إلى آخر. يشمل التحويلات المُعرَّفة والمُشتقة.",
+      "usage": "يظهر عند التحقق من إمكانية التحويل بين أنواع في القوالب أو عند بناء أنظمة أنواع.",
+      "example": "static_assert(std::is_convertible_v<int, double>);\nstatic_assert(std::is_convertible_v<Derived*, Base*>);\nstatic_assert(!std::is_convertible_v<int, void*>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_constructible",
+        "std::is_base_of",
+        "std::is_same"
+      ]
+    },
+    "std::is_base_of": {
+      "title": "std::is_base_of",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان نوع هو base class لنوع آخر. يشمل الحالة التي يكون فيها النوعان متطابقين.",
+      "usage": "يظهر عند كتابة قوالب تتعامل مع التسلسل الوراثي أو عند بناء أنظمة polymorphic.",
+      "example": "struct Base {};\nstruct Derived : Base {};\nstatic_assert(std::is_base_of_v<Base, Derived>);\nstatic_assert(std::is_base_of_v<Base, Base>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_convertible",
+        "std::is_polymorphic",
+        "std::is_abstract"
+      ]
+    },
+    "std::has_virtual_destructor": {
+      "title": "std::has_virtual_destructor",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع يحتوي على مُدمّر افتراضي (virtual destructor). مهم عند حذف كائن مشتق عبر مؤشر للأساس.",
+      "usage": "يظهر عند التحقق من سلامة الحذف عبر مؤشر base class لمنع undefined behavior.",
+      "example": "struct Base { virtual ~Base() {} };\nstruct Derived : Base {};\nstatic_assert(std::has_virtual_destructor_v<Base>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_polymorphic",
+        "std::is_destructible",
+        "std::is_base_of"
+      ]
+    },
+    "std::is_pod": {
+      "title": "std::is_pod",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع POD (Plain Old Data). مُهمل في C++20. POD يعني trivial + standard layout.",
+      "usage": "يظهر في كود قديم أو عند التوافق مع C. استخدم is_trivial و is_standard_layout بدلًا منه.",
+      "example": "struct Pod { int x; double y; };\nstatic_assert(std::is_pod_v<Pod>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivial",
+        "std::is_standard_layout",
+        "std::is_aggregate"
+      ]
+    },
+    "std::is_literal_type": {
+      "title": "std::is_literal_type",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع literal type يمكن استخدامه في constexpr. مُهمل في C++17 لأن constexpr أصبح أوسع.",
+      "usage": "يظهر في كود C++14 أو أقدم عند التحقق من إمكانية استخدام نوع في constexpr.",
+      "example": "static_assert(std::is_literal_type_v<int>);\nstatic_assert(std::is_literal_type_v<struct { int x; }>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_trivial",
+        "std::is_standard_layout",
+        "constexpr"
+      ]
+    },
+    "std::is_bind_expression": {
+      "title": "std::is_bind_expression",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع نتيجة std::bind. يُستخدم داخليًا في std::invoke لمعالجة bind expressions.",
+      "usage": "نادر الاستخدام المباشر. يظهر عند بناء أنظمة استدعاء مخصصة أو عند التفاعل مع std::bind.",
+      "example": "auto b = std::bind(std::plus<int>{}, 1, 2);\nstatic_assert(std::is_bind_expression_v<decltype(b)>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_placeholder",
+        "std::invoke",
+        "std::bind"
+      ]
+    },
+    "std::is_placeholder": {
+      "title": "std::is_placeholder",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع placeholder لـ std::bind (مثل _1, _2). يُرجع رقم الـ placeholder أو 0.",
+      "usage": "نادر الاستخدام المباشر. يظهر عند بناء أنظمة bind مخصصة.",
+      "example": "static_assert(std::is_placeholder_v<decltype(std::placeholders::_1)> > 0);\nstatic_assert(std::is_placeholder_v<int> == 0);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_bind_expression",
+        "std::bind",
+        "std::placeholders"
+      ]
+    },
+    "std::is_error_code_enum": {
+      "title": "std::is_error_code_enum",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع enum مُعلَّمًا كـ error_code enum عبر تخصيص القالب. يُستخدم في std::error_code.",
+      "usage": "يظهر عند بناء أنظمة أخطاء مخصصة تستخدم std::error_code.",
+      "example": "enum class MyErr { None, Fail };\ntemplate<> struct std::is_error_code_enum<MyErr> : true_type {};\nstatic_assert(std::is_error_code_enum_v<MyErr>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_error_condition_enum",
+        "std::error_code",
+        "std::error_condition"
+      ]
+    },
+    "std::is_error_condition_enum": {
+      "title": "std::is_error_condition_enum",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان النوع enum مُعلَّمًا كـ error_condition enum عبر تخصيص القالب. يُستخدم في std::error_condition.",
+      "usage": "يظهر عند بناء أنظمة أخطاء مخصصة تستخدم std::error_condition.",
+      "example": "enum class MyCond { Ok, Err };\ntemplate<> struct std::is_error_condition_enum<MyCond> : true_type {};\nstatic_assert(std::is_error_condition_enum_v<MyCond>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_error_code_enum",
+        "std::error_condition",
+        "std::error_code"
+      ]
+    },
+    "std::remove_const": {
+      "title": "std::remove_const",
+      "type": "type trait",
+      "description": "يزيل مؤهّل const من النوع. يُنتج struct به ::type. النسخة المختصرة remove_const_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة للتعامل مع النوع الأساسي بدون const في القوالب.",
+      "example": "static_assert(std::is_same_v<std::remove_const<const int>::type, int>);\nstatic_assert(std::is_same_v<std::remove_const_t<const int>, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_const_t",
+        "std::remove_volatile",
+        "std::remove_cv"
+      ]
+    },
+    "std::remove_volatile": {
+      "title": "std::remove_volatile",
+      "type": "type trait",
+      "description": "يزيل مؤهّل volatile من النوع. يُنتج struct به ::type. النسخة المختصرة remove_volatile_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة للتعامل مع النوع الأساسي بدون volatile في القوالب.",
+      "example": "static_assert(std::is_same_v<std::remove_volatile_t<volatile int>, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_const",
+        "std::remove_cv",
+        "std::add_volatile"
+      ]
+    },
+    "std::remove_cv": {
+      "title": "std::remove_cv",
+      "type": "type trait",
+      "description": "يزيل const و volatile معًا من النوع. يُنتج struct به ::type. النسخة المختصرة remove_cv_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة للنوع الأساسي النقي بدون أي مؤهلات.",
+      "example": "static_assert(std::is_same_v<std::remove_cv_t<const volatile int>, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_const",
+        "std::remove_volatile",
+        "std::add_cv"
+      ]
+    },
+    "std::add_const": {
+      "title": "std::add_const",
+      "type": "type trait",
+      "description": "يُضيف مؤهّل const إلى النوع. يُنتج struct به ::type. النسخة المختصرة add_const_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة لإضافة const إلى نوع في القوالب.",
+      "example": "static_assert(std::is_same_v<std::add_const_t<int>, const int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::add_const_t",
+        "std::remove_const",
+        "std::add_volatile"
+      ]
+    },
+    "std::add_volatile": {
+      "title": "std::add_volatile",
+      "type": "type trait",
+      "description": "يُضيف مؤهّل volatile إلى النوع. النسخة المختصرة add_volatile_t تُرجع النوع مباشرة.",
+      "usage": "نادر الاستخدام. يظهر عند الحاجة لإضافة volatile إلى نوع في القوالب.",
+      "example": "static_assert(std::is_same_v<std::add_volatile_t<int>, volatile int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::add_const",
+        "std::remove_volatile",
+        "std::add_cv"
+      ]
+    },
+    "std::add_cv": {
+      "title": "std::add_cv",
+      "type": "type trait",
+      "description": "يُضيف const و volatile معًا إلى النوع. النسخة المختصرة add_cv_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة لإضافة كلا المؤهلين إلى نوع.",
+      "example": "static_assert(std::is_same_v<std::add_cv_t<int>, const volatile int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::add_const",
+        "std::add_volatile",
+        "std::remove_cv"
+      ]
+    },
+    "std::remove_reference": {
+      "title": "std::remove_reference",
+      "type": "type trait",
+      "description": "يزيل المرجع (lvalue أو rvalue) من النوع. يُنتج struct به ::type. النسخة المختصرة remove_reference_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة للنوع الأساسي بدون مرجع، شائع جدًا في perfect forwarding.",
+      "example": "static_assert(std::is_same_v<std::remove_reference_t<int&>, int>);\nstatic_assert(std::is_same_v<std::remove_reference_t<int&&>, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_reference_t",
+        "std::add_lvalue_reference",
+        "std::add_rvalue_reference"
+      ]
+    },
+    "std::add_lvalue_reference": {
+      "title": "std::add_lvalue_reference",
+      "type": "type trait",
+      "description": "يُضيف مرجعًا يساريًا (T&) إلى النوع. النسخة المختصرة add_lvalue_reference_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة لتحويل نوع إلى مرجع يساري في القوالب.",
+      "example": "static_assert(std::is_same_v<std::add_lvalue_reference_t<int>, int&>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::add_rvalue_reference",
+        "std::remove_reference",
+        "std::is_lvalue_reference"
+      ]
+    },
+    "std::add_rvalue_reference": {
+      "title": "std::add_rvalue_reference",
+      "type": "type trait",
+      "description": "يُضيف مرجعًا يمينيًا (T&&) إلى النوع. النسخة المختصرة add_rvalue_reference_t تُرجع النوع مباشرة.",
+      "usage": "يظهر في std::forward و std::move لتحويل الأنواع إلى مراجع يمينية.",
+      "example": "static_assert(std::is_same_v<std::add_rvalue_reference_t<int>, int&&>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::add_lvalue_reference",
+        "std::remove_reference",
+        "std::is_rvalue_reference"
+      ]
+    },
+    "std::remove_pointer": {
+      "title": "std::remove_pointer",
+      "type": "type trait",
+      "description": "يزيل مؤشرًا واحدًا من النوع. النسخة المختصرة remove_pointer_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة للنوع المُشار إليه بدلًا من المؤشر نفسه.",
+      "example": "static_assert(std::is_same_v<std::remove_pointer_t<int*>, int>);\nstatic_assert(std::is_same_v<std::remove_pointer_t<int**>, int*>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::add_pointer",
+        "std::remove_reference",
+        "std::is_pointer"
+      ]
+    },
+    "std::add_pointer": {
+      "title": "std::add_pointer",
+      "type": "type trait",
+      "description": "يُضيف مؤشرًا إلى النوع. إذا كان النوع مرجعًا يزيل المرجع أولًا ثم يُضيف المؤشر. النسخة المختصرة add_pointer_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة لتحويل نوع إلى مؤشر في القوالب.",
+      "example": "static_assert(std::is_same_v<std::add_pointer_t<int>, int*>);\nstatic_assert(std::is_same_v<std::add_pointer_t<int&>, int*>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_pointer",
+        "std::is_pointer",
+        "std::remove_reference"
+      ]
+    },
+    "std::make_signed": {
+      "title": "std::make_signed",
+      "type": "type trait",
+      "description": "يُحوّل نوع صحيح غير مُوقَّع إلى النوع المُوقَّع المقابل (مثل unsigned int إلى int). النسخة المختصرة make_signed_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة لإجراء عمليات حسابية موقّعة على أنواع غير موقّعة.",
+      "example": "static_assert(std::is_same_v<std::make_signed_t<unsigned int>, int>);\nstatic_assert(std::is_same_v<std::make_signed_t<size_t>, ssize_t>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::make_unsigned",
+        "std::is_signed",
+        "std::is_unsigned"
+      ]
+    },
+    "std::make_unsigned": {
+      "title": "std::make_unsigned",
+      "type": "type trait",
+      "description": "يُحوّل نوع صحيح مُوقَّع إلى النوع غير المُوقَّع المقابل (مثل int إلى unsigned int). النسخة المختصرة make_unsigned_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة لعمليات bitwise أو فهارس على أنواع موقّعة.",
+      "example": "static_assert(std::is_same_v<std::make_unsigned_t<int>, unsigned int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::make_signed",
+        "std::is_signed",
+        "std::is_unsigned"
+      ]
+    },
+    "std::remove_extent": {
+      "title": "std::remove_extent",
+      "type": "type trait",
+      "description": "يزيل بُعدًا واحدًا من نوع مصفوفة. النسخة المختصرة remove_extent_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند التعامل مع أنواع المصفوفات في القوالب للحصول على نوع العنصر.",
+      "example": "static_assert(std::is_same_v<std::remove_extent_t<int[5]>, int>);\nstatic_assert(std::is_same_v<std::remove_extent_t<int[5][3]>, int[3]>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_all_extents",
+        "std::extent",
+        "std::rank"
+      ]
+    },
+    "std::remove_all_extents": {
+      "title": "std::remove_all_extents",
+      "type": "type trait",
+      "description": "يزيل كل أبعاد المصفوفة من النوع ويُرجع نوع العنصر. النسخة المختصرة remove_all_extents_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة لنوع العنصر الأساسي لمصفوفة متعددة الأبعاد.",
+      "example": "static_assert(std::is_same_v<std::remove_all_extents_t<int[5][3][2]>, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_extent",
+        "std::rank",
+        "std::extent"
+      ]
+    },
+    "std::aligned_storage": {
+      "title": "std::aligned_storage",
+      "type": "type trait",
+      "description": "يُعرّف نوع POD بمحاذاة وحجم مُحددين. مُهمل في C++23. يُستخدم لتخزين كائنات بشكل خام.",
+      "usage": "يظهر في كود قديم لإنشاء مخازن مؤقتة محاذاة. استخدم std::aligned_alloc أو alignas بدلًا منه.",
+      "example": "using Storage = std::aligned_storage_t<sizeof(int), alignof(int)>;\nStorage s;\nnew (&s) int(42);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::aligned_union",
+        "alignas",
+        "std::aligned_alloc"
+      ]
+    },
+    "std::aligned_union": {
+      "title": "std::aligned_union",
+      "type": "type trait",
+      "description": "يُعرّف نوع POD مناسب لتخزين أي نوع من قائمة أنواع. مُهمل في C++23.",
+      "usage": "يظهر في كود قديم لإنشاء مخازن مؤقتة يمكنها استضافة أنواع مختلفة.",
+      "example": "using Union = std::aligned_union_t<0, int, double, char>;\nUnion u;\nnew (&u) int(42);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::aligned_storage",
+        "alignas",
+        "std::variant"
+      ]
+    },
+    "std::decay": {
+      "title": "std::decay",
+      "type": "type trait",
+      "description": "يُطبّق التحويلات الضمنية التي تحدث عند تمرير قيمة إلى دالة: المصفوفات تتحول لمؤشرات، الدوال لمؤشرات دوال، ويُزال const/volatile من المراجع. النسخة المختصرة decay_t.",
+      "usage": "يظهر عند محاكاة سلوك pass-by-value في القوالب أو عند تطبيع الأنواع.",
+      "example": "static_assert(std::is_same_v<std::decay_t<int&>, int>);\nstatic_assert(std::is_same_v<std::decay_t<const int&>, int>);\nstatic_assert(std::is_same_v<std::decay_t<int[5]>, int*>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::remove_reference",
+        "std::remove_cv",
+        "std::common_type"
+      ]
+    },
+    "std::common_type": {
+      "title": "std::common_type",
+      "type": "type trait",
+      "description": "يُحدد النوع المشترك الذي يمكن تحويل كلا النوعين إليه. مثلاً int و double يُعطيان double. النسخة المختصرة common_type_t.",
+      "usage": "يظهر عند كتابة دوال أو قوالب تقبل أنواعًا مختلفة وتحتاج نوع إرجاع مشترك.",
+      "example": "static_assert(std::is_same_v<std::common_type_t<int, double>, double>);\nstatic_assert(std::is_same_v<std::common_type_t<int, long>, long>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::decay",
+        "std::is_convertible",
+        "std::conditional"
+      ]
+    },
+    "std::underlying_type": {
+      "title": "std::underlying_type",
+      "type": "type trait",
+      "description": "يُرجع النوع الأساسي لـ enum (enum class أو unscoped enum). يُنتج struct به ::type. النسخة المختصرة underlying_type_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند الحاجة للتعامل مع القيم الرقمية لـ enum أو تحويلها.",
+      "example": "enum class Color : uint8_t { Red, Green };\nstatic_assert(std::is_same_v<std::underlying_type<Color>::type, uint8_t>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::underlying_type_t",
+        "std::is_enum",
+        "std::is_same"
+      ]
+    },
+    "std::invoke_result": {
+      "title": "std::invoke_result",
+      "type": "type trait",
+      "description": "يُحدد نوع الإرجاع عند استدعاء callable بأنواع مُعطاة عبر std::invoke (C++17). حلّ محل result_of المُهمل.",
+      "usage": "يظهر عند كتابة قوالب تحتاج معرفة نوع إرجاع callable.",
+      "example": "int func(double);\nstatic_assert(std::is_same_v<std::invoke_result_t<decltype(func), double>, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::result_of",
+        "std::invoke",
+        "std::is_invocable"
+      ]
+    },
+    "std::result_of": {
+      "title": "std::result_of",
+      "type": "type trait",
+      "description": "يُحدد نوع إرجاع callable. مُهمل في C++17 لصالح invoke_result. بناء الجملة مختلف: يأخذ نوع الدالة لا الأنواع المنفصلة.",
+      "usage": "يظهر في كود C++14 أو أقدم. استخدم invoke_result في C++17+.",
+      "example": "int func(double);\nstatic_assert(std::is_same_v<std::result_of_t<decltype(func)(double)>, int>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::invoke_result",
+        "std::invoke",
+        "std::declval"
+      ]
+    },
+    "std::extent": {
+      "title": "std::extent",
+      "type": "type trait",
+      "description": "يُرجع عدد العناصر في بُعد مُحدد من مصفوفة. القيمة الافتراضية 0 إذا لم يكن البُعد موجودًا. النسخة المختصرة extent_v.",
+      "usage": "يظهر عند الحاجة لمعرفة حجم بُعد معين من مصفوفة في وقت الترجمة.",
+      "example": "static_assert(std::extent_v<int[5]> == 5);\nstatic_assert(std::extent_v<int[3][4], 1> == 4);\nstatic_assert(std::extent_v<int[], 0> == 0);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::rank",
+        "std::remove_extent",
+        "std::remove_all_extents"
+      ]
+    },
+    "std::rank": {
+      "title": "std::rank",
+      "type": "type trait",
+      "description": "يُرجع عدد أبعاد المصفوفة. النسخة المختصرة rank_v.",
+      "usage": "يظهر عند الحاجة لمعرفة عدد أبعاد مصفوفة في وقت الترجمة.",
+      "example": "static_assert(std::rank_v<int> == 0);\nstatic_assert(std::rank_v<int[5]> == 1);\nstatic_assert(std::rank_v<int[3][4]> == 2);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::extent",
+        "std::remove_extent",
+        "std::is_array"
+      ]
+    },
+    "std::alignment_of": {
+      "title": "std::alignment_of",
+      "type": "type trait",
+      "description": "يُرجع محاذاة النوع (alignment) بالبايتات. مُهمل لصالح alignof. النسخة المختصرة alignment_of_v.",
+      "usage": "يظهر في كود قديم. استخدم alignof مباشرة في C++11+.",
+      "example": "static_assert(std::alignment_of_v<int> == alignof(int));\nstatic_assert(std::alignment_of_v<double> >= sizeof(double));",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "alignas",
+        "alignof",
+        "std::aligned_storage"
+      ]
+    },
+    "std::type_identity": {
+      "title": "std::type_identity",
+      "type": "type trait",
+      "description": "يُرجع النوع كما هو بدون أي تعديل (C++20). مفيد لتجنب template argument deduction في سياقات معينة.",
+      "usage": "يظهر كمعامل افتراضي في القوالب لمنع الـ deduction على معامل معين.",
+      "example": "template<typename T>\nvoid func(T x, std::type_identity_t<T> = T{});\nfunc(42); // T = int، المعامل الثاني لا يُشارك في deduction",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::conditional",
+        "std::decay",
+        "std::enable_if"
+      ]
+    },
+    "std::conditional": {
+      "title": "std::conditional",
+      "type": "type trait",
+      "description": "يختار نوعًا من نوعين بناءً على شرط bool. يُنتج struct به ::type. النسخة المختصرة conditional_t تُرجع النوع مباشرة.",
+      "usage": "يظهر عند اختيار أنواع مختلفة في وقت الترجمة بناءً على شروط.",
+      "example": "static_assert(std::is_same_v<std::conditional<true, int, double>::type, int>);\nstatic_assert(std::is_same_v<std::conditional<false, int, double>::type, double>);",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::conditional_t",
+        "std::enable_if",
+        "std::is_same"
+      ]
+    },
+    "std::tuple_element": {
+      "title": "std::tuple_element",
+      "type": "type trait",
+      "description": "يُرجع نوع العنصر في فهرس مُحدد من std::tuple أو std::pair. يُنتج struct به ::type. النسخة المختصرة tuple_element_t.",
+      "usage": "يظهر عند الحاجة لمعرفة نوع عنصر معين في tuple أو pair في القوالب.",
+      "example": "using T = std::tuple<int, double, char>;\nstatic_assert(std::is_same_v<std::tuple_element_t<0, T>, int>);\nstatic_assert(std::is_same_v<std::tuple_element_t<1, T>, double>);",
+      "includeHeader": "#include <tuple>",
+      "related": [
+        "std::tuple_size",
+        "std::tuple",
+        "std::get"
+      ]
+    },
+    "std::tuple_size": {
+      "title": "std::tuple_size",
+      "type": "type trait",
+      "description": "يُرجع عدد عناصر std::tuple أو std::pair أو std::array كقيمة ثابتة. النسخة المختصرة tuple_size_v.",
+      "usage": "يظهر عند الحاجة لمعرفة حجم tuple في وقت الترجمة.",
+      "example": "static_assert(std::tuple_size_v<std::tuple<int, double>> == 2);\nstatic_assert(std::tuple_size_v<std::pair<int, char>> == 2);\nstatic_assert(std::tuple_size_v<std::array<int, 5>> == 5);",
+      "includeHeader": "#include <tuple>",
+      "related": [
+        "std::tuple_element",
+        "std::tuple",
+        "std::array"
+      ]
+    },
+    "std::ratio_subtract": {
+      "title": "std::ratio_subtract",
+      "type": "type trait",
+      "description": "يُرجع نتيجة طرح نسبتين compile-time (std::ratio). يُنتج نوع ratio يمثل النتيجة.",
+      "usage": "يظهر في الحسابات الزمنية في وقت الترجمة مثل std::chrono.",
+      "example": "using R = std::ratio_subtract<std::ratio<3, 4>, std::ratio<1, 4>>;\nstatic_assert(R::num == 1 && R::den == 2); // 3/4 - 1/4 = 1/2",
+      "includeHeader": "#include <ratio>",
+      "related": [
+        "std::ratio_add",
+        "std::ratio_multiply",
+        "std::chrono::duration"
+      ]
+    },
+    "std::is_empty": {
+      "title": "std::is_empty",
+      "type": "type trait",
+      "description": "يتحقق مما إذا كان الصنف فارغًا (لا يحتوي بيانات أعضاء غير ثابتة، ولا لديه أصناف أساسية غير فارغة، ولا دوال افتراضية). الأصناف الفارغة مفيدة لتحسين الأداء عبر Empty Base Optimization (EBO).",
+      "usage": "يظهر عند التحقق من إمكانية تطبيق EBO أو عند بناء type traits مخصصة.",
+      "example": "static_assert(std::is_empty_v<std::allocator<int>>); // true\nstatic_assert(!std::is_empty_v<std::vector<int>>); // false",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_class",
+        "std::is_polymorphic",
+        "std::is_final"
+      ]
+    },
+    "std::is_empty_v": {
+      "title": "std::is_empty_v",
+      "type": "type trait",
+      "description": "اختصار قالب متغير لـ std::is_empty<T>::value. يُرجع true إذا كان الصنف فارغًا.",
+      "usage": "استخدمه بدل is_empty<T>::value لأنه أنظف وأقصر.",
+      "example": "template<typename T>\nvoid check() {\n    if constexpr (std::is_empty_v<T>) {\n        // يمكن تطبيق EBO\n    }\n}",
+      "includeHeader": "#include <type_traits>",
+      "related": [
+        "std::is_empty",
+        "std::is_class_v",
+        "std::is_polymorphic_v"
+      ]
+    }
+  }
+}

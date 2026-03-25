@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_SetTrackIOStream",
+    "slug": "mix-set-track-io-stream",
+    "titleArabic": "Set a MIX_Track 's input to an\nSDL_IOStream",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-set-track-io-stream",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-set-track-io-stream.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Set a MIX_Track 's input to an\nSDL_IOStream",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل MIX Set Track IO الدفق داخل SDL3_mixer، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل MIX Set Track IO الدفق داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true on success, false on error; call SDL_GetError()\nfor details. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Set a MIX_Track 's input to an\nSDL_IOStream."
+  },
+  "signature": {
+    "raw": "bool MIX_SetTrackIOStream(MIX_Track *track, SDL_IOStream *io, bool closeio);",
+    "returnType": "bool",
+    "parameters": [
+      "MIX_Track *track",
+      "SDL_IOStream *io",
+      "bool closeio"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "track",
+        "type": "MIX_Track *",
+        "descriptionArabic": "يمثل المعامل track من النوع MIX_Track * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the track on which to set a new audio input."
+      },
+      {
+        "name": "io",
+        "type": "SDL_IOStream *",
+        "descriptionArabic": "يمثل المعامل io من النوع SDL_IOStream * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new i/o stream to use as the track's input."
+      },
+      {
+        "name": "closeio",
+        "type": "bool",
+        "descriptionArabic": "يمثل المعامل closeio من النوع bool القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "if true, close the stream when done with it."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This is not the recommended way to set a track's input, but this can\nbe useful for a very specific scenario: a large file, to be played once,\nthat must be read from disk in small chunks as needed. In most cases,\nhowever, it is preferable to create a MIX_Audio ahead of time and use MIX_SetTrackAudio () instead.",
+      "The stream supplied here should provide an audio file in a supported\nformat. SDL_mixer will parse it during this call to make sure it's\nvalid, and then will read file data from the stream as it needs to\ndecode more during mixing.",
+      "The stream must be able to seek through the complete set of data, or\nthis function will fail.",
+      "A given IOStream may only be assigned to a single track at a time;\nduplicate assignments won't return an error, but assigning a stream to\nmultiple tracks will cause each track to read from the stream\narbitrarily, causing confusion, incorrect mixing, or failure to\ndecode.",
+      "Once a track has a valid input, it can start mixing sound by calling\n MIX_PlayTrack (), or possibly MIX_PlayTag ().",
+      "Calling this function with a NULL stream is legal, and removes any\ninput from the track. If the track was currently playing, the next time\nthe mixer runs, it'll notice this and mark the track as stopped, calling\nany assigned MIX_TrackStoppedCallback .",
+      "It is legal to change the input of a track while it's playing,\nhowever some states, like loop points, may cease to make sense with the\nnew audio. In such a case, one can call MIX_PlayTrack again to adjust\nparameters.",
+      "The provided stream must remain valid until the track no longer needs\nit (either by changing the track's input or destroying the track)."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true on success, false on error; call SDL_GetError()\nfor details.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_SetTrackIOStream",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_SetTrackRawIOStream",
+        "route": "#ref/sdl3-mixer/functions/mix-set-track-raw-io-stream",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

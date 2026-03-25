@@ -1,0 +1,221 @@
+[
+  {
+    "name": "$<CONFIG:cfg>",
+    "aliases": [
+      "CONFIG generator expression",
+      "$<CONFIG>"
+    ],
+    "titleArabic": "تعبير مولد يتحقق مما إذا كانت تشكيلة البناء الحالية مطابقة للقيمة المحددة",
+    "actualMeaningArabic": "هذا التعبير يرجع 1 إذا كانت تشكيلة البناء الحالية تساوي cfg، وإلا يرجع 0. يستخدم لتغيير السلوك بحسب Debug أو Release أو تشكيلة مخصصة.",
+    "purposeArabic": "يستخدم لتفعيل تعريفات أو مسارات أو خيارات مختلفة بين Debug وRelease وRelWithDebInfo.",
+    "whyUseArabic": "لأن بعض الإعدادات يجب أن تختلف باختلاف نوع البناء دون إنشاء targets منفصلة.",
+    "carriedValueArabic": "يُقيَّم في مرحلة generate أو وقت الاستهلاك، ويعتمد على التشكيلة الفعلية التي يبنيها generator.",
+    "signature": "$<CONFIG:cfg>",
+    "usage": [
+      "شائع داخل $<$<CONFIG:Debug>:...> لتفعيل تعريف في Debug فقط.",
+      "يمكن دمجه مع IF عبر $<IF:$<CONFIG:Debug>,a,b> لاختيار قيمة حسب التشكيلة."
+    ],
+    "notes": [
+      "القيمة cfg حساسة لحالة الأحرف مع بعض generators.",
+      "لا يعمل كما هو متوقع مع multi-config generators مثل Visual Studio إلا داخل السياق المناسب."
+    ],
+    "instructions": [
+      "استخدمه عندما تحتاج سلوكاً مختلفاً حسب التشكيلة، لا حسب متغير CMAKE_BUILD_TYPE فقط."
+    ],
+    "example": "target_compile_definitions(calculator\n  PRIVATE $<$<CONFIG:Debug>:CALC_DEBUG_BUILD>\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#configuration-expressions",
+    "related": [
+      "CMAKE_BUILD_TYPE",
+      "target_compile_definitions",
+      "Generator Expressions"
+    ]
+  },
+  {
+    "name": "$<BUILD_INTERFACE:...>",
+    "aliases": [
+      "BUILD_INTERFACE",
+      "build interface expression"
+    ],
+    "titleArabic": "تعبير مولد يحدد ما يُستخدم عندما يُستهلك target من داخل شجرة البناء",
+    "actualMeaningArabic": "هذا التعبير يُرجع المحتوى المحدد عندما يُستهلك target من داخل نفس شجرة البناء، ويُتجاهل عند التصدير أو التثبيت.",
+    "purposeArabic": "يستخدم داخل target_include_directories لتحديد مسارات تختلف بين البناء المحلي والتثبيت.",
+    "whyUseArabic": "لأن المسارات النسبية تختلف بين build tree وinstall tree، وهذا التعبير يضمن صحة كل سياق.",
+    "carriedValueArabic": "يُقيَّم حسب سياق الاستهلاك: يظهر داخل البناء ويختفي عند التصدير.",
+    "signature": "$<BUILD_INTERFACE:content>",
+    "usage": [
+      "شائع جداً مع $<INSTALL_INTERFACE:...> داخل نفس target_include_directories.",
+      "المحتوى غالباً مسار مثل ${CMAKE_CURRENT_SOURCE_DIR}/include."
+    ],
+    "notes": [
+      "لا يستعمل وحده؛ يظهر داخل قائمة أو خاصية تستوعب تعبيرات مولد متعددة.",
+      "يُستخدم مع targets قابلة للتصدير."
+    ],
+    "instructions": [
+      "اجعل المسارات داخل BUILD_INTERFACE تشير إلى source tree لا binary tree."
+    ],
+    "example": "target_include_directories(calclib\n  PUBLIC\n    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n    $<INSTALL_INTERFACE:include>\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#build-configuration-expressions",
+    "related": [
+      "$<INSTALL_INTERFACE:...>",
+      "target_include_directories",
+      "Generator Expressions"
+    ]
+  },
+  {
+    "name": "$<INSTALL_INTERFACE:...>",
+    "aliases": [
+      "INSTALL_INTERFACE",
+      "install interface expression"
+    ],
+    "titleArabic": "تعبير مولد يحدد ما يُستخدم عندما يُستهلك target بعد التثبيت",
+    "actualMeaningArabic": "هذا التعبير يُرجع المحتوى المحدد عندما يُستهلك target من موقع التثبيت، ويُتجاهل أثناء البناء المحلي.",
+    "purposeArabic": "يستخدم داخل target_include_directories لتحديد مسارات الترويسات بعد التثبيت.",
+    "whyUseArabic": "لأن المستهلك بعد التثبيت يحتاج مسارات نسبية لوجهة التثبيت لا لشجرة المصدر.",
+    "carriedValueArabic": "يُقيَّم فقط عند استهلاك target مثبَّت، ولا يظهر في build tree العادي.",
+    "signature": "$<INSTALL_INTERFACE:content>",
+    "usage": [
+      "يُقترن دائماً تقريباً مع $<BUILD_INTERFACE:...>.",
+      "المسار غالباً نسبي مثل include أي أنه سيُحل نسبة إلى CMAKE_INSTALL_PREFIX."
+    ],
+    "notes": [
+      "يجب أن يُستخدم مع targets قابلة للتصدير عبر install(EXPORT).",
+      "لا تضع مسارات مطلقة هنا لأنها قد لا وجود لها على آلة المستهلك."
+    ],
+    "instructions": [
+      "تأكد أن المسار يطابق layout التثبيت الفعلي للمكتبة."
+    ],
+    "example": "target_include_directories(calclib\n  PUBLIC\n    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n    $<INSTALL_INTERFACE:include>\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#build-configuration-expressions",
+    "related": [
+      "$<BUILD_INTERFACE:...>",
+      "install",
+      "Generator Expressions"
+    ]
+  },
+  {
+    "name": "$<TARGET_FILE:tgt>",
+    "aliases": [
+      "TARGET_FILE",
+      "target file path expression"
+    ],
+    "titleArabic": "تعبير مولد يُرجع المسار الكامل للملف الرئيسي الناتج عن target",
+    "actualMeaningArabic": "هذا التعبير يُرجع المسار الكامل للملف القابل للتنفيذ أو المكتبة الذي يولّده target المحدد.",
+    "purposeArabic": "يستخدم للحصول على مسار artifact الناتج دون معرفة امتداده أو موقعه المسبق.",
+    "whyUseArabic": "لأن المسار واسم الملف قد يختلفان بحسب منصة وبrefix وoutput_name، وهذا التعبير يلخص ذلك.",
+    "carriedValueArabic": "يُقيَّم في وقت generate ويعطي المسار النهائي الذي سيُكتب إليه الملف.",
+    "signature": "$<TARGET_FILE:tgt>",
+    "usage": [
+      "مفيد في add_custom_command عندما تحتاج تمرير artifact كمدخل.",
+      "يمكن استخدامه في scripts أو اختبارات تحتاج المسار الحقيقي."
+    ],
+    "notes": [
+      "tgt يجب أن يكون target معروفاً في نفس المشروع.",
+      "يعطي الملف الرئيسي فقط؛ للمكتبات قد تحتاج TARGET_LINKER_FILE."
+    ],
+    "instructions": [
+      "استخدمه بدل بناء المسار يدوياً من متغيرات متعددة."
+    ],
+    "example": "add_custom_command(TARGET calculator POST_BUILD\n  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:calculator> ${CMAKE_BINARY_DIR}/bin/\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#target-dependent-expressions",
+    "related": [
+      "add_custom_command",
+      "add_executable",
+      "Generator Expressions"
+    ]
+  },
+  {
+    "name": "$<IF:cond,true_val,false_val>",
+    "aliases": [
+      "IF generator expression",
+      "$<IF>"
+    ],
+    "titleArabic": "تعبير مولد شرطي يختار قيمة حسب نتيجة شرط آخر",
+    "actualMeaningArabic": "هذا التعبير يُقيّم cond فإذا كان صحيحاً يُرجع true_val وإلا يُرجع false_val.",
+    "purposeArabic": "يستخدم لاختيار قيم مختلفة داخل generator expression واحد بدل تكرار السطر كاملاً.",
+    "whyUseArabic": "يجعل التعبيرات المركبة أكثر إيجازاً ويقلل تكرار المنطق الشرطي.",
+    "carriedValueArabic": "يُقيَّم في وقت generate ويعتمد على قيمة cond في تلك اللحظة.",
+    "signature": "$<IF:condition,true_value,false_value>",
+    "usage": [
+      "شائع مع CONFIG أو PLATFORM_ID لاختيار قيمة مختلفة.",
+      "يمكن تداخله مع تعبيرات أخرى."
+    ],
+    "notes": [
+      "جميع الفروع تُقيَّم لغرض التحقق من الصحة حتى لو لم تُستخدم.",
+      "cond يجب أن يُرجع 1 أو 0."
+    ],
+    "instructions": [
+      "استخدمه لتبسيط المنطق الشرطي داخل target_* commands."
+    ],
+    "example": "target_compile_definitions(calculator PRIVATE\n  $<IF:$<CONFIG:Debug>,DEBUG_MODE,RELEASE_MODE>\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions",
+    "related": [
+      "$<CONFIG:cfg>",
+      "$<AND:...>",
+      "$<OR:...>",
+      "Generator Expressions"
+    ]
+  },
+  {
+    "name": "$<PLATFORM_ID:ids>",
+    "aliases": [
+      "PLATFORM_ID",
+      "platform id expression"
+    ],
+    "titleArabic": "تعبير مولد يتحقق من منصة البناء الحالية",
+    "actualMeaningArabic": "هذا التعبير يُرجع 1 إذا كانت منصة البناء الحالية ضمن القائمة ids، وإلا يُرجع 0.",
+    "purposeArabic": "يستخدم لتفعيل إعدادات أو تعريفات أو مصادر مختلفة حسب نظام التشغيل.",
+    "whyUseArabic": "لأن بعض الخيارات أو الملفات تختلف بين Windows وLinux وmacOS.",
+    "carriedValueArabic": "يُقيَّم في وقت generate بناءً على CMAKE_SYSTEM_NAME.",
+    "signature": "$<PLATFORM_ID:platform_ids>",
+    "usage": [
+      "شائع مع $<IF:...> لاختيار مسارات أو مكتبات حسب المنصة.",
+      "ids يمكن أن تكون قائمة مفصولة بفواصل منقوطة."
+    ],
+    "notes": [
+      "أسماء المنصات تشمل Windows وLinux وDarwin.",
+      "لا يتحول تلقائياً عند cross-compile؛ يعتمد على CMAKE_SYSTEM_NAME."
+    ],
+    "instructions": [
+      "استخدمه بدل if(WIN32) داخل generator expressions لأن الأخيرة لا تعمل هناك."
+    ],
+    "example": "target_compile_definitions(calculator PRIVATE\n  $<IF:$<PLATFORM_ID:Windows>,WINDOWS_BUILD,UNIX_BUILD>\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#platform-expressions",
+    "related": [
+      "CMAKE_SYSTEM_NAME",
+      "WIN32",
+      "UNIX",
+      "Generator Expressions"
+    ]
+  },
+  {
+    "name": "Generator Expressions",
+    "aliases": [
+      "$<...>",
+      "generator expressions"
+    ],
+    "titleArabic": "تعابير مؤجلة التقييم تُقرأ في سياقات محددة مثل خصائص targets والتثبيت والاختبار",
+    "actualMeaningArabic": "Generator Expressions ليست أوامر configure عادية، بل تراكيب من الشكل $<...> يؤجل CMake تقييمها حتى سياق generate أو حتى وقت استهلاك خاصية معينة.",
+    "purposeArabic": "تستخدم لتمييز الإعدادات بحسب التشكيلة أو اللغة أو نوع المستهلك أو مرحلة BUILD_INTERFACE وINSTALL_INTERFACE.",
+    "whyUseArabic": "لأنك تحتاج أحياناً أن يختلف include path أو compile definition أو link item بين Debug وRelease أو بين build tree وinstall tree دون نسخ targets منفصلة.",
+    "carriedValueArabic": "لا تظهر قيمتها فور قراءة الملف، بل عندما يوسّع CMake الخاصية أو الأمر الذي يحتويها في السياق المناسب.",
+    "usage": [
+      "شائعة جداً داخل target_include_directories وtarget_compile_definitions وخصائص التصدير.",
+      "تُعد جزءاً من مرحلة generate أكثر من configure لأنها لا تُحسم عادةً في لحظة كتابة السطر."
+    ],
+    "notes": [
+      "أشهر أمثلتها $<CONFIG:Debug> و$<BUILD_INTERFACE:...> و$<INSTALL_INTERFACE:...>.",
+      "القيمة نفسها قد تختلف باختلاف target المستهلك أو التشكيلة أو مرحلة التصدير."
+    ],
+    "instructions": [
+      "استخدمها عندما يكون الشرط متعلقًا بالسياق الذي سيُولَّد له البناء أو يُستهلك منه، لا عندما يكون قرار configure ثابتًا مرة واحدة."
+    ],
+    "example": "target_include_directories(calclib\n  PUBLIC\n    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n    $<INSTALL_INTERFACE:include>\n)\n\ntarget_compile_definitions(calculator\n  PRIVATE $<$<CONFIG:Debug>:CALC_DEBUG_BUILD>\n)",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html",
+    "related": [
+      "target_include_directories",
+      "target_compile_definitions",
+      "CMAKE_BUILD_TYPE",
+      "INTERFACE_INCLUDE_DIRECTORIES"
+    ]
+  }
+]

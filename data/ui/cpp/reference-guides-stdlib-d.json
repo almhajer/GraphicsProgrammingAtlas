@@ -1,0 +1,657 @@
+{
+  "referenceGuides": {
+    "std::for_each": {
+      "fullProjectNoteArabic": "std::for_each تُنفّذ دالة على كل عنصر في مجال. فائدتها أنها أوضح نيةً من حلقة for العادية عند التطبيق على مجال كامل.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المقصود تطبيق دالة على كل عنصر بلا شرط.",
+        "الدالة يمكنها تعديل العناصر إذا كانت تأخذ مرجعًا.",
+        "ترجع الدالة المُمررة نفسها — مفيد لتجميع النتائج."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تطبيق دالة على كل عنصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    std::for_each(v.begin(), v.end(), [](int& x) { x *= 2; });\n    return v[0] + v[1] + v[2];\n}",
+          "explanationArabic": "for_each تُنفّذ lambda على كل عنصر. المرجع int& يسمح بتعديل العناصر.",
+          "relatedTokens": [
+            "std::for_each",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "استخدام دالة عادية",
+          "code": "#include <algorithm>\n#include <vector>\n\nvoid print(int x) { (void)x; }\n\nint main() {\n    std::vector<int> v = {10, 20, 30};\n    std::for_each(v.begin(), v.end(), print);\n    return v.size();\n}",
+          "explanationArabic": "يمكن تمرير دالة عادية بدل lambda. هذا مفيد عندما تكون الدالة معرّفة مسبقًا.",
+          "relatedTokens": [
+            "std::for_each",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "for_each مع مدى مباشر",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    std::for_each(v.begin(), v.end(), [](int x) { (void)x; });\n    return v.size();\n}",
+          "explanationArabic": "في C++20 يمكن استخدام for_each مع المدى مباشرة. المعنى: تطبق الدالة على كل عنصر دون تغيير الترتيب أو الحجم.",
+          "relatedTokens": [
+            "std::for_each"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::transform",
+        "std::vector"
+      ]
+    },
+    "std::count_if": {
+      "fullProjectNoteArabic": "std::count_if تَعُد العناصر التي تُحقق شرطًا محددًا. فائدتها أنها أوضح من كتابة عداد يدوي داخل حلقة.",
+      "projectStepsArabic": [
+        "استخدمها لعد العناصر المطابقة لشرط.",
+        "مرر lambda أو دالة تُرجع bool.",
+        "التعقيد O(n) — تمر على كل عنصر."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "عد الأعداد الزوجية",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5, 6};\n    auto n = std::count_if(v.begin(), v.end(), [](int x) { return x % 2 == 0; });\n    return static_cast<int>(n);\n}",
+          "explanationArabic": "count_if تمر على كل عنصر وتزيد العداد عندما تُرجع lambda true. النتيجة 3 (2, 4, 6).",
+          "relatedTokens": [
+            "std::count_if",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "عد النصوص الطويلة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n\nint main() {\n    std::vector<std::string> words = {\"a\", \"bb\", \"ccc\", \"dd\"};\n    auto n = std::count_if(words.begin(), words.end(), [](const std::string& s) { return s.size() > 1; });\n    return static_cast<int>(n);\n}",
+          "explanationArabic": "count_if لا تقتصر على الأرقام. هنا نعد النصوص التي طولها أكبر من 1.",
+          "relatedTokens": [
+            "std::count_if",
+            "std::vector",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن count",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 2, 3, 2};\n    auto c = std::count(v.begin(), v.end(), 2);\n    auto ci = std::count_if(v.begin(), v.end(), [](int x) { return x > 1; });\n    return c + ci;\n}",
+          "explanationArabic": "count تبحث عن قيمة محددة (3 هنا). count_if تبحث بشروط (4 هنا: 2,2,3,2). استخدم count عند المساواة وcount_if عند الشرط.",
+          "relatedTokens": [
+            "std::count_if",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::find_if",
+        "std::vector"
+      ]
+    },
+    "std::min_element": {
+      "fullProjectNoteArabic": "std::min_element تُرجع مكررًا لأصغر عنصر في مجال. فائدتها أنها أوضح من كتابة بحث يدوي.",
+      "projectStepsArabic": [
+        "استخدمها للبحث عن الأصغر في مجال معروف.",
+        "تُرجع مكررًا لا القيمة — استخدم * للحصول على القيمة.",
+        "يمكن تمرير مقارنة مخصصة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إيجاد الأصغر",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {5, 2, 8, 1};\n    auto it = std::min_element(v.begin(), v.end());\n    return *it;\n}",
+          "explanationArabic": "min_element يمر على كل العناصر ويرجع مكررًا للأصغر. *it يُرجع القيمة (1).",
+          "relatedTokens": [
+            "std::min_element",
+            "std::vector",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "مع مقارنة مخصصة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n\nint main() {\n    std::vector<std::string> v = {\"aaa\", \"b\", \"cc\"};\n    auto it = std::min_element(v.begin(), v.end(), [](const std::string& a, const std::string& b) { return a.size() < b.size(); });\n    return static_cast<int>(it->size());\n}",
+          "explanationArabic": "المقارنة المخصصة تجعل 'الأصغر' يعني 'الأقصر' هنا. هذا أنسب من مقارنة أبجدية.",
+          "relatedTokens": [
+            "std::min_element",
+            "std::vector",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان فحص مجال فارغ",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {5, 3};\n    if (!v.empty()) {\n        auto it = std::min_element(v.begin(), v.end());\n        return *it;\n    }\n    return 0;\n}",
+          "explanationArabic": "min_element على مجال فارغ يُسبب سلوكًا غير معرّف. تحقق دائمًا أن المجال ليس فارغًا قبل فك المكرر.",
+          "relatedTokens": [
+            "std::min_element",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::max_element",
+        "std::minmax_element",
+        "std::vector"
+      ]
+    },
+    "std::max_element": {
+      "fullProjectNoteArabic": "std::max_element تُرجع مكررًا لأكبر عنصر في مجال. عكس min_element تمامًا.",
+      "projectStepsArabic": [
+        "استخدمها للبحث عن الأكبر في مجال معروف.",
+        "تُرجع مكررًا لا القيمة.",
+        "تحقق أن المجال ليس فارغًا قبل فك المكرر."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إيجاد الأكبر",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {3, 7, 2, 9};\n    auto it = std::max_element(v.begin(), v.end());\n    return *it;\n}",
+          "explanationArabic": "max_element يُرجع مكررًا للأكبر (9). نفس نمط min_element لكن بالعكس.",
+          "relatedTokens": [
+            "std::max_element",
+            "std::vector",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "إيجاد الأطول بنصوص",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n\nint main() {\n    std::vector<std::string> v = {\"hi\", \"hello\", \"hey\"};\n    auto it = std::max_element(v.begin(), v.end(), [](const std::string& a, const std::string& b) { return a.size() < b.size(); });\n    return static_cast<int>(it->size());\n}",
+          "explanationArabic": "بمقارنة مخصصة نبحث عن الأطول لا الأبجدي الأكبر. النتيجة 5 (hello).",
+          "relatedTokens": [
+            "std::max_element",
+            "std::vector",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "minmax_element: الأصغر والأكبر معًا",
+          "code": "#include <algorithm>\n#include <vector>\n#include <utility>\n\nint main() {\n    std::vector<int> v = {5, 1, 9, 3};\n    auto [min_it, max_it] = std::minmax_element(v.begin(), v.end());\n    return *min_it + *max_it;\n}",
+          "explanationArabic": "minmax_element تُرجع زوج مكررات للأصغر والأكبر في مرور واحد. أنسب من استدعاء min_element ثم max_element.",
+          "relatedTokens": [
+            "std::max_element",
+            "std::min_element",
+            "std::vector",
+            "auto"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::min_element",
+        "std::minmax_element",
+        "std::vector"
+      ]
+    },
+    "std::swap": {
+      "fullProjectNoteArabic": "std::swap تُبدّل قيمتين بكفاءة. فائدتها أنها أوضح من المتغير المؤقت اليدوي وقد تستخدم move semantics.",
+      "projectStepsArabic": [
+        "استخدمها لتبديل قيمتين بدل المتغير المؤقت.",
+        "مع C++20 استخدم std::ranges::swap أو using std::swap;",
+        "الحاويات توفر swap خاص بها قد يكون أنسب."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تبديل متغيرين",
+          "code": "#include <utility>\n\nint main() {\n    int a = 3, b = 7;\n    std::swap(a, b);\n    return a;\n}",
+          "explanationArabic": "swap تُبدّل القيم: a يصبح 7 وb يصبح 3. أوضح من المتغير المؤقت اليدوي.",
+          "relatedTokens": [
+            "std::swap"
+          ]
+        },
+        {
+          "titleArabic": "تبديل حاويات",
+          "code": "#include <utility>\n#include <vector>\n\nint main() {\n    std::vector<int> a = {1, 2};\n    std::vector<int> b = {3, 4, 5};\n    std::swap(a, b);\n    return static_cast<int>(a.size());\n}",
+          "explanationArabic": "swap مع الحاويات تُبدّل المؤشرات الداخلية لا تنسخ العناصر — O(1). a يصبح {3,4,5} وb يصبح {1,2}.",
+          "relatedTokens": [
+            "std::swap",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: swap مراجع مؤقتة",
+          "code": "#include <utility>\n\nint main() {\n    int x = 1, y = 2;\n    std::swap(x, y);\n    // لا تستخدم swap على مراجع لمتغيرات مؤقتة\n    // std::swap(x, 42); // خطأ: 42 ليس lvalue\n    return x + y;\n}",
+          "explanationArabic": "swap تحتاج lvalue (متغيرات فعلية) لا قيمًا مؤقتة. هذا يختلف عن بعض اللغات التي تسمح بذلك.",
+          "relatedTokens": [
+            "std::swap"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::move",
+        "std::vector"
+      ]
+    },
+    "std::advance": {
+      "fullProjectNoteArabic": "std::advance تُحرّك مكررًا بعدد محدد من الخطوات. للمرورات العشوائية O(1) وللثنائية O(n).",
+      "projectStepsArabic": [
+        "استخدمها لتحريك مكرر بعدد خطوات.",
+        "مع مكررات عشوائية استخدم + مباشرة لأنه أوضح.",
+        "مع مكررات ثنائية الارتباط advance أكثر كفاءة من ++ المتكرر."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تخطي أول عنصرين",
+          "code": "#include <iterator>\n#include <list>\n\nint main() {\n    std::list<int> lst = {10, 20, 30, 40};\n    auto it = lst.begin();\n    std::advance(it, 2);\n    return *it;\n}",
+          "explanationArabic": "advance يُحرّك المكرر خطوتين للأمام. مع list لا يمكن استخدام + لأنها لا تدعم الوصول العشوائي.",
+          "relatedTokens": [
+            "std::advance",
+            "std::list"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن next",
+          "code": "#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    auto it = v.begin();\n    std::advance(it, 1); // يُعدّل it نفسه\n    auto it2 = std::next(v.begin(), 1); // يُرجع مكرر جديد\n    return *it + *it2;\n}",
+          "explanationArabic": "advance تُعدّل المكرر الأصلي. next تُرجع مكررًا جديدًا دون تعديل الأصلي. next أنسب عندما تحتاج المكرر الأصلي.",
+          "relatedTokens": [
+            "std::advance",
+            "std::next",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: تجاوز نهاية المجال",
+          "code": "#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2};\n    auto it = v.begin();\n    // std::advance(it, 10); // خطأ: يتجاوز النهاية — سلوك غير معرّف\n    std::advance(it, 1);\n    return *it;\n}",
+          "explanationArabic": "advance لا تتحقق من الحدود. تجاوز النهاية يُسبب سلوكًا غير معرّف. تأكد أن الخطوات لا تتجاوز المسافة للنهاية.",
+          "relatedTokens": [
+            "std::advance",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::next",
+        "std::prev",
+        "std::distance"
+      ]
+    },
+    "std::distance": {
+      "fullProjectNoteArabic": "std::distance تحسب عدد الخطوات بين مكررين. للعشوائية O(1) وللثنائية O(n).",
+      "projectStepsArabic": [
+        "استخدمها لحساب المسافة بين مكررين.",
+        "مع vector استخدم size() لأنها أوضح وأسرع.",
+        "مع forward_list استخدمها لأن size() غير متوفرة."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "المسافة بين begin وfind",
+          "code": "#include <algorithm>\n#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40};\n    auto it = std::find(v.begin(), v.end(), 30);\n    auto d = std::distance(v.begin(), it);\n    return static_cast<int>(d);\n}",
+          "explanationArabic": "distance تُرجع 2 — موضع 30 في المصفوفة. مفيدة لمعرفة فهرس العنصر الذي أرجعه find.",
+          "relatedTokens": [
+            "std::distance",
+            "std::find",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "حجم forward_list",
+          "code": "#include <forward_list>\n#include <iterator>\n\nint main() {\n    std::forward_list<int> lst = {1, 2, 3};\n    return std::distance(lst.begin(), lst.end());\n}",
+          "explanationArabic": "forward_list لا توفر size(). distance تحسب العدد بالمرور الخطي — هذا الاستخدام الأساسي لها.",
+          "relatedTokens": [
+            "std::distance",
+            "std::forward_list"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استدعاء distance على مكررات من حاويات مختلفة",
+          "code": "#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> a = {1, 2};\n    std::vector<int> b = {3, 4};\n    // std::distance(a.begin(), b.end()); // خطأ: مكررات من حاويات مختلفة\n    return std::distance(a.begin(), a.end());\n}",
+          "explanationArabic": "distance تتطلب مكررين من نفس الحاوية والمجال. المكررات من حاويات مختلفة تُسبب سلوكًا غير معرّف.",
+          "relatedTokens": [
+            "std::distance",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::advance",
+        "std::next",
+        "std::forward_list"
+      ]
+    },
+    "std::next": {
+      "fullProjectNoteArabic": "std::next تُرجع مكررًا متقدمًا بعدد خطوات من المكرر الأصلي دون تعديله. أنظف من advance عند الحاجة للمكرر الأصلي.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج مكررًا متقدمًا مع الاحتفاظ بالأصلي.",
+        "الافتراضي خطوة واحدة. مرر العدد كمعامل ثانٍ لخطوات أكثر.",
+        "لا تتحقق من الحدود — تجاوز النهاية سلوك غير معرّف."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "الحصول على مكرر العنصر التالي",
+          "code": "#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {10, 20, 30};\n    auto it = v.begin();\n    auto next_it = std::next(it);\n    return *next_it;\n}",
+          "explanationArabic": "next(it) تُرجع مكررًا للعنصر التالي دون تعديل it. أنظف من ++it عندما تحتاج it الأصلي.",
+          "relatedTokens": [
+            "std::next",
+            "std::vector",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "تخطي عدة عناصر",
+          "code": "#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    auto it = std::next(v.begin(), 3);\n    return *it;\n}",
+          "explanationArabic": "next(begin, 3) تُرجع مكررًا للعنصر الرابع (الفهرس 3). المعامل الثاني هو عدد الخطوات لا الفهرس.",
+          "relatedTokens": [
+            "std::next",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن advance",
+          "code": "#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    auto it = v.begin();\n    auto copy = std::next(it, 2); // it لا يتغير\n    // std::advance(it, 2); // it يتغير\n    return *it + *copy;\n}",
+          "explanationArabic": "next تُرجع مكررًا جديدًا وتحافظ على الأصلي. advance تُعدّل المكرر الأصلي ولا تُرجع شيئًا. اختر بناءً على هل تحتاج الأصلي.",
+          "relatedTokens": [
+            "std::next",
+            "std::advance",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::prev",
+        "std::advance",
+        "std::distance"
+      ]
+    },
+    "std::prev": {
+      "fullProjectNoteArabic": "std::prev تُرجع مكررًا متأخرًا بعدد خطوات. عكس next تمامًا.",
+      "projectStepsArabic": [
+        "استخدمها للرجوع للخلف من مكرر مع الاحتفاظ بالأصلي.",
+        "تتطلب مكررًا ثنائي الارتباط على الأقل.",
+        "لا تستخدمها على forward_list أو istream_iterator."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "الرجوع خطوة للخلف",
+          "code": "#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {10, 20, 30};\n    auto it = v.end();\n    auto prev_it = std::prev(it);\n    return *prev_it;\n}",
+          "explanationArabic": "prev(end) تُرجع مكررًا لآخر عنصر. أنظف من --end لأنها لا تُعدّل end.",
+          "relatedTokens": [
+            "std::prev",
+            "std::vector",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "الوصول للعنصر قبل الأخير",
+          "code": "#include <iterator>\n#include <list>\n\nint main() {\n    std::list<int> lst = {1, 2, 3, 4};\n    auto it = std::prev(lst.end(), 2);\n    return *it;\n}",
+          "explanationArabic": "prev(end, 2) تُرجع مكررًا للعنصر الثالث من النهاية (3). مفيدة مع list التي لا تدعم operator[].",
+          "relatedTokens": [
+            "std::prev",
+            "std::list"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدامها مع forward_list",
+          "code": "#include <iterator>\n#include <forward_list>\n\nint main() {\n    std::forward_list<int> lst = {1, 2, 3};\n    // std::prev(lst.begin()); // خطأ: forward_list أحادية الارتباط\n    return lst.front();\n}",
+          "explanationArabic": "prev تحتاج مكررًا ثنائي الارتباط. forward_list أحادية فلا تستطيع الرجوع للخلف.",
+          "relatedTokens": [
+            "std::prev",
+            "std::forward_list"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::next",
+        "std::advance",
+        "std::list"
+      ]
+    },
+    "std::replace": {
+      "fullProjectNoteArabic": "std::replace تُبدّل كل عناصر تساوي قيمة محددة بقيمة أخرى. تعمل في المكان.",
+      "projectStepsArabic": [
+        "استخدمها لاستبدال قيمة بأخرى في مجال.",
+        "لا تُرجع شيئًا — تُعدّل المجال مباشرة.",
+        "استخدم replace_if للاستبدال بشرط."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "استبدال قيمة",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 2, 4};\n    std::replace(v.begin(), v.end(), 2, 99);\n    return v[1];\n}",
+          "explanationArabic": "كل 2 تُستبدل بـ 99. v تصبح {1, 99, 3, 99, 4}. العملية في المكان لا تُنشئ حاوية جديدة.",
+          "relatedTokens": [
+            "std::replace",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "استبدال في مصفوفة خام",
+          "code": "#include <algorithm>\n\nint main() {\n    int arr[] = {0, 0, 1, 0, 1};\n    std::replace(arr, arr + 5, 0, -1);\n    return arr[0];\n}",
+          "explanationArabic": "replace تعمل مع أي مجال مكررات بما فيها المصفوفات الخام.",
+          "relatedTokens": [
+            "std::replace"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن replace_if",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, -2, 3, -4, 5};\n    std::replace_if(v.begin(), v.end(), [](int x) { return x < 0; }, 0);\n    return v[1];\n}",
+          "explanationArabic": "replace_if تستبدل بشرط لا بقيمة محددة. هنا نستبدل كل سالب بـ 0. أنسب عندما يكون الشرط أكثر تعقيدًا من المساواة.",
+          "relatedTokens": [
+            "std::replace",
+            "std::replace_if",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::replace_if",
+        "std::transform",
+        "std::vector"
+      ]
+    },
+    "std::replace_if": {
+      "fullProjectNoteArabic": "std::replace_if تُبدّل كل عناصر تُحقق شرطًا بقيمة جديدة. أنسب من replace عندما يكون الشرط أكثر من مساواة بسيطة.",
+      "projectStepsArabic": [
+        "استخدمها للاستبدال بشرط مخصص.",
+        "مرر lambda أو دالة تُرجع bool.",
+        "العملية في المكان."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "استبدال السالب بـ صفر",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {3, -1, 4, -2, 5};\n    std::replace_if(v.begin(), v.end(), [](int x) { return x < 0; }, 0);\n    return v[1] + v[3];\n}",
+          "explanationArabic": "كل عنصر سالب يُستبدل بـ 0. v تصبح {3, 0, 4, 0, 5}.",
+          "relatedTokens": [
+            "std::replace_if",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "استبدال نصوص طويلة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n\nint main() {\n    std::vector<std::string> v = {\"a\", \"bb\", \"ccc\"};\n    std::replace_if(v.begin(), v.end(), [](const std::string& s) { return s.size() > 2; }, \"...\");\n    return v[2].size();\n}",
+          "explanationArabic": "الشرط يمكن أن يكون أي دالة bool. هنا نستبدل النصوص الطويلة بـ '...'.",
+          "relatedTokens": [
+            "std::replace_if",
+            "std::vector",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: الخلط مع remove_if",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4};\n    // replace_if: تُبدّل القيمة لكن تحافظ على الحجم\n    std::replace_if(v.begin(), v.end(), [](int x) { return x > 2; }, 0);\n    // remove_if: تُزييل العناصر لكن تحتاج erase\n    return v.size();\n}",
+          "explanationArabic": "replace_if تُغيّر القيمة لكن الحجم يبقى نفسه. remove_if تُزيّل العناصر لكن تحتاج erase بعد ذلك لتقليص الحجم فعليًا.",
+          "relatedTokens": [
+            "std::replace_if",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::replace",
+        "std::remove_if",
+        "std::vector"
+      ]
+    },
+    "std::partition": {
+      "fullProjectNoteArabic": "std::partition تُرتّب العناصر بحيث كل ما يُحقق الشرط قبله وما لا يُحققه بعده. لا تحافظ على الترتيب النسبي.",
+      "projectStepsArabic": [
+        "استخدمها لفصل العناصر بميزة ثنائية.",
+        "تُرجع مكررًا لنقطة الفصل.",
+        "استخدم stable_partition إذا كنت تحتاج الحفاظ على الترتيب النسبي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "فصل زوجي عن فردي",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {5, 2, 8, 1, 4, 7};\n    auto mid = std::partition(v.begin(), v.end(), [](int x) { return x % 2 == 0; });\n    return static_cast<int>(mid - v.begin());\n}",
+          "explanationArabic": "partition تضع الزوجية قبل الفردية. mid يشير لأول عنصر فردي. لا يضمن ترتيبًا داخل كل مجموعة.",
+          "relatedTokens": [
+            "std::partition",
+            "std::vector",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "فصل نصوص حسب الطول",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n\nint main() {\n    std::vector<std::string> v = {\"a\", \"bb\", \"c\", \"ddd\"};\n    auto mid = std::partition(v.begin(), v.end(), [](const std::string& s) { return s.size() <= 1; });\n    return static_cast<int>(mid - v.begin());\n}",
+          "explanationArabic": "partition تعمل مع أي نوع. هنا نضع القصيرة قبل الطويلة.",
+          "relatedTokens": [
+            "std::partition",
+            "std::vector",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: الاعتماد على الترتيب النسبي",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {3, 1, 4, 2};\n    std::partition(v.begin(), v.end(), [](int x) { return x < 3; });\n    // النتيجة: {1, 2, 4, 3} أو {2, 1, 4, 3} — الترتيب غير مضمون\n    // استخدم stable_partition للحفاظ على الترتيب النسبي\n    return v[0];\n}",
+          "explanationArabic": "partition لا تحافظ على الترتيب النسبي. 1 و2 قد يتبدلان. استخدم stable_partition إذا كان الترتيب مهمًا لكنها أبطأ.",
+          "relatedTokens": [
+            "std::partition",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::stable_partition",
+        "std::sort",
+        "std::vector"
+      ]
+    },
+    "std::generate": {
+      "fullProjectNoteArabic": "std::generate تُعيّن قيمًا لعناصر مجال عبر استدعاء دالة لكل عنصر. فائدتها في ملء حاوية بقيم مُولَّدة.",
+      "projectStepsArabic": [
+        "استخدمها لملء حاوية بقيم من دالة أو lambda.",
+        "الدالة لا تأخذ معاملات.",
+        "generate_n لعدد محدد من العناصر."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "ملء vector بأعداد متزايدة",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v(5);\n    int counter = 0;\n    std::generate(v.begin(), v.end(), [&counter]() { return counter++; });\n    return v[4];\n}",
+          "explanationArabic": "generate تُستدعي lambda لكل عنصر وتضع النتيجة فيه. v تصبح {0, 1, 2, 3, 4}.",
+          "relatedTokens": [
+            "std::generate",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "generate_n لعدد محدد",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v;\n    v.resize(3);\n    std::generate_n(v.begin(), 3, []() { return 42; });\n    return v[0];\n}",
+          "explanationArabic": "generate_n تأخذ عدد العناصر كمعامل. أنسب عندما لا تريد الاعتماد على حجم المجال.",
+          "relatedTokens": [
+            "std::generate",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن fill",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v1(3), v2(3);\n    std::fill(v1.begin(), v1.end(), 5);\n    int c = 0;\n    std::generate(v2.begin(), v2.end(), [&c]() { return ++c; });\n    return v1[0] + v2[0];\n}",
+          "explanationArabic": "fill تضع نفس القيمة في كل عنصر. generate تُستدعي دالة لكل عنصر فكل قيمة قد تكون مختلفة.",
+          "relatedTokens": [
+            "std::generate",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::fill",
+        "std::iota",
+        "std::vector"
+      ]
+    },
+    "std::back_inserter": {
+      "fullProjectNoteArabic": "std::back_inserter يُنشئ مكرر إدراج يُضيف عناصر في نهاية الحاوية. فائدته مع خوارزميات STL التي تكتب إلى مكرر مثل copy أو transform.",
+      "projectStepsArabic": [
+        "استخدمه لنسخ أو تحويل عناصر إلى حاوية فارغة.",
+        "يتطلب حاوية تدعم push_back مثل vector أو deque.",
+        "أنظف من resize + تعيين يدوي."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نسخ عناصر إلى حاوية فارغة",
+          "code": "#include <algorithm>\n#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> src = {1, 2, 3};\n    std::vector<int> dst;\n    std::copy(src.begin(), src.end(), std::back_inserter(dst));\n    return dst.size();\n}",
+          "explanationArabic": "back_inserter يُنشئ مكررًا يستدعي push_back لكل عنصر. dst لا تحتاج resize مسبقًا.",
+          "relatedTokens": [
+            "std::back_inserter",
+            "std::vector",
+            "std::copy"
+          ]
+        },
+        {
+          "titleArabic": "فلترة عناصر أثناء النسخ",
+          "code": "#include <algorithm>\n#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> src = {1, 2, 3, 4, 5};\n    std::vector<int> even;\n    std::copy_if(src.begin(), src.end(), std::back_inserter(even), [](int x) { return x % 2 == 0; });\n    return even.size();\n}",
+          "explanationArabic": "copy_if مع back_inserter تنسخ العناصر المطابقة فقط. أنظف من حلقة يدوية مع push_back.",
+          "relatedTokens": [
+            "std::back_inserter",
+            "std::vector",
+            "std::copy_if"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدامه مع حاوية لا تدعم push_back",
+          "code": "#include <algorithm>\n#include <iterator>\n#include <vector>\n\nint main() {\n    std::vector<int> src = {1, 2};\n    std::vector<int> dst;\n    std::copy(src.begin(), src.end(), std::back_inserter(dst));\n    // لا تستخدم back_inserter مع array أو set\n    // استخدم inserter بدلًا من ذلك\n    return dst.size();\n}",
+          "explanationArabic": "back_inserter يحتاج push_back. مع set استخدم std::inserter(s, s.end()). مع array لا يمكن لأن حجمها ثابت.",
+          "relatedTokens": [
+            "std::back_inserter",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::inserter",
+        "std::copy",
+        "std::copy_if",
+        "std::vector"
+      ]
+    },
+    "std::find_first_of": {
+      "fullProjectNoteArabic": "std::find_first_of تبحث عن أول عنصر في مجال يطابق أي عنصر من مجموعة مرشحة. فائدتها في البحث عن أي من عدة قيم.",
+      "projectStepsArabic": [
+        "استخدمها للبحث عن أول تطابق من عدة قيم مرشحة.",
+        "تُرجع مكررًا لأول تطابق أو end إذا لم تُجد.",
+        "المقارنة الافتراضية == يمكن تخصيصها."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "البحث عن أي محرف من مجموعة",
+          "code": "#include <algorithm>\n#include <string>\n\nint main() {\n    std::string text = \"hello world\";\n    std::string vowels = \"aeiou\";\n    auto it = std::find_first_of(text.begin(), text.end(), vowels.begin(), vowels.end());\n    return it != text.end() ? 1 : 0;\n}",
+          "explanationArabic": "find_first_of تبحث عن أول حرف في text يوجد في vowels. النتيجة: 'e' في الموضع 1.",
+          "relatedTokens": [
+            "std::find_first_of",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "البحث عن أي من عدة قيم",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> data = {5, 3, 8, 1, 9};\n    std::vector<int> targets = {2, 8, 4};\n    auto it = std::find_first_of(data.begin(), data.end(), targets.begin(), targets.end());\n    return it != data.end() ? *it : -1;\n}",
+          "explanationArabic": "تبحث في data عن أول عنصر يطابق أي عنصر في targets. النتيجة 8.",
+          "relatedTokens": [
+            "std::find_first_of",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن find",
+          "code": "#include <algorithm>\n#include <vector>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    // find: تبحث عن قيمة واحدة\n    auto a = std::find(v.begin(), v.end(), 2);\n    // find_first_of: تبحث عن أي تطابق من مجموعة\n    std::vector<int> targets = {5, 3, 7};\n    auto b = std::find_first_of(v.begin(), v.end(), targets.begin(), targets.end());\n    return (*a) + (*b);\n}",
+          "explanationArabic": "find تبحث عن قيمة واحدة محددة. find_first_of تبحث عن أي تطابق من عدة قيم. استخدم find_first_of عندما يكون لديك عدة مرشحين.",
+          "relatedTokens": [
+            "std::find_first_of",
+            "std::find",
+            "std::vector"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::find",
+        "std::find_if",
+        "std::any_of",
+        "std::vector"
+      ]
+    }
+  }
+}
+<task_progress>- [x] فحص ملفات extra لمعرفة العناصر بدون guides
+- [x] إنشاء guides للخوارزميات (15 عنصر) - ملف stdlib-d
+- [ ] إنشاء guides للرياضيات والأعداد (9 عناصر) - ملف stdlib-e
+- [ ] إنشاء guides لنوعيات traits (7 عناصر) + إدخال/إخراج (8 عناصر) - ملف stdlib-f
+- [ ] إنشاء guides للتزامن متبقي (7 عناصر) + أدوات واستثناءات متبقية - ملف stdlib-g
+- [ ] تسجيل الملفات الجديدة في index
+- [ ] تحديث ملف التتبع
+</task_progress>
+</write_to_file>

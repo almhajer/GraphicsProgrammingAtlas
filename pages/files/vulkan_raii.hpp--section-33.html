@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 33 من 64 • الأسطر 14401-14850 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 33 من 64 • الأسطر 14401-14850</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 33 من 64 • الأسطر 14401-14850</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-32.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-34.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 33/64</span>
+        <span class="source-stat">الأسطر: 14401-14850</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;SwapchainKHR&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    class SwapchainKHRs : public std::vector&lt;SwapchainKHR&gt;
+    {
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      SwapchainKHRs( Device const &amp; device, ArrayProxy&lt;SwapchainCreateInfoKHR&gt; const &amp; createInfos, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createSharedSwapchainsKHR( createInfos, allocator );
+      }
+#  endif
+
+      SwapchainKHRs( std::nullptr_t ) {}
+
+      SwapchainKHRs()                                    = delete;
+      SwapchainKHRs( SwapchainKHRs const &amp; )             = delete;
+      SwapchainKHRs( SwapchainKHRs &amp;&amp; rhs )              = default;
+      SwapchainKHRs &amp; operator=( SwapchainKHRs const &amp; ) = delete;
+      SwapchainKHRs &amp; operator=( SwapchainKHRs &amp;&amp; rhs )  = default;
+
+      SwapchainKHRs( std::vector&lt;SwapchainKHR&gt; &amp;&amp; rhs )
+      {
+        std::swap( *this, rhs );
+      }
+    };
+
+    // wrapper class for handle VkTensorARM, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkTensorARM.html
+    class TensorARM
+    {
+    public:
+      using CType   = VkTensorARM;
+      using CppType = VULKAN_HPP_NAMESPACE::TensorARM;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eTensorARM;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      TensorARM( Device const &amp; device, TensorCreateInfoARM const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createTensorARM( createInfo, allocator );
+      }
+#  endif
+
+      TensorARM( Device const &amp; device, VkTensorARM tensor, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_tensorARM( tensor )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      TensorARM( std::nullptr_t ) {}
+
+      ~TensorARM()
+      {
+        clear();
+      }
+
+      TensorARM()                    = delete;
+      TensorARM( TensorARM const &amp; ) = delete;
+
+      TensorARM( TensorARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_tensorARM( exchange( rhs.m_tensorARM, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      TensorARM &amp; operator=( TensorARM const &amp; ) = delete;
+
+      TensorARM &amp; operator=( TensorARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_tensorARM, rhs.m_tensorARM );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::TensorARM const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_tensorARM;
+      }
+
+      VULKAN_HPP_NAMESPACE::TensorARM const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_tensorARM );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::TensorARM() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_tensorARM;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_tensorARM )
+        {
+          getDispatcher()-&gt;vkDestroyTensorARM(
+            static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkTensorARM&gt;( m_tensorARM ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device     = nullptr;
+        m_tensorARM  = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::TensorARM release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_tensorARM, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( TensorARM &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_tensorARM, rhs.m_tensorARM );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device     m_device     = {};
+      VULKAN_HPP_NAMESPACE::TensorARM  m_tensorARM  = {};
+      const AllocationCallbacks *      m_allocator  = {};
+      detail::DeviceDispatcher const * m_dispatcher = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;TensorARM&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkTensorViewARM, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkTensorViewARM.html
+    class TensorViewARM
+    {
+    public:
+      using CType   = VkTensorViewARM;
+      using CppType = VULKAN_HPP_NAMESPACE::TensorViewARM;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eTensorViewARM;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      TensorViewARM( Device const &amp; device, TensorViewCreateInfoARM const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createTensorViewARM( createInfo, allocator );
+      }
+#  endif
+
+      TensorViewARM( Device const &amp; device, VkTensorViewARM tensorView, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_tensorViewARM( tensorView )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      TensorViewARM( std::nullptr_t ) {}
+
+      ~TensorViewARM()
+      {
+        clear();
+      }
+
+      TensorViewARM()                        = delete;
+      TensorViewARM( TensorViewARM const &amp; ) = delete;
+
+      TensorViewARM( TensorViewARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_tensorViewARM( exchange( rhs.m_tensorViewARM, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      TensorViewARM &amp; operator=( TensorViewARM const &amp; ) = delete;
+
+      TensorViewARM &amp; operator=( TensorViewARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_tensorViewARM, rhs.m_tensorViewARM );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::TensorViewARM const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_tensorViewARM;
+      }
+
+      VULKAN_HPP_NAMESPACE::TensorViewARM const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_tensorViewARM );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::TensorViewARM() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_tensorViewARM;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_tensorViewARM )
+        {
+          getDispatcher()-&gt;vkDestroyTensorViewARM( static_cast&lt;VkDevice&gt;( m_device ),
+                                                   static_cast&lt;VkTensorViewARM&gt;( m_tensorViewARM ),
+                                                   reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device        = nullptr;
+        m_tensorViewARM = nullptr;
+        m_allocator     = nullptr;
+        m_dispatcher    = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::TensorViewARM release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_tensorViewARM, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( TensorViewARM &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_tensorViewARM, rhs.m_tensorViewARM );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device        m_device        = {};
+      VULKAN_HPP_NAMESPACE::TensorViewARM m_tensorViewARM = {};
+      const AllocationCallbacks *         m_allocator     = {};
+      detail::DeviceDispatcher const *    m_dispatcher    = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;TensorViewARM&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkValidationCacheEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkValidationCacheEXT.html
+    class ValidationCacheEXT
+    {
+    public:
+      using CType   = VkValidationCacheEXT;
+      using CppType = VULKAN_HPP_NAMESPACE::ValidationCacheEXT;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eValidationCacheEXT;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eValidationCacheEXT;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      ValidationCacheEXT( Device const &amp; device, ValidationCacheCreateInfoEXT const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createValidationCacheEXT( createInfo, allocator );
+      }
+#  endif
+
+      ValidationCacheEXT( Device const &amp; device, VkValidationCacheEXT validationCache, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_validationCacheEXT( validationCache )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      ValidationCacheEXT( std::nullptr_t ) {}
+
+      ~ValidationCacheEXT()
+      {
+        clear();
+      }
+
+      ValidationCacheEXT()                             = delete;
+      ValidationCacheEXT( ValidationCacheEXT const &amp; ) = delete;
+
+      ValidationCacheEXT( ValidationCacheEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_validationCacheEXT( exchange( rhs.m_validationCacheEXT, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      ValidationCacheEXT &amp; operator=( ValidationCacheEXT const &amp; ) = delete;
+
+      ValidationCacheEXT &amp; operator=( ValidationCacheEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_validationCacheEXT, rhs.m_validationCacheEXT );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::ValidationCacheEXT const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_validationCacheEXT;
+      }
+
+      VULKAN_HPP_NAMESPACE::ValidationCacheEXT const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_validationCacheEXT );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::ValidationCacheEXT() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_validationCacheEXT;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_validationCacheEXT )
+        {
+          getDispatcher()-&gt;vkDestroyValidationCacheEXT( static_cast&lt;VkDevice&gt;( m_device ),
+                                                        static_cast&lt;VkValidationCacheEXT&gt;( m_validationCacheEXT ),
+                                                        reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device             = nullptr;
+        m_validationCacheEXT = nullptr;
+        m_allocator          = nullptr;
+        m_dispatcher         = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::ValidationCacheEXT release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_validationCacheEXT, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( ValidationCacheEXT &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_validationCacheEXT, rhs.m_validationCacheEXT );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_EXT_validation_cache ===
+
+      // wrapper function for command vkMergeValidationCachesEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkMergeValidationCachesEXT.html
+      typename ResultValueType&lt;void&gt;::type merge( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::ValidationCacheEXT&gt; const &amp; srcCaches ) const;
+
+      // wrapper function for command vkGetValidationCacheDataEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetValidationCacheDataEXT.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;std::vector&lt;uint8_t&gt;&gt;::type getData() const;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device             m_device             = {};
+      VULKAN_HPP_NAMESPACE::ValidationCacheEXT m_validationCacheEXT = {};
+      const AllocationCallbacks *              m_allocator          = {};
+      detail::DeviceDispatcher const *         m_dispatcher         = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;ValidationCacheEXT&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkVideoSessionKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkVideoSessionKHR.html
+    class VideoSessionKHR
+    {
+    public:
+      using CType   = VkVideoSessionKHR;
+      using CppType = VULKAN_HPP_NAMESPACE::VideoSessionKHR;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eVideoSessionKHR;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      VideoSessionKHR( Device const &amp; device, VideoSessionCreateInfoKHR const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createVideoSessionKHR( createInfo, allocator );
+      }
+#  endif
+
+      VideoSessionKHR( Device const &amp; device, VkVideoSessionKHR videoSession, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_videoSessionKHR( videoSession )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      VideoSessionKHR( std::nullptr_t ) {}
+
+      ~VideoSessionKHR()
+      {
+        clear();</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-32.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-34.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

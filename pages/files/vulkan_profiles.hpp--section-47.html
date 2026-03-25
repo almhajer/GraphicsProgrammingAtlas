@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_profiles.hpp • القسم 47 من 47 • الأسطر 20701-21010 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_profiles.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_profiles.hpp.html">vulkan_profiles.hpp</a> /
+        <span>القسم 47 من 47 • الأسطر 20701-21010</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_profiles.hpp</h1>
+      <p class="page-description">القسم 47 من 47 • الأسطر 20701-21010</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-46.html">القسم السابق</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم لاحق</span>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_profiles.hpp</span>
+        <span class="source-stat">القسم: 47/47</span>
+        <span class="source-stat">الأسطر: 20701-21010</span>
+        <span class="source-stat">حجم الملف: 1.41 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t*                                   pStructureTypeCount,
+    VkStructureType*                            pStructureTypes) {
+    return detail::vpGetProfileStructureTypes(
+#ifdef VP_USE_OBJECT
+        capabilities,
+#endif//VP_USE_OBJECT
+        pProfile, pBlockName, detail::STRUCTURE_FEATURE, pStructureTypeCount, pStructureTypes);
+}
+
+VPAPI_ATTR VkResult vpGetProfilePropertyStructureTypes(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t*                                   pStructureTypeCount,
+    VkStructureType*                            pStructureTypes) {
+    return detail::vpGetProfileStructureTypes(
+#ifdef VP_USE_OBJECT
+        capabilities,
+#endif//VP_USE_OBJECT
+        pProfile, pBlockName, detail::STRUCTURE_PROPERTY, pStructureTypeCount, pStructureTypes);
+}
+
+VPAPI_ATTR VkResult vpGetProfileQueueFamilyStructureTypes(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t*                                   pStructureTypeCount,
+    VkStructureType*                            pStructureTypes) {
+    return detail::vpGetProfileStructureTypes(
+#ifdef VP_USE_OBJECT
+        capabilities,
+#endif//VP_USE_OBJECT
+        pProfile, pBlockName, detail::STRUCTURE_QUEUE_FAMILY, pStructureTypeCount, pStructureTypes);
+}
+
+VPAPI_ATTR VkResult vpGetProfileFormatStructureTypes(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t*                                   pStructureTypeCount,
+    VkStructureType*                            pStructureTypes) {
+    return detail::vpGetProfileStructureTypes(
+#ifdef VP_USE_OBJECT
+        capabilities,
+#endif//VP_USE_OBJECT
+        pProfile, pBlockName, detail::STRUCTURE_FORMAT, pStructureTypeCount, pStructureTypes);
+}
+
+#ifdef VK_KHR_video_queue
+// Query the list of video profiles specified by the profile
+VPAPI_ATTR VkResult vpGetProfileVideoProfiles(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t*                                   pVideoProfileCount,
+    VpVideoProfileProperties*                   pVideoProfiles) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+    if (pVideoProfileCount == nullptr) return VK_ERROR_UNKNOWN;
+
+    VkResult result = pBlockName == nullptr ? VK_SUCCESS : VK_INCOMPLETE;
+
+    uint32_t total_video_profile_count = 0;
+
+    const std::vector&lt;VpProfileProperties&gt;&amp; gathered_profiles = detail::GatherProfiles(*pProfile);
+
+    for (std::size_t profile_index = 0, profile_count = gathered_profiles.size(); profile_index &lt; profile_count; ++profile_index) {
+        const detail::VpProfileDesc* profile_desc = detail::vpGetProfileDesc(gathered_profiles[profile_index].profileName);
+        if (profile_desc == nullptr) return VK_ERROR_UNKNOWN;
+
+        for (uint32_t capability_index = 0; capability_index &lt; profile_desc-&gt;requiredCapabilityCount; ++capability_index) {
+            const detail::VpCapabilitiesDesc&amp; cap_desc = profile_desc-&gt;pRequiredCapabilities[capability_index];
+
+            for (uint32_t variant_index = 0; variant_index &lt; cap_desc.variantCount; ++variant_index) {
+                const detail::VpVariantDesc&amp; variant = cap_desc.pVariants[variant_index];
+                if (pBlockName != nullptr) {
+                    if (strcmp(variant.blockName, pBlockName) != 0) {
+                        continue;
+                    }
+                    result = VK_SUCCESS;
+                }
+
+                if (pVideoProfiles != nullptr) {
+                    for (uint32_t i = 0; i &lt; variant.videoProfileCount; ++i) {
+                        if (total_video_profile_count &lt; *pVideoProfileCount) {
+                            *pVideoProfiles = variant.pVideoProfiles[i].properties;
+                            total_video_profile_count++;
+                            pVideoProfiles++;
+                        } else {
+                            result = VK_INCOMPLETE;
+                            break;
+                        }
+                    }
+                } else {
+                    total_video_profile_count += variant.videoProfileCount;
+                }
+            }
+        }
+    }
+
+    *pVideoProfileCount = total_video_profile_count;
+    return result;
+}
+
+VPAPI_ATTR VkResult vpGetProfileVideoProfileInfo(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t                                    videoProfileIndex,
+    VkVideoProfileInfoKHR*                      pVideoProfileInfo) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+
+    const detail::VpVideoProfileDesc* pVideoProfileDesc = nullptr;
+    VkResult result = detail::vpGetProfileVideoProfileDesc(pProfile, pBlockName, videoProfileIndex, &amp;pVideoProfileDesc);
+
+    if (pVideoProfileDesc != nullptr) {
+        VkBaseOutStructure* p = reinterpret_cast&lt;VkBaseOutStructure*&gt;(pVideoProfileInfo);
+        while (p != nullptr) {
+            pVideoProfileDesc-&gt;info.pfnFiller(p);
+            p = p-&gt;pNext;
+        }
+    }
+
+    return result;
+}
+
+VPAPI_ATTR VkResult vpGetProfileVideoCapabilities(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t                                    videoProfileIndex,
+    void*                                       pNext) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+
+    const detail::VpVideoProfileDesc* pVideoProfileDesc = nullptr;
+    VkResult result = detail::vpGetProfileVideoProfileDesc(pProfile, pBlockName, videoProfileIndex, &amp;pVideoProfileDesc);
+
+    if (pVideoProfileDesc != nullptr) {
+        VkBaseOutStructure* p = reinterpret_cast&lt;VkBaseOutStructure*&gt;(pNext);
+        while (p != nullptr) {
+            pVideoProfileDesc-&gt;capability.pfnFiller(p);
+            p = p-&gt;pNext;
+        }
+    }
+
+    return result;
+}
+
+VPAPI_ATTR VkResult vpGetProfileVideoFormatProperties(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t                                    videoProfileIndex,
+    uint32_t*                                   pPropertyCount,
+    VkVideoFormatPropertiesKHR*                 pProperties) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+
+    const detail::VpVideoProfileDesc* pVideoProfileDesc = nullptr;
+    VkResult result = detail::vpGetProfileVideoProfileDesc(pProfile, pBlockName, videoProfileIndex, &amp;pVideoProfileDesc);
+
+    uint32_t property_count = 0;
+    if (pVideoProfileDesc != nullptr) {
+        if (pProperties != nullptr) {
+            for (; property_count &lt; pVideoProfileDesc-&gt;formatCount; ++property_count) {
+                if (property_count &lt; *pPropertyCount) {
+                    VkBaseOutStructure* p = reinterpret_cast&lt;VkBaseOutStructure*&gt;(&amp;pProperties[property_count]);
+                    while (p != nullptr) {
+                        pVideoProfileDesc-&gt;pFormats[property_count].pfnFiller(p);
+                        p = p-&gt;pNext;
+                    }
+                } else {
+                    result = VK_INCOMPLETE;
+                    break;
+                }
+            }
+        } else {
+            property_count = pVideoProfileDesc-&gt;formatCount;
+        }
+    }
+
+    *pPropertyCount = property_count;
+    return result;
+}
+
+VPAPI_ATTR VkResult vpGetProfileVideoProfileInfoStructureTypes(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t                                    videoProfileIndex,
+    uint32_t*                                   pStructureTypeCount,
+    VkStructureType*                            pStructureTypes) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+
+    const detail::VpVideoProfileDesc* pVideoProfileDesc = nullptr;
+    VkResult result = detail::vpGetProfileVideoProfileDesc(pProfile, pBlockName, videoProfileIndex, &amp;pVideoProfileDesc);
+
+    if (pVideoProfileDesc != nullptr) {
+        if (pStructureTypes != nullptr) {
+            if (*pStructureTypeCount &lt; pVideoProfileDesc-&gt;infoStructTypeCount) {
+                result = VK_INCOMPLETE;
+            } else {
+                *pStructureTypeCount = pVideoProfileDesc-&gt;infoStructTypeCount;
+            }
+            if (*pStructureTypeCount &gt; 0) {
+                memcpy(pStructureTypes, pVideoProfileDesc-&gt;pInfoStructTypes, *pStructureTypeCount * sizeof(VkStructureType));
+            }
+        } else {
+            *pStructureTypeCount = pVideoProfileDesc-&gt;infoStructTypeCount;
+        }
+    }
+
+    return result;
+}
+
+VPAPI_ATTR VkResult vpGetProfileVideoCapabilityStructureTypes(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t                                    videoProfileIndex,
+    uint32_t*                                   pStructureTypeCount,
+    VkStructureType*                            pStructureTypes) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+
+    const detail::VpVideoProfileDesc* pVideoProfileDesc = nullptr;
+    VkResult result = detail::vpGetProfileVideoProfileDesc(pProfile, pBlockName, videoProfileIndex, &amp;pVideoProfileDesc);
+
+    if (pVideoProfileDesc != nullptr) {
+        if (pStructureTypes != nullptr) {
+            if (*pStructureTypeCount &lt; pVideoProfileDesc-&gt;capabilityStructTypeCount) {
+                result = VK_INCOMPLETE;
+            } else {
+                *pStructureTypeCount = pVideoProfileDesc-&gt;capabilityStructTypeCount;
+            }
+            if (*pStructureTypeCount &gt; 0) {
+                memcpy(pStructureTypes, pVideoProfileDesc-&gt;pCapabilityStructTypes, *pStructureTypeCount * sizeof(VkStructureType));
+            }
+        } else {
+            *pStructureTypeCount = pVideoProfileDesc-&gt;capabilityStructTypeCount;
+        }
+    }
+
+    return result;
+}
+
+VPAPI_ATTR VkResult vpGetProfileVideoFormatStructureTypes(
+#ifdef VP_USE_OBJECT
+    VpCapabilities                              capabilities,
+#endif//VP_USE_OBJECT
+    const VpProfileProperties*                  pProfile,
+    const char*                                 pBlockName,
+    uint32_t                                    videoProfileIndex,
+    uint32_t*                                   pStructureTypeCount,
+    VkStructureType*                            pStructureTypes) {
+#ifdef VP_USE_OBJECT
+    (void)capabilities;
+#endif//VP_USE_OBJECT
+
+    const detail::VpVideoProfileDesc* pVideoProfileDesc = nullptr;
+    VkResult result = detail::vpGetProfileVideoProfileDesc(pProfile, pBlockName, videoProfileIndex, &amp;pVideoProfileDesc);
+
+    if (pVideoProfileDesc != nullptr) {
+        if (pStructureTypes != nullptr) {
+            if (*pStructureTypeCount &lt; pVideoProfileDesc-&gt;formatStructTypeCount) {
+                result = VK_INCOMPLETE;
+            } else {
+                *pStructureTypeCount = pVideoProfileDesc-&gt;formatStructTypeCount;
+            }
+            if (*pStructureTypeCount &gt; 0) {
+                memcpy(pStructureTypes, pVideoProfileDesc-&gt;pFormatStructTypes, *pStructureTypeCount * sizeof(VkStructureType));
+            }
+        } else {
+            *pStructureTypeCount = pVideoProfileDesc-&gt;formatStructTypeCount;
+        }
+    }
+
+    return result;
+}
+#endif  // VK_KHR_video_queue
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_profiles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_profiles.hpp--section-46.html">القسم السابق</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم لاحق</span>
+    </div>
+  
+  </main>
+</body>
+</html>

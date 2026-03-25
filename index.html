@@ -1,0 +1,627 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="مرجع عربي تقني لـ Vulkan وCMake وSDL3 وGLSLang وDear ImGui مع دروس وأمثلة وروابط داخلية">
+    <meta name="keywords" content="Vulkan, CMake, SDL3, GLSL, Dear ImGui, رسوميات, برمجة, C++, عربي, توثيق">
+    <meta name="author" content="Arabic Vulkan Documentation">
+
+    <title>ا. المرجع العربي للبرمجة</title>
+
+    <!-- الأنماط -->
+    <link rel="stylesheet" href="css/main.css?v=0.0.1">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+</head>
+<body>
+    <!-- زر القائمة للموبايل -->
+    <button class="menu-toggle" aria-label="فتح القائمة" aria-controls="sidebar" aria-expanded="false" onclick="toggleMobileSidebarMenu(event); return false;">☰</button>
+
+    <!-- القائمة الجانبية -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="brand-link" onclick="showHomePage(); return false;" aria-label="العودة إلى الصفحة الرئيسية">
+                <img src="assets/logo.png?v=0.0.1" alt="ا. المرجع العربي للبرمجة" class="brand-logo-image">
+            </a>
+        </div>
+
+        <!-- البحث -->
+        <div class="search-container">
+            <div class="search-input-shell">
+                <span class="search-input-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <circle cx="11" cy="11" r="6.5"></circle>
+                        <path d="M16 16 L21 21"></path>
+                    </svg>
+                </span>
+                <input type="text" id="search-input" class="search-input" placeholder="ابحث هنا" autocomplete="off">
+                <button type="button" id="search-clear-btn" class="search-clear-btn" aria-label="مسح نص البحث" title="مسح البحث" onclick="clearSearchInput(); return false;" hidden>×</button>
+            </div>
+            <div class="search-autocomplete" id="search-autocomplete" style="display: none;" aria-label="اقتراحات البحث"></div>
+            <div class="search-filters" id="search-filters" aria-label="تحديد قسم البحث">
+                <button type="button" class="filter-btn active" data-filter="all" onclick="setSearchFilter('all')">الكل</button>
+                <button type="button" class="filter-btn" data-filter="vulkan" onclick="setSearchFilter('vulkan')">فولكان</button>
+                <button type="button" class="filter-btn" data-filter="cpp" onclick="setSearchFilter('cpp')">C++</button>
+                <button type="button" class="filter-btn" data-filter="cmake" onclick="setSearchFilter('cmake')">CMake</button>
+                <button type="button" class="filter-btn" data-filter="sdl3" onclick="setSearchFilter('sdl3')">SDL3</button>
+                <button type="button" class="filter-btn" data-filter="sdl3-audio" onclick="setSearchFilter('sdl3-audio')">SDL3Audio</button>
+                <button type="button" class="filter-btn" data-filter="imgui" onclick="setSearchFilter('imgui')">Dear ImGui</button>
+                <button type="button" class="filter-btn" data-filter="glsl" onclick="setSearchFilter('glsl')">GLSL</button>
+                <button type="button" class="filter-btn" data-filter="tutorials" onclick="setSearchFilter('tutorials')">الدروس</button>
+                <button type="button" class="filter-btn" data-filter="ffmpeg" onclick="setSearchFilter('ffmpeg')">FFmpeg</button>
+                <button type="button" class="filter-btn" data-filter="files" onclick="setSearchFilter('files')">الملفات</button>
+            </div>
+            <div class="search-filters search-subfilters" id="search-subfilters" aria-label="تحديد المجال الفرعي للبحث" style="display: none;"></div>
+        </div>
+
+        <section class="recent-visited-panel" id="recentVisitedPanel" aria-label="العناصر التي تمت زيارتها مؤخرًا">
+            <div class="recent-visited-header">
+                <div class="recent-visited-title-wrap">
+                    <span class="recent-visited-icon" aria-hidden="true">↺</span>
+                    <span class="recent-visited-title">زُرت مؤخرًا</span>
+                </div>
+                <button type="button" class="recent-visited-clear-btn" id="recentVisitedClearBtn" onclick="clearRecentVisits()">تنظيف</button>
+            </div>
+            <div class="recent-visited-list" id="recentVisitedList"></div>
+        </section>
+
+        <button
+            type="button"
+            class="sidebar-smart-scroll-btn"
+            id="sidebarSmartScrollButton"
+            aria-label="انزل إلى أسفل القائمة">
+            <span class="sidebar-smart-scroll-icon" aria-hidden="true">↓</span>
+        </button>
+        <button
+            type="button"
+            class="sidebar-close-open-btn"
+            id="sidebarCloseOpenButton"
+            aria-label="إغلاق الفروع المفتوحة"
+            title="إغلاق الفروع المفتوحة">
+            ×
+        </button>
+        <div class="sidebar-jump-menu" id="sidebarJumpMenu" aria-label="اختصارات المكتبات الرئيسية"></div>
+
+        <section id="cmake-cluster" class="nav-cluster nav-cluster-glsl collapsed" aria-label="CMake">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('cmake-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/file.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>CMake</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="cmake-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر CMake">...</span>
+                    <span class="nav-super-header-note">البناء والتهيئة والتثبيت</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="cmake-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="cpp-cluster" class="nav-cluster nav-cluster-glsl collapsed" aria-label="C++">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('cpp-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/structure.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>C++</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="cpp-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر C++">...</span>
+                    <span class="nav-super-header-note">اللغة والمكتبة المعيارية</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="cpp-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="vulkan-cluster" class="nav-cluster nav-cluster-vulkan collapsed" aria-label="Vulkan | فولكان">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('vulkan-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/command.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>Vulkan | فولكان</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="vulkan-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر Vulkan">...</span>
+                    <span class="nav-super-header-note">المرجع والدروس والملفات</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+
+            <div class="nav-items nav-cluster-items">
+                <div class="nav-item" data-nav-type="vulkan-index" data-nav-name="vulkan" data-tooltip="يفتح فهرس Vulkan المعياري المحلي المبني على طبقة المرجع الجديدة." tabindex="0" role="button">
+                    <span><img src="assets/material-icon-theme/command.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"></span>
+                    <span>فهرس Vulkan</span>
+                </div>
+            </div>
+
+            <!-- قائمة الدوال -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('functions-list')">
+                    <h3><img src="assets/material-icon-theme/function.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الدوال <span id="vulkan-functions-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="functions-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الماكرو -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('macros-list')">
+                    <h3><img src="assets/material-icon-theme/macro.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الماكرو <span id="vulkan-macros-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="macros-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الثوابت -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('constants-list')">
+                    <h3><img src="assets/material-icon-theme/constant.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الثوابت <span id="vulkan-constants-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="constants-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الهياكل -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('structures-list')">
+                    <h3><img src="assets/material-icon-theme/structure.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الهياكل <span id="vulkan-structures-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="structures-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة التعدادات -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('enums-list')">
+                    <h3><img src="assets/material-icon-theme/enum.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> التعدادات <span id="vulkan-enums-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="enums-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة المتغيرات والأنواع الخاصة -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('variables-list')">
+                    <h3><img src="assets/material-icon-theme/variable.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> المتغيرات <span id="vulkan-variables-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="variables-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الدروس -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('tutorials-list')">
+                    <h3><img src="assets/material-icon-theme/tutorial.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الدروس <span id="vulkan-tutorials-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="tutorials-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة الملفات -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('files-list')">
+                    <h3><img src="assets/material-icon-theme/file.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> الملفات <span id="vulkan-files-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="files-list" class="nav-items"></div>
+            </div>
+
+            <!-- قائمة أمثلة فولكان -->
+            <div class="nav-section vulkan-sidebar-kind-section collapsed">
+                <div class="nav-section-header" onclick="toggleSection('examples-list')">
+                    <h3><img src="assets/material-icon-theme/command.svg" alt="" class="sidebar-kind-icon ui-codicon nav-icon"> أمثلة فولكان <span id="vulkan-examples-count" class="nav-section-inline-count">0</span></h3>
+                    <span class="icon">▼</span>
+                </div>
+                <div id="examples-list" class="nav-items"></div>
+            </div>
+        </section>
+
+        <section id="sdl3-core-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-core-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-core-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3">...</span>
+                    <span class="nav-super-header-note">النواة الأساسية</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-core-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="sdl3-audio-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3Audio">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-audio-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3Audio</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-audio-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3Audio">...</span>
+                    <span class="nav-super-header-note">فرع الصوت</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-audio-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="sdl3-image-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3_image">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-image-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3_image</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-image-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3_image">...</span>
+                    <span class="nav-super-header-note">ملحق الصور</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-image-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="sdl3-mixer-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3_mixer">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-mixer-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3_mixer</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-mixer-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3_mixer">...</span>
+                    <span class="nav-super-header-note">ملحق الصوت</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-mixer-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="sdl3-ttf-cluster" class="nav-cluster nav-cluster-sdl3 collapsed" aria-label="SDL3_ttf">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('sdl3-ttf-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/sdl3.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>SDL3_ttf</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="sdl3-ttf-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر SDL3_ttf">...</span>
+                    <span class="nav-super-header-note">ملحق الخطوط</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="sdl3-ttf-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="glsl-cluster" class="nav-cluster nav-cluster-glsl collapsed" aria-label="GLSLang">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('glsl-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/glsl.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>GLSLang</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="glsl-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر GLSL">...</span>
+                    <span class="nav-super-header-note">مرجع لغة التظليل</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="glsl-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="imgui-cluster" class="nav-cluster nav-cluster-imgui collapsed" aria-label="Dear ImGui">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('imgui-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/imgui.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>Dear ImGui</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="imgui-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر Dear ImGui">...</span>
+                    <span class="nav-super-header-note">مرجع الواجهة الفورية</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="imgui-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="game-ui-cluster" class="nav-cluster nav-cluster-imgui collapsed" aria-label="واجهات الألعاب">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('game-ui-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/tutorial.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>واجهات الألعاب</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="game-ui-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر واجهات الألعاب">...</span>
+                    <span class="nav-super-header-note">عناصر HUD و UI و أدوات المحرر</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="game-ui-list" class="nav-items nav-cluster-items"></div>
+        </section>
+
+        <section id="ffmpeg-cluster" class="nav-cluster collapsed" aria-label="FFmpeg">
+            <div class="nav-super-header" onclick="toggleSidebarCluster('ffmpeg-cluster')">
+                <div class="nav-super-header-title">
+                    <img src="assets/material-icon-theme/file.svg" alt="" class="sidebar-kind-icon nav-super-icon">
+                    <span>FFmpeg</span>
+                </div>
+                <div class="nav-super-header-meta">
+                    <span id="ffmpeg-cluster-count" class="nav-super-header-count" aria-label="عدد عناصر FFmpeg">109</span>
+                    <span class="nav-super-header-note">معالجة الوسائط وترميزها</span>
+                    <span class="nav-super-header-toggle" aria-hidden="true">▼</span>
+                </div>
+            </div>
+            <div id="ffmpeg-list" class="nav-items nav-cluster-items">
+                <div class="nav-item" data-nav-type="ffmpeg-index" data-nav-name="ffmpeg" data-tooltip="يفتح فهرس FFmpeg داخل المرجع المعياري الحالي" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;">
+                    <span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span>
+                    <span>فهرس FFmpeg</span>
+                </div>
+                <div class="nav-section ffmpeg-reference-kind-section collapsed">
+                    <div class="nav-section-header" onclick="toggleFfmpegSection('modules')">
+                        <h3><span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span> المكتبات الفرعية <span class="nav-section-inline-count">7</span></h3>
+                        <span class="icon">▼</span>
+                    </div>
+                    <div id="ffmpeg-section-modules" class="nav-items">
+                        <div class="nav-item" data-nav-type="ffmpeg-index" data-nav-name="modules" data-tooltip="يفتح فهرس المكتبات الفرعية في FFmpeg داخل المرجع المعياري" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;">
+                            <span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span>
+                            <span>فهرس المكتبات الفرعية</span>
+                        </div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="libavformat" data-nav-library="ffmpeg" data-nav-kind="modules" data-nav-slug="libavformat" data-tooltip="طبقة الحاويات وفتح المصادر وقراءة الحزم" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span><span>libavformat</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="libavcodec" data-nav-library="ffmpeg" data-nav-kind="modules" data-nav-slug="libavcodec" data-tooltip="طبقة الترميز وفك الترميز الأساسية في FFmpeg" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span><span>libavcodec</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="libavfilter" data-nav-library="ffmpeg" data-nav-kind="modules" data-nav-slug="libavfilter" data-tooltip="طبقة الفلاتر ومعالجة الإطارات داخل مخطط ترابطي" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span><span>libavfilter</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="libswscale" data-nav-library="ffmpeg" data-nav-kind="modules" data-nav-slug="libswscale" data-tooltip="طبقة تحويل الصور والتحجيم وتبديل صيغ البكسل" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span><span>libswscale</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="libswresample" data-nav-library="ffmpeg" data-nav-kind="modules" data-nav-slug="libswresample" data-tooltip="طبقة إعادة أخذ عينات الصوت وتحويل صيغته" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span><span>libswresample</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="libavutil" data-nav-library="ffmpeg" data-nav-kind="modules" data-nav-slug="libavutil" data-tooltip="طبقة الأدوات المشتركة والبنى العامة بين مكتبات FFmpeg" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span><span>libavutil</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="libavdevice" data-nav-library="ffmpeg" data-nav-kind="modules" data-nav-slug="libavdevice" data-tooltip="طبقة التعامل مع أجهزة الإدخال والإخراج الخاصة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="file" aria-hidden="true"></span><span>libavdevice</span></div>
+                    </div>
+                </div>
+                <div class="nav-section ffmpeg-reference-kind-section collapsed">
+                    <div class="nav-section-header" onclick="toggleFfmpegSection('functions')">
+                        <h3><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span> الدوال <span class="nav-section-inline-count">40</span></h3>
+                        <span class="icon">▼</span>
+                    </div>
+                    <div id="ffmpeg-section-functions" class="nav-items">
+                        <div class="nav-item" data-nav-type="ffmpeg-index" data-nav-name="functions" data-tooltip="يفتح فهرس الدوال في FFmpeg داخل المرجع المعياري" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;">
+                            <span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span>
+                            <span>فهرس الدوال</span>
+                        </div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avformat_open_input" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avformat-open-input" data-tooltip="يفتح ملفًا أو تدفقًا ويجهز AVFormatContext للقراءة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avformat_open_input</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avformat_find_stream_info" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avformat-find-stream-info" data-tooltip="يقرأ من المصدر بقدر كاف لاكتشاف خصائص الـ streams تلقائيًا" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avformat_find_stream_info</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_find_best_stream" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-find-best-stream" data-tooltip="يختار تلقائيًا أفضل stream من نوع وسائط معين داخل الملف" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_find_best_stream</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_read_frame" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-read-frame" data-tooltip="يسحب الحزمة التالية من المصدر المفتوح على شكل AVPacket" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_read_frame</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avformat_close_input" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avformat-close-input" data-tooltip="يغلق المصدر المفتوح ويحرر AVFormatContext وما يتبعه" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avformat_close_input</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_find_decoder" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-find-decoder" data-tooltip="يبحث عن decoder مسجل يطابق AVCodecID المطلوب" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_find_decoder</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_alloc_context3" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-alloc-context3" data-tooltip="يخصص AVCodecContext ويملؤه بالقيم الافتراضية المناسبة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_alloc_context3</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_parameters_to_context" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-parameters-to-context" data-tooltip="ينسخ AVCodecParameters إلى AVCodecContext قبل الفتح" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_parameters_to_context</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_open2" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-open2" data-tooltip="يحوّل AVCodecContext من بنية محجوزة إلى decoder أو encoder فعلي جاهز" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_open2</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_send_packet" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-send-packet" data-tooltip="يدفع packet مضغوطة إلى decoder ليعالجها تدريجيًا" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_send_packet</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_receive_frame" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-receive-frame" data-tooltip="يسحب الإطار المفكوك من سياق codec بعد إدخال الحزم" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_receive_frame</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_get_hw_frames_parameters" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-get-hw-frames-parameters" data-tooltip="يبني AVHWFramesContext مناسبًا لمسار فك الترميز العتادي" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_get_hw_frames_parameters</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_flush_buffers" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-flush-buffers" data-tooltip="يمسح buffers الداخلية داخل AVCodecContext لإعادة البدء" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_flush_buffers</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_free_context" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-free-context" data-tooltip="يحرر AVCodecContext ويصفّر المؤشر بعد الانتهاء" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_free_context</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_get_name" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-get-name" data-tooltip="يعيد الاسم النصي القياسي لـ AVCodecID" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_get_name</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_codec_iterate" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-codec-iterate" data-tooltip="يمر على جميع codecs المسجلة واحدة تلو الأخرى" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_codec_iterate</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_codec_is_encoder" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-codec-is-encoder" data-tooltip="يتحقق هل AVCodec المعطى يعمل كمرمّز" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_codec_is_encoder</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_codec_is_decoder" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-codec-is-decoder" data-tooltip="يتحقق هل AVCodec المعطى يعمل كمفكّك" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_codec_is_decoder</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_find_encoder" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-find-encoder" data-tooltip="يبحث عن encoder مسجل يطابق AVCodecID المطلوب" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_find_encoder</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_parameters_from_context" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-parameters-from-context" data-tooltip="ينسخ إعدادات AVCodecContext إلى AVCodecParameters" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_parameters_from_context</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_send_frame" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-send-frame" data-tooltip="يدفع AVFrame خامة إلى encoder ليبني منها AVPacket مضغوطة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_send_frame</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avcodec_receive_packet" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avcodec-receive-packet" data-tooltip="يسحب AVPacket المضغوطة الناتجة من encoder بعد إدخال frames" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avcodec_receive_packet</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_bsf_alloc" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-bsf-alloc" data-tooltip="يحجز AVBSFContext لمرشح bitstream محدد" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_bsf_alloc</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_bsf_init" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-bsf-init" data-tooltip="يهيئ AVBSFContext بعد تعبئة مدخلاته الأساسية" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_bsf_init</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_bsf_send_packet" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-bsf-send-packet" data-tooltip="يدفع AVPacket مضغوطة إلى مرشح bitstream" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_bsf_send_packet</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_bsf_receive_packet" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-bsf-receive-packet" data-tooltip="يسحب AVPacket الناتجة من مرشح bitstream" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_bsf_receive_packet</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="av_bsf_free" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="av-bsf-free" data-tooltip="يحرر AVBSFContext بعد انتهاء مرشح bitstream" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>av_bsf_free</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_getContext" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-get-context" data-tooltip="ينشئ SwsContext لربط أبعاد المصدر والوجهة وصيغ البكسل وخوارزمية التحويل" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_getContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_getCachedContext" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-get-cached-context" data-tooltip="يعيد SwsContext موجودًا أو يعيد بناءه فقط عند تغير المواصفات" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_getCachedContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_scale" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-scale" data-tooltip="يحول الإطار بين صيغ بكسل أو أحجام مختلفة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_scale</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_isSupportedInput" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-is-supported-input" data-tooltip="يتحقق هل صيغة البكسل مدعومة كمدخل في libswscale" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_isSupportedInput</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_isSupportedOutput" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-is-supported-output" data-tooltip="يتحقق هل صيغة البكسل مدعومة كمخرج في libswscale" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_isSupportedOutput</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_getCoefficients" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-get-coefficients" data-tooltip="يعيد معاملات مصفوفة التحويل اللوني لفضاء YUV محدد" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_getCoefficients</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_setColorspaceDetails" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-set-colorspace-details" data-tooltip="يضبط معاملات الفضاء اللوني ونطاق اللون داخل SwsContext" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_setColorspaceDetails</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_getColorspaceDetails" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-get-colorspace-details" data-tooltip="يقرأ إعدادات الفضاء اللوني الحالية من SwsContext" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_getColorspaceDetails</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="sws_freeContext" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="sws-free-context" data-tooltip="يحرر SwsContext بعد انتهاء التحويلات" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>sws_freeContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avdevice_list_input_sources" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avdevice-list-input-sources" data-tooltip="يسرد أجهزة الإدخال المتاحة لجهاز capture أو input device معين" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avdevice_list_input_sources</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avdevice_list_output_sinks" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avdevice-list-output-sinks" data-tooltip="يسرد أجهزة الإخراج المتاحة لجهاز output معين" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avdevice_list_output_sinks</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avdevice_app_to_dev_control_message" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avdevice-app-to-dev-control-message" data-tooltip="يرسل رسالة تحكم من التطبيق إلى الجهاز" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avdevice_app_to_dev_control_message</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="avdevice_dev_to_app_control_message" data-nav-library="ffmpeg" data-nav-kind="functions" data-nav-slug="avdevice-dev-to-app-control-message" data-tooltip="يرسل رسالة تحكم من الجهاز إلى التطبيق" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-method" aria-hidden="true"></span><span>avdevice_dev_to_app_control_message</span></div>
+                    </div>
+                </div>
+                <div class="nav-section ffmpeg-reference-kind-section collapsed">
+                    <div class="nav-section-header" onclick="toggleFfmpegSection('structures')">
+                        <h3><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span> البنى <span class="nav-section-inline-count">13</span></h3>
+                        <span class="icon">▼</span>
+                    </div>
+                    <div id="ffmpeg-section-structures" class="nav-items">
+                        <div class="nav-item" data-nav-type="ffmpeg-index" data-nav-name="structures" data-tooltip="يفتح فهرس البنى في FFmpeg داخل المرجع المعياري" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;">
+                            <span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span>
+                            <span>فهرس البنى</span>
+                        </div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVFormatContext" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-format-context" data-tooltip="السياق العام للمصدر أو الحاوية المفتوحة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVFormatContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVCodecContext" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-codec-context" data-tooltip="السياق التشغيلي للـ codec أثناء الترميز أو فك الترميز" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVCodecContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVPacket" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-packet" data-tooltip="الحاوية التي تمثل وحدة بيانات مضغوطة قادمة من demuxer أو ذاهبة إلى codec" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVPacket</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVFrame" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-frame" data-tooltip="الحاوية التي تمثل بيانات خام مفكوكة مثل صورة أو عينة صوت" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVFrame</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="SwsContext" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="sws-context" data-tooltip="السياق الداخلي لعمليات التحجيم وتحويل الصورة في libswscale" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>SwsContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVDeviceInfoList" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-device-info-list" data-tooltip="قائمة الأجهزة أو المخارج المكتشفة في libavdevice" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVDeviceInfoList</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="SwsFilter" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="sws-filter" data-tooltip="حاوية فلاتر اختيارية تضبط سلوك التحجيم داخل libswscale" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>SwsFilter</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="SwsVector" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="sws-vector" data-tooltip="متجه معاملات يستخدم لبناء فلاتر التحجيم في libswscale" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>SwsVector</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVD3D11VAContext" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-d3d11va-context" data-tooltip="سياق التسريع العتادي D3D11VA لفك الترميز على Windows" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVD3D11VAContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="dxva_context" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="dxva-context" data-tooltip="سياق DXVA2 العام لتكامل فك الترميز العتادي على Windows" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>dxva_context</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVVDPAUContext" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-vdpau-context" data-tooltip="سياق VDPAU لتكامل فك الترميز العتادي على Linux" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVVDPAUContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVVideotoolboxContext" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-videotoolbox-context" data-tooltip="سياق VideoToolbox لتكامل فك الترميز العتادي على macOS وiOS" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVVideotoolboxContext</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVHWAccel" data-nav-library="ffmpeg" data-nav-kind="structures" data-nav-slug="av-hw-accel" data-tooltip="وصف داخلي لمسار التسريع العتادي المرتبط بـ codec" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-struct" aria-hidden="true"></span><span>AVHWAccel</span></div>
+                    </div>
+                </div>
+                <div class="nav-section ffmpeg-reference-kind-section collapsed">
+                    <div class="nav-section-header" onclick="toggleFfmpegSection('enums')">
+                        <h3><span class="ui-codicon nav-icon" data-codicon="symbol-enum" aria-hidden="true"></span> التعدادات <span class="nav-section-inline-count">6</span></h3>
+                        <span class="icon">▼</span>
+                    </div>
+                    <div id="ffmpeg-section-enums" class="nav-items">
+                        <div class="nav-item" data-nav-type="ffmpeg-index" data-nav-name="enums" data-tooltip="يفتح فهرس التعدادات في FFmpeg داخل المرجع المعياري" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;">
+                            <span class="ui-codicon nav-icon" data-codicon="symbol-enum" aria-hidden="true"></span>
+                            <span>فهرس التعدادات</span>
+                        </div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVMediaType" data-nav-library="ffmpeg" data-nav-kind="enums" data-nav-slug="av-media-type" data-tooltip="يحدد نوع الـ stream أو الـ codec: فيديو أو صوت أو ترجمة أو غير ذلك" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-enum" aria-hidden="true"></span><span>AVMediaType</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVPixelFormat" data-nav-library="ffmpeg" data-nav-kind="enums" data-nav-slug="av-pixel-format" data-tooltip="يحدد كيف تُرتب بكسلات الصورة داخل الذاكرة وما القنوات الموجودة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-enum" aria-hidden="true"></span><span>AVPixelFormat</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVCodecID" data-nav-library="ffmpeg" data-nav-kind="enums" data-nav-slug="av-codec-id" data-tooltip="يحدد codec المحدد داخل فئة الوسائط مثل H.264 أو AAC أو HEVC" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-enum" aria-hidden="true"></span><span>AVCodecID</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVDiscard" data-nav-library="ffmpeg" data-nav-kind="enums" data-nav-slug="av-discard" data-tooltip="يحدد سياسة تجاهل بعض أنواع الإطارات أو الحزم أثناء فك الترميز" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-enum" aria-hidden="true"></span><span>AVDiscard</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVAppToDevMessageType" data-nav-library="ffmpeg" data-nav-kind="enums" data-nav-slug="av-app-to-dev-message-type" data-tooltip="أنواع رسائل التحكم التي يرسلها التطبيق إلى الجهاز" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-enum" aria-hidden="true"></span><span>AVAppToDevMessageType</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVDevToAppMessageType" data-nav-library="ffmpeg" data-nav-kind="enums" data-nav-slug="av-dev-to-app-message-type" data-tooltip="أنواع الرسائل التي يرسلها الجهاز إلى التطبيق" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-enum" aria-hidden="true"></span><span>AVDevToAppMessageType</span></div>
+                    </div>
+                </div>
+                <div class="nav-section ffmpeg-reference-kind-section collapsed">
+                    <div class="nav-section-header" onclick="toggleFfmpegSection('constants')">
+                        <h3><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span> الثوابت <span class="nav-section-inline-count">18</span></h3>
+                        <span class="icon">▼</span>
+                    </div>
+                    <div id="ffmpeg-section-constants" class="nav-items">
+                        <div class="nav-item" data-nav-type="ffmpeg-index" data-nav-name="constants" data-tooltip="يفتح فهرس الثوابت في FFmpeg داخل المرجع المعياري" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;">
+                            <span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span>
+                            <span>فهرس الثوابت</span>
+                        </div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_NOPTS_VALUE" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-nopts-value" data-tooltip="قيمة sentinel تعني أن الطابع الزمني غير معروف أو غير متوفر" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_NOPTS_VALUE</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_TIME_BASE" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-time-base" data-tooltip="القاعدة الزمنية الداخلية الشائعة في FFmpeg وتساوي الميكروثانية" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_TIME_BASE</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AVERROR_EOF" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="averror-eof" data-tooltip="قيمة خطأ خاصة تعني أن المصدر انتهى فعليًا" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AVERROR_EOF</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_INPUT_BUFFER_PADDING_SIZE" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-input-buffer-padding-size" data-tooltip="عدد البايتات الإضافية التي يجب أن توجد بعد buffer الإدخال لسلامة فك الترميز" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_INPUT_BUFFER_PADDING_SIZE</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_CODEC_FLAG_GLOBAL_HEADER" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-codec-flag-global-header" data-tooltip="علم يطلب وضع headers الخاصة بالـ codec في مكان عام بدل تكرارها داخل كل packet" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_CODEC_FLAG_GLOBAL_HEADER</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_CODEC_FLAG_LOW_DELAY" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-codec-flag-low-delay" data-tooltip="علم يطلب نمط تشغيل منخفض التأخير عندما يدعمه الـ codec" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_CODEC_FLAG_LOW_DELAY</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_CODEC_FLAG_COPY_OPAQUE" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-codec-flag-copy-opaque" data-tooltip="علم يطلب نسخ الحقل opaque بين المدخلات والمخرجات عندما يدعم الـ codec ذلك" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_CODEC_FLAG_COPY_OPAQUE</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_CODEC_FLAG2_FAST" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-codec-flag2-fast" data-tooltip="علم يفضّل المسار الأسرع حتى لو كان أقل تشددًا في بعض التفاصيل" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_CODEC_FLAG2_FAST</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_CODEC_CAP_HARDWARE" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-codec-cap-hardware" data-tooltip="قدرة تشير إلى أن الـ codec مرتبط بتسريع عتادي أو يعتمد عليه" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_CODEC_CAP_HARDWARE</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="AV_CODEC_CAP_DR1" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="av-codec-cap-dr1" data-tooltip="قدرة تعني أن codec يدعم إدارة buffers مخصصة عبر get_buffer2" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>AV_CODEC_CAP_DR1</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="LIBAVCODEC_VERSION_MAJOR" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="libavcodec-version-major" data-tooltip="رقم الإصدار الرئيسي لـ libavcodec" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>LIBAVCODEC_VERSION_MAJOR</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="LIBAVCODEC_VERSION_MINOR" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="libavcodec-version-minor" data-tooltip="رقم الإصدار الفرعي لـ libavcodec" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>LIBAVCODEC_VERSION_MINOR</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="LIBAVCODEC_VERSION_MICRO" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="libavcodec-version-micro" data-tooltip="رقم الإصدار الدقيق أو التصحيحي لـ libavcodec" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>LIBAVCODEC_VERSION_MICRO</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="LIBAVCODEC_VERSION_INT" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="libavcodec-version-int" data-tooltip="القيمة العددية المجمعة لإصدار libavcodec" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>LIBAVCODEC_VERSION_INT</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="LIBAVCODEC_BUILD" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="libavcodec-build" data-tooltip="اسم بناء تاريخي يشير إلى قيمة إصدار libavcodec المجمعة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>LIBAVCODEC_BUILD</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="LIBAVCODEC_IDENT" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="libavcodec-ident" data-tooltip="سلسلة تعريف نصية جاهزة تعرّف libavcodec وإصداره" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>LIBAVCODEC_IDENT</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="LIBAVDEVICE_VERSION_MAJOR" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="libavdevice-version-major" data-tooltip="رقم الإصدار الرئيسي لـ libavdevice" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>LIBAVDEVICE_VERSION_MAJOR</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="LIBAVDEVICE_IDENT" data-nav-library="ffmpeg" data-nav-kind="constants" data-nav-slug="libavdevice-ident" data-tooltip="سلسلة تعريف نصية جاهزة تعرّف libavdevice وإصداره" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="symbol-constant" aria-hidden="true"></span><span>LIBAVDEVICE_IDENT</span></div>
+                    </div>
+                </div>
+                <div class="nav-section ffmpeg-reference-kind-section collapsed">
+                    <div class="nav-section-header" onclick="toggleFfmpegSection('examples')">
+                        <h3><span class="ui-codicon nav-icon" data-codicon="book" aria-hidden="true"></span> الأمثلة <span class="nav-section-inline-count">25</span></h3>
+                        <span class="icon">▼</span>
+                    </div>
+                    <div id="ffmpeg-section-examples" class="nav-items">
+                        <div class="nav-item" data-nav-type="ffmpeg-index" data-nav-name="examples" data-tooltip="يفتح فهرس أمثلة FFmpeg داخل المرجع المعياري" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;">
+                            <span class="ui-codicon nav-icon" data-codicon="book" aria-hidden="true"></span>
+                            <span>فهرس الأمثلة</span>
+                        </div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="decode_video.c" data-nav-library="ffmpeg" data-nav-kind="examples" data-nav-slug="decode-video" data-tooltip="يبين كيف تتحول packet الفيديو إلى AVFrame خامة قابلة للعرض أو المعالجة" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="book" aria-hidden="true"></span><span>decode_video.c</span></div>
+                        <div class="nav-item" data-nav-type="ffmpeg-entity" data-nav-name="transcode.c" data-nav-library="ffmpeg" data-nav-kind="examples" data-nav-slug="transcode" data-tooltip="يبين pipeline كاملة: demux + decode + filter + encode + mux" tabindex="0" role="button" onclick="event.stopPropagation(); handleSidebarNavActivation(event, this); return false;"><span class="ui-codicon nav-icon" data-codicon="book" aria-hidden="true"></span><span>transcode.c</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </aside>
+
+    <div
+        class="sidebar-resizer"
+        id="sidebarResizer"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="مقبض تغيير عرض القائمة الرئيسية"
+        title="اسحب لتكبير أو تصغير عرض القائمة الرئيسية">
+        <span class="sidebar-resizer-handle" aria-hidden="true"></span>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content" id="mainContent">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px; color: var(--text-muted);">جاري تحميل التوثيق...</p>
+        </div>
+    </main>
+
+    <button
+        type="button"
+        class="page-smart-scroll-btn"
+        id="pageSmartScrollButton"
+        aria-label="انزل إلى أسفل الصفحة">
+        <span class="page-smart-scroll-icon" aria-hidden="true">↓</span>
+    </button>
+
+    <script>
+        window.__showBootstrapScriptError = function (source) {
+            var content = document.getElementById('mainContent');
+            if (!content) return;
+            content.innerHTML = '<div class="page-header"><h1>تعذر تحميل ملفات الواجهة</h1><p>فشل تحميل: <code>' + source + '</code></p></div>';
+        };
+    </script>
+
+    <!-- سكريبت التطبيق -->
+    <script src="data/split/core.js?v=0.0.1" onerror="window.__showBootstrapScriptError('data/split/core.js')"></script>
+    <script src="js/modules/content-catalogs.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/content-catalogs.js')"></script>
+    <script src="js/modules/reference-templates.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/reference-templates.js')"></script>
+    <script src="js/modules/vulkan-patterns.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-patterns.js')"></script>
+    <script src="js/modules/shared-patterns.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/shared-patterns.js')"></script>
+    <script src="js/modules/ui-blocks.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/ui-blocks.js')"></script>
+    <script src="js/modules/example-routes.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/example-routes.js')"></script>
+    <script src="js/modules/sidebar-navigation.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sidebar-navigation.js')"></script>
+    <script src="js/modules/sidebar-blocks.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sidebar-blocks.js')"></script>
+    <script src="js/modules/glsl-section.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/glsl-section.js')"></script>
+    <script src="js/modules/game-ui-section.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/game-ui-section.js')"></script>
+    <script src="js/modules/imgui-section.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/imgui-section.js')"></script>
+    <script src="js/modules/sdl3-section.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-section.js')"></script>
+    <script src="js/modules/search-engine.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/search-engine.js')"></script>
+    <script src="js/modules/home-page.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/home-page.js')"></script>
+    <script src="js/modules/reference-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/reference-runtime.js')"></script>
+    <script src="js/modules/index-pages.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/index-pages.js')"></script>
+    <script src="js/modules/vulkan-value-pages.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-value-pages.js')"></script>
+    <script src="js/modules/vulkan-reference-pages.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-reference-pages.js')"></script>
+    <script src="js/modules/general-detail-pages.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/general-detail-pages.js')"></script>
+    <script src="js/modules/cpp-reference-utils.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/cpp-reference-utils.js')"></script>
+    <script src="js/modules/app-bootstrap-config.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-bootstrap-config.js')"></script>
+    <script src="js/modules/app-runtime-agents.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-runtime-agents.js')"></script>
+    <script src="js/modules/app-text-loader.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-text-loader.js')"></script>
+    <script src="js/modules/app-segment-registry.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-segment-registry.js')"></script>
+    <script src="js/modules/app-data-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-data-runtime.js')"></script>
+    <script src="js/modules/sdl3-package-data-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-package-data-runtime.js')"></script>
+    <script src="js/modules/app-load-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-load-runtime.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-2.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-2.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-3.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-3.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-4.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-4.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-5.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-5.js')"></script>
+    <script src="js/modules/tutorial-support.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/tutorial-support.js')"></script>
+    <script src="js/modules/file-source-viewer.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/file-source-viewer.js')"></script>
+    <script src="js/modules/project-reference-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/project-reference-runtime.js')"></script>
+    <script src="js/modules/cmake-semantic-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/cmake-semantic-runtime.js')"></script>
+    <script src="js/modules/tooltip-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/tooltip-runtime.js')"></script>
+    <script src="js/modules/cpp-glfw-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/cpp-glfw-runtime.js')"></script>
+    <script src="js/modules/vulkan-enum-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-enum-runtime.js')"></script>
+    <script src="js/modules/sdl3-code-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-code-runtime.js')"></script>
+    <script src="js/modules/sdl3-related-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-related-runtime.js')"></script>
+    <script src="js/modules/tutorial-fallback-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/tutorial-fallback-runtime.js')"></script>
+    <script src="js/modules/sdl3-example-groups-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-example-groups-runtime.js')"></script>
+    <script src="js/modules/sdl3-ready-example-preview-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-ready-example-preview-runtime.js')"></script>
+    <script src="js/modules/sdl3-ready-example-page-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-ready-example-page-runtime.js')"></script>
+    <script src="js/modules/vulkan-example-preview-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-example-preview-runtime.js')"></script>
+    <script src="js/modules/vulkan-ready-example-preview-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-ready-example-preview-runtime.js')"></script>
+    <script src="js/modules/vulkan-ready-example-page-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-ready-example-page-runtime.js')"></script>
+    <script src="js/modules/vulkan-home-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-home-runtime.js')"></script>
+    <script src="js/modules/cmake-home-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/cmake-home-runtime.js')"></script>
+    <script src="js/modules/cpp-home-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/cpp-home-runtime.js')"></script>
+    <script src="js/modules/ffmpeg-home-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/ffmpeg-home-runtime.js')"></script>
+    <script src="js/modules/ffmpeg-reference-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/ffmpeg-reference-runtime.js')"></script>
+    <script src="js/modules/glsl-home-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/glsl-home-runtime.js')"></script>
+    <script src="js/modules/sdl3-home-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-home-runtime.js')"></script>
+    <script src="js/modules/home-shell-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/home-shell-runtime.js')"></script>
+    <script src="js/modules/tree-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/tree-runtime.js')"></script>
+    <script src="js/modules/category-lookup-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/category-lookup-runtime.js')"></script>
+    <script src="js/modules/vulkan-sidebar-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-sidebar-runtime.js')"></script>
+    <script src="js/modules/vulkan-constants-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/vulkan-constants-runtime.js')"></script>
+    <script src="js/modules/sdl3-example-preview-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-example-preview-runtime.js')"></script>
+    <script src="js/modules/imgui-example-preview-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/imgui-example-preview-runtime.js')"></script>
+    <script src="js/modules/sdl3-parameter-render-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-parameter-render-runtime.js')"></script>
+    <script src="js/modules/sdl3-entity-render-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-entity-render-runtime.js')"></script>
+    <script src="js/modules/sdl3-detail-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-detail-runtime.js')"></script>
+    <script src="js/modules/sdl3-nav-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/sdl3-nav-runtime.js')"></script>
+    <script src="js/modules/glsl-page-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/glsl-page-runtime.js')"></script>
+    <script src="js/modules/glsl-example-runtime.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/glsl-example-runtime.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-7.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-7.js')"></script>
+    <script src="js/modules/app-heavy-reference-helpers-6.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/modules/app-heavy-reference-helpers-6.js')"></script>
+    <script src="js/app.js?v=0.0.1" onerror="window.__showBootstrapScriptError('js/app.js')"></script>
+</body>
+</html>

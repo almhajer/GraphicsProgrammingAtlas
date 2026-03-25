@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_PeepEvents",
+    "slug": "sdl-peep-events",
+    "titleArabic": "Check the event queue for messages and optionally return them",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-peep-events",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-peep-events.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Check the event queue for messages and optionally return them",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Peep الأحداث داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Peep الأحداث داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (int) Returns the number of events actually stored or -1 on failure;\ncall SDL_GetError () for more\ninformation. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Check the event queue for messages and optionally return them."
+  },
+  "signature": {
+    "raw": "int SDL_PeepEvents(SDL_Event *events, int numevents, SDL_EventAction action, Uint32 minType, Uint32 maxType);",
+    "returnType": "int",
+    "parameters": [
+      "SDL_Event *events",
+      "int numevents",
+      "SDL_EventAction action",
+      "Uint32 minType",
+      "Uint32 maxType"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_events.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "events",
+        "type": "SDL_Event *",
+        "descriptionArabic": "يمثل المعامل events من النوع SDL_Event * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "destination buffer for the retrieved events, may be NULL to leave\nthe events in the queue and return the number of events that would have\nbeen stored."
+      },
+      {
+        "name": "numevents",
+        "type": "int",
+        "descriptionArabic": "يمثل المعامل numevents من النوع int القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "if action is SDL_ADDEVENT , the\nnumber of events to add back to the event queue; if action is SDL_PEEKEVENT or SDL_GETEVENT , the maximum number of events\nto retrieve."
+      },
+      {
+        "name": "action",
+        "type": "SDL_EventAction",
+        "descriptionArabic": "يمثل المعامل action من النوع SDL_EventAction القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "action to take; see Remarks for details."
+      },
+      {
+        "name": "minType",
+        "type": "Uint32",
+        "descriptionArabic": "يمثل المعامل minType من النوع Uint32 القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "minimum value of the event type to be considered; SDL_EVENT_FIRST is a safe choice."
+      },
+      {
+        "name": "maxType",
+        "type": "Uint32",
+        "descriptionArabic": "يمثل المعامل maxType من النوع Uint32 القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "maximum value of the event type to be considered; SDL_EVENT_LAST is a safe choice."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "action may be any of the following:",
+      "SDL_ADDEVENT : up to\n numevents events will be added to the back of the event\nqueue.",
+      "SDL_PEEKEVENT :\n numevents events at the front of the event queue, within\nthe specified minimum and maximum type, will be returned to the caller\nand will not be removed from the queue. If you pass NULL for\n events , then numevents is ignored and the\ntotal number of matching events will be returned.",
+      "SDL_GETEVENT : up to\n numevents events at the front of the event queue, within\nthe specified minimum and maximum type, will be returned to the caller\nand will be removed from the queue.",
+      "You may have to call SDL_PumpEvents () before calling this\nfunction. Otherwise, the events may not be ready to be filtered when you\ncall SDL_PeepEvents ()."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(int) Returns the number of events actually stored or -1 on failure;\ncall SDL_GetError () for more\ninformation.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_PeepEvents",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_PollEvent",
+        "route": "#ref/sdl3-core/functions/sdl-poll-event",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_PumpEvents",
+        "route": "#ref/sdl3-core/functions/sdl-pump-events",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_PushEvent",
+        "route": "#ref/sdl3-core/functions/sdl-push-event",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Event Handling",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

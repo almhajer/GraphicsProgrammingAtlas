@@ -1,0 +1,969 @@
+{
+  "exampleGuides": {
+    "instance-creation": {
+      "officialSummaryArabic": "هذه المراجع مهمة لأنها تشرح المعنى البرمجي الحقيقي لـ VkInstance: ليس مجرد كائن تبدأ به، بل عقدة البداية التي تعلن هوية التطبيق والامتدادات والطبقات المتاحة لكل ما سيأتي بعده.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateInstance"},
+        {"type": "reference", "name": "VkInstanceCreateInfo"},
+        {"type": "external", "label": "Vulkan Tutorial: Instance", "href": "https://docs.vulkan.org/tutorial/latest/03_Drawing_a_triangle/00_Setup/02_Instance.html"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يشرح خطوة bootstrap الأساسية فعليًا. الغرض منه ليس إنشاء handle فقط، بل بناء نقطة دخول موثوقة تتحقق من المتطلبات وتمنع المشروع من الاستمرار فوق إعداد أولي ناقص أو مضلل.",
+      "projectStepsArabic": [
+        "افصل جمع الامتدادات والطبقات المطلوبة عن خطوة الإنشاء نفسها حتى يتضح أن المعنى الحقيقي هنا هو توصيف البداية لا سطر الاستدعاء وحده.",
+        "أضف validation config اختيارية بدل تثبيت الأسماء داخل main حتى لا يسيء المبتدئ فهم الطبقات على أنها جزء ثابت لا يتغير.",
+        "حوّل إنشاء VkInstance إلى bootstrap object صغير يحرر المورد تلقائيًا عند فشل المراحل التالية حتى يبقى السلوك الفعلي عند الفشل واضحًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "pick-physical-device", "label": "الانتقال إلى اختيار الجهاز الفيزيائي"}
+      ]
+    },
+    "pick-physical-device": {
+      "officialSummaryArabic": "هذه المراجع توضح أن اختيار الجهاز الفيزيائي ليس خطوة شكلية؛ بل مرحلة تقييم capabilities حقيقية تحدد ما الذي يستطيع المشروع فعله لاحقًا وما الذي سيفشل قبل أن يبدأ.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkEnumeratePhysicalDevices"},
+        {"type": "reference", "name": "VkPhysicalDevice"},
+        {"type": "reference", "name": "vkGetPhysicalDeviceQueueFamilyProperties"}
+      ],
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي هنا هو فحص قدرات الأجهزة ثم اتخاذ قرار واعٍ. الهدف ليس أخذ أول جهاز متاح، بل اختيار جهاز يحقق متطلبات السطح والطوابير والميزات والامتدادات بشكل مفهوم.",
+      "projectStepsArabic": [
+        "ابنِ مرحلة تقييم مستقلة تجمع queue families والميزات والامتدادات المدعومة حتى يفهم القارئ أن الاختيار نتيجة تحليل لا نتيجة صدفة.",
+        "أضف scoring واضحًا يعطي الأولوية للأجهزة التي تدعم ما تحتاجه فعلًا بدل إبقاء القرار غامضًا أو مبنيًا على أول نتيجة.",
+        "احتفظ بنتيجة التقييم في بنية DeviceSelection حتى لا يختلط قرار الاختيار مع خطوات إنشاء VkDevice والـ swapchain لاحقًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "logical-device", "label": "الانتقال إلى إنشاء الجهاز المنطقي"}
+      ]
+    },
+    "logical-device": {
+      "officialSummaryArabic": "هذا المسار يوضح أن VkDevice ليس مجرد handle ثانٍ بعد VkInstance؛ بل الواجهة التشغيلية التي ستنشئ عبرها الطوابير والموارد وتنفذ أغلب عمل Vulkan الفعلي.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateDevice"},
+        {"type": "reference", "name": "VkDeviceCreateInfo"},
+        {"type": "reference", "name": "VkDeviceQueueCreateInfo"}
+      ],
+      "fullProjectNoteArabic": "الغرض الحقيقي من هذا المثال هو فصل اختيار القدرات عن تشغيلها الفعلي. عند هذه النقطة يتحول المشروع من فحص ما هو ممكن إلى بناء السياق الذي سيملك queues والموارد والعمليات اللاحقة.",
+      "projectStepsArabic": [
+        "اجمع queue family indices والـ queues الناتجة داخل Context واحدة قابلة للمشاركة حتى لا يضيع معنى الجهاز المنطقي بين متغيرات مبعثرة.",
+        "افصل features المطلوبة والاختيارية في builder واضح قبل استدعاء vkCreateDevice حتى لا يختلط على المبتدئ ما هو ضروري بما هو تحسين لاحق.",
+        "أضف teardown موحدًا لتدمير device والموارد التابعة بترتيب صحيح لأن سوء الفهم الشائع هنا هو أن الإنشاء أهم من دورة الحياة الكاملة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "swapchain", "label": "الانتقال إلى swapchain"}
+      ]
+    },
+    "sdl3-window-surface": {
+      "officialSummaryArabic": "هذه المراجع الرسمية مهمة لأنها تمثل جسر SDL3 مع Vulkan عند إنشاء النافذة والسطح والامتدادات المطلوبة للعرض الحقيقي.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateInstance"},
+        {"type": "reference", "name": "VkInstanceCreateInfo"},
+        {"type": "external", "label": "SDL_Vulkan_CreateSurface", "href": "https://wiki.libsdl.org/SDL3/SDL_Vulkan_CreateSurface"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، يجب أن تصبح طبقة SDL3 window + surface bootstrap وحدة واضحة تعيد SDL_Window وVkSurfaceKHR والامتدادات المطلوبة بدل نثرها في main.",
+      "projectStepsArabic": [
+        "افصل إنشاء النافذة عن إنشاء VkInstance وعن إنشاء VkSurfaceKHR حتى يسهل اختبار فشل كل مرحلة وحدها.",
+        "احفظ امتدادات SDL المطلوبة داخل BootstrapConfig بدل طلبها من جديد في كل مسار.",
+        "وحّد تحرير SDL_Window وVkSurfaceKHR وVkInstance في teardown واضح حتى لا تنعكس الأخطاء على مسار الإغلاق."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "instance-creation", "label": "الانتقال إلى بناء VkInstance بالتفصيل"},
+        {"type": "example", "id": "pick-physical-device", "label": "الانتقال إلى اختيار الجهاز المناسب للسطح"}
+      ]
+    },
+    "swapchain": {
+      "officialSummaryArabic": "هذه المراجع تشرح المعنى الحقيقي للـ swapchain: هي ليست مصفوفة صور فقط، بل عقد العرض بين التطبيق والسطح بما يشمله من عدد صور وتنسيق وأبعاد وpresent mode.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateSwapchainKHR"},
+        {"type": "reference", "name": "VkSwapchainCreateInfoKHR"},
+        {"type": "external", "label": "VK_KHR_swapchain", "href": "https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSwapchainKHR.html"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يوضح أول مورد يعكس حالة السطح فعليًا. الهدف منه أن تفهم أن swapchain تعيش وتتغير مع حجم النافذة والسطح، وليست موردًا ثابتًا يُنشأ مرة واحدة ثم يُنسى.",
+      "projectStepsArabic": [
+        "افصل استعلام surface capabilities واختيار format وpresent mode عن خطوة الإنشاء النهائية حتى يظهر سبب كل قرار بوضوح.",
+        "ابنِ مسار recreateSwapchain يعيد الصور وframebuffers والاعتمادات التابعة بترتيب موحد لأن سوء الفهم الأكثر شيوعًا هو اعتبار swapchain موردًا دائمًا لا يحتاج إعادة بناء.",
+        "احتفظ بكل عناصر swapchain داخل بنية فرعية بدل نشرها كمتغيرات عامة حتى يبقى سلوكها الفعلي مرتبطًا بدورة حياة واضحة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "render-pass", "label": "الانتقال إلى render pass"}
+      ]
+    },
+    "render-pass": {
+      "officialSummaryArabic": "المرجع الرسمي هنا يوضح attachments والـ load/store ops والاعتماديات، وهي مفاهيم لا يكفيها مثال محلي واحد عادة.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateRenderPass"},
+        {"type": "reference", "name": "VkRenderPassCreateInfo"},
+        {"type": "reference", "name": "VkAttachmentDescription"}
+      ],
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي لهذا المثال ليس مجرد \"إنشاء render pass\"، بل تعريف عقد المرور الرسومي نفسه: أي attachments ستدخل، ماذا سيحدث لمحتواها عند البداية والنهاية، وكيف سيتنقل التنفيذ بين subpasses أو إلى المسار الخارجي.",
+      "projectStepsArabic": [
+        "اكتب بوضوح أي image ستدخل كـ color أو depth attachment، وما layout المتوقعة لها قبل pass وبعدها، بدل إبقاء هذه القرارات متناثرة بين الإنشاء والرسم.",
+        "افصل وصف `VkAttachmentDescription` و`VkAttachmentReference` وsubpass dependencies في builders صغيرة حتى يظهر أن كل جزء يحدد contract مختلفًا لا مجرد حقل إضافي.",
+        "إذا كان المشروع قد ينتقل إلى dynamic rendering لاحقًا، فاجعل المثال يوضح صراحة ما الذي كان render pass يوفره ضمنيًا من توافق attachments واعتماديات."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "graphics-pipeline", "label": "الانتقال إلى graphics pipeline"}
+      ]
+    },
+    "graphics-pipeline": {
+      "officialSummaryArabic": "هذه المراجع مهمة لأن الـ graphics pipeline ليست دالة ترسم وحدها؛ بل وصف كامل لحالة الرسم من الشيدر حتى rasterization والـ blending والـ layout.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateGraphicsPipelines"},
+        {"type": "reference", "name": "VkGraphicsPipelineCreateInfo"},
+        {"type": "reference", "name": "VkPipelineShaderStageCreateInfo"}
+      ],
+      "fullProjectNoteArabic": "المعنى البرمجي الحقيقي هنا أن هذا المثال لا \"يرسم مثلثًا\" بحد ذاته، بل يبني object سيخبر draw اللاحقة: أي shaders ستعمل، كيف ستُقرأ vertex data، كيف ستُقص primitive، وكيف ستُكتب النتائج في attachments.",
+      "projectStepsArabic": [
+        "افصل بوضوح بين `creation-time state` مثل rasterization/depth/blend وبين الحالات التي ستصبح dynamic لاحقًا، حتى لا يختلط على القارئ ما يتغير وقت draw بما يُثبت وقت الإنشاء.",
+        "اربط `VkPipelineLayout` وdescriptor set layouts بالمثال نفسه كي يظهر أن الـ pipeline لا تستهلك الموارد مباشرة، بل تعتمد على contract ربط منفصلة.",
+        "سجّل في المثال ما الذي سيفشل إذا غيّرت shader stage أو vertex input أو render-pass compatibility دون تعديل الأجزاء التابعة، لأن هذه هي نقطة سوء الفهم الأكثر شيوعًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "frame-rendering", "label": "الانتقال إلى رسم الإطار"}
+      ]
+    },
+    "image-views": {
+      "officialSummaryArabic": "هذا المسار الرسمي يوضح كيف تتحول صور swapchain الخام إلى image views قابلة للربط في framebuffers وrender passes.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateImageView"},
+        {"type": "reference", "name": "VkImageViewCreateInfo"},
+        {"type": "reference", "name": "VkImageView"}
+      ],
+      "fullProjectNoteArabic": "عندما يكبر المشروع، يجب أن تصبح image views جزءًا من وحدة swapchain resources بدل متغيرات معزولة داخل خطوة لاحقة.",
+      "projectStepsArabic": [
+        "اجمع صور swapchain وimage views والأبعاد والتنسيق داخل بنية SwapchainResources واحدة.",
+        "وحّد إنشاء image views وتدميرها ضمن recreate path نفسه حتى لا ينسى المشروع تنظيفها عند تغيير الحجم.",
+        "أضف helper موحدًا لإنشاء views للصور الملونة ثم وسّعه لاحقًا لصور العمق أو multisampling."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "framebuffers", "label": "الانتقال إلى ربط الصور داخل framebuffers"},
+        {"type": "example", "id": "render-pass", "label": "العودة إلى وصف render pass"}
+      ]
+    },
+    "framebuffers": {
+      "officialSummaryArabic": "هذه المراجع الرسمية تشرح أين يلتقي render pass مع image views الفعلية لكل صورة من صور العرض.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateFramebuffer"},
+        {"type": "reference", "name": "VkFramebufferCreateInfo"},
+        {"type": "reference", "name": "VkFramebuffer"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي، framebuffers يجب أن تدار ضمن دورة recreate الخاصة بالـ swapchain لأن صلاحيتها مرتبطة مباشرة بحجم الصور ومرفقاتها.",
+      "projectStepsArabic": [
+        "اربط إنشاء framebuffers بمسار recreateSwapchain بدل جعله خطوة يدوية منفصلة.",
+        "احتفظ بكل framebuffer مع image view المقابلة لها ضمن مصفوفة موارد لكل صورة.",
+        "جهّز المسار منذ الآن لاحتمال إضافة depth attachment أو MSAA resolve attachment لاحقًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "command-buffer-recording", "label": "الانتقال إلى تسجيل أوامر الرسم فوق framebuffer"},
+        {"type": "example", "id": "frame-rendering", "label": "الانتقال إلى دورة الإطار الكاملة"}
+      ]
+    },
+    "command-pool": {
+      "officialSummaryArabic": "هذا المرجع الرسمي مهم لأنه يربط queue family المناسبة بمصدر command buffers الذي سيغذي مسار الرسم كله لاحقًا.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateCommandPool"},
+        {"type": "reference", "name": "VkCommandPoolCreateInfo"},
+        {"type": "reference", "name": "vkAllocateCommandBuffers"}
+      ],
+      "fullProjectNoteArabic": "الغرض الحقيقي من هذا المثال هو شرح من أين تأتي command buffers فعليًا ومن يملك عمرها. الـ pool ليست تفصيل إنشاء ثانوي، بل مالك التخصيص وإعادة التدوير المرتبط بـ queue family محددة.",
+      "projectStepsArabic": [
+        "اذكر بوضوح في المثال لأي `queue family` أُنشئت الـ pool ولماذا، لأن هذا يفسر أين يمكن تنفيذ command buffers التابعة لها لاحقًا.",
+        "افصل في الشرح بين `VkCommandPoolCreateFlagBits` التي تضبط استراتيجية reset/reuse وبين تخصيص buffers نفسها، حتى لا تبدو الـ pool مجرد wrapper فارغة.",
+        "إذا كان المثال يعتمد على frames-in-flight، اربط pool أو buffers بكل FrameContext صراحة حتى يظهر من يملك التسجيل الحالي ومن ينتظر fence الإطار السابق."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "command-buffer-recording", "label": "الانتقال إلى تسجيل command buffer"},
+        {"type": "example", "id": "frame-rendering", "label": "الانتقال إلى دورة الإطار"}
+      ]
+    },
+    "command-buffer-recording": {
+      "officialSummaryArabic": "هذا المسار يشرح الفرق الحاسم بين ما تسجله الآن وما يُنفذ لاحقًا على GPU؛ وهو من أكثر النقاط التي يسيء المبتدئ فهمها في Vulkan.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkBeginCommandBuffer"},
+        {"type": "reference", "name": "VkCommandBufferBeginInfo"},
+        {"type": "reference", "name": "vkEndCommandBuffer"}
+      ],
+      "fullProjectNoteArabic": "الغرض الحقيقي من هذا المثال هو أن ترى ما الذي يُكتب فعليًا داخل command buffer: bind pipeline، bind descriptor sets، bind buffers، begin/end render pass أو rendering، وأوامر draw. هذا ليس تنفيذًا مباشرًا بل بناء batch ستُرسل لاحقًا.",
+      "projectStepsArabic": [
+        "اكتب الشرح بحيث يذكر ترتيب التسجيل نفسه: begin، ثم bind state والموارد، ثم أوامر draw/dispatch، ثم end. هذا الترتيب هو معنى command recording لا مجرد تنسيق للكود.",
+        "اربط كل أمر مسجل بالشرط المسبق الذي يعتمد عليه، مثل pipeline متوافقة، framebuffer أو attachments جاهزة، وdescriptor sets مرتبطة بالـ layout الصحيحة.",
+        "أظهر بوضوح أن أي خطأ هنا لن يظهر غالبًا وقت التسجيل فقط، بل قد ينفجر عند submit أو أثناء التنفيذ الفعلي، ولذلك فهم الفرق بين التسجيل والتنفيذ إلزامي."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "frame-rendering", "label": "الانتقال إلى submit/present الكامل"},
+        {"type": "example", "id": "uniform-buffer", "label": "الانتقال إلى تغذية الشيدر ببيانات متغيرة"}
+      ]
+    },
+    "glfw-triangle": {
+      "officialSummaryArabic": "هذه المراجع الرسمية مفيدة لأن المثال يجمع surface وswapchain وrender pass وpipeline في أول نافذة مرئية حقيقية فوق GLFW3.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCmdDraw"},
+        {"type": "reference", "name": "vkQueueSubmit"},
+        {"type": "external", "label": "Vulkan Tutorial: Drawing a triangle", "href": "https://docs.vulkan.org/tutorial/latest/03_Drawing_a_triangle/00_Setup/00_Base_code.html"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يجب أن يصبح bootstrap منفصلًا للرسم الأساسي على GLFW3، لا صفحة تكرر كل خطوة في كل مشروع جديد.",
+      "projectStepsArabic": [
+        "اجمع إنشاء GLFW window وVkSurfaceKHR وswapchain وpipeline داخل بنية App صغيرة بدل إبقائها مبعثرة.",
+        "أضف مسار recreateSwapchain واضحًا مبكرًا حتى لا يتحول أول مثال مرئي إلى نقطة اختناق عند التوسع.",
+        "افصل تسجيل أوامر الرسم عن حلقة النافذة حتى تصبح إضافة buffers أو textures لاحقًا خطوة طبيعية."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "square-draw", "label": "الانتقال إلى شكل مرئي أكبر من المثلث"},
+        {"type": "example", "id": "vertex-buffer", "label": "الانتقال إلى تغذية الرؤوس من buffer فعلي"}
+      ]
+    },
+    "square-draw": {
+      "officialSummaryArabic": "هذا المسار الرسمي يوضح أين يبقى منطق الرسم نفسه بسيطًا، وأين تبدأ الحاجة إلى buffers أو فهارس عند زيادة التعقيد.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCmdDraw"},
+        {"type": "reference", "name": "VkPipeline"},
+        {"type": "reference", "name": "VkCommandBuffer"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، هذا المثال هو محطة انتقالية بين الرسم الضمني داخل الشيدر وبين الاعتماد على vertex/index buffers الحقيقية.",
+      "projectStepsArabic": [
+        "استخدم المثال لتثبيت مسار render pass وpipeline قبل إدخال تعقيد buffers أو textures.",
+        "حوّل عدد الرؤوس والشكل المرسوم إلى بيانات وصفية إذا بدأت تجربة أشكال متعددة داخل نفس المختبر.",
+        "انتقل بعده مباشرة إلى vertex/index buffers بدل إبقاء الهندسة مضمنة داخل الشيدر طويلًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "vertex-buffer", "label": "الانتقال إلى Vertex Buffer"},
+        {"type": "example", "id": "index-buffer", "label": "الانتقال إلى Index Buffer"}
+      ]
+    },
+    "vertex-buffer": {
+      "officialSummaryArabic": "هذه المراجع الرسمية توضح الانتقال من رؤوس ضمنية إلى بيانات فعلية داخل الذاكرة تُربط بالـ pipeline وقت الرسم.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "VkDeviceMemory"},
+        {"type": "reference", "name": "vkCmdBindVertexBuffers"}
+      ],
+      "fullProjectNoteArabic": "المعنى الحقيقي لهذا المثال هو الانتقال من هندسة ضمنية داخل الشيدر إلى مورد خطي في الذاكرة: تنشئ buffer، تربطها بذاكرة، ترفع بيانات الرؤوس إليها، ثم تربطها وقت التسجيل قبل draw.",
+      "projectStepsArabic": [
+        "قسّم المثال إلى: إنشاء `VkBuffer`، اختيار وربط `VkDeviceMemory`, رفع البيانات عبر staging أو map بحسب المسار، ثم `vkCmdBindVertexBuffers` وقت التسجيل.",
+        "اربط وصف `Vertex` في C++ مباشرةً مع `VkPipelineVertexInputStateCreateInfo` وما يقرؤه Vertex Shader حتى يظهر contract البيانات لا مجرد struct محلية.",
+        "اشرح ما الذي سيتغيّر لو أصبح buffer ديناميكيًا أو متعددة meshes، حتى يفهم القارئ أن buffer نفسها مورد طويل العمر بينما التسجيل يربطها فقط للإطار الحالي."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "index-buffer", "label": "الانتقال إلى تقليل تكرار الرؤوس بالفهرسة"},
+        {"type": "example", "id": "texture-image", "label": "الانتقال إلى خامة فوق هندسة حقيقية"}
+      ]
+    },
+    "index-buffer": {
+      "officialSummaryArabic": "هذا المسار الرسمي يثبت الفرق بين ربط الرؤوس وربط الفهارس، وكيف يقلل vkCmdDrawIndexed ازدواجية البيانات في الذاكرة.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCmdBindIndexBuffer"},
+        {"type": "reference", "name": "vkCmdDrawIndexed"},
+        {"type": "reference", "name": "VkBuffer"}
+      ],
+      "fullProjectNoteArabic": "الغرض الحقيقي هنا ليس فقط \"رسم بفهارس\"، بل شرح أن الرسم لم يعد يستهلك الرؤوس بالترتيب الخام؛ بل يقرأ جدول indices من buffer مستقلة يحدد إعادة استخدام الرؤوس وترتيب تجميع primitives.",
+      "projectStepsArabic": [
+        "اقسم المثال بوضوح إلى: إنشاء/رفع index buffer، ثم `vkCmdBindIndexBuffer`, ثم `vkCmdDrawIndexed`, حتى يظهر أين تنتهي إدارة المورد وأين يبدأ الربط والتنفيذ.",
+        "اشرح لماذا يجب أن يطابق نوع index في الكود (`uint16_t` أو `uint32_t`) القيمة الممررة إلى `vkCmdBindIndexBuffer`, لأن الخطأ هنا يفسد التفسير الفعلي للذاكرة.",
+        "اربط المثال مباشرةً بتقليل تكرار الرؤوس وبتغيير topology أو ترتيب الوجوه، لأن هذا هو السبب العملي لاستخدام index buffer أصلًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "texture-image", "label": "الانتقال إلى خامة على geometry مفهرسة"},
+        {"type": "example", "id": "simple-camera", "label": "الانتقال إلى عرض المشهد بكاميرا"}
+      ]
+    },
+    "uniform-buffer": {
+      "officialSummaryArabic": "هذه المراجع مفيدة عندما تبدأ بتمرير بيانات مشهد أو وقت أو transforms إلى الشيدر بدل الاعتماد على قيم ثابتة داخله.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "reference", "name": "vkUnmapMemory"},
+        {"type": "external", "label": "Vulkan Tutorial: Uniform buffers", "href": "https://docs.vulkan.org/tutorial/latest/05_Uniform_buffers/00_Descriptor_set_layout_and_buffer.html"}
+      ],
+      "fullProjectNoteArabic": "هذا المثال يجب أن يوضح مسار host/device الحقيقي: CPU تكتب struct مع transforms أو الوقت، ثم تُجعل هذه البيانات مرئية للشيدر عبر buffer موصوفة في descriptor set وتُقرأ لاحقًا أثناء التنفيذ.",
+      "projectStepsArabic": [
+        "افصل بوضوح بين كتابة CPU إلى الذاكرة (`map` أو staging) وبين ربط الـ buffer في descriptor set، لأن الأولى تغير البيانات والثانية تغير من سيرى هذه البيانات.",
+        "عرّف struct موحدة للـ scene أو object uniforms ثم اربطها مباشرة بما يتوقعه الشيدر، حتى يصبح معنى `VkDescriptorType::UNIFORM_BUFFER` عمليًا لا نظريًا.",
+        "اذكر صراحة كيف يتغير التصميم عند وجود أكثر من frame-in-flight: هل ستملك buffer لكل frame، أم offsets ديناميكية، وما أثر ذلك على التزامن."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "graphics-pipeline", "label": "العودة إلى بنية pipeline"},
+        {"type": "example", "id": "frame-rendering", "label": "الانتقال إلى ربط البيانات بدورة الإطار"}
+      ]
+    },
+    "frame-rendering": {
+      "officialSummaryArabic": "هذا المسار الرسمي مهم لأنه يربط acquire/submit/present، وهي دورة العمل اليومية لأي تطبيق Vulkan فعلي.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkAcquireNextImageKHR"},
+        {"type": "reference", "name": "vkQueueSubmit"},
+        {"type": "reference", "name": "vkQueuePresentKHR"}
+      ],
+      "fullProjectNoteArabic": "المعنى الحقيقي لهذا المثال هو دورة الإطار الكاملة: تكتسب صورة swapchain، تجهّز command buffer الصحيحة، تسجل أو تعيد استخدامها، تُsubmitها مع semaphores وفence، ثم تُpresent الصورة نفسها. أي خلل في هذه السلسلة يغير سلوك التطبيق فعليًا أو يفشل الإطار كله.",
+      "projectStepsArabic": [
+        "اكتب الدورة كخطوات واضحة: `vkAcquireNextImageKHR` ثم انتظار fence الإطار عند الحاجة ثم reset/record ثم `vkQueueSubmit` ثم `vkQueuePresentKHR`, مع تسمية الموارد التي تنتقل بين هذه المراحل.",
+        "اجمع semaphores وfences وcommand buffers وdescriptor sets الخاصة بالإطار داخل `FrameContext` حتى يظهر من يخص الإطار الحالي ومن يعود للإطار السابق.",
+        "اشرح في المثال ماذا يحدث عند `OUT_OF_DATE_KHR` أو `SUBOPTIMAL_KHR`: ليس خطأ عابرًا، بل إشارة إلى أن عقد swapchain/السطح تغير ويجب إعادة بناء المسار التابع."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "imgui-integration", "label": "الانتقال إلى دمج ImGui فوق Vulkan"}
+      ]
+    },
+    "imgui-integration": {
+      "officialSummaryArabic": "هذه المراجع تربط طبقة أدوات ImGui ببقية مسار Vulkan، خصوصًا descriptor pool والرندر فوق نفس الإطار الرسومي.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkDescriptorPoolCreateInfo"},
+        {"type": "reference", "name": "vkCreateDescriptorPool"},
+        {"type": "external", "label": "ImGui Vulkan backend", "href": "https://github.com/ocornut/imgui/blob/master/backends/imgui_impl_vulkan.h"}
+      ],
+      "fullProjectNoteArabic": "في مشروع حقيقي، دمج ImGui يجب أن يبقى طبقة overlay منفصلة عن مشهد اللعبة أو التطبيق، مع موارد وdescriptor pool خاصة به حتى لا يلوث مسار الرسم الأساسي.",
+      "projectStepsArabic": [
+        "افصل تهيئة ImGui backend عن تهيئة Vulkan الأساسية داخل وحدة DebugUi أو ToolsOverlay مستقلة.",
+        "خصص descriptor pool منفصلة لـ ImGui ولا تخلطها مع pools الخاصة بالمواد أو المشهد.",
+        "حدد بوضوح متى يبدأ تسجيل UI ومتى يندمج فوق الإطار حتى لا تختلط أوامر الواجهة مع passes الرسم الأساسية."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "frame-rendering", "label": "العودة إلى دورة الإطار الأساسية"},
+        {"type": "example", "id": "uniform-buffer", "label": "الانتقال إلى تمرير بيانات الشيدر"}
+      ]
+    },
+    "texture-image": {
+      "officialSummaryArabic": "هذه المراجع الرسمية مهمة لأن مثال الخامة يجمع image upload وimage view وdescriptor set داخل خطوة واحدة تتكرر في معظم التطبيقات العملية.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCreateImageView"},
+        {"type": "reference", "name": "VkImageView"},
+        {"type": "reference", "name": "VkDescriptorSet"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الأكبر، texture loading يجب أن ينتقل إلى Texture Manager أو Resource System يفرق بين الرفع والمعاينة والربط داخل materials.",
+      "projectStepsArabic": [
+        "افصل مرحلة القراءة من الملف عن مرحلة staging/upload وعن مرحلة descriptor binding داخل طبقات مستقلة.",
+        "عرّف بنية TextureResource تحفظ VkImage وVkImageView وVkSampler وذاكرتها بدل نشرها في متغيرات منفصلة.",
+        "جهّز نظام cache للمسارات والصور إذا كان المشروع سيستخدم أكثر من خامة أو material."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-to-spirv", "label": "الانتقال إلى إعداد الشيدرز التي تستخدم الخامة"},
+        {"type": "example", "id": "simple-camera", "label": "الانتقال إلى عرض خامات داخل مشهد بكاميرا"}
+      ]
+    },
+    "glsl-to-spirv": {
+      "officialSummaryArabic": "هذا المسار الرسمي-العملي يربط بين ملفات GLSL النصية وبين Shader Modules التي يستهلكها Vulkan فعليًا داخل الـ pipeline.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkShaderModule"},
+        {"type": "reference", "name": "VkPipelineShaderStageCreateInfo"},
+        {"type": "external", "label": "glslangValidator", "href": "https://github.com/KhronosGroup/glslang"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، تحويل GLSL إلى SPIR-V يجب أن يكون جزءًا من build pipeline أو asset pipeline واضح، لا أمرًا يدويًا متفرقًا.",
+      "projectStepsArabic": [
+        "انقل أوامر glslangValidator إلى CMake أو script بناء موحد بدل استدعائها يدويًا لكل ملف.",
+        "افصل ملفات المصدر `.vert/.frag` عن نواتج `.spv` داخل مجلدات واضحة حتى يسهل تتبع rebuilds.",
+        "أضف تحققًا مبكرًا من نجاح الترجمة قبل إنشاء VkShaderModule حتى يصبح فشل الشيدر أوضح."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glfw-triangle", "label": "العودة إلى أول مسار رسم فعلي"},
+        {"type": "example", "id": "texture-image", "label": "الانتقال إلى خامة وشيدر فعليين"}
+      ]
+    },
+    "simple-camera": {
+      "officialSummaryArabic": "هذه المراجع مفيدة لأن الكاميرا البسيطة تربط مصفوفات view/projection مع تحديث الذاكرة والوصول إلى الشيدر داخل دورة الرسم.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "reference", "name": "VkDeviceMemory"},
+        {"type": "reference", "name": "VkBuffer"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، الكاميرا يجب أن تصبح وحدة مستقلة تحفظ الإعدادات والموقع والاتجاه وتحدّث uniform data من مكان مركزي.",
+      "projectStepsArabic": [
+        "افصل CameraState عن CameraUniforms حتى لا تختلط حالة التحكم مع البيانات المرسلة إلى الشيدر.",
+        "وحّد بناء view وprojection في helper واحدة تربط aspect ratio وسياسات near/far plane.",
+        "اربط الكاميرا بمسار scene أو viewer واضح بدل تحديثها من المثال الرسومي نفسه فقط."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "camera-movement", "label": "الانتقال إلى تحريك الكاميرا"},
+        {"type": "example", "id": "vertex-buffer", "label": "العودة إلى هندسة المشهد"}
+      ]
+    },
+    "camera-movement": {
+      "officialSummaryArabic": "هذا المسار الرسمي-التطبيقي يربط الإدخال بحالة الكاميرا ثم بإعادة بناء view matrix ورفعها إلى الذاكرة في كل إطار.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "reference", "name": "vkUnmapMemory"},
+        {"type": "reference", "name": "VkDeviceMemory"}
+      ],
+      "fullProjectNoteArabic": "في مشروع فعلي، movement system يجب أن تعيش داخل Camera Controller أو Player Controller واضح بدل شروط إدخال متناثرة داخل الحلقة الرئيسية.",
+      "projectStepsArabic": [
+        "افصل قراءة الإدخال عن تحديث الفيزياء/الحركة ثم عن رفع بيانات الكاميرا إلى الـ uniform buffer.",
+        "أضف delta-time موحدًا ومحددات سرعة/حساسية في مكان واحد بدل القيم الصلبة داخل كل مثال.",
+        "جهّز الكاميرا منذ الآن لدعم yaw/pitch أو orbit modes إذا كان المشروع سيتوسع إلى viewer أو editor."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "simple-camera", "label": "العودة إلى الكاميرا الثابتة"},
+        {"type": "example", "id": "texture-image", "label": "الانتقال إلى مشاهدة المشهد مع خامات"}
+      ]
+    },
+    "handle-basics": {
+      "officialSummaryArabic": "هذه المراجع الرسمية تشرح لماذا تتعامل Vulkan مع معظم الموارد كمقابض handles، وكيف تفرّق بين المقابض الصالحة وVK_NULL_HANDLE قبل البناء فوقها.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkInstance"},
+        {"type": "reference", "name": "VkDevice"},
+        {"type": "external", "label": "Vulkan Guide: Handles and Dispatch", "href": "https://docs.vulkan.org/guide/latest/dispatch.html"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، لا يجب أن تبقى المقابض متغيرات عامة خام فقط؛ الأفضل تجميعها داخل Contexts واضحة تملك المسؤولية عن دورة حياتها.",
+      "projectStepsArabic": [
+        "افصل مقابض instance وdevice وqueues داخل بنى AppContext أو DeviceContext بدل نشرها في كل دالة.",
+        "اجعل أي مورد يبدأ من VK_NULL_HANDLE ويُفعَّل فقط بعد نجاح الإنشاء حتى يسهل cleanup الآمن.",
+        "اربط كل handle بخطوة teardown مقابلة منذ البداية حتى لا يتحول التوسع لاحقًا إلى فوضى تحرير موارد."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "instance-creation", "label": "الانتقال إلى أول handle فعلي: VkInstance"},
+        {"type": "example", "id": "instance-cleanup", "label": "الانتقال إلى دورة حياة handle الكاملة"}
+      ]
+    },
+    "version-macros": {
+      "officialSummaryArabic": "هذا المسار يوضح كيف تبني أرقام نسخ Vulkan وتقرأها بشكل صحيح بدل التعامل معها كأرقام غامضة داخل logs أو شروط التوافق.",
+      "officialReferences": [
+        {"type": "reference", "name": "VK_API_VERSION_1_0"},
+        {"type": "reference", "name": "VK_API_VERSION_1_3"},
+        {"type": "external", "label": "VK_MAKE_API_VERSION", "href": "https://docs.vulkan.org/refpages/latest/refpages/source/VK_MAKE_API_VERSION.html"}
+      ],
+      "fullProjectNoteArabic": "في مشروع فعلي، قراءة النسخة ليست مجرد طباعة؛ بل جزء من طبقة توافق تحدد features والامتدادات والمسارات البديلة.",
+      "projectStepsArabic": [
+        "اجمع منطق قراءة النسخة وتنسيقها داخل helper واضح بدل تكرار الأقنعة والتحويلات في أكثر من موضع.",
+        "استخدم النسخة الفعلية لتوجيه feature gates بدل الاكتفاء برسالة console لا تؤثر على القرار.",
+        "احتفظ بالنسخة المطلوبة والنسخة المتاحة داخل BootstrapReport أو DeviceReport لسهولة التشخيص."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "device-info-dashboard", "label": "الانتقال إلى لوحة معلومات الجهاز"},
+        {"type": "example", "id": "instance-creation", "label": "العودة إلى إنشاء VkInstance مع نسخة واضحة"}
+      ]
+    },
+    "instance-cleanup": {
+      "officialSummaryArabic": "المرجع الرسمي هنا مهم لأنه يثبت أن teardown ليس خطوة تجميلية؛ ترتيب التدمير جزء أساسي من صحة تطبيق Vulkan.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkDestroyInstance"},
+        {"type": "reference", "name": "vkDestroyDevice"},
+        {"type": "reference", "name": "vkDeviceWaitIdle"}
+      ],
+      "fullProjectNoteArabic": "المشروع الحقيقي يحتاج طبقة cleanup متدرجة من الموارد الفرعية حتى أعلى السياق، لا دوال destroy متناثرة داخل main.",
+      "projectStepsArabic": [
+        "ابدأ دائمًا من الموارد التابعة مثل buffers وimage views قبل device وinstance.",
+        "أضف دوال teardown صغيرة لكل subsystem ثم اجمعها في shutdown موحد بدل destroy عشوائي في آخر الملف.",
+        "استعمل نمط ownership واضحًا حتى تعرف من يملك مسؤولية تدمير كل مورد."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "handle-basics", "label": "العودة إلى أساسيات المقابض"},
+        {"type": "example", "id": "buffer-memory-upload", "label": "الانتقال إلى cleanup مورد فعلي مثل buffer"}
+      ]
+    },
+    "device-info-dashboard": {
+      "officialSummaryArabic": "هذه المراجع الرسمية توضّح كيف تُسحب خصائص الجهاز وحدوده وقدراته بدل التعامل مع GPU كصندوق أسود.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkGetPhysicalDeviceProperties"},
+        {"type": "reference", "name": "VkPhysicalDeviceProperties"},
+        {"type": "reference", "name": "VkPhysicalDevice"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، معلومات الجهاز يجب أن تُجمع في تقرير أو capability snapshot يدعم قرارات الجودة والميزات والمسارات الاحتياطية.",
+      "projectStepsArabic": [
+        "افصل جمع الخصائص والميزات والذاكرة في وحدات تقرير مستقلة بدل سحبها متفرقة داخل واجهة العرض.",
+        "حوّل أسماء الجهاز والإصدار والحدود المهمة إلى dashboard تشخيصية قابلة لإعادة الاستخدام داخل editor أو debug overlay.",
+        "اربط capability snapshot بخيارات التهيئة حتى يصبح اختيار المسارات المتقدمة مبنيًا على بيانات حقيقية."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "pick-physical-device", "label": "العودة إلى اختيار الجهاز الفيزيائي"},
+        {"type": "example", "id": "version-macros", "label": "الرجوع إلى قراءة النسخة API"}
+      ]
+    },
+    "buffer-memory-upload": {
+      "officialSummaryArabic": "هذا هو الجسر العملي بين إنشاء VkBuffer نظريًا وبين رفع بيانات فعلية إليه عبر الذاكرة وربطها بالاستخدام الحقيقي.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "reference", "name": "vkUnmapMemory"},
+        {"type": "reference", "name": "VkBuffer"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الأكبر، رفع البيانات يجب أن يصبح طبقة Upload أو Staging واضحة تخدم buffers والصور بدل تكرار map/copy/unmap في كل مثال.",
+      "projectStepsArabic": [
+        "افصل إنشاء buffer عن اختيار نوع الذاكرة وعن عملية النسخ الفعلية إلى الذاكرة.",
+        "ابنِ helper أو allocator صغيرًا يجمع VkBuffer وVkDeviceMemory وسياسة التحميل الخاصة بهما.",
+        "جهّز منذ الآن مسار staging upload لأن كثيرًا من الموارد التالية سيحتاجه أيضًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "vertex-buffer", "label": "الانتقال إلى استخدام buffer للرؤوس"},
+        {"type": "example", "id": "uniform-buffer", "label": "الانتقال إلى رفع بيانات متغيرة كل إطار"}
+      ]
+    },
+    "depth-tested-3d-cube": {
+      "officialSummaryArabic": "هذه المراجع توضح أن الانتقال من 2D إلى 3D لا يكفيه pipeline جديدة فقط؛ تحتاج أيضًا depth attachment ومسار اختبار عمق صحيح.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkPipelineDepthStencilStateCreateInfo"},
+        {"type": "reference", "name": "VkRenderPass"},
+        {"type": "reference", "name": "VkFramebuffer"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي، دعم العمق يجب أن يدخل ضمن FrameGraph أو RenderTargets واضحة بدل إضافته كاستثناء داخل مثال المكعب فقط.",
+      "projectStepsArabic": [
+        "أضف مورد depth منفصلًا مع create/destroy واضحين بدل مزجه داخل نفس كتلة إنشاء swapchain.",
+        "اجعل إعدادات depth test جزءًا من وصف pipeline أو material بدل قيم صلبة متناثرة.",
+        "اربط هذا المثال مباشرة بالتحويلات والكاميرا حتى ترى قيمة العمق داخل مشهد 3D فعلي."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "transform-rotation-scale", "label": "الانتقال إلى تحويلات 3D فوق مشهد عميق"},
+        {"type": "example", "id": "basic-lighting", "label": "الانتقال لاحقًا إلى الإضاءة فوق مشهد 3D"}
+      ]
+    },
+    "glsl-file-reading": {
+      "officialSummaryArabic": "هذا المثال يثبت أن خطوة قراءة ملفات GLSL نفسها جزء من خط البناء والتشخيص، وليست مجرد IO هامشي قبل إنشاء الشيدر.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkShaderModule"},
+        {"type": "external", "label": "glslangValidator", "href": "https://github.com/KhronosGroup/glslang"},
+        {"type": "external", "label": "Vulkan Tutorial: Shader modules", "href": "https://docs.vulkan.org/tutorial/latest/03_Drawing_a_triangle/02_Graphics_pipeline_basics/01_Shader_modules.html"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، إدارة ملفات الشيدر يجب أن تكون جزءًا من asset pipeline تعرف أين المصدر وأين الناتج وأين أخطاء الترجمة.",
+      "projectStepsArabic": [
+        "افصل قراءة النص الخام عن ترجمة GLSL إلى SPIR-V وعن تحميل الناتج داخل VkShaderModule.",
+        "أضف تقارير خطأ واضحة بأسماء الملفات والمسارات بدل رسالة فشل عامة داخل المثال.",
+        "وحّد امتدادات الملفات والمجلدات الخاصة بالشيدرز حتى يسهل rebuild أو hot reload لاحقًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-file-pipeline", "label": "الانتقال إلى خط ملفات شيدر كامل"},
+        {"type": "example", "id": "glsl-to-spirv", "label": "الانتقال إلى الترجمة الفعلية نحو SPIR-V"}
+      ]
+    },
+    "glsl-file-pipeline": {
+      "officialSummaryArabic": "هذا المسار يربط بين قراءة ملفات الشيدر، ترجمتها، ثم إدخالها فعليًا في pipeline قابلة للتشغيل داخل Vulkan.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkPipelineShaderStageCreateInfo"},
+        {"type": "reference", "name": "VkShaderModule"},
+        {"type": "external", "label": "glslangValidator", "href": "https://github.com/KhronosGroup/glslang"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، هذا المثال يجب أن يتحول إلى Shader Build Pipeline واضحة تُدار من أدوات البناء أو محرر الأصول لا من main مباشرة.",
+      "projectStepsArabic": [
+        "اجمع ملفات shader source ونواتج SPIR-V داخل بنية AssetManifest أو BuildStep واضحة.",
+        "افصل خطوة compile عن خطوة createShaderModule حتى يبقى التشخيص دقيقًا.",
+        "اربط تعريف shader stages بمواد أو pipeline descriptors بدل بنائها يدويًا في كل مثال."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "multi-shader-stage", "label": "الانتقال إلى أكثر من مرحلة شيدر"},
+        {"type": "example", "id": "texture-image", "label": "الانتقال إلى خامة تستخدم shaders من الملفات"}
+      ]
+    },
+    "multi-shader-stage": {
+      "officialSummaryArabic": "هذه المراجع تشرح كيف تتحول فكرة Vertex/Fragment المنفصلة إلى stages متعددة مرتبطة ببنية pipeline واحدة.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkPipelineShaderStageCreateInfo"},
+        {"type": "reference", "name": "VkShaderStageFlagBits"},
+        {"type": "reference", "name": "vkCreateGraphicsPipelines"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، مراحل الشيدر يجب أن ترتبط بمفهوم Material أو Pipeline Recipe، لا بمصفوفة stages ثابتة داخل مثال منفرد.",
+      "projectStepsArabic": [
+        "حوّل stages إلى وصف بياناتي يحدد الملف والنقطة entry point والمرحلة بدل مصفوفة مصنّعة داخل الكود.",
+        "اجعل بناء pipeline يستقبل قائمة stages جاهزة حتى يصبح التوسع إلى geometry أو compute أو variants أسهل.",
+        "افصل الأخطاء الخاصة بكل stage بوضوح لأن فشل vertex وfragment ليسا الشيء نفسه."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "glsl-file-pipeline", "label": "العودة إلى خط ملفات الشيدر"},
+        {"type": "example", "id": "obj-model-loading", "label": "الانتقال إلى mesh تحتاج shader stages أوضح"}
+      ]
+    },
+    "transform-rotation-scale": {
+      "officialSummaryArabic": "هذا المثال يربط translation وrotation وscale داخل مصفوفة واحدة تُدفع إلى الشيدر، وهو المسار الأساسي لأي مشهد متحرك.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "VkDeviceMemory"},
+        {"type": "reference", "name": "vkMapMemory"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الفعلي، التحويلات يجب أن تُدار ضمن TransformComponent أو Scene Node بدل بناء المصفوفة يدويًا داخل كل مثال.",
+      "projectStepsArabic": [
+        "افصل position وrotation وscale داخل بنية Transform واضحة بدل مصفوفة خام وحيدة.",
+        "اجعل بناء world matrix دالة مركزية قابلة لإعادة الاستخدام مع أكثر من كائن.",
+        "اربط التحويلات بمسار camera أو scene graph إذا كان المشروع سيتوسع إلى محرر أو viewer."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "translation-transform", "label": "تفصيل جزء الإزاحة Translation"},
+        {"type": "example", "id": "animation-basic", "label": "الانتقال إلى الحركة فوق التحويلات"}
+      ]
+    },
+    "translation-transform": {
+      "officialSummaryArabic": "هذا المسار يعزل معنى الإزاحة نفسها قبل دمجها مع التدوير والتكبير، لذلك هو مناسب لفهم الحركة المكانية الأساسية.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "external", "label": "GLM Translation", "href": "https://glm.g-truc.net/0.9.9/api/a00668.html"}
+      ],
+      "fullProjectNoteArabic": "في مشروع كامل، translation لا يجب أن تعيش كأرقام x/y/z مبعثرة؛ الأفضل تخزينها داخل Transform أو CameraState واضحة.",
+      "projectStepsArabic": [
+        "عرّف مصدر بيانات واحدًا للموقع بدل تمرير ثلاثة أرقام مستقلة في كل دالة.",
+        "اربط الترجمة بحدود المشهد أو world units حتى لا تبقى الإحداثيات عشوائية.",
+        "استخدم هذا المثال كنقطة قبل دمج rotation وscale في world matrix كاملة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "rotation-transform", "label": "الانتقال إلى التدوير"},
+        {"type": "example", "id": "transform-rotation-scale", "label": "العودة إلى التحويل المركب"}
+      ]
+    },
+    "rotation-transform": {
+      "officialSummaryArabic": "هذا المثال يعزل التدوير حتى تفهم معنى pivot والزوايا والزمن قبل خلطه مع بقية التحويلات داخل المشهد.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "external", "label": "GLM Rotation", "href": "https://glm.g-truc.net/0.9.9/api/a00668.html"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، rotation يجب أن تُخزن بطريقة متسقة مثل Euler أو Quaternion بدل خلط طرق متعددة بين الأمثلة.",
+      "projectStepsArabic": [
+        "ثبّت وحدة الزوايا المستخدمة داخل المشروع حتى لا تختلط الدرجات مع الراديان.",
+        "افصل سرعة الدوران عن الزمن الفعلي للإطار عبر delta-time واضح.",
+        "جهّز هذا المثال ليصبح أساسًا لكاميرا orbit أو animation system لاحقًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "scale-transform", "label": "الانتقال إلى التكبير والتصغير"},
+        {"type": "example", "id": "animation-basic", "label": "الانتقال إلى حركة مستمرة"}
+      ]
+    },
+    "scale-transform": {
+      "officialSummaryArabic": "هذا المسار يوضح كيف يغيّر scale حجم الكائن المعروض من دون المساس ببقية منطق الرسم، وما أثر ذلك على إدراك الحجم داخل المشهد.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "external", "label": "GLM Scale", "href": "https://glm.g-truc.net/0.9.9/api/a00668.html"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، scale يجب أن تكون جزءًا من Transform موحد ويمكن أن ترتبط أحيانًا بالوحدات الفنية أو asset metadata.",
+      "projectStepsArabic": [
+        "افصل scale المحلي عن أي world scale أو parent scale إذا كان المشروع يتجه إلى scene graph.",
+        "تجنب القيم الصفرية أو السالبة غير المقصودة عبر حواجز validation بسيطة داخل المثال.",
+        "استخدم هذا المثال لتثبيت فهمك قبل جمع T/R/S كلها في مصفوفة موحدة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "transform-rotation-scale", "label": "العودة إلى الجمع بين T/R/S"},
+        {"type": "example", "id": "depth-tested-3d-cube", "label": "الانتقال إلى كائن 3D مع عمق"}
+      ]
+    },
+    "animation-basic": {
+      "officialSummaryArabic": "هذا المثال يربط الزمن بالتحويلات وبيانات الشيدر، لذلك هو خطوة طبيعية بعد فهم translation وrotation وscale منفصلة.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "reference", "name": "vkUnmapMemory"}
+      ],
+      "fullProjectNoteArabic": "في مشروع أكبر، animation لا ينبغي أن تكون معادلة داخل الحلقة فقط؛ الأفضل أن تصبح نظام تحديث يقرأ الزمن ويحدث الحالات والـ transforms بشكل موحد.",
+      "projectStepsArabic": [
+        "افصل time source عن animation logic حتى يسهل الإيقاف المؤقت أو التسريع أو إعادة الضبط.",
+        "ابنِ AnimationState صغيرة تحفظ progress والسرعة والاتجاه بدل حساب كل شيء لحظيًا من الزمن العام فقط.",
+        "اجعل تحديث البيانات الرسومية نتيجة لحالة animation واضحة، لا حسابًا متناثرًا داخل draw."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "transform-rotation-scale", "label": "العودة إلى التحويلات الأساسية"},
+        {"type": "example", "id": "camera-movement", "label": "الانتقال إلى حركة الكاميرا بدل حركة الجسم"}
+      ]
+    },
+    "image-file-loading": {
+      "officialSummaryArabic": "هذا المثال يربط قراءة ملفات الصور خارج Vulkan بمرحلة upload والربط داخل descriptors حتى تصبح الخامة موردًا فعليًا داخل المشهد.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkImageView"},
+        {"type": "reference", "name": "VkDescriptorSet"},
+        {"type": "reference", "name": "VkBuffer"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، تحميل الصور يجب أن يندمج مع Texture/Asset pipeline واضحة تفرّق بين قراءة الملف وفك الترميز والرفع إلى GPU.",
+      "projectStepsArabic": [
+        "افصل decoder أو image loader عن طبقة Vulkan نفسها حتى تستطيع دعم أكثر من صيغة بسهولة.",
+        "أضف staging path موحدًا لرفع بيانات الصورة إلى VkImage بدل منطق خاص لكل مثال.",
+        "احتفظ ببيانات المسار والحجم والصيغة داخل TextureAsset أو TextureResource لتسهيل cache وإعادة الاستخدام."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "texture-image", "label": "الانتقال إلى ربط الخامة داخل الرسم"},
+        {"type": "example", "id": "obj-model-loading", "label": "الانتقال إلى نموذج يستخدم خامات فعلية"}
+      ]
+    },
+    "obj-model-loading": {
+      "officialSummaryArabic": "هذه المراجع تساعدك على الانتقال من أشكال تعليمية بسيطة إلى Mesh حقيقية تُقرأ من ملف وتُحوّل إلى buffers وmaterials قابلة للرسم.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkCmdBindVertexBuffers"},
+        {"type": "reference", "name": "vkCmdBindIndexBuffer"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، تحميل OBJ يجب أن يعيش داخل Asset Importer أو Mesh Loader، لا داخل نفس مسار الرسم أو الـ pipeline.",
+      "projectStepsArabic": [
+        "افصل parsing ملف OBJ عن بناء vertex/index buffers حتى يبقى كل جزء قابلاً للاختبار.",
+        "عرّف بنية MeshAsset تحفظ vertices وindices وmaterials بدل قذف البيانات مباشرة نحو Vulkan.",
+        "ابدأ التفكير مبكرًا في cache للأصول إذا كان المشروع سيحمّل نفس النماذج أكثر من مرة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "obj-mesh-draw", "label": "الانتقال إلى رسم الـ mesh بعد التحميل"},
+        {"type": "example", "id": "image-file-loading", "label": "الانتقال إلى خامات النموذج"}
+      ]
+    },
+    "obj-mesh-draw": {
+      "officialSummaryArabic": "هذا المسار يربط mesh المحمّلة فعليًا بخط الرسم والأوامر، ويثبت أين تبدأ طبقة scene أو renderer الحقيقي بدل المثال التعليمي.",
+      "officialReferences": [
+        {"type": "reference", "name": "vkCmdBindVertexBuffers"},
+        {"type": "reference", "name": "vkCmdBindIndexBuffer"},
+        {"type": "reference", "name": "vkCmdDrawIndexed"}
+      ],
+      "fullProjectNoteArabic": "في مشروع عملي، draw path يجب أن يستقبل MeshRenderItem أو DrawPacket بدل تمرير buffers والcounts يدويًا مع كل استدعاء.",
+      "projectStepsArabic": [
+        "اجمع أوامر bind والدraw داخل دالة mesh renderer واضحة بدل تكرارها لكل mesh.",
+        "افصل بيانات التحويل والمادة عن بيانات الهندسة حتى يصبح دعم أكثر من كائن طبيعيًا.",
+        "اجعل هذا المثال محطة قبل الإضاءة أو الخامات المتعددة، لا نهاية المسار."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "depth-tested-3d-cube", "label": "الانتقال إلى مشهد 3D مع عمق"},
+        {"type": "example", "id": "basic-lighting", "label": "الانتقال لاحقًا إلى إضاءة على mesh"}
+      ]
+    },
+    "viewport-ray-picking": {
+      "officialSummaryArabic": "هذا المثال يربط الإدخال والإحداثيات والمصفوفات واختبار التقاطع ليحوّل نقرة المستخدم إلى اختيار كائن فعلي داخل مشهد Vulkan.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "external", "label": "Vulkan Guide", "href": "https://docs.vulkan.org/guide/latest/"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، picking يجب أن يعيش داخل Selection System أو Editor Tools layer مستقلة عن مسار الرسم نفسه.",
+      "projectStepsArabic": [
+        "افصل تحويل screen coordinates إلى ray world-space عن اختبار التقاطع نفسه حتى يسهل تبديل نوع المجسمات لاحقًا.",
+        "احتفظ ببيانات bounds مثل AABB أو OBB داخل طبقة scene واضحة بدل حسابها كل مرة من الرسم فقط.",
+        "أعد نتيجة الاختيار كمعرف كائن أو SelectionState بدل تنفيذ التأثير المرئي مباشرة أثناء الفحص."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "camera-movement", "label": "العودة إلى التحكم بالكاميرا الذي يغذي الـ viewport"},
+        {"type": "example", "id": "obj-mesh-draw", "label": "الانتقال إلى اختيار mesh فعلية داخل المشهد"}
+      ]
+    },
+    "offscreen-postprocess-bloom": {
+      "officialSummaryArabic": "هذا المسار يشرح كيف يتحول الرسم من pass واحدة إلى مرحلتين: offscreen target ثم pass نهائية تضيف bloom أو exposure قبل العرض.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkFramebuffer"},
+        {"type": "reference", "name": "VkImageView"},
+        {"type": "reference", "name": "vkCmdDraw"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، bloom يجب أن يندمج مع Render Graph أو PostProcess stack واضحة بدل framebuffer مخصص منفرد داخل المثال.",
+      "projectStepsArabic": [
+        "افصل إنشاء offscreen images وframebuffers عن full-screen composition pass داخل وحدتين واضحتين.",
+        "اجمع post-process parameters مثل exposure وthreshold في بنية EffectSettings قابلة للمشاركة.",
+        "صمم pass chain تسمح بإضافة effects لاحقًا مثل tone mapping أو vignette دون إعادة بناء المسار من الصفر."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "post-processing-basic", "label": "العودة إلى post-process أبسط"},
+        {"type": "example", "id": "shadow-mapping", "label": "الانتقال إلى pass إضافية من نوع مختلف"}
+      ]
+    },
+    "basic-lighting": {
+      "officialSummaryArabic": "هذا المثال هو أول خطوة حقيقية من geometry صامتة إلى مادة تتفاعل مع الضوء عبر normals واتجاه ضوء واضح.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkPipeline"},
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "VkPipelineShaderStageCreateInfo"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، بيانات الضوء والمادة يجب أن تُدار داخل Material أو Lighting System بدل constants محلية داخل الشيدر أو المثال.",
+      "projectStepsArabic": [
+        "افصل بيانات الضوء عن بيانات المجسم داخل uniforms أو push constants واضحة.",
+        "ابدأ بمسار Lambert بسيط ثم أبقِ تصميمك قابلًا لإضافة specular أو عدة أضواء لاحقًا.",
+        "اربط المثال مباشرة بالـ depth والتحويلات حتى يكون الإحساس بالشكل ثلاثي الأبعاد واضحًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "directional-light", "label": "الانتقال إلى ضوء اتجاهي أوضح"},
+        {"type": "example", "id": "specular-lighting", "label": "الانتقال إلى اللمعان Specular"}
+      ]
+    },
+    "directional-light": {
+      "officialSummaryArabic": "هذا المثال يثبت كيف تمثل ضوءًا بعيدًا ثابت الاتجاه مثل الشمس، من دون موضع محلي يتغير مع كل كائن.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "VkPipeline"},
+        {"type": "reference", "name": "vkMapMemory"}
+      ],
+      "fullProjectNoteArabic": "في مشروع فعلي، directional light يجب أن تصبح كيانًا أو إعدادًا ضمن Scene Lighting state لا متغيرًا وحيدًا داخل الشيدر.",
+      "projectStepsArabic": [
+        "خزّن اتجاه الضوء وكثافته ولونه في بنية LightData واحدة قابلة للمشاركة مع أكثر من pass.",
+        "افصل تحديث بيانات الضوء عن رسم المجسمات حتى يسهل لاحقًا دعم أكثر من ضوء أو shadow map.",
+        "استخدم المثال كبوابة قبل shadow mapping لأن الظل الاتجاهي غالبًا يبنى على نفس الفكرة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "shadow-mapping", "label": "الانتقال إلى الظلال من منظور الضوء"},
+        {"type": "example", "id": "point-light", "label": "الانتقال إلى ضوء محلي بموضع"}
+      ]
+    },
+    "point-light": {
+      "officialSummaryArabic": "هذا المسار يوضح الفرق بين الضوء الاتجاهي والضوء المحلي الذي يضعف مع المسافة ويحتاج موضعًا فعليًا داخل العالم.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "reference", "name": "VkPipelineShaderStageCreateInfo"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الأكبر، point lights يجب أن تُدار داخل light list أو clustered/tiled path لاحقًا، لا متغيرًا واحدًا صلبًا داخل المثال.",
+      "projectStepsArabic": [
+        "احفظ الموضع ونصف القطر وقيم attenuation داخل بنية ضوء واضحة بدل معاملات منفصلة متناثرة.",
+        "افصل حساب المسافة والاضمحلال داخل shader helpers حتى يسهل تعديل النموذج لاحقًا.",
+        "اربط المثال مباشرة بخامات أو specular حتى ترى الفرق البصري بوضوح."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "specular-lighting", "label": "الانتقال إلى لمعان الأسطح مع الضوء المحلي"},
+        {"type": "example", "id": "particle-system", "label": "الانتقال إلى عناصر صغيرة تتفاعل بصريًا مع الإضاءة"}
+      ]
+    },
+    "specular-lighting": {
+      "officialSummaryArabic": "هذا المثال يضيف بعدًا مهمًا فوق Lambert: كيف يرى السطح الكاميرا والضوء معًا ليولد البقعة اللامعة الواقعية.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkPipeline"},
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkMapMemory"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، خصائص specular يجب أن ترتبط بالمادة أو الـ material parameters لا بالحساب العام لجميع الأسطح.",
+      "projectStepsArabic": [
+        "افصل normal وview direction وlight direction داخل shader helpers واضحة بدل كتلة حساب واحدة كبيرة.",
+        "خزّن roughness أو shininess أو قيمة اللمعان ضمن بيانات مادة قابلة للتعديل.",
+        "استخدم المثال كنقطة قبل post-process لأن اللمعان العالي يتفاعل بصريًا مع bloom عادة."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "offscreen-postprocess-bloom", "label": "الانتقال إلى bloom فوق highlights"},
+        {"type": "example", "id": "shadow-mapping", "label": "الانتقال إلى إضاءة مع ظلال"}
+      ]
+    },
+    "shadow-mapping": {
+      "officialSummaryArabic": "هذا المثال يشرح المسار العملي للظلال: تمرير عمق من منظور الضوء أولًا ثم استعماله في pass الرسم الأساسية.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkRenderPass"},
+        {"type": "reference", "name": "VkFramebuffer"},
+        {"type": "reference", "name": "VkImageView"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، shadow mapping يجب أن يكون جزءًا من multi-pass renderer أو render graph واضح يفرق بين passes الضوء والمشهد.",
+      "projectStepsArabic": [
+        "افصل pass خريطة العمق عن pass الإضاءة النهائية بمواردها الخاصة بدل خلطهما في نفس الدالة.",
+        "عرّف ShadowResources واضحة تشمل depth image وsampler ومصفوفات light view/projection.",
+        "ابدأ بمصدر ضوء واحد ثم اجعل التصميم قابلًا للتوسع قبل التفكير في cascades أو عدة shadow maps."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "directional-light", "label": "العودة إلى الضوء الاتجاهي الذي يقود الظل"},
+        {"type": "example", "id": "offscreen-postprocess-bloom", "label": "الانتقال إلى passes بصرية إضافية بعد الظل"}
+      ]
+    },
+    "post-processing-basic": {
+      "officialSummaryArabic": "هذا المثال هو النسخة الأبسط من مسار الصورة المؤجلة: render target خارجية ثم fullscreen pass تعدل الخرج النهائي.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkFramebuffer"},
+        {"type": "reference", "name": "VkImageView"},
+        {"type": "reference", "name": "vkCmdDraw"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، post-processing يجب أن يُصمم كstack effects أو graph صغير بدل effect واحد hardcoded داخل المثال.",
+      "projectStepsArabic": [
+        "افصل إنشاء render target خارجية عن shader الخاص بالـ fullscreen composition.",
+        "اجعل pass ما بعد المعالجة تستقبل EffectSettings أو Material خاصًا بها بدل أرقام ثابتة.",
+        "ثبت هذا المثال أولًا قبل توسيعه إلى bloom أو color grading أو tone mapping."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "offscreen-postprocess-bloom", "label": "الانتقال إلى bloom متعدد الخطوات"},
+        {"type": "example", "id": "specular-lighting", "label": "العودة إلى مصدر highlights قبل المعالجة"}
+      ]
+    },
+    "particle-system": {
+      "officialSummaryArabic": "هذا المثال يربط تحديث بيانات كثيرة قصيرة العمر مع مسار رسم خاص، لذلك هو اختبار جيد لإدارة buffers الديناميكية وstate المتكرر.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkMapMemory"},
+        {"type": "reference", "name": "vkCmdDraw"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، الجسيمات يجب أن تعيش داخل ParticleSystem أو FX subsystem منفصلة عن scene الأساسية.",
+      "projectStepsArabic": [
+        "افصل تحديث العمر والسرعة والموقع عن مسار الرسم حتى تستطيع لاحقًا نقل التحديث إلى compute أو jobs.",
+        "استخدم بنية ParticleData واضحة بدل arrays غير مترابطة للقيم المختلفة.",
+        "حدّد من البداية سياسة الرفع إلى GPU: إعادة تحميل كاملة، ring buffer، أو staging حسب الحجم والتواتر."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "offscreen-postprocess-bloom", "label": "الانتقال إلى مؤثرات بصرية لاحقة فوق الجسيمات"},
+        {"type": "example", "id": "terrain-rendering", "label": "الانتقال إلى دمج FX فوق مشهد أوسع"}
+      ]
+    },
+    "terrain-rendering": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تنتقل من meshes صغيرة إلى سطح أرضي واسع يعتمد على شبكة منتظمة أو heightmap وتحويلات وكاميرا واضحة.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkCmdBindVertexBuffers"},
+        {"type": "reference", "name": "vkCmdDrawIndexed"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، الـ terrain يجب أن يصبح نظامًا مستقلًا لإدارة tiles أو chunks والارتفاعات والمواد بدل mesh واحدة كبيرة داخل المثال.",
+      "projectStepsArabic": [
+        "افصل توليد الارتفاعات أو قراءة heightmap عن بناء mesh الفعلية حتى يبقى كل جزء قابلًا للتطوير.",
+        "ابدأ بتقسيم الأرض إلى chunks مبكرًا إذا كان المشهد سيتوسع بدل إبقاء شبكة واحدة ضخمة.",
+        "اربط terrain بالكاميرا والإضاءة والمواد منذ البداية لأن قيمته التعليمية تظهر داخل مشهد متكامل لا سطح مجرد."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "basic-lighting", "label": "العودة إلى الإضاءة الأساسية فوق سطح واسع"},
+        {"type": "example", "id": "shadow-mapping", "label": "الانتقال إلى ظلال على مشهد أكبر"}
+      ]
+    },
+    "multi-image-draw": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تنتقل من خامة أو صورة واحدة إلى عدة صور لها descriptors أو transforms مستقلة لكنها تُرسم كلها داخل الإطار نفسه.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkDescriptorSet"},
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkCmdDraw"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، الرسم متعدد الصور يجب أن يُدار ضمن SpriteBatch أو UI/Image layer واضحة بدل تكرار bind/draw لكل صورة داخل المثال نفسه.",
+      "projectStepsArabic": [
+        "افصل بيانات كل صورة مثل transform وdescriptor والموضع عن أوامر الرسم حتى يسهل بناء قائمة render items.",
+        "وحّد مسار الربط بين texture والـ descriptor أو push constants حتى لا تتكرر نفس الخطوات لكل عنصر.",
+        "استخدم المثال كأساس قبل gallery أو HUD أو overlays تتطلب عشرات الصور داخل نفس الإطار."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "texture-image", "label": "العودة إلى الخامة الواحدة كأساس"},
+        {"type": "example", "id": "post-processing-basic", "label": "الانتقال إلى صورة شاشة كاملة بعد الرسم"}
+      ]
+    },
+    "skybox-rendering": {
+      "officialSummaryArabic": "هذا المسار يشرح كيف تضيف cubemap تحيط بالكاميرا وتمنح المشهد خلفية ثلاثية الأبعاد ثابتة الإحساس رغم حركة المشهد نفسه.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkImageView"},
+        {"type": "reference", "name": "VkPipeline"},
+        {"type": "reference", "name": "VkDescriptorSet"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، skybox يجب أن تكون جزءًا من Environment أو Background pass مستقلة عن مواد الأجسام والإضاءة المباشرة.",
+      "projectStepsArabic": [
+        "افصل cubemap resource وsampler وpipeline الخاصة بها عن بقية مواد المشهد حتى تبقى skybox pass مستقلة.",
+        "ارسم السماء قبل أو بعد المشهد بحسب استراتيجية depth التي تعتمدها، لكن اجعل القاعدة واضحة ومركزية.",
+        "اربط skybox لاحقًا بالإضاءة البيئية أو الانعكاسات إذا كان المشروع سيتوسع بصريًا."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "terrain-rendering", "label": "الانتقال إلى مشهد واسع يستفيد من skybox"},
+        {"type": "example", "id": "directional-light", "label": "العودة إلى الإضاءة التي تحدد مزاج البيئة"}
+      ]
+    },
+    "rotating-images": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تدوّر الصور أو sprites داخل Vulkan عبر مصفوفة تحويل أو push constants، بدل تعديل بيانات texture نفسها أو إعادة توليدها.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "VkDescriptorSet"},
+        {"type": "reference", "name": "vkCmdDraw"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، تدوير الصور يجب أن يصبح جزءًا من SpriteTransform أو UI/Image renderer واضح بدل مصفوفة محلية لكل مثال منفرد.",
+      "projectStepsArabic": [
+        "افصل transform الخاصة بكل صورة عن بيانات الخامة نفسها حتى يبقى الرسم متعدد العناصر قابلًا للتوسع.",
+        "وحّد بناء مصفوفات الدوران أو الزاوية الحالية داخل helper أو state خاص بالعناصر المرئية.",
+        "استخدم المثال كنقطة قبل دمج rotation مع cropping أو multi-image layouts داخل renderer واحد."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "multi-image-draw", "label": "الانتقال إلى عدة صور مستقلة داخل نفس الإطار"},
+        {"type": "example", "id": "image-cropping", "label": "الانتقال إلى التحكم في الجزء المعروض من الصورة"}
+      ]
+    },
+    "special-constants": {
+      "officialSummaryArabic": "هذا المثال يشرح القيم الجاهزة والخاصة داخل Vulkan مثل حدود النسخ والتمثيلات الخاصة، ولماذا تحتاج معرفتها قبل التعامل مع الانتقالات والنسخ والبنى النصية.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkResult"},
+        {"type": "reference", "name": "VkImageLayout"},
+        {"type": "external", "label": "Vulkan Refpages", "href": "https://docs.vulkan.org/refpages/latest/refpages/source/"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الكامل، هذه الثوابت يجب أن تُحاط بطبقة helper أو documentation notes داخل المحرك بدل تركها كقيم غامضة مبعثرة في الكود.",
+      "projectStepsArabic": [
+        "اجمع الثوابت الشائعة ذات المعنى الخاص داخل cheat sheet أو helper constants واضحة في طبقة المحرك.",
+        "اربط كل ثابت خاص بسياق استخدامه مثل copy regions أو image layouts أو dependency masks بدل عرضه كقائمة منعزلة.",
+        "استخدم المثال كمرجع تشخيصي سريع لا كنقطة منطقية لتوزيع القيم داخل كل ملف رسومي."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "buffer-memory-upload", "label": "العودة إلى سياق النسخ والتحميل العملي"},
+        {"type": "example", "id": "post-processing-basic", "label": "العودة إلى استعمال layouts وpasses فعليًا"}
+      ]
+    },
+    "image-cropping": {
+      "officialSummaryArabic": "هذا المثال يوضح كيف تعرض جزءًا فقط من texture كاملة عبر UVs أو push constants، بدل نسخ أو قص الصورة في الذاكرة كل مرة.",
+      "officialReferences": [
+        {"type": "reference", "name": "VkDescriptorSet"},
+        {"type": "reference", "name": "VkBuffer"},
+        {"type": "reference", "name": "vkCmdDraw"}
+      ],
+      "fullProjectNoteArabic": "في المشروع الحقيقي، cropping يجب أن يعيش داخل SpriteRegion أو Atlas system واضح، لا كقيم UV خام داخل كل draw call.",
+      "projectStepsArabic": [
+        "افصل المنطقة المعروضة من الصورة إلى بنية UVRegion أو SpriteRegion بدل أزواج أرقام متناثرة داخل المثال.",
+        "وحّد مسار الربط بين cropping وrotation وposition حتى لا تتشعب transforms في عدة اتجاهات متفرقة.",
+        "استخدم المثال كبداية قبل atlas أو galleries أو UI systems تعتمد على أجزاء من نفس texture."
+      ],
+      "followUpExamples": [
+        {"type": "example", "id": "rotating-images", "label": "الانتقال إلى دمج القص مع التدوير"},
+        {"type": "example", "id": "multi-image-draw", "label": "الانتقال إلى رسم عدة عناصر من موارد متعددة"}
+      ]
+    }
+  }
+}

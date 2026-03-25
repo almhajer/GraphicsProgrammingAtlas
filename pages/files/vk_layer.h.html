@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة vk_layer.h ضمن مجلد vulkan وتغطي جزءاً محدداً من واجهة Vulkan أو إحدى طبقاتها أو امتداداتها.">
+  <title>vk_layer.h - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vk_layer.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <span>vk_layer.h</span>
+      </nav>
+      <h1 class="page-title">📄 vk_layer.h</h1>
+      <p class="page-description">ترويسة vk_layer.h ضمن مجلد vulkan وتغطي جزءاً محدداً من واجهة Vulkan أو إحدى طبقاتها أو امتداداتها.</p>
+      <div class="standalone-badges">
+        <span class="standalone-badge">ملفات vulkan</span>
+        <span class="standalone-badge">مساعدات</span>
+        <span class="standalone-badge"><span dir="ltr">vulkan/vk_layer.h</span></span>
+      </div>
+    </div>
+
+    <div class="standalone-grid">
+      <section class="standalone-card">
+        <h2>الهدف الفعلي للملف</h2>
+        <ul class="insight-list">
+          <li>هذا الملف ليس للاستخدام اليومي داخل تطبيق يرسم بالمباشر، بل هو عقد الربط بين الـ loader والـ layers: التفاوض على الواجهة، تمرير dispatch tables، وربط سلاسل CreateInstance/CreateDevice بين الطبقات.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>متى تستخدمه؟</h2>
+        <p>استخدم vk_layer.h عندما تحتاج الجزء الذي يغطيه هذا الملف من واجهة Vulkan بدلاً من الاكتفاء بالترويسة العامة وحدها.</p>
+      </section>
+      <section class="standalone-card">
+        <h2>مثال تضمين</h2>
+        <pre class="code-block" dir="ltr"><code class="language-cpp">#include &lt;vulkan/vk_layer.h&gt;</code></pre>
+      </section>
+      <section class="standalone-card">
+        <h2>الملفات المضمنة</h2>
+        <ul><li><code>vulkan_core.h</code></li></ul>
+      </section>
+      <section class="standalone-card">
+        <h2>تركيب الملف</h2>
+        <ul class="insight-list">
+          <li>يستورد 1 ملفاً آخر قبل بناء تعريفاته الخاصة.</li><li>فيه 5 ماكرو/تعريفاً مسبقاً لتنظيم التوافق، النسخ، أو بناء الأنواع.</li><li>يحتوي على 4 تعداداً يعبّر عن الحالات أو الأنواع أو الأعلام.</li><li>يحتوي على 10 بنية لتمرير البيانات بين التطبيق والواجهة.</li><li>يعلن 1 دالة أو نقطة دخول من API.</li><li>يستخدم 19 مؤشراً لدالة، ما يبرز دور الربط الديناميكي أو dispatch.</li><li>ملامحه C++ واضحة: 0 namespace، 0 class، و3 استعمالاً لـ inline تقريباً.</li>
+        </ul>
+      </section>
+      <section class="standalone-card">
+        <h2>ما الذي تقوله التعليقات نفسها؟</h2>
+        <ul class="insight-list">
+          
+            <li>
+              Need to define dispatch table Core struct can then have ptr to dispatch table at the top Along with object ptrs for current and next OBJ
+              <span class="comment-context">#include &quot;vulkan_core.h&quot;</span>
+            </li>
+          
+            <li>
+              Loader-Layer version negotiation API. Versions add the following features: Versions 0/1 - Initial. Doesn&#39;t support vk_layerGetPhysicalDeviceProcAddr or vk_icdNegotiateLoaderLayerInterfaceVersion. Version 2 - Add support for vk_layerGetPhysicalDeviceProcAddr and vk_icdNegotiateLoaderLayerInterfaceVersion.
+              <span class="comment-context">CURRENT_LOADER_LAYER_INTERFACE_VERSION</span>
+            </li>
+          
+            <li>
+              Typedef for use in the interfaces below
+              <span class="comment-context">#ifndef IS_DEFINED_PFN_GetPhysicalDeviceProcAddr</span>
+            </li>
+          
+            <li>
+              Version negotiation values
+              <span class="comment-context">VkNegotiateLayerStructType</span>
+            </li>
+          
+            <li>
+              Version negotiation structures
+              <span class="comment-context">VkNegotiateLayerInterface</span>
+            </li>
+          
+            <li>
+              Version negotiation functions
+              <span class="comment-context">typedef VkResult (VKAPI_PTR *PFN_vkNegotiateLoaderLayerInterfaceVersion)(VkNegotiateLayerInterface *pVersionStruct);</span>
+            </li>
+          
+            <li>
+              Function prototype for unknown physical device extension command
+              <span class="comment-context">typedef VkResult(VKAPI_PTR *PFN_PhysDevExt)(VkPhysicalDevice phys_device);</span>
+            </li>
+          
+            <li>
+              ------------------------------------------------------------------------------------------------ CreateInstance and CreateDevice support structures
+              <span class="comment-context">VkLayerFunction_</span>
+            </li>
+          
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الأسطر: 193</span>
+        <span class="source-stat">الحجم: 7.0 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>/*
+ * Copyright 2015-2023 The Khronos Group Inc.
+ * Copyright 2015-2023 Valve Corporation
+ * Copyright 2015-2023 LunarG, Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+#pragma once
+
+/* Need to define dispatch table
+ * Core struct can then have ptr to dispatch table at the top
+ * Along with object ptrs for current and next OBJ
+ */
+
+#include &quot;vulkan_core.h&quot;
+
+#define MAX_NUM_UNKNOWN_EXTS 250
+
+ // Loader-Layer version negotiation API.  Versions add the following features:
+ //   Versions 0/1 - Initial.  Doesn&#39;t support vk_layerGetPhysicalDeviceProcAddr
+ //                  or vk_icdNegotiateLoaderLayerInterfaceVersion.
+ //   Version 2    - Add support for vk_layerGetPhysicalDeviceProcAddr and
+ //                  vk_icdNegotiateLoaderLayerInterfaceVersion.
+#define CURRENT_LOADER_LAYER_INTERFACE_VERSION 2
+#define MIN_SUPPORTED_LOADER_LAYER_INTERFACE_VERSION 1
+
+#define VK_CURRENT_CHAIN_VERSION 1
+
+// Typedef for use in the interfaces below
+#ifndef IS_DEFINED_PFN_GetPhysicalDeviceProcAddr
+typedef PFN_vkVoidFunction (VKAPI_PTR *PFN_GetPhysicalDeviceProcAddr)(VkInstance instance, const char* pName);
+#define IS_DEFINED_PFN_GetPhysicalDeviceProcAddr
+#endif
+
+// Version negotiation values
+typedef enum VkNegotiateLayerStructType {
+    LAYER_NEGOTIATE_UNINTIALIZED = 0,
+    LAYER_NEGOTIATE_INTERFACE_STRUCT = 1,
+} VkNegotiateLayerStructType;
+
+// Version negotiation structures
+typedef struct VkNegotiateLayerInterface {
+    VkNegotiateLayerStructType sType;
+    void *pNext;
+    uint32_t loaderLayerInterfaceVersion;
+    PFN_vkGetInstanceProcAddr pfnGetInstanceProcAddr;
+    PFN_vkGetDeviceProcAddr pfnGetDeviceProcAddr;
+    PFN_GetPhysicalDeviceProcAddr pfnGetPhysicalDeviceProcAddr;
+} VkNegotiateLayerInterface;
+
+// Version negotiation functions
+typedef VkResult (VKAPI_PTR *PFN_vkNegotiateLoaderLayerInterfaceVersion)(VkNegotiateLayerInterface *pVersionStruct);
+
+// Function prototype for unknown physical device extension command
+typedef VkResult(VKAPI_PTR *PFN_PhysDevExt)(VkPhysicalDevice phys_device);
+
+// ------------------------------------------------------------------------------------------------
+// CreateInstance and CreateDevice support structures
+
+/* Sub type of structure for instance and device loader ext of CreateInfo.
+ * When sType == VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO
+ * or sType == VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO
+ * then VkLayerFunction indicates struct type pointed to by pNext
+ */
+typedef enum VkLayerFunction_ {
+    VK_LAYER_LINK_INFO = 0,
+    VK_LOADER_DATA_CALLBACK = 1,
+    VK_LOADER_LAYER_CREATE_DEVICE_CALLBACK = 2,
+    VK_LOADER_FEATURES = 3,
+} VkLayerFunction;
+
+typedef struct VkLayerInstanceLink_ {
+    struct VkLayerInstanceLink_ *pNext;
+    PFN_vkGetInstanceProcAddr pfnNextGetInstanceProcAddr;
+    PFN_GetPhysicalDeviceProcAddr pfnNextGetPhysicalDeviceProcAddr;
+} VkLayerInstanceLink;
+
+/*
+ * When creating the device chain the loader needs to pass
+ * down information about it&#39;s device structure needed at
+ * the end of the chain. Passing the data via the
+ * VkLayerDeviceInfo avoids issues with finding the
+ * exact instance being used.
+ */
+typedef struct VkLayerDeviceInfo_ {
+    void *device_info;
+    PFN_vkGetInstanceProcAddr pfnNextGetInstanceProcAddr;
+} VkLayerDeviceInfo;
+
+typedef VkResult (VKAPI_PTR *PFN_vkSetInstanceLoaderData)(VkInstance instance,
+        void *object);
+typedef VkResult (VKAPI_PTR *PFN_vkSetDeviceLoaderData)(VkDevice device,
+        void *object);
+typedef VkResult (VKAPI_PTR *PFN_vkLayerCreateDevice)(VkInstance instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo,
+						      const VkAllocationCallbacks *pAllocator, VkDevice *pDevice, PFN_vkGetInstanceProcAddr layerGIPA, PFN_vkGetDeviceProcAddr *nextGDPA);
+typedef void (VKAPI_PTR *PFN_vkLayerDestroyDevice)(VkDevice physicalDevice, const VkAllocationCallbacks *pAllocator, PFN_vkDestroyDevice destroyFunction);
+
+typedef enum VkLoaderFeastureFlagBits {
+    VK_LOADER_FEATURE_PHYSICAL_DEVICE_SORTING = 0x00000001,
+} VkLoaderFlagBits;
+typedef VkFlags VkLoaderFeatureFlags;
+
+typedef struct {
+    VkStructureType sType; // VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO
+    const void *pNext;
+    VkLayerFunction function;
+    union {
+        VkLayerInstanceLink *pLayerInfo;
+        PFN_vkSetInstanceLoaderData pfnSetInstanceLoaderData;
+        struct {
+	        PFN_vkLayerCreateDevice pfnLayerCreateDevice;
+	        PFN_vkLayerDestroyDevice pfnLayerDestroyDevice;
+	    } layerDevice;
+        VkLoaderFeatureFlags loaderFeatures;
+    } u;
+} VkLayerInstanceCreateInfo;
+
+typedef struct VkLayerDeviceLink_ {
+    struct VkLayerDeviceLink_ *pNext;
+    PFN_vkGetInstanceProcAddr pfnNextGetInstanceProcAddr;
+    PFN_vkGetDeviceProcAddr pfnNextGetDeviceProcAddr;
+} VkLayerDeviceLink;
+
+typedef struct {
+    VkStructureType sType; // VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO
+    const void *pNext;
+    VkLayerFunction function;
+    union {
+        VkLayerDeviceLink *pLayerInfo;
+        PFN_vkSetDeviceLoaderData pfnSetDeviceLoaderData;
+    } u;
+} VkLayerDeviceCreateInfo;
+
+#ifdef __cplusplus
+extern &quot;C&quot; {
+#endif
+
+VKAPI_ATTR VkResult VKAPI_CALL vkNegotiateLoaderLayerInterfaceVersion(VkNegotiateLayerInterface *pVersionStruct);
+
+typedef enum VkChainType {
+    VK_CHAIN_TYPE_UNKNOWN = 0,
+    VK_CHAIN_TYPE_ENUMERATE_INSTANCE_EXTENSION_PROPERTIES = 1,
+    VK_CHAIN_TYPE_ENUMERATE_INSTANCE_LAYER_PROPERTIES = 2,
+    VK_CHAIN_TYPE_ENUMERATE_INSTANCE_VERSION = 3,
+} VkChainType;
+
+typedef struct VkChainHeader {
+    VkChainType type;
+    uint32_t version;
+    uint32_t size;
+} VkChainHeader;
+
+typedef struct VkEnumerateInstanceExtensionPropertiesChain {
+    VkChainHeader header;
+    VkResult(VKAPI_PTR *pfnNextLayer)(const struct VkEnumerateInstanceExtensionPropertiesChain *, const char *, uint32_t *,
+                                      VkExtensionProperties *);
+    const struct VkEnumerateInstanceExtensionPropertiesChain *pNextLink;
+
+#if defined(__cplusplus)
+    inline VkResult CallDown(const char *pLayerName, uint32_t *pPropertyCount, VkExtensionProperties *pProperties) const {
+        return pfnNextLayer(pNextLink, pLayerName, pPropertyCount, pProperties);
+    }
+#endif
+} VkEnumerateInstanceExtensionPropertiesChain;
+
+typedef struct VkEnumerateInstanceLayerPropertiesChain {
+    VkChainHeader header;
+    VkResult(VKAPI_PTR *pfnNextLayer)(const struct VkEnumerateInstanceLayerPropertiesChain *, uint32_t *, VkLayerProperties *);
+    const struct VkEnumerateInstanceLayerPropertiesChain *pNextLink;
+
+#if defined(__cplusplus)
+    inline VkResult CallDown(uint32_t *pPropertyCount, VkLayerProperties *pProperties) const {
+        return pfnNextLayer(pNextLink, pPropertyCount, pProperties);
+    }
+#endif
+} VkEnumerateInstanceLayerPropertiesChain;
+
+typedef struct VkEnumerateInstanceVersionChain {
+    VkChainHeader header;
+    VkResult(VKAPI_PTR *pfnNextLayer)(const struct VkEnumerateInstanceVersionChain *, uint32_t *);
+    const struct VkEnumerateInstanceVersionChain *pNextLink;
+
+#if defined(__cplusplus)
+    inline VkResult CallDown(uint32_t *pApiVersion) const {
+        return pfnNextLayer(pNextLink, pApiVersion);
+    }
+#endif
+} VkEnumerateInstanceVersionChain;
+
+#ifdef __cplusplus
+}
+#endif
+</code></pre>
+    </section>
+    
+  </main>
+</body>
+</html>

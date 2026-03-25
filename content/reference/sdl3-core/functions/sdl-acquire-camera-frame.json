@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_AcquireCameraFrame",
+    "slug": "sdl-acquire-camera-frame",
+    "titleArabic": "الحصول على الإطار",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-acquire-camera-frame",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-acquire-camera-frame.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "الحصول على الإطار",
+    "actualMeaningArabic": "الحصول على الإطار.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى الحصول على الإطار داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_Surface *) Returns a new frame of\nvideo on success, NULL if none is currently available. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Acquire a frame."
+  },
+  "signature": {
+    "raw": "SDL_Surface * SDL_AcquireCameraFrame(SDL_Camera *camera, Uint64 *timestampNS);",
+    "returnType": "SDL_Surface *",
+    "parameters": [
+      "SDL_Camera *camera",
+      "Uint64 *timestampNS"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_camera.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "camera",
+        "type": "SDL_Camera *",
+        "descriptionArabic": "يمثل المعامل camera من النوع SDL_Camera * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "opened camera device."
+      },
+      {
+        "name": "timestampNS",
+        "type": "Uint64 *",
+        "descriptionArabic": "يمثل المعامل timestampNS من النوع Uint64 * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer filled in with the frame's timestamp, or 0 on error. Can\nbe NULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "The frame is a memory pointer to the image data, whose size and\nformat are given by the spec requested when opening the device.",
+      "This is a non blocking API. If there is a frame available, a non-NULL\nsurface is returned, and timestampNS will be filled with a non-zero\nvalue.",
+      "Note that an error case can also return NULL, but a NULL by itself is\nnormal and just signifies that a new frame is not yet available. Note\nthat even if a camera device fails outright (a USB camera is unplugged\nwhile in use, etc), SDL will send an event separately to notify the app,\nbut continue to provide blank frames at ongoing intervals until SDL_CloseCamera () is called, so real\nfailure here is almost always an out of memory condition.",
+      "After use, the frame should be released with SDL_ReleaseCameraFrame (). If you\ndon't do this, the system may stop providing more video!",
+      "Do not call SDL_DestroySurface () on the returned\nsurface! It must be given back to the camera subsystem with SDL_ReleaseCameraFrame !",
+      "If the system is waiting for the user to approve access to the\ncamera, as some platforms require, this will return NULL (no frames\navailable); you should either wait for an SDL_EVENT_CAMERA_DEVICE_APPROVED\n(or SDL_EVENT_CAMERA_DEVICE_DENIED )\nevent, or poll SDL_GetCameraPermissionState ()\noccasionally until it returns non-zero."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_Surface *) Returns a new frame of\nvideo on success, NULL if none is currently available.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_AcquireCameraFrame",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_ReleaseCameraFrame",
+        "route": "#ref/sdl3-core/functions/sdl-release-camera-frame",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Camera Support",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

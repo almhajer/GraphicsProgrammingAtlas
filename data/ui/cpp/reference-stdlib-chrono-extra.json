@@ -1,0 +1,428 @@
+{
+  "referenceData": {
+    "std::chrono::year_month_day": {
+      "title": "std::chrono::year_month_day",
+      "type": "نوع تاريخ",
+      "description": "نوع يمثل تاريخًا كاملًا من ثلاثة أجزاء: السنة والشهر واليوم. جزء من مكتبة chrono في C++20. يسمح بإنشاء تواريخ والتحقق من صحتها وإجراء عمليات حسابية عليها. التواريخ غير الصالحة (مثل 31 فبراير) تُحفظ لكن يمكن التحقق منها بـ ok().",
+      "usage": "تمثيل تواريخ في التقويم الميلادي، حساب الفرق بين تاريخين، إنشاء تواريخ محددة.",
+      "example": "std::chrono::year_month_day today = std::chrono::floor<std::chrono::days>(std::chrono::system_clock::now());",
+      "includeHeader": "#include <chrono>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء تاريخ وعرضه",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    // إنشاء تاريخ محدد\n    year_month_day birthday{year{1995}, month{6}, day{15}};\n\n    std::cout << \"السنة: \" << static_cast<int>(birthday.year()) << '\\n';\n    std::cout << \"الشهر: \" << static_cast<unsigned>(birthday.month()) << '\\n';\n    std::cout << \"اليوم: \" << static_cast<unsigned>(birthday.day()) << '\\n';\n    std::cout << \"صالح: \" << birthday.ok() << '\\n';\n}",
+          "explanationArabic": "year_month_day يُنشئ تاريخًا من سنة وشهر ويوم. ok() يتحقق من صلاحية التاريخ. static_cast ضروري لطباعة الأجزاء لأنها أنواع قوية (strong types)."
+        },
+        {
+          "titleArabic": "التاريخ الحالي",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    // تحويل الوقت الحالي لتاريخ\n    auto now = system_clock::now();\n    year_month_day today = floor<days>(now);\n\n    std::cout << static_cast<int>(today.year()) << '-'\n              << static_cast<unsigned>(today.month()) << '-'\n              << static_cast<unsigned>(today.day()) << '\\n';\n}",
+          "explanationArabic": "system_clock::now() يُرجع وقتًا دقيقًا. floor<days> يُقطع الجزء الزمني ويحتفظ بالتاريخ فقط. هذا هو الطريقة القياسية للحصول على التاريخ الحالي في C++20."
+        },
+        {
+          "titleArabic": "كشف تاريخ غير صالح",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    year_month_day valid{year{2024}, month{2}, day{29}};   // 2024 سنة كبيسة\n    year_month_day invalid{year{2023}, month{2}, day{29}};  // 2023 ليست كبيسة\n\n    std::cout << \"29/2/2024 صالح: \" << valid.ok() << '\\n';     // true\n    std::cout << \"29/2/2023 صالح: \" << invalid.ok() << '\\n';   // false\n\n    // يمكن تصحيحه بـ operator+\n    auto corrected = year{2023}/month{3}/day{1};\n    std::cout << \"تصحيح: \" << corrected.ok() << '\\n'; // true\n}",
+          "explanationArabic": "C++ يسمح بإنشاء تواريخ غير صالحة لكن ok() يكشفها. التعبير year/month/day أنظن من المنشئ. السنوات الكبيسة تُحسب تلقائيًا."
+        }
+      ],
+      "related": [
+        "std::chrono::system_clock",
+        "std::chrono::day",
+        "std::chrono::month",
+        "std::chrono::year"
+      ]
+    },
+    "std::chrono::weekday": {
+      "title": "std::chrono::weekday",
+      "type": "نوع زمني",
+      "description": "نوع يمثل يومًا من الأسبوع (السبت إلى الجمعة). جزء من C++20 chrono. القيم من 0 (الأحد) إلى 6 (السبت) عند استخدام الترميز ISO. يسمح بالحساب مثل إضافة أيام أو إيجاد يوم الأسبوع لتاريخ معين.",
+      "usage": "معرفة يوم الأسبوع لتاريخ، حساب تاريخ اليوم القادم من نوع معين (مثل الجمعة القادمة).",
+      "example": "auto wd = std::chrono::weekday{3}; // الأربعاء (ISO)",
+      "includeHeader": "#include <chrono>",
+      "usageExamples": [
+        {
+          "titleArabic": "معرفة يوم الأسبوع لتاريخ",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    year_month_day date{year{2024}, month{3}, day{25}};\n    weekday wd = weekday{sys_days{date}};\n\n    std::cout << \"يوم الأسبوع (ISO): \" << wd.iso_encoding() << '\\n';\n    // 1 = الإثنين\n\n    // أوامر مسماة أقرأ\n    std::cout << std::boolalpha;\n    std::cout << \"Monday: \" << (wd == Monday) << '\\n';\n    std::cout << \"Friday: \" << (wd == Friday) << '\\n';\n}",
+          "explanationArabic": "sys_days يحول year_month_day لعدد أيام. weekday يستخرج يوم الأسبوع. الأوامر المسماة (Monday, Tuesday, ...) أوضح من الأرقام."
+        },
+        {
+          "titleArabic": "إيجاد الجمعة القادمة",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    // التاريخ الحالي\n    auto today = floor<days>(system_clock::now());\n    weekday today_wd{today};\n\n    // حساب الأيام حتى الجمعة القادمة\n    days until_friday = Friday - today_wd;\n    if (until_friday == days{0}) until_friday = days{7};\n\n    auto next_friday = today + until_friday;\n    year_month_day friday_date{next_friday};\n\n    std::cout << \"الجمعة القادمة: \"\n              << static_cast<int>(friday_date.year()) << '-'\n              << static_cast<unsigned>(friday_date.month()) << '-'\n              << static_cast<unsigned>(friday_date.day()) << '\\n';\n}",
+          "explanationArabic": "Friday - today_wd يحسب الفرق. إذا كان اليوم جمعة نضيف 7 للحصول على الجمعة القادمة. هذا النمط يعمل لأي يوم من الأسبوع."
+        }
+      ],
+      "related": [
+        "std::chrono::year_month_day",
+        "std::chrono::sys_days",
+        "std::chrono::Monday"
+      ]
+    },
+    "std::chrono::zoned_time": {
+      "title": "std::chrono::zoned_time",
+      "type": "نوع زمني",
+      "description": "يمثل وقتًا مع منطقة زمنية محددة. جزء من C++20 chrono مع دعم المناطق الزمنية. يسمح بتحويل الوقت بين المناطق الزمنية وعرض الوقت بالتوقيت المحلي. يحتاج دعم نظام التشغيل لقاعدة بيانات المناطق الزمنية (tzdata).",
+      "usage": "عرض الوقت بتوقيت مدينة محددة، تحويل وقت من منطقة لأخرى.",
+      "example": "std::chrono::zoned_time time{\"Asia/Riyadh\", std::chrono::system_clock::now()};",
+      "includeHeader": "#include <chrono>",
+      "usageExamples": [
+        {
+          "titleArabic": "عرض الوقت بتوقيت الرياض",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    zoned_time riyadh_time{\"Asia/Riyadh\", system_clock::now()};\n    std::cout << \"الرياض: \" << riyadh_time << '\\n';\n\n    zoned_time london_time{\"Europe/London\", system_clock::now()};\n    std::cout << \"لندن: \" << london_time << '\\n';\n}",
+          "explanationArabic": "zoned_time يأخذ اسم المنطقة الزمنية (من قاعدة بيانات IANA) والوقت. يعرض الوقت بالتوقيت المحلي للمنطقة المحددة. أسماء المناطق مثل Asia/Riyadh وEurope/London."
+        },
+        {
+          "titleArabic": "تحويل وقت بين منطقتين",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    // وقت محدد بتوقيت طوكيو\n    zoned_time tokyo{\"Asia/Tokyo\", system_clock::now()};\n\n    // نفس اللحظة بتوقيت نيويورك\n    zoned_time new_york{\"America/New_York\", tokyo.get_sys_time()};\n\n    std::cout << \"طوكيو: \" << tokyo << '\\n';\n    std::cout << \"نيويورك: \" << new_york << '\\n';\n    // الفرق ≈ 13-14 ساعة حسب التوقيت الصيفي\n}",
+          "explanationArabic": "get_sys_time() يُرجع اللحظة الزمنية (UTC). تمريرها لـ zoned_time بمنطقة أخرى يُحولها. هذا يسمح بعرض نفس اللحظة بتوقيتات مختلفة."
+        }
+      ],
+      "related": [
+        "std::chrono::system_clock",
+        "std::chrono::clock_cast",
+        "std::chrono::time_zone"
+      ]
+    },
+    "std::chrono::clock_cast": {
+      "title": "std::chrono::clock_cast",
+      "type": "دالة تحويل ساعات",
+      "description": "يُحوّل نقطة زمنية من ساعة (clock) إلى أخرى. جزء من C++20 chrono. مفيد عند التحويل بين system_clock وutc_clock وtai_clock وgps_clock. كل ساعة لها نقطة بداية مختلفة — clock_cast يُعالج هذا.",
+      "usage": "تحويل وقت من system_clock لـ utc_clock، مقارنة أوقات من ساعات مختلفة.",
+      "example": "auto utc = std::chrono::clock_cast<std::chrono::utc_clock>(sys_time);",
+      "includeHeader": "#include <chrono>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحويل system_clock لـ utc_clock",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    // الوقت الحالي من ساعة النظام\n    auto sys_now = system_clock::now();\n\n    // تحويل لـ UTC\n    auto utc_now = clock_cast<utc_clock>(sys_now);\n\n    std::cout << \"System: \" << sys_now << '\\n';\n    std::cout << \"UTC:    \" << utc_now << '\\n';\n}",
+          "explanationArabic": "system_clock قد لا يكون UTC حقيقيًا (يعتمد على النظام). clock_cast يُحوّل بين الساعات بدقة. utc_clock يُمثل UTC الحقيقي بدون تأثير التوقيت الصيفي."
+        },
+        {
+          "titleArabic": "الفرق بين الساعات",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    auto sys = system_clock::now();\n    auto utc = clock_cast<utc_clock>(sys);\n    auto tai = clock_cast<tai_clock>(sys);\n    auto gps = clock_cast<gps_clock>(sys);\n\n    // TAI = UTC + leap seconds (≈ 37 ثانية في 2024)\n    // GPS = UTC + leap seconds - 9 ثوان\n    std::cout << \"SYS: \" << sys << '\\n';\n    std::cout << \"UTC: \" << utc << '\\n';\n    std::cout << \"TAI: \" << tai << '\\n';\n    std::cout << \"GPS: \" << gps << '\\n';\n}",
+          "explanationArabic": "كل ساعة لها نقطة بداية مختلفة. TAI يسبق UTC بـ 37 ثانية تقريبًا (ثواني كبيسة). GPS يسبق UTC بـ 19 ثانية. clock_cast يُعالج كل هذه الاختلافات."
+        }
+      ],
+      "related": [
+        "std::chrono::system_clock",
+        "std::chrono::utc_clock",
+        "std::chrono::tai_clock"
+      ]
+    },
+    "std::chrono::last_day": {
+      "title": "std::chrono::last_day",
+      "type": "دالة تقويم",
+      "description": "يُنشئ كائن يمثل آخر يوم في شهر محدد. جزء من C++20 chrono. يُستخدم مع year_month لمعرفة أو إنشاء تاريخ آخر يوم في الشهر. يتعامل تلقائيًا مع السنوات الكبيسة (فبراير له 28 أو 29 يومًا).",
+      "usage": "معرفة عدد أيام شهر، إنشاء تاريخ لآخر يوم في الشهر.",
+      "example": "auto last = std::chrono::year{2024}/std::chrono::February/std::chrono::last_day;",
+      "includeHeader": "#include <chrono>",
+      "usageExamples": [
+        {
+          "titleArabic": "معرفة آخر يوم في شهر",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    // آخر يوم في فبراير 2024 (سنة كبيسة)\n    auto feb_2024 = year{2024}/February/last_day;\n    std::cout << \"فبراير 2024: \" << static_cast<unsigned>(feb_2024.day()) << \" يوم\" << '\\n'; // 29\n\n    // آخر يوم في فبراير 2023 (عادية)\n    auto feb_2023 = year{2023}/February/last_day;\n    std::cout << \"فبراير 2023: \" << static_cast<unsigned>(feb_2023.day()) << \" يوم\" << '\\n'; // 28\n\n    // آخر يوم في ديسمبر\n    auto dec = year{2024}/December/last_day;\n    std::cout << \"ديسمبر 2024: \" << static_cast<unsigned>(dec.day()) << \" يوم\" << '\\n'; // 31\n}",
+          "explanationArabic": "last_day يُحسب تلقائيًا حسب الشهر والسنة. السنوات الكبيسة تُعالج بدقة. هذا يُغني عن جداول الشهور يدويًا."
+        },
+        {
+          "titleArabic": "حساب الأيام المتبقية في الشهر",
+          "code": "#include <iostream>\n#include <chrono>\n\nint main() {\n    using namespace std::chrono;\n\n    auto today = floor<days>(system_clock::now());\n    year_month_day ymd{today};\n\n    // آخر يوم في الشهر الحالي\n    year_month_day last = ymd.year()/ymd.month()/last_day;\n\n    // الأيام المتبقية\n    days remaining = sys_days{last} - sys_days{ymd};\n    std::cout << \"الأيام المتبقية: \" << remaining.count() << '\\n';\n}",
+          "explanationArabic": "الفرق بين آخر يوم واليوم الحالي يُعطي الأيام المتبقية. sys_days يحول year_month_day لعدد أيام يمكن طرحها. هذا أنمط شائع في التطبيقات."
+        }
+      ],
+      "related": [
+        "std::chrono::year_month_day",
+        "std::chrono::year_month",
+        "std::chrono::day"
+      ]
+    },
+    "std::common_type_time_point": {
+      "title": "std::common_type_time_point",
+      "type": "قالب تخصيص",
+      "description": "تخصيص (specialization) لقالب std::common_type يعمل على أنواع time_point. يُحدد النوع الزمني المشترك الأصغر الذي يمكن تحويل نوعين من time_point إليه. هذا يسمح بإجراء عمليات حسابية بين نقطتين زمنيتين من ساعات مختلفة.",
+      "usage": "حساب الفرق بين نقطتين زمنيتين من ساعات مختلفة، أو مقارنة time_point بأمان.",
+      "example": "// مثال: حساب الفرق بين نقطتين زمنيتين من ساعات مختلفة\n#include <chrono>\n#include <iostream>\nint main() {\n    using namespace std::chrono;\n    // نوع مشترك بين time_point لنظامين مختلفين\n    using common_tp = std::common_type_t<system_clock::time_point, steady_clock::time_point>;\n    auto now_sys = system_clock::now();\n    auto now_steady = steady_clock::now();\n    std::cout << \"نوع مشترك متاح: \" << typeid(common_tp).name() << '\\n';\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::time_point",
+        "std::chrono::system_clock",
+        "std::chrono::steady_clock"
+      ]
+    },
+    "std::duration_cast": {
+      "title": "std::duration_cast",
+      "type": "دالة تحويل",
+      "description": "يُحوّل كائن duration من نوع زمني إلى آخر مع ضبط القيمة بدقة. التحويل بين وحدات زمنية مختلفة (مثل مللي ثانية إلى ثوانٍ) قد يُفقد دقة إذا كانت الوحدة الهدف أكبر. يُستخدم عند الحاجة لتغيير دقة القياس الزمني.",
+      "usage": "تحويل مدة زمنية من وحدة لأخرى مثل تحويل مللي ثانية لثوانٍ أو العكس.",
+      "example": "// مثال: تحويل مدة زمنية بين وحدات مختلفة\n#include <chrono>\n#include <iostream>\nint main() {\n    using namespace std::chrono;\n    milliseconds ms{2500};\n    // تحويل مللي ثانية لثوانٍ (يُفقد الجزء الكسري)\n    auto sec = duration_cast<seconds>(ms);\n    std::cout << sec.count() << \" ثوانٍ\\n\"; // 2\n    // تحويل مللي ثانية لدقائق\n    auto min = duration_cast<minutes>(ms);\n    std::cout << min.count() << \" دقائق\\n\"; // 0\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::duration",
+        "std::chrono::seconds",
+        "std::chrono::milliseconds"
+      ]
+    },
+    "std::hours": {
+      "title": "std::hours",
+      "type": "نوع زمني",
+      "description": "نوع duration مُسبق التعريف يمثل ساعة واحدة (3600 ثانية). وحدة زمنية كبيرة تُستخدم لقياس الفترات الطويلة. يُمثّل داخليًا كعدد صحيح من الساعات (std::int64_t عادةً).",
+      "usage": "قياس فترات زمنية بالساعات مثل مدة الرحلات أو الفروق الزمنية بين المناطق.",
+      "example": "// مثال: استخدام الساعات لقياس فترات طويلة\n#include <chrono>\n#include <iostream>\nint main() {\n    using namespace std::chrono;\n    hours flight_time{8};\n    hours layover{2};\n    hours total = flight_time + layover;\n    std::cout << \"إجمالي الرحلة: \" << total.count() << \" ساعات\\n\"; // 10\n    // تحويل لدقائق\n    auto mins = duration_cast<minutes>(total);\n    std::cout << mins.count() << \" دقيقة\\n\"; // 600\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::minutes",
+        "std::chrono::seconds",
+        "std::chrono::duration"
+      ]
+    },
+    "std::microseconds": {
+      "title": "std::microseconds",
+      "type": "نوع زمني",
+      "description": "نوع duration مُسبق التعريف يمثل ميكروثانية واحدة (1/1,000,000 ثانية). وحدة دقيقة جدًا تُستخدم في قياس الأداء ووقت التنفيذ. يُمثّل داخليًا كعدد صحيح من الميكروثواني (std::int64_t عادةً).",
+      "usage": "قياس وقت تنفيذ الدوال بدقة عالية، أو حساب زمن استجابة الأنظمة.",
+      "example": "// مثال: قياس وقت تنفيذ دالة بالميكروثانية\n#include <chrono>\n#include <iostream>\n#include <thread>\nint main() {\n    using namespace std::chrono;\n    auto start = steady_clock::now();\n    std::this_thread::sleep_for(microseconds{500});\n    auto end = steady_clock::now();\n    auto elapsed = duration_cast<microseconds>(end - start);\n    std::cout << \"الوقت المنقضي: \" << elapsed.count() << \" ميكروثانية\\n\";\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::nanoseconds",
+        "std::chrono::milliseconds",
+        "std::chrono::duration"
+      ]
+    },
+    "std::milliseconds": {
+      "title": "std::milliseconds",
+      "type": "نوع زمني",
+      "description": "نوع duration مُسبق التعريف يمثل ملي ثانية واحدة (1/1,000 ثانية). وحدة زمنية شائعة الاستخدام في البرمجة لقياس الفترات القصيرة. يُمثّل داخليًا كعدد صحيح من المللي ثواني (std::int64_t عادةً).",
+      "usage": "تحديد مهلة (timeout) للعمليات، قياس زمن استجابة واجهات المستخدم، أو تأخير تنفيذ.",
+      "example": "// مثال: استخدام المللي ثانية كمهلة\n#include <chrono>\n#include <iostream>\n#include <thread>\nint main() {\n    using namespace std::chrono;\n    milliseconds timeout{1500};\n    auto start = steady_clock::now();\n    std::this_thread::sleep_for(timeout);\n    auto elapsed = steady_clock::now() - start;\n    std::cout << \"انتظرنا: \" << duration_cast<milliseconds>(elapsed).count() << \" مللي ثانية\\n\";\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::seconds",
+        "std::chrono::microseconds",
+        "std::chrono::duration"
+      ]
+    },
+    "std::minutes": {
+      "title": "std::minutes",
+      "type": "نوع زمني",
+      "description": "نوع duration مُسبق التعريف يمثل دقيقة واحدة (60 ثانية). وحدة زمنية متوسطة تُستخدم لقياس الفترات المعتدلة. يُمثّل داخليًا كعدد صحيح من الدقائق (std::int64_t عادةً).",
+      "usage": "تحديد فترات انتظار أو مهال بالدقائق مثل وقت انتهاء الجلسة أو الفاصل بين المحاولات.",
+      "example": "// مثال: حساب وقت انتهاء صلاحية جلسة\n#include <chrono>\n#include <iostream>\nint main() {\n    using namespace std::chrono;\n    minutes session_timeout{30};\n    minutes elapsed{12};\n    minutes remaining = session_timeout - elapsed;\n    std::cout << \"الوقت المتبقي: \" << remaining.count() << \" دقيقة\\n\"; // 18\n    // تحويل لثوانٍ\n    std::cout << duration_cast<seconds>(remaining).count() << \" ثانية\\n\"; // 1080\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::hours",
+        "std::chrono::seconds",
+        "std::chrono::duration"
+      ]
+    },
+    "std::nanoseconds": {
+      "title": "std::nanoseconds",
+      "type": "نوع زمني",
+      "description": "نوع duration مُسبق التعريف يمثل نانوثانية واحدة (1/1,000,000,000 ثانية). أدق وحدة زمنية قياسية في chrono. يُستخدم لقياس الأداء الدقيق جدًا والعمليات التي تستغرق أجزاء صغيرة من الميكروثانية.",
+      "usage": "قياس أداء الدوال الحسابية البسيطة، مقارنة سرعة الخوارزميات، أو ضبط التوقيت الدقيق.",
+      "example": "// مثال: قياس زمن عملية حسابية بسيطة بالنانوثانية\n#include <chrono>\n#include <iostream>\nint main() {\n    using namespace std::chrono;\n    auto start = steady_clock::now();\n    volatile long sum = 0;\n    for (int i = 0; i < 1000000; ++i) sum += i;\n    auto end = steady_clock::now();\n    auto elapsed = duration_cast<nanoseconds>(end - start);\n    std::cout << \"الوقت: \" << elapsed.count() << \" نانوثانية\\n\";\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::microseconds",
+        "std::chrono::milliseconds",
+        "std::chrono::duration"
+      ]
+    },
+    "std::seconds": {
+      "title": "std::seconds",
+      "type": "نوع زمني",
+      "description": "نوع duration مُسبق التعريف يمثل ثانية واحدة. الوحدة الأساسية والأكثر استخدامًا في chrono. يُمثّل داخليًا كعدد صحيح من الثواني (std::int64_t عادةً). جميع الوحدات الأخرى (minutes, hours) تُبنى فوقه.",
+      "usage": "قياس الفترات الزمنية بالثواني مثل وقت تحميل الصفحة أو مدة العملية.",
+      "example": "// مثال: حساب مدة عملية بالثواني\n#include <chrono>\n#include <iostream>\n#include <thread>\nint main() {\n    using namespace std::chrono;\n    auto start = steady_clock::now();\n    std::this_thread::sleep_for(seconds{3});\n    auto end = steady_clock::now();\n    auto elapsed = duration_cast<seconds>(end - start);\n    std::cout << \"الوقت المنقضي: \" << elapsed.count() << \" ثانية\\n\"; // 3\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::minutes",
+        "std::chrono::milliseconds",
+        "std::chrono::duration"
+      ]
+    },
+    "std::time_point_cast": {
+      "title": "std::time_point_cast",
+      "type": "دالة تحويل",
+      "description": "يُحوّل كائن time_point من دقة زمنية إلى أخرى. مشابه لـ duration_cast لكن يعمل على نقاط زمنية وليس مدد. التحويل يقتطع (truncates) الجزء الزمني الأدنى عند التحويل لدقة أقل، ولا يُقرّب.",
+      "usage": "تحويل نقطة زمنية من دقيقة لأقل مثل تحويل وقت بالنانوثانية لوقت بالثواني.",
+      "example": "// مثال: تحويل نقطة زمنية من دقة عالية لدقة أقل\n#include <chrono>\n#include <iostream>\nint main() {\n    using namespace std::chrono;\n    // نقطة زمنية بدقة النانوثانية\n    auto precise = system_clock::now();\n    // تحويل لدقة الثواني (يقتطع الجزء الكسري)\n    auto sec_tp = time_point_cast<seconds>(precise);\n    // تحويل لدقة الدقائق\n    auto min_tp = time_point_cast<minutes>(precise);\n    std::cout << \"ثوانٍ منذ الحقبة: \" << sec_tp.time_since_epoch().count() << '\\n';\n}\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::time_point",
+        "std::chrono::duration_cast",
+        "std::chrono::system_clock"
+      ]
+    },
+    "std::chrono::duration": {
+      "title": "std::chrono::duration",
+      "type": "قالب",
+      "description": "يُمثّل فترة زمنية بين نقطتين زمنيتين. قالب معاملاه نوع العدد (rep) ونسبة التكبير (period). مثال: duration<int, std::milli> = عدد صحيح بالمللي ثانية.",
+      "usage": "قياس فترات زمنية مخصصة بوحدات غير قياسية، أو إنشاء أنواع زمنية بدقة محددة.",
+      "example": "// مدة 500 مللي ثانية\nusing half_sec = std::chrono::duration<int, std::ratio<1, 2>>;\nhalf_sec t{3}; // 1.5 ثانية\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::duration_cast",
+        "std::chrono::seconds",
+        "std::chrono::time_point"
+      ]
+    },
+    "std::chrono::duration_values": {
+      "title": "std::chrono::duration_values",
+      "type": "قالب",
+      "description": "يوفر قيم خاصّة لـ duration: zero(), min(), max(). يُستخدم داخليًا من duration.",
+      "usage": "يُستخدم داخليًا من duration للحصول على القيم الحدية. نادرًا ما يُستخدم مباشرة.",
+      "example": "// القيم الحدية لـ int\nauto z = std::chrono::duration_values<int>::zero(); // 0\nauto mn = std::chrono::duration_values<int>::min(); // INT_MIN\nauto mx = std::chrono::duration_values<int>::max(); // INT_MAX\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::duration",
+        "std::chrono::seconds"
+      ]
+    },
+    "std::chrono::time_point": {
+      "title": "std::chrono::time_point",
+      "type": "قالب",
+      "description": "يُمثّل لحظة زمنية محددة بالنسبة لساعة. قالب معاملاه نوع الساعة ونوع الـ duration. يُستخدم لحفظ أوقات محددة مثل وقت البدء والانتهاء.",
+      "usage": "حفظ لحظة زمنية من ساعة مثل system_clock::now()، أو حساب الفرق بين لحظتين.",
+      "example": "// حفظ وقت البدء وحساب الفرق\nauto start = std::chrono::steady_clock::now();\n// ... عملية ...\nauto end = std::chrono::steady_clock::now();\nauto elapsed = end - start;\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::system_clock",
+        "std::chrono::steady_clock",
+        "std::chrono::duration"
+      ]
+    },
+    "std::chrono::steady_clock": {
+      "title": "std::chrono::steady_clock",
+      "type": "صنف",
+      "description": "ساعة أحادية الاتجاه لا تتراجع. مثالية لقياس الفترات الزمنية (benchmarking) لأنها مضمونة ألا تتأثر بتعديل وقت النظام.",
+      "usage": "قياس وقت تنفيذ الدوال، قياس أداء الخوارزميات، أي عملية تحتاج قياس فترة زمنية دقيقة.",
+      "example": "// قياس وقت تنفيذ دالة\nauto start = std::chrono::steady_clock::now();\nmy_function();\nauto end = std::chrono::steady_clock::now();\nauto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::system_clock",
+        "std::chrono::high_resolution_clock",
+        "std::chrono::time_point"
+      ]
+    },
+    "std::chrono::system_clock": {
+      "title": "std::chrono::system_clock",
+      "type": "صنف",
+      "description": "ساعة النظام (wall clock). تُمثّل الوقت الحقيقي ويمكن تحويلها لـ time_t. قد تتأثر بتعديل وقت النظام أو التوقيت الصيفي.",
+      "usage": "الحصول على التاريخ والوقت الحالي، عرض الوقت للمستخدم، تسجيل الأحداث بتاريخ حقيقي.",
+      "example": "// الوقت الحالي وتحويله لـ time_t\nauto now = std::chrono::system_clock::now();\nstd::time_t tt = std::chrono::system_clock::to_time_t(now);\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::steady_clock",
+        "std::chrono::high_resolution_clock",
+        "std::chrono::time_point"
+      ]
+    },
+    "std::chrono::high_resolution_clock": {
+      "title": "std::chrono::high_resolution_clock",
+      "type": "صنف",
+      "description": "الساعة بأدق دقة متاحة على النظام. قد تكون alias لـ steady_clock أو system_clock حسب المنصة. لا يُنصح بها لقياس الفترات الزمنية لأن سلوك is_steady غير مضمون.",
+      "usage": "عند الحاجة لأدق دقة ممكنة ولا يهم إن كانت الساعة steady أم لا.",
+      "example": "// استخدام الساعة عالية الدقة\nauto t = std::chrono::high_resolution_clock::now();\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::steady_clock",
+        "std::chrono::system_clock"
+      ]
+    },
+    "std::chrono::treat_as_floating_point": {
+      "title": "std::chrono::treat_as_floating_point",
+      "type": "type trait",
+      "description": "type trait يُحدد هل يُعامل نوع الـ duration كعدد عشري. true للأعداد العشرية (double, float)، false للأعداد الصحيحة (int, long). يُؤثر على سلوك عمليات duration مثل القسمة.",
+      "usage": "يُستخدم داخليًا من duration لتقرير هل يمكن تقسيم المدة لقيم عشرية. نادرًا ما يُستخدم مباشرة.",
+      "example": "// فحص نوعين\nstatic_assert(std::chrono::treat_as_floating_point<double>::value);  // true\nstatic_assert(!std::chrono::treat_as_floating_point<int>::value);     // false\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::duration",
+        "std::chrono::duration_values"
+      ]
+    },
+    "std::duration": {
+      "title": "std::chrono::duration",
+      "type": "قالب",
+      "description": "يُمثّل فترة زمنية بين نقطتين زمنيتين. قالب معاملاه نوع العدد (rep) ونسبة التكبير (period). مثال: duration<int, std::milli> = عدد صحيح بالمللي ثانية.",
+      "usage": "قياس فترات زمنية مخصصة بوحدات غير قياسية، أو إنشاء أنواع زمنية بدقة محددة.",
+      "example": "// مدة 500 مللي ثانية\nusing half_sec = std::chrono::duration<int, std::ratio<1, 2>>;\nhalf_sec t{3}; // 1.5 ثانية\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::duration_cast",
+        "std::chrono::seconds",
+        "std::chrono::time_point"
+      ]
+    },
+    "std::duration_values": {
+      "title": "std::chrono::duration_values",
+      "type": "قالب",
+      "description": "يوفر قيم خاصّة لـ duration: zero(), min(), max(). يُستخدم داخليًا من duration.",
+      "usage": "يُستخدم داخليًا من duration للحصول على القيم الحدية. نادرًا ما يُستخدم مباشرة.",
+      "example": "// القيم الحدية لـ int\nauto z = std::chrono::duration_values<int>::zero(); // 0\nauto mn = std::chrono::duration_values<int>::min(); // INT_MIN\nauto mx = std::chrono::duration_values<int>::max(); // INT_MAX\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::duration",
+        "std::chrono::seconds"
+      ]
+    },
+    "std::time_point": {
+      "title": "std::chrono::time_point",
+      "type": "قالب",
+      "description": "يُمثّل لحظة زمنية محددة بالنسبة لساعة. قالب معاملاه نوع الساعة ونوع الـ duration. يُستخدم لحفظ أوقات محددة مثل وقت البدء والانتهاء.",
+      "usage": "حفظ لحظة زمنية من ساعة مثل system_clock::now()، أو حساب الفرق بين لحظتين.",
+      "example": "// حفظ وقت البدء وحساب الفرق\nauto start = std::chrono::steady_clock::now();\n// ... عملية ...\nauto end = std::chrono::steady_clock::now();\nauto elapsed = end - start;\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::system_clock",
+        "std::chrono::steady_clock",
+        "std::chrono::duration"
+      ]
+    },
+    "std::steady_clock": {
+      "title": "std::chrono::steady_clock",
+      "type": "صنف",
+      "description": "ساعة أحادية الاتجاه لا تتراجع. مثالية لقياس الفترات الزمنية (benchmarking) لأنها مضمونة ألا تتأثر بتعديل وقت النظام.",
+      "usage": "قياس وقت تنفيذ الدوال، قياس أداء الخوارزميات، أي عملية تحتاج قياس فترة زمنية دقيقة.",
+      "example": "// قياس وقت تنفيذ دالة\nauto start = std::chrono::steady_clock::now();\nmy_function();\nauto end = std::chrono::steady_clock::now();\nauto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::system_clock",
+        "std::chrono::high_resolution_clock",
+        "std::chrono::time_point"
+      ]
+    },
+    "std::system_clock": {
+      "title": "std::chrono::system_clock",
+      "type": "صنف",
+      "description": "ساعة النظام (wall clock). تُمثّل الوقت الحقيقي ويمكن تحويلها لـ time_t. قد تتأثر بتعديل وقت النظام أو التوقيت الصيفي.",
+      "usage": "الحصول على التاريخ والوقت الحالي، عرض الوقت للمستخدم، تسجيل الأحداث بتاريخ حقيقي.",
+      "example": "// الوقت الحالي وتحويله لـ time_t\nauto now = std::chrono::system_clock::now();\nstd::time_t tt = std::chrono::system_clock::to_time_t(now);\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::steady_clock",
+        "std::chrono::high_resolution_clock",
+        "std::chrono::time_point"
+      ]
+    },
+    "std::high_resolution_clock": {
+      "title": "std::chrono::high_resolution_clock",
+      "type": "صنف",
+      "description": "الساعة بأدق دقة متاحة على النظام. قد تكون alias لـ steady_clock أو system_clock حسب المنصة. لا يُنصح بها لقياس الفترات الزمنية لأن سلوك is_steady غير مضمون.",
+      "usage": "عند الحاجة لأدق دقة ممكنة ولا يهم إن كانت الساعة steady أم لا.",
+      "example": "// استخدام الساعة عالية الدقة\nauto t = std::chrono::high_resolution_clock::now();\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::steady_clock",
+        "std::chrono::system_clock"
+      ]
+    },
+    "std::treat_as_floating_point": {
+      "title": "std::chrono::treat_as_floating_point",
+      "type": "type trait",
+      "description": "type trait يُحدد هل يُعامل نوع الـ duration كعدد عشري. true للأعداد العشرية (double, float)، false للأعداد الصحيحة (int, long). يُؤثر على سلوك عمليات duration مثل القسمة.",
+      "usage": "يُستخدم داخليًا من duration لتقرير هل يمكن تقسيم المدة لقيم عشرية. نادرًا ما يُستخدم مباشرة.",
+      "example": "// فحص نوعين\nstatic_assert(std::chrono::treat_as_floating_point<double>::value);  // true\nstatic_assert(!std::chrono::treat_as_floating_point<int>::value);     // false\n",
+      "includeHeader": "#include <chrono>",
+      "related": [
+        "std::chrono::duration",
+        "std::chrono::duration_values"
+      ]
+    }
+  }
+}

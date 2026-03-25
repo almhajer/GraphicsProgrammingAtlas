@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "glslang",
+    "displayName": "GLSLang",
+    "displayNameArabic": "GLSLang",
+    "description": "مرجع عربي لعناصر GLSL وGLSLang من التوجيهات حتى الدوال والعناصر المضمنة."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "groupMemoryBarrier",
+    "slug": "group-memory-barrier",
+    "titleArabic": "تطلب ترتيب جميع وصولات الذاكرة ذات الصلة كما تراها invocations الأخرى داخل Workgroup نفسها",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/glslang/functions/group-memory-barrier",
+    "contentPath": "content/reference/glslang/functions/group-memory-barrier.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تطلب ترتيب جميع وصولات الذاكرة ذات الصلة كما تراها invocations الأخرى داخل Workgroup نفسها",
+    "actualMeaningArabic": "تطلب ترتيب جميع وصولات الذاكرة ذات الصلة كما تراها invocations الأخرى داخل Workgroup نفسها.",
+    "purposeArabic": "تستخدم عندما تريد barrier ذا معنى جماعي أوسع من نوع مورد واحد داخل خوارزمية Compute.",
+    "whyUseArabic": "توفر نقطة أوسع لضبط ترتيب الذاكرة المشتركة بين invocations المتعاونة قبل الاستمرار.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء ليست نصاً أو تعريفاً فقط، بل الأثر الذي يحدثه على الحالة أو المورد المستهدف.",
+    "sourceDescription": "تطلب ترتيب جميع وصولات الذاكرة ذات الصلة كما تراها invocations الأخرى داخل Workgroup نفسها."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "تستخدم عندما تريد barrier ذا معنى جماعي أوسع من نوع مورد واحد داخل خوارزمية Compute."
+    ],
+    "notes": [
+      "تنظم visibility لوصولات الذاكرة ذات الصلة داخل حدود Workgroup الواحدة.",
+      "توفر نقطة أوسع لضبط ترتيب الذاكرة المشتركة بين invocations المتعاونة قبل الاستمرار.",
+      "تفيد مع shared والعمل التعاوني داخل Compute، لكنها لا تحل محل barriers على مستوى أوامر Vulkan أو queues."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "#version 460\nlayout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;\nshared vec4 tileCache[64];\n\nvoid main() {\n uint localIndex = gl_LocalInvocationIndex;\n tileCache[localIndex] = vec4(float(localIndex) / 63.0);\n groupMemoryBarrier();\n barrier();\n}"
+  },
+  "links": {
+    "officialUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/glsl/reference/functions.json",
+    "category": "الدوال المضمنة",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

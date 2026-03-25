@@ -1,0 +1,217 @@
+{
+  "referenceData": {
+    "أسبقية المشغّلات وترابطها": {
+      "title": "أسبقية المشغّلات وترابطها",
+      "titleEnglish": "C++ Operator Precedence and Associativity",
+      "type": "مفهوم لغوي أساسي في C++",
+      "description": "جدول يُحدد ترتيب تقييم المشغّلات داخل التعبير الواحد. الأسبقية الأعلى تُقيَّم أولًا، والترابط يُحدد الاتجاه عند تساوي الأسبقية. بدون هذه القواعد، تعبير مثل `2 + 3 * 4` يكون غامضًا: هل النتيجة 20 أم 14؟ الأسبقية تجعلها 14 لأن `*` أعلى من `+`.",
+      "usage": "فهم هذا الجدول ضروري لقراءة أي تعبير C++ واكتشاف الأخطاء الناتجة عن ترتيب تقييم خاطئ. ليس شيئًا تُستدعيه، بل قاعدة ذهنية تُطبق تلقائيًا عند كتابة أو قراءة التعبيرات.",
+      "example": "int result = 2 + 3 * 4; // 14 لا 20\nint a = 5, b = 7;\nint c = a > 3 && b < 10; // true لأن > و < أسبقية أعلى من &&",
+      "related": [
+        "operator",
+        "and",
+        "or",
+        "not",
+        "bitand",
+        "bitor",
+        "xor",
+        "sizeof",
+        "static_cast",
+        "dynamic_cast",
+        "reinterpret_cast",
+        "const_cast",
+        "typeid",
+        "new",
+        "delete",
+        "throw",
+        "if"
+      ],
+      "precedenceTable": [
+        {
+          "level": 1,
+          "operators": "::",
+          "nameArabic": "حل النطاق",
+          "nameEnglish": "Scope resolution",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "يُحدد إلى أي نطاق ينتمي الاسم. يُقيَّم قبل أي مشغل آخر لأنه يحل الاسم نفسه قبل أن يُستخدم في تعبير.",
+          "exampleArabic": "std::vector<int> v;\nMyClass::static_value;"
+        },
+        {
+          "level": 2,
+          "operators": "++ -- () [] . -> typeid const_cast dynamic_cast reinterpret_cast static_cast نوع(تعبير) نوع{تعبير}",
+          "nameArabic": "لاحقات (Postfix)",
+          "nameEnglish": "Postfix operators",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تُقيَّم بعد المعامل: الزيادة والنقصان اللاحقية، استدعاء الدوال، الفهرسة، الوصول للعضو عبر . أو ->، وتحويلات الأنواع النمطية. أسبقيتها عالية لأنها تُكمّل معنى المعامل نفسه قبل أن يُدخل في حساب أوسع.",
+          "exampleArabic": "arr[0]\nobj.method()\nptr->member\nvalue++\nstatic_cast<int>(3.14)"
+        },
+        {
+          "level": 3,
+          "operators": "++ -- + - ! ~ * & sizeof sizeof... new delete alignof noexcept decltype (نوع)تعبير",
+          "nameArabic": "أوابد (Prefix / Unary)",
+          "nameEnglish": "Prefix / Unary operators",
+          "associativity": "من اليمين لليسار",
+          "descriptionArabic": "تُقيَّم قبل المعامل: الزيادة والنقصان المسبقين، الإشارة الموجبة والسالبة، النفي المنطقي (!)، النفي البتي (~)، مرجع المؤشر (*)، عنوان الذاكرة (&)، sizeof، new/delete. الترابط من اليمين لليسار يعني أن `!!x` تُقرأ كـ `!(!x)`.",
+          "exampleArabic": "++counter\n-5\n!ready\n*ptr\n&value\nsizeof(int)\nnew int[10]"
+        },
+        {
+          "level": 4,
+          "operators": ".* ->*",
+          "nameArabic": "مؤشر لعضو كائن",
+          "nameEnglish": "Pointer-to-member",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "يصل لعضو داخل كائن عبر مؤشر دالة عضو أو مؤشر عضو بيانات. نادر الاستخدام في الكود اليومي ويظهر في الأنماط المتقدمة مثل مؤشرات الدوال الأعضاء داخل جداول العمليات.",
+          "exampleArabic": "obj.*member_ptr\nptr->*member_ptr"
+        },
+        {
+          "level": 5,
+          "operators": "* / %",
+          "nameArabic": "الضرب والقسمة والباقي",
+          "nameEnglish": "Multiplicative",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "العمليات الحسابية الأساسية الأعلى أسبقية بعد الأوابد. تُقيَّم من اليسار لليمين عند التساوي: `10 / 2 * 3` تعني `(10 / 2) * 3 = 15` لا `10 / (2 * 3)`. انتبه أن `%` مع الأعداد السالبة سلوكه معرّف في C++11 لكنه قد يُفاجئ المبتدئين.",
+          "exampleArabic": "int a = 2 * 3;      // 6\nint b = 10 / 3;    // 3 (قسمة صحيحة)\nint c = 10 % 3;    // 1 (باقي القسمة)"
+        },
+        {
+          "level": 6,
+          "operators": "+ -",
+          "nameArabic": "الجمع والطرح",
+          "nameEnglish": "Additive",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "الجمع والطرح الثنائيان. أسبقيتهما أقل من الضرب والقسمة لذلك `2 + 3 * 4 = 14`. يمكن أيضًا استخدامها مع المؤشرات: `ptr + 1` يعني العنوان التالي في الذاكرة بحسب حجم النوع المُشار إليه.",
+          "exampleArabic": "int a = 5 + 3;     // 8\nint b = 10 - 4;    // 6\nint* p = arr + 2;  // عنوان العنصر الثالث"
+        },
+        {
+          "level": 7,
+          "operators": "<< >>",
+          "nameArabic": "الإزاحة البتية",
+          "nameEnglish": "Bit shift",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تُزيح البتات يمينًا أو يسارًا. لا تخلط بينها وبين تدفقات الإدخال والإخراج: مع الأعداد تعني إزاحة بتات حقيقية، ومع cout/cin تعني إرسال واستقبال. الأسبقية هنا للإزاحة البتية فقط.",
+          "exampleArabic": "int flags = 1 << 3;   // 8 (تحريك البت الثالث)\nint shifted = flags >> 1; // 4\n// مع cout: std::cout << value; // هذا مشغل مختلف"
+        },
+        {
+          "level": 8,
+          "operators": "< <= > >=",
+          "nameArabic": "العلاقات (المقارنة)",
+          "nameEnglish": "Relational",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تقارن بين قيمتين وتُرجع bool. لا تُربط عدة مقارنات بدون أقواس: `a < b < c` لا تعني `a < b و b < c` بل `(a < b) < c` أي مقارنة bool مع عدد، وهذا خطأ شائع.",
+          "exampleArabic": "if (age >= 18 && age <= 65) { /* ... */ }\n// خطأ شائع: if (0 < x < 10) — لا تعني ما تظن"
+        },
+        {
+          "level": 9,
+          "operators": "== !=",
+          "nameArabic": "المساواة",
+          "nameEnglish": "Equality",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تتحقق من التساوي أو عدم التساوي. أسبقيتها أقل من المقارنات العلاقية لذلك `a < b == c < d` تُقرأ كـ `(a < b) == (c < d)` لا `(a < b == c) < d`. خطأ شائع: كتابة `=` بدل `==` داخل الشرط.",
+          "exampleArabic": "if (status == 0) { /* ... */ }\nif (ptr != nullptr) { /* ... */ }\n// خطأ شائع: if (x = 5) — هذا إسناد لا مقارنة"
+        },
+        {
+          "level": 10,
+          "operators": "&",
+          "nameArabic": "AND البتي (تقاطع البتات)",
+          "nameEnglish": "Bitwise AND",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تُفعّل فقط البتات المشتركة بين الطرفين. أسبقيتها أقل من المساواة لذلك `flags & mask == 0` تُقرأ كـ `flags & (mask == 0)` وهو غالبًا خطأ — استخدم أقواس: `(flags & mask) == 0`. البديل النصي هو `bitand`.",
+          "exampleArabic": "int common = flags & 0b1100; // البتات المشتركة فقط\nif ((flags & VISIBLE) != 0) { /* البت مفعّل */ }"
+        },
+        {
+          "level": 11,
+          "operators": "^",
+          "nameArabic": "XOR البتي (التفريق)",
+          "nameEnglish": "Bitwise XOR",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تُفعّل البتات المختلفة بين الطرفين. خاصيتها الفريدة: تطبيق XOR مرتين بنفس القناع يُعيد الحالة الأصلية. البديل النصي هو `xor`. تُستخدم كثيرًا في تبديل قيم متغيرين بدون متغير مؤقت وفي خوارزميات التشفير البسيطة.",
+          "exampleArabic": "int toggled = flags ^ 0b0100; // قلب البت الثالث\nflags ^= mask; // تبديل: نفس القناع يُعيد الحالة\n// تبديل قيمتين: a ^= b; b ^= a; a ^= b;"
+        },
+        {
+          "level": 12,
+          "operators": "|",
+          "nameArabic": "OR البتي (جمع البتات)",
+          "nameEnglish": "Bitwise OR",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تُفعّل أي بت مفعّل في أحد الطرفين. شائعة جدًا في بناء أقنعة الخيارات: `READ | WRITE | EXEC`. البديل النصي هو `bitor`. لا تخلطها مع `||` المنطقية: `|` تتعامل مع كل بت على حدة، بينما `||` تتعامل مع القيمة ككل (صفر أم لا).",
+          "exampleArabic": "const int READ = 1 << 0;\nconst int WRITE = 1 << 1;\nint perms = READ | WRITE; // 0b11\n// خطأ: لا تخلط بين | و ||"
+        },
+        {
+          "level": 13,
+          "operators": "&&",
+          "nameArabic": "AND المنطقي",
+          "nameEnglish": "Logical AND",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تنجح فقط إذا كان الطرفان صحيحين منطقيًا، مع short-circuit: إذا كان الطرف الأول false لا يُقيَّم الثاني أصلًا. هذا السلوك مهم جدًا عند وضع فحوصات في الطرف الثاني تعتمد على نجاح الأول مثل فحص المؤشر قبل استخدامه. البديل النصي هو `and`.",
+          "exampleArabic": "if (ptr && *ptr > 0) { /* آمن: لا يُقيَّم *ptr إذا ptr فارغ */ }\nif (age >= 18 && has_id) { /* كلا الشرطين لازم */ }"
+        },
+        {
+          "level": 14,
+          "operators": "||",
+          "nameArabic": "OR المنطقي",
+          "nameEnglish": "Logical OR",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تنجح إذا كان أحد الطرفين صحيحًا منطقيًا، مع short-circuit: إذا كان الطرف الأول true لا يُقيَّم الثاني. أسبقيتها أقل من && لذلك `a && b || c && d` تُقرأ كـ `(a && b) || (c && d)`. البديل النصي هو `or`.",
+          "exampleArabic": "if (cached || load_from_disk()) { /* لا يُستدعى load إذا كان cached */ }\nif (is_admin || is_moderator) { /* أحد الشرطين يكفي */ }"
+        },
+        {
+          "level": 15,
+          "operators": "?:",
+          "nameArabic": "الشرط الثلاثي",
+          "nameEnglish": "Ternary conditional",
+          "associativity": "من اليمين لليسار",
+          "descriptionArabic": "الوحيد الذي يأخذ ثلاثة معاملات: شرط ثم قيمة إذا صحيح ثم قيمة إذا خاطئ. الترابط من اليمين لليسار يسمح بالتداخل: `a ? b : c ? d : e` تُقرأ كـ `a ? b : (c ? d : e)`. لا تُفرط في تداخله لأنه يصعب القراءة.",
+          "exampleArabic": "int max = (a > b) ? a : b;\nstd::string label = (count == 1) ? \"عنصر\" : \"عناصر\";\n// تداخل: int x = flag ? 1 : depth ? 2 : 0;"
+        },
+        {
+          "level": 16,
+          "operators": "throw",
+          "nameArabic": "رمي الاستثناء",
+          "nameEnglish": "Throw expression",
+          "associativity": "من اليمين لليسار",
+          "descriptionArabic": "يُرسل استثناءً إلى أقرب catch. أسبقيته منخفضة جدًا لأنه يُفترض أن يكون نهاية مسار تعبيري لا جزءًا من حساب. يمكن استخدامه داخل تعبيرات مثل `x || throw Error()` كنمط مختصر.",
+          "exampleArabic": "throw std::runtime_error(\"فشل\");\nint value = ptr ? *ptr : throw std::invalid_argument(\"فارغ\");"
+        },
+        {
+          "level": 17,
+          "operators": "= += -= *= /= %= <<= >>= &= |= ^=",
+          "nameArabic": "الإسناد",
+          "nameEnglish": "Assignment",
+          "associativity": "من اليمين لليسار",
+          "descriptionArabic": "تُسنِد قيمة للطرف الأيسر. الترابط من اليمين لليسار يسمح بتسلسل مثل `a = b = c = 0` بمعنى `a = (b = (c = 0))`. الإسناد المركب مثل `+=` يُنفذ العملية ثم يُسنِد النتيجة للطرف الأيسر. لاحظ أن الإسناد يُنتج قيمة (القيمة المُسنَدة) وهذا يسمح باستخدامه داخل تعبيرات لكن يُنصح بتجنبه لوضوح الكود.",
+          "exampleArabic": "int x = 5;\nx += 3;     // x = 8\nx *= 2;     // x = 16\nint a, b, c;\na = b = c = 0; // الكل يصبح 0"
+        },
+        {
+          "level": 18,
+          "operators": ",",
+          "nameArabic": "الفاصلة (التسلسل)",
+          "nameEnglish": "Comma",
+          "associativity": "من اليسار لليمين",
+          "descriptionArabic": "تُقيِّم التعبيرات من اليسار لليمين ونتيجتها هي نتيجة التعبير الأخير فقط. أسبقيتها الأدنى تعني أنها تُقيَّم أخيرًا دائمًا. احذر: الفاصلة داخل استدعاء دالة `f(a, b)` ليست مشغل فاصلة بل فاصل معاملات. الفاصلة كمشغل تظهر في حلقات for مثل `for (int i = 0, j = n-1; ...)` أو في التعبيرات المعقدة.",
+          "exampleArabic": "for (int i = 0, j = 9; i < j; ++i, --j) { /* ... */ }\nint x = (1, 2, 3); // x = 3 (نتيجة الأخير فقط)"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "titleArabic": "مقارنات متسلسلة خاطئة",
+          "codeArabic": "// ❌ خطأ: هذا لا يعني (0 < x) و (x < 10)\nif (0 < x < 10) { /* ... */ }\n// ما يحدث فعليًا: (0 < x) يُرجع 0 أو 1، ثم يُقارن بـ 10\n// فإذا x = 5: (0 < 5) = 1، ثم 1 < 10 = true — بالصدفة!\n// لكن إذا x = -1: (0 < -1) = 0، ثم 0 < 10 = true — خطأ!\n\n// ✅ الصحيح: فصل المقارنتين\nif (x > 0 && x < 10) { /* ... */ }",
+          "explanationArabic": "المقارنات لا تُسلسل مثل الرياضيات. كل مقارنة تُرجع bool ثم تُقارن كعدد مع ما بعدها. استخدم && دائمًا لربط شروط النطاق."
+        },
+        {
+          "titleArabic": "خلط = مع ==",
+          "codeArabic": "// ❌ خطأ: إسناد داخل if لا مقارنة\nif (x = 5) { /* سينفذ دائمًا لأن 5 != 0 */ }\n\n// ✅ الصحيح: مقارنة\nif (x == 5) { /* ... */ }\n\n// ✅ حيلة دفاعية: ضع الثابت أولًا\nif (5 == x) { /* إذا كتبت = بالخطأ سيفشل الترجمة */ }",
+          "explanationArabic": "= إسناد و == مقارنة. داخل if كلاهما صالح نحويًا لأن الإسناد يُرجع قيمة. وضع الثابت أولًا يجعل المترجم يرفض `5 = x` لأنك لا تستطيع إسناد قيمة لثابت."
+        },
+        {
+          "titleArabic": "نسيان أقواس حول & و | مع المقارنات",
+          "codeArabic": "// ❌ خطأ: == أسبقية أعلى من &\nif (flags & mask == 0) { /* ... */ }\n// يُقرأ كـ: flags & (mask == 0)\n// أي: flags & 1 أو flags & 0 حسب نتيجة المقارنة\n\n// ✅ الصحيح: أقواس واضحة\nif ((flags & mask) == 0) { /* ... */ }",
+          "explanationArabic": "المشغلات البتية (& | ^) أسبقيتها أقل من == و !=. هذا مخالف لحدس كثير من المبرمجين الذين يتوقعون أن & تُقيَّم أولًا. القاعدة: ضع أقواس دائمًا حول العملية البتية عند مقارنة النتيجة."
+        },
+        {
+          "titleArabic": "خلط << الإزاحة مع << التدفق",
+          "codeArabic": "int shifted = value << 3;   // ✅ إزاحة بتات: value × 8\nstd::cout << value;          // ✅ إرسال للتدفق: طباعة\n\n// لكن داخل تعبير مختلط:\n// std::cout << value << 3; // لا يعني إزاحة! يطبع value ثم 3\n\n// ✅ إذا أردت الطباعة بعد الإزاحة:\nstd::cout << (value << 3);",
+          "explanationArabic": "مشغل << له معنيان مختلفان حسب السياق. مع الأعداد يعني إزاحة بتات، ومع التدفقات يعني إرسال. لا تخلط بينهما في نفس التعبير بدون أقواس."
+        }
+      ]
+    }
+  }
+}

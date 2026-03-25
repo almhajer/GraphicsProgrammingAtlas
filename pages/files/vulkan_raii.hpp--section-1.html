@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 1 من 64 • الأسطر 1-450 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 1 من 64 • الأسطر 1-450</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 1 من 64 • الأسطر 1-450</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم سابق</span>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-2.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 1/64</span>
+        <span class="source-stat">الأسطر: 1-450</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>// Copyright 2015-2026 The Khronos Group Inc.
+//
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+//
+
+// This header is generated from the Khronos Vulkan XML API Registry.
+
+#ifndef VULKAN_RAII_HPP
+#define VULKAN_RAII_HPP
+
+#include &lt;vulkan/vulkan.hpp&gt;
+#if !defined( VULKAN_HPP_CXX_MODULE )
+#  include &lt;memory&gt;   // std::unique_ptr
+#  include &lt;utility&gt;  // std::forward
+#endif
+
+#if !defined( VULKAN_HPP_DISABLE_ENHANCED_MODE )
+namespace VULKAN_HPP_NAMESPACE
+{
+  namespace VULKAN_HPP_RAII_NAMESPACE
+  {
+    namespace detail
+    {
+      using PFN_dummy = void ( * )();
+
+      class ContextDispatcher : public ::VULKAN_HPP_NAMESPACE::detail::DispatchLoaderBase
+      {
+      public:
+        ContextDispatcher( PFN_vkGetInstanceProcAddr getProcAddr )
+          : vkGetInstanceProcAddr( getProcAddr )
+          //=== VK_VERSION_1_0 ===
+          , vkCreateInstance( PFN_vkCreateInstance( getProcAddr( NULL, &quot;vkCreateInstance&quot; ) ) )
+          , vkEnumerateInstanceExtensionProperties(
+              PFN_vkEnumerateInstanceExtensionProperties( getProcAddr( NULL, &quot;vkEnumerateInstanceExtensionProperties&quot; ) ) )
+          , vkEnumerateInstanceLayerProperties( PFN_vkEnumerateInstanceLayerProperties( getProcAddr( NULL, &quot;vkEnumerateInstanceLayerProperties&quot; ) ) )
+          //=== VK_VERSION_1_1 ===
+          , vkEnumerateInstanceVersion( PFN_vkEnumerateInstanceVersion( getProcAddr( NULL, &quot;vkEnumerateInstanceVersion&quot; ) ) )
+        {
+        }
+
+      public:
+        PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = 0;
+
+        //=== VK_VERSION_1_0 ===
+        PFN_vkCreateInstance                       vkCreateInstance                       = 0;
+        PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties = 0;
+        PFN_vkEnumerateInstanceLayerProperties     vkEnumerateInstanceLayerProperties     = 0;
+
+        //=== VK_VERSION_1_1 ===
+        PFN_vkEnumerateInstanceVersion vkEnumerateInstanceVersion = 0;
+      };
+
+      class InstanceDispatcher : public ::VULKAN_HPP_NAMESPACE::detail::DispatchLoaderBase
+      {
+      public:
+        InstanceDispatcher( PFN_vkGetInstanceProcAddr getProcAddr, VkInstance instance ) : vkGetInstanceProcAddr( getProcAddr )
+        {
+          //=== VK_VERSION_1_0 ===
+          vkDestroyInstance           = PFN_vkDestroyInstance( vkGetInstanceProcAddr( instance, &quot;vkDestroyInstance&quot; ) );
+          vkEnumeratePhysicalDevices  = PFN_vkEnumeratePhysicalDevices( vkGetInstanceProcAddr( instance, &quot;vkEnumeratePhysicalDevices&quot; ) );
+          vkGetPhysicalDeviceFeatures = PFN_vkGetPhysicalDeviceFeatures( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceFeatures&quot; ) );
+          vkGetPhysicalDeviceFormatProperties =
+            PFN_vkGetPhysicalDeviceFormatProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceFormatProperties&quot; ) );
+          vkGetPhysicalDeviceImageFormatProperties =
+            PFN_vkGetPhysicalDeviceImageFormatProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceImageFormatProperties&quot; ) );
+          vkGetPhysicalDeviceProperties = PFN_vkGetPhysicalDeviceProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceProperties&quot; ) );
+          vkGetPhysicalDeviceQueueFamilyProperties =
+            PFN_vkGetPhysicalDeviceQueueFamilyProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceQueueFamilyProperties&quot; ) );
+          vkGetPhysicalDeviceMemoryProperties =
+            PFN_vkGetPhysicalDeviceMemoryProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceMemoryProperties&quot; ) );
+          vkCreateDevice = PFN_vkCreateDevice( vkGetInstanceProcAddr( instance, &quot;vkCreateDevice&quot; ) );
+          vkEnumerateDeviceExtensionProperties =
+            PFN_vkEnumerateDeviceExtensionProperties( vkGetInstanceProcAddr( instance, &quot;vkEnumerateDeviceExtensionProperties&quot; ) );
+          vkEnumerateDeviceLayerProperties = PFN_vkEnumerateDeviceLayerProperties( vkGetInstanceProcAddr( instance, &quot;vkEnumerateDeviceLayerProperties&quot; ) );
+          vkGetPhysicalDeviceSparseImageFormatProperties =
+            PFN_vkGetPhysicalDeviceSparseImageFormatProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSparseImageFormatProperties&quot; ) );
+
+          //=== VK_VERSION_1_1 ===
+          vkEnumeratePhysicalDeviceGroups = PFN_vkEnumeratePhysicalDeviceGroups( vkGetInstanceProcAddr( instance, &quot;vkEnumeratePhysicalDeviceGroups&quot; ) );
+          vkGetPhysicalDeviceFeatures2    = PFN_vkGetPhysicalDeviceFeatures2( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceFeatures2&quot; ) );
+          vkGetPhysicalDeviceProperties2  = PFN_vkGetPhysicalDeviceProperties2( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceProperties2&quot; ) );
+          vkGetPhysicalDeviceFormatProperties2 =
+            PFN_vkGetPhysicalDeviceFormatProperties2( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceFormatProperties2&quot; ) );
+          vkGetPhysicalDeviceImageFormatProperties2 =
+            PFN_vkGetPhysicalDeviceImageFormatProperties2( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceImageFormatProperties2&quot; ) );
+          vkGetPhysicalDeviceQueueFamilyProperties2 =
+            PFN_vkGetPhysicalDeviceQueueFamilyProperties2( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceQueueFamilyProperties2&quot; ) );
+          vkGetPhysicalDeviceMemoryProperties2 =
+            PFN_vkGetPhysicalDeviceMemoryProperties2( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceMemoryProperties2&quot; ) );
+          vkGetPhysicalDeviceSparseImageFormatProperties2 =
+            PFN_vkGetPhysicalDeviceSparseImageFormatProperties2( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSparseImageFormatProperties2&quot; ) );
+          vkGetPhysicalDeviceExternalBufferProperties =
+            PFN_vkGetPhysicalDeviceExternalBufferProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceExternalBufferProperties&quot; ) );
+          vkGetPhysicalDeviceExternalFenceProperties =
+            PFN_vkGetPhysicalDeviceExternalFenceProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceExternalFenceProperties&quot; ) );
+          vkGetPhysicalDeviceExternalSemaphoreProperties =
+            PFN_vkGetPhysicalDeviceExternalSemaphoreProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceExternalSemaphoreProperties&quot; ) );
+
+          //=== VK_VERSION_1_3 ===
+          vkGetPhysicalDeviceToolProperties = PFN_vkGetPhysicalDeviceToolProperties( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceToolProperties&quot; ) );
+
+          //=== VK_KHR_surface ===
+          vkDestroySurfaceKHR = PFN_vkDestroySurfaceKHR( vkGetInstanceProcAddr( instance, &quot;vkDestroySurfaceKHR&quot; ) );
+          vkGetPhysicalDeviceSurfaceSupportKHR =
+            PFN_vkGetPhysicalDeviceSurfaceSupportKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSurfaceSupportKHR&quot; ) );
+          vkGetPhysicalDeviceSurfaceCapabilitiesKHR =
+            PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSurfaceCapabilitiesKHR&quot; ) );
+          vkGetPhysicalDeviceSurfaceFormatsKHR =
+            PFN_vkGetPhysicalDeviceSurfaceFormatsKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSurfaceFormatsKHR&quot; ) );
+          vkGetPhysicalDeviceSurfacePresentModesKHR =
+            PFN_vkGetPhysicalDeviceSurfacePresentModesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSurfacePresentModesKHR&quot; ) );
+
+          //=== VK_KHR_swapchain ===
+          vkGetPhysicalDevicePresentRectanglesKHR =
+            PFN_vkGetPhysicalDevicePresentRectanglesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDevicePresentRectanglesKHR&quot; ) );
+
+          //=== VK_KHR_display ===
+          vkGetPhysicalDeviceDisplayPropertiesKHR =
+            PFN_vkGetPhysicalDeviceDisplayPropertiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceDisplayPropertiesKHR&quot; ) );
+          vkGetPhysicalDeviceDisplayPlanePropertiesKHR =
+            PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceDisplayPlanePropertiesKHR&quot; ) );
+          vkGetDisplayPlaneSupportedDisplaysKHR =
+            PFN_vkGetDisplayPlaneSupportedDisplaysKHR( vkGetInstanceProcAddr( instance, &quot;vkGetDisplayPlaneSupportedDisplaysKHR&quot; ) );
+          vkGetDisplayModePropertiesKHR    = PFN_vkGetDisplayModePropertiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetDisplayModePropertiesKHR&quot; ) );
+          vkCreateDisplayModeKHR           = PFN_vkCreateDisplayModeKHR( vkGetInstanceProcAddr( instance, &quot;vkCreateDisplayModeKHR&quot; ) );
+          vkGetDisplayPlaneCapabilitiesKHR = PFN_vkGetDisplayPlaneCapabilitiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetDisplayPlaneCapabilitiesKHR&quot; ) );
+          vkCreateDisplayPlaneSurfaceKHR   = PFN_vkCreateDisplayPlaneSurfaceKHR( vkGetInstanceProcAddr( instance, &quot;vkCreateDisplayPlaneSurfaceKHR&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_XLIB_KHR )
+          //=== VK_KHR_xlib_surface ===
+          vkCreateXlibSurfaceKHR = PFN_vkCreateXlibSurfaceKHR( vkGetInstanceProcAddr( instance, &quot;vkCreateXlibSurfaceKHR&quot; ) );
+          vkGetPhysicalDeviceXlibPresentationSupportKHR =
+            PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceXlibPresentationSupportKHR&quot; ) );
+#  endif /*VK_USE_PLATFORM_XLIB_KHR*/
+
+#  if defined( VK_USE_PLATFORM_XCB_KHR )
+          //=== VK_KHR_xcb_surface ===
+          vkCreateXcbSurfaceKHR = PFN_vkCreateXcbSurfaceKHR( vkGetInstanceProcAddr( instance, &quot;vkCreateXcbSurfaceKHR&quot; ) );
+          vkGetPhysicalDeviceXcbPresentationSupportKHR =
+            PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceXcbPresentationSupportKHR&quot; ) );
+#  endif /*VK_USE_PLATFORM_XCB_KHR*/
+
+#  if defined( VK_USE_PLATFORM_WAYLAND_KHR )
+          //=== VK_KHR_wayland_surface ===
+          vkCreateWaylandSurfaceKHR = PFN_vkCreateWaylandSurfaceKHR( vkGetInstanceProcAddr( instance, &quot;vkCreateWaylandSurfaceKHR&quot; ) );
+          vkGetPhysicalDeviceWaylandPresentationSupportKHR =
+            PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceWaylandPresentationSupportKHR&quot; ) );
+#  endif /*VK_USE_PLATFORM_WAYLAND_KHR*/
+
+#  if defined( VK_USE_PLATFORM_ANDROID_KHR )
+          //=== VK_KHR_android_surface ===
+          vkCreateAndroidSurfaceKHR = PFN_vkCreateAndroidSurfaceKHR( vkGetInstanceProcAddr( instance, &quot;vkCreateAndroidSurfaceKHR&quot; ) );
+#  endif /*VK_USE_PLATFORM_ANDROID_KHR*/
+
+#  if defined( VK_USE_PLATFORM_WIN32_KHR )
+          //=== VK_KHR_win32_surface ===
+          vkCreateWin32SurfaceKHR = PFN_vkCreateWin32SurfaceKHR( vkGetInstanceProcAddr( instance, &quot;vkCreateWin32SurfaceKHR&quot; ) );
+          vkGetPhysicalDeviceWin32PresentationSupportKHR =
+            PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceWin32PresentationSupportKHR&quot; ) );
+#  endif /*VK_USE_PLATFORM_WIN32_KHR*/
+
+          //=== VK_EXT_debug_report ===
+          vkCreateDebugReportCallbackEXT  = PFN_vkCreateDebugReportCallbackEXT( vkGetInstanceProcAddr( instance, &quot;vkCreateDebugReportCallbackEXT&quot; ) );
+          vkDestroyDebugReportCallbackEXT = PFN_vkDestroyDebugReportCallbackEXT( vkGetInstanceProcAddr( instance, &quot;vkDestroyDebugReportCallbackEXT&quot; ) );
+          vkDebugReportMessageEXT         = PFN_vkDebugReportMessageEXT( vkGetInstanceProcAddr( instance, &quot;vkDebugReportMessageEXT&quot; ) );
+
+          //=== VK_KHR_video_queue ===
+          vkGetPhysicalDeviceVideoCapabilitiesKHR =
+            PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceVideoCapabilitiesKHR&quot; ) );
+          vkGetPhysicalDeviceVideoFormatPropertiesKHR =
+            PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceVideoFormatPropertiesKHR&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_GGP )
+          //=== VK_GGP_stream_descriptor_surface ===
+          vkCreateStreamDescriptorSurfaceGGP =
+            PFN_vkCreateStreamDescriptorSurfaceGGP( vkGetInstanceProcAddr( instance, &quot;vkCreateStreamDescriptorSurfaceGGP&quot; ) );
+#  endif /*VK_USE_PLATFORM_GGP*/
+
+          //=== VK_NV_external_memory_capabilities ===
+          vkGetPhysicalDeviceExternalImageFormatPropertiesNV =
+            PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceExternalImageFormatPropertiesNV&quot; ) );
+
+          //=== VK_KHR_get_physical_device_properties2 ===
+          vkGetPhysicalDeviceFeatures2KHR = PFN_vkGetPhysicalDeviceFeatures2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceFeatures2KHR&quot; ) );
+          if ( !vkGetPhysicalDeviceFeatures2 )
+            vkGetPhysicalDeviceFeatures2 = vkGetPhysicalDeviceFeatures2KHR;
+          vkGetPhysicalDeviceProperties2KHR = PFN_vkGetPhysicalDeviceProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceProperties2KHR&quot; ) );
+          if ( !vkGetPhysicalDeviceProperties2 )
+            vkGetPhysicalDeviceProperties2 = vkGetPhysicalDeviceProperties2KHR;
+          vkGetPhysicalDeviceFormatProperties2KHR =
+            PFN_vkGetPhysicalDeviceFormatProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceFormatProperties2KHR&quot; ) );
+          if ( !vkGetPhysicalDeviceFormatProperties2 )
+            vkGetPhysicalDeviceFormatProperties2 = vkGetPhysicalDeviceFormatProperties2KHR;
+          vkGetPhysicalDeviceImageFormatProperties2KHR =
+            PFN_vkGetPhysicalDeviceImageFormatProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceImageFormatProperties2KHR&quot; ) );
+          if ( !vkGetPhysicalDeviceImageFormatProperties2 )
+            vkGetPhysicalDeviceImageFormatProperties2 = vkGetPhysicalDeviceImageFormatProperties2KHR;
+          vkGetPhysicalDeviceQueueFamilyProperties2KHR =
+            PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceQueueFamilyProperties2KHR&quot; ) );
+          if ( !vkGetPhysicalDeviceQueueFamilyProperties2 )
+            vkGetPhysicalDeviceQueueFamilyProperties2 = vkGetPhysicalDeviceQueueFamilyProperties2KHR;
+          vkGetPhysicalDeviceMemoryProperties2KHR =
+            PFN_vkGetPhysicalDeviceMemoryProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceMemoryProperties2KHR&quot; ) );
+          if ( !vkGetPhysicalDeviceMemoryProperties2 )
+            vkGetPhysicalDeviceMemoryProperties2 = vkGetPhysicalDeviceMemoryProperties2KHR;
+          vkGetPhysicalDeviceSparseImageFormatProperties2KHR =
+            PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSparseImageFormatProperties2KHR&quot; ) );
+          if ( !vkGetPhysicalDeviceSparseImageFormatProperties2 )
+            vkGetPhysicalDeviceSparseImageFormatProperties2 = vkGetPhysicalDeviceSparseImageFormatProperties2KHR;
+
+#  if defined( VK_USE_PLATFORM_VI_NN )
+          //=== VK_NN_vi_surface ===
+          vkCreateViSurfaceNN = PFN_vkCreateViSurfaceNN( vkGetInstanceProcAddr( instance, &quot;vkCreateViSurfaceNN&quot; ) );
+#  endif /*VK_USE_PLATFORM_VI_NN*/
+
+          //=== VK_KHR_device_group_creation ===
+          vkEnumeratePhysicalDeviceGroupsKHR =
+            PFN_vkEnumeratePhysicalDeviceGroupsKHR( vkGetInstanceProcAddr( instance, &quot;vkEnumeratePhysicalDeviceGroupsKHR&quot; ) );
+          if ( !vkEnumeratePhysicalDeviceGroups )
+            vkEnumeratePhysicalDeviceGroups = vkEnumeratePhysicalDeviceGroupsKHR;
+
+          //=== VK_KHR_external_memory_capabilities ===
+          vkGetPhysicalDeviceExternalBufferPropertiesKHR =
+            PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceExternalBufferPropertiesKHR&quot; ) );
+          if ( !vkGetPhysicalDeviceExternalBufferProperties )
+            vkGetPhysicalDeviceExternalBufferProperties = vkGetPhysicalDeviceExternalBufferPropertiesKHR;
+
+          //=== VK_KHR_external_semaphore_capabilities ===
+          vkGetPhysicalDeviceExternalSemaphorePropertiesKHR =
+            PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceExternalSemaphorePropertiesKHR&quot; ) );
+          if ( !vkGetPhysicalDeviceExternalSemaphoreProperties )
+            vkGetPhysicalDeviceExternalSemaphoreProperties = vkGetPhysicalDeviceExternalSemaphorePropertiesKHR;
+
+          //=== VK_EXT_direct_mode_display ===
+          vkReleaseDisplayEXT = PFN_vkReleaseDisplayEXT( vkGetInstanceProcAddr( instance, &quot;vkReleaseDisplayEXT&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_XLIB_XRANDR_EXT )
+          //=== VK_EXT_acquire_xlib_display ===
+          vkAcquireXlibDisplayEXT    = PFN_vkAcquireXlibDisplayEXT( vkGetInstanceProcAddr( instance, &quot;vkAcquireXlibDisplayEXT&quot; ) );
+          vkGetRandROutputDisplayEXT = PFN_vkGetRandROutputDisplayEXT( vkGetInstanceProcAddr( instance, &quot;vkGetRandROutputDisplayEXT&quot; ) );
+#  endif /*VK_USE_PLATFORM_XLIB_XRANDR_EXT*/
+
+          //=== VK_EXT_display_surface_counter ===
+          vkGetPhysicalDeviceSurfaceCapabilities2EXT =
+            PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSurfaceCapabilities2EXT&quot; ) );
+
+          //=== VK_KHR_external_fence_capabilities ===
+          vkGetPhysicalDeviceExternalFencePropertiesKHR =
+            PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceExternalFencePropertiesKHR&quot; ) );
+          if ( !vkGetPhysicalDeviceExternalFenceProperties )
+            vkGetPhysicalDeviceExternalFenceProperties = vkGetPhysicalDeviceExternalFencePropertiesKHR;
+
+          //=== VK_KHR_performance_query ===
+          vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR = PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
+            vkGetInstanceProcAddr( instance, &quot;vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR&quot; ) );
+          vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR = PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(
+            vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR&quot; ) );
+
+          //=== VK_KHR_get_surface_capabilities2 ===
+          vkGetPhysicalDeviceSurfaceCapabilities2KHR =
+            PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSurfaceCapabilities2KHR&quot; ) );
+          vkGetPhysicalDeviceSurfaceFormats2KHR =
+            PFN_vkGetPhysicalDeviceSurfaceFormats2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSurfaceFormats2KHR&quot; ) );
+
+          //=== VK_KHR_get_display_properties2 ===
+          vkGetPhysicalDeviceDisplayProperties2KHR =
+            PFN_vkGetPhysicalDeviceDisplayProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceDisplayProperties2KHR&quot; ) );
+          vkGetPhysicalDeviceDisplayPlaneProperties2KHR =
+            PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceDisplayPlaneProperties2KHR&quot; ) );
+          vkGetDisplayModeProperties2KHR    = PFN_vkGetDisplayModeProperties2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetDisplayModeProperties2KHR&quot; ) );
+          vkGetDisplayPlaneCapabilities2KHR = PFN_vkGetDisplayPlaneCapabilities2KHR( vkGetInstanceProcAddr( instance, &quot;vkGetDisplayPlaneCapabilities2KHR&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_IOS_MVK )
+          //=== VK_MVK_ios_surface ===
+          vkCreateIOSSurfaceMVK = PFN_vkCreateIOSSurfaceMVK( vkGetInstanceProcAddr( instance, &quot;vkCreateIOSSurfaceMVK&quot; ) );
+#  endif /*VK_USE_PLATFORM_IOS_MVK*/
+
+#  if defined( VK_USE_PLATFORM_MACOS_MVK )
+          //=== VK_MVK_macos_surface ===
+          vkCreateMacOSSurfaceMVK = PFN_vkCreateMacOSSurfaceMVK( vkGetInstanceProcAddr( instance, &quot;vkCreateMacOSSurfaceMVK&quot; ) );
+#  endif /*VK_USE_PLATFORM_MACOS_MVK*/
+
+          //=== VK_EXT_debug_utils ===
+          vkCreateDebugUtilsMessengerEXT  = PFN_vkCreateDebugUtilsMessengerEXT( vkGetInstanceProcAddr( instance, &quot;vkCreateDebugUtilsMessengerEXT&quot; ) );
+          vkDestroyDebugUtilsMessengerEXT = PFN_vkDestroyDebugUtilsMessengerEXT( vkGetInstanceProcAddr( instance, &quot;vkDestroyDebugUtilsMessengerEXT&quot; ) );
+          vkSubmitDebugUtilsMessageEXT    = PFN_vkSubmitDebugUtilsMessageEXT( vkGetInstanceProcAddr( instance, &quot;vkSubmitDebugUtilsMessageEXT&quot; ) );
+
+          //=== VK_EXT_descriptor_heap ===
+          vkGetPhysicalDeviceDescriptorSizeEXT =
+            PFN_vkGetPhysicalDeviceDescriptorSizeEXT( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceDescriptorSizeEXT&quot; ) );
+
+          //=== VK_EXT_sample_locations ===
+          vkGetPhysicalDeviceMultisamplePropertiesEXT =
+            PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceMultisamplePropertiesEXT&quot; ) );
+
+          //=== VK_EXT_calibrated_timestamps ===
+          vkGetPhysicalDeviceCalibrateableTimeDomainsEXT =
+            PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceCalibrateableTimeDomainsEXT&quot; ) );
+          if ( !vkGetPhysicalDeviceCalibrateableTimeDomainsKHR )
+            vkGetPhysicalDeviceCalibrateableTimeDomainsKHR = vkGetPhysicalDeviceCalibrateableTimeDomainsEXT;
+
+#  if defined( VK_USE_PLATFORM_FUCHSIA )
+          //=== VK_FUCHSIA_imagepipe_surface ===
+          vkCreateImagePipeSurfaceFUCHSIA = PFN_vkCreateImagePipeSurfaceFUCHSIA( vkGetInstanceProcAddr( instance, &quot;vkCreateImagePipeSurfaceFUCHSIA&quot; ) );
+#  endif /*VK_USE_PLATFORM_FUCHSIA*/
+
+#  if defined( VK_USE_PLATFORM_METAL_EXT )
+          //=== VK_EXT_metal_surface ===
+          vkCreateMetalSurfaceEXT = PFN_vkCreateMetalSurfaceEXT( vkGetInstanceProcAddr( instance, &quot;vkCreateMetalSurfaceEXT&quot; ) );
+#  endif /*VK_USE_PLATFORM_METAL_EXT*/
+
+          //=== VK_KHR_fragment_shading_rate ===
+          vkGetPhysicalDeviceFragmentShadingRatesKHR =
+            PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceFragmentShadingRatesKHR&quot; ) );
+
+          //=== VK_EXT_tooling_info ===
+          vkGetPhysicalDeviceToolPropertiesEXT =
+            PFN_vkGetPhysicalDeviceToolPropertiesEXT( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceToolPropertiesEXT&quot; ) );
+          if ( !vkGetPhysicalDeviceToolProperties )
+            vkGetPhysicalDeviceToolProperties = vkGetPhysicalDeviceToolPropertiesEXT;
+
+          //=== VK_NV_cooperative_matrix ===
+          vkGetPhysicalDeviceCooperativeMatrixPropertiesNV =
+            PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceCooperativeMatrixPropertiesNV&quot; ) );
+
+          //=== VK_NV_coverage_reduction_mode ===
+          vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV = PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(
+            vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_WIN32_KHR )
+          //=== VK_EXT_full_screen_exclusive ===
+          vkGetPhysicalDeviceSurfacePresentModes2EXT =
+            PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceSurfacePresentModes2EXT&quot; ) );
+#  endif /*VK_USE_PLATFORM_WIN32_KHR*/
+
+          //=== VK_EXT_headless_surface ===
+          vkCreateHeadlessSurfaceEXT = PFN_vkCreateHeadlessSurfaceEXT( vkGetInstanceProcAddr( instance, &quot;vkCreateHeadlessSurfaceEXT&quot; ) );
+
+          //=== VK_EXT_acquire_drm_display ===
+          vkAcquireDrmDisplayEXT = PFN_vkAcquireDrmDisplayEXT( vkGetInstanceProcAddr( instance, &quot;vkAcquireDrmDisplayEXT&quot; ) );
+          vkGetDrmDisplayEXT     = PFN_vkGetDrmDisplayEXT( vkGetInstanceProcAddr( instance, &quot;vkGetDrmDisplayEXT&quot; ) );
+
+          //=== VK_KHR_video_encode_queue ===
+          vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR = PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(
+            vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_WIN32_KHR )
+          //=== VK_NV_acquire_winrt_display ===
+          vkAcquireWinrtDisplayNV = PFN_vkAcquireWinrtDisplayNV( vkGetInstanceProcAddr( instance, &quot;vkAcquireWinrtDisplayNV&quot; ) );
+          vkGetWinrtDisplayNV     = PFN_vkGetWinrtDisplayNV( vkGetInstanceProcAddr( instance, &quot;vkGetWinrtDisplayNV&quot; ) );
+#  endif /*VK_USE_PLATFORM_WIN32_KHR*/
+
+#  if defined( VK_USE_PLATFORM_DIRECTFB_EXT )
+          //=== VK_EXT_directfb_surface ===
+          vkCreateDirectFBSurfaceEXT = PFN_vkCreateDirectFBSurfaceEXT( vkGetInstanceProcAddr( instance, &quot;vkCreateDirectFBSurfaceEXT&quot; ) );
+          vkGetPhysicalDeviceDirectFBPresentationSupportEXT =
+            PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceDirectFBPresentationSupportEXT&quot; ) );
+#  endif /*VK_USE_PLATFORM_DIRECTFB_EXT*/
+
+#  if defined( VK_USE_PLATFORM_SCREEN_QNX )
+          //=== VK_QNX_screen_surface ===
+          vkCreateScreenSurfaceQNX = PFN_vkCreateScreenSurfaceQNX( vkGetInstanceProcAddr( instance, &quot;vkCreateScreenSurfaceQNX&quot; ) );
+          vkGetPhysicalDeviceScreenPresentationSupportQNX =
+            PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceScreenPresentationSupportQNX&quot; ) );
+#  endif /*VK_USE_PLATFORM_SCREEN_QNX*/
+
+          //=== VK_ARM_tensors ===
+          vkGetPhysicalDeviceExternalTensorPropertiesARM =
+            PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceExternalTensorPropertiesARM&quot; ) );
+
+          //=== VK_NV_optical_flow ===
+          vkGetPhysicalDeviceOpticalFlowImageFormatsNV =
+            PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceOpticalFlowImageFormatsNV&quot; ) );
+
+          //=== VK_NV_cooperative_vector ===
+          vkGetPhysicalDeviceCooperativeVectorPropertiesNV =
+            PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceCooperativeVectorPropertiesNV&quot; ) );
+
+          //=== VK_KHR_cooperative_matrix ===
+          vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR =
+            PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR&quot; ) );
+
+          //=== VK_ARM_data_graph ===
+          vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM = PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
+            vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM&quot; ) );
+          vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM = PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
+            vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM&quot; ) );
+
+          //=== VK_KHR_calibrated_timestamps ===
+          vkGetPhysicalDeviceCalibrateableTimeDomainsKHR =
+            PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR( vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceCalibrateableTimeDomainsKHR&quot; ) );
+
+#  if defined( VK_USE_PLATFORM_OHOS )
+          //=== VK_OHOS_surface ===
+          vkCreateSurfaceOHOS = PFN_vkCreateSurfaceOHOS( vkGetInstanceProcAddr( instance, &quot;vkCreateSurfaceOHOS&quot; ) );
+#  endif /*VK_USE_PLATFORM_OHOS*/
+
+          //=== VK_NV_cooperative_matrix2 ===
+          vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV = PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
+            vkGetInstanceProcAddr( instance, &quot;vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV&quot; ) );
+
+          //=== VK_ARM_performance_counters_by_region ===
+          vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM = PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+            vkGetInstanceProcAddr( instance, &quot;vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM&quot; ) );
+
+          vkGetDeviceProcAddr = PFN_vkGetDeviceProcAddr( vkGetInstanceProcAddr( instance, &quot;vkGetDeviceProcAddr&quot; ) );
+        }
+
+      public:
+        //=== VK_VERSION_1_0 ===
+        PFN_vkDestroyInstance                              vkDestroyInstance                              = 0;
+        PFN_vkEnumeratePhysicalDevices                     vkEnumeratePhysicalDevices                     = 0;
+        PFN_vkGetPhysicalDeviceFeatures                    vkGetPhysicalDeviceFeatures                    = 0;
+        PFN_vkGetPhysicalDeviceFormatProperties            vkGetPhysicalDeviceFormatProperties            = 0;
+        PFN_vkGetPhysicalDeviceImageFormatProperties       vkGetPhysicalDeviceImageFormatProperties       = 0;
+        PFN_vkGetPhysicalDeviceProperties                  vkGetPhysicalDeviceProperties                  = 0;
+        PFN_vkGetPhysicalDeviceQueueFamilyProperties       vkGetPhysicalDeviceQueueFamilyProperties       = 0;
+        PFN_vkGetPhysicalDeviceMemoryProperties            vkGetPhysicalDeviceMemoryProperties            = 0;
+        PFN_vkGetInstanceProcAddr                          vkGetInstanceProcAddr                          = 0;
+        PFN_vkCreateDevice                                 vkCreateDevice                                 = 0;
+        PFN_vkEnumerateDeviceExtensionProperties           vkEnumerateDeviceExtensionProperties           = 0;
+        PFN_vkEnumerateDeviceLayerProperties               vkEnumerateDeviceLayerProperties               = 0;
+        PFN_vkGetPhysicalDeviceSparseImageFormatProperties vkGetPhysicalDeviceSparseImageFormatProperties = 0;
+
+        //=== VK_VERSION_1_1 ===
+        PFN_vkEnumeratePhysicalDeviceGroups                 vkEnumeratePhysicalDeviceGroups                 = 0;
+        PFN_vkGetPhysicalDeviceFeatures2                    vkGetPhysicalDeviceFeatures2                    = 0;
+        PFN_vkGetPhysicalDeviceProperties2                  vkGetPhysicalDeviceProperties2                  = 0;
+        PFN_vkGetPhysicalDeviceFormatProperties2            vkGetPhysicalDeviceFormatProperties2            = 0;
+        PFN_vkGetPhysicalDeviceImageFormatProperties2       vkGetPhysicalDeviceImageFormatProperties2       = 0;
+        PFN_vkGetPhysicalDeviceQueueFamilyProperties2       vkGetPhysicalDeviceQueueFamilyProperties2       = 0;
+        PFN_vkGetPhysicalDeviceMemoryProperties2            vkGetPhysicalDeviceMemoryProperties2            = 0;
+        PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 vkGetPhysicalDeviceSparseImageFormatProperties2 = 0;
+        PFN_vkGetPhysicalDeviceExternalBufferProperties     vkGetPhysicalDeviceExternalBufferProperties     = 0;
+        PFN_vkGetPhysicalDeviceExternalFenceProperties      vkGetPhysicalDeviceExternalFenceProperties      = 0;
+        PFN_vkGetPhysicalDeviceExternalSemaphoreProperties  vkGetPhysicalDeviceExternalSemaphoreProperties  = 0;
+
+        //=== VK_VERSION_1_3 ===
+        PFN_vkGetPhysicalDeviceToolProperties vkGetPhysicalDeviceToolProperties = 0;
+
+        //=== VK_KHR_surface ===
+        PFN_vkDestroySurfaceKHR                       vkDestroySurfaceKHR                       = 0;
+        PFN_vkGetPhysicalDeviceSurfaceSupportKHR      vkGetPhysicalDeviceSurfaceSupportKHR      = 0;
+        PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR = 0;
+        PFN_vkGetPhysicalDeviceSurfaceFormatsKHR      vkGetPhysicalDeviceSurfaceFormatsKHR      = 0;
+        PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR = 0;
+
+        //=== VK_KHR_swapchain ===
+        PFN_vkGetPhysicalDevicePresentRectanglesKHR vkGetPhysicalDevicePresentRectanglesKHR = 0;
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <span class="standalone-link is-disabled">لا يوجد قسم سابق</span>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-2.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

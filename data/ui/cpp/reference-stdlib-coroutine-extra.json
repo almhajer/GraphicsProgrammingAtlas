@@ -1,0 +1,59 @@
+{
+  "referenceData": {
+    "std::coroutine_traits": {
+      "title": "std::coroutine_traits",
+      "type": "نوع coroutine",
+      "description": "قالب نوع (type trait) يُحدد أنواع الـ coroutine التابعة لنوع الإرجاع. يُستخدم تلقائيًا من المُجمّع لتحديد نوع promise_type. يمكن تخصيصه لأنواع إرجاع مخصصة. كل coroutine في C++ يحتاج نوع promise مرتبط بنوع الإرجاع — coroutine_traits يُنشئ هذا الربط.",
+      "usage": "تخصيص سلوك coroutine لأنواع إرجاع مخصصة. المُجمّع يستخدمه تلقائيًا — نادرًا ما تحتاج لاستخدامه مباشرة إلا عند إنشاء أنواع coroutine جديدة.",
+      "example": "template<typename T> struct std::coroutine_traits<MyTask<T>> { using promise_type = MyPromise<T>; };",
+      "includeHeader": "#include <coroutine>",
+      "usageExamples": [
+        {
+          "titleArabic": "المُجمّع يستخدم coroutine_traits تلقائيًا",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct Generator {\n    struct promise_type {\n        int current_value;\n        Generator get_return_object() { return {}; }\n        std::suspend_always initial_suspend() { return {}; }\n        std::suspend_always final_suspend() noexcept { return {}; }\n        void return_void() {}\n        void unhandled_exception() {}\n        std::suspend_always yield_value(int value) {\n            current_value = value;\n            return {};\n        }\n    };\n};\n\n// المُجمّع يبحث عن Generator::promise_type تلقائيًا\n// هذا يعادل coroutine_traits<Generator>::promise_type\nGenerator my_coro() {\n    co_yield 42;\n    co_yield 100;\n}",
+          "explanationArabic": "عندما يرى المُجمّع co_yield أو co_return، يبحث عن promise_type داخل نوع الإرجاع. coroutine_traits يُحدد هذا الربط تلقائيًا. لا تحتاج لكتابته يدويًا عندما يكون promise_type عضوًا في نوع الإرجاع."
+        },
+        {
+          "titleArabic": "تخصيص coroutine_traits لنوع خارجي",
+          "code": "#include <coroutine>\n#include <iostream>\n\n// نوع إرجاع لا يملك promise_type بداخله\nstruct ExternalTask {\n    int result;\n};\n\n// تخصيص coroutine_traits لأنواع إرجاع لا تتحكم فيها\nnamespace std {\ntemplate<>\nstruct coroutine_traits<ExternalTask> {\n    struct promise_type {\n        ExternalTask get_return_object() { return {}; }\n        std::suspend_never initial_suspend() { return {}; }\n        std::suspend_never final_suspend() noexcept { return {}; }\n        void return_value(int value) {}\n        void unhandled_exception() {}\n    };\n};\n}\n\nExternalTask compute() {\n    co_return 42;\n}",
+          "explanationArabic": "عندما لا تملك نوع الإرجاع (مثل نوع من مكتبة خارجية)، يمكنك تخصيص coroutine_traits في namespace std. هذا يسمح باستخدام أي نوع كنوع إرجاع لـ coroutine."
+        },
+        {
+          "titleArabic": "coroutine_traits مع معاملات الدالة",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct StatefulTask {\n    struct promise_type {\n        StatefulTask get_return_object() { return {}; }\n        std::suspend_never initial_suspend() { return {}; }\n        std::suspend_never final_suspend() noexcept { return {}; }\n        void return_void() {}\n        void unhandled_exception() {}\n    };\n};\n\n// coroutine_traits<ReturnType, Args...> يمرر معاملات الدالة\n// يمكن استخدامها لتمرير حالة أولية لـ promise_type\nStatefulTask run_with_state(int state) {\n    // state يمكن الوصول إليه عبر coroutine_traits\n    co_return;\n}",
+          "explanationArabic": "coroutine_traits يأخذ معاملات الدالة كقالب إضافي. هذا يسمح بتمرير حالة أولية من معاملات الدالة لـ promise_type. مفيد عند بناء أطر عمل coroutine متقدمة."
+        }
+      ],
+      "related": [
+        "std::coroutine_handle",
+        "std::suspend_always",
+        "std::suspend_never"
+      ]
+    },
+    "std::noop_coroutine": {
+      "title": "std::noop_coroutine",
+      "type": "دالة coroutine",
+      "description": "يُرجع مقبض coroutine فارغ لا يفعل شيئًا عند استئنافه أو إيقافه. مفيد كقيمة افتراضية أو بديل فارغ. coroutine_handle المُرجع دائمًا done() وresume() وdestroy() آمنة عليه. لا يُخصص ذاكرة.",
+      "usage": "قيمة افتراضية لمقبض coroutine، بديل فارغ عند عدم وجود coroutine حقيقي.",
+      "example": "auto h = std::noop_coroutine();\nh.resume(); // لا يفعل شيئًا",
+      "includeHeader": "#include <coroutine>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدامه كقيمة افتراضية",
+          "code": "#include <coroutine>\n#include <iostream>\n\nstruct Task {\n    std::coroutine_handle<> handle = std::noop_coroutine();\n\n    void resume() {\n        handle.resume(); // آمن حتى لو لم يكن هناك coroutine حقيقي\n    }\n\n    ~Task() {\n        if (!handle.done()) handle.destroy();\n    }\n};\n\nint main() {\n    Task t; // handle = noop_coroutine افتراضيًا\n    t.resume(); // لا يفعل شيئًا — لا يرمي خطأ\n    std::cout << \"آمن\" << '\\n';\n}",
+          "explanationArabic": "noop_coroutine يُرجع مقبضًا آمنًا يمكن استدعاء resume وdestroy عليه بدون تأثير. هذا يُبسّط الكود لأنك لا تحتاج للتحقق من nullptr قبل كل عملية."
+        },
+        {
+          "titleArabic": "تجنب فحص nullptr",
+          "code": "#include <coroutine>\n#include <iostream>\n\nvoid process(std::coroutine_handle<> h) {\n    // بدون noop_coroutine: يجب الفحص\n    // if (h) h.resume();\n\n    // مع noop_coroutine كافتراضي: لا حاجة للفحص\n    h.resume(); // دائمًا آمن\n}\n\nint main() {\n    // بدل تمرير nullptr عند عدم وجود coroutine\n    process(std::noop_coroutine()); // آمن\n    std::cout << \"تم\" << '\\n';\n}",
+          "explanationArabic": "بدل تمرير nullptr والتحقق منه في كل مكان، مرر noop_coroutine. هذا يُزيل فحوصات nullptr المكررة ويجعل الكود أنظف وأقل عرضة للأخطاء."
+        }
+      ],
+      "related": [
+        "std::coroutine_handle",
+        "std::noop_coroutine_promise",
+        "std::suspend_never"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1475 @@
+{
+  "referenceData": {
+    "std::memory_order": {
+      "title": "std::memory_order",
+      "type": "تعداد التزامن",
+      "description": "تعداد يُحدد كيف يُرتب المُصرِّف والمعالج عمليات القراءة والكتابة على الذاكرة. يُستخدم مع atomic.",
+      "usage": "يظهر عند استخدام atomic لضمان ترتيب صحيح للعمليات بين خيوط مختلفة.",
+      "example": "counter.fetch_add(1, std::memory_order_relaxed);",
+      "includeHeader": "#include <atomic>",
+      "usageExamples": [
+        {
+          "titleArabic": "relaxed — الأسرع بلا ترتيب",
+          "code": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<int> counter{0};\n\nvoid increment(int times) {\n    for (int i = 0; i < times; ++i) {\n        counter.fetch_add(1, std::memory_order_relaxed);\n    }\n}\n\nint main() {\n    std::thread t1(increment, 100000);\n    std::thread t2(increment, 100000);\n    t1.join(); t2.join();\n    std::cout << counter; // دائمًا 200000\n}",
+          "explanationArabic": "relaxed يضمن الذرية فقط — لا يضمن ترتيبًا مع عمليات أخرى. مناسب للعدادات البسيطة التي لا تتحكم بشروط أخرى. الأسرع بين كل memory orders."
+        },
+        {
+          "titleArabic": "acquire/release — ترتيب زوجي",
+          "code": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<bool> ready{false};\nint data = 0;\n\nvoid producer() {\n    data = 42;\n    ready.store(true, std::memory_order_release);\n}\n\nvoid consumer() {\n    while (!ready.load(std::memory_order_acquire)) {}\n    std::cout << data; // مضمون: 42\n}\n\nint main() {\n    std::thread t1(producer);\n    std::thread t2(consumer);\n    t1.join(); t2.join();\n}",
+          "explanationArabic": "release يضمن أن كل الكتابات السابقة (data=42) مرئية عند الاستيقاظ عبر acquire. هذا الزوج يُشكّل 'happens-before' بين الخيوط. بدون هذا الزوج، المعالج قد يُعيد ترتيب الكتابات."
+        },
+        {
+          "titleArabic": "seq_cst — الأبطأ والأضمن",
+          "code": "#include <atomic>\n\n// seq_cst: الترتيب المتسلسل — الافتراضي\n// يضمن ترتيبًا واحدًا متفقًا عليه بين كل الخيوط\nstd::atomic<int> x{0}, y{0};\nx.store(1, std::memory_order_seq_cst); // الافتراضي\nint v = y.load(std::memory_order_seq_cst);\n\n// ❌ لا تستخدم seq_cst دائمًا — أبطأ من اللازم\n// ✅ استخدم relaxed للعدادات و acquire/release للإشارات\n// ✅ seq_cst فقط عند الحاجة لترتيب متسلسل عام",
+          "explanationArabic": "seq_cst هو الافتراضي والأبطأ. يضمن ترتيبًا متسلسلًا واحدًا بين كل العمليات. استخدمه فقط عند الحاجة. لمعظم الحالات، relaxed أو acquire/release يكفيان."
+        }
+      ],
+      "related": [
+        "std::atomic",
+        "std::atomic_flag"
+      ]
+    },
+    "std::atomic_flag": {
+      "title": "std::atomic_flag",
+      "type": "نوع التزامن",
+      "description": "أبسط نوع atomic — علم منطقي (boolean flag) يمكن اختباره وضبطه ذريًا. مضمون أن يكون lock-free دائمًا.",
+      "usage": "يظهر كأساس لتنفيذ أقفال بسيطة (spinlock) أو أعلام إيقاف.",
+      "example": "std::atomic_flag flag = ATOMIC_FLAG_INIT;\nwhile (flag.test_and_set()) {}",
+      "includeHeader": "#include <atomic>",
+      "usageExamples": [
+        {
+          "titleArabic": "spinlock بسيط",
+          "code": "#include <atomic>\n#include <iostream>\n\nstd::atomic_flag lock = ATOMIC_FLAG_INIT;\n\nvoid critical_section() {\n    while (lock.test_and_set(std::memory_order_acquire)) {\n        // انتظار مُزدحم — في التطبيق الحقيقي أضف pause\n    }\n    // القسم الحرج — خيط واحد فقط هنا\n    std::cout << \"working...\" << '\\n';\n    lock.clear(std::memory_order_release);\n    // حرر القفل\n}",
+          "explanationArabic": "test_and_set تضبط العلم وتُرجع القيمة القديمة ذريًا. إذا كان true (مأخوذ) تستمر في الانتظار. clear تُعيد العلم لـ false (متاح). هذا نمط spinlock أساسي."
+        },
+        {
+          "titleArabic": "atomic_flag vs atomic<bool>",
+          "code": "#include <atomic>\n\n// atomic_flag: مضمون lock-free دائمًا\nstd::atomic_flag flag = ATOMIC_FLAG_INIT;\nflag.test_and_set(); // ذري\nflag.clear();        // ذري\n\n// atomic<bool>: قد لا يكون lock-free على بعض الأنظمة\nstd::atomic<bool> b{false};\nb.store(true);  // ذري\nb.exchange(false); // ذري\n\n// atomic_flag أبسط لكن محدود: لا load/store مباشرة\n// atomic<bool> أكثر مرونة لكن قد يكون أبطأ",
+          "explanationArabic": "atomic_flag مضمون lock-free على كل الأنظمة — أبسط وأسرع لعلم بسيط. لكنه محدود: لا يدعم load/store مباشرة، فقط test_and_set و clear. atomic<bool> أكثر مرونة لكن قد لا يكون lock-free."
+        },
+        {
+          "titleArabic": "ATOMIC_FLAG_INIT في C++20 أصبح اختياريًا",
+          "code": "#include <atomic>\n\n// C++20: التهيئة الافتراضية كافية\nstd::atomic_flag flag{}; // false — أنظف\n\n// قبل C++20: ATOMIC_FLAG_INIT مطلوب\n// std::atomic_flag flag = ATOMIC_FLAG_INIT;",
+          "explanationArabic": "في C++20، atomic_flag يُهيأ افتراضيًا بـ false. ATOMIC_FLAG_INIT لا يزال يعمل لكنه لم يعد ضروريًا."
+        }
+      ],
+      "related": [
+        "std::atomic",
+        "std::memory_order"
+      ]
+    },
+    "std::shared_future": {
+      "title": "std::shared_future",
+      "type": "نوع التزامن",
+      "description": "مثل std::future لكن يمكن نسخه — عدة خيوط يمكنها انتظار نفس النتيجة.",
+      "usage": "يظهر عند الحاجة لعدة خيوط تنتظر نفس العملية غير المتزامنة.",
+      "example": "auto sf = std::async(func).share();",
+      "includeHeader": "#include <future>",
+      "usageExamples": [
+        {
+          "titleArabic": "عدة خيوط تنتظر نفس النتيجة",
+          "code": "#include <future>\n#include <iostream>\n\nint compute() {\n    return 42;\n}\n\nint main() {\n    std::shared_future<int> sf = std::async(compute).share();\n    // share() يحول future إلى shared_future\n    auto f1 = std::async([sf]() { return sf.get(); });\n    auto f2 = std::async([sf]() { return sf.get(); });\n    std::cout << f1.get() << ' ' << f2.get(); // 42 42\n}",
+          "explanationArabic": "share() يحول future إلى shared_future. كل get() ينتظر نفس النتيجة. يمكن نسخ shared_future بين خيوط عديدة. get() آمن للتزامن."
+        },
+        {
+          "titleArabic": "shared_future vs future",
+          "code": "#include <future>\n\n// future: ملكية حصرية — get() يُستدعى مرة واحدة فقط\nauto f = std::async([](){ return 1; });\nint v = f.get(); // OK\n// f.get(); // ❌ خطأ: future_valid == false\n\n// shared_future: ملكية مشتركة — get() يُستدعى عدة مرات\nauto sf = std::async([](){ return 1; }).share();\nint v1 = sf.get(); // OK\nint v2 = sf.get(); // OK — نفس النتيجة",
+          "explanationArabic": "future::get يُنقل الملكية ويمكن استدعاؤه مرة واحدة. shared_future::get يُرجع نفس النتيجة كل مرة. استخدم shared_future عند الحاجة لعدة خيوط تقرأ نفس النتيجة."
+        },
+        {
+          "titleArabic": "استخدام wait بدل get عند عدم الحاجة للقيمة",
+          "code": "#include <future>\n#include <thread>\n#include <iostream>\n\nint main() {\n    auto sf = std::async([](){\n        return 42;\n    }).share();\n    sf.wait(); // ينتظر بدون استهلاك النتيجة\n    std::cout << sf.get(); // 42\n}",
+          "explanationArabic": "wait() ينتظر اكتمال العملية بدون استدعاء get(). مفيد عندما تريد التأكد من الاكتمال قبل خطوة معينة."
+        }
+      ],
+      "related": [
+        "std::future",
+        "std::async",
+        "std::promise"
+      ]
+    },
+    "std::packaged_task": {
+      "title": "std::packaged_task",
+      "type": "نوع التزامن",
+      "description": "يلف callable ويُنشئ future وpromise معًا. يُستدعى يدويًا أو يُرسل لخيط.",
+      "usage": "يظهر عند الحاجة لتشغيل مهمة في خيط معين مع الحصول على future للنتيجة.",
+      "example": "std::packaged_task<int()> task(func);\nauto f = task.get_future();\ntask(); // استدعاء\nint result = f.get();",
+      "includeHeader": "#include <future>",
+      "usageExamples": [
+        {
+          "titleArabic": "تشغيل مهمة في خيط معين",
+          "code": "#include <future>\n#include <thread>\n#include <iostream>\n\nint compute(int x) { return x * x; }\n\nint main() {\n    std::packaged_task<int(int)> task(compute);\n    auto f = task.get_future();\n    std::thread t(std::move(task), 5);\n    std::cout << f.get(); // 25\n    t.join();\n}",
+          "explanationArabic": "packaged_task يربط callable بـ future. عند استدعاء task() يُنفذ compute ونتيجته تظهر عبر f.get(). يُمكن نقل task لخيط آخر. هذا يختلف عن async الذي يُشغّل تلقائيًا."
+        },
+        {
+          "titleArabic": "packaged_task vs async",
+          "code": "#include <future>\n\n// async: يُشغّل تلقائيًا — لا تتحكم بأي خيط\nauto f1 = std::async([](){ return 42; });\n\n// packaged_task: تتحكم بالتشغيل والخيط\nstd::packaged_task<int()> task([](){ return 42; });\nauto f2 = task.get_future();\n// شغّل متى شئت: في خيط محدد أو لاحقًا\ntask();\nint r = f2.get();",
+          "explanationArabic": "async يُشغّل المهمة تلقائيًا (قد يكون في خيط جديد أو مؤجل). packaged_task يعطيك تحكمًا كاملًا: تختار متى وأين تُشغّل. مفيد مع thread pools."
+        },
+        {
+          "titleArabic": "استدعاء مكرر لـ packaged_task",
+          "code": "#include <future>\n#include <iostream>\n\nint main() {\n    std::packaged_task<int()> task([](){ return 99; });\n    auto f = task.get_future();\n    task(); // أول استدعاء\n    std::cout << f.get(); // 99\n    // task(); // ❌ خطأ: std::future_error — يُستدعى مرة واحدة فقط\n}",
+          "explanationArabic": "packaged_task يُستدعى مرة واحدة فقط. محاولة استدعائه ثانية تُرمي std::future_error. هذا مقصود لأن future مرتبط بنتيجة واحدة."
+        }
+      ],
+      "related": [
+        "std::future",
+        "std::promise",
+        "std::async"
+      ]
+    },
+    "std::future": {
+      "title": "std::future",
+      "type": "نوع التزامن",
+      "description": "يمثل قيمة ستكون متاحة لاحقًا من خيط آخر. get() تحجب حتى تصبح القيمة جاهزة ثم يُنقلها — لا يمكن استدعاء get() أكثر من مرة. يوفر wait() للانتظار بدون قراءة و wait_for() لانتظار بمدة زمنية.",
+      "usage": "يظهر مع std::async أو std::promise لاستقبال نتائج غير متزامنة.",
+      "example": "std::future<int> result = std::async(task);\nint value = result.get();",
+      "includeHeader": "#include <future>",
+      "usageExamples": [
+        {
+          "titleArabic": "استقبال نتيجة من std::async",
+          "code": "#include <future>\n#include <iostream>\n\nint compute(int x) {\n    // محاكاة عمل مكلف\n    return x * x;\n}\n\nint main() {\n    // launch::async يُجبر التشغيل في خيط فعلي (ليس تأجيلًا)\n    std::future<int> f = std::async(std::launch::async, compute, 42);\n\n    // يمكنك عمل أشياء أخرى هنا بينما الخيط يعمل\n    std::cout << \"جاري الحساب...\\n\";\n\n    // get() يحجب حتى النتيجة ثم يُنقلها\n    int result = f.get(); // 1764\n    std::cout << result;\n\n    // ❌ لا تستدعِ get() مرة ثانية — يُرمي std::future_error\n}",
+          "explanationArabic": "std::async مع launch::async يُنشئ خيطًا فعليًا. بدونها قد يُؤجَّل التنفيذ حتى get() (lazy). get() يُنقل القيمة — بعد الاستدعاء الأولى يصبح future غير صالح. هذا يضمن أن مالكًا واحدًا فقط يأخذ النتيجة."
+        },
+        {
+          "titleArabic": "انتظار بمدة زمنية مع wait_for",
+          "code": "#include <future>\n#include <chrono>\n#include <iostream>\n\nint main() {\n    std::future<int> f = std::async(std::launch::async, []{\n        // عمل طويل\n        int sum = 0;\n        for (int i = 0; i < 100000000; ++i) sum += i;\n        return sum;\n    });\n\n    // wait_for: انتظر 100ms ثم أبلّغ عن الحالة\n    auto status = f.wait_for(std::chrono::milliseconds(100));\n    if (status == std::future_status::ready) {\n        std::cout << \"جاهز: \" << f.get();\n    } else if (status == std::future_status::timeout) {\n        std::cout << \"لم ينتهِ بعد — استمر لاحقًا\";\n        // لا تستدعِ get() هنا — الخيط ما زال يعمل\n    }\n}",
+          "explanationArabic": "wait_for ينتظر المدة المحددة ثم يُرجع الحالة بدون أخذ القيمة. timeout يعني 'لم ينتهِ بعد' — لا تستدعِ get() في هذه الحالة لأنه سيحجب. deferred يعني أن التنفيذ لم يبدأ (عندما لم تُستخدم launch::async). هذا النمط مفيد لتحديث واجهة المستخدم أثناء انتظار نتيجة."
+        },
+        {
+          "titleArabic": "خطأ شائع: استدعاء get() مرتين",
+          "code": "#include <future>\n\nstd::future<int> f = std::async(std::launch::async, [] { return 42; });\n\nint a = f.get(); // ✅ أول مرة — يُرجع 42\n// int b = f.get(); // ❌ يرمي std::future_error: no shared state\n\n// ✅ إذا احتجت القيمة في عدة أماكن: خزّنها في متغير\nint result = f.get(); // خذها مرة واحدة\nint x = result;      // استخدم النسخة المخزّنة\nint y = result;      // آمن",
+          "explanationArabic": "get() يُنقل القيمة من الحالة المشتركة (shared state) ثم يُبطّلها — هذا تصميم متعمّد لمنع الغموض حول 'من يملك النتيجة'. بعد get()، valid() يُرجع false. القاعدة: خزّن نتيجة get() في متغير واستخدمها مرارًا."
+        }
+      ],
+      "related": [
+        "std::promise",
+        "std::async",
+        "std::thread",
+        "std::future_status"
+      ]
+    },
+    "std::unique_lock": {
+      "title": "std::unique_lock",
+      "type": "نوع التزامن",
+      "description": "غلاف RAII لقفل mutex مع تحكم أكبر: تأخير أو تحرير مبكر أو نقل.",
+      "usage": "يظهر مع condition_variable أو عند الحاجة لتحرير مبكر.",
+      "example": "std::unique_lock<std::mutex> lock(m);\ncv.wait(lock);\nlock.unlock();",
+      "related": [
+        "std::mutex",
+        "std::lock_guard",
+        "std::condition_variable"
+      ]
+    },
+    "std::scoped_lock": {
+      "title": "std::scoped_lock",
+      "type": "نوع التزامن",
+      "description": "غلاف RAII يقفل عدة mutexes دفعة واحدة مع تجنب deadlock (C++17).",
+      "usage": "يفيد عند قفل عدة mutexes في نفس الوقت بأمان.",
+      "example": "std::scoped_lock lock(mutex_a, mutex_b);",
+      "related": [
+        "std::mutex",
+        "std::lock_guard",
+        "std::unique_lock"
+      ]
+    },
+    "std::async": {
+      "title": "std::async",
+      "type": "دالة التزامن",
+      "description": "تشغل دالة بشكل غير متزامن وتُرجع future لنتيجتها.",
+      "usage": "الطريقة الأبسط لتنفيذ مهمة غير متزامنة.",
+      "example": "std::future<int> f = std::async(std::launch::async, compute, arg);",
+      "related": [
+        "std::future",
+        "std::promise",
+        "std::thread"
+      ]
+    },
+    "std::once_flag": {
+      "title": "std::once_flag",
+      "type": "نوع التزامن",
+      "description": "كائن يضمن تنفيذ دالة مرة واحدة فقط حتى مع خيوط متعددة.",
+      "usage": "يُستخدم مع std::call_once لتهيئة موارد مشتركة مرة واحدة.",
+      "example": "std::once_flag flag;\nstd::call_once(flag, []{ init(); });",
+      "related": [
+        "std::call_once",
+        "std::mutex",
+        "static"
+      ]
+    },
+    "std::try_lock": {
+      "title": "std::try_lock",
+      "type": "دالة التزامن",
+      "description": "يحاول قفل عدة mutexes دفعة واحدة بترتيب آمن يمنع deadlock. يُرجع فهرس أول mutex فشل قفله، أو -1 إذا نجح قفلها كلها.",
+      "usage": "يظهر عند الحاجة لقفل عدة mutexes مع تجنب deadlock دون حجب (blocking). إذا فشل أي قفل، يُحرر كل ما تم قفله تلقائيًا.",
+      "example": "int failed = std::try_lock(m1, m2, m3);\nif (failed == -1) { /* كلها مغلقة */ }",
+      "includeHeader": "#include <mutex>",
+      "usageExamples": [
+        {
+          "titleArabic": "محاولة قفل عدة mutexes",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::mutex m1, m2;\n\nvoid transfer() {\n    int result = std::try_lock(m1, m2);\n    if (result == -1) {\n        // كلتا القفلين مأخوذتان — آمن للعمل\n        std::cout << \"both locked\\n\";\n        m1.unlock();\n        m2.unlock();\n    } else {\n        // فشل قفل mutex رقم result\n        std::cout << \"failed to lock mutex \" << result << \"\\n\";\n        // ما تم قفله تم تحريره تلقائيًا\n    }\n}",
+          "explanationArabic": "try_lock يحاول قفل كل mutexes بالترتيب. إذا فشل أي واحد، يُحرر كل ما تم قفله ويُرجع فهرس الفاشل. هذا يمنع deadlock لأنه لا يحجب أبدًا — إمّا ينجح كله أو يفشل فورًا."
+        },
+        {
+          "titleArabic": "try_lock vs lock",
+          "code": "#include <mutex>\n\nstd::mutex m1, m2;\n\n// lock: يحجب حتى ينجح — قد يحجب إلى الأبد (deadlock)\n// std::lock(m1, m2); // حجب\n\n// try_lock: لا يحجب — يُرجع فورًا\nint r = std::try_lock(m1, m2);\nif (r == -1) {\n    // نجح\n} else {\n    // فشل — حاول لاحقًا أو اتخذ إجراءً بديلًا\n}",
+          "explanationArabic": "lock يحجب الخيط حتى ينجح. try_lock يُرجع فورًا — أنسب في حلقات الألعاب والأنظمة التفاعلية حيث لا يمكنك تحجب الخيط الرئيسي. lock يستخدم خوارزمية deadlock-avoidance مثل scoped_lock."
+        },
+        {
+          "titleArabic": "استخدامه في حلقة إعادة المحاولة",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::mutex m1, m2;\n\nvoid safe_transfer() {\n    while (true) {\n        if (std::try_lock(m1, m2) == -1) {\n            // نجح — نفذ العملية\n            std::cout << \"working\\n\";\n            m1.unlock();\n            m2.unlock();\n            break;\n        }\n        // فشل — انتظر قليلًا ثم حاول مجددًا\n        std::this_thread::yield();\n    }\n}",
+          "explanationArabic": "try_lock في حلقة مع yield نمط شائع لتجنب الحجب مع ضمان التقدم. yield يتنازل عن باقي وقت الخيط لخيط آخر. هذا أنسب من sleep لأنه أسرع عند تحرير القفل."
+        }
+      ],
+      "related": [
+        "std::lock",
+        "std::scoped_lock",
+        "std::mutex",
+        "std::unique_lock"
+      ]
+    },
+    "std::defer_lock_t": {
+      "title": "std::defer_lock",
+      "type": "علامة قفل",
+      "description": "كائن علامة يُمرّر لـ unique_lock لمنع القفل عند الإنشاء. unique_lock يأخذ mutex لكن لا يقفله — يمكنك قفله لاحقًا يدويًا عبر lock() أو try_lock().",
+      "usage": "يظهر مع condition_variable أو عند الحاجة لتأخير القفل حتى نقطة محددة في الكود.",
+      "example": "std::unique_lock<std::mutex> lk(m, std::defer_lock);\nlk.lock();",
+      "includeHeader": "#include <mutex>",
+      "usageExamples": [
+        {
+          "titleArabic": "تأخير القفل مع unique_lock",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::mutex m;\n\nvoid delayed_lock_example() {\n    // إنشاء unique_lock بدون قفل\n    std::unique_lock<std::mutex> lk(m, std::defer_lock);\n\n    // ... عمل لا يحتاج قفل ...\n    std::cout << \"working without lock\\n\";\n\n    lk.lock(); // قفل يدوي عند الحاجة\n    // ... القسم الحرج ...\n    std::cout << \"critical section\\n\";\n    // lk.unlock() تلقائي عند الخروج من النطاق\n}",
+          "explanationArabic": "defer_lock يُنشئ unique_lock بدون قفل. يمكنك استدعاء lock() لاحقًا عند الحاجة. هذا مفيد عندما تريد RAII لكن لا تريد القفل فورًا."
+        },
+        {
+          "titleArabic": "استخدامه مع try_lock",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::mutex m1, m2;\n\nvoid try_both() {\n    std::unique_lock<std::mutex> lk1(m1, std::defer_lock);\n    std::unique_lock<std::mutex> lk2(m2, std::defer_lock);\n\n    // محاولة قفل كلاهما معًا\n    if (std::lock(lk1, lk2)) {\n        std::cout << \"both locked\\n\";\n    }\n    // lk1 وlk2 تُحرران تلقائيًا عند الخروج\n}",
+          "explanationArabic": "defer_lock مع std::lock يسمح بقفل عدة mutexes مع RAII. std::lock(lk1, lk2) يستخدم خوارزمية deadlock-avoidance. إذا فشل أي قفل، لا شيء يُقفل."
+        },
+        {
+          "titleArabic": "defer_lock vs الافتراضي",
+          "code": "#include <mutex>\n\nstd::mutex m;\n\n// الافتراضي: يقفل فورًا\n// std::unique_lock<std::mutex> lk(m); // مأخوذ\n\n// defer_lock: لا يقفل\n// std::unique_lock<std::mutex> lk(m, std::defer_lock); // غير مأخوذ\n\n// try_to_lock: يحاول القفل بدون حجب\n// std::unique_lock<std::mutex> lk(m, std::try_to_lock);\n// if (lk.owns_lock()) { /* نجح */ }\n\n// adopt_lock: يتبنى قفل مأخوذ مسبقًا\n// m.lock();\n// std::unique_lock<std::mutex> lk(m, std::adopt_lock);",
+          "explanationArabic": "ثلاث علامات لـ unique_lock: defer_lock (لا يقفل)، try_to_lock (يحاول بدون حجب)، adopt_lock (يتبنى قفل موجود). الافتراضي يقفل فورًا."
+        }
+      ],
+      "related": [
+        "std::unique_lock",
+        "std::adopt_lock",
+        "std::try_to_lock",
+        "std::mutex"
+      ]
+    },
+    "std::adopt_lock_t": {
+      "title": "std::adopt_lock",
+      "type": "علامة قفل",
+      "description": "كائن علامة يُخبر unique_lock أن الـ mutex مأخوذ (مقفل) مسبقًا ولا يجب محاولة قفله مجددًا. unique_lock يأخذ الملكية وسيُحرره عند الخروج من النطاق.",
+      "usage": "يظهر عند قفل mutex يدويًا ثم تمريره لـ unique_lock لإدارة التحرير التلقائي عبر RAII.",
+      "example": "m.lock();\nstd::unique_lock<std::mutex> lk(m, std::adopt_lock);",
+      "includeHeader": "#include <mutex>",
+      "usageExamples": [
+        {
+          "titleArabic": "تبنّي قفل مأخوذ مسبقًا",
+          "code": "#include <mutex>\n#include <iostream>\n\nstd::mutex m;\n\nvoid manual_then_raii() {\n    m.lock(); // قفل يدوي\n    // تمريره لـ unique_lock مع adopt_lock\n    std::unique_lock<std::mutex> lk(m, std::adopt_lock);\n    // lk يملك القفل الآن وسيُحرره عند الخروج\n    std::cout << \"critical section\\n\";\n} // m تُحرر تلقائيًا هنا",
+          "explanationArabic": "adopt_lock يفترض أن القفل مأخوذ بالفعل. unique_lock يأخذ الملكية فقط. هذا مفيد عند دمج كود قديم يستخدم lock() يدوي مع كود جديد يستخدم RAII."
+        },
+        {
+          "titleArabic": "استخدامه مع lock_guard",
+          "code": "#include <mutex>\n\nstd::mutex m1, m2;\n\nvoid multi_lock() {\n    // lock يقفل كليهما بأمان\n    std::lock(m1, m2);\n    // تمريرهما لـ lock_guard مع adopt_lock\n    std::lock_guard<std::mutex> lk1(m1, std::adopt_lock);\n    std::lock_guard<std::mutex> lk2(m2, std::adopt_lock);\n    // كلاهما يُحرران تلقائيًا عند الخروج\n}",
+          "explanationArabic": "std::lock + adopt_lock نمط شائع لقفل عدة mutexes بأمان ثم إدارتها بـ RAII. std::lock يمنع deadlock وadopt_lock يمنع القفل المزدوج."
+        }
+      ],
+      "related": [
+        "std::defer_lock",
+        "std::unique_lock",
+        "std::lock_guard",
+        "std::lock"
+      ]
+    },
+    "std::this_thread::sleep_until": {
+      "title": "std::this_thread::sleep_until",
+      "type": "دالة التزامن",
+      "description": "يُعلّق (يُنيم) الخيط الحالي حتى زمن محدد (time_point). يختلف عن sleep_for الذي ينام لمدة زمنية.",
+      "usage": "يظهر عند الحاجة لانتظار حتى لحظة زمنية محددة — مثل جدولة مهمة في وقت معين أو انتظار تزامن مع ساعة خارجية.",
+      "example": "std::this_thread::sleep_until(next_time);",
+      "includeHeader": "#include <thread>",
+      "usageExamples": [
+        {
+          "titleArabic": "انتظار حتى وقت محدد",
+          "code": "#include <thread>\n#include <chrono>\n#include <iostream>\n\nint main() {\n    using namespace std::chrono;\n    // تحديد وقت الاستيقاظ: الآن + 2 ثانية\n    auto wake_time = system_clock::now() + seconds(2);\n    std::cout << \"sleeping until specific time...\\n\";\n    std::this_thread::sleep_until(wake_time);\n    std::cout << \"awake!\\n\";\n}",
+          "explanationArabic": "sleep_until ينام حتى time_point محدد. مع system_clock::now() + duration تحدد وقتًا مطلقًا. هذا يختلف عن sleep_for الذي ينام لمدة نسبية."
+        },
+        {
+          "titleArabic": "sleep_until vs sleep_for",
+          "code": "#include <thread>\n#include <chrono>\n#include <iostream>\n\nint main() {\n    using namespace std::chrono;\n\n    // sleep_for: مدة نسبية (2 ثانية من الآن)\n    std::this_thread::sleep_for(seconds(2));\n\n    // sleep_until: وقت مطلق (استيقاظ عند الساعة 12:00)\n    auto target = system_clock::now() + seconds(2);\n    std::this_thread::sleep_until(target);\n\n    // sleep_until أنسب عند الجدولة: 'نفذ في وقت X'\n    // sleep_for أنسب عند التأخير: 'انتظر مدة Y'",
+          "explanationArabic": "sleep_for للمدة النسبية ('انتظر 2 ثانية'). sleep_until للوقت المطلق ('استيقظ عند الساعة كذا'). sleep_until أدق في الجدولة لأنه يحسب الوقت المتبقي حتى الهدف حتى لو تأخر التنفيذ."
+        }
+      ],
+      "related": [
+        "std::this_thread::sleep_for",
+        "std::this_thread::yield",
+        "std::chrono::system_clock"
+      ]
+    },
+    "std::hardware_concurrency": {
+      "title": "std::hardware_concurrency",
+      "type": "دالة استعلام",
+      "description": "يُرجع عدد الخيوط المتوازية التي يمكن للنظام تنفيذها فعليًا. قد يُرجع 0 إذا لم يتمكن من التحديد. هو دالة constexpr منذ C++20.",
+      "usage": "يظهر عند تحديد عدد الخيوط لمهام متوازية — مثل ضبط thread pool أو تحديد عدد أجزاء parallel algorithm.",
+      "example": "unsigned int n = std::thread::hardware_concurrency();",
+      "includeHeader": "#include <thread>",
+      "usageExamples": [
+        {
+          "titleArabic": "معرفة عدد أنوية المعالج",
+          "code": "#include <thread>\n#include <iostream>\n\nint main() {\n    unsigned int cores = std::thread::hardware_concurrency();\n    if (cores > 0) {\n        std::cout << \"CPU cores: \" << cores;\n    } else {\n        std::cout << \"unable to determine\";\n    }\n}",
+          "explanationArabic": "hardware_concurrency يُرجع عدد الأنوية المنطقية (مع hyperthreading). على معالج رباعي الأنوية مع hyperthreading يُرجع 8. قد يُرجع 0 إذا لم يتمكن النظام من التحديد."
+        },
+        {
+          "titleArabic": "استخدامه لضبط thread pool",
+          "code": "#include <thread>\n#include <vector>\n#include <iostream>\n\nint main() {\n    unsigned int num_threads = std::thread::hardware_concurrency();\n    if (num_threads == 0) num_threads = 4; // قيمة افتراضية\n\n    std::vector<std::thread> pool;\n    for (unsigned int i = 0; i < num_threads; ++i) {\n        pool.emplace_back([i] {\n            std::cout << \"thread \" << i << \" working\\n\";\n        });\n    }\n    for (auto& t : pool) t.join();\n}",
+          "explanationArabic": "hardware_concurrency يُحدد العدد الأمثل للخيوط. عادةً لا حاجة لخيوط أكثر من الأنوية المتاحة. إذا أرجع 0، استخدم قيمة افتراضية معقولة."
+        },
+        {
+          "titleArabic": "لا يُرجع دائمًا العدد الدقيق",
+          "code": "#include <thread>\n#include <iostream>\n\nint main() {\n    unsigned int n = std::thread::hardware_concurrency();\n    // قد يُرجع 0 على بعض الأنظمة المضمنة\n    // قد لا يعكس العدد الفعلي بدقة في البيئات الافتراضية\n    // قد يتغير إذا تم تغيير تقارب المعالج (CPU affinity)\n\n    if (n == 0) {\n        // استخدم قيمة افتراضية\n        n = 2;\n    }\n    std::cout << \"using \" << n << \" threads\";\n}",
+          "explanationArabic": "hardware_concurrency قد يُرجع 0 على الأنظمة المضمنة أو في حاويات معينة. تحقق دائمًا قبل الاستخدام واستخدم قيمة افتراضية. القيمة تقريبية وليست مضمونة الدقة."
+        }
+      ],
+      "related": [
+        "std::thread",
+        "std::async",
+        "std::jthread"
+      ]
+    },
+    "std::atomic_ref": {
+      "title": "std::atomic_ref",
+      "type": "نوع ذري (C++20)",
+      "description": "مرجع ذري (atomic reference) يُنشئ وصولًا ذريًا لكائن غير ذري. لا يملك الكائن — يشير فقط إليه. يسمح بعمليات ذرية على متغيرات عادية بدون تحويلها إلى atomic.",
+      "usage": "يظهر عند الحاجة لعمليات ذرية على بيانات موجودة بدون تغيير نوعها إلى atomic — مثل عمل ذري على عنصر في vector أو عضو في struct.",
+      "example": "int x = 0;\nstd::atomic_ref<int> ax{x};\nax.fetch_add(1);",
+      "includeHeader": "#include <atomic>",
+      "usageExamples": [
+        {
+          "titleArabic": "عمليات ذرية على متغير عادي",
+          "code": "#include <atomic>\n#include <iostream>\n\nint main() {\n    int counter = 0;\n    // إنشاء مرجع ذري لمتغير عادي\n    std::atomic_ref<int> ref(counter);\n    ref.fetch_add(1, std::memory_order_relaxed);\n    ref.fetch_add(1, std::memory_order_relaxed);\n    std::cout << counter; // 2\n    // counter متغير عادي لكن الوصول إليه كان ذريًا\n}",
+          "explanationArabic": "atomic_ref يُنشئ وصولًا ذريًا لمتغير عادي. المتغير نفسه لا يتغير — فقط الوصول إليه يكون ذريًا. هذا مفيد عند الحاجة لعمليات ذرية على بيانات لا تتحكم في نوعها."
+        },
+        {
+          "titleArabic": "استخدامه مع عناصر vector",
+          "code": "#include <atomic>\n#include <vector>\n#include <thread>\n#include <iostream>\n\nint main() {\n    std::vector<int> counters(4, 0);\n    std::thread t1([&] {\n        std::atomic_ref<int> ref(counters[0]);\n        ref.fetch_add(1);\n    });\n    std::thread t2([&] {\n        std::atomic_ref<int> ref(counters[0]);\n        ref.fetch_add(1);\n    });\n    t1.join(); t2.join();\n    std::cout << counters[0]; // 2 (ذري)\n}",
+          "explanationArabic": "atomic_ref مفيد مع عناصر حاوية. بدل جعل كل عنصر atomic<int> (مما يمنع النسخ)، أبقِ العناصر int عادية واستخدم atomic_ref عند الحاجة لوصول ذري."
+        },
+        {
+          "titleArabic": "atomic_ref لا يملك الكائن",
+          "code": "#include <atomic>\n\nint x = 0;\n{\n    std::atomic_ref<int> ref(x);\n    ref.store(42);\n} // ref يخرج من النطاق لكن x لا تُتلف — ref لا يملكها\n\n// x لا تزال 42\n// atomic_ref مثل مرجع عادي: يشير فقط\n\n// ❌ لا تُنشئ atomic_ref لمتغير محلي يخرج من النطاق\n// std::atomic_ref<int> bad_ref = [&](){\n//     int local = 0;\n//     return std::atomic_ref<int>(local);\n// }(); // local دُمّرت — bad_ref يشير لذاكرة غير صالحة",
+          "explanationArabic": "atomic_ref مرجع لا مالك — لا يُمدّد عمر الكائن. تأكد أن الكائن يعيش طويلًا بما يكفي. هذا مثل مرجع C++ عادي: يجب أن يعيش المُشار إليه أطول من المرجع."
+        }
+      ],
+      "related": [
+        "std::atomic",
+        "std::atomic_flag",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_wait": {
+      "title": "std::atomic_wait",
+      "type": "دالة ذرية (C++20)",
+      "description": "يُعلّق الخيط الحالي حتى تتغير قيمة atomic إلى قيمة مختلفة عن القيمة المُمرَّرة. يُستخدم مع atomic_notify_one أو atomic_notify_all لإيقاظ الخيط.",
+      "usage": "يظهر كآلية انتظار/إشعار خفيفة الوزن بدل condition_variable. أنسب عندما تنتظر تغييرًا بسيطًا في قيمة atomic.",
+      "example": "value.wait(old_value); // ينام حتى value != old_value",
+      "includeHeader": "#include <atomic>",
+      "usageExamples": [
+        {
+          "titleArabic": "انتظار تغيير قيمة atomic",
+          "code": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<int> signal{0};\n\nvoid waiter() {\n    int expected = 0;\n    signal.wait(expected); // ينام حتى signal != 0\n    std::cout << \"received: \" << signal.load();\n}\n\nint main() {\n    std::thread t(waiter);\n    signal.store(42);\n    signal.notify_one(); // يُوقظ الخيط المنتظر\n    t.join();\n}",
+          "explanationArabic": "atomic_wait يُقارن القيمة الحالية بالمتوقعة. إذا كانت متساوية ينام. notify_one يُوقظ خيطًا واحدًا. هذا أنسب من condition_variable للإشارات البسيطة."
+        },
+        {
+          "titleArabic": "atomic_wait vs condition_variable",
+          "code": "#include <atomic>\n#include <mutex>\n#include <condition_variable>\n\n// atomic_wait: خفيف — لا يحتاج mutex\n// std::atomic<int> flag{0};\n// flag.wait(0); // أنظم للإشارات البسيطة\n// flag.notify_one();\n\n// condition_variable: أقوى لكن يحتاج mutex\n// std::mutex m;\n// std::condition_variable cv;\n// int flag = 0;\n// std::unique_lock lk(m);\n// cv.wait(lk, [&]{ return flag != 0; });",
+          "explanationArabic": "atomic_wait أبسط وأخف من condition_variable — لا يحتاج mutex. لكنه أقل مرونة: ينتظر تغيير قيمة واحدة فقط. condition_variable أنسب مع شروط معقدة أو بيانات متعددة محمية بنفس mutex."
+        }
+      ],
+      "related": [
+        "std::atomic_notify_one",
+        "std::atomic_notify_all",
+        "std::condition_variable",
+        "std::atomic"
+      ]
+    },
+    "std::atomic_notify_one": {
+      "title": "std::atomic_notify_one",
+      "type": "دالة ذرية (C++20)",
+      "description": "يُوقظ خيطًا واحدًا ينتظر على atomic عبر atomic_wait. إذا لم يكن هناك خيط منتظر، لا يفعل شيئًا.",
+      "usage": "يظهر مع atomic_wait كآلية إشعار خفيفة الوزن. مثل condition_variable::notify_one لكن بدون mutex.",
+      "example": "flag.notify_one();",
+      "includeHeader": "#include <atomic>",
+      "usageExamples": [
+        {
+          "titleArabic": "إيقاظ خيط ينتظر على atomic",
+          "code": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<bool> ready{false};\n\nvoid consumer() {\n    ready.wait(false); // ينام حتى ready != false\n    std::cout << \"ready!\";\n}\n\nint main() {\n    std::thread t(consumer);\n    ready.store(true);\n    ready.notify_one(); // يُوقظ consumer\n    t.join();\n}",
+          "explanationArabic": "notify_one يُوقظ خيطًا واحدًا من الخيوط المنتظرة. إذا كان عدة خيوط تنتظر، واحد فقط يستيقظ. notify_all يُوقظهم كلهم."
+        },
+        {
+          "titleArabic": "notify_one vs notify_all",
+          "code": "#include <atomic>\n\nstd::atomic<int> work{0};\n\n// notify_one: يُوقظ خيطًا واحدًا فقط\n// work.notify_one();\n\n// notify_all: يُوقظ كل الخيوط المنتظرة\n// work.notify_all();\n\n// استخدم notify_one لمهمة واحدة\n// استخدم notify_all عند تغيير يؤثر على كل المنتظرين",
+          "explanationArabic": "notify_one للإنتاج/استهلاك (منتج واحد يُوقظ مستهلكًا واحدًا). notify_all عند تغيير عام يؤثر على كل المنتظرين مثل إغلاق نظام."
+        }
+      ],
+      "related": [
+        "std::atomic_wait",
+        "std::atomic_notify_all",
+        "std::condition_variable"
+      ]
+    },
+    "std::atomic_compare_exchange": {
+      "title": "std::atomic_compare_exchange",
+      "type": "عملية ذرية",
+      "description": "عملية مقارنة وتبديل ذرية (CAS — Compare-And-Swap): تتحقق من أن القيمة الحالية تساوي قيمة متوقعة، فإذا كانت كذلك تُبدّلها بقيمة جديدة وتُرجع true، وإلا تُرجع false. هذه العملية هي أساس كل خوارزميات التزامن بدون أقفال (lock-free).",
+      "usage": "يظهر في بناء هياكل بيانات بدون أقفال (lock-free) مثل قوائم الانتظار والمكدسات الذرية. هو اللبنة الأساسية لكل عمليات atomic مثل fetch_add وexchange.",
+      "example": "int expected = 10;\nbool ok = obj.compare_exchange_weak(expected, 20);",
+      "includeHeader": "#include <atomic>",
+      "usageExamples": [
+        {
+          "titleArabic": "مقارنة وتبديل بسيط",
+          "code": "#include <atomic>\n#include <iostream>\n\nint main() {\n    std::atomic<int> value{10};\n    int expected = 10;\n\n    // إذا value == expected: value = 20 وترجع true\n    // إذا value != expected: تُحدّث expected للقيمة الحالية وترجع false\n    bool success = value.compare_exchange_strong(expected, 20);\n    std::cout << std::boolalpha << success << '\\n'; // true\n    std::cout << value.load(); // 20\n}",
+          "explanationArabic": "compare_exchange_strong يتحقق من القيمة ويُبدّلها ذريًا في عملية واحدة. إذا نجح يُرجع true ويُعيّن القيمة الجديدة. إذا فشل يُحدّث expected بالقيمة الفعلية ويرجع false."
+        },
+        {
+          "titleArabic": "compare_exchange_weak vs strong",
+          "code": "#include <atomic>\n#include <iostream>\n\nint main() {\n    std::atomic<int> value{10};\n    int expected = 10;\n\n    // strong: يفشل فقط إذا القيمة فعلًا مختلفة\n    bool s = value.compare_exchange_strong(expected, 20);\n\n    // weak: قد يفشل حتى لو القيمة متساوية (spurious failure)\n    // لكنه أسرع على بعض الأنظمة\n    // bool w = value.compare_exchange_weak(expected, 20);\n\n    // weak أنسب في الحلقات (spurious failure لا مشكلة)\n    // strong أنسب خارج الحلقات\n}",
+          "explanationArabic": "weak قد يُرجع false رغم تساوي القيمتين (spurious failure) لكنه أسرع. استخدم weak في الحلقات حيث المحاولة مجانية، وstrong خارج الحلقات حيث تحتاج نتيجة حاسمة."
+        },
+        {
+          "titleArabic": "بناء عداد بدون أقفال",
+          "code": "#include <atomic>\n#include <iostream>\n\nint main() {\n    std::atomic<int> counter{0};\n\n    // زيادة ذرية مخصصة عبر CAS\n    int old = counter.load();\n    while (!counter.compare_exchange_weak(old, old + 1)) {\n        // old تُحدّث تلقائيًا بالقيمة الحالية — حاول مجددًا\n    }\n    std::cout << counter; // 1\n\n    // هذا ما يفعله fetch_add داخليًا\n    // counter.fetch_add(1); // أنظم\n}",
+          "explanationArabic": "CAS في حلقة هو النمط الأساسي لبناء كل العمليات الذرية. إذا فشل (لأن خيطًا آخر عدّل القيمة)، old تُحدّث تلقائيًا ونُعيد المحاولة. هذا أساس lock-free programming."
+        }
+      ],
+      "related": [
+        "std::atomic",
+        "std::atomic_exchange",
+        "std::atomic_fetch_add",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_compare_exchange_strong": {
+      "title": "std::atomic_compare_exchange_strong",
+      "type": "دالة قالب",
+      "description": "نسخة الدالة الحرة لعملية CAS القوية. تتحقق أن القيمة الحالية تساوي expected، فإذا كانت كذلك تُبدّلها بـ desired وتُرجع true، وإلا تُحدّث expected بالقيمة الفعلية وتُرجع false. تضمن عدم وجود spurious failure — تفشل فقط فعليًا عند اختلاف القيم.",
+      "usage": "يُستخدم كبديل للدالة العضو عند العمل مع مؤشرات إلى atomic بدل الكائنات مباشرة. أساس بناء خوارزميات lock-free.",
+      "example": "#include <atomic>\n#include <iostream>\n\nint main() {\n    std::atomic<int> value{10};\n    int expected = 10;\n\n    bool ok = std::atomic_compare_exchange_strong(&value, &expected, 20);\n    std::cout << std::boolalpha << ok; // true\n    std::cout << value.load(); // 20\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_compare_exchange_weak",
+        "std::atomic_compare_exchange_strong_explicit",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_compare_exchange_strong_explicit": {
+      "title": "std::atomic_compare_exchange_strong_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من CAS القوية تسمح بتحديد memory_order للنجاح والفشل بشكل منفصل. عند النجاح يُستخدم success_order، وعند الفشل failure_order.",
+      "usage": "يُستخدم عندما تحتاج تحكمًا دقيقًا بترتيب الذاكرة في CAS — مثل استخدام acquire عند الفشل وrelease عند النجاح.",
+      "example": "int expected = 10;\nstd::atomic_compare_exchange_strong_explicit(\n    &value, &expected, 20,\n    std::memory_order_acq_rel,\n    std::memory_order_acquire\n);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_compare_exchange_strong",
+        "std::atomic_compare_exchange_weak_explicit",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_compare_exchange_weak": {
+      "title": "std::atomic_compare_exchange_weak",
+      "type": "دالة قالب",
+      "description": "نسخة الدالة الحرة لعملية CAS الضعيفة. مثل strong لكنها قد تُرجع false رغم تساوي القيمتين (spurious failure). أسرع على بعض المعالجات (مثل ARM). يجب استخدامها داخل حلقة retry.",
+      "usage": "يُستخدم في الحلقات حيث spurious failure لا مشكلة — مثل بناء عدادات أو قوائم lock-free. الأنسب للأداء على المعالجات الضعيفة.",
+      "example": "#include <atomic>\n\nstd::atomic<int> counter{0};\n\nvoid lock_free_increment() {\n    int old = counter.load(std::memory_order_relaxed);\n    while (!std::atomic_compare_exchange_weak(\n        &counter, &old, old + 1,\n        std::memory_order_relaxed,\n        std::memory_order_relaxed\n    )) {\n        // old تُحدّث تلقائيًا — أعد المحاولة\n    }\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_compare_exchange_strong",
+        "std::atomic_compare_exchange_weak_explicit",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_compare_exchange_weak_explicit": {
+      "title": "std::atomic_compare_exchange_weak_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من CAS الضعيفة تسمح بتحديد memory_order للنجاح والفشل بشكل منفصل. قد تحدث spurious failure لكنها أسرع على بعض المعالجات.",
+      "usage": "يُستخدم في الحلقات lock-free مع تحكم دقيق بترتيب الذاكرة.",
+      "example": "int old = counter.load(std::memory_order_relaxed);\nwhile (!std::atomic_compare_exchange_weak_explicit(\n    &counter, &old, old + 1,\n    std::memory_order_relaxed,\n    std::memory_order_relaxed\n)) {}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_compare_exchange_weak",
+        "std::atomic_compare_exchange_strong_explicit",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_exchange": {
+      "title": "std::atomic_exchange",
+      "type": "دالة قالب",
+      "description": "تبديل ذري: تستبدل قيمة atomic بقيمة جديدة وتُرجع القيمة القديمة. العملية كلها ذرية — لا يمكن لخيط آخر أن يقرأ أو يكتب أثناء التبديل.",
+      "usage": "يُستخدم لنقل ملكية قيمة بين خيوط بشكل ذري — مثل تبديل مؤشرات أو حالات آلة الحالة (state machine).",
+      "example": "#include <atomic>\n#include <iostream>\n\nint main() {\n    std::atomic<int> value{10};\n    int old = std::atomic_exchange(&value, 20);\n    std::cout << old;  // 10 (القيمة القديمة)\n    std::cout << value.load(); // 20 (القيمة الجديدة)\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_exchange_explicit",
+        "std::atomic_compare_exchange_strong",
+        "std::atomic::exchange"
+      ]
+    },
+    "std::atomic_exchange_explicit": {
+      "title": "std::atomic_exchange_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من std::atomic_exchange تسمح بتحديد memory_order يدويًا بدل الافتراضي (seq_cst).",
+      "usage": "يُستخدم عندما تحتاج تحكمًا دقيقًا بترتيب الذاكرة عند التبديل الذري.",
+      "example": "int old = std::atomic_exchange_explicit(&value, 20, std::memory_order_acq_rel);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_exchange",
+        "std::memory_order",
+        "std::atomic_store_explicit"
+      ]
+    },
+    "std::atomic_fetch_add": {
+      "title": "std::atomic_fetch_add",
+      "type": "دالة قالب",
+      "description": "جمع ذري: تضيف قيمة إلى atomic وتُرجع القيمة القديمة. العملية ذرية كاملة — لا يوجد data race حتى مع عدة خيوط تضيف في نفس الوقت.",
+      "usage": "العملية الأساسية للعدادات المتزامنة. كل خيط يزيد العداد بشكل آمن دون الحاجة لأقفال.",
+      "example": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<int> counter{0};\n\nvoid increment(int n) {\n    for (int i = 0; i < n; ++i)\n        std::atomic_fetch_add(&counter, 1);\n}\n\nint main() {\n    std::thread t1(increment, 100000);\n    std::thread t2(increment, 100000);\n    t1.join(); t2.join();\n    std::cout << counter.load(); // دائمًا 200000\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_add_explicit",
+        "std::atomic_fetch_sub",
+        "std::atomic::fetch_add"
+      ]
+    },
+    "std::atomic_fetch_add_explicit": {
+      "title": "std::atomic_fetch_add_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من std::atomic_fetch_add تسمح بتحديد memory_order يدويًا بدل الافتراضي (seq_cst).",
+      "usage": "يُستخدم مع relaxed للعدادات البسيطة حيث لا تحتاج ترتيبًا صارمًا — أسرع من الافتراضي.",
+      "example": "std::atomic_fetch_add_explicit(&counter, 1, std::memory_order_relaxed);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_add",
+        "std::memory_order",
+        "std::atomic_fetch_sub_explicit"
+      ]
+    },
+    "std::atomic_fetch_and": {
+      "title": "std::atomic_fetch_and",
+      "type": "دالة قالب",
+      "description": "AND بتية ذرية: تُنفذ عملية AND بتية بين قيمة atomic وقيمة مُعطاة، وتُرجع القيمة القديمة. تُستخدم لمسح بتات محددة بشكل آمن بين خيوط متعددة.",
+      "usage": "يُستخدم لإزالة أعلام (flags) من مجموعة أعلام مشتركة — مثل مسح بت إيقاف دون التأثير على البتات الأخرى.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0xFF};\n\nvoid clear_flag(unsigned bit) {\n    std::atomic_fetch_and(&flags, ~(1u << bit));\n    // مسح البت bit فقط — البقية كما هي\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_and_explicit",
+        "std::atomic_fetch_or",
+        "std::atomic_fetch_xor"
+      ]
+    },
+    "std::atomic_fetch_and_explicit": {
+      "title": "std::atomic_fetch_and_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من std::atomic_fetch_and تسمح بتحديد memory_order يدويًا بدل الافتراضي (seq_cst).",
+      "usage": "يُستخدم عند الحاجة لتحكم دقيق بترتيب الذاكرة في عمليات AND البتية الذرية.",
+      "example": "std::atomic_fetch_and_explicit(&flags, mask, std::memory_order_acq_rel);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_and",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_fetch_or": {
+      "title": "std::atomic_fetch_or",
+      "type": "دالة قالب",
+      "description": "OR بتية ذرية: تُنفذ عملية OR بتية بين قيمة atomic وقيمة مُعطاة، وتُرجع القيمة القديمة. تُستخدم لتفعيل بتات محددة بشكل آمن بين خيوط متعددة.",
+      "usage": "يُستخدم لتفعيل أعلام (flags) في مجموعة أعلام مشتركة — مثل تفعيل بت توقف أو تسجيل حدث.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0};\n\nvoid set_flag(unsigned bit) {\n    std::atomic_fetch_or(&flags, 1u << bit);\n    // تفعيل البت bit فقط — البقية كما هي\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_or_explicit",
+        "std::atomic_fetch_and",
+        "std::atomic_fetch_xor"
+      ]
+    },
+    "std::atomic_fetch_or_explicit": {
+      "title": "std::atomic_fetch_or_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من std::atomic_fetch_or تسمح بتحديد memory_order يدويًا بدل الافتراضي (seq_cst).",
+      "usage": "يُستخدم عند الحاجة لتحكم دقيق بترتيب الذاكرة في عمليات OR البتية الذرية.",
+      "example": "std::atomic_fetch_or_explicit(&flags, mask, std::memory_order_acq_rel);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_or",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_fetch_sub": {
+      "title": "std::atomic_fetch_sub",
+      "type": "دالة قالب",
+      "description": "طرح ذري: تطرح قيمة من atomic وتُرجع القيمة القديمة. العملية ذرية كاملة — آمنة مع عدة خيوط تطرح في نفس الوقت.",
+      "usage": "يُستخدم للعدادات التنازلية — مثل تقليل عدد المهام المتبقية أو عداد Semaphore.",
+      "example": "#include <atomic>\n#include <iostream>\n\nint main() {\n    std::atomic<int> counter{10};\n    int old = std::atomic_fetch_sub(&counter, 3);\n    std::cout << old;  // 10 (القيمة قبل الطرح)\n    std::cout << counter.load(); // 7 (القيمة بعد الطرح)\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_sub_explicit",
+        "std::atomic_fetch_add",
+        "std::atomic::fetch_sub"
+      ]
+    },
+    "std::atomic_fetch_sub_explicit": {
+      "title": "std::atomic_fetch_sub_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من std::atomic_fetch_sub تسمح بتحديد memory_order يدويًا بدل الافتراضي (seq_cst).",
+      "usage": "يُستخدم مع relaxed للعدادات التنازلية البسيطة — أسرع من الافتراضي.",
+      "example": "std::atomic_fetch_sub_explicit(&counter, 1, std::memory_order_relaxed);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_sub",
+        "std::memory_order",
+        "std::atomic_fetch_add_explicit"
+      ]
+    },
+    "std::atomic_fetch_xor": {
+      "title": "std::atomic_fetch_xor",
+      "type": "دالة قالب",
+      "description": "XOR بتية ذرية: تُنفذ عملية XOR بتية بين قيمة atomic وقيمة مُعطاة، وتُرجع القيمة القديمة. تُستخدم لتبديل بتات (toggle) بشكل آمن بين خيوط متعددة.",
+      "usage": "يُستخدم لتبديل حالة بت — مثل تبديل علم تشغيل/إيقاف. XOR مع 1 يُبدّل البت، مع 0 يبقيه كما هو.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0};\n\nvoid toggle_flag(unsigned bit) {\n    std::atomic_fetch_xor(&flags, 1u << bit);\n    // تبديل البت bit: 0→1 أو 1→0\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_xor_explicit",
+        "std::atomic_fetch_or",
+        "std::atomic_fetch_and"
+      ]
+    },
+    "std::atomic_fetch_xor_explicit": {
+      "title": "std::atomic_fetch_xor_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من std::atomic_fetch_xor تسمح بتحديد memory_order يدويًا بدل الافتراضي (seq_cst).",
+      "usage": "يُستخدم عند الحاجة لتحكم دقيق بترتيب الذاكرة في عمليات XOR البتية الذرية.",
+      "example": "std::atomic_fetch_xor_explicit(&flags, mask, std::memory_order_acq_rel);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_xor",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_flag_clear": {
+      "title": "std::atomic_flag_clear",
+      "type": "دالة",
+      "description": "مسح atomic_flag ذريًا (تعيينه إلى false). العملية ذرية مضمونة. تُستخدم لتحرير قفل بسيط أو إشارة.",
+      "usage": "يُستخدم لتحرير spin lock بسيط أو إعادة تعيين إشارة. هو النصف التكميلي لـ atomic_flag_test_and_set.",
+      "example": "#include <atomic>\n\nstd::atomic_flag lock = ATOMIC_FLAG_INIT;\n\nvoid unlock() {\n    std::atomic_flag_clear(&lock);\n    // القفل الآن متاح لخيط آخر\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_flag_clear_explicit",
+        "std::atomic_flag_test_and_set",
+        "std::atomic_flag"
+      ]
+    },
+    "std::atomic_flag_clear_explicit": {
+      "title": "std::atomic_flag_clear_explicit",
+      "type": "دالة",
+      "description": "نسخة صريحة من std::atomic_flag_clear تسمح بتحديد memory_order يدويًا. عادةً يُستخدم memory_order_release لضمان أن كل الكتابات السابقة مرئية قبل تحرير القفل.",
+      "usage": "يُستخدم لتحرير spin lock مع ضمان ترتيب الذاكرة الصحيح — release يضمن رؤية التعديلات السابقة.",
+      "example": "std::atomic_flag_clear_explicit(&lock, std::memory_order_release);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_flag_clear",
+        "std::memory_order",
+        "std::atomic_flag_test_and_set_explicit"
+      ]
+    },
+    "std::atomic_flag_test_and_set": {
+      "title": "std::atomic_flag_test_and_set",
+      "type": "دالة",
+      "description": "فحص atomic_flag وضبطه إلى true ذريًا في عملية واحدة. يُرجع القيمة القديمة: true إذا كان مضبوطًا مسبقًا (القفل مشغول)، false إذا كان مسحوبًا (نجح الاستحواذ).",
+      "usage": "يُستخدم لاكتساب spin lock بسيط. إذا أرجع false فالخيط حصل على القفل. إذا أرجع true فيُعيد المحاولة.",
+      "example": "#include <atomic>\n\nstd::atomic_flag lock = ATOMIC_FLAG_INIT;\n\nvoid lock_func() {\n    while (std::atomic_flag_test_and_set(&lock)) {\n        // القفل مشغول — انتظر وأعد المحاولة (spin)\n    }\n    // الآن الخيط يمتلك القفل\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_flag_test_and_set_explicit",
+        "std::atomic_flag_clear",
+        "std::atomic_flag"
+      ]
+    },
+    "std::atomic_flag_test_and_set_explicit": {
+      "title": "std::atomic_flag_test_and_set_explicit",
+      "type": "دالة",
+      "description": "نسخة صريحة من std::atomic_flag_test_and_set تسمح بتحديد memory_order يدويًا. عادةً يُستخدم memory_order_acquire لضمان رؤية كل التعديلات التي تمت قبل تحرير القفل.",
+      "usage": "يُستخدم لاكتساب spin lock مع ضمان ترتيب الذاكرة — acquire يضمن رؤية التعديلات السابقة.",
+      "example": "while (std::atomic_flag_test_and_set_explicit(&lock, std::memory_order_acquire)) {\n    // spin — انتظر\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_flag_test_and_set",
+        "std::memory_order",
+        "std::atomic_flag_clear_explicit"
+      ]
+    },
+    "std::atomic_init": {
+      "title": "std::atomic_init",
+      "type": "دالة قالب",
+      "description": "تهيئة atomic بقيمة غير ذرية. مهمل منذ C++20 — استخدم المُنشئ بدلًا منه. لم يكن ذريًا أصلًا — يجب استدعاؤه قبل أي استخدام متزامن.",
+      "usage": "لا يُستخدم في الكود الحديث. استخدم المُنشئ: std::atomic<int> x{42}; بدل std::atomic_init(&x, 42);",
+      "example": "// مهمل C++20 — لا تستخدمه\nstd::atomic<int> x;\nstd::atomic_init(&x, 42); // ❌ قديم\n\n// البديل الصحيح:\nstd::atomic<int> x{42}; // ✅",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic",
+        "std::ATOMIC_VAR_INIT"
+      ]
+    },
+    "std::atomic_is_lock_free": {
+      "title": "std::atomic_is_lock_free",
+      "type": "دالة قالب",
+      "description": "تتحقق هل العمليات الذرية على كائن atomic تتم بدون أقفال داخلية (hardware-supported). إذا أرجعت true، العمليات أسرع ولا يمكن حظرها. النتيجة تعتمد على نوع البيانات والمعالج.",
+      "usage": "يُستخدم لاتخاذ قرار بين خوارزمية lock-free وlock-based. على x86، int وpointer عادةً lock-free. الأنواع الكبيرة قد تستخدم أقفالًا داخلية.",
+      "example": "#include <atomic>\n#include <iostream>\n\nint main() {\n    std::atomic<int> a;\n    std::atomic<long long> b;\n\n    std::cout << std::atomic_is_lock_free(&a); // عادةً 1 (lock-free)\n    std::cout << std::atomic_is_lock_free(&b); // يعتمد على المنصة\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::is_lock_free",
+        "std::atomic",
+        "std::hardware_concurrency"
+      ]
+    },
+    "std::atomic_load": {
+      "title": "std::atomic_load",
+      "type": "دالة قالب",
+      "description": "قراءة ذرية لقيمة atomic. تضمن قراءة قيمة كاملة وليس قيمة جزئية (torn read). بدونها، قراءة متغير من خيط آخر أثناء الكتابة قد تُنتج قيمة غير صالحة.",
+      "usage": "يُستخدم لقراءة قيمة atomic من خلال مؤشر بدل الدالة العضو. الافتراضي seq_cst — أضمن ترتيب ذاكرة.",
+      "example": "#include <atomic>\n#include <iostream>\n\nint main() {\n    std::atomic<int> value{42};\n    int v = std::atomic_load(&value);\n    std::cout << v; // 42\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_load_explicit",
+        "std::atomic_store",
+        "std::atomic::load"
+      ]
+    },
+    "std::atomic_load_explicit": {
+      "title": "std::atomic_load_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من std::atomic_load تسمح بتحديد memory_order يدويًا بدل الافتراضي (seq_cst).",
+      "usage": "يُستخدم عندما تحتاج تحكمًا دقيقًا بترتيب الذاكرة عند القراءة الذرية.",
+      "example": "int v = std::atomic_load_explicit(&counter, std::memory_order_acquire);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_load",
+        "std::memory_order",
+        "std::atomic_store_explicit"
+      ]
+    },
+    "std::atomic_signal_fence": {
+      "title": "std::atomic_signal_fence",
+      "type": "دالة",
+      "description": "حاجز ذاكرة بين خيط ومعالج إشارة (signal handler). يمنع المعالج من إعادة ترتيب عمليات الذاكرة عبر الحاجز. يُنفذ على مستوى المعالج فقط — لا يُولّد تعليمات حاجز فعلي.",
+      "usage": "يُستخدم نادرًا — فقط عند مشاركة بيانات بين خيط عادي ومعالج إشارة (signal handler). لمعظم الحالات، atomic_thread_fence أنسب.",
+      "example": "#include <atomic>\n\n// في الكود العادي:\ndata = 42;\nstd::atomic_signal_fence(std::memory_order_release);\nstd::atomic_flag_test_and_set(&signal);\n\n// في signal handler:\nif (std::atomic_flag_test_and_set(&signal)) {\n    std::atomic_signal_fence(std::memory_order_acquire);\n    use(data); // مضمون رؤية data = 42\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_thread_fence",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic_store": {
+      "title": "std::atomic_store",
+      "type": "دالة قالب",
+      "description": "كتابة ذرية لقيمة atomic. تضمن كتابة القيمة كاملة وليس جزئية. بدونها، كتابة من خيط وقراءة من آخر قد تُنتج قيمة غير صالحة (data race = UB).",
+      "usage": "يُستخدم لكتابة قيمة atomic من خلال مؤشر. الافتراضي seq_cst — أضمن ترتيب ذاكرة.",
+      "example": "#include <atomic>\n\nstd::atomic<int> value{0};\nstd::atomic_store(&value, 42);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_store_explicit",
+        "std::atomic_load",
+        "std::atomic::store"
+      ]
+    },
+    "std::atomic_store_explicit": {
+      "title": "std::atomic_store_explicit",
+      "type": "دالة قالب",
+      "description": "نسخة صريحة من std::atomic_store تسمح بتحديد memory_order يدويًا بدل الافتراضي (seq_cst). عادةً يُستخدم memory_order_release.",
+      "usage": "يُستخدم مع release لنشر بيانات مكتوبة مسبقًا — مثل ضبط علم ready بعد كتابة البيانات.",
+      "example": "std::atomic_store_explicit(&ready, true, std::memory_order_release);",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_store",
+        "std::memory_order",
+        "std::atomic_load_explicit"
+      ]
+    },
+    "std::atomic_thread_fence": {
+      "title": "std::atomic_thread_fence",
+      "type": "دالة",
+      "description": "حاجز ذاكرة عام بين خيوط. يمنع المُصرِّف والمعالج من إعادة ترتيب عمليات القراءة والكتابة عبر الحاجز. أقوى من memory_order على عمليات فردية — يؤثر على كل عمليات الذاكرة.",
+      "usage": "يُستخدم عند الحاجة لترتيب ذاكرة صارم بين عدة عمليات غير ذرية. نادرًا ما يحتاجه المبرمج — عادةً memory_order على atomic يكفي.",
+      "example": "#include <atomic>\n\nbool ready = false;\nint data = 0;\n\nvoid producer() {\n    data = 42;\n    std::atomic_thread_fence(std::memory_order_release);\n    ready = true; // الكتابة لـ data لن تُعاد ترتيبها بعد هذا\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_signal_fence",
+        "std::memory_order"
+      ]
+    },
+    "std::kill_dependency": {
+      "title": "std::kill_dependency",
+      "type": "دالة قالب",
+      "description": "تقطع سلسلة التبعية (dependency chain) التي يتبعها المُصرِّف عند استخدام memory_order_consume. تُرجع القيمة نفسها لكن بدون اعتبارها تبعية ذرية. نادرًا ما يُحتاج إليها.",
+      "usage": "يُستخدم نادرًا — فقط لمنع المُصرِّف من نشر تبعية consume أكثر من اللازم. معظم المُصرِّفات تعامل consume كـ acquire حاليًا.",
+      "example": "#include <atomic>\n\nint val = std::kill_dependency(ptr.load(std::memory_order_consume));\n// val لا يحمل تبعية consume بعد الآن",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::memory_order",
+        "std::atomic_load"
+      ]
+    },
+    "std::atomic": {
+      "title": "std::atomic",
+      "type": "قالب فئة",
+      "description": "قالب فئة يوفر عمليات ذرية على أي نوع. يضمن أن القراءة والكتابة والتعديل تتم كوحدة واحدة غير قابلة للتجزئة — مما يمنع data races بين خيوط متعددة. بدون atomic، تعديل متغير من عدة خيوط يُنتج سلوكًا غير معرَّف (UB).",
+      "usage": "يُستخدم لكل متغير يُقرأ ويُكتب من عدة خيوط في نفس الوقت — مثل العدادات والأعلام والبيانات المشتركة. هو البديل الخفيف عن mutex للعمليات البسيطة.",
+      "example": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<int> counter{0};\n\nvoid increment(int times) {\n    for (int i = 0; i < times; ++i) {\n        counter.fetch_add(1, std::memory_order_relaxed);\n    }\n}\n\nint main() {\n    std::thread t1(increment, 100000);\n    std::thread t2(increment, 100000);\n    t1.join();\n    t2.join();\n    std::cout << counter.load(); // دائمًا 200000\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_ref",
+        "std::memory_order",
+        "std::atomic_flag"
+      ]
+    },
+    "std::ATOMIC_FLAG_INIT": {
+      "title": "std::ATOMIC_FLAG_INIT",
+      "type": "ماكرو",
+      "description": "ماكرو يُهيّئ atomic_flag بالقيمة false (مسحوب). هو الطريقة الوحيدة لتهيئة atomic_flag بشكل ثابت (static initialization). لا يحتاج إلى أقفال.",
+      "usage": "يُستخدم لتهيئة atomic_flag كمتغير عام أو ثابت. مطلوب قبل C++20 — بعدها المُنشئ الافتراضي يكفي.",
+      "example": "#include <atomic>\n\nstd::atomic_flag lock = ATOMIC_FLAG_INIT; // مهيأ بـ false\n// lock.clear(); // مسح (false)\n// lock.test_and_set(); // ضبط (true)",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_flag",
+        "std::ATOMIC_VAR_INIT",
+        "std::atomic_flag_test_and_set"
+      ]
+    },
+    "std::ATOMIC_VAR_INIT": {
+      "title": "std::ATOMIC_VAR_INIT",
+      "type": "ماكرو",
+      "description": "ماكرو مهمل منذ C++20 لتهيئة متغيرات atomic بشكل ثابت. كان يُستخدم قبل أن يدعم المُصرِّفون التهيئة الثابتة لـ atomic بشكل كامل. استخدم المُنشئ بدلًا منه.",
+      "usage": "لا يُستخدم في الكود الحديث. استخدم المُنشئ: std::atomic<int> x{42}; بدل std::atomic<int> x = ATOMIC_VAR_INIT(42);",
+      "example": "// مهمل C++20 — لا تستخدمه\nstd::atomic<int> x = ATOMIC_VAR_INIT(42); // ❌ قديم\n\n// البديل:\nstd::atomic<int> x{42}; // ✅",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::ATOMIC_FLAG_INIT",
+        "std::atomic_init",
+        "std::atomic"
+      ]
+    },
+    "std::atomic::atomic": {
+      "title": "std::atomic::atomic",
+      "type": "دالة عضو",
+      "description": "المُنشئ (constructor) لقالب std::atomic. يُهيّئ الكائن بقيمة مُعطاة. التهيئة ليست ذرية — يجب أن تتم قبل أي وصول متزامن. لا يدعم النسخ أو النقل (deleted copy/move).",
+      "usage": "يُستخدم لإنشاء متغير ذري. يجب التهيئة بقيمة قبل مشاركته بين الخيوط.",
+      "example": "#include <atomic>\n\nstd::atomic<int> a{42};       // تهيئة بـ 42\nstd::atomic<int> b;           // تهيئة افتراضية (غير محددة)\nstd::atomic<bool> flag{false}; // تهيئة بـ false\n\n// std::atomic<int> c = a; // ❌ خطأ: النسخ محذوف",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic",
+        "std::ATOMIC_VAR_INIT"
+      ]
+    },
+    "std::atomic::compare_exchange_strong": {
+      "title": "std::atomic::compare_exchange_strong",
+      "type": "دالة عضو",
+      "description": "نسخة العضو لعملية CAS القوية. تتحقق أن القيمة الحالية تساوي expected، فإذا كانت كذلك تُبدّلها بـ desired وتُرجع true. لا تحدث spurious failure — تفشل فقط فعليًا عند اختلاف القيم.",
+      "usage": "يُستخدم مباشرة على كائن atomic بدل الدالة الحرة. أنسب خارج الحلقات حيث تحتاج نتيجة حاسمة.",
+      "example": "#include <atomic>\n\nstd::atomic<int> value{10};\nint expected = 10;\n\nif (value.compare_exchange_strong(expected, 20)) {\n    // نجح: value الآن 20\n} else {\n    // فشل: expected تضمّن القيمة الفعلية\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::compare_exchange_weak",
+        "std::atomic_compare_exchange_strong",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic::compare_exchange_weak": {
+      "title": "std::atomic::compare_exchange_weak",
+      "type": "دالة عضو",
+      "description": "نسخة العضو لعملية CAS الضعيفة. مثل strong لكنها قد تحدث spurious failure — تُرجع false رغم تساوي القيمتين. أسرع على بعض المعالجات. يجب استخدامها داخل حلقة retry.",
+      "usage": "يُستخدم في الحلقات lock-free. الأنسب للأداء على ARM وبعض المعالجات.",
+      "example": "#include <atomic>\n\nstd::atomic<int> counter{0};\n\nvoid increment() {\n    int old = counter.load(std::memory_order_relaxed);\n    while (!counter.compare_exchange_weak(old, old + 1,\n               std::memory_order_relaxed,\n               std::memory_order_relaxed)) {\n        // old تُحدّث تلقائيًا — أعد المحاولة\n    }\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::compare_exchange_strong",
+        "std::atomic_compare_exchange_weak",
+        "std::memory_order"
+      ]
+    },
+    "std::atomic::exchange": {
+      "title": "std::atomic::exchange",
+      "type": "دالة عضو",
+      "description": "نسخة العضو للتبديل الذري. تستبدل القيمة الحالية بقيمة جديدة وتُرجع القيمة القديمة. العملية كلها ذرية.",
+      "usage": "يُستخدم مباشرة على كائن atomic لنقل ملكية قيمة أو تبديل حالة آلة الحالة.",
+      "example": "#include <atomic>\n\nstd::atomic<int> state{0};\nint prev = state.exchange(1); // state = 1، prev = 0",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_exchange",
+        "std::atomic::compare_exchange_strong",
+        "std::atomic::store"
+      ]
+    },
+    "std::atomic::fetch_add": {
+      "title": "std::atomic::fetch_add",
+      "type": "دالة عضو",
+      "description": "نسخة العضو للجمع الذري. تضيف قيمة وتُرجع القيمة القديمة. العملية الأساسية للعدادات المتزامنة.",
+      "usage": "يُستخدم مباشرة على كائن atomic لزيادة عدادات أو مؤشرات بشكل آمن بين الخيوط.",
+      "example": "#include <atomic>\n\nstd::atomic<int> counter{0};\nint old = counter.fetch_add(5); // counter = 5، old = 0",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_add",
+        "std::atomic::fetch_sub",
+        "std::atomic::operator+="
+      ]
+    },
+    "std::atomic::fetch_and": {
+      "title": "std::atomic::fetch_and",
+      "type": "دالة عضو",
+      "description": "نسخة العضو لـ AND البتية الذرية. تُنفذ AND بتية وتُرجع القيمة القديمة. تُستخدم لمسح بتات محددة.",
+      "usage": "يُستخدم مباشرة على كائن atomic لإزالة أعلام من مجموعة أعلام مشتركة.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0xFF};\nflags.fetch_and(0x0F); // مسح البتات العليا — flags = 0x0F",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_and",
+        "std::atomic::fetch_or",
+        "std::atomic::operator&="
+      ]
+    },
+    "std::atomic::fetch_or": {
+      "title": "std::atomic::fetch_or",
+      "type": "دالة عضو",
+      "description": "نسخة العضو لـ OR البتية الذرية. تُنفذ OR بتية وتُرجع القيمة القديمة. تُستخدم لتفعيل بتات محددة.",
+      "usage": "يُستخدم مباشرة على كائن atomic لتفعيل أعلام في مجموعة أعلام مشتركة.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0};\nflags.fetch_or(0x0F); // تفعيل البتات الأربعة الدنيا",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_or",
+        "std::atomic::fetch_and",
+        "std::atomic::operator|="
+      ]
+    },
+    "std::atomic::fetch_sub": {
+      "title": "std::atomic::fetch_sub",
+      "type": "دالة عضو",
+      "description": "نسخة العضو للطرح الذري. تطرح قيمة وتُرجع القيمة القديمة. العملية الأساسية للعدادات التنازلية.",
+      "usage": "يُستخدم مباشرة على كائن atomic لتقليل عدادات أو مؤشرات بشكل آمن بين الخيوط.",
+      "example": "#include <atomic>\n\nstd::atomic<int> counter{10};\nint old = counter.fetch_sub(3); // counter = 7، old = 10",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_sub",
+        "std::atomic::fetch_add",
+        "std::atomic::operator-="
+      ]
+    },
+    "std::atomic::fetch_xor": {
+      "title": "std::atomic::fetch_xor",
+      "type": "دالة عضو",
+      "description": "نسخة العضو لـ XOR البتية الذرية. تُنفذ XOR بتية وتُرجع القيمة القديمة. تُستخدم لتبديل بتات (toggle).",
+      "usage": "يُستخدم مباشرة على كائن atomic لتبديل حالة بتات في مجموعة أعلام مشتركة.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0x0F};\nflags.fetch_xor(0xFF); // تبديل كل البتات — flags = 0xF0",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_fetch_xor",
+        "std::atomic::fetch_or",
+        "std::atomic::operator^="
+      ]
+    },
+    "std::atomic::is_lock_free": {
+      "title": "std::atomic::is_lock_free",
+      "type": "دالة عضو",
+      "description": "دالة عضو تتحقق هل العمليات على هذا الكائن الذري تتم بدون أقفال داخلية. إذا أرجعت true، العمليات أسرع ولا يمكن حظرها. النتيجة تعتمد على نوع البيانات والمعالج.",
+      "usage": "يُستخدم لاتخاذ قرار بين خوارزمية lock-free وlock-based في وقت التشغيل.",
+      "example": "#include <atomic>\n#include <iostream>\n\nstd::atomic<int> a{0};\nif (a.is_lock_free()) {\n    // استخدام خوارزمية lock-free\n}",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_is_lock_free",
+        "std::atomic"
+      ]
+    },
+    "std::atomic::load": {
+      "title": "std::atomic::load",
+      "type": "دالة عضو",
+      "description": "نسخة العضو للقراءة الذرية. تقرأ القيمة الحالية ذريًا وتمنع القراءة الجزئية. يمكن تحديد memory_order.",
+      "usage": "يُستخدم لقراءة قيمة atomic مع تحكم بترتيب الذاكرة. الافتراضي seq_cst.",
+      "example": "#include <atomic>\n\nstd::atomic<int> value{42};\nint v = value.load(); // قراءة ذرية\nint v2 = value.load(std::memory_order_acquire); // مع ترتيب محدد",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_load",
+        "std::atomic::store",
+        "std::atomic::operator T"
+      ]
+    },
+    "std::atomic::operator T": {
+      "title": "std::atomic::operator T",
+      "type": "معامل",
+      "description": "معامل التحويل الضمني إلى النوع T. يُنفذ load() ذريًا ويعيد القيمة. الافتراضي seq_cst. انتبه: هذا التحويل لا يسمح بتحديد memory_order.",
+      "usage": "اختصار مريح لقراءة القيمة. لا يُستخدم عندما تحتاج تحكمًا بـ memory_order — استخدم load() بدلًا منه.",
+      "example": "#include <atomic>\n#include <iostream>\n\nstd::atomic<int> value{42};\nint v = value; // تحويل ضمني — مثل value.load()\nstd::cout << v; // 42",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::load",
+        "std::atomic::store",
+        "std::atomic::operator="
+      ]
+    },
+    "std::atomic::operator&=": {
+      "title": "std::atomic::operator&=",
+      "type": "معامل",
+      "description": "معامل AND بتية وتعيين ذري. اختصار لـ fetch_and(val) مع تجاهل القيمة المرجعة. يُنفذ AND بتية ويُخزن النتيجة.",
+      "usage": "اختصار لمسح بتات محددة. أنسب عندما لا تحتاج القيمة القديمة.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0xFF};\nflags &= 0x0F; // flags = flags.fetch_and(0x0F) — مسح البتات العليا",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::fetch_and",
+        "std::atomic::operator|=",
+        "std::atomic::operator^="
+      ]
+    },
+    "std::atomic::operator++": {
+      "title": "std::atomic::operator++",
+      "type": "معامل",
+      "description": "معامل الزيادة الذرية (prefix ++x أو postfix x++). يُرجع القيمة الجديدة (prefix) أو القديمة (postfix).",
+      "usage": "اختصار لـ fetch_add(1) — أنسب للعدادات البسيطة.",
+      "example": "#include <atomic>\n\nstd::atomic<int> counter{0};\n++counter; // ذري — يُرجع القيمة بعد الزيادة\nint old = counter++; // يُرجع القيمة قبل الزيادة",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::fetch_add",
+        "std::atomic::operator--",
+        "std::atomic::operator+="
+      ]
+    },
+    "std::atomic::operator+=": {
+      "title": "std::atomic::operator+=",
+      "type": "معامل",
+      "description": "معامل الجمع والتعيين الذري. اختصار لـ fetch_add(val) مع تجاهل القيمة المرجعة.",
+      "usage": "اختصار للجمع الذري. أنسب عندما لا تحتاج القيمة القديمة.",
+      "example": "#include <atomic>\n\nstd::atomic<int> counter{0};\ncounter += 5; // ذري — مثل counter.fetch_add(5)",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::fetch_add",
+        "std::atomic::operator-=",
+        "std::atomic::operator++"
+      ]
+    },
+    "std::atomic::operator--": {
+      "title": "std::atomic::operator--",
+      "type": "معامل",
+      "description": "معامل النقصان الذري (prefix --x أو postfix x--). يُرجع القيمة الجديدة (prefix) أو القديمة (postfix).",
+      "usage": "اختصار لـ fetch_sub(1) — أنسب للعدادات التنازلية.",
+      "example": "#include <atomic>\n\nstd::atomic<int> counter{10};\n--counter; // ذري — يُرجع القيمة بعد النقصان\nint old = counter--; // يُرجع القيمة قبل النقصان",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::fetch_sub",
+        "std::atomic::operator++",
+        "std::atomic::operator-="
+      ]
+    },
+    "std::atomic::operator-=": {
+      "title": "std::atomic::operator-=",
+      "type": "معامل",
+      "description": "معامل الطرح والتعيين الذري. اختصار لـ fetch_sub(val) مع تجاهل القيمة المرجعة.",
+      "usage": "اختصار للطرح الذري. أنسب عندما لا تحتاج القيمة القديمة.",
+      "example": "#include <atomic>\n\nstd::atomic<int> counter{10};\ncounter -= 3; // ذري — مثل counter.fetch_sub(3)",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::fetch_sub",
+        "std::atomic::operator+=",
+        "std::atomic::operator--"
+      ]
+    },
+    "std::atomic::operator=": {
+      "title": "std::atomic::operator=",
+      "type": "معامل",
+      "description": "معامل التعيين الذري. يُخزن قيمة جديدة بشكل ذري — مثل store(). لا يدعم التعيين من atomic آخر (النسخ محذوفة).",
+      "usage": "اختصار لتخزين قيمة في atomic. لا يُستخدم لنسخ بين atomic.",
+      "example": "#include <atomic>\n\nstd::atomic<int> a{0};\na = 42; // ذري — مثل a.store(42)\n\n// std::atomic<int> b = a; // ❌ خطأ: النسخ محذوفة",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::store",
+        "std::atomic::operator T",
+        "std::atomic::atomic"
+      ]
+    },
+    "std::atomic::operator^=": {
+      "title": "std::atomic::operator^=",
+      "type": "معامل",
+      "description": "معامل XOR بتية وتعيين ذري. اختصار لـ fetch_xor(val) مع تجاهل القيمة المرجعة. يُنفذ XOR بتية ويُخزن النتيجة.",
+      "usage": "اختصار لتبديل بتات محددة. أنسب عندما لا تحتاج القيمة القديمة.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0x0F};\nflags ^= 0xFF; // flags = flags.fetch_xor(0xFF) — تبديل كل البتات",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::fetch_xor",
+        "std::atomic::operator&=",
+        "std::atomic::operator|="
+      ]
+    },
+    "std::atomic::operator|=": {
+      "title": "std::atomic::operator|=",
+      "type": "معامل",
+      "description": "معامل OR بتية وتعيين ذري. اختصار لـ fetch_or(val) مع تجاهل القيمة المرجعة. يُنفذ OR بتية ويُخزن النتيجة.",
+      "usage": "اختصار لتفعيل بتات محددة. أنسب عندما لا تحتاج القيمة القديمة.",
+      "example": "#include <atomic>\n\nstd::atomic<unsigned> flags{0};\nflags |= 0x0F; // flags = flags.fetch_or(0x0F) — تفعيل البتات الأربعة الدنيا",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic::fetch_or",
+        "std::atomic::operator&=",
+        "std::atomic::operator^="
+      ]
+    },
+    "std::atomic::store": {
+      "title": "std::atomic::store",
+      "type": "دالة عضو",
+      "description": "نسخة العضو للكتابة الذرية. تخزن قيمة جديدة بشكل ذري وتمنع الكتابة الجزئية. يمكن تحديد memory_order.",
+      "usage": "يُستخدم لكتابة قيمة atomic مع تحكم بترتيب الذاكرة. الافتراضي seq_cst.",
+      "example": "#include <atomic>\n\nstd::atomic<int> value{0};\nvalue.store(42); // كتابة ذرية\nvalue.store(42, std::memory_order_release); // مع ترتيب محدد",
+      "includeHeader": "#include <atomic>",
+      "related": [
+        "std::atomic_store",
+        "std::atomic::load",
+        "std::atomic::operator="
+      ]
+    },
+    "std::adopt_lock": {
+      "title": "std::adopt_lock",
+      "type": "علامة قفل",
+      "description": "علامة تُمرَّر لـ lock_guard أو unique_lock لتُخبرها أن القفل مُكتسب فعلًا ولا يجب محاولة قفله مجددًا. unique_lock يأخذ الملكية وسيُحرره عند الخروج من النطاق عبر RAII.",
+      "usage": "يُستخدم عند قفل mutex يدويًا ثم تمريره لغلاف RAII لإدارة التحرير التلقائي. شائع مع std::lock عند قفل عدة mutexes.",
+      "example": "std::mutex m;\nm.lock();\nstd::unique_lock<std::mutex> lk(m, std::adopt_lock);\n// lk يملك القفل وسيُحرره عند الخروج",
+      "includeHeader": "#include <mutex>",
+      "related": [
+        "std::defer_lock",
+        "std::try_to_lock",
+        "std::unique_lock",
+        "std::lock_guard"
+      ]
+    },
+    "std::defer_lock": {
+      "title": "std::defer_lock",
+      "type": "علامة قفل",
+      "description": "علامة تُمرَّر لـ unique_lock لإنشائه دون قفل المنطقة الحرجة فورًا. unique_lock يأخذ mutex لكن لا يقفله — يمكنك قفله لاحقًا يدويًا عبر lock() أو try_lock().",
+      "usage": "يُستخدم مع condition_variable أو عند الحاجة لتأخير القفل حتى نقطة محددة. مفيد أيضًا مع std::lock لقفل عدة mutexes معًا.",
+      "example": "std::unique_lock<std::mutex> lk(m, std::defer_lock);\n// ... عمل لا يحتاج قفل ...\nlk.lock();\n// القسم الحرج",
+      "includeHeader": "#include <mutex>",
+      "related": [
+        "std::adopt_lock",
+        "std::try_to_lock",
+        "std::unique_lock"
+      ]
+    },
+    "std::try_to_lock": {
+      "title": "std::try_to_lock",
+      "type": "علامة قفل",
+      "description": "علامة تُمرَّر لـ unique_lock لمحاولة القفل دون انتظار. إذا كان القفل متاحًا يأخذه، وإلا لا يحجب الخيط. يتحقق owns_lock() لمعرفة النجاح.",
+      "usage": "يُستخدم عند عدم الرغبة في حجب الخيط (non-blocking). مفيد في حلقات الألعاب والأنظمة التفاعلية حيث لا يمكنك تحجب الخيط الرئيسي.",
+      "example": "std::unique_lock<std::mutex> lk(m, std::try_to_lock);\nif (lk.owns_lock()) {\n    // نجح القفل — القسم الحرج\n} else {\n    // فشل — اتخذ إجراءً بديلًا\n}",
+      "includeHeader": "#include <mutex>",
+      "related": [
+        "std::defer_lock",
+        "std::adopt_lock",
+        "std::unique_lock"
+      ]
+    },
+    "std::timed_mutex": {
+      "title": "std::timed_mutex",
+      "type": "نوع التزامن",
+      "description": "قفل مزمن يدعم try_lock_for و try_lock_until. يسمح بالانتظار لمدة محدودة بدل الحظر اللانهائي. مثل std::mutex لكن مع إمكانية تحديد مهلة زمنية.",
+      "usage": "يُستخدم عند الحاجة لتجنب الحجب اللانهائي — مثل محاولة قفل مع مهلة ثم اتخاذ إجراء بديل عند الفشل.",
+      "example": "std::timed_mutex m;\nif (m.try_lock_for(std::chrono::milliseconds(100))) {\n    // نجح القفل\n    m.unlock();\n} else {\n    // انتهت المهلة — إجراء بديل\n}",
+      "includeHeader": "#include <mutex>",
+      "related": [
+        "std::mutex",
+        "std::recursive_timed_mutex",
+        "std::unique_lock"
+      ]
+    },
+    "std::recursive_timed_mutex": {
+      "title": "std::recursive_timed_mutex",
+      "type": "نوع التزامن",
+      "description": "قفل مزمن تكراري. يجمع بين recursive_mutex (يسمح لخيط نفسه بقفل عدة مرات) و timed_mutex (يدعم مهلة زمنية). يجب فتحه بنفس عدد مرات القفل.",
+      "usage": "يُستخدم في الدوال العودية التي تحتاج قفلًا مع مهلة زمنية. نادرًا ما يُحتاج — غالبًا إعادة تصميم الكود أنسب.",
+      "example": "std::recursive_timed_mutex m;\nvoid recursive_func(int depth) {\n    if (m.try_lock_for(std::chrono::milliseconds(50))) {\n        if (depth > 0) recursive_func(depth - 1);\n        m.unlock();\n    }\n}",
+      "includeHeader": "#include <mutex>",
+      "related": [
+        "std::timed_mutex",
+        "std::recursive_mutex",
+        "std::mutex"
+      ]
+    },
+    "std::condition_variable_any": {
+      "title": "std::condition_variable_any",
+      "type": "نوع التزامن",
+      "description": "مثل condition_variable لكن يعمل مع أي نوع Lockable (لا يقتصر على unique_lock<mutex>). يمكن استخدامه مع shared_mutex أو scoped_lock أو أي نوع يدعم lock() وunlock().",
+      "usage": "يُستخدم عند الحاجة لـ condition_variable مع أنواع قفل غير std::mutex — مثل shared_mutex أو أقفال مخصصة.",
+      "example": "std::condition_variable_any cv;\nstd::shared_mutex m;\nstd::unique_lock<std::shared_mutex> lk(m);\ncv.wait(lk, []{ return ready; });",
+      "includeHeader": "#include <mutex>",
+      "related": [
+        "std::condition_variable",
+        "std::unique_lock",
+        "std::shared_mutex"
+      ]
+    },
+    "std::cv_status": {
+      "title": "std::cv_status",
+      "type": "تعداد",
+      "description": "تعداد نتيجة wait_for أو wait_until على condition_variable. قيمتان: no_timeout (تم الإيقاظ بسبب notify) و timeout (انتهت المهلة).",
+      "usage": "يُستخدم لمعرفة سبب استيقاظ الخيط: هل بسبب إشعار أم انتهاء المهلة. يُرجع مع wait_for/wait_until.",
+      "example": "std::condition_variable cv;\nstd::mutex m;\nstd::unique_lock<std::mutex> lk(m);\nauto status = cv.wait_for(lk, std::chrono::seconds(1));\nif (status == std::cv_status::no_timeout) {\n    // تم الإيقاظ بسبب notify\n} else {\n    // انتهت المهلة\n}",
+      "includeHeader": "#include <condition_variable>",
+      "related": [
+        "std::condition_variable",
+        "std::future_status"
+      ]
+    },
+    "std::launch": {
+      "title": "std::launch",
+      "type": "تعداد",
+      "description": "تعداد يُحدد سياسة تنفيذ std::async. launch::async يُنشئ خيطًا جديدًا فورًا. launch::deferred يؤخر التنفيذ حتى استدعاء get(). يمكن دمجها مع عامل |.",
+      "usage": "يُمرَّر لـ std::async للتحكم بكيفية التنفيذ. بدون تحديد، النظام يختار تلقائيًا (قد يكون أي منهما).",
+      "example": "// خيط جديد فورًا\nauto f1 = std::async(std::launch::async, compute);\n// تنفيذ متأخر عند get()\nauto f2 = std::async(std::launch::deferred, compute);\n// النظام يختار (افتراضي)\nauto f3 = std::async(compute);",
+      "includeHeader": "#include <future>",
+      "related": [
+        "std::async",
+        "std::future"
+      ]
+    },
+    "std::future_errc": {
+      "title": "std::future_errc",
+      "type": "تعداد",
+      "description": "تعداد أخطاء future/promise. يشمل: broken_promise (المرسل دُمّر بدون set_value)، future_already_retrieved (get() استُدعي مرتين)، promise_already_satisfied (set_value استُدعي مرتين)، no_state (الكائن فارغ).",
+      "usage": "يُستخدم لمعرفة نوع الخطأ عند التقاط std::future_error. يُفحص عبر errc member في الاستثناء.",
+      "example": "try {\n    auto f = std::async([]{ return 42; });\n    f.get();\n    f.get(); // خطأ\n} catch (const std::future_error& e) {\n    if (e.code() == std::make_error_code(std::future_errc::future_already_retrieved)) {\n        // معالجة الخطأ\n    }\n}",
+      "includeHeader": "#include <future>",
+      "related": [
+        "std::future_error",
+        "std::future",
+        "std::promise"
+      ]
+    },
+    "std::future_error": {
+      "title": "std::future_error",
+      "type": "استثناء",
+      "description": "استثناء يُرمى من future/promise عند خطأ. يرث من std::logic_error. يحتوي على code() الذي يُرجع future_errc يصف نوع الخطأ: broken_promise أو future_already_retrieved أو غيرها.",
+      "usage": "يُلتقط عند استدعاء get() مرتين أو عند broken_promise. يُفحص code() member لمعرفة السبب الدقيق.",
+      "example": "try {\n    std::promise<int> p;\n    auto f = p.get_future();\n    p.set_value(42);\n    p.set_value(99); // يرمي future_error\n} catch (const std::future_error& e) {\n    std::cout << e.what();\n    std::cout << (int)e.code().value(); // future_errc\n}",
+      "includeHeader": "#include <future>",
+      "related": [
+        "std::future_errc",
+        "std::future",
+        "std::promise"
+      ]
+    },
+    "std::future_status": {
+      "title": "std::future_status",
+      "type": "تعداد",
+      "description": "تعداد حالة wait_for أو wait_until على future. قيمه: ready (النتيجة جاهزة)، timeout (لم تنتهِ بعد)، deferred (لم يبدأ التنفيذ — فقط مع launch::deferred).",
+      "usage": "يُستخدم لفحص حالة future بدون حجب. مفيد لتحديث واجهة المستخدم أثناء انتظار نتيجة.",
+      "example": "auto f = std::async(std::launch::async, []{ return 42; });\nauto status = f.wait_for(std::chrono::milliseconds(100));\nif (status == std::future_status::ready) {\n    int result = f.get();\n} else if (status == std::future_status::timeout) {\n    // لم ينتهِ بعد\n}",
+      "includeHeader": "#include <future>",
+      "related": [
+        "std::future",
+        "std::cv_status",
+        "std::launch"
+      ]
+    },
+    "std::stop_callback": {
+      "title": "std::stop_callback",
+      "type": "نوع التزامن (C++20)",
+      "description": "يُسجّل دالة callback تُستدعى تلقائيًا عند طلب إيقاف stop_source المرتبط. يُستخدم لتنظيف الموارد أو إيقاف حلقات عند طلب الإيقاف. يُنفذ callback في الخيط الذي استدعى request_stop.",
+      "usage": "يُستخدم مع jthread أو stop_token لتنظيف الموارد عند الإيقاف. مفيد لإغلاق ملفات أو إيقاف اتصالات عند إنهاء الخيط.",
+      "example": "std::stop_source ss;\nstd::stop_callback cb(ss.get_token(), []{\n    // يُستدعى عند ss.request_stop()\n    cleanup_resources();\n});\nss.request_stop(); // يُستدعى callback فورًا",
+      "includeHeader": "#include <stop_token>",
+      "related": [
+        "std::stop_source",
+        "std::jthread",
+        "std::stop_token"
+      ]
+    },
+    "std::stop_source": {
+      "title": "std::stop_source",
+      "type": "نوع التزامن (C++20)",
+      "description": "يملك حالة الإيقاف (stop_state) ويُستخدم لطلب إيقاف عبر request_stop(). يُنشئ stop_token لتمريره لخيوط أخرى. jthread يملك stop_source داخليًا.",
+      "usage": "يُستخدم لطلب إيقاف خيوط jthread أو أي كود يستخدم stop_token. request_stop() يُوقظ كل stop_callback المرتبطة.",
+      "example": "std::jthread worker([](std::stop_token st) {\n    while (!st.stop_requested()) {\n        do_work();\n    }\n});\nworker.request_stop(); // يطلب الإيقاف\n// worker.join() يُستدعى تلقائيًا في المُدمّر",
+      "includeHeader": "#include <stop_token>",
+      "related": [
+        "std::stop_callback",
+        "std::jthread",
+        "std::stop_token"
+      ]
+    },
+    "std::this_thread": {
+      "title": "std::this_thread",
+      "type": "مساحة أسماء",
+      "description": "مساحة أسماء تحتوي دوال إدارة الخيط الحالي: get_id (معرّف الخيط)، sleep_for (نوم لمدة)، sleep_until (نوم حتى وقت)، yield (تنازل عن الوقت). كل الدوال تعمل على الخيط الذي يستدعيها.",
+      "usage": "تُستخدم للتحكم بالخيط الحالي: معرفة هويته، تأخيره، أو تنازله عن وقت المعالج لخيوط أخرى.",
+      "example": "#include <thread>\n#include <iostream>\n\nvoid worker() {\n    std::cout << \"thread id: \" << std::this_thread::get_id();\n    std::this_thread::sleep_for(std::chrono::milliseconds(100));\n    std::this_thread::yield();\n}",
+      "includeHeader": "#include <thread>",
+      "related": [
+        "std::thread",
+        "std::this_thread::get_id",
+        "std::this_thread::sleep_for",
+        "std::this_thread::yield"
+      ]
+    },
+    "std::this_thread::get_id": {
+      "title": "std::this_thread::get_id",
+      "type": "دالة",
+      "description": "يُرجع معرّف الخيط الحالي (thread::id). كل خيط له معرّف فريد. يُستخدم للتصحيح والتسجيل والتحقق من أن الكود يُنفذ في الخيط المتوقع.",
+      "usage": "يُستخدم في logging لمعرفة أي خيط يُنفذ الكود. مفيد أيضًا للتحقق من أن مهمة تُنفذ في خيط معين.",
+      "example": "#include <thread>\n#include <iostream>\n\nvoid log_task() {\n    std::cout << \"running on thread \"\n              << std::this_thread::get_id() << '\\n';\n}",
+      "includeHeader": "#include <thread>",
+      "related": [
+        "std::this_thread",
+        "std::thread::get_id",
+        "std::thread"
+      ]
+    },
+    "std::this_thread::sleep_for": {
+      "title": "std::this_thread::sleep_for",
+      "type": "دالة",
+      "description": "يُعلّق الخيط الحالي لمدة محددة. الخيط لا يستهلك موارد المعالج أثناء النوم. الدقة تعتمد على نظام التشغيل — قد يكون أطول من المطلوب قليلًا.",
+      "usage": "يُستخدم في Polling loops للتحكم في التردد، أو للتأخير بين العمليات. لا يُستخدم للمزامنة — استخدم condition_variable بدلًا منه.",
+      "example": "#include <thread>\n#include <chrono>\n\nvoid poll_loop() {\n    while (!done) {\n        check_status();\n        std::this_thread::sleep_for(std::chrono::milliseconds(50));\n    }\n}",
+      "includeHeader": "#include <thread>",
+      "related": [
+        "std::this_thread",
+        "std::this_thread::sleep_until",
+        "std::this_thread::yield"
+      ]
+    },
+    "std::this_thread::yield": {
+      "title": "std::this_thread::yield",
+      "type": "دالة",
+      "description": "يتنازل الخيط الحالي عن باقي شريحة الوقت (timeslice) ويُعيد نفسه لجدولة المعالج. يسمح لخيوط أخرى بالتشغيل. لا يضمن أن خيطًا آخر سيُنفذ فورًا.",
+      "usage": "يُستخدم في spin loops لتقليل الضغط على المعالج. أنسب من sleep_for في الحلقات السريعة لأنه لا يُضيف تأخير زمني.",
+      "example": "#include <thread>\n#include <mutex>\n\nvoid spin_wait(std::mutex& m) {\n    while (!m.try_lock()) {\n        std::this_thread::yield();\n        // تنازل عن الوقت بدل استهلاكه كله\n    }\n    // القفل مأخوذ\n    m.unlock();\n}",
+      "includeHeader": "#include <thread>",
+      "related": [
+        "std::this_thread",
+        "std::this_thread::sleep_for",
+        "std::mutex"
+      ]
+    },
+    "std::future_category": {
+      "title": "std::future_category",
+      "type": "فئة",
+      "description": "تُرجع مرجعًا إلى كائن error_category يمثّل أخطاء std::future وstd::promise مثل broken_promise وfuture_already_retrieved.",
+      "usage": "يظهر عند معالجة std::future_error لمعرفة نوع الخطأ بدقة عبر error_code::category().",
+      "example": "#include <future>\n#include <iostream>\nint main() {\n    const std::error_category& cat = std::future_category();\n    std::cout << cat.name(); // future\n}",
+      "includeHeader": "#include <future>",
+      "related": [
+        "std::future_errc",
+        "std::future_error",
+        "std::make_error_code"
+      ]
+    },
+    "std::generic_category": {
+      "title": "std::generic_category",
+      "type": "فئة",
+      "description": "تُرجع مرجعًا إلى error_category للأخطاء العامة القابلة للنقل بين الأنظمة مثل errno. هذه الأخطاء لها معنى موحّد بغض النظر عن نظام التشغيل.",
+      "usage": "يظهر عند إنشاء error_condition للأخطاء العامة أو مقارنة error_code مع أخطاء معيارية.",
+      "example": "#include <system_error>\n#include <iostream>\nint main() {\n    const std::error_category& cat = std::generic_category();\n    std::cout << cat.name(); // generic\n}",
+      "includeHeader": "#include <system_error>",
+      "related": [
+        "std::system_category",
+        "std::error_condition",
+        "std::errc"
+      ]
+    },
+    "std::system_category": {
+      "title": "std::system_category",
+      "type": "فئة",
+      "description": "تُرجع مرجعًا إلى error_category لأخطاء نظام التشغيل الفعلية. قيمة الخطأ الرقمية تتوافق مع errno أو كود خطأ النظام.",
+      "usage": "يظهر عند التعامل مع أخطاء النظام المباشرة مثل فشل فتح ملف عبر error_code.",
+      "example": "#include <system_error>\n#include <iostream>\nint main() {\n    const std::error_category& cat = std::system_category();\n    std::cout << cat.name(); // system\n    std::error_code ec(2, std::system_category());\n    std::cout << ec.message(); // No such file or directory\n}",
+      "includeHeader": "#include <system_error>",
+      "related": [
+        "std::generic_category",
+        "std::error_code",
+        "std::system_error"
+      ]
+    },
+    "std::lock": {
+      "title": "std::lock",
+      "type": "دالة",
+      "description": "يقفل عدة mutexes دفعة واحدة باستخدام خوارزمية تمنع deadlock (مثل try-and-back-off). يحجب حتى يتم قفلها كلها أو يُرمي استثناء.",
+      "usage": "يظهر عند الحاجة لقفل عدة mutexes في نفس الوقت بأمان — مثل نقل بيانات بين كائنين محميين بأقفال مختلفة.",
+      "example": "#include <mutex>\n#include <iostream>\nstd::mutex m1, m2;\nvoid transfer() {\n    std::lock(m1, m2);\n    std::lock_guard<std::mutex> lk1(m1, std::adopt_lock);\n    std::lock_guard<std::mutex> lk2(m2, std::adopt_lock);\n    std::cout << \"both locked safely\";\n}",
+      "includeHeader": "#include <mutex>",
+      "related": [
+        "std::try_lock",
+        "std::scoped_lock",
+        "std::unique_lock",
+        "std::adopt_lock"
+      ]
+    },
+    "std::make_error_code": {
+      "title": "std::make_error_code",
+      "type": "دالة",
+      "description": "تُنشئ كائن error_code من تعداد أخطاء مثل std::errc أو std::future_errc. تحدّد الفئة المناسبة تلقائيًا بناءً على نوع التعداد.",
+      "usage": "يظهر عند إنشاء error_code للإبلاغ عن خطأ أو مقارنة خطأ مع كود معياري.",
+      "example": "#include <system_error>\n#include <iostream>\nint main() {\n    std::error_code ec = std::make_error_code(std::errc::no_such_file_or_directory);\n    std::cout << ec.value() << \": \" << ec.message();\n}",
+      "includeHeader": "#include <system_error>",
+      "related": [
+        "std::error_code",
+        "std::make_error_condition",
+        "std::errc"
+      ]
+    },
+    "std::make_error_condition": {
+      "title": "std::make_error_condition",
+      "type": "دالة",
+      "description": "تُنشئ كائن error_condition من تعداد أخطاء. error_condition يُمثّل الخطأ المجرّد (المعنى) وليس كود النظام الفعلي — يُستخدم للمقارنة المحمولة.",
+      "usage": "يظهر عند مقارنة error_code مع خطأ معياري مجرّد — مثل التحقق هل خطأ النظام يعني permission_denied.",
+      "example": "#include <system_error>\n#include <iostream>\nint main() {\n    std::error_condition ec = std::make_error_condition(std::errc::permission_denied);\n    std::cout << ec.message();\n}",
+      "includeHeader": "#include <system_error>",
+      "related": [
+        "std::error_condition",
+        "std::make_error_code",
+        "std::generic_category"
+      ]
+    },
+    "std::notify_all_at_thread_exit": {
+      "title": "std::notify_all_at_thread_exit",
+      "type": "دالة",
+      "description": "يُجدول إشعار notify_all على condition_variable عند خروج الخيط الحالي — بعد تدمير كل الكائنات المحلية. يضمن أن الخيوط المنتظرة ترى كل التغييرات.",
+      "usage": "يظهر عند الحاجة لضمان أن خيوط أخرى ترى نتائج خيط كاملة قبل أن تستيقظ.",
+      "example": "#include <condition_variable>\n#include <mutex>\n#include <thread>\n#include <iostream>\nstd::mutex m;\nstd::condition_variable cv;\nbool ready = false;\nvoid worker() {\n    std::lock_guard<std::mutex> lk(m);\n    ready = true;\n    std::notify_all_at_thread_exit(cv, std::move(lk));\n}\nint main() {\n    std::thread t(worker);\n    std::unique_lock<std::mutex> lk(m);\n    cv.wait(lk, []{ return ready; });\n    t.join();\n    std::cout << \"done\";\n}",
+      "includeHeader": "#include <condition_variable>",
+      "related": [
+        "std::condition_variable",
+        "std::notify_one",
+        "std::thread"
+      ]
+    },
+    "std::swap (thread)": {
+      "title": "std::swap (std::thread)",
+      "type": "دالة",
+      "description": "تبادل متخصص يُبدّل حالتَي خيطين (std::thread). بعد التبديل، كل خيط يمتلك السياق والمعرف الذي كان للآخر.",
+      "usage": "يظهر عند الحاجة لنقل خيط بين حاويات أو تبديل سياق خيطين بدون join أو detach.",
+      "example": "#include <thread>\n#include <iostream>\nint main() {\n    std::thread t1([]{ std::cout << \"A\"; });\n    std::thread t2;\n    std::swap(t1, t2);\n    if (!t1.joinable()) std::cout << \"t1 empty\";\n    t2.join();\n}",
+      "includeHeader": "#include <thread>",
+      "related": [
+        "std::thread",
+        "std::move",
+        "std::jthread"
+      ]
+    },
+    "std::iostream_category": {
+      "title": "std::iostream_category",
+      "type": "فئة",
+      "description": "تُرجع مرجعًا إلى error_category لأخطاء تدفقات الإدخال والإخراج مثل io_errc::stream. يُستخدم لمعالجة أخطاء iostream عبر error_code.",
+      "usage": "يظهر عند معالجة أخطاء iostream عبر error_code بدلًا من فحص الحالة التقليدي.",
+      "example": "#include <ios>\n#include <iostream>\n#include <system_error>\nint main() {\n    const std::error_category& cat = std::iostream_category();\n    std::cout << cat.name(); // iostream\n}",
+      "includeHeader": "#include <ios>",
+      "related": [
+        "std::generic_category",
+        "std::system_category",
+        "std::io_errc"
+      ]
+    }
+  }
+}

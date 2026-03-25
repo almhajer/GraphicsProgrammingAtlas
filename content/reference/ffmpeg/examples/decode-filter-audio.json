@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "decode_filter_audio.c",
+    "slug": "decode-filter-audio",
+    "titleArabic": "فك الصوت ثم تمريره عبر filter graph",
+    "aliases": [
+      "decode_filter_audio",
+      "decode_filter_audio"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/decode-filter-audio",
+    "contentPath": "content/reference/ffmpeg/examples/decode-filter-audio.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "فك الصوت ثم تمريره عبر filter graph",
+    "actualMeaningArabic": "يجمع بين decoder الصوتية ومرشحات FFmpeg الصوتية داخل خط واحد.",
+    "purposeArabic": "يجمع بين decoder الصوتية ومرشحات FFmpeg الصوتية داخل خط واحد.",
+    "whyUseArabic": "يجمع بين decoder الصوتية ومرشحات FFmpeg الصوتية داخل خط واحد.",
+    "carriedValueArabic": "يجمع بين decoder الصوتية ومرشحات FFmpeg الصوتية داخل خط واحد.",
+    "sourceDescription": "يجمع بين decoder الصوتية ومرشحات FFmpeg الصوتية داخل خط واحد."
+  },
+  "signature": {
+    "raw": "// decode_filter_audio.c - فك ترميز + تطبيق فلاتر صوتي\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp3\";\n\n    // فتح المدخل\n    AVFormatContext *fmt_ctx = NULL;\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    AVCodecContext *codec_ctx = avcodec_alloc_context3(codec);\nn    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\nn    avcodec_open2(codec_ctx, codec, NULL);\n\n    // بناء graph الفلاتر: abuffer -> volume=2.0 -> aformat=sample_fmts=flt:44100 -> abuffersink\n    AVFilterGraph *graph = avfilter_graph_alloc();\n    int ret = avfilter_graph_parse_ptr(graph,\n        \"abuffer=time_base=1/44100:sample_rate=44100:channel_layout=stereo\"\n        \"[volume=2.0]\"\n        \"[aformat=sample_fmts=flt:sample_rate=44100]\"\n        \"abuffersink\",\n        NULL);\n    if (ret < 0) {\n        fprintf(stderr, \"فشل بناء graph\\n\");\n        return 1;\n    }\n    avfilter_graph_config(graph, NULL);\n\n    // قراءة وفك الترميز وتطبيق الفلتر\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *filt_frame = av_frame_alloc();\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                // إدخال frame إلى graph الفلاتر\n                ret = av_buffersrc_add_frame(graph, frame);\n                if (ret < 0) break;\n                // استخراج الناتج من graph\n                while (av_buffersink_get_frame(graph, filt_frame) >= 0) {\n                    // filt_frame يحتوي البيانات بعد تطبيق volume=2.0\n                    printf(\"filtered: samples=%d\\n\", filt_frame->nb_samples);\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_frame_free(&filt_frame);\n    av_packet_free(&pkt);\nn    avcodec_free_context(&codec_ctx);\nn    avformat_close_input(&fmt_ctx);\nn    avfilter_graph_free(&graph);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يجمع بين decoder الصوتية ومرشحات FFmpeg الصوتية داخل خط واحد."
+    ],
+    "notes": [
+      "يجمع بين decoder الصوتية ومرشحات FFmpeg الصوتية داخل خط واحد."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// decode_filter_audio.c - فك ترميز + تطبيق فلاتر صوتي\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp3\";\n\n    // فتح المدخل\n    AVFormatContext *fmt_ctx = NULL;\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    AVCodecContext *codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    // بناء graph الفلاتر: abuffer -> volume=2.0 -> aformat=sample_fmts=flt:44100 -> abuffersink\n    AVFilterGraph *graph = avfilter_graph_alloc();\n    int ret = avfilter_graph_parse_ptr(graph,\n        \"abuffer=time_base=1/44100:sample_rate=44100:channel_layout=stereo\"\n        \"[volume=2.0]\"\n        \"[aformat=sample_fmts=flt:sample_rate=44100]\"\n        \"abuffersink\",\n        NULL);\n    if (ret < 0) {\n        fprintf(stderr, \"فشل بناء graph\n\");\n        return 1;\n    }\n    avfilter_graph_config(graph, NULL);\n\n    // قراءة وفك الترميز وتطبيق الفلتر\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *filt_frame = av_frame_alloc();\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                // إدخال frame إلى graph الفلاتر\n                ret = av_buffersrc_add_frame(graph, frame);\n                if (ret < 0) break;\n                // استخراج الناتج من graph\n                while (av_buffersink_get_frame(graph, filt_frame) >= 0) {\n                    // filt_frame يحتوي البيانات بعد تطبيق volume=2.0\n                    printf(\"filtered: samples=%d\n\", filt_frame->nb_samples);\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_frame_free(&filt_frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\n    avfilter_graph_free(&graph);\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "فك الصوت ثم تمريره عبر filter graph",
+        "code": "// decode_filter_audio.c - فك ترميز + تطبيق فلاتر صوتي\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp3\";\n\n    // فتح المدخل\n    AVFormatContext *fmt_ctx = NULL;\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    AVCodecContext *codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    // بناء graph الفلاتر: abuffer -> volume=2.0 -> aformat=sample_fmts=flt:44100 -> abuffersink\n    AVFilterGraph *graph = avfilter_graph_alloc();\n    int ret = avfilter_graph_parse_ptr(graph,\n        \"abuffer=time_base=1/44100:sample_rate=44100:channel_layout=stereo\"\n        \"[volume=2.0]\"\n        \"[aformat=sample_fmts=flt:sample_rate=44100]\"\n        \"abuffersink\",\n        NULL);\n    if (ret < 0) {\n        fprintf(stderr, \"فشل بناء graph\n\");\n        return 1;\n    }\n    avfilter_graph_config(graph, NULL);\n\n    // قراءة وفك الترميز وتطبيق الفلتر\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *filt_frame = av_frame_alloc();\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                // إدخال frame إلى graph الفلاتر\n                ret = av_buffersrc_add_frame(graph, frame);\n                if (ret < 0) break;\n                // استخراج الناتج من graph\n                while (av_buffersink_get_frame(graph, filt_frame) >= 0) {\n                    // filt_frame يحتوي البيانات بعد تطبيق volume=2.0\n                    printf(\"filtered: samples=%d\n\", filt_frame->nb_samples);\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_frame_free(&filt_frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\n    avfilter_graph_free(&graph);\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/decode_filter_audio_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "الفلاتر والمعالجة",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

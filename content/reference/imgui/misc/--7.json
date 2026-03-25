@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "imgui",
+    "displayName": "Dear ImGui",
+    "displayNameArabic": "Dear ImGui",
+    "description": "مرجع عربي لعناصر Dear ImGui التفاعلية وحالتها ومعناها العملي داخل الإطار."
+  },
+  "kind": {
+    "id": "misc",
+    "displayName": "Misc",
+    "displayNameArabic": "عناصر أخرى",
+    "description": "أي نوع لا يندرج مباشرة تحت الأقسام القياسية الأخرى."
+  },
+  "identity": {
+    "name": "إعادة ترتيب عقدة داخل شجرة المشهد",
+    "slug": "--7",
+    "titleArabic": "المصدر هنا هو عقدة Tree نفسها",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/imgui/misc/--7",
+    "contentPath": "content/reference/imgui/misc/--7.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "المصدر هنا هو عقدة Tree نفسها",
+    "actualMeaningArabic": "Dear ImGui لا تعيد بناء Hierarchy عنك؛ هي تعطيك واجهة سحب وإفلات، أما إعادة الترتيب الفعلية فتحدث داخل مصفوفة العقد أو بنية الشجرة التي يملكها التطبيق.",
+    "purposeArabic": "استخدمه في Scene Hierarchy وOutliner وFolders وTree Views التي تسمح بإعادة parent أو reorder للعناصر.",
+    "whyUseArabic": "يجعل إعادة تنظيم الشجرة عملية مباشرة داخل الواجهة نفسها، وهو سلوك متوقع في أي محرر مشاهد أو ملفات حديث.",
+    "carriedValueArabic": "يحمل هذا العنصر معنى تنفيذياً أو دلالياً يقرأه النظام أو اللغة عند استخدامه داخل السياق الصحيح.",
+    "sourceDescription": "يبين هذا المثال كيف يتحول سحب عقدة شجرية من Hierarchy إلى عملية إعادة ترتيب أو إعادة parent داخل شجرة المشهد."
+  },
+  "signature": {
+    "raw": "",
+    "returnType": "",
+    "parameters": [],
+    "header": "imgui.h",
+    "headerUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [
+      "مصدر السحب هو TreeNode نفسها.",
+      "هدف الإفلات يجب أن يرفض إسقاط العقدة على نفسها أو على عقدة غير صالحة.",
+      "البيانات المنقولة هنا هي node id فقط، لا بنية العقدة كاملة."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+    "example": "ImGui::TreeNodeEx(node.label, flags);\nif (ImGui::BeginDragDropSource()) {\n ImGui::SetDragDropPayload(\"SCENE_NODE\", &node.id, sizeof(int));\n ImGui::Text(\"اسحب العقدة: %s\", node.label);\n ImGui::EndDragDropSource();\n}\nif (ImGui::BeginDragDropTarget()) {\n if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(\"SCENE_NODE\")) {\n const int source_id = *(const int*)payload->Data;\n ReparentNode(source_id, node.id);\n }\n ImGui::EndDragDropTarget();\n}"
+  },
+  "links": {
+    "officialUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+    "related": [
+      {
+        "name": "ImGui::TreeNode",
+        "route": "#ref/imgui/functions/im-gui-tree-node",
+        "libraryId": "imgui",
+        "kindId": "functions"
+      },
+      {
+        "name": "ImGui::BeginDragDropSource",
+        "route": ""
+      },
+      {
+        "name": "ImGui::BeginDragDropTarget",
+        "route": ""
+      },
+      {
+        "name": "ImGui::AcceptDragDropPayload",
+        "route": ""
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/imgui/sections/dragdrop.json",
+    "category": "السحب والإفلات",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

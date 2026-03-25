@@ -1,0 +1,153 @@
+/* طبقة تخطيطات الشريط الجانبي والعناصر المحيطة به */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 12%),
+        linear-gradient(180deg, rgba(15, 15, 26, 0.98), rgba(11, 14, 25, 0.98));
+    border-left: 1px solid var(--border-color);
+    overflow-y: auto;
+    direction: ltr;
+    z-index: 100;
+    box-shadow: -12px 0 34px rgba(0, 0, 0, 0.18);
+}
+
+.sidebar > * {
+    direction: rtl;
+}
+
+.sidebar-resizer {
+    position: fixed;
+    top: 0;
+    right: calc(var(--sidebar-width) - (var(--sidebar-resizer-width) / 2));
+    width: var(--sidebar-resizer-width);
+    height: 100vh;
+    z-index: 115;
+    cursor: ew-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+}
+
+.sidebar-resizer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(88, 166, 255, 0.04), rgba(233, 69, 96, 0.08), rgba(88, 166, 255, 0.04));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    animation: sidebarResizerGlow 2s ease-in-out infinite;
+}
+
+.sidebar-resizer-handle {
+    position: relative;
+    width: 4px;
+    height: 72px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(88, 166, 255, 0.70), rgba(255, 255, 255, 0.18));
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 10px 26px rgba(88, 166, 255, 0.16);
+    opacity: 0.65;
+    transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+    animation: sidebarResizerPulseWave 1s ease-in-out infinite;
+}
+
+.sidebar-resizer:hover::before,
+body.sidebar-resizing .sidebar-resizer::before {
+    opacity: 1;
+}
+
+.sidebar-resizer:hover .sidebar-resizer-handle,
+body.sidebar-resizing .sidebar-resizer-handle {
+    opacity: 1;
+    transform: scaleY(1.08);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        0 14px 34px rgba(88, 166, 255, 0.22);
+}
+
+@keyframes sidebarResizerPulseWave {
+    0%, 100% {
+        opacity: 0.65;
+        transform: translateY(-5px) scaleY(0.88);
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.08),
+            0 10px 26px rgba(88, 166, 255, 0.16);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(5px) scaleY(1.18);
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.12),
+            0 16px 36px rgba(88, 166, 255, 0.32);
+    }
+}
+
+@keyframes sidebarResizerGlow {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.42;
+    }
+}
+
+/* عناصر القائمة */
+.nav-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-right: 3px solid transparent;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.nav-item:hover {
+    background: var(--hover-bg);
+    color: var(--text-color);
+    border-right-color: var(--accent-color);
+}
+
+.nav-item span:last-child {
+    flex: 1;
+    min-width: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.sidebar-header {
+    padding: 14px 16px;
+    background: transparent;
+    text-align: center;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+}
+
+.brand-link:hover {
+    color: white;
+    opacity: 0.92;
+}
+
+.brand-logo-image {
+    display: block;
+    width: min(100%, 220px);
+    height: auto;
+    object-fit: contain;
+}

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 40 من 64 • الأسطر 17551-18000 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 40 من 64 • الأسطر 17551-18000</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 40 من 64 • الأسطر 17551-18000</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-39.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-41.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 40/64</span>
+        <span class="source-stat">الأسطر: 17551-18000</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    // wrapper function for command vkGetSemaphoreCounterValue, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetSemaphoreCounterValue.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;uint64_t&gt;::type Semaphore::getCounterValue() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetSemaphoreCounterValue &amp;&amp;
+                         &quot;Function &lt;vkGetSemaphoreCounterValue&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      uint64_t value;
+      Result   result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkGetSemaphoreCounterValue( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkSemaphore&gt;( m_semaphore ), &amp;value ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Semaphore::getCounterValue&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( value ) );
+    }
+
+    // wrapper function for command vkWaitSemaphores, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkWaitSemaphores.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::waitSemaphores( const SemaphoreWaitInfo &amp; waitInfo, uint64_t timeout ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkWaitSemaphores &amp;&amp; &quot;Function &lt;vkWaitSemaphores&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkWaitSemaphores( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkSemaphoreWaitInfo *&gt;( &amp;waitInfo ), timeout ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::waitSemaphores&quot;, { Result::eSuccess, Result::eTimeout } );
+
+      return static_cast&lt;Result&gt;( result );
+    }
+
+    // wrapper function for command vkSignalSemaphore, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSignalSemaphore.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Device::signalSemaphore( const SemaphoreSignalInfo &amp; signalInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkSignalSemaphore &amp;&amp; &quot;Function &lt;vkSignalSemaphore&gt; requires &lt;VK_KHR_timeline_semaphore&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkSignalSemaphore( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkSemaphoreSignalInfo *&gt;( &amp;signalInfo ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::signalSemaphore&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkGetBufferDeviceAddress, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetBufferDeviceAddress.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE DeviceAddress Device::getBufferAddress( const BufferDeviceAddressInfo &amp; info ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetBufferDeviceAddress &amp;&amp;
+                         &quot;Function &lt;vkGetBufferDeviceAddress&gt; requires &lt;VK_EXT_buffer_device_address&gt; or &lt;VK_KHR_buffer_device_address&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      VkDeviceAddress result =
+        getDispatcher()-&gt;vkGetBufferDeviceAddress( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkBufferDeviceAddressInfo *&gt;( &amp;info ) );
+
+      return static_cast&lt;DeviceAddress&gt;( result );
+    }
+
+    // wrapper function for command vkGetBufferOpaqueCaptureAddress, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetBufferOpaqueCaptureAddress.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE uint64_t Device::getBufferOpaqueCaptureAddress( const BufferDeviceAddressInfo &amp; info ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetBufferOpaqueCaptureAddress &amp;&amp;
+                         &quot;Function &lt;vkGetBufferOpaqueCaptureAddress&gt; requires &lt;VK_KHR_buffer_device_address&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      uint64_t result =
+        getDispatcher()-&gt;vkGetBufferOpaqueCaptureAddress( static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkBufferDeviceAddressInfo *&gt;( &amp;info ) );
+
+      return result;
+    }
+
+    // wrapper function for command vkGetDeviceMemoryOpaqueCaptureAddress, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceMemoryOpaqueCaptureAddress.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE uint64_t
+      Device::getMemoryOpaqueCaptureAddress( const DeviceMemoryOpaqueCaptureAddressInfo &amp; info ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceMemoryOpaqueCaptureAddress &amp;&amp;
+                         &quot;Function &lt;vkGetDeviceMemoryOpaqueCaptureAddress&gt; requires &lt;VK_KHR_buffer_device_address&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      uint64_t result = getDispatcher()-&gt;vkGetDeviceMemoryOpaqueCaptureAddress( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                reinterpret_cast&lt;const VkDeviceMemoryOpaqueCaptureAddressInfo *&gt;( &amp;info ) );
+
+      return result;
+    }
+
+    // wrapper function for command vkCmdDrawIndirectCount, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndirectCount.html
+    VULKAN_HPP_INLINE void CommandBuffer::drawIndirectCount( VULKAN_HPP_NAMESPACE::Buffer buffer,
+                                                             DeviceSize                   offset,
+                                                             VULKAN_HPP_NAMESPACE::Buffer countBuffer,
+                                                             DeviceSize                   countBufferOffset,
+                                                             uint32_t                     maxDrawCount,
+                                                             uint32_t                     stride ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdDrawIndirectCount &amp;&amp;
+                         &quot;Function &lt;vkCmdDrawIndirectCount&gt; requires &lt;VK_AMD_draw_indirect_count&gt; or &lt;VK_KHR_draw_indirect_count&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdDrawIndirectCount( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                               static_cast&lt;VkBuffer&gt;( buffer ),
+                                               static_cast&lt;VkDeviceSize&gt;( offset ),
+                                               static_cast&lt;VkBuffer&gt;( countBuffer ),
+                                               static_cast&lt;VkDeviceSize&gt;( countBufferOffset ),
+                                               maxDrawCount,
+                                               stride );
+    }
+
+    // wrapper function for command vkCmdDrawIndexedIndirectCount, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndexedIndirectCount.html
+    VULKAN_HPP_INLINE void CommandBuffer::drawIndexedIndirectCount( VULKAN_HPP_NAMESPACE::Buffer buffer,
+                                                                    DeviceSize                   offset,
+                                                                    VULKAN_HPP_NAMESPACE::Buffer countBuffer,
+                                                                    DeviceSize                   countBufferOffset,
+                                                                    uint32_t                     maxDrawCount,
+                                                                    uint32_t                     stride ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdDrawIndexedIndirectCount &amp;&amp;
+                         &quot;Function &lt;vkCmdDrawIndexedIndirectCount&gt; requires &lt;VK_AMD_draw_indirect_count&gt; or &lt;VK_KHR_draw_indirect_count&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdDrawIndexedIndirectCount( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                      static_cast&lt;VkBuffer&gt;( buffer ),
+                                                      static_cast&lt;VkDeviceSize&gt;( offset ),
+                                                      static_cast&lt;VkBuffer&gt;( countBuffer ),
+                                                      static_cast&lt;VkDeviceSize&gt;( countBufferOffset ),
+                                                      maxDrawCount,
+                                                      stride );
+    }
+
+    // wrapper function for command vkCreateRenderPass2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass2.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;RenderPass&gt;::type
+                         Device::createRenderPass2( RenderPassCreateInfo2 const &amp;       createInfo,
+                                 Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateRenderPass2 &amp;&amp; &quot;Function &lt;vkCreateRenderPass2&gt; requires &lt;VK_KHR_create_renderpass2&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::RenderPass renderPass;
+      Result                           result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateRenderPass2( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                 reinterpret_cast&lt;const VkRenderPassCreateInfo2 *&gt;( &amp;createInfo ),
+                                                                                 reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                                 reinterpret_cast&lt;VkRenderPass *&gt;( &amp;renderPass ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createRenderPass2&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, RenderPass( *this, *reinterpret_cast&lt;VkRenderPass *&gt;( &amp;renderPass ), allocator ) );
+    }
+
+    // wrapper function for command vkCmdBeginRenderPass2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginRenderPass2.html
+    VULKAN_HPP_INLINE void CommandBuffer::beginRenderPass2( const RenderPassBeginInfo &amp; renderPassBegin,
+                                                            const SubpassBeginInfo &amp;    subpassBeginInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdBeginRenderPass2 &amp;&amp;
+                         &quot;Function &lt;vkCmdBeginRenderPass2&gt; requires &lt;VK_KHR_create_renderpass2&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdBeginRenderPass2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                              reinterpret_cast&lt;const VkRenderPassBeginInfo *&gt;( &amp;renderPassBegin ),
+                                              reinterpret_cast&lt;const VkSubpassBeginInfo *&gt;( &amp;subpassBeginInfo ) );
+    }
+
+    // wrapper function for command vkCmdNextSubpass2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdNextSubpass2.html
+    VULKAN_HPP_INLINE void CommandBuffer::nextSubpass2( const SubpassBeginInfo &amp; subpassBeginInfo,
+                                                        const SubpassEndInfo &amp;   subpassEndInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdNextSubpass2 &amp;&amp; &quot;Function &lt;vkCmdNextSubpass2&gt; requires &lt;VK_KHR_create_renderpass2&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdNextSubpass2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                          reinterpret_cast&lt;const VkSubpassBeginInfo *&gt;( &amp;subpassBeginInfo ),
+                                          reinterpret_cast&lt;const VkSubpassEndInfo *&gt;( &amp;subpassEndInfo ) );
+    }
+
+    // wrapper function for command vkCmdEndRenderPass2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndRenderPass2.html
+    VULKAN_HPP_INLINE void CommandBuffer::endRenderPass2( const SubpassEndInfo &amp; subpassEndInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdEndRenderPass2 &amp;&amp; &quot;Function &lt;vkCmdEndRenderPass2&gt; requires &lt;VK_KHR_create_renderpass2&gt; or &lt;VK_VERSION_1_2&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdEndRenderPass2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkSubpassEndInfo *&gt;( &amp;subpassEndInfo ) );
+    }
+
+    //=== VK_VERSION_1_3 ===
+
+    // wrapper function for command vkGetPhysicalDeviceToolProperties, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceToolProperties.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;PhysicalDeviceToolProperties&gt;&gt;::type PhysicalDevice::getToolProperties() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPhysicalDeviceToolProperties &amp;&amp;
+                         &quot;Function &lt;vkGetPhysicalDeviceToolProperties&gt; requires &lt;VK_EXT_tooling_info&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      std::vector&lt;PhysicalDeviceToolProperties&gt; toolProperties;
+      uint32_t                                  toolCount;
+      Result                                    result;
+      do
+      {
+        result =
+          static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetPhysicalDeviceToolProperties( static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;toolCount, nullptr ) );
+        if ( ( result == Result::eSuccess ) &amp;&amp; toolCount )
+        {
+          toolProperties.resize( toolCount );
+          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetPhysicalDeviceToolProperties(
+            static_cast&lt;VkPhysicalDevice&gt;( m_physicalDevice ), &amp;toolCount, reinterpret_cast&lt;VkPhysicalDeviceToolProperties *&gt;( toolProperties.data() ) ) );
+        }
+      } while ( result == Result::eIncomplete );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::PhysicalDevice::getToolProperties&quot; );
+      VULKAN_HPP_ASSERT( toolCount &lt;= toolProperties.size() );
+      if ( toolCount &lt; toolProperties.size() )
+      {
+        toolProperties.resize( toolCount );
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( toolProperties ) );
+    }
+
+    // wrapper function for command vkCreatePrivateDataSlot, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePrivateDataSlot.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;PrivateDataSlot&gt;::type
+                         Device::createPrivateDataSlot( PrivateDataSlotCreateInfo const &amp;   createInfo,
+                                     Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreatePrivateDataSlot &amp;&amp; &quot;Function &lt;vkCreatePrivateDataSlot&gt; requires &lt;VK_EXT_private_data&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::PrivateDataSlot privateDataSlot;
+      Result                                result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreatePrivateDataSlot( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                     reinterpret_cast&lt;const VkPrivateDataSlotCreateInfo *&gt;( &amp;createInfo ),
+                                                                                     reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                                     reinterpret_cast&lt;VkPrivateDataSlot *&gt;( &amp;privateDataSlot ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createPrivateDataSlot&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType(
+        result, PrivateDataSlot( *this, *reinterpret_cast&lt;VkPrivateDataSlot *&gt;( &amp;privateDataSlot ), allocator ) );
+    }
+
+    // wrapper function for command vkSetPrivateData, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetPrivateData.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type
+      Device::setPrivateData( ObjectType objectType_, uint64_t objectHandle, VULKAN_HPP_NAMESPACE::PrivateDataSlot privateDataSlot, uint64_t data ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkSetPrivateData &amp;&amp; &quot;Function &lt;vkSetPrivateData&gt; requires &lt;VK_EXT_private_data&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkSetPrivateData(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkObjectType&gt;( objectType_ ), objectHandle, static_cast&lt;VkPrivateDataSlot&gt;( privateDataSlot ), data ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::setPrivateData&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkGetPrivateData, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPrivateData.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE uint64_t Device::getPrivateData( ObjectType                            objectType_,
+                                                                            uint64_t                              objectHandle,
+                                                                            VULKAN_HPP_NAMESPACE::PrivateDataSlot privateDataSlot ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetPrivateData &amp;&amp; &quot;Function &lt;vkGetPrivateData&gt; requires &lt;VK_EXT_private_data&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      uint64_t data;
+      getDispatcher()-&gt;vkGetPrivateData(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkObjectType&gt;( objectType_ ), objectHandle, static_cast&lt;VkPrivateDataSlot&gt;( privateDataSlot ), &amp;data );
+
+      return data;
+    }
+
+    // wrapper function for command vkCmdPipelineBarrier2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier2.html
+    VULKAN_HPP_INLINE void CommandBuffer::pipelineBarrier2( const DependencyInfo &amp; dependencyInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdPipelineBarrier2 &amp;&amp; &quot;Function &lt;vkCmdPipelineBarrier2&gt; requires &lt;VK_KHR_synchronization2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdPipelineBarrier2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkDependencyInfo *&gt;( &amp;dependencyInfo ) );
+    }
+
+    // wrapper function for command vkCmdWriteTimestamp2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWriteTimestamp2.html
+    VULKAN_HPP_INLINE void
+      CommandBuffer::writeTimestamp2( PipelineStageFlags2 stage, VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdWriteTimestamp2 &amp;&amp; &quot;Function &lt;vkCmdWriteTimestamp2&gt; requires &lt;VK_KHR_synchronization2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdWriteTimestamp2(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkPipelineStageFlags2&gt;( stage ), static_cast&lt;VkQueryPool&gt;( queryPool ), query );
+    }
+
+    // wrapper function for command vkQueueSubmit2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit2.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Queue::submit2( ArrayProxy&lt;const SubmitInfo2&gt; const &amp; submits,
+                                                                           VULKAN_HPP_NAMESPACE::Fence           fence ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkQueueSubmit2 &amp;&amp; &quot;Function &lt;vkQueueSubmit2&gt; requires &lt;VK_KHR_synchronization2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkQueueSubmit2(
+        static_cast&lt;VkQueue&gt;( m_queue ), submits.size(), reinterpret_cast&lt;const VkSubmitInfo2 *&gt;( submits.data() ), static_cast&lt;VkFence&gt;( fence ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Queue::submit2&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkCmdCopyBuffer2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer2.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyBuffer2( const CopyBufferInfo2 &amp; copyBufferInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyBuffer2 &amp;&amp; &quot;Function &lt;vkCmdCopyBuffer2&gt; requires &lt;VK_KHR_copy_commands2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyBuffer2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkCopyBufferInfo2 *&gt;( &amp;copyBufferInfo ) );
+    }
+
+    // wrapper function for command vkCmdCopyImage2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyImage2.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyImage2( const CopyImageInfo2 &amp; copyImageInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyImage2 &amp;&amp; &quot;Function &lt;vkCmdCopyImage2&gt; requires &lt;VK_KHR_copy_commands2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyImage2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkCopyImageInfo2 *&gt;( &amp;copyImageInfo ) );
+    }
+
+    // wrapper function for command vkCmdCopyBufferToImage2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage2.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyBufferToImage2( const CopyBufferToImageInfo2 &amp; copyBufferToImageInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyBufferToImage2 &amp;&amp;
+                         &quot;Function &lt;vkCmdCopyBufferToImage2&gt; requires &lt;VK_KHR_copy_commands2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyBufferToImage2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                reinterpret_cast&lt;const VkCopyBufferToImageInfo2 *&gt;( &amp;copyBufferToImageInfo ) );
+    }
+
+    // wrapper function for command vkCmdCopyImageToBuffer2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyImageToBuffer2.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyImageToBuffer2( const CopyImageToBufferInfo2 &amp; copyImageToBufferInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyImageToBuffer2 &amp;&amp;
+                         &quot;Function &lt;vkCmdCopyImageToBuffer2&gt; requires &lt;VK_KHR_copy_commands2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyImageToBuffer2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                reinterpret_cast&lt;const VkCopyImageToBufferInfo2 *&gt;( &amp;copyImageToBufferInfo ) );
+    }
+
+    // wrapper function for command vkGetDeviceBufferMemoryRequirements, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceBufferMemoryRequirements.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE MemoryRequirements2
+      Device::getBufferMemoryRequirements( const DeviceBufferMemoryRequirements &amp; info ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceBufferMemoryRequirements &amp;&amp;
+                         &quot;Function &lt;vkGetDeviceBufferMemoryRequirements&gt; requires &lt;VK_KHR_maintenance4&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      MemoryRequirements2 memoryRequirements;
+      getDispatcher()-&gt;vkGetDeviceBufferMemoryRequirements( static_cast&lt;VkDevice&gt;( m_device ),
+                                                            reinterpret_cast&lt;const VkDeviceBufferMemoryRequirements *&gt;( &amp;info ),
+                                                            reinterpret_cast&lt;VkMemoryRequirements2 *&gt;( &amp;memoryRequirements ) );
+
+      return memoryRequirements;
+    }
+
+    // wrapper function for command vkGetDeviceBufferMemoryRequirements, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceBufferMemoryRequirements.html
+    template &lt;typename X, typename Y, typename... Z&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE StructureChain&lt;X, Y, Z...&gt;
+                                           Device::getBufferMemoryRequirements( const DeviceBufferMemoryRequirements &amp; info ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceBufferMemoryRequirements &amp;&amp;
+                         &quot;Function &lt;vkGetDeviceBufferMemoryRequirements&gt; requires &lt;VK_KHR_maintenance4&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      StructureChain&lt;X, Y, Z...&gt; structureChain;
+      MemoryRequirements2 &amp;      memoryRequirements = structureChain.template get&lt;MemoryRequirements2&gt;();
+      getDispatcher()-&gt;vkGetDeviceBufferMemoryRequirements( static_cast&lt;VkDevice&gt;( m_device ),
+                                                            reinterpret_cast&lt;const VkDeviceBufferMemoryRequirements *&gt;( &amp;info ),
+                                                            reinterpret_cast&lt;VkMemoryRequirements2 *&gt;( &amp;memoryRequirements ) );
+
+      return structureChain;
+    }
+
+    // wrapper function for command vkGetDeviceImageMemoryRequirements, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceImageMemoryRequirements.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE MemoryRequirements2
+      Device::getImageMemoryRequirements( const DeviceImageMemoryRequirements &amp; info ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceImageMemoryRequirements &amp;&amp;
+                         &quot;Function &lt;vkGetDeviceImageMemoryRequirements&gt; requires &lt;VK_KHR_maintenance4&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      MemoryRequirements2 memoryRequirements;
+      getDispatcher()-&gt;vkGetDeviceImageMemoryRequirements( static_cast&lt;VkDevice&gt;( m_device ),
+                                                           reinterpret_cast&lt;const VkDeviceImageMemoryRequirements *&gt;( &amp;info ),
+                                                           reinterpret_cast&lt;VkMemoryRequirements2 *&gt;( &amp;memoryRequirements ) );
+
+      return memoryRequirements;
+    }
+
+    // wrapper function for command vkGetDeviceImageMemoryRequirements, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceImageMemoryRequirements.html
+    template &lt;typename X, typename Y, typename... Z&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE StructureChain&lt;X, Y, Z...&gt;
+                                           Device::getImageMemoryRequirements( const DeviceImageMemoryRequirements &amp; info ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceImageMemoryRequirements &amp;&amp;
+                         &quot;Function &lt;vkGetDeviceImageMemoryRequirements&gt; requires &lt;VK_KHR_maintenance4&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      StructureChain&lt;X, Y, Z...&gt; structureChain;
+      MemoryRequirements2 &amp;      memoryRequirements = structureChain.template get&lt;MemoryRequirements2&gt;();
+      getDispatcher()-&gt;vkGetDeviceImageMemoryRequirements( static_cast&lt;VkDevice&gt;( m_device ),
+                                                           reinterpret_cast&lt;const VkDeviceImageMemoryRequirements *&gt;( &amp;info ),
+                                                           reinterpret_cast&lt;VkMemoryRequirements2 *&gt;( &amp;memoryRequirements ) );
+
+      return structureChain;
+    }
+
+    // wrapper function for command vkGetDeviceImageSparseMemoryRequirements, see
+    // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceImageSparseMemoryRequirements.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE std::vector&lt;SparseImageMemoryRequirements2&gt;
+                                           Device::getImageSparseMemoryRequirements( const DeviceImageMemoryRequirements &amp; info ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetDeviceImageSparseMemoryRequirements &amp;&amp;
+                         &quot;Function &lt;vkGetDeviceImageSparseMemoryRequirements&gt; requires &lt;VK_KHR_maintenance4&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      std::vector&lt;SparseImageMemoryRequirements2&gt; sparseMemoryRequirements;
+      uint32_t                                    sparseMemoryRequirementCount;
+      getDispatcher()-&gt;vkGetDeviceImageSparseMemoryRequirements(
+        static_cast&lt;VkDevice&gt;( m_device ), reinterpret_cast&lt;const VkDeviceImageMemoryRequirements *&gt;( &amp;info ), &amp;sparseMemoryRequirementCount, nullptr );
+      sparseMemoryRequirements.resize( sparseMemoryRequirementCount );
+      getDispatcher()-&gt;vkGetDeviceImageSparseMemoryRequirements( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                 reinterpret_cast&lt;const VkDeviceImageMemoryRequirements *&gt;( &amp;info ),
+                                                                 &amp;sparseMemoryRequirementCount,
+                                                                 reinterpret_cast&lt;VkSparseImageMemoryRequirements2 *&gt;( sparseMemoryRequirements.data() ) );
+
+      VULKAN_HPP_ASSERT( sparseMemoryRequirementCount &lt;= sparseMemoryRequirements.size() );
+      if ( sparseMemoryRequirementCount &lt; sparseMemoryRequirements.size() )
+      {
+        sparseMemoryRequirements.resize( sparseMemoryRequirementCount );
+      }
+      return sparseMemoryRequirements;
+    }
+
+    // wrapper function for command vkCmdSetEvent2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetEvent2.html
+    VULKAN_HPP_INLINE void CommandBuffer::setEvent2( VULKAN_HPP_NAMESPACE::Event event, const DependencyInfo &amp; dependencyInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdSetEvent2 &amp;&amp; &quot;Function &lt;vkCmdSetEvent2&gt; requires &lt;VK_KHR_synchronization2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdSetEvent2(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkEvent&gt;( event ), reinterpret_cast&lt;const VkDependencyInfo *&gt;( &amp;dependencyInfo ) );
+    }
+
+    // wrapper function for command vkCmdResetEvent2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResetEvent2.html
+    VULKAN_HPP_INLINE void CommandBuffer::resetEvent2( VULKAN_HPP_NAMESPACE::Event event, PipelineStageFlags2 stageMask ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdResetEvent2 &amp;&amp; &quot;Function &lt;vkCmdResetEvent2&gt; requires &lt;VK_KHR_synchronization2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdResetEvent2(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkEvent&gt;( event ), static_cast&lt;VkPipelineStageFlags2&gt;( stageMask ) );
+    }
+
+    // wrapper function for command vkCmdWaitEvents2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWaitEvents2.html
+    VULKAN_HPP_INLINE void CommandBuffer::waitEvents2( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Event&gt; const &amp; events,
+                                                       ArrayProxy&lt;const DependencyInfo&gt; const &amp;              dependencyInfos ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdWaitEvents2 &amp;&amp; &quot;Function &lt;vkCmdWaitEvents2&gt; requires &lt;VK_KHR_synchronization2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+#  ifdef VULKAN_HPP_NO_EXCEPTIONS
+      VULKAN_HPP_ASSERT( events.size() == dependencyInfos.size() );
+#  else
+      if ( events.size() != dependencyInfos.size() )
+      {
+        throw LogicError( VULKAN_HPP_NAMESPACE_STRING &quot;::CommandBuffer::waitEvents2: events.size() != dependencyInfos.size()&quot; );
+      }
+#  endif /*VULKAN_HPP_NO_EXCEPTIONS*/
+
+      getDispatcher()-&gt;vkCmdWaitEvents2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                         events.size(),
+                                         reinterpret_cast&lt;const VkEvent *&gt;( events.data() ),
+                                         reinterpret_cast&lt;const VkDependencyInfo *&gt;( dependencyInfos.data() ) );
+    }
+
+    // wrapper function for command vkCmdBlitImage2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBlitImage2.html
+    VULKAN_HPP_INLINE void CommandBuffer::blitImage2( const BlitImageInfo2 &amp; blitImageInfo ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdBlitImage2 &amp;&amp; &quot;Function &lt;vkCmdBlitImage2&gt; requires &lt;VK_KHR_copy_commands2&gt; or &lt;VK_VERSION_1_3&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdBlitImage2( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), reinterpret_cast&lt;const VkBlitImageInfo2 *&gt;( &amp;blitImageInfo ) );
+    }
+
+    // wrapper function for command vkCmdResolveImage2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResolveImage2.html
+    VULKAN_HPP_INLINE void CommandBuffer::resolveImage2( const ResolveImageInfo2 &amp; resolveImageInfo ) const VULKAN_HPP_NOEXCEPT</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-39.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-41.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

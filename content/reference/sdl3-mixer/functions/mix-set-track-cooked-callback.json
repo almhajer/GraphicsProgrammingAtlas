@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_SetTrackCookedCallback",
+    "slug": "mix-set-track-cooked-callback",
+    "titleArabic": "Set a callback that fires when the mixer has transformed a track's\naudio",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-set-track-cooked-callback",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-set-track-cooked-callback.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Set a callback that fires when the mixer has transformed a track's\naudio",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل MIX Set Track Cooked Callback داخل SDL3_mixer، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل MIX Set Track Cooked Callback داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Set a callback that fires when the mixer has transformed a track's\naudio."
+  },
+  "signature": {
+    "raw": "bool MIX_SetTrackCookedCallback(MIX_Track *track, MIX_TrackMixCallback cb, void *userdata);",
+    "returnType": "bool",
+    "parameters": [
+      "MIX_Track *track",
+      "MIX_TrackMixCallback cb",
+      "void *userdata"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "track",
+        "type": "MIX_Track *",
+        "descriptionArabic": "يمثل المعامل track من النوع MIX_Track * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the track to assign this callback to."
+      },
+      {
+        "name": "cb",
+        "type": "MIX_TrackMixCallback",
+        "descriptionArabic": "يمثل المعامل cb من النوع MIX_TrackMixCallback القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the function to call when the track mixes. May be NULL."
+      },
+      {
+        "name": "userdata",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل userdata من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "an opaque pointer provided to the callback for its own personal\nuse."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "As a track needs to mix more data, it pulls from its input (a MIX_Audio , an SDL_AudioStream, etc). This\ninput might be a compressed file format, like MP3, so a little more data\nis uncompressed from it.",
+      "Once the track has PCM data to start operating on, and its raw\ncallback has completed, it will begin to transform the audio: gain,\nfading, frequency ratio, 3D positioning, etc.",
+      "A callback can be fired after all these transformations, but before\nthe transformed data is mixed into other tracks. This lets an app view\nthe data at the last moment that it is still a part of this track. It\ncan also change the data in any way it pleases during this callback, and\nthe mixer will continue as if this data came directly from the\ninput.",
+      "Each track has its own unique cooked callback.",
+      "Passing a NULL callback here is legal; it disables this track's\ncallback."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "يعيد true عند النجاح وfalse عند الفشل؛ استخدم SDL_GetError لمعرفة السبب.",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_SetTrackCookedCallback",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_TrackMixCallback",
+        "route": "#ref/sdl3-mixer/types/mix-track-mix-callback",
+        "libraryId": "sdl3-mixer",
+        "kindId": "types"
+      },
+      {
+        "name": "MIX_SetTrackRawCallback",
+        "route": "#ref/sdl3-mixer/functions/mix-set-track-raw-callback",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_CreateGPUShader",
+    "slug": "sdl-create-gpu-shader",
+    "titleArabic": "Creates a shader to be used when creating a graphics pipeline",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-create-gpu-shader",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-create-gpu-shader.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Creates a shader to be used when creating a graphics pipeline",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Create GPU المظلل داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Create GPU المظلل داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_GPUShader *) Returns a shader\nobject on success, or NULL on failure; call SDL_GetError () for more information. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Creates a shader to be used when creating a graphics pipeline."
+  },
+  "signature": {
+    "raw": "SDL_GPUShader * SDL_CreateGPUShader(\n SDL_GPUDevice *device,\n const SDL_GPUShaderCreateInfo *createinfo);",
+    "returnType": "SDL_GPUShader *",
+    "parameters": [
+      "SDL_GPUDevice *device",
+      "const SDL_GPUShaderCreateInfo *createinfo"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_gpu.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "device",
+        "type": "SDL_GPUDevice *",
+        "descriptionArabic": "يمثل المعامل device من النوع SDL_GPUDevice * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a GPU Context."
+      },
+      {
+        "name": "createinfo",
+        "type": "const SDL_GPUShaderCreateInfo *",
+        "descriptionArabic": "يمثل المعامل createinfo من النوع const SDL_GPUShaderCreateInfo * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a struct describing the state of the shader to create."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Shader resource bindings must be authored to follow a particular\norder depending on the shader format.",
+      "For SPIR-V shaders, use the following resource sets:",
+      "For vertex shaders:",
+      "0: Sampled textures, followed by storage textures, followed by\nstorage buffers",
+      "1: Uniform buffers",
+      "For fragment shaders:",
+      "2: Sampled textures, followed by storage textures, followed by\nstorage buffers",
+      "3: Uniform buffers",
+      "For DXBC and DXIL shaders, use the following register order:",
+      "(t[n], space0): Sampled textures, followed by storage textures,\nfollowed by storage buffers",
+      "(s[n], space0): Samplers with indices corresponding to the sampled\ntextures",
+      "(b[n], space1): Uniform buffers",
+      "For pixel shaders:",
+      "(t[n], space2): Sampled textures, followed by storage textures,\nfollowed by storage buffers",
+      "(s[n], space2): Samplers with indices corresponding to the sampled\ntextures",
+      "(b[n], space3): Uniform buffers",
+      "For MSL/metallib, use the following order:",
+      "[[texture]]: Sampled textures, followed by storage textures",
+      "[[sampler]]: Samplers with indices corresponding to the sampled\ntextures",
+      "[[buffer]]: Uniform buffers, followed by storage buffers. Vertex\nbuffer 0 is bound at [[buffer(14)]], vertex buffer 1 at [[buffer(15)]],\nand so on. Rather than manually authoring vertex buffer indices, use the\n[[stage_in]] attribute which will automatically use the vertex input\ninformation from the SDL_GPUGraphicsPipeline .",
+      "Shader semantics other than system-value semantics do not matter in\nD3D12 and for ease of use the SDL implementation assumes that non\nsystem-value semantics will all be TEXCOORD. If you are using HLSL as\nthe shader source language, your vertex semantics should start at\nTEXCOORD0 and increment like so: TEXCOORD1, TEXCOORD2, etc. If you wish\nto change the semantic prefix to something other than TEXCOORD you can\nuse SDL_PROP_GPU_DEVICE_CREATE_D3D12_SEMANTIC_NAME_STRING\nwith SDL_CreateGPUDeviceWithProperties ().",
+      "There are optional properties that can be provided through\n props . These are the supported properties:",
+      "SDL_PROP_GPU_SHADER_CREATE_NAME_STRING :\na name that can be displayed in debugging tools."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_GPUShader *) Returns a shader\nobject on success, or NULL on failure; call SDL_GetError () for more information.",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_CreateGPUShader",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_CreateGPUGraphicsPipeline",
+        "route": "#ref/sdl3-core/functions/sdl-create-gpu-graphics-pipeline",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_ReleaseGPUShader",
+        "route": "#ref/sdl3-core/functions/sdl-release-gpu-shader",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "3D Rendering and GPU Compute",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

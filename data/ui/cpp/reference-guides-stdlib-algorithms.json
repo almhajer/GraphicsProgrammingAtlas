@@ -1,0 +1,172 @@
+{
+  "referenceGuides": {
+    "cpp-algorithms": {
+      "fullProjectNoteArabic": "خوارزميات `<algorithm>` و`<numeric>` هي مجموعة أدوات جاهزة تُنفّذ عمليات شائعة على النطاقات (ranges): بحث، ترتيب، تحويل، فلترة، تجميع، وغيرها. فائدتها ليست فقط توفير الوقت — بل توحيد الأسلوب. بدل كتابة حلقة for يدوية لكل عملية، تستدعي دالة واحدة بتوقيع موحد. هذا يجعل الكود أقصر، أقل عرضة للأخطاء، وأسهل في القراءة. كل خوارزمية تأخذ مكرّرات (begin/end) كمعاملات — لذلك تعمل مع أي حاوية توفر مكرّرات: vector، array، list، deque، وحتى المصفوفات الخام.",
+      "projectStepsArabic": [
+        {
+          "titleArabic": "كيف تعمل الخوارزميات؟ المكرّرات هي المفتاح",
+          "contentArabic": "كل خوارزمية في STL لا تعرف نوع الحاوية التي تعمل عليها. هي تعمل عبر مكرّرات (iterators): مؤشرات عامة تتحرك بين العناصر. v.begin() يُرجع مكرّر لأول عنصر وv.end() يُرجع مكرّر بعد الأخير. هذا يعني أن std::sort يعمل بنفس الطريقة مع vector وarray ومصفوفة خام — لأنها كلها توفر begin/end. الفهم الأساسي: الخوارزمية لا تملك البيانات، بل تُمرّ عليها عبر المكرّرات."
+        },
+        {
+          "titleArabic": "التصنيف الأساسي: ماذا تريد أن تفعل؟",
+          "contentArabic": "البحث: find، find_if، binary_search، lower_bound — لإيجاد عنصر. الفحص: any_of، all_of، none_of، count، count_if — للتحقق من شرط. التعديل: transform، replace، replace_if، fill، generate — لتغيير العناصر. إعادة الترتيب: sort، reverse， rotate، shuffle، partition — لتغيير ترتيب العناصر. الحذف: remove_if، unique — لنقل العناصر غير المرغوبة (تحتاج erase بعدها). التجميع: accumulate، inner_product، partial_sum — لتقليل النطاق لقيمة واحدة."
+        },
+        {
+          "titleArabic": "نمط remove + erase: لماذا remove وحده لا يكفي",
+          "contentArabic": "remove_if لا تُغيّر حجم الحاوية — هي تنقل العناصر المطلوبة للأمام وتُرجع مكرر نهاية النطاق الجديد. العناصر بعد المكرر لا تزال موجودة لكنها 'قمامة'. لذلك يجب دائمًا استدعاء erase بعد remove_if: v.erase(remove_if(...), v.end()). هذا النمط يُسمى erase-remove idiom وهو من أكثر الأنماط شيوعًا في C++."
+        },
+        {
+          "titleArabic": "الفرق بين in-place ونسخة: كل خوارزمية لها نسخة _copy",
+          "contentArabic": "معظم الخوارزميات تُعدّل النطاق في مكانه (in-place): sort، reverse، replace، remove. لكل منها نسخة _copy تكتب النتيجة في نطاق آخر دون تعديل الأصل: reverse_copy، replace_copy، remove_copy_if. استخدم النسخة الأصلية عندما تريد التعديل الفعلي، والنسخة _copy عندما تحتاج الأصل كما هو."
+        }
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "sort — الترتيب الأساسي",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 2, 8, 1, 9, 3};\n\n    // ترتيب تصاعدي — الافتراضي\n    std::sort(v.begin(), v.end());\n    // v = {1, 2, 3, 5, 8, 9}\n\n    // ترتيب تنازلي بمقارنة lambda\n    std::sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n    // v = {9, 8, 5, 3, 2, 1}\n\n    for (int x : v) std::cout << x << ' ';\n    return 0;\n}",
+          "explanationArabic": "sort هو الخوارزمية الأكثر استخدامًا. تعقيدها O(n log n) وهي تُرتّب في المكان (لا حاوية جديدة). المقارنة المخصصة تُحدد معنى 'أولى': return a > b يعني 'الأكبر يأتي أولًا'. بدون مقارنة، تستخدم operator< الافتراضي.",
+          "relatedTokens": [
+            "std::sort",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "find و find_if — البحث في نطاق",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 25, 30, 45, 50};\n\n    // find: يبحث عن قيمة محددة — O(n)\n    auto it = std::find(v.begin(), v.end(), 30);\n    if (it != v.end()) {\n        std::cout << \"وُجد في الموضع: \" << (it - v.begin()) << '\\n'; // 2\n    }\n\n    // find_if: يبحث بشرط مخصص\n    auto it2 = std::find_if(v.begin(), v.end(), [](int x) {\n        return x > 40;\n    });\n    if (it2 != v.end()) {\n        std::cout << \"أول عنصر > 40: \" << *it2 << '\\n'; // 45\n    }\n\n    return 0;\n}",
+          "explanationArabic": "find يبحث بقيمة، find_if يبحث بشرط. كلاهما O(n) — يفحصان عنصرًا عنصرًا. يُرجعان end() إذا لم يُجدا شيئًا. مع الحاويات المرتبة (set، map) استخدم member find() لأنه O(log n). find_if أنفع عندما تبحث بحسب خاصية مثل 'أول عنصر أكبر من 40'.",
+          "relatedTokens": [
+            "std::find",
+            "std::find_if",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "binary_search و lower_bound — بحث سريع في نطاق مرتب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    // يجب أن يكون النطاق مرتبًا مسبقًا!\n    std::vector<int> v = {1, 3, 5, 7, 9, 11, 13};\n\n    // binary_search: يُرجع true/false فقط — O(log n)\n    bool exists = std::binary_search(v.begin(), v.end(), 7);\n    std::cout << \"7 موجودة: \" << exists << '\\n'; // 1 (true)\n\n    // lower_bound: يُرجع مكرر لأول عنصر >= القيمة\n    auto it = std::lower_bound(v.begin(), v.end(), 6);\n    // it يشير لـ 7 (أول عنصر >= 6)\n    std::cout << \"أول عنصر >= 6: \" << *it << '\\n';\n\n    // استخدام عملي: إدراج مع الحفاظ على الترتيب\n    v.insert(it, 6);\n    // v = {1, 3, 5, 6, 7, 9, 11, 13}\n\n    for (int x : v) std::cout << x << ' ';\n    return 0;\n}",
+          "explanationArabic": "binary_search يُرجع فقط 'موجود أو لا'. lower_bound يُرجع المكرر — أنفع لأنه يُعطيك الموضع. upper_bound يُرجع أول عنصر أكبر (لا يساوي). الفرق بين lower وupper مهم مع العناصر المكررة. هذه الخوارزميات تتطلب ترتيبًا مسبقًا — على نطاق غير مرتب النتيجة غير صحيحة.",
+          "relatedTokens": [
+            "std::binary_search",
+            "std::lower_bound",
+            "std::upper_bound",
+            "std::sort"
+          ]
+        },
+        {
+          "titleArabic": "count و count_if — عدّ العناصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, -2, 3, -4, 5, -6, 7};\n\n    // count: عدّ القيم المساوية\n    int negatives = std::count(v.begin(), v.end(), -2);\n    std::cout << \"عدد -2: \" << negatives << '\\n'; // 1\n\n    // count_if: عدّ العناصر التي تحقّق شرطًا\n    int neg_count = std::count_if(v.begin(), v.end(), [](int x) {\n        return x < 0;\n    });\n    std::cout << \"عدد السالبات: \" << neg_count << '\\n'; // 3\n\n    return 0;\n}",
+          "explanationArabic": "count يعدّ بالقيمة، count_if يعدّ بالشرط. كلاهما O(n). count_if أنفع في أغلب الحالات لأنك عادةً تريد عدّ بحسب خاصية لا بحسب قيمة واحدة. إذا أردت فقط معرفة 'هل يوجد عنصر يحقق الشرط' فاستخدم any_of — أسرع لأنه يتوقف عند أول تطابق.",
+          "relatedTokens": [
+            "std::count",
+            "std::count_if",
+            "std::any_of"
+          ]
+        },
+        {
+          "titleArabic": "transform — تحويل عناصر النطاق",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n\n    // تحويل في المكان: ضرب كل عنصر في 2\n    std::transform(v.begin(), v.end(), v.begin(), [](int x) {\n        return x * 2;\n    });\n    // v = {2, 4, 6, 8, 10}\n\n    // تحويل إلى حاوية أخرى\n    std::vector<int> squares;\n    std::transform(v.begin(), v.end(), std::back_inserter(squares), [](int x) {\n        return x * x;\n    });\n    // squares = {4, 16, 36, 64, 100}\n\n    for (int x : squares) std::cout << x << ' ';\n    return 0;\n}",
+          "explanationArabic": "transform تُطبق دالة على كل عنصر وتكتب النتيجة. عندما يكون الإدخال والإخراج نفس النطاق، التعديل يكون في المكان. مع back_inserter تُبني حاوية جديدة. transform مع نطاقين يأخذ عنصرًا من كل نطاق (مثل جمع متجهين عنصرًا بعنصر).",
+          "relatedTokens": [
+            "std::transform",
+            "std::back_inserter",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "accumulate — تجميع عناصر النطاق لقيمة واحدة",
+          "code": "#include <numeric>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40};\n\n    // جمع بسيط — القيمة الأولية 0 تحدد نوع النتيجة (int)\n    int sum = std::accumulate(v.begin(), v.end(), 0);\n    std::cout << \"المجموع: \" << sum << '\\n'; // 100\n\n    // جمع حقول من بنية\n    struct Item { std::string name; int price; };\n    std::vector<Item> cart = {{\"كتاب\", 30}, {\"قلم\", 5}, {\"دفتر\", 15}};\n    int total = std::accumulate(cart.begin(), cart.end(), 0,\n        [](int s, const Item& i) { return s + i.price; });\n    std::cout << \"الإجمالي: \" << total << '\\n'; // 50\n\n    // ضرب كل العناصر\n    int product = std::accumulate(v.begin(), v.end(), 1, std::multiplies<>());\n    std::cout << \"الجداء: \" << product << '\\n'; // 240000\n\n    return 0;\n}",
+          "explanationArabic": "accumulate يبدأ من قيمة أولية ويجمع كل عنصر. القيمة الأولية تحدد النوع: 0 → int، 0.0 → double، \"\" → string. مع lambda مخصص يمكن التجميع بأي عملية (ضرب، دمج نصوص، جمع حقول). البديل الأحدث في C++17 هو std::reduce لكن accumulate يبقى الأكثر استخدامًا.",
+          "relatedTokens": [
+            "std::accumulate",
+            "std::multiplies",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "remove_if + erase — حذف عناصر بشروط",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, -2, 3, -4, 5, -6, 7};\n\n    // ❌ remove_if وحده لا يُغيّر الحجم!\n    // auto new_end = std::remove_if(v.begin(), v.end(), [](int x) { return x < 0; });\n    // v.size() لا تزال 7\n\n    // ✅ النمط الصحيح: erase-remove idiom\n    v.erase(\n        std::remove_if(v.begin(), v.end(), [](int x) { return x < 0; }),\n        v.end()\n    );\n    // v = {1, 3, 5, 7} — الحجم الآن 4\n\n    for (int x : v) std::cout << x << ' ';\n    return 0;\n}",
+          "explanationArabic": "remove_if تنقل العناصر المطلوبة للأمام وتُرجع مكرر 'نهاية جديدة'. العناصر بين المكرّر وend() هي قيم قديمة (قمامة) لكن size() لم يتغير. erase تأخذ المكرر وend() وتُزيل كل شيء بينهما. هذا النمط شائع جدًا في C++ — تذكّره كوحدة واحدة. في C++20 std::erase_if تبسّط هذا إلى استدعاء واحد.",
+          "relatedTokens": [
+            "std::remove_if",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "reverse و rotate — تغيير الترتيب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n\n    // reverse: عكس الترتيب بالكامل\n    std::reverse(v.begin(), v.end());\n    // v = {5, 4, 3, 2, 1}\n\n    // rotate: يدور بحيث يصبح العنصر المحدد أولًا\n    // هنا العنصر في الموضع 2 (وهو 3) يصبح الأول\n    std::rotate(v.begin(), v.begin() + 2, v.end());\n    // v = {3, 2, 1, 5, 4}\n\n    for (int x : v) std::cout << x << ' ';\n    return 0;\n}",
+          "explanationArabic": "reverse تعكس كل العناصر. rotate تأخذ ثلاثة مكرّرات: بداية النطاق، العنصر الذي تريده أولًا، ونهاية النطاق. كل شيء قبل العنصر المحدد ينتقل للنهاية. rotate شائع في قوائم الانتظار الدائرية ومعالجة البيانات على دفعات.",
+          "relatedTokens": [
+            "std::reverse",
+            "std::rotate",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "any_of و all_of و none_of — فحص شروط",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {2, 4, 6, 8, 10};\n\n    // any_of: هل أي عنصر يحقق الشرط؟ (يتوقف عند الأول)\n    bool has_odd = std::any_of(v.begin(), v.end(), [](int x) {\n        return x % 2 != 0;\n    });\n    std::cout << \"يوجد فردي: \" << has_odd << '\\n'; // 0 (false)\n\n    // all_of: هل كل العناصر تُحقق الشرط؟ (يتوقف عند الأول الفاشل)\n    bool all_even = std::all_of(v.begin(), v.end(), [](int x) {\n        return x % 2 == 0;\n    });\n    std::cout << \"كلها زوجية: \" << all_even << '\\n'; // 1 (true)\n\n    // none_of: هل لا يوجد عنصر يُحقق الشرط؟\n    bool no_negative = std::none_of(v.begin(), v.end(), [](int x) {\n        return x < 0;\n    });\n    std::cout << \"لا سالبات: \" << no_negative << '\\n'; // 1 (true)\n\n    return 0;\n}",
+          "explanationArabic": "الثلاثة أنظف من count_if > 0 أو count_if == size لأنها تتوقف مبكرًا عند أول نتيجة حاسمة. any_of تتوقف عند أول true. all_of تتوقف عند أول false. none_of تتوقف عند أول true. هذا يُوفّر وقتًا على النطاقات الكبيرة. استخدمها عندما تحتاج نتيجة boolean فقط لا العدد الفعلي.",
+          "relatedTokens": [
+            "std::any_of",
+            "std::all_of",
+            "std::none_of",
+            "std::count_if"
+          ]
+        },
+        {
+          "titleArabic": "fill و generate و iota — ملء النطاق",
+          "code": "#include <algorithm>\n#include <numeric>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v(5);\n\n    // fill: ملء كل العناصر بقيمة واحدة\n    std::fill(v.begin(), v.end(), 42);\n    // v = {42, 42, 42, 42, 42}\n\n    // generate: ملء بدالة تُستدعى لكل عنصر\n    int counter = 0;\n    std::generate(v.begin(), v.end(), [&counter]() { return counter += 10; });\n    // v = {10, 20, 30, 40, 50}\n\n    // iota: ملء بقيم متزايدة (0, 1, 2, ...)\n    std::iota(v.begin(), v.end(), 100);\n    // v = {100, 101, 102, 103, 104}\n\n    for (int x : v) std::cout << x << ' ';\n    return 0;\n}",
+          "explanationArabic": "fill لقيمة ثابتة. generate لقيم من دالة (مثل أعداد عشوائية أو تسلسل مخصص). iota لترقيم متسلسل بدءًا من قيمة. iota أنظف من generate مع عداد لأنها مبنية خصيصًا لهذا الغرض. الثلاثة تعمل في المكان — تحتاج أن يكون النطاق موجودًا بالفعل.",
+          "relatedTokens": [
+            "std::fill",
+            "std::generate",
+            "std::iota",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "min_element و max_element — إيجاد الأصغر والأكبر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {40, 10, 70, 20, 50};\n\n    // تُرجع مكرّر لا قيمة — تحقق من النطاق الفارغ أولًا!\n    auto min_it = std::min_element(v.begin(), v.end());\n    auto max_it = std::max_element(v.begin(), v.end());\n    std::cout << \"الأصغر: \" << *min_it << \" في الموضع \" << (min_it - v.begin()) << '\\n';\n    std::cout << \"الأكبر: \" << *max_it << '\\n';\n\n    // مع مقارنة مخصصة: أقصر نص\n    std::vector<std::string> words = {\"banana\", \"apple\", \"cherry\"};\n    auto shortest = std::min_element(words.begin(), words.end(),\n        [](const std::string& a, const std::string& b) { return a.size() < b.size(); });\n    std::cout << \"الأقصر: \" << *shortest << '\\n'; // apple\n\n    return 0;\n}",
+          "explanationArabic": "min_element وmax_element يُرجعان مكرّرات لا قيمًا. *it تحصل على القيمة، it - v.begin() تحصل على الموضع. على نطاق فارغ يُرجعان end() — فك المكرّر في هذه الحالة سلوك غير معرّف. مع مقارنة مخصصة يمكنك البحث بحسب أي خاصية (طول، وزن، نتيجة).",
+          "relatedTokens": [
+            "std::min_element",
+            "std::max_element",
+            "std::minmax_element"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: binary_search على نطاق غير مرتب",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 1, 3, 2, 4}; // غير مرتب!\n\n    // ❌ النتيجة غير مضمونة — قد يُرجع true أو false خطأ\n    bool wrong = std::binary_search(v.begin(), v.end(), 3);\n    std::cout << \"نتيجة خاطئة: \" << wrong << '\\n';\n\n    // ✅ رتّب أولًا ثم ابحث\n    std::sort(v.begin(), v.end());\n    bool correct = std::binary_search(v.begin(), v.end(), 3);\n    std::cout << \"نتيجة صحيحة: \" << correct << '\\n'; // 1 (true)\n\n    // ✅ أو استخدم find إذا لم تُرد ترتيب النطاق\n    auto it = std::find(v.begin(), v.end(), 3);\n    // find يعمل على أي ترتيب لكنه O(n) بدل O(log n)\n\n    return 0;\n}",
+          "explanationArabic": "binary_search، lower_bound، upper_bound كلها تفترض نطاقًا مرتبًا. على نطاق غير مرتب النتيجة سلوك غير معرّف — قد تعطي إجابة خاطئة دون أي تحذير. إذا كان النطاق غير مرتب: إمّا رتّبه أولًا ثم استخدم البحث الثنائي، أو استخدم find/find_if (أبطأ لكن يعمل دائمًا). القاعدة: لا تستخدم binary_search إلا إذا أنت متأكد أن النطاق مرتب.",
+          "relatedTokens": [
+            "std::binary_search",
+            "std::sort",
+            "std::find"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::sort",
+        "std::find",
+        "std::find_if",
+        "std::binary_search",
+        "std::lower_bound",
+        "std::upper_bound",
+        "std::count",
+        "std::count_if",
+        "std::transform",
+        "std::accumulate",
+        "std::remove_if",
+        "std::reverse",
+        "std::rotate",
+        "std::any_of",
+        "std::all_of",
+        "std::none_of",
+        "std::fill",
+        "std::generate",
+        "std::iota",
+        "std::min_element",
+        "std::max_element",
+        "std::back_inserter"
+      ]
+    }
+  }
+}

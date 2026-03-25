@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_GL_GetProcAddress",
+    "slug": "sdl-gl-get-proc-address",
+    "titleArabic": "جلب OpenGL function name",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-gl-get-proc-address",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-gl-get-proc-address.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "جلب OpenGL function name",
+    "actualMeaningArabic": "جلب OpenGL function name.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى جلب OpenGL function name داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه ( SDL_FunctionPointer ) Returns\na pointer to the named OpenGL function. The returned pointer should be\ncast to the appropriate function signature. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Get an OpenGL function by name."
+  },
+  "signature": {
+    "raw": "SDL_FunctionPointer SDL_GL_GetProcAddress(const char *proc);",
+    "returnType": "SDL_FunctionPointer",
+    "parameters": [
+      "const char *proc"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_video.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "proc",
+        "type": "const char *",
+        "descriptionArabic": "يمثل المعامل proc من النوع const char * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the name of an OpenGL function."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "If the GL library is loaded at runtime with SDL_GL_LoadLibrary (), then all GL\nfunctions must be retrieved this way. Usually this is used to retrieve\nfunction pointers to OpenGL extensions.",
+      "There are some quirks to looking up OpenGL functions that require\nsome extra care from the application. If you code carefully, you can\nhandle these quirks without any platform-specific code, though:",
+      "On Windows, function pointers are specific to the current GL\ncontext; this means you need to have created a GL context and made it\ncurrent before calling SDL_GL_GetProcAddress (). If you\nrecreate your context or create a second context, you should assume that\nany existing function pointers aren't valid to use with it. This is\n(currently) a Windows-specific limitation, and in practice lots of\ndrivers don't suffer this limitation, but it is still the way the wgl\nAPI is documented to work and you should expect crashes if you don't\nrespect it. Store a copy of the function pointers that comes and goes\nwith context lifespan.",
+      "On X11, function pointers returned by this function are valid for\nany context, and can even be looked up before a context is created at\nall. This means that, for at least some common OpenGL implementations,\nif you look up a function that doesn't exist, you'll get a non-NULL\nresult that is NOT safe to call. You must always make sure the\nfunction is actually available for a given GL context before calling it,\nby checking for the existence of the appropriate extension with SDL_GL_ExtensionSupported (),\nor verifying that the version of OpenGL you're using offers the function\nas core functionality.",
+      "Some OpenGL drivers, on all platforms, will return NULL if\na function isn't supported, but you can't count on this behavior. Check\nfor extensions you use, and if you get a NULL anyway, act as if that\nextension wasn't available. This is probably a bug in the driver, but\nyou can code defensively for this scenario anyhow.",
+      "Just because you're on Linux/Unix, don't assume you'll be using X11.\nNext-gen display servers are waiting to replace it, and may or may not\nmake the same promises about function pointers.",
+      "OpenGL function pointers must be declared APIENTRY as\nin the example code. This will ensure the proper calling convention is\nfollowed on platforms where this matters (Win32) thereby avoiding stack\ncorruption."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "( SDL_FunctionPointer ) Returns\na pointer to the named OpenGL function. The returned pointer should be\ncast to the appropriate function signature.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_GL_GetProcAddress",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_GL_ExtensionSupported",
+        "route": "#ref/sdl3-core/functions/sdl-gl-extension-supported",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GL_LoadLibrary",
+        "route": "#ref/sdl3-core/functions/sdl-gl-load-library",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_GL_UnloadLibrary",
+        "route": "#ref/sdl3-core/functions/sdl-gl-unload-library",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Display and Window Management",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

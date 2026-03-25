@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "types",
+    "displayName": "Types",
+    "displayNameArabic": "الأنواع",
+    "description": "أنواع مجردة أو صريحة تحمل معنى دلالياً وتظهر في التواقيع والبنى."
+  },
+  "identity": {
+    "name": "SDL_IOStreamInterface",
+    "slug": "sdl-io-stream-interface",
+    "titleArabic": "The function pointers that drive an SDL_IOStream",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/types/sdl-io-stream-interface",
+    "contentPath": "content/reference/sdl3-core/types/sdl-io-stream-interface.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "The function pointers that drive an SDL_IOStream",
+    "actualMeaningArabic": "يمثل هذا النوع نوع SDL IO الدفق Interface، أي القيمة أو المقبض أو المؤشر الذي تتعامل معه بقية الواجهة في هذا السياق.",
+    "purposeArabic": "يستخدم هذا النوع عندما تحتاج القيمة أو المقبض أو المؤشر الذي يمثله داخل بقية الواجهة.",
+    "whyUseArabic": "القيمة الحقيقية هنا أنه يمثل نوع القيمة التي تتداولها بقية الواجهة بين الحقول والدوال.",
+    "carriedValueArabic": "يحمل هذا النوع القيمة الفعلية أو المقبض أو المؤشر الذي تمرره بقية الدوال والحقول في هذا المسار.",
+    "sourceDescription": "The function pointers that drive an SDL_IOStream ."
+  },
+  "signature": {
+    "raw": "typedef struct SDL_IOStreamInterface\n{\n /* The version of this interface */\n Uint32 version;\n\n /**\n * Return the number of bytes in this SDL_IOStream\n *\n * \\return the total size of the data stream, or -1 on error.\n */\n Sint64 (SDLCALL *size)(void *userdata);\n\n /**\n * Seek to `offset` relative to `whence`, one of stdio's whence values:\n * SDL_IO_SEEK_SET, SDL_IO_SEEK_CUR, SDL_IO_SEEK_END\n *\n * \\return the final offset in the data stream, or -1 on error.\n */\n Sint64 (SDLCALL *seek)(void *userdata, Sint64 offset, SDL_IOWhence whence);\n\n /**\n * Read up to `size` bytes from the data stream to the area pointed\n * at by `ptr`. `size` will always be > 0.\n *\n * On an incomplete read, you should set `*status` to a value from the\n * SDL_IOStatus enum. You do not have to explicitly set this on\n * a complete, successful read.\n *\n * \\return the number of bytes read\n */\n size_t (SDLCALL *read)(void *userdata, void *ptr, size_t size, SDL_IOStatus *status);\n\n /**\n * Write exactly `size` bytes from the area pointed at by `ptr`\n * to data stream. `size` will always be > 0.\n *\n * On an incomplete write, you should set `*status` to a value from the\n * SDL_IOStatus enum. You do not have to explicitly set this on\n * a complete, successful write.\n *\n * \\return the number of bytes written\n */\n size_t (SDLCALL *write)(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status);\n\n /**\n * If the stream is buffering, make sure the data is written out.\n *\n * On failure, you should set `*status` to a value from the\n * SDL_IOStatus enum. You do not have to explicitly set this on\n * a successful flush.\n *\n * \\return true if successful or false on write error when flushing data.\n */\n bool (SDLCALL *flush)(void *userdata, SDL_IOStatus *status);\n\n /**\n * Close and free any allocated resources.\n *\n * This does not guarantee file writes will sync to physical media; they\n * can be in the system's file cache, waiting to go to disk.\n *\n * The SDL_IOStream is still destroyed even if this fails, so clean up anything\n * even if flushing buffers, etc, returns an error.\n *\n * \\return true if successful or false on write error when flushing data.\n */\n bool (SDLCALL *close)(void *userdata);\n\n} SDL_IOStreamInterface;",
+    "returnType": "*/",
+    "parameters": [
+      "SDLCALL *size)(void *userdata);\n\n /**\n * Seek to `offset` relative to `whence`",
+      "one of stdio's whence values:\n * SDL_IO_SEEK_SET",
+      "SDL_IO_SEEK_CUR",
+      "SDL_IO_SEEK_END\n *\n * \\return the final offset in the data stream",
+      "or -1 on error.\n */\n Sint64 (SDLCALL *seek)(void *userdata",
+      "Sint64 offset",
+      "SDL_IOWhence whence);\n\n /**\n * Read up to `size` bytes from the data stream to the area pointed\n * at by `ptr`. `size` will always be > 0.\n *\n * On an incomplete read",
+      "you should set `*status` to a value from the\n * SDL_IOStatus enum. You do not have to explicitly set this on\n * a complete",
+      "successful read.\n *\n * \\return the number of bytes read\n */\n size_t (SDLCALL *read)(void *userdata",
+      "void *ptr",
+      "size_t size",
+      "SDL_IOStatus *status);\n\n /**\n * Write exactly `size` bytes from the area pointed at by `ptr`\n * to data stream. `size` will always be > 0.\n *\n * On an incomplete write",
+      "you should set `*status` to a value from the\n * SDL_IOStatus enum. You do not have to explicitly set this on\n * a complete",
+      "successful write.\n *\n * \\return the number of bytes written\n */\n size_t (SDLCALL *write)(void *userdata",
+      "const void *ptr",
+      "size_t size",
+      "SDL_IOStatus *status);\n\n /**\n * If the stream is buffering",
+      "make sure the data is written out.\n *\n * On failure",
+      "you should set `*status` to a value from the\n * SDL_IOStatus enum. You do not have to explicitly set this on\n * a successful flush.\n *\n * \\return true if successful or false on write error when flushing data.\n */\n bool (SDLCALL *flush)(void *userdata",
+      "SDL_IOStatus *status);\n\n /**\n * Close and free any allocated resources.\n *\n * This does not guarantee file writes will sync to physical media; they\n * can be in the system's file cache",
+      "waiting to go to disk.\n *\n * The SDL_IOStream is still destroyed even if this fails",
+      "so clean up anything\n * even if flushing buffers",
+      "etc",
+      "returns an error.\n *\n * \\return true if successful or false on write error when flushing data.\n */\n bool (SDLCALL *close)(void *userdata"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_iostream.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "Applications can provide this struct to SDL_OpenIO () to create their own\nimplementation of SDL_IOStream . This is\nnot necessarily required, as SDL already offers several common types of\nI/O streams, via functions like SDL_IOFromFile () and SDL_IOFromMem ().",
+      "This structure should be initialized using SDL_INIT_INTERFACE ()"
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_IOStreamInterface",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_INIT_INTERFACE",
+        "route": "#ref/sdl3-core/macros/sdl-init-interface",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "I/O Streams",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

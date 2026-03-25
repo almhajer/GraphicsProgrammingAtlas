@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 29 من 64 • الأسطر 12601-13050 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 29 من 64 • الأسطر 12601-13050</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 29 من 64 • الأسطر 12601-13050</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-28.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-30.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 29/64</span>
+        <span class="source-stat">الأسطر: 12601-13050</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+      VULKAN_HPP_NAMESPACE::PipelineLayout release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_pipelineLayout, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( PipelineLayout &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_pipelineLayout, rhs.m_pipelineLayout );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device         m_device         = {};
+      VULKAN_HPP_NAMESPACE::PipelineLayout m_pipelineLayout = {};
+      const AllocationCallbacks *          m_allocator      = {};
+      detail::DeviceDispatcher const *     m_dispatcher     = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;PipelineLayout&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkPrivateDataSlot, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkPrivateDataSlot.html
+    class PrivateDataSlot
+    {
+    public:
+      using CType   = VkPrivateDataSlot;
+      using CppType = VULKAN_HPP_NAMESPACE::PrivateDataSlot;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::ePrivateDataSlot;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      PrivateDataSlot( Device const &amp; device, PrivateDataSlotCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createPrivateDataSlot( createInfo, allocator );
+      }
+#  endif
+
+      PrivateDataSlot( Device const &amp; device, VkPrivateDataSlot privateDataSlot, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_privateDataSlot( privateDataSlot )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      PrivateDataSlot( std::nullptr_t ) {}
+
+      ~PrivateDataSlot()
+      {
+        clear();
+      }
+
+      PrivateDataSlot()                          = delete;
+      PrivateDataSlot( PrivateDataSlot const &amp; ) = delete;
+
+      PrivateDataSlot( PrivateDataSlot &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_privateDataSlot( exchange( rhs.m_privateDataSlot, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      PrivateDataSlot &amp; operator=( PrivateDataSlot const &amp; ) = delete;
+
+      PrivateDataSlot &amp; operator=( PrivateDataSlot &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_privateDataSlot, rhs.m_privateDataSlot );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::PrivateDataSlot const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_privateDataSlot;
+      }
+
+      VULKAN_HPP_NAMESPACE::PrivateDataSlot const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_privateDataSlot );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::PrivateDataSlot() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_privateDataSlot;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_privateDataSlot )
+        {
+          getDispatcher()-&gt;vkDestroyPrivateDataSlot( static_cast&lt;VkDevice&gt;( m_device ),
+                                                     static_cast&lt;VkPrivateDataSlot&gt;( m_privateDataSlot ),
+                                                     reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device          = nullptr;
+        m_privateDataSlot = nullptr;
+        m_allocator       = nullptr;
+        m_dispatcher      = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::PrivateDataSlot release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_privateDataSlot, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( PrivateDataSlot &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_privateDataSlot, rhs.m_privateDataSlot );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device          m_device          = {};
+      VULKAN_HPP_NAMESPACE::PrivateDataSlot m_privateDataSlot = {};
+      const AllocationCallbacks *           m_allocator       = {};
+      detail::DeviceDispatcher const *      m_dispatcher      = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;PrivateDataSlot&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkQueryPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueryPool.html
+    class QueryPool
+    {
+    public:
+      using CType   = VkQueryPool;
+      using CppType = VULKAN_HPP_NAMESPACE::QueryPool;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eQueryPool;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eQueryPool;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      QueryPool( Device const &amp; device, QueryPoolCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createQueryPool( createInfo, allocator );
+      }
+#  endif
+
+      QueryPool( Device const &amp; device, VkQueryPool queryPool, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_queryPool( queryPool )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      QueryPool( std::nullptr_t ) {}
+
+      ~QueryPool()
+      {
+        clear();
+      }
+
+      QueryPool()                    = delete;
+      QueryPool( QueryPool const &amp; ) = delete;
+
+      QueryPool( QueryPool &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_queryPool( exchange( rhs.m_queryPool, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      QueryPool &amp; operator=( QueryPool const &amp; ) = delete;
+
+      QueryPool &amp; operator=( QueryPool &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_queryPool, rhs.m_queryPool );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::QueryPool const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_queryPool;
+      }
+
+      VULKAN_HPP_NAMESPACE::QueryPool const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_queryPool );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::QueryPool() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_queryPool;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_queryPool )
+        {
+          getDispatcher()-&gt;vkDestroyQueryPool(
+            static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkQueryPool&gt;( m_queryPool ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device     = nullptr;
+        m_queryPool  = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::QueryPool release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_queryPool, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( QueryPool &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_queryPool, rhs.m_queryPool );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_VERSION_1_0 ===
+
+      // wrapper function for command vkGetQueryPoolResults, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueryPoolResults.html
+      template &lt;typename DataType&gt;
+      VULKAN_HPP_NODISCARD ResultValue&lt;std::vector&lt;DataType&gt;&gt; getResults(
+        uint32_t firstQuery, uint32_t queryCount, size_t dataSize, DeviceSize stride, QueryResultFlags flags VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const;
+
+      // wrapper function for command vkGetQueryPoolResults, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueryPoolResults.html
+      template &lt;typename DataType&gt;
+      VULKAN_HPP_NODISCARD ResultValue&lt;DataType&gt;
+        getResult( uint32_t firstQuery, uint32_t queryCount, DeviceSize stride, QueryResultFlags flags VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const;
+
+      //=== VK_VERSION_1_2 ===
+
+      // wrapper function for command vkResetQueryPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetQueryPool.html
+      void reset( uint32_t firstQuery, uint32_t queryCount ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_EXT_host_query_reset ===
+
+      // wrapper function for command vkResetQueryPoolEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetQueryPoolEXT.html
+      void resetEXT( uint32_t firstQuery, uint32_t queryCount ) const VULKAN_HPP_NOEXCEPT;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device     m_device     = {};
+      VULKAN_HPP_NAMESPACE::QueryPool  m_queryPool  = {};
+      const AllocationCallbacks *      m_allocator  = {};
+      detail::DeviceDispatcher const * m_dispatcher = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;QueryPool&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkQueue, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueue.html
+    class Queue
+    {
+    public:
+      using CType   = VkQueue;
+      using CppType = VULKAN_HPP_NAMESPACE::Queue;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eQueue;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eQueue;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Queue( Device const &amp; device, uint32_t queueFamilyIndex, uint32_t queueIndex )
+      {
+        *this = device.getQueue( queueFamilyIndex, queueIndex );
+      }
+#  endif
+
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      Queue( Device const &amp; device, DeviceQueueInfo2 const &amp; queueInfo )
+      {
+        *this = device.getQueue2( queueInfo );
+      }
+#  endif
+
+      Queue( Device const &amp; device, VkQueue queue ) : m_queue( queue ), m_dispatcher( device.getDispatcher() ) {}
+
+      Queue( std::nullptr_t ) {}
+
+      ~Queue()
+      {
+        clear();
+      }
+
+      Queue() = delete;
+
+      Queue( Queue const &amp; rhs ) : m_queue( rhs.m_queue ), m_dispatcher( rhs.m_dispatcher ) {}
+
+      Queue( Queue &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_queue( exchange( rhs.m_queue, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      Queue &amp; operator=( Queue const &amp; rhs )
+      {
+        m_queue      = rhs.m_queue;
+        m_dispatcher = rhs.m_dispatcher;
+        return *this;
+      }
+
+      Queue &amp; operator=( Queue &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_queue, rhs.m_queue );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::Queue const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_queue;
+      }
+
+      VULKAN_HPP_NAMESPACE::Queue const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_queue );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::Queue() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_queue;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        m_queue      = nullptr;
+        m_dispatcher = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::Queue release()
+      {
+        m_dispatcher = nullptr;
+        return exchange( m_queue, nullptr );
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( Queue &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_queue, rhs.m_queue );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_VERSION_1_0 ===
+
+      // wrapper function for command vkQueueSubmit, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html
+      typename ResultValueType&lt;void&gt;::type submit( ArrayProxy&lt;const SubmitInfo&gt; const &amp; submits,
+                                                   VULKAN_HPP_NAMESPACE::Fence fence    VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const;
+
+      // wrapper function for command vkQueueWaitIdle, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueWaitIdle.html
+      typename ResultValueType&lt;void&gt;::type waitIdle() const;
+
+      // wrapper function for command vkQueueBindSparse, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueBindSparse.html
+      typename ResultValueType&lt;void&gt;::type bindSparse( ArrayProxy&lt;const BindSparseInfo&gt; const &amp; bindInfo,
+                                                       VULKAN_HPP_NAMESPACE::Fence fence        VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const;
+
+      //=== VK_VERSION_1_3 ===
+
+      // wrapper function for command vkQueueSubmit2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit2.html
+      typename ResultValueType&lt;void&gt;::type submit2( ArrayProxy&lt;const SubmitInfo2&gt; const &amp; submits,
+                                                    VULKAN_HPP_NAMESPACE::Fence fence     VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const;
+
+      //=== VK_KHR_swapchain ===
+
+      // wrapper function for command vkQueuePresentKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueuePresentKHR.html
+      VULKAN_HPP_NODISCARD Result presentKHR( const PresentInfoKHR &amp; presentInfo ) const;
+
+      //=== VK_EXT_debug_utils ===
+
+      // wrapper function for command vkQueueBeginDebugUtilsLabelEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueBeginDebugUtilsLabelEXT.html
+      void beginDebugUtilsLabelEXT( const DebugUtilsLabelEXT &amp; labelInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkQueueEndDebugUtilsLabelEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueEndDebugUtilsLabelEXT.html
+      void endDebugUtilsLabelEXT() const VULKAN_HPP_NOEXCEPT;
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-28.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-30.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

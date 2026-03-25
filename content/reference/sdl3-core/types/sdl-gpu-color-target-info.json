@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "types",
+    "displayName": "Types",
+    "displayNameArabic": "الأنواع",
+    "description": "أنواع مجردة أو صريحة تحمل معنى دلالياً وتظهر في التواقيع والبنى."
+  },
+  "identity": {
+    "name": "SDL_GPUColorTargetInfo",
+    "slug": "sdl-gpu-color-target-info",
+    "titleArabic": "A structure specifying the parameters of a color target used by a\nrender pass",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/types/sdl-gpu-color-target-info",
+    "contentPath": "content/reference/sdl3-core/types/sdl-gpu-color-target-info.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "A structure specifying the parameters of a color target used by a\nrender pass",
+    "actualMeaningArabic": "يمثل هذا النوع نوع SDL GPU اللون Target Info، أي القيمة أو المقبض أو المؤشر الذي تتعامل معه بقية الواجهة في هذا السياق.",
+    "purposeArabic": "يستخدم هذا النوع عندما تحتاج القيمة أو المقبض أو المؤشر الذي يمثله داخل بقية الواجهة.",
+    "whyUseArabic": "القيمة الحقيقية هنا أنه يمثل نوع القيمة التي تتداولها بقية الواجهة بين الحقول والدوال.",
+    "carriedValueArabic": "يحمل هذا النوع القيمة الفعلية أو المقبض أو المؤشر الذي تمرره بقية الدوال والحقول في هذا المسار.",
+    "sourceDescription": "A structure specifying the parameters of a color target used by a\nrender pass."
+  },
+  "signature": {
+    "raw": "typedef struct SDL_GPUColorTargetInfo\n{\n SDL_GPUTexture *texture; /**< The texture that will be used as a color target by a render pass. */\n Uint32 mip_level; /**< The mip level to use as a color target. */\n Uint32 layer_or_depth_plane; /**< The layer index or depth plane to use as a color target. This value is treated as a layer index on 2D array and cube textures, and as a depth plane on 3D textures. */\n SDL_FColor clear_color; /**< The color to clear the color target to at the start of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used. */\n SDL_GPULoadOp load_op; /**< What is done with the contents of the color target at the beginning of the render pass. */\n SDL_GPUStoreOp store_op; /**< What is done with the results of the render pass. */\n SDL_GPUTexture *resolve_texture; /**< The texture that will receive the results of a multisample resolve operation. Ignored if a RESOLVE* store_op is not used. */\n Uint32 resolve_mip_level; /**< The mip level of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* store_op is not used. */\n Uint32 resolve_layer; /**< The layer index of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* store_op is not used. */\n bool cycle; /**< true cycles the texture if the texture is bound and load_op is not LOAD */\n bool cycle_resolve_texture; /**< true cycles the resolve texture if the resolve texture is bound. Ignored if a RESOLVE* store_op is not used. */\n Uint8 padding1;\n Uint8 padding2;\n} SDL_GPUColorTargetInfo;",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_gpu.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "The load_op field determines what is done with the texture at the\nbeginning of the render pass.",
+      "LOAD: Loads the data currently in the texture. Not recommended for\nmultisample textures as it requires significant memory bandwidth.",
+      "CLEAR: Clears the texture to a single color.",
+      "DONT_CARE: The driver will do whatever it wants with the texture\nmemory. This is a good option if you know that every single pixel will\nbe touched in the render pass.",
+      "The store_op field determines what is done with the color results of\nthe render pass.",
+      "STORE: Stores the results of the render pass in the texture. Not\nrecommended for multisample textures as it requires significant memory\nbandwidth.",
+      "DONT_CARE: The driver will do whatever it wants with the texture\nmemory. This is often a good option for depth/stencil textures.",
+      "RESOLVE: Resolves a multisample texture into resolve_texture, which\nmust have a sample count of 1. Then the driver may discard the\nmultisample texture memory. This is the most performant method of\nresolving a multisample target.",
+      "RESOLVE_AND_STORE: Resolves a multisample texture into the\nresolve_texture, which must have a sample count of 1. Then the driver\nstores the multisample texture's contents. Not recommended as it\nrequires significant memory bandwidth."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_GPUColorTargetInfo",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_BeginGPURenderPass",
+        "route": "#ref/sdl3-core/functions/sdl-begin-gpu-render-pass",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_FColor",
+        "route": "#ref/sdl3-core/types/sdl-f-color",
+        "libraryId": "sdl3-core",
+        "kindId": "types"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "3D Rendering and GPU Compute",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

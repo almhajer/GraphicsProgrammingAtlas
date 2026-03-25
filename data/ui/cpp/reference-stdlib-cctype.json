@@ -1,0 +1,335 @@
+{
+  "referenceData": {
+    "std::isalpha": {
+      "title": "std::isalpha",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف حرفًا أبجديًا (a-z أو A-Z). تُرجع قيمة غير صفرية (صحيحة) إذا كان الحرف أبجديًا، وصفرًا إذا لم يكن. تعمل على قيمة int وليس char مباشرة — يجب تحويل char لـ unsigned char قبل تمريره لتجنب سلوك غير محدد مع القيم السالبة.",
+      "usage": "تُستخدم للتحقق من صحة المدخلات النصية مثل فحص اسم مستخدم لا يحتوي أرقامًا أو رموزًا، أو لتصفية النصوص من غير الأحرف.",
+      "example": "if (std::isalpha(static_cast<unsigned char>(ch))) {\n    // حرف أبجدي\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص حرف واحد",
+          "code": "#include <cctype>\n#include <iostream>\n\nchar ch = 'G';\n// التحويل لـ unsigned char ضروري قبل التمرير\nif (std::isalpha(static_cast<unsigned char>(ch))) {\n    std::cout << \"حرف أبجدي\"; // يُطبع\n}\n\nchar digit = '7';\nif (std::isalpha(static_cast<unsigned char>(digit))) {\n    std::cout << \"حرف أبجدي\"; // لا يُطبع — '7' ليس حرفًا\n}",
+          "explanationArabic": "isalpha تتحقق فقط من الأحرف اللاتينية a-z و A-Z. لا تعترف بالأحرف العربية أو المحارف المُوصَّلة (مثل é أو ñ) إلا إذا كانت locale مختلفة. التحويل لـ unsigned char يمنع UB عند تمرير char سالب (محارف فوق ASCII 127)."
+        },
+        {
+          "titleArabic": "فحص اسم مستخدم: أحرف فقط بدون أرقام",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nbool is_valid_username(const std::string& name) {\n    if (name.empty()) return false;\n    for (char c : name) {\n        if (!std::isalpha(static_cast<unsigned char>(c))) {\n            return false; // وُجد حرف غير أبجدي\n        }\n    }\n    return true;\n}\n\nstd::cout << is_valid_username(\"Ali\");    // true\nstd::cout << is_valid_username(\"Ali123\"); // false — يحتوي أرقام\nstd::cout << is_valid_username(\"Ali_\");   // false — يحتوي شرطة سفلية",
+          "explanationArabic": "المرور على كل حرف والتحقق بـ isalpha يضمن أن النص يحتوي أحرفًا فقط. هذا النمط شائع في فحص المدخلات. لاحظ أن الأسماء العربية لن تمر هذا الفحص لأن isalpha لا تعترف بالعربية في الـ locale الافتراضية (C)."
+        },
+        {
+          "titleArabic": "خطأ شائع: تمرير char مباشرة بدون تحويل",
+          "code": "#include <cctype>\n\nchar ch = -60; // قيمة char سالبة (محرف فوق ASCII 127 مثل é في بعض الترميزات)\n\n// ❌ سلوك غير محدد: char سالب يُمرر كـ int سالب\n// isalpha قد يصل لذاكرة خارج نطاق جدول الفحص الداخلي\n// std::isalpha(ch); // UB!\n\n// ✅ صحيح: التحويل لـ unsigned char أولًا\n// unsigned char يضمن القيمة بين 0-255 — داخل نطاق الجدول\nbool result = std::isalpha(static_cast<unsigned char>(ch));\n// result = false (أو true حسب locale) لكن بدون UB",
+          "explanationArabic": "في الأنظمة التي يكون فيها char موقّعًا (الافتراضي على x86)، أي محرف فوق 127 يُمثَّل كقيمة سالبة. isalpha تتوقع قيمة بين 0 و EOF (-1). قيمة سالبة ليست EOF تُسبب وصولًا خارج نطاق الجدول الداخلي = UB. التحويل لـ unsigned char يحل هذه المشكلة دائمًا."
+        }
+      ],
+      "related": [
+        "std::isalnum",
+        "std::isdigit",
+        "std::islower",
+        "std::isupper"
+      ]
+    },
+    "std::isdigit": {
+      "title": "std::isdigit",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف رقمًا عشريًا (0-9). تُرجع قيمة غير صفرية إذا كان الرقم عشريًا، وصفرًا غير ذلك. مثل باقي دوال cctype، يجب تحويل char لـ unsigned char قبل التمرير.",
+      "usage": "تُستخدم لفحص المدخلات الرقمية مثل التحقق من أن حقل الإدخال يحتوي أرقامًا فقط، أو لتحليل نصوص تحتوي أرقامًا متداخلة مع حروف.",
+      "example": "if (std::isdigit(static_cast<unsigned char>(ch))) {\n    // رقم عشري\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص حقل رقم هاتف: أرقام فقط",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nbool is_valid_phone(const std::string& phone) {\n    if (phone.empty()) return false;\n    for (char c : phone) {\n        if (!std::isdigit(static_cast<unsigned char>(c))) {\n            return false;\n        }\n    }\n    return true;\n}\n\nstd::cout << is_valid_phone(\"0512345678\"); // true\nstd::cout << is_valid_phone(\"051-234-567\"); // false — يحتوي شرطات\nstd::cout << is_valid_phone(\"\");            // false — فارغ",
+          "explanationArabic": "isdigit تتحقق من الأرقام 0-9 فقط. لا تعترف بالأرقام العربية (٠-٩) ولا بالأرقام الرومانية. إذا أردت السماح بعلامات مثل + أو - أضف فحوصات إضافية. هذا النمط أبسط من استخدام regex للفحص البسيط."
+        },
+        {
+          "titleArabic": "استخراج الأرقام من نص مختلط",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nstd::string extract_digits(const std::string& input) {\n    std::string result;\n    for (char c : input) {\n        if (std::isdigit(static_cast<unsigned char>(c))) {\n            result += c;\n        }\n    }\n    return result;\n}\n\nstd::string version = \"v2.5.1-beta\";\nstd::cout << extract_digits(version); // \"251\"",
+          "explanationArabic": "isdigit مفيدة لفصل الأرقام عن النص. هذا أبسط من regex عند الحاجة لاستخراج بسيط. لاحظ أن النتيجة \"251\" وليست \"2.5.1\" — النقاط تُزال لأنها ليست أرقامًا. إذا أردت الحفاظ على النقاط أضفها كاستثناء."
+        },
+        {
+          "titleArabic": "خطأ شائع: الخلط بين isdigit وتحويل النص لعدد",
+          "code": "#include <cctype>\n\n// ❌ isdigit لا تُحوّل — تفحص فقط\n// char ch = '5';\n// int num = std::isdigit(ch); // num = 1 (قيمة منطقية) وليس 5!\n\n// ✅ صحيح: isdigit للفحص، ثم الطرح للحصول على القيمة الرقمية\nchar ch = '5';\nif (std::isdigit(static_cast<unsigned char>(ch))) {\n    int num = ch - '0'; // 5 — الطرح من '0' يُعطي القيمة الرقمية\n}\n\n// ✅ أو استخدم stoi/stof لتحويل نص كامل\n// int num = std::stoi(\"42\");",
+          "explanationArabic": "isdigit تُرجع قيمة غير صفرية (عادةً 1) عند النجاح وليس القيمة الرقمية. لتحويل حرف رقمي لقيمته الرقمية، اطرح '0' منه: ch - '0'. لتحويل نص كامل لعدد استخدم stoi/stof من <string>."
+        }
+      ],
+      "related": [
+        "std::isalpha",
+        "std::isalnum",
+        "std::isxdigit",
+        "std::stoi"
+      ]
+    },
+    "std::isalnum": {
+      "title": "std::isalnum",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف حرفًا أبجديًا أو رقمًا عشريًا (a-z, A-Z, 0-9). هي اختصار لـ (isalpha || isdigit). تُرجع قيمة غير صفرية إذا تحقق أي منهما.",
+      "usage": "تُستخدم عند قبول مدخلات تحتوي أحرفًا وأرقامًا معًا مثل أسماء المتغيرات أو كلمات المرور أو معرّفات البرمجة.",
+      "example": "if (std::isalnum(static_cast<unsigned char>(ch))) {\n    // حرف أو رقم\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص اسم متغير: حروف وأرقام فقط مع شرطة سفلية",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nbool is_valid_identifier(const std::string& name) {\n    if (name.empty()) return false;\n    // الحرف الأول يجب أن يكون حرفًا أو شرطة سفلية\n    char first = name[0];\n    if (first != '_' && !std::isalpha(static_cast<unsigned char>(first))) {\n        return false;\n    }\n    // باقي الأحرف: حروف أو أرقام أو شرطة سفلية\n    for (size_t i = 1; i < name.size(); ++i) {\n        char c = name[i];\n        if (c != '_' && !std::isalnum(static_cast<unsigned char>(c))) {\n            return false;\n        }\n    }\n    return true;\n}\n\nstd::cout << is_valid_identifier(\"my_var_2\"); // true\nstd::cout << is_valid_identifier(\"2ndPlace\");  // false — يبدأ برقم\nstd::cout << is_valid_identifier(\"my-var\");   // false — يحتوي شرطة عادية",
+          "explanationArabic": "isalnum تُبسّط الفحص لأنها تقبل الحروف والأرقام معًا. في أسماء المتغيرات، الحرف الأول له قاعدة خاصة (لا يبدأ برقم) بينما الباقي يستخدم isalnum مع استثناء للشرطة السفلية. هذا نمط شائع في مفسرات اللغات والمُصرِّفات."
+        },
+        {
+          "titleArabic": "عدّ الأحرف والأرقام في نص",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nsize_t count_alnum(const std::string& text) {\n    size_t count = 0;\n    for (char c : text) {\n        if (std::isalnum(static_cast<unsigned char>(c))) {\n            ++count;\n        }\n    }\n    return count;\n}\n\nstd::cout << count_alnum(\"Hello World 123!\"); // 13 (حروف + أرقام فقط)",
+          "explanationArabic": "isalnum تُرجع true للأحرف والأرقام معًا — المسافات وعلامات التعجب لا تُحتسب. هذا مفيد لحساب طول المحتوى الفعلي لنص مختلط أو لتقدير قوة كلمة المرور."
+        },
+        {
+          "titleArabic": "الفرق بين isalnum و isalpha في سياق واحد",
+          "code": "#include <cctype>\n#include <string>\n\nstd::string text = \"User42!\";\n\nfor (char c : text) {\n    auto uc = static_cast<unsigned char>(c);\n    bool alpha = std::isalpha(uc);\n    bool alnum = std::isalnum(uc);\n    // 'U' → alpha=true, alnum=true\n    // 's' → alpha=true, alnum=true\n    // 'e' → alpha=true, alnum=true\n    // 'r' → alpha=true, alnum=true\n    // '4' → alpha=false, alnum=true  ← الفرق هنا\n    // '2' → alpha=false, alnum=true  ← والفرق هنا\n    // '!' → alpha=false, alnum=false\n}",
+          "explanationArabic": "الفرق الوحيد: isalnum تُرجع true للأرقام بينما isalpha لا. إذا كنت تقبل أرقامًا استخدم isalnum، وإذا كنت تريد أحرفًا فقط استخدم isalpha. هذا الفرق مهم في فحص المدخلات حيث يجب اختيار الدالة المناسبة لقاعدة التحقق."
+        }
+      ],
+      "related": [
+        "std::isalpha",
+        "std::isdigit",
+        "std::ispunct"
+      ]
+    },
+    "std::isspace": {
+      "title": "std::isspace",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف مسافة بيضاء: مسافة (' '), جدول أفقي ('\\t'), سطر جديد ('\\n'), جدول عمودي ('\\v'), نموذج صفحة ('\\f'), رجوع عربة ('\\r'). تتعرف على 6 أنواع من المسافات البيضاء وليس المسافة العادية فقط.",
+      "usage": "تُستخدم لتخطي المسافات عند تحليل النصوص، أو لتقسيم نص على كلمات، أو لإزالة المسافات الزائدة من بداية ونهاية النص (trim).",
+      "example": "if (std::isspace(static_cast<unsigned char>(ch))) {\n    // مسافة بيضاء\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "تقسيم نص على كلمات (تخطي المسافات)",
+          "code": "#include <cctype>\n#include <string>\n#include <vector>\n#include <iostream>\n\nstd::vector<std::string> split_words(const std::string& text) {\n    std::vector<std::string> words;\n    std::string current;\n    for (char c : text) {\n        if (std::isspace(static_cast<unsigned char>(c))) {\n            if (!current.empty()) {\n                words.push_back(current);\n                current.clear();\n            }\n        } else {\n            current += c;\n        }\n    }\n    if (!current.empty()) words.push_back(current);\n    return words;\n}\n\nauto words = split_words(\"  hello   world  \");\n// words = {\"hello\", \"world\"} — المسافات الزائدة لا تُنشئ كلمات فارغة",
+          "explanationArabic": "isspace تتعرف على كل أنواع المسافات البيضاء (مسافة، tab، سطر جديد...) وليس المسافة العادية فقط. الفحص if (!current.empty()) يمنع إنشاء كلمات فارغة عند مسافات متتالية. هذا أبسط من stringstream عند الحاجة لتحكم أكبر."
+        },
+        {
+          "titleArabic": "إزالة المسافات من طرفي النص (trim)",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nstd::string trim(const std::string& s) {\n    size_t start = 0;\n    while (start < s.size() && std::isspace(static_cast<unsigned char>(s[start]))) {\n        ++start;\n    }\n    size_t end = s.size();\n    while (end > start && std::isspace(static_cast<unsigned char>(s[end - 1]))) {\n        --end;\n    }\n    return s.substr(start, end - start);\n}\n\nstd::cout << \"[\" << trim(\"  hello world  \") << \"]\";\n// المخرج: [hello world]",
+          "explanationArabic": "trim تبحث من البداية حتى تجد حرفًا ليس مسافة، ومن النهاية حتى تجد حرفًا ليس مسافة.isspace تتعرف على tab و newline أيضًا وليس فقط المسافة العادية. هذا النمط شائع جدًا عند قراءة مدخلات مستخدم أو ملفات إعدادات."
+        },
+        {
+          "titleArabic": "خطأ شائع: المقارنة بـ ' ' فقط",
+          "code": "#include <cctype>\n\n// ❌ لا يلتقط إلا المسافة العادية — يفلت tab و newline و \\r\n// if (ch == ' ') { /* مسافة */ }\n\n// ❌ محاولة يدوية غير مكتملة\n// if (ch == ' ' || ch == '\\t' || ch == '\\n') { /* قد تنسى \\v \\f \\r */ }\n\n// ✅ صحيح: isspace تلتقط كل الـ 6 أنواع دفعة واحدة\nif (std::isspace(static_cast<unsigned char>(ch))) {\n    // ' ', '\\t', '\\n', '\\v', '\\f', '\\r' — كلها\n}",
+          "explanationArabic": "المقارنة بـ ' ' تفلت كل أنواع المسافات البيضاء الأخرى. كتابة كل الحالات يدويًا معرضة للنسيان (خاصة \\v و \\f النادرتين). isspace تحل هذا بشكل مركزي وموثوق. القاعدة: عندما تقول 'مسافة بيضاء' في C++ استخدم isspace دائمًا."
+        }
+      ],
+      "related": [
+        "std::isprint",
+        "std::isalpha",
+        "std::ispunct"
+      ]
+    },
+    "std::isupper": {
+      "title": "std::isupper",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف حرفًا أبجديًا كبيرًا (A-Z). تُرجع قيمة غير صفرية للحروف الكبيرة، وصفرًا لغيرها بما فيها الأرقام والعلامات والأحرف الصغيرة.",
+      "usage": "تُستخدم للتحقق من حالة الحرف أو لتنفيذ منطق يعتمد على التمييز بين الأحرف الكبيرة والصغيرة مثل فرض قواعد تسمية معينة.",
+      "example": "if (std::isupper(static_cast<unsigned char>(ch))) {\n    // حرف كبير\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص إذا كان النص كله أحرفًا كبيرة",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nbool is_all_upper(const std::string& text) {\n    for (char c : text) {\n        if (std::isalpha(static_cast<unsigned char>(c)) && !std::isupper(static_cast<unsigned char>(c))) {\n            return false; // وُجد حرف صغير\n        }\n    }\n    return !text.empty(); // نص غير فارغ ولا يحتوي أحرفًا صغيرة\n}\n\nstd::cout << is_all_upper(\"HELLO\");   // true\nstd::cout << is_all_upper(\"Hello\");   // false — 'e' صغير\nstd::cout << is_all_upper(\"HELLO 123\"); // true — الأرقام لا تُؤثر",
+          "explanationArabic": "المفتاح هنا: نفحص isalpha أولًا ثم isupper. بدون isalpha، الأرقام والعلامات ستجعل النتيجة false رغم أنها ليست أحرفًا صغيرة. الأرقام والعلامات لا يُنظر إليها كـ 'ليست كبيرة' — هي ببساطة ليست أحرفًا."
+        },
+        {
+          "titleArabic": "تحويل النص لصيغة Title Case (أول حرف كبير)",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nstd::string to_title_case(std::string text) {\n    bool new_word = true;\n    for (char& c : text) {\n        if (std::isspace(static_cast<unsigned char>(c))) {\n            new_word = true;\n        } else if (new_word && std::isalpha(static_cast<unsigned char>(c))) {\n            c = std::toupper(static_cast<unsigned char>(c));\n            new_word = false;\n        } else {\n            c = std::tolower(static_cast<unsigned char>(c));\n            new_word = false;\n        }\n    }\n    return text;\n}\n\nstd::cout << to_title_case(\"hello WORLD example\");\n// المخرج: \"Hello World Example\"",
+          "explanationArabic": "isupper تُستخدم هنا مع toupper/tolower لتحويل أول حرف من كل كلمة لكبير والباقي لصغير. new_word يتتبع هل نحن في بداية كلمة جديدة (بعد مسافة). هذا النمط مفيد لتنسيق العناوين والأسماء."
+        },
+        {
+          "titleArabic": "خطأ شائع: الاعتماد على الفرق بين الأحرف الكبيرة والصغيرة",
+          "code": "#include <cctype>\n\nchar ch = 'A';\n\n// ❌ غير محمول: يعتمد على أن الأحرف الكبيرة والصغيرة متتالية في ASCII\n// bool upper = (ch >= 'A' && ch <= 'Z'); // يعمل على ASCII لكن ليس مضمونًا على EBCDIC\n\n// ❌ أسوأ: الطرح للتحويل\n// char lower = ch + 32; // يعمل على ASCII فقط — غير محمول\n\n// ✅ صحيح: isupper محمول ومضمون على كل الترميزات\nbool is_upper = std::isupper(static_cast<unsigned char>(ch));\n\n// ✅ للتحويل: toupper محمول أيضًا\nchar lower = std::tolower(static_cast<unsigned char>(ch));",
+          "explanationArabic": "الفرق 32 بين الحرف الكبير والصغير خاص بـ ASCII. على ترميزات أخرى مثل EBCDIC هذا الافتراض يفشل. isupper و toupper يعتمدان على locale النظام ويعملان بشكل صحيح على كل الترميزات. القاعدة: لا تفترض ترتيب ASCII أبدًا مع دوال cctype."
+        }
+      ],
+      "related": [
+        "std::islower",
+        "std::toupper",
+        "std::tolower",
+        "std::isalpha"
+      ]
+    },
+    "std::islower": {
+      "title": "std::islower",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف حرفًا أبجديًا صغيرًا (a-z). تُرجع قيمة غير صفرية للحروف الصغيرة، وصفرًا لغيرها. متممة لـ isupper — كلاهما يفحصان نفس المجموعة لكن كل منهما حالة مختلفة.",
+      "usage": "تُستخدم للتحقق من حالة الحرف مثل فحص كلمة مرور تحتاج أحرفًا صغيرة، أو لتنفيذ منطق يعتمد على التمييز بين الحالات.",
+      "example": "if (std::islower(static_cast<unsigned char>(ch))) {\n    // حرف صغير\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص قوة كلمة المرور: تحتاج حرفًا صغيرًا على الأقل",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nbool has_lowercase(const std::string& password) {\n    for (char c : password) {\n        if (std::islower(static_cast<unsigned char>(c))) {\n            return true;\n        }\n    }\n    return false;\n}\n\nstd::cout << has_lowercase(\"PASSWORD\"); // false\nstd::cout << has_lowercase(\"PassWORD\"); // true — 'a' و 's' صغيران",
+          "explanationArabic": "islower تُستخدم كشرط جزئي في فحص قوة كلمة المرور. عادةً تُدمج مع isupper و isdigit و ispunct لقواعد أكثر تعقيدًا. الفائدة هنا: الإيقاف الفوري عند أول حرف صغير بدل فحص الكل."
+        },
+        {
+          "titleArabic": "عدّ الأحرف الصغيرة والكبيرة في نص",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nvoid count_cases(const std::string& text) {\n    int upper = 0, lower = 0;\n    for (char c : text) {\n        auto uc = static_cast<unsigned char>(c);\n        if (std::isupper(uc)) ++upper;\n        else if (std::islower(uc)) ++lower;\n    }\n    std::cout << \"كبيرة: \" << upper << \" صغيرة: \" << lower;\n}\n\ncount_cases(\"Hello World\"); // كبيرة: 2 (H, W) صغيرة: 8",
+          "explanationArabic": "isupper و islower متبادلتان لحروف ASCII — حرف أبجدي إما كبير أو صغير. الأرقام والعلامات لا تُحتسب في أي منهما. هذا مفيد لتحليل نصوص أو لتقديم إحصائيات عن المحتوى."
+        },
+        {
+          "titleArabic": "الفرق بين islower و isalpha",
+          "code": "#include <cctype>\n\n// 'a' → islower=true,  isalpha=true\n// 'A' → islower=false, isalpha=true  ← الفرق\n// '5' → islower=false, isalpha=false\n// ' ' → islower=false, isalpha=false\n\n// islower = isalpha && حرف صغير\n// isalpha = islower || isupper\n\n// إذا أردت 'حرف صغير فقط' → islower\n// إذا أردت 'أي حرف' → isalpha",
+          "explanationArabic": "islower أضيق من isalpha: كل islower هو isalpha لكن ليس العكس. استخدم isalpha عندما لا يهمك الحجم، واستخدم islower عندما تريد حروفًا صغيرة تحديدًا."
+        }
+      ],
+      "related": [
+        "std::isupper",
+        "std::toupper",
+        "std::tolower",
+        "std::isalpha"
+      ]
+    },
+    "std::isprint": {
+      "title": "std::isprint",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف قابلًا للطباعة — أي أنه يُنتج رمزًا مرئيًا عند عرضه. يشمل الأحرف والأرقام والعلامات والمسافة العادية (' ')، لكنه لا يشمل محارف التحكم (control characters) مثل tab و newline و null. يُرجع قيمة غير صفرية للقابل للطباعة وصفرًا غير ذلك.",
+      "usage": "تُستخدم لفحص نص قبل عرضه للتأكد من عدم احتوائه على محارف تحكم غير مرغوبة، أو لتصفية المدخلات من المحارف غير المطبوعة.",
+      "example": "if (std::isprint(static_cast<unsigned char>(ch))) {\n    // قابل للطباعة\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص نص قبل عرضه: إزالة محارف التحكم",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nstd::string remove_non_printable(const std::string& text) {\n    std::string clean;\n    clean.reserve(text.size());\n    for (char c : text) {\n        if (std::isprint(static_cast<unsigned char>(c))) {\n            clean += c;\n        }\n    }\n    return clean;\n}\n\nstd::string dirty = \"hello\\tworld\\n\\x01\";\nstd::cout << \"[\" << remove_non_printable(dirty) << \"]\";\n// المخرج: [helloworld] — tab و newline و \\x01 أُزيلت",
+          "explanationArabic": "isprint تُرجع false لمحارف التحكم مثل tab (\\t) و newline (\\n) و null (\\0) وكل المحارف بين 0-31 و 127. هذا يختلف عن isspace التي تُرجع true لـ tab و newline. استخدم isprint عندما تريد نصًا نظيفًا للعرض، واستخدم isspace عندما تريد التعامل مع المسافات البيضاء."
+        },
+        {
+          "titleArabic": "الفرق بين isprint و isspace",
+          "code": "#include <cctype>\n\n// المحارف وتصنيفها:\n// ' '  (مسافة) → isprint=true,  isspace=true\n// '\\t' (tab)   → isprint=false, isspace=true  ← الفرق!\n// '\\n' (newline)→ isprint=false, isspace=true  ← الفرق!\n// 'A'  (حرف)   → isprint=true,  isspace=false\n// '\\x01' (SOH) → isprint=false, isspace=false\n\n// isprint: المسافة العادية هي المحرف الوحيد الذي هو قابل للطباعة + مسافة بيضاء\n// isspace: تتضمن 6 محارف بعضها غير قابل للطباعة",
+          "explanationArabic": "التقاطع بين isprint و isspace هو المسافة العادية (' ') فقط. كل محارف تحكم آخر (tab, newline, etc.) هو مسافة بيضاء لكنه غير قابل للطباعة. هذا الفرق مهم عند تنظيف النصوص: إذا أردت إزالة المسافات أيضًا لا تعتمد على isprint وحدها."
+        }
+      ],
+      "related": [
+        "std::isspace",
+        "std::isalpha",
+        "std::ispunct",
+        "std::iscntrl"
+      ]
+    },
+    "std::ispunct": {
+      "title": "std::ispunct",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف علامة ترقيم — أي حرف قابل للطباعة وليس حرفًا أبجديًا ولا رقمًا ولا مسافة. يشمل: ! \" # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \\ ] ^ _ ` { | } ~. يُرجع قيمة غير صفرية للعلامات وصفرًا غير ذلك.",
+      "usage": "تُستخدم لفصل العلامات عن النصوص، أو لفحص مدخلات لا تقبل علامات، أو لتحليل نصوص برمجية.",
+      "example": "if (std::ispunct(static_cast<unsigned char>(ch))) {\n    // علامة ترقيم\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "إزالة علامات الترقيم من نص",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nstd::string remove_punctuation(const std::string& text) {\n    std::string clean;\n    clean.reserve(text.size());\n    for (char c : text) {\n        if (!std::ispunct(static_cast<unsigned char>(c))) {\n            clean += c;\n        }\n    }\n    return clean;\n}\n\nstd::cout << remove_punctuation(\"Hello, World! How's it going?\");\n// المخرج: \"Hello World Hows it going\"",
+          "explanationArabic": "ispunct تلتقط كل علامات الترقيم بما فيها الشرطة السفلية (_) والفاصلة العليا ('). هذا أوسع من مجرد '.,!?' — تشمل كل printable character ليس حرفًا ولا رقمًا ولا مسافة. إذا أردت استثناء علامات معينة أضف فحصًا إضافيًا."
+        },
+        {
+          "titleArabic": "عدّ العلامات في نص (مؤشر تعقيد كلمة المرور)",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nint count_punctuation(const std::string& password) {\n    int count = 0;\n    for (char c : password) {\n        if (std::ispunct(static_cast<unsigned char>(c))) {\n            ++count;\n        }\n    }\n    return count;\n}\n\nstd::cout << count_punctuation(\"abc123\");        // 0\nstd::cout << count_punctuation(\"abc@123!\");       // 2\nstd::cout << count_punctuation(\"aB3$fGh7*\");      // 2",
+          "explanationArabic": "ispunct مفيدة كشرط في فحص قوة كلمة المرور. عادةً تُطلب علامة واحدة على الأقل. لاحظ أن _ (شرطة سفلية) تُعتبر علامة ترقيم حسب isprint — إذا أردت استثناءها أضف `c != '_'`."
+        },
+        {
+          "titleArabic": "ispunct مقابل isprint && !isalpha && !isdigit && !isspace",
+          "code": "#include <cctype>\n\n// التعريف الفعلي لـ ispunct هو تقريبًا:\n// isprint(c) && !isalpha(c) && !isdigit(c) && !isspace(c)\n\n// لذلك:\n// '!' → ispunct=true  (مطبوع وليس حرف/رقم/مسافة)\n// 'A' → ispunct=false (حرف)\n// '5' → ispunct=false (رقم)\n// ' ' → ispunct=false (مسافة)\n// '\\t'→ ispunct=false (غير مطبوع أصلًا)\n\n// الشرطة السفلية '_' تُعتبر punct!\n// هذا مهم عند فحص أسماء المتغيرات حيث _ مسموحة",
+          "explanationArabic": "ispunct = قابل للطباعة لكن ليس حرفًا ولا رقمًا ولا مسافة. الشرطة السفلية '_' تُصنّف كعلامة ترقيم حسب المعيار — هذا قد يكون مفاجئًا عند فحص أسماء متغيرات. تذكر هذا عند بناء قواعد تحقق."
+        }
+      ],
+      "related": [
+        "std::isprint",
+        "std::isalpha",
+        "std::isdigit",
+        "std::isspace"
+      ]
+    },
+    "std::isxdigit": {
+      "title": "std::isxdigit",
+      "type": "دالة فحص محارف",
+      "description": "تفحص إن كان المحرف رقمًا سداسيًا عشريًا (0-9, a-f, A-F). تشمل الأرقام العشرية العادية بالإضافة لحروف الهيكس. تُرجع قيمة غير صفرية إذا كان الرقم سداسيًا عشريًا.",
+      "usage": "تُستخدم عند تحليل مدخلات سداسية عشرية مثل ألوان الويب (#FF00AA) أو عناوين الذاكرة (0x7FFE) أو بيانات ثنائية مشفرة بنص hex.",
+      "example": "if (std::isxdigit(static_cast<unsigned char>(ch))) {\n    // رقم سداسي عشري\n}",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص لون ويب: # يتبعه 6 أرقام هيكس",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nbool is_valid_hex_color(const std::string& color) {\n    if (color.size() != 7 || color[0] != '#') return false;\n    for (size_t i = 1; i < 7; ++i) {\n        if (!std::isxdigit(static_cast<unsigned char>(color[i]))) {\n            return false;\n        }\n    }\n    return true;\n}\n\nstd::cout << is_valid_hex_color(\"#FF00AA\"); // true\nstd::cout << is_valid_hex_color(\"#ff00aa\"); // true — حروف صغيرة مقبولة\nstd::cout << is_valid_hex_color(\"#GG00AA\"); // false — 'G' ليس رقم هيكس\nstd::cout << is_valid_hex_color(\"FF00AA\");  // false — بدون #",
+          "explanationArabic": "isxdigit تقبل a-f و A-F بالإضافة لـ 0-9. هذا أوسع من isdigit التي تقبل 0-9 فقط. عند فحص ألوان هيكس، isxdigit أنسب من isdigit لأن الألوان تحتوي حروفًا. لاحظ أن isxdigit تقبل الحروف الكبيرة والصغيرة معًا."
+        },
+        {
+          "titleArabic": "تحويل نص هيكس لقيمة عددية",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nint hex_to_int(char c) {\n    if (std::isdigit(static_cast<unsigned char>(c))) {\n        return c - '0';\n    } else if (c >= 'A' && c <= 'F') {\n        return 10 + (c - 'A');\n    } else if (c >= 'a' && c <= 'f') {\n        return 10 + (c - 'a');\n    }\n    return -1; // ليس رقم هيكس\n}\n\n// مثال: تحويل \"1A\" لـ 26\nint value = hex_to_int('1') * 16 + hex_to_int('A');\nstd::cout << value; // 26",
+          "explanationArabic": "isxdigit للفحص فقط — لا تُحوّل. للتحويل الفعلي تحتاج حساب يدوي أو استخدام std::stoi مع الأساس 16: `std::stoi(\"1A\", nullptr, 16)`. isxdigit مفيدة هنا للتحقق من صحة المدخل قبل التحويل."
+        },
+        {
+          "titleArabic": "خطأ شائع: الخلط بين isxdigit و isdigit",
+          "code": "#include <cctype>\n\n// 'A' → isdigit=false, isxdigit=true  ← الفرق!\n// 'F' → isdigit=false, isxdigit=true  ← الفرق!\n// '9' → isdigit=true,  isxdigit=true  ← كلاهما true\n// 'G' → isdigit=false, isxdigit=false\n\n// isdigit: 0-9 فقط\n// isxdigit: 0-9 + a-f + A-F (مجموعة أكبر)\n\n// إذا كنت تتعامل مع بيانات هيكس → استخدم isxdigit\n// إذا كنت تتعامل مع أرقام عشرية → استخدم isdigit",
+          "explanationArabic": "كل isdigit هو isxdigit لكن ليس العكس. استخدام isdigit لفحص بيانات هيكس سيرفض الأحرف a-f رغم أنها صالحة. القاعدة: عند التعامل مع أي شيء يُمثَّل بنظام عد غير عشري، استخدم isxdigit."
+        }
+      ],
+      "related": [
+        "std::isdigit",
+        "std::isalpha",
+        "std::stoi"
+      ]
+    },
+    "std::toupper": {
+      "title": "std::toupper",
+      "type": "دالة تحويل محارف",
+      "description": "تحوّل الحرف الأبجدي الصغير إلى كبير. إذا كان الحرف غير صغير (رقم، علامة، حرف كبير أصلًا) تُرجعه بدون تغيير. تُرجع النتيجة كـ int وليس char — يجب تحويل النتيجة لـ char عند الحاجة. تعتمد على locale النظام الحالي.",
+      "usage": "تُستخدم لتحويل نصوص لأحرف كبيرة مثل تنسيق العناوين أو المقارنة غير الحساسة للحالة أو توحيد صيغة المدخلات.",
+      "example": "char upper = std::toupper(static_cast<unsigned char>(ch));",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحويل نص كامل لأحرف كبيرة",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nstd::string to_upper(const std::string& text) {\n    std::string result;\n    result.reserve(text.size());\n    for (char c : text) {\n        result += static_cast<char>(std::toupper(static_cast<unsigned char>(c)));\n    }\n    return result;\n}\n\nstd::cout << to_upper(\"Hello World 123!\");\n// المخرج: \"HELLO WORLD 123!\"",
+          "explanationArabic": "التحويل لـ unsigned char عند الإدخال ولـ char عند الإخراج ضروري. الأرقام والعلامات لا تتغير. toupper تُرجع int لأنها قد تُرجع قيمًا لا تتسع في char في بعض الـ locales (مثل الأحرف المُوصَّلة في UTF-8). في ASCII العادي التحويل آمن."
+        },
+        {
+          "titleArabic": "مقارنة نصوص غير حساسة للحالة",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nbool equals_ignore_case(const std::string& a, const std::string& b) {\n    if (a.size() != b.size()) return false;\n    for (size_t i = 0; i < a.size(); ++i) {\n        if (std::toupper(static_cast<unsigned char>(a[i])) !=\n            std::toupper(static_cast<unsigned char>(b[i]))) {\n            return false;\n        }\n    }\n    return true;\n}\n\nstd::cout << equals_ignore_case(\"Hello\", \"HELLO\"); // true\nstd::cout << equals_ignore_case(\"Hello\", \"World\"); // false",
+          "explanationArabic": "مقارنة كل حرف بعد تحويله لكبير تُلغي تأثير الحالة. هذا أبسط من تحويل النصين كاملين لمتغيرات مؤقتة. في C++20 يمكن استخدام std::ranges::equal مع projection لكن هذا النمط يعمل على كل الإصدارات."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان التحويل لـ unsigned char عند الإدخال",
+          "code": "#include <cctype>\n\nchar ch = -60; // محرف فوق ASCII 127\n\n// ❌ سلوك غير محدد: char سالب يُمرر كما هو\n// int result = std::toupper(ch); // UB!\n\n// ✅ صحيح: تحويل الإدخال لـ unsigned char\nint result = std::toupper(static_cast<unsigned char>(ch));\n\n// ❌ خطأ آخر: نسيان تحويل الناتج لـ char\n// std::string s;\n// s += std::toupper(c); // خطأ: toupper تُرجع int لا char\n\n// ✅ صحيح: تحويل الناتج لـ char\nstd::string s;\ns += static_cast<char>(std::toupper(static_cast<unsigned char>(c)));",
+          "explanationArabic": "مشكلتان منفصلتان: الإدخال يجب أن يكون unsigned char (لمنع UB مع القيم السالبة)، والمخرج يجب تحويله لـ char لأن toupper تُرجع int. نسيان أي منهما يسبب مشاكل: الأول UB والثاني خطأ ترجمة أو سلوك غير متوقع."
+        }
+      ],
+      "related": [
+        "std::tolower",
+        "std::isupper",
+        "std::islower"
+      ]
+    },
+    "std::tolower": {
+      "title": "std::tolower",
+      "type": "دالة تحويل محارف",
+      "description": "تحوّل الحرف الأبجدي الكبير إلى صغير. إذا كان الحرف غير كبير (رقم، علامة، حرف صغير أصلًا) تُرجعه بدون تغيير. تُرجع النتيجة كـ int وليس char. متممة لـ toupper — تحويل كبير لصغير بدل العكس.",
+      "usage": "تُستخدم لتحويل نصوص لأحرف صغيرة مثل توحيد صيغة المدخلات أو المقارنة غير الحساسة للحالة أو تحويل مسارات ملفات على الأنظمة الحساسة للحالة.",
+      "example": "char lower = std::tolower(static_cast<unsigned char>(ch));",
+      "includeHeader": "#include <cctype>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحويل مدخل مستخدم لأحرف صغيرة للمعالجة",
+          "code": "#include <cctype>\n#include <string>\n#include <iostream>\n\nstd::string normalize_input(std::string input) {\n    for (char& c : input) {\n        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));\n    }\n    return input;\n}\n\nint main() {\n    std::string command;\n    std::getline(std::cin, command);\n    std::string normalized = normalize_input(command);\n\n    if (normalized == \"quit\") {\n        std::cout << \"تم إنهاء البرنامج\";\n    } else if (normalized == \"help\") {\n        std::cout << \"قائمة الأوامر\";\n    }\n    // المستخدم يمكنه كتابة QUIT أو Quit أو quit — كلها تعمل\n}",
+          "explanationArabic": "تحويل المدخل لصغير قبل المقارنة يجعل الأمر غير حساس للحالة. هذا أبسط من كتابة عدة مقارنات لكل حالة. المرور بالمرجع (char& c) يُعدّل في المكان بدون إنشاء سلسلة جديدة."
+        },
+        {
+          "titleArabic": "بناء خريطة بحث غير حساسة للحالة",
+          "code": "#include <cctype>\n#include <string>\n#include <unordered_map>\n#include <iostream>\n\nstruct CaseInsensitiveHash {\n    size_t operator()(std::string key) const {\n        for (char& c : key) {\n            c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));\n        }\n        return std::hash<std::string>{}(key);\n    }\n};\n\nstruct CaseInsensitiveEqual {\n    bool operator()(const std::string& a, const std::string& b) const {\n        if (a.size() != b.size()) return false;\n        for (size_t i = 0; i < a.size(); ++i) {\n            if (std::tolower(static_cast<unsigned char>(a[i])) !=\n                std::tolower(static_cast<unsigned char>(b[i])))\n                return false;\n        }\n        return true;\n    }\n};\n\nstd::unordered_map<std::string, int, CaseInsensitiveHash, CaseInsensitiveEqual> config;\nconfig[\"Debug\"] = 1;\n// الآن config[\"debug\"], config[\"DEBUG\"], config[\"DeBuG\"] كلها تصل لنفس القيمة",
+          "explanationArabic": "عند الحاجة لخريطة (map) غير حساسة للحالة، tolower تُستخدم في كل من hash و equal. هذا نمط متقدم لكنه ضروري في حالات مثل ملفات إعدادات حيث المفتاح قد يُكتب بأي حالة. في C++20 يمكن استخدام std::ranges مع projection كبديل أبسط."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام tolower على سلسلة كاملة",
+          "code": "#include <cctype>\n#include <string>\n\nstd::string text = \"Hello\";\n\n// ❌ tolower تعمل على حرف واحد فقط — ليست دالة سلسلة\n// std::string lower = std::tolower(text); // خطأ ترجمة!\n\n// ❌ حتى لو حصلت على مؤشر الدالة لن يعمل على السلسلة\n// auto fn = std::tolower; // لا يمكن تطبيقها على string\n\n// ✅ صحيح: المرور على كل حرف وتحويله\nfor (char& c : text) {\n    c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));\n}\n// text = \"hello\"",
+          "explanationArabic": "tolower (و toupper) من <cctype> تعمل على حرف واحد. هناك tolower أخرى في <locale> تعمل على سلسلة لكنها مختلفة تمامًا. القاعدة: <cctype>::tolower = حرف واحد، <locale>::tolower = سلسلة. لا تخلط بينهما."
+        }
+      ],
+      "related": [
+        "std::toupper",
+        "std::islower",
+        "std::isupper"
+      ]
+    }
+  }
+}

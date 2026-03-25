@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_DestroyAsyncIOQueue",
+    "slug": "sdl-destroy-async-io-queue",
+    "titleArabic": "تدمير previously-created async I/O task الطابور",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-destroy-async-io-queue",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-destroy-async-io-queue.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تدمير previously-created async I/O task الطابور",
+    "actualMeaningArabic": "تدمير previously-created async I/O task الطابور.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تدمير previously-created async I/O task الطابور داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه void وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Destroy a previously-created async I/O task queue."
+  },
+  "signature": {
+    "raw": "void SDL_DestroyAsyncIOQueue(SDL_AsyncIOQueue *queue);",
+    "returnType": "void",
+    "parameters": [
+      "SDL_AsyncIOQueue *queue"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_asyncio.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "queue",
+        "type": "SDL_AsyncIOQueue *",
+        "descriptionArabic": "يمثل المعامل queue من النوع SDL_AsyncIOQueue * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the task queue to destroy."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "If there are still tasks pending for this queue, this call will block\nuntil those tasks are finished. All those tasks will be deallocated.\nTheir results will be lost to the app.",
+      "Any pending reads from SDL_LoadFileAsync () that are still in\nthis queue will have their buffers deallocated by this function, to\nprevent a memory leak.",
+      "Once this function is called, the queue is no longer valid and should\nnot be used, including by other threads that might access it while\ndestruction is blocking on pending tasks.",
+      "Do not destroy a queue that still has threads waiting on it through\n SDL_WaitAsyncIOResult (). You\ncan call SDL_SignalAsyncIOQueue () first to\nunblock those threads, and take measures (such as SDL_WaitThread ()) to make sure they have\nfinished their wait and won't wait on the queue again."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "It is safe to call this function from any thread, so long as no other\nthread is waiting on the queue with SDL_WaitAsyncIOResult .",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_DestroyAsyncIOQueue",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Async I/O",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

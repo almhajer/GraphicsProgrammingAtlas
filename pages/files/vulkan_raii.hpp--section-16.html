@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 16 من 64 • الأسطر 6751-7200 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 16 من 64 • الأسطر 6751-7200</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 16 من 64 • الأسطر 6751-7200</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-15.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-17.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 16/64</span>
+        <span class="source-stat">الأسطر: 6751-7200</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( CommandBuffer &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_commandPool, rhs.m_commandPool );
+        std::swap( m_commandBuffer, rhs.m_commandBuffer );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_VERSION_1_0 ===
+
+      // wrapper function for command vkBeginCommandBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkBeginCommandBuffer.html
+      typename ResultValueType&lt;void&gt;::type begin( const CommandBufferBeginInfo &amp; beginInfo ) const;
+
+      // wrapper function for command vkEndCommandBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkEndCommandBuffer.html
+      typename ResultValueType&lt;void&gt;::type end() const;
+
+      // wrapper function for command vkResetCommandBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetCommandBuffer.html
+      typename ResultValueType&lt;void&gt;::type reset( CommandBufferResetFlags flags VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const;
+
+      // wrapper function for command vkCmdCopyBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer.html
+      void copyBuffer( VULKAN_HPP_NAMESPACE::Buffer         srcBuffer,
+                       VULKAN_HPP_NAMESPACE::Buffer         dstBuffer,
+                       ArrayProxy&lt;const BufferCopy&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdCopyImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyImage.html
+      void copyImage( VULKAN_HPP_NAMESPACE::Image         srcImage,
+                      ImageLayout                         srcImageLayout,
+                      VULKAN_HPP_NAMESPACE::Image         dstImage,
+                      ImageLayout                         dstImageLayout,
+                      ArrayProxy&lt;const ImageCopy&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdCopyBufferToImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage.html
+      void copyBufferToImage( VULKAN_HPP_NAMESPACE::Buffer              srcBuffer,
+                              VULKAN_HPP_NAMESPACE::Image               dstImage,
+                              ImageLayout                               dstImageLayout,
+                              ArrayProxy&lt;const BufferImageCopy&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdCopyImageToBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyImageToBuffer.html
+      void copyImageToBuffer( VULKAN_HPP_NAMESPACE::Image               srcImage,
+                              ImageLayout                               srcImageLayout,
+                              VULKAN_HPP_NAMESPACE::Buffer              dstBuffer,
+                              ArrayProxy&lt;const BufferImageCopy&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdUpdateBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdUpdateBuffer.html
+      template &lt;typename DataType&gt;
+      void updateBuffer( VULKAN_HPP_NAMESPACE::Buffer dstBuffer, DeviceSize dstOffset, ArrayProxy&lt;const DataType&gt; const &amp; data ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdFillBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdFillBuffer.html
+      void fillBuffer( VULKAN_HPP_NAMESPACE::Buffer dstBuffer, DeviceSize dstOffset, DeviceSize size, uint32_t data ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdPipelineBarrier, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html
+      void pipelineBarrier( PipelineStageFlags                            srcStageMask,
+                            PipelineStageFlags                            dstStageMask,
+                            DependencyFlags                               dependencyFlags,
+                            ArrayProxy&lt;const MemoryBarrier&gt; const &amp;       memoryBarriers,
+                            ArrayProxy&lt;const BufferMemoryBarrier&gt; const &amp; bufferMemoryBarriers,
+                            ArrayProxy&lt;const ImageMemoryBarrier&gt; const &amp;  imageMemoryBarriers ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBeginQuery, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginQuery.html
+      void beginQuery( VULKAN_HPP_NAMESPACE::QueryPool queryPool,
+                       uint32_t                        query,
+                       QueryControlFlags flags         VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdEndQuery, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndQuery.html
+      void endQuery( VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdResetQueryPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResetQueryPool.html
+      void resetQueryPool( VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t firstQuery, uint32_t queryCount ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdWriteTimestamp, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWriteTimestamp.html
+      void writeTimestamp( PipelineStageFlagBits pipelineStage, VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdCopyQueryPoolResults, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyQueryPoolResults.html
+      void copyQueryPoolResults( VULKAN_HPP_NAMESPACE::QueryPool queryPool,
+                                 uint32_t                        firstQuery,
+                                 uint32_t                        queryCount,
+                                 VULKAN_HPP_NAMESPACE::Buffer    dstBuffer,
+                                 DeviceSize                      dstOffset,
+                                 DeviceSize                      stride,
+                                 QueryResultFlags flags          VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdExecuteCommands, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdExecuteCommands.html
+      void executeCommands( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::CommandBuffer&gt; const &amp; commandBuffers ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBindPipeline, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindPipeline.html
+      void bindPipeline( PipelineBindPoint pipelineBindPoint, VULKAN_HPP_NAMESPACE::Pipeline pipeline ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBindDescriptorSets, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets.html
+      void bindDescriptorSets( PipelineBindPoint                                             pipelineBindPoint,
+                               VULKAN_HPP_NAMESPACE::PipelineLayout                          layout,
+                               uint32_t                                                      firstSet,
+                               ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::DescriptorSet&gt; const &amp; descriptorSets,
+                               ArrayProxy&lt;const uint32_t&gt; const &amp;                            dynamicOffsets ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdClearColorImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdClearColorImage.html
+      void clearColorImage( VULKAN_HPP_NAMESPACE::Image                     image,
+                            ImageLayout                                     imageLayout,
+                            const ClearColorValue &amp;                         color,
+                            ArrayProxy&lt;const ImageSubresourceRange&gt; const &amp; ranges ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDispatch, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDispatch.html
+      void dispatch( uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDispatchIndirect, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDispatchIndirect.html
+      void dispatchIndirect( VULKAN_HPP_NAMESPACE::Buffer buffer, DeviceSize offset ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetEvent.html
+      void setEvent( VULKAN_HPP_NAMESPACE::Event event, PipelineStageFlags stageMask VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdResetEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResetEvent.html
+      void resetEvent( VULKAN_HPP_NAMESPACE::Event event, PipelineStageFlags stageMask VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdWaitEvents, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWaitEvents.html
+      void waitEvents( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Event&gt; const &amp; events,
+                       PipelineStageFlags                                    srcStageMask,
+                       PipelineStageFlags                                    dstStageMask,
+                       ArrayProxy&lt;const MemoryBarrier&gt; const &amp;               memoryBarriers,
+                       ArrayProxy&lt;const BufferMemoryBarrier&gt; const &amp;         bufferMemoryBarriers,
+                       ArrayProxy&lt;const ImageMemoryBarrier&gt; const &amp;          imageMemoryBarriers ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdPushConstants, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushConstants.html
+      template &lt;typename ValuesType&gt;
+      void pushConstants( VULKAN_HPP_NAMESPACE::PipelineLayout layout,
+                          ShaderStageFlags                     stageFlags,
+                          uint32_t                             offset,
+                          ArrayProxy&lt;const ValuesType&gt; const &amp; values ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetViewport, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetViewport.html
+      void setViewport( uint32_t firstViewport, ArrayProxy&lt;const Viewport&gt; const &amp; viewports ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetScissor, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetScissor.html
+      void setScissor( uint32_t firstScissor, ArrayProxy&lt;const Rect2D&gt; const &amp; scissors ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetLineWidth, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetLineWidth.html
+      void setLineWidth( float lineWidth ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetDepthBias, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthBias.html
+      void setDepthBias( float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetBlendConstants, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetBlendConstants.html
+      void setBlendConstants( const float blendConstants[4] ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetDepthBounds, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthBounds.html
+      void setDepthBounds( float minDepthBounds, float maxDepthBounds ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetStencilCompareMask, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetStencilCompareMask.html
+      void setStencilCompareMask( StencilFaceFlags faceMask, uint32_t compareMask ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetStencilWriteMask, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetStencilWriteMask.html
+      void setStencilWriteMask( StencilFaceFlags faceMask, uint32_t writeMask ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetStencilReference, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetStencilReference.html
+      void setStencilReference( StencilFaceFlags faceMask, uint32_t reference ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBindIndexBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindIndexBuffer.html
+      void bindIndexBuffer( VULKAN_HPP_NAMESPACE::Buffer buffer, DeviceSize offset, IndexType indexType ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBindVertexBuffers, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers.html
+      void bindVertexBuffers( uint32_t                                               firstBinding,
+                              ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Buffer&gt; const &amp; buffers,
+                              ArrayProxy&lt;const DeviceSize&gt; const &amp;                   offsets ) const;
+
+      // wrapper function for command vkCmdDraw, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDraw.html
+      void draw( uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDrawIndexed, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndexed.html
+      void
+        drawIndexed( uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDrawIndirect, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndirect.html
+      void drawIndirect( VULKAN_HPP_NAMESPACE::Buffer buffer, DeviceSize offset, uint32_t drawCount, uint32_t stride ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDrawIndexedIndirect, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndexedIndirect.html
+      void drawIndexedIndirect( VULKAN_HPP_NAMESPACE::Buffer buffer, DeviceSize offset, uint32_t drawCount, uint32_t stride ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBlitImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBlitImage.html
+      void blitImage( VULKAN_HPP_NAMESPACE::Image         srcImage,
+                      ImageLayout                         srcImageLayout,
+                      VULKAN_HPP_NAMESPACE::Image         dstImage,
+                      ImageLayout                         dstImageLayout,
+                      ArrayProxy&lt;const ImageBlit&gt; const &amp; regions,
+                      Filter                              filter ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdClearDepthStencilImage, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdClearDepthStencilImage.html
+      void clearDepthStencilImage( VULKAN_HPP_NAMESPACE::Image                     image,
+                                   ImageLayout                                     imageLayout,
+                                   const ClearDepthStencilValue &amp;                  depthStencil,
+                                   ArrayProxy&lt;const ImageSubresourceRange&gt; const &amp; ranges ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdClearAttachments, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdClearAttachments.html
+      void clearAttachments( ArrayProxy&lt;const ClearAttachment&gt; const &amp; attachments, ArrayProxy&lt;const ClearRect&gt; const &amp; rects ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdResolveImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResolveImage.html
+      void resolveImage( VULKAN_HPP_NAMESPACE::Image            srcImage,
+                         ImageLayout                            srcImageLayout,
+                         VULKAN_HPP_NAMESPACE::Image            dstImage,
+                         ImageLayout                            dstImageLayout,
+                         ArrayProxy&lt;const ImageResolve&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBeginRenderPass, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginRenderPass.html
+      void beginRenderPass( const RenderPassBeginInfo &amp; renderPassBegin, SubpassContents contents ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdNextSubpass, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdNextSubpass.html
+      void nextSubpass( SubpassContents contents ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdEndRenderPass, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndRenderPass.html
+      void endRenderPass() const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_VERSION_1_1 ===
+
+      // wrapper function for command vkCmdSetDeviceMask, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDeviceMask.html
+      void setDeviceMask( uint32_t deviceMask ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDispatchBase, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDispatchBase.html
+      void dispatchBase( uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ ) const
+        VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_VERSION_1_2 ===
+
+      // wrapper function for command vkCmdDrawIndirectCount, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndirectCount.html
+      void drawIndirectCount( VULKAN_HPP_NAMESPACE::Buffer buffer,
+                              DeviceSize                   offset,
+                              VULKAN_HPP_NAMESPACE::Buffer countBuffer,
+                              DeviceSize                   countBufferOffset,
+                              uint32_t                     maxDrawCount,
+                              uint32_t                     stride ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDrawIndexedIndirectCount, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndexedIndirectCount.html
+      void drawIndexedIndirectCount( VULKAN_HPP_NAMESPACE::Buffer buffer,
+                                     DeviceSize                   offset,
+                                     VULKAN_HPP_NAMESPACE::Buffer countBuffer,
+                                     DeviceSize                   countBufferOffset,
+                                     uint32_t                     maxDrawCount,
+                                     uint32_t                     stride ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBeginRenderPass2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginRenderPass2.html
+      void beginRenderPass2( const RenderPassBeginInfo &amp; renderPassBegin, const SubpassBeginInfo &amp; subpassBeginInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdNextSubpass2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdNextSubpass2.html
+      void nextSubpass2( const SubpassBeginInfo &amp; subpassBeginInfo, const SubpassEndInfo &amp; subpassEndInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdEndRenderPass2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndRenderPass2.html
+      void endRenderPass2( const SubpassEndInfo &amp; subpassEndInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_VERSION_1_3 ===
+
+      // wrapper function for command vkCmdPipelineBarrier2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier2.html
+      void pipelineBarrier2( const DependencyInfo &amp; dependencyInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdWriteTimestamp2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWriteTimestamp2.html
+      void writeTimestamp2( PipelineStageFlags2 stage, VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdCopyBuffer2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer2.html
+      void copyBuffer2( const CopyBufferInfo2 &amp; copyBufferInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdCopyImage2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyImage2.html
+      void copyImage2( const CopyImageInfo2 &amp; copyImageInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdCopyBufferToImage2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage2.html
+      void copyBufferToImage2( const CopyBufferToImageInfo2 &amp; copyBufferToImageInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdCopyImageToBuffer2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyImageToBuffer2.html
+      void copyImageToBuffer2( const CopyImageToBufferInfo2 &amp; copyImageToBufferInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetEvent2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetEvent2.html
+      void setEvent2( VULKAN_HPP_NAMESPACE::Event event, const DependencyInfo &amp; dependencyInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdResetEvent2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResetEvent2.html
+      void resetEvent2( VULKAN_HPP_NAMESPACE::Event event, PipelineStageFlags2 stageMask VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdWaitEvents2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWaitEvents2.html
+      void waitEvents2( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Event&gt; const &amp; events, ArrayProxy&lt;const DependencyInfo&gt; const &amp; dependencyInfos ) const;
+
+      // wrapper function for command vkCmdBlitImage2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBlitImage2.html
+      void blitImage2( const BlitImageInfo2 &amp; blitImageInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdResolveImage2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResolveImage2.html
+      void resolveImage2( const ResolveImageInfo2 &amp; resolveImageInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBeginRendering, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginRendering.html
+      void beginRendering( const RenderingInfo &amp; renderingInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdEndRendering, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndRendering.html
+      void endRendering() const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetCullMode, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetCullMode.html
+      void setCullMode( CullModeFlags cullMode VULKAN_HPP_DEFAULT_ASSIGNMENT( {} ) ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetFrontFace, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetFrontFace.html
+      void setFrontFace( FrontFace frontFace ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetPrimitiveTopology, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPrimitiveTopology.html
+      void setPrimitiveTopology( PrimitiveTopology primitiveTopology ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetViewportWithCount, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetViewportWithCount.html
+      void setViewportWithCount( ArrayProxy&lt;const Viewport&gt; const &amp; viewports ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetScissorWithCount, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetScissorWithCount.html
+      void setScissorWithCount( ArrayProxy&lt;const Rect2D&gt; const &amp; scissors ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBindVertexBuffers2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers2.html
+      void bindVertexBuffers2( uint32_t                                               firstBinding,
+                               ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Buffer&gt; const &amp; buffers,
+                               ArrayProxy&lt;const DeviceSize&gt; const &amp;                   offsets,
+                               ArrayProxy&lt;const DeviceSize&gt; const &amp; sizes             VULKAN_HPP_DEFAULT_ASSIGNMENT( nullptr ),
+                               ArrayProxy&lt;const DeviceSize&gt; const &amp; strides           VULKAN_HPP_DEFAULT_ASSIGNMENT( nullptr ) ) const;
+
+      // wrapper function for command vkCmdSetDepthTestEnable, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthTestEnable.html
+      void setDepthTestEnable( Bool32 depthTestEnable ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetDepthWriteEnable, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthWriteEnable.html
+      void setDepthWriteEnable( Bool32 depthWriteEnable ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetDepthCompareOp, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthCompareOp.html
+      void setDepthCompareOp( CompareOp depthCompareOp ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetDepthBoundsTestEnable, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthBoundsTestEnable.html
+      void setDepthBoundsTestEnable( Bool32 depthBoundsTestEnable ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetStencilTestEnable, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetStencilTestEnable.html
+      void setStencilTestEnable( Bool32 stencilTestEnable ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetStencilOp, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetStencilOp.html
+      void setStencilOp( StencilFaceFlags faceMask, StencilOp failOp, StencilOp passOp, StencilOp depthFailOp, CompareOp compareOp ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetRasterizerDiscardEnable, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetRasterizerDiscardEnable.html
+      void setRasterizerDiscardEnable( Bool32 rasterizerDiscardEnable ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetDepthBiasEnable, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetDepthBiasEnable.html
+      void setDepthBiasEnable( Bool32 depthBiasEnable ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetPrimitiveRestartEnable, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetPrimitiveRestartEnable.html
+      void setPrimitiveRestartEnable( Bool32 primitiveRestartEnable ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_VERSION_1_4 ===
+
+      // wrapper function for command vkCmdPushDescriptorSet, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushDescriptorSet.html
+      void pushDescriptorSet( PipelineBindPoint                            pipelineBindPoint,
+                              VULKAN_HPP_NAMESPACE::PipelineLayout         layout,
+                              uint32_t                                     set,
+                              ArrayProxy&lt;const WriteDescriptorSet&gt; const &amp; descriptorWrites ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdPushDescriptorSetWithTemplate, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushDescriptorSetWithTemplate.html
+      template &lt;typename DataType&gt;
+      void pushDescriptorSetWithTemplate( VULKAN_HPP_NAMESPACE::DescriptorUpdateTemplate descriptorUpdateTemplate,
+                                          VULKAN_HPP_NAMESPACE::PipelineLayout           layout,
+                                          uint32_t                                       set,
+                                          DataType const &amp;                               data ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBindDescriptorSets2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets2.html
+      void bindDescriptorSets2( const BindDescriptorSetsInfo &amp; bindDescriptorSetsInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdPushConstants2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushConstants2.html
+      void pushConstants2( const PushConstantsInfo &amp; pushConstantsInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdPushDescriptorSet2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushDescriptorSet2.html
+      void pushDescriptorSet2( const PushDescriptorSetInfo &amp; pushDescriptorSetInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdPushDescriptorSetWithTemplate2, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushDescriptorSetWithTemplate2.html
+      void pushDescriptorSetWithTemplate2( const PushDescriptorSetWithTemplateInfo &amp; pushDescriptorSetWithTemplateInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetLineStipple, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetLineStipple.html
+      void setLineStipple( uint32_t lineStippleFactor, uint16_t lineStipplePattern ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdBindIndexBuffer2, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindIndexBuffer2.html
+      void bindIndexBuffer2( VULKAN_HPP_NAMESPACE::Buffer buffer, DeviceSize offset, DeviceSize size, IndexType indexType ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetRenderingAttachmentLocations, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetRenderingAttachmentLocations.html
+      void setRenderingAttachmentLocations( const RenderingAttachmentLocationInfo &amp; locationInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdSetRenderingInputAttachmentIndices, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetRenderingInputAttachmentIndices.html
+      void setRenderingInputAttachmentIndices( const RenderingInputAttachmentIndexInfo &amp; inputAttachmentIndexInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_EXT_debug_marker ===
+
+      // wrapper function for command vkCmdDebugMarkerBeginEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDebugMarkerBeginEXT.html
+      void debugMarkerBeginEXT( const DebugMarkerMarkerInfoEXT &amp; markerInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDebugMarkerEndEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDebugMarkerEndEXT.html
+      void debugMarkerEndEXT() const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDebugMarkerInsertEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDebugMarkerInsertEXT.html
+      void debugMarkerInsertEXT( const DebugMarkerMarkerInfoEXT &amp; markerInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_KHR_video_queue ===
+
+      // wrapper function for command vkCmdBeginVideoCodingKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginVideoCodingKHR.html
+      void beginVideoCodingKHR( const VideoBeginCodingInfoKHR &amp; beginInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdEndVideoCodingKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndVideoCodingKHR.html
+      void endVideoCodingKHR( const VideoEndCodingInfoKHR &amp; endCodingInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdControlVideoCodingKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdControlVideoCodingKHR.html
+      void controlVideoCodingKHR( const VideoCodingControlInfoKHR &amp; codingControlInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_KHR_video_decode_queue ===
+
+      // wrapper function for command vkCmdDecodeVideoKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDecodeVideoKHR.html
+      void decodeVideoKHR( const VideoDecodeInfoKHR &amp; decodeInfo ) const VULKAN_HPP_NOEXCEPT;
+
+      //=== VK_EXT_transform_feedback ===
+
+      // wrapper function for command vkCmdBindTransformFeedbackBuffersEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindTransformFeedbackBuffersEXT.html
+      void bindTransformFeedbackBuffersEXT( uint32_t                                               firstBinding,
+                                            ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Buffer&gt; const &amp; buffers,
+                                            ArrayProxy&lt;const DeviceSize&gt; const &amp;                   offsets,
+                                            ArrayProxy&lt;const DeviceSize&gt; const &amp; sizes             VULKAN_HPP_DEFAULT_ASSIGNMENT( nullptr ) ) const;
+
+      // wrapper function for command vkCmdBeginTransformFeedbackEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginTransformFeedbackEXT.html
+      void beginTransformFeedbackEXT( uint32_t                                                  firstCounterBuffer,
+                                      ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Buffer&gt; const &amp;    counterBuffers,
+                                      ArrayProxy&lt;const DeviceSize&gt; const &amp; counterBufferOffsets VULKAN_HPP_DEFAULT_ASSIGNMENT( nullptr ) ) const;
+
+      // wrapper function for command vkCmdEndTransformFeedbackEXT, see
+      // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndTransformFeedbackEXT.html
+      void endTransformFeedbackEXT( uint32_t                                                  firstCounterBuffer,
+                                    ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::Buffer&gt; const &amp;    counterBuffers,
+                                    ArrayProxy&lt;const DeviceSize&gt; const &amp; counterBufferOffsets VULKAN_HPP_DEFAULT_ASSIGNMENT( nullptr ) ) const;
+
+      // wrapper function for command vkCmdBeginQueryIndexedEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginQueryIndexedEXT.html
+      void beginQueryIndexedEXT( VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query, QueryControlFlags flags, uint32_t index ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdEndQueryIndexedEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndQueryIndexedEXT.html
+      void endQueryIndexedEXT( VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query, uint32_t index ) const VULKAN_HPP_NOEXCEPT;
+
+      // wrapper function for command vkCmdDrawIndirectByteCountEXT, see</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-15.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-17.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

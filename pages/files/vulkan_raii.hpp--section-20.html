@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 20 من 64 • الأسطر 8551-9000 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 20 من 64 • الأسطر 8551-9000</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 20 من 64 • الأسطر 8551-9000</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-19.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-21.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 20/64</span>
+        <span class="source-stat">الأسطر: 8551-9000</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+    // wrapper class for handle VkCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkCudaModuleNV.html
+#  if defined( VK_ENABLE_BETA_EXTENSIONS )
+    class CudaModuleNV
+    {
+    public:
+      using CType   = VkCudaModuleNV;
+      using CppType = VULKAN_HPP_NAMESPACE::CudaModuleNV;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eCudaModuleNV;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eCudaModuleNV;
+
+    public:
+#    if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      CudaModuleNV( Device const &amp; device, CudaModuleCreateInfoNV const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+      {
+        *this = device.createCudaModuleNV( createInfo, allocator );
+      }
+#    endif
+
+      CudaModuleNV( Device const &amp; device, VkCudaModuleNV module, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_cudaModuleNV( module )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      CudaModuleNV( std::nullptr_t ) {}
+
+      ~CudaModuleNV()
+      {
+        clear();
+      }
+
+      CudaModuleNV()                       = delete;
+      CudaModuleNV( CudaModuleNV const &amp; ) = delete;
+
+      CudaModuleNV( CudaModuleNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_cudaModuleNV( exchange( rhs.m_cudaModuleNV, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      CudaModuleNV &amp; operator=( CudaModuleNV const &amp; ) = delete;
+
+      CudaModuleNV &amp; operator=( CudaModuleNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_cudaModuleNV, rhs.m_cudaModuleNV );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::CudaModuleNV const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_cudaModuleNV;
+      }
+
+      VULKAN_HPP_NAMESPACE::CudaModuleNV const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_cudaModuleNV );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::CudaModuleNV() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_cudaModuleNV;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_cudaModuleNV )
+        {
+          getDispatcher()-&gt;vkDestroyCudaModuleNV(
+            static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkCudaModuleNV&gt;( m_cudaModuleNV ), reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device       = nullptr;
+        m_cudaModuleNV = nullptr;
+        m_allocator    = nullptr;
+        m_dispatcher   = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::CudaModuleNV release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_cudaModuleNV, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( CudaModuleNV &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_cudaModuleNV, rhs.m_cudaModuleNV );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+      //=== VK_NV_cuda_kernel_launch ===
+
+      // wrapper function for command vkGetCudaModuleCacheNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetCudaModuleCacheNV.html
+      VULKAN_HPP_NODISCARD typename ResultValueType&lt;std::vector&lt;uint8_t&gt;&gt;::type getCache() const;
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device       m_device       = {};
+      VULKAN_HPP_NAMESPACE::CudaModuleNV m_cudaModuleNV = {};
+      const AllocationCallbacks *        m_allocator    = {};
+      detail::DeviceDispatcher const *   m_dispatcher   = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;CudaModuleNV&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+#  endif /*VK_ENABLE_BETA_EXTENSIONS*/
+
+    // wrapper class for handle VkDataGraphPipelineSessionARM, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDataGraphPipelineSessionARM.html
+    class DataGraphPipelineSessionARM
+    {
+    public:
+      using CType   = VkDataGraphPipelineSessionARM;
+      using CppType = VULKAN_HPP_NAMESPACE::DataGraphPipelineSessionARM;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDataGraphPipelineSessionARM;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DataGraphPipelineSessionARM( Device const &amp;                                device,
+                                   DataGraphPipelineSessionCreateInfoARM const &amp; createInfo,
+                                   Optional&lt;const AllocationCallbacks&gt;           allocator = nullptr )
+      {
+        *this = device.createDataGraphPipelineSessionARM( createInfo, allocator );
+      }
+#  endif
+
+      DataGraphPipelineSessionARM( Device const &amp; device, VkDataGraphPipelineSessionARM session, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_device( device )
+        , m_dataGraphPipelineSessionARM( session )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( device.getDispatcher() )
+      {
+      }
+
+      DataGraphPipelineSessionARM( std::nullptr_t ) {}
+
+      ~DataGraphPipelineSessionARM()
+      {
+        clear();
+      }
+
+      DataGraphPipelineSessionARM()                                      = delete;
+      DataGraphPipelineSessionARM( DataGraphPipelineSessionARM const &amp; ) = delete;
+
+      DataGraphPipelineSessionARM( DataGraphPipelineSessionARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_device( exchange( rhs.m_device, {} ) )
+        , m_dataGraphPipelineSessionARM( exchange( rhs.m_dataGraphPipelineSessionARM, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      DataGraphPipelineSessionARM &amp; operator=( DataGraphPipelineSessionARM const &amp; ) = delete;
+
+      DataGraphPipelineSessionARM &amp; operator=( DataGraphPipelineSessionARM &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_device, rhs.m_device );
+          std::swap( m_dataGraphPipelineSessionARM, rhs.m_dataGraphPipelineSessionARM );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::DataGraphPipelineSessionARM const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_dataGraphPipelineSessionARM;
+      }
+
+      VULKAN_HPP_NAMESPACE::DataGraphPipelineSessionARM const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_dataGraphPipelineSessionARM );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::DataGraphPipelineSessionARM() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_dataGraphPipelineSessionARM;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_dataGraphPipelineSessionARM )
+        {
+          getDispatcher()-&gt;vkDestroyDataGraphPipelineSessionARM( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                 static_cast&lt;VkDataGraphPipelineSessionARM&gt;( m_dataGraphPipelineSessionARM ),
+                                                                 reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_device                      = nullptr;
+        m_dataGraphPipelineSessionARM = nullptr;
+        m_allocator                   = nullptr;
+        m_dispatcher                  = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::DataGraphPipelineSessionARM release()
+      {
+        m_device     = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_dataGraphPipelineSessionARM, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Device getDevice() const
+      {
+        return m_device;
+      }
+
+      detail::DeviceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( DataGraphPipelineSessionARM &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_device, rhs.m_device );
+        std::swap( m_dataGraphPipelineSessionARM, rhs.m_dataGraphPipelineSessionARM );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Device                      m_device                      = {};
+      VULKAN_HPP_NAMESPACE::DataGraphPipelineSessionARM m_dataGraphPipelineSessionARM = {};
+      const AllocationCallbacks *                       m_allocator                   = {};
+      detail::DeviceDispatcher const *                  m_dispatcher                  = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;DataGraphPipelineSessionARM&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkDebugReportCallbackEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDebugReportCallbackEXT.html
+    class DebugReportCallbackEXT
+    {
+    public:
+      using CType   = VkDebugReportCallbackEXT;
+      using CppType = VULKAN_HPP_NAMESPACE::DebugReportCallbackEXT;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDebugReportCallbackEXT;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eDebugReportCallbackEXT;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DebugReportCallbackEXT( Instance const &amp;                         instance,
+                              DebugReportCallbackCreateInfoEXT const &amp; createInfo,
+                              Optional&lt;const AllocationCallbacks&gt;      allocator = nullptr )
+      {
+        *this = instance.createDebugReportCallbackEXT( createInfo, allocator );
+      }
+#  endif
+
+      DebugReportCallbackEXT( Instance const &amp; instance, VkDebugReportCallbackEXT callback, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_instance( instance )
+        , m_debugReportCallbackEXT( callback )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( instance.getDispatcher() )
+      {
+      }
+
+      DebugReportCallbackEXT( std::nullptr_t ) {}
+
+      ~DebugReportCallbackEXT()
+      {
+        clear();
+      }
+
+      DebugReportCallbackEXT()                                 = delete;
+      DebugReportCallbackEXT( DebugReportCallbackEXT const &amp; ) = delete;
+
+      DebugReportCallbackEXT( DebugReportCallbackEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_instance( exchange( rhs.m_instance, {} ) )
+        , m_debugReportCallbackEXT( exchange( rhs.m_debugReportCallbackEXT, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      DebugReportCallbackEXT &amp; operator=( DebugReportCallbackEXT const &amp; ) = delete;
+
+      DebugReportCallbackEXT &amp; operator=( DebugReportCallbackEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_instance, rhs.m_instance );
+          std::swap( m_debugReportCallbackEXT, rhs.m_debugReportCallbackEXT );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }
+        return *this;
+      }
+
+      VULKAN_HPP_NAMESPACE::DebugReportCallbackEXT const &amp; operator*() const &amp; VULKAN_HPP_NOEXCEPT
+      {
+        return m_debugReportCallbackEXT;
+      }
+
+      VULKAN_HPP_NAMESPACE::DebugReportCallbackEXT const &amp;&amp; operator*() const &amp;&amp; VULKAN_HPP_NOEXCEPT
+      {
+        return std::move( m_debugReportCallbackEXT );
+      }
+
+      operator VULKAN_HPP_NAMESPACE::DebugReportCallbackEXT() const VULKAN_HPP_NOEXCEPT
+      {
+        return m_debugReportCallbackEXT;
+      }
+
+      void clear() VULKAN_HPP_NOEXCEPT
+      {
+        if ( m_debugReportCallbackEXT )
+        {
+          getDispatcher()-&gt;vkDestroyDebugReportCallbackEXT( static_cast&lt;VkInstance&gt;( m_instance ),
+                                                            static_cast&lt;VkDebugReportCallbackEXT&gt;( m_debugReportCallbackEXT ),
+                                                            reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( m_allocator ) );
+        }
+        m_instance               = nullptr;
+        m_debugReportCallbackEXT = nullptr;
+        m_allocator              = nullptr;
+        m_dispatcher             = nullptr;
+      }
+
+      VULKAN_HPP_NAMESPACE::DebugReportCallbackEXT release()
+      {
+        m_instance   = nullptr;
+        m_allocator  = nullptr;
+        m_dispatcher = nullptr;
+        return exchange( m_debugReportCallbackEXT, nullptr );
+      }
+
+      VULKAN_HPP_NAMESPACE::Instance getInstance() const
+      {
+        return m_instance;
+      }
+
+      detail::InstanceDispatcher const * getDispatcher() const
+      {
+        VULKAN_HPP_ASSERT( m_dispatcher-&gt;getVkHeaderVersion() == VK_HEADER_VERSION );
+        return m_dispatcher;
+      }
+
+      void swap( DebugReportCallbackEXT &amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        std::swap( m_instance, rhs.m_instance );
+        std::swap( m_debugReportCallbackEXT, rhs.m_debugReportCallbackEXT );
+        std::swap( m_allocator, rhs.m_allocator );
+        std::swap( m_dispatcher, rhs.m_dispatcher );
+      }
+
+    private:
+      VULKAN_HPP_NAMESPACE::Instance               m_instance               = {};
+      VULKAN_HPP_NAMESPACE::DebugReportCallbackEXT m_debugReportCallbackEXT = {};
+      const AllocationCallbacks *                  m_allocator              = {};
+      detail::InstanceDispatcher const *           m_dispatcher             = nullptr;
+    };
+
+    template &lt;&gt;
+    struct isVulkanRAIIHandleType&lt;DebugReportCallbackEXT&gt;
+    {
+      static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+    };
+
+    // wrapper class for handle VkDebugUtilsMessengerEXT, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkDebugUtilsMessengerEXT.html
+    class DebugUtilsMessengerEXT
+    {
+    public:
+      using CType   = VkDebugUtilsMessengerEXT;
+      using CppType = VULKAN_HPP_NAMESPACE::DebugUtilsMessengerEXT;
+
+      static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eDebugUtilsMessengerEXT;
+      static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eUnknown;
+
+    public:
+#  if !defined( VULKAN_HPP_NO_EXCEPTIONS )
+      DebugUtilsMessengerEXT( Instance const &amp;                         instance,
+                              DebugUtilsMessengerCreateInfoEXT const &amp; createInfo,
+                              Optional&lt;const AllocationCallbacks&gt;      allocator = nullptr )
+      {
+        *this = instance.createDebugUtilsMessengerEXT( createInfo, allocator );
+      }
+#  endif
+
+      DebugUtilsMessengerEXT( Instance const &amp; instance, VkDebugUtilsMessengerEXT messenger, Optional&lt;const AllocationCallbacks&gt; allocator = nullptr )
+        : m_instance( instance )
+        , m_debugUtilsMessengerEXT( messenger )
+        , m_allocator( static_cast&lt;const AllocationCallbacks *&gt;( allocator ) )
+        , m_dispatcher( instance.getDispatcher() )
+      {
+      }
+
+      DebugUtilsMessengerEXT( std::nullptr_t ) {}
+
+      ~DebugUtilsMessengerEXT()
+      {
+        clear();
+      }
+
+      DebugUtilsMessengerEXT()                                 = delete;
+      DebugUtilsMessengerEXT( DebugUtilsMessengerEXT const &amp; ) = delete;
+
+      DebugUtilsMessengerEXT( DebugUtilsMessengerEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+        : m_instance( exchange( rhs.m_instance, {} ) )
+        , m_debugUtilsMessengerEXT( exchange( rhs.m_debugUtilsMessengerEXT, {} ) )
+        , m_allocator( exchange( rhs.m_allocator, {} ) )
+        , m_dispatcher( exchange( rhs.m_dispatcher, nullptr ) )
+      {
+      }
+
+      DebugUtilsMessengerEXT &amp; operator=( DebugUtilsMessengerEXT const &amp; ) = delete;
+
+      DebugUtilsMessengerEXT &amp; operator=( DebugUtilsMessengerEXT &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+      {
+        if ( this != &amp;rhs )
+        {
+          std::swap( m_instance, rhs.m_instance );
+          std::swap( m_debugUtilsMessengerEXT, rhs.m_debugUtilsMessengerEXT );
+          std::swap( m_allocator, rhs.m_allocator );
+          std::swap( m_dispatcher, rhs.m_dispatcher );
+        }</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-19.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-21.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

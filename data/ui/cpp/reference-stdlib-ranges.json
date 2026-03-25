@@ -1,0 +1,489 @@
+{
+  "referenceData": {
+    "std::views::transform": {
+      "title": "std::views::transform",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُنشئ عرضًا (view) يُطبّق دالة تحويل على كل عنصر عند المرور عليه. لا يُنفّذ التحويل فورًا — فقط عند الوصول للعنصر (lazy evaluation).",
+      "usage": "يظهر عند الحاجة لتطبيق تحويل على نطاق دون إنشاء نطاق جديد. مثلًا: تحويل درجات مئوية لفهرنهايت أو استخراج حقل من كائنات.",
+      "example": "auto doubled = std::views::transform(v, [](int x) { return x * 2; });",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "مضاعفة كل عنصر",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    auto doubled = v | std::views::transform([](int x) { return x * 2; });\n    for (int x : doubled) std::cout << x << ' ';\n    // المخرجات: 2 4 6 8 10\n}",
+          "explanationArabic": "views::transform يُنشئ عرضًا يُطبّق lambda على كل عنصر. لا يُنشئ vector جديدًا — التحويل يحدث عند المرور. هذا أنظم وأخف من std::transform مع back_inserter."
+        },
+        {
+          "titleArabic": "استخراج حقل من كائنات",
+          "code": "#include <ranges>\n#include <vector>\n#include <string>\n#include <iostream>\n\nstruct Student { std::string name; int score; };\n\nint main() {\n    std::vector<Student> students = {{\"Ali\", 90}, {\"Sara\", 85}, {\"Omar\", 95}};\n    auto names = students | std::views::transform([](const Student& s) { return s.name; });\n    for (const auto& n : names) std::cout << n << ' ';\n    // المخرجات: Ali Sara Omar\n}",
+          "explanationArabic": "transform مفيد لاستخراج حقل من هيكل. أنظم من حلقة يدوية. مع pipe operator (|) يكون التعبير أنيقًا وسهل القراءة."
+        },
+        {
+          "titleArabic": "ربط عدة عمليات معًا",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5, 6};\n    auto result = v\n        | std::views::filter([](int x) { return x % 2 == 0; })\n        | std::views::transform([](int x) { return x * x; });\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 4 16 36 (الأزواج مربّعة)\n}",
+          "explanationArabic": "views يمكن ربطها بالـ pipe operator. filter ثم transform يُنتج سلسلة عمليات أنيقة. كل شيء lazy — لا يُنفّذ حتى المرور في for."
+        }
+      ],
+      "related": [
+        "std::views::filter",
+        "std::views::take",
+        "std::ranges::transform"
+      ]
+    },
+    "std::views::take": {
+      "title": "std::views::take",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُنشئ عرضًا يأخذ أول N عنصر من النطاق الأصلي. يُقيّد الوصول لعدد محدد من العناصر.",
+      "usage": "يظهر عند الحاجة لأول N عنصر من نطاق. مثلًا: أول 10 نتائج بحث أو أول 5 صفوف من جدول.",
+      "example": "auto first3 = v | std::views::take(3);",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "أول 3 عناصر",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40, 50};\n    auto first3 = v | std::views::take(3);\n    for (int x : first3) std::cout << x << ' ';\n    // المخرجات: 10 20 30\n}",
+          "explanationArabic": "views::take يأخذ أول N عنصر فقط. لا يُنشئ نسخة — يُقيّد الوصول. إذا كان N أكبر من حجم النطاق، يأخذ كل العناصر بدون خطأ."
+        },
+        {
+          "titleArabic": "ربط take مع filter",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, -2, 3, -4, 5, -6, 7, -8};\n    auto result = v\n        | std::views::filter([](int x) { return x > 0; })\n        | std::views::take(2);\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 1 3 (أول موجبتين فقط)\n}",
+          "explanationArabic": "take بعد filter يأخذ أول N عنصر من النتيجة المُفلترة. هذا أنظم من حلقة مع عداد يدوي."
+        },
+        {
+          "titleArabic": "take لا يتحقق من الحدود",
+          "code": "#include <ranges>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3};\nauto result = v | std::views::take(100);\n// آمن: يأخذ 3 عناصر فقط (كل ما هو متاح)\n// لا يرمي استثناء ولا سلوك غير معرّف",
+          "explanationArabic": "take آمن مع N أكبر من الحجم. يأخذ كل ما هو متاح. هذا يختلف عن std::copy_n الذي يتطلب أن النطاق يملك N عنصرًا."
+        }
+      ],
+      "related": [
+        "std::views::drop",
+        "std::views::take_while",
+        "std::views::split"
+      ]
+    },
+    "std::views::drop": {
+      "title": "std::views::drop",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُنشئ عرضًا يتخطى أول N عنصر ويعرض الباقي.",
+      "usage": "يظهر عند الحاجة لتخطي عناصر من البداية. مثلًا: تخطي العنوان أو تخطي أول سطر من ملف.",
+      "example": "auto rest = v | std::views::drop(2);",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "تخطي أول عنصرين",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40, 50};\n    auto rest = v | std::views::drop(2);\n    for (int x : rest) std::cout << x << ' ';\n    // المخرجات: 30 40 50\n}",
+          "explanationArabic": "views::drop يتخطى أول N عنصر. عكس take الذي يأخذ أول N. لا يُنشئ نسخة — يبدأ المرور من الموضع N."
+        },
+        {
+          "titleArabic": "تخطي العنوان في بيانات",
+          "code": "#include <ranges>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> lines = {\"Name\", \"Age\", \"Ali\", \"25\", \"Sara\", \"30\"};\n    auto data = lines | std::views::drop(1);\n    for (const auto& l : data) std::cout << l << '\\n';\n    // يطبع كل شيء بدون السطر الأول (العنوان)\n}",
+          "explanationArabic": "drop(1) يتخطي العنوان. مفيد عند قراءة ملفات CSV أو بيانات مهيكلة تحتوي رأسًا."
+        },
+        {
+          "titleArabic": "drop + take = نطاق وسط",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};\n    auto middle = v | std::views::drop(3) | std::views::take(4);\n    for (int x : middle) std::cout << x << ' ';\n    // المخرجات: 3 4 5 6\n}",
+          "explanationArabic": "drop(3) + take(4) يأخذ العناصر من الموضع 3 إلى 6. أنظم من begin()+3 و end()-3 مع مكرّرات يدوية."
+        }
+      ],
+      "related": [
+        "std::views::take",
+        "std::views::drop_while",
+        "std::views::split"
+      ]
+    },
+    "std::views::take_while": {
+      "title": "std::views::take_while",
+      "type": "عرض نطاق (C++20)",
+      "description": "يأخذ عناصر النطاق طالما تحقّق شرطًا. يتوقف عند أول عنصر يُرجع false من الشرط.",
+      "usage": "يظهر عند الحاجة لأخذ عناصر حتى شرط يتحقق. مثلًا: قراءة حتى نهاية البيانات الصالحة أو أخذ حتى فاصل.",
+      "example": "auto valid = v | std::views::take_while([](int x) { return x > 0; });",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "أخذ الأعداد الموجبة حتى أول سالب",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 3, 7, -1, 2, 4};\n    auto positives = v | std::views::take_while([](int x) { return x > 0; });\n    for (int x : positives) std::cout << x << ' ';\n    // المخرجات: 5 3 7 (يتوقف عند -1)\n}",
+          "explanationArabic": "take_while يأخذ العناصر طالما الشرط true. عند أول false يتوقف حتى لو كانت هناك عناصر تحقق الشرط لاحقًا. هذا يختلف عن filter الذي يمر على الكل."
+        },
+        {
+          "titleArabic": "take_while vs filter",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, -1, 3, 4};\n\n    auto tw = v | std::views::take_while([](int x) { return x > 0; });\n    for (int x : tw) std::cout << x << ' ';\n    // المخرجات: 1 2 (يتوقف عند -1)\n\n    auto fi = v | std::views::filter([](int x) { return x > 0; });\n    for (int x : fi) std::cout << x << ' ';\n    // المخرجات: 1 2 3 4 (كل الموجبة)\n}",
+          "explanationArabic": "take_while يتوقف عند أول فشل. filter يمر على الكل. استخدم take_when عندما يكون الترتيب مهمًا والعناصر الصالحة متتالية."
+        }
+      ],
+      "related": [
+        "std::views::drop_while",
+        "std::views::take",
+        "std::views::filter"
+      ]
+    },
+    "std::views::drop_while": {
+      "title": "std::views::drop_while",
+      "type": "عرض نطاق (C++20)",
+      "description": "يتخطى عناصر النطاق طالما تحقّق شرطًا. يبدأ العرض من أول عنصر يُرجع false.",
+      "usage": "يظهر عند الحاجة لتخطي عناصر لا تريدها في البداية. مثلًا: تخطي المسافات البادئة أو تخطي القيم الافتراضية.",
+      "example": "auto rest = v | std::views::drop_while([](int x) { return x == 0; });",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "تخطي الأصفار البادئة",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {0, 0, 0, 5, 3, 0, 7};\n    auto no_leading_zeros = v | std::views::drop_while([](int x) { return x == 0; });\n    for (int x : no_leading_zeros) std::cout << x << ' ';\n    // المخرجات: 5 3 0 7 (تخطى الأصفار البادئة فقط)\n}",
+          "explanationArabic": "drop_while يتخطى العناصر طالما الشرط true. عند أول false يبدأ العرض. الأصفار في الوسط لا تُتخطى — فقط البادئة."
+        },
+        {
+          "titleArabic": "تخطي العناصر الصغيرة",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 5, 3, 1, 8, 2};\n    auto big = v | std::views::drop_while([](int x) { return x < 5; });\n    for (int x : big) std::cout << x << ' ';\n    // المخرجات: 5 3 1 8 2 (بدأ من أول عنصر >= 5)\n}",
+          "explanationArabic": "drop_while يبدأ من أول عنصر يكسر الشرط. لا يُفلتر الكل — فقط يتخطى البداية. العناصر اللاحقة التي تحقق الشرط تظهر في النتيجة."
+        }
+      ],
+      "related": [
+        "std::views::take_while",
+        "std::views::drop",
+        "std::views::filter"
+      ]
+    },
+    "std::views::split": {
+      "title": "std::views::split",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُقسّم النطاق إلى عدة نطاقات فرعية عند كل ظهور لفاصل محدد. كل نطاق فرعي هو عرض لا نسخة.",
+      "usage": "يظهر عند تقسيم نص إلى كلمات أو تقسيم بيانات بسجل محدد. مثل string::split في لغات أخرى.",
+      "example": "auto words = text | std::views::split(' ');",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "تقسيم نص بكلمات",
+          "code": "#include <ranges>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::string text = \"hello world from cpp\";\n    for (auto word : std::views::split(text, ' ')) {\n        std::string s(word.begin(), word.end());\n        std::cout << s << '\\n';\n    }\n    // hello\n    // world\n    // from\n    // cpp\n}",
+          "explanationArabic": "views::split يُقسّم النطاق عند كل فاصل. كل جزء هو نطاق فرعي (range). لتحويله لـ string تحتاج بناء من begin/end."
+        },
+        {
+          "titleArabic": "تقسيم على عدة أحرف",
+          "code": "#include <ranges>\n#include <string>\n#include <string_view>\n#include <iostream>\n\nint main() {\n    std::string data = \"key1=value1;key2=value2\";\n    for (auto pair : std::views::split(data, ';')) {\n        std::string_view sv(pair.begin(), pair.end());\n        std::cout << sv << '\\n';\n    }\n    // key1=value1\n    // key2=value2\n}",
+          "explanationArabic": "split يعمل مع أي فاصل: حرف واحد أو عدة أحرف. مفيد لتحليل بيانات مهيكلة مثل ملفات الإعدادات وCSV."
+        }
+      ],
+      "related": [
+        "std::views::join",
+        "std::views::take",
+        "std::string_view"
+      ]
+    },
+    "std::views::join": {
+      "title": "std::views::join",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُسطّح نطاقًا من النطاقات إلى نطاق واحد. يدمج كل النطاقات الفرعية في تسلسل واحد.",
+      "usage": "يظهر عند الحاجة لتسطيح vector<vector<T>> أو دمج عدة نطاقات في واحد.",
+      "example": "auto flat = matrix | std::views::join;",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "تسطيح vector<vector<int>>",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<std::vector<int>> matrix = {{1, 2}, {3, 4, 5}, {6}};\n    auto flat = matrix | std::views::join;\n    for (int x : flat) std::cout << x << ' ';\n    // المخرجات: 1 2 3 4 5 6\n}",
+          "explanationArabic": "views::join يُسطّح نطاقًا ثنائي الأبعاد إلى أحادي. كل العناصر من كل النطاقات الفرعية تظهر بالتسلسل. لا يُنشئ نسخة — lazy evaluation."
+        },
+        {
+          "titleArabic": "دمج نطاقات من split",
+          "code": "#include <ranges>\n#include <string>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> lines = {\"a b c\", \"d e\", \"f\"};\n    auto words = lines\n        | std::views::transform([](const std::string& s) {\n            return std::views::split(s, ' ');\n        })\n        | std::views::join;\n    for (auto word : words) {\n        std::string w(word.begin(), word.end());\n        std::cout << w << ' ';\n    }\n    // المخرجات: a b c d e f\n}",
+          "explanationArabic": "join بعد transform يدمج كل النتائج الفرعية. هنا نقسّم كل سطر لكلمات ثم ندمج الكل في تسلسل واحد."
+        }
+      ],
+      "related": [
+        "std::views::split",
+        "std::views::transform",
+        "std::views::filter"
+      ]
+    },
+    "std::views::reverse": {
+      "title": "std::views::reverse",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُنشئ عرضًا يمر على عناصر النطاق بترتيب عكسي. لا يُعدّل النطاق الأصلي.",
+      "usage": "يظهر عند الحاجة للمرور على العناصر من النهاية للبداية. مثلًا: عرض آخر سجلات أو طباعة بترتيب عكسي.",
+      "example": "auto rev = v | std::views::reverse;",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "طباعة vector بترتيب عكسي",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    for (int x : v | std::views::reverse) {\n        std::cout << x << ' ';\n    }\n    // المخرجات: 5 4 3 2 1\n}",
+          "explanationArabic": "views::reverse يمر على العناصر بترتيب عكسي. لا يُنشئ نسخة معكوسة — يبدأ المرور من النهاية. أنظم من std::reverse_copy."
+        },
+        {
+          "titleArabic": "reverse مع filter",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5, 6};\n    auto result = v\n        | std::views::filter([](int x) { return x % 2 == 0; })\n        | std::views::reverse;\n    for (int x : result) std::cout << x << ' ';\n    // المخرجات: 6 4 2 (الأزواج بترتيب عكسي)\n}",
+          "explanationArabic": "reverse بعد filter يعرض النتيجة المُفلترة بترتيب عكسي. ترتيب العمليات مهم: filter أولًا ثم reverse."
+        }
+      ],
+      "related": [
+        "std::views::take",
+        "std::views::drop",
+        "std::reverse"
+      ]
+    },
+    "std::views::iota": {
+      "title": "std::views::iota",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُنشئ عرضًا يُولّد تسلسلًا من القيم المتزايدة. يبدأ من قيمة ويُنتج القيمة التالية تلقائيًا باستخدام ++.",
+      "usage": "يظهر عند الحاجة لتسلسل أرقام أو فهرسة. مثلًا: أرقام الصفوف أو معرّفات أو حلقات مرقمة.",
+      "example": "for (int i : std::views::iota(1, 6)) std::cout << i << ' ';",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "تسلسل أرقام",
+          "code": "#include <ranges>\n#include <iostream>\n\nint main() {\n    for (int i : std::views::iota(1, 6)) {\n        std::cout << i << ' ';\n    }\n    // المخرجات: 1 2 3 4 5\n}",
+          "explanationArabic": "views::iota(begin, end) يُولّد قيمًا من begin حتى end (لا يشمل end). مثل range في Python. لا يُنشئ vector — يُولّد القيم عند المرور."
+        },
+        {
+          "titleArabic": "iota مع transform",
+          "code": "#include <ranges>\n#include <iostream>\n\nint main() {\n    auto squares = std::views::iota(1, 6)\n        | std::views::transform([](int i) { return i * i; });\n    for (int x : squares) std::cout << x << ' ';\n    // المخرجات: 1 4 9 16 25\n}",
+          "explanationArabic": "iota + transform يُنتج تسلسلًا محسوبًا بدون حلقة. أنظم من for مع push_back."
+        }
+      ],
+      "related": [
+        "std::iota",
+        "std::views::transform",
+        "std::views::take"
+      ]
+    },
+    "std::views::enumerate": {
+      "title": "std::views::enumerate",
+      "type": "عرض نطاق (C++23)",
+      "description": "يُنشئ عرضًا يُضيف فهرسًا لكل عنصر. كل عنصر في النتيجة هو زوج (index, value).",
+      "usage": "يظهر عند الحاجة للفهرس والقيمة معًا. مثل enumerate في Python.",
+      "example": "for (auto [i, v] : std::views::enumerate(vec)) { ... }",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "طباعة فهرس وقيمة",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> fruits = {\"apple\", \"banana\", \"cherry\"};\n    for (auto [i, name] : std::views::enumerate(fruits)) {\n        std::cout << i << \": \" << name << '\\n';\n    }\n    // 0: apple\n    // 1: banana\n    // 2: cherry\n}",
+          "explanationArabic": "views::enumerate يُضيف فهرسًا تلقائيًا. أنظم من for مع size_t يدوي. يحتاج C++23."
+        }
+      ],
+      "related": [
+        "std::views::zip",
+        "std::views::iota",
+        "std::views::transform"
+      ]
+    },
+    "std::views::zip": {
+      "title": "std::views::zip",
+      "type": "عرض نطاق (C++23)",
+      "description": "يُنشئ عرضًا يجمع عناصر عدة نطاقات في أزواج. يتوقف عند أقصر نطاق.",
+      "usage": "يظهر عند الحاجة للمرور على عدة نطاقات متوازية. مثل zip في Python.",
+      "example": "for (auto [a, b] : std::views::zip(v1, v2)) { ... }",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "دمج نطاقين في أزواج",
+          "code": "#include <ranges>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> names = {\"Ali\", \"Sara\"};\n    std::vector<int> scores = {90, 85};\n    for (auto [name, score] : std::views::zip(names, scores)) {\n        std::cout << name << \": \" << score << '\\n';\n    }\n    // Ali: 90\n    // Sara: 85\n}",
+          "explanationArabic": "views::zip يجمع عناصر النطاقات في أزواج. يتوقف عند أقصر نطاق. يحتاج C++23. أنظم من فهرسة يدوية."
+        }
+      ],
+      "related": [
+        "std::views::enumerate",
+        "std::views::transform",
+        "std::views::keys"
+      ]
+    },
+    "std::views::keys": {
+      "title": "std::views::keys",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُنشئ عرضًا يحتوي مفاتيح زوج من نطاق أزواج (مثل map أو pair).",
+      "usage": "يظهر عند الحاجة لاستخراج المفاتيح من map أو unordered_map.",
+      "example": "for (auto k : std::views::keys(my_map)) { ... }",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخراج مفاتيح map",
+          "code": "#include <ranges>\n#include <map>\n#include <iostream>\n\nint main() {\n    std::map<std::string, int> ages = {{\"Ali\", 25}, {\"Sara\", 30}};\n    for (const auto& key : ages | std::views::keys) {\n        std::cout << key << ' ';\n    }\n    // المخرجات: Ali Sara\n}",
+          "explanationArabic": "views::keys يستخرج المفاتيح من أزواج. مع map يُرجع المفاتيح مرتبة. أنظم من حلقة مع it->first."
+        }
+      ],
+      "related": [
+        "std::views::values",
+        "std::views::elements",
+        "std::views::transform"
+      ]
+    },
+    "std::views::values": {
+      "title": "std::views::values",
+      "type": "عرض نطاق (C++20)",
+      "description": "يُنشئ عرضًا يحتوي قيم أزواج من نطاق أزواج (مثل map أو pair).",
+      "usage": "يظهر عند الحاجة لاستخراج القيم من map أو unordered_map.",
+      "example": "for (auto v : std::views::values(my_map)) { ... }",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخراج قيم map",
+          "code": "#include <ranges>\n#include <map>\n#include <iostream>\n\nint main() {\n    std::map<std::string, int> ages = {{\"Ali\", 25}, {\"Sara\", 30}};\n    for (const auto& val : ages | std::views::values) {\n        std::cout << val << ' ';\n    }\n    // المخرجات: 25 30\n}",
+          "explanationArabic": "views::values يستخرج القيم من أزواج. أنظم من حلقة مع it->second. مفيد عند الحاجة للقيم فقط."
+        }
+      ],
+      "related": [
+        "std::views::keys",
+        "std::views::elements",
+        "std::views::transform"
+      ]
+    },
+    "std::views::chunk": {
+      "title": "std::views::chunk",
+      "type": "عرض نطاق (C++23)",
+      "description": "يُقسّم النطاق إلى كتل (chunks) بحجم محدد. كل كتلة هي عرض بحجم N عناصر.",
+      "usage": "يظهر عند تقسيم بيانات لدفعات. مثلًا: معالجة 100 عنصر في كل مرة.",
+      "example": "auto batches = data | std::views::chunk(100);",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "تقسيم إلى مجموعات",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5, 6, 7};\n    for (auto chunk : v | std::views::chunk(3)) {\n        for (int x : chunk) std::cout << x << ' ';\n        std::cout << '|';\n    }\n    // المخرجات: 1 2 3 |4 5 6 |7 |\n}",
+          "explanationArabic": "views::chunk يُقسّم النطاق لمجموعات بحجم N. الكتلة الأخيرة قد تكون أصغر. يحتاج C++23."
+        }
+      ],
+      "related": [
+        "std::views::slide",
+        "std::views::split",
+        "std::views::take"
+      ]
+    },
+    "std::views::slide": {
+      "title": "std::views::slide",
+      "type": "عرض نطاق (C++23)",
+      "description": "يُنشئ عرضًا يحتوي نوافذ منزلقة (sliding windows) بحجم N على النطاق.",
+      "usage": "يظهر عند الحاجة لنوافذ متحركة على بيانات. مثلًا: متوسط متحرك أو مقارنة عناصر متجاورة.",
+      "example": "auto windows = data | std::views::slide(3);",
+      "includeHeader": "#include <ranges>",
+      "usageExamples": [
+        {
+          "titleArabic": "نوافذ منزلقة بحجم 3",
+          "code": "#include <ranges>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 4, 5};\n    for (auto window : v | std::views::slide(3)) {\n        for (int x : window) std::cout << x << ' ';\n        std::cout << '|';\n    }\n    // المخرجات: 1 2 3 |2 3 4 |3 4 5 |\n}",
+          "explanationArabic": "views::slide يُنشئ نوافذ متحركة. كل نافذة بحجم N تتحرك عنصرًا واحدًا. مفيد للمتوسطات المتحركة وتحليل السلاسل الزمنية."
+        }
+      ],
+      "related": [
+        "std::views::chunk",
+        "std::views::adjacent",
+        "std::views::take"
+      ]
+    },
+    "std::ranges::sort": {
+      "title": "std::ranges::sort",
+      "type": "خوارزمية نطاق (C++20)",
+      "description": "يُرتّب نطاقًا في مكانه. نسخة ranges من std::sort تأخذ النطاق مباشرة بدل مكرّرات.",
+      "usage": "يظهر عند الحاجة لترتيب حاوية. أنظم من std::sort لأنه يأخذ النطاق مباشرة.",
+      "example": "std::ranges::sort(v);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "ترتيب vector",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {5, 3, 1, 4, 2};\n    std::ranges::sort(v);\n    for (int x : v) std::cout << x << ' ';\n    // المخرجات: 1 2 3 4 5\n}",
+          "explanationArabic": "ranges::sort يأخذ النطاق مباشرة بدل begin/end. أنظم من std::sort(v.begin(), v.end())."
+        },
+        {
+          "titleArabic": "ترتيب بحسب خاصية",
+          "code": "#include <algorithm>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> words = {\"banana\", \"apple\", \"cherry\"};\n    std::ranges::sort(words, {}, &std::string::size);\n    for (const auto& w : words) std::cout << w << ' ';\n    // المخرجات: apple banana cherry (بالطول)\n}",
+          "explanationArabic": "ranges::sort مع projection يسمح بالترتيب بحسب خاصية. هنا نرتّب بحسب الطول باستخدام &std::string::size كمؤشر عضو."
+        }
+      ],
+      "related": [
+        "std::sort",
+        "std::ranges::find",
+        "std::ranges::for_each"
+      ]
+    },
+    "std::ranges::find": {
+      "title": "std::ranges::find",
+      "type": "خوارزمية نطاق (C++20)",
+      "description": "يبحث عن أول عنصر يساوي قيمة محددة في نطاق. نسخة ranges من std::find.",
+      "usage": "يظهر عند البحث عن قيمة في حاوية. أنظم من std::find.",
+      "example": "auto it = std::ranges::find(v, 42);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "البحث عن قيمة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30, 40};\n    auto it = std::ranges::find(v, 30);\n    if (it != v.end()) {\n        std::cout << \"found: \" << *it;\n    }\n}",
+          "explanationArabic": "ranges::find يأخذ النطاق والقيمة مباشرة. أنظم من std::find(v.begin(), v.end(), 30)."
+        }
+      ],
+      "related": [
+        "std::find",
+        "std::ranges::sort",
+        "std::ranges::count"
+      ]
+    },
+    "std::ranges::for_each": {
+      "title": "std::ranges::for_each",
+      "type": "خوارزمية نطاق (C++20)",
+      "description": "يُنفّذ دالة على كل عنصر في نطاق. نسخة ranges من std::for_each.",
+      "usage": "يظهر عند تطبيق عملية على كل عنصر. أنظم من std::for_each.",
+      "example": "std::ranges::for_each(v, [](int x) { std::cout << x << ' '; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "طباعة كل عنصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    std::ranges::for_each(v, [](int x) { std::cout << x << ' '; });\n    // المخرجات: 1 2 3\n}",
+          "explanationArabic": "ranges::for_each يأخذ النطاق مباشرة. أنظم من std::for_each(v.begin(), v.end(), lambda)."
+        }
+      ],
+      "related": [
+        "std::for_each",
+        "std::ranges::sort",
+        "std::ranges::transform"
+      ]
+    },
+    "std::ranges::count": {
+      "title": "std::ranges::count",
+      "type": "خوارزمية نطاق (C++20)",
+      "description": "يُرجع عدد العناصر المساوية لقيمة محددة في نطاق. نسخة ranges من std::count.",
+      "usage": "يظهر عند عد تكرارات قيمة في حاوية.",
+      "example": "int n = std::ranges::count(v, 42);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "عد تكرارات قيمة",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3, 2, 4, 2};\n    std::cout << std::ranges::count(v, 2); // 3\n}",
+          "explanationArabic": "ranges::count يأخذ النطاق والقيمة مباشرة. أنظم من std::count(v.begin(), v.end(), 2)."
+        }
+      ],
+      "related": [
+        "std::count",
+        "std::ranges::find",
+        "std::ranges::for_each"
+      ]
+    },
+    "std::ranges::copy": {
+      "title": "std::ranges::copy",
+      "type": "خوارزمية نطاق (C++20)",
+      "description": "ينسخ عناصر من نطاق إلى نطاق آخر. نسخة ranges من std::copy.",
+      "usage": "يظهر عند نسخ بيانات. أنظم من std::copy.",
+      "example": "std::ranges::copy(src, std::back_inserter(dst));",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ vector",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iterator>\n#include <iostream>\n\nint main() {\n    std::vector<int> src = {1, 2, 3};\n    std::vector<int> dst;\n    std::ranges::copy(src, std::back_inserter(dst));\n    for (int x : dst) std::cout << x << ' ';\n    // المخرجات: 1 2 3\n}",
+          "explanationArabic": "ranges::copy يأخذ النطاق مباشرة. أنظم من std::copy(src.begin(), src.end(), ...)."
+        }
+      ],
+      "related": [
+        "std::copy",
+        "std::ranges::sort",
+        "std::ranges::transform"
+      ]
+    },
+    "std::ranges::transform": {
+      "title": "std::ranges::transform",
+      "type": "خوارزمية نطاق (C++20)",
+      "description": "يُطبّق دالة تحويل على كل عنصر ويكتب النتيجة في نطاق الوجهة. نسخة ranges من std::transform.",
+      "usage": "يظهر عند تحويل عناصر. أنظم من std::transform.",
+      "example": "std::ranges::transform(v, std::back_inserter(dst), [](int x) { return x * 2; });",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحويل عناصر",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iterator>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    std::vector<int> dst;\n    std::ranges::transform(v, std::back_inserter(dst), [](int x) { return x * 2; });\n    for (int x : dst) std::cout << x << ' ';\n    // المخرجات: 2 4 6\n}",
+          "explanationArabic": "ranges::transform يأخذ النطاق مباشرة. أنظم من std::transform(v.begin(), v.end(), ...)."
+        }
+      ],
+      "related": [
+        "std::transform",
+        "std::ranges::for_each",
+        "std::ranges::copy"
+      ]
+    }
+  }
+}

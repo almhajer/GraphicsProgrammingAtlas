@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "glslang",
+    "displayName": "GLSLang",
+    "displayNameArabic": "GLSLang",
+    "description": "مرجع عربي لعناصر GLSL وGLSLang من التوجيهات حتى الدوال والعناصر المضمنة."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "memoryBarrierShared",
+    "slug": "memory-barrier-shared",
+    "titleArabic": "تفرض ترتيبًا لوصولات shared memory داخل Workgroup كما تراها invocations الأخرى في المجموعة نفسها",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/glslang/functions/memory-barrier-shared",
+    "contentPath": "content/reference/glslang/functions/memory-barrier-shared.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تفرض ترتيبًا لوصولات shared memory داخل Workgroup كما تراها invocations الأخرى في المجموعة نفسها",
+    "actualMeaningArabic": "تفرض ترتيبًا لوصولات shared memory داخل Workgroup كما تراها invocations الأخرى في المجموعة نفسها.",
+    "purposeArabic": "تستخدم عندما تكتب invocations إلى shared variables ثم تحتاج invocations أخرى في Workgroup لقراءة النتائج بوضوح صحيح.",
+    "whyUseArabic": "تجعل تواصل invocations عبر shared memory أكثر قابلية للتنبؤ قبل barrier أو بعده حسب الخوارزمية.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء ليست نصاً أو تعريفاً فقط، بل الأثر الذي يحدثه على الحالة أو المورد المستهدف.",
+    "sourceDescription": "تفرض ترتيبًا لوصولات shared memory داخل Workgroup كما تراها invocations الأخرى في المجموعة نفسها."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "تستخدم عندما تكتب invocations إلى shared variables ثم تحتاج invocations أخرى في Workgroup لقراءة النتائج بوضوح صحيح."
+    ],
+    "notes": [
+      "تؤثر على shared memory المحلية الخاصة بـ Workgroup الواحدة في Compute Shader.",
+      "تجعل تواصل invocations عبر shared memory أكثر قابلية للتنبؤ قبل barrier أو بعده حسب الخوارزمية.",
+      "مهمة داخل خوارزميات Compute المتعاونة؛ لكنها تبقى محلية لـ Workgroup ولا تعوض barriers بين dispatches."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "#version 460\nlayout(local_size_x = 64) in;\nshared float partialSums[64];\n\nvoid main() {\n uint localIndex = gl_LocalInvocationIndex;\n partialSums[localIndex] = float(localIndex);\n memoryBarrierShared();\n barrier();\n}"
+  },
+  "links": {
+    "officialUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/glsl/reference/functions.json",
+    "category": "الدوال المضمنة",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

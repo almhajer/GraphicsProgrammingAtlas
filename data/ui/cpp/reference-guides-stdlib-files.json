@@ -1,0 +1,156 @@
+{
+  "referenceGuides": {
+    "cpp-files": {
+      "fullProjectNoteArabic": "التعامل مع الملفات في C++ يعني القدرة على قراءة البيانات من القرص وكتابتها إليه. هذا ليس مجرد ميزة ثانوية — بل هو الأساس لأي برنامج حقيقي يحتاج أن يستمر بعد إغلاقه: ملفات الإعدادات، السجلات، البيانات المحفوظة، الأصول (صور، أصوات، شيادر)، والبيانات المُصدّرة. المكتبة القياسية توفر ثلاثة أنواع رئيسية في `<fstream>`: ifstream للقراءة، ofstream للكتابة، وfstream للقراءة والكتابة معًا.",
+      "projectStepsArabic": [
+        {
+          "titleArabic": "لماذا نحتاج الملفات أصلاً؟",
+          "contentArabic": "البرنامج بدون ملفات يفقد كل بياناته عند الإغلاق. الملفات تحل هذه المشكلة: تُخزّن الإعدادات بين الجلسات، تحفظ تقدم اللاعب، تُحمّل الأصول من القرص، وتُصدّر النتائج. فهم الملفات هو فهم كيف يتفاعل برنامجك مع العالم الخارجي beyond الذاكرة المؤقتة."
+        },
+        {
+          "titleArabic": "الأنواع الثلاثة: أيّها تستخدم؟",
+          "contentArabic": "ifstream: قراءة فقط. استخدمه عندما تريد تحميل بيانات من ملف (config، shader، بيانات اللعبة). ofstream: كتابة فقط. استخدمه لحفظ نتائج أو إنشاء ملفات جديدة. fstream: قراءة وكتابة معًا. استخدمه عند تعديل ملف موجود دون إعادة كتابته كاملًا (مثل تعديل قيمة في ملف إعدادات). القاعدة: إذا كنت تحتاج قراءة فقط أو كتابة فقط، استخدم النوع المتخصص — أبسط وأقل عرضة للأخطاء."
+        },
+        {
+          "titleArabic": "أوضاع فتح الملف (ios flags)",
+          "contentArabic": "ios::in — فتح للقراءة (افتراضي لـ ifstream). ios::out — فتح للكتابة (افتراضي لـ ofstream، يقطع الملف). ios::app — الإلحاق في نهاية الملف بدل قطعه. ios::binary — الوضع الثنائي (يمنع تحويل الأحرف على ويندوز). ios::trunc — قطع الملف إن كان موجودًا (يحدث تلقائيًا مع out). ios::ate — فتح والذهاب فورًا لنهاية الملف. تُجمع بالمعامل | مثل: ios::in | ios::binary."
+        },
+        {
+          "titleArabic": "دورة حياة الملف: فتح، استخدام، إغلاق",
+          "contentArabic": "الملف يُفتح عند بناء الكائن ويُغلق تلقائيًا عند خروجه من النطاق (RAII). هذا يعني أنك لا تحتاج close() يدويًا في أغلب الحالات. لكن يجب دائمًا التحقق من نجاح الفتح قبل الاستخدام لأن فشل الفتح (ملف غير موجود، لا صلاحية) يحدث بصمت دون استثناء."
+        }
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "كتابة ملف نصي — أبسط حالة",
+          "code": "#include <fstream>\n#include <iostream>\n\nint main() {\n    // ofstream يفتح للكتابة — يُنشئ الملف إن لم يكن موجودًا\n    std::ofstream file(\"output.txt\");\n\n    // التحقق من نجاح الفتح — خطوة أساسية دائمًا\n    if (!file) {\n        std::cerr << \"فشل إنشاء الملف\" << '\\n';\n        return 1;\n    }\n\n    // الكتابة مثل cout بالمعامل <<\n    file << \"السطر الأول\" << '\\n';\n    file << \"السطر الثاني: \" << 42 << '\\n';\n\n    // الملف يُغلق تلقائيًا عند خروج file من النطاق هنا\n    std::cout << \"تمت الكتابة بنجاح\" << '\\n';\n    return 0;\n}",
+          "explanationArabic": "هذا أبسط شكل للتعامل مع الملفات: بناء ofstream يفتح الملف، << يكتب فيه، وعند نهاية main يُغلق تلقائيًا. التحقق من !file هو أهم خطوة لأن الكتابة لملف فاشل تصمت ولا تُبلّغ عن الخطأ.",
+          "relatedTokens": [
+            "std::ofstream"
+          ]
+        },
+        {
+          "titleArabic": "قراءة ملف نصي سطرًا بسطر",
+          "code": "#include <fstream>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::ifstream file(\"config.txt\");\n\n    if (!file.is_open()) {\n        std::cerr << \"لا يمكن فتح الملف\" << '\\n';\n        return 1;\n    }\n\n    std::string line;\n    int line_number = 0;\n\n    // getline يقرأ سطرًا كاملًا ويعيد false عند نهاية الملف\n    while (std::getline(file, line)) {\n        ++line_number;\n        std::cout << line_number << \": \" << line << '\\n';\n    }\n\n    // لا حاجة لـ close() — ifstream تُغلق تلقائيًا\n    return 0;\n}",
+          "explanationArabic": "while(getline) هو النمط الأكثر شيوعًا لقراءة ملف نصي. getline تقرأ حتى حرف السطر الجديد وتتجاوزه. الحلقة تتوقف تلقائيًا عند نهاية الملف أو خطأ القراءة. is_open() و !file كلاهما يعملان للتحقق.",
+          "relatedTokens": [
+            "std::ifstream",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "الإلحاق في ملف موجود بدل قطعه",
+          "code": "#include <fstream>\n#include <iostream>\n\nint main() {\n    // بدون ios::app: ofstream يقطع الملف ويبدأ من الصفر\n    // مع ios::app: الكتابة تُضاف في نهاية الملف الموجود\n    std::ofstream log(\"game.log\", std::ios::app);\n\n    if (!log) return 1;\n\n    // كل تشغيل يضيف سطرًا جديدًا بدل حذف السابق\n    log << \"[INFO] بدء اللعبة\" << '\\n';\n    log << \"[INFO] تحميل المستوى 1\" << '\\n';\n\n    std::cout << \"تمت إضافة السجلات\" << '\\n';\n    return 0;\n}",
+          "explanationArabic": "ios::app هو الخيار الأساسي لملفات السجل (log files). بدونه، كل فتح للملف يمحو كل السجلات السابقة! هذا خطأ شائع يُفقد البيانات دون أي تحذير. الفرق بين ofstream العادية وofstream مع app هو الفرق بين 'استبدال' و'إضافة'.",
+          "relatedTokens": [
+            "std::ofstream",
+            "std::ios"
+          ]
+        },
+        {
+          "titleArabic": "قراءة بيانات مهيكلة بالمعامل >>",
+          "code": "#include <fstream>\n#include <string>\n#include <iostream>\n\nint main() {\n    // ملف scores.txt يحتوي مثل:\n    // Ahmed 95\n    // Sara 88\n    // Omar 76\n\n    std::ifstream file(\"scores.txt\");\n    if (!file) return 1;\n\n    std::string name;\n    int score;\n\n    // >> يقرأ كلمات منفصلة بمسافة/سطر تلقائيًا\n    // ويتوقف عند فشل القراءة (نهاية ملف أو بيانات خاطئة)\n    while (file >> name >> score) {\n        std::cout << name << \": \" << score << '\\n';\n    }\n\n    return 0;\n}",
+          "explanationArabic": ">> أنسب من getline عندما يكون كل سطر مهيكلًا بنفس النمط (اسم ثم رقم). >> يتخطى المسافات والأسطر الجديدة تلقائيًا. while(file >> ...) أنظف من while(!file.eof()) لأن eof يتحقق بعد القراءة لا قبلها — مما قد يسبب قراءة إضافية خاطئة.",
+          "relatedTokens": [
+            "std::ifstream",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "قراءة ملف ثنائي — تحميل بيانات خام",
+          "code": "#include <fstream>\n#include <vector>\n#include <iostream>\n\nint main() {\n    // ios::binary ضروري للملفات الثنائية!\n    // بدونه على ويندوز: يُحوّل \\r\\n لـ \\n مما يُفسد البيانات\n    std::ifstream file(\"texture.raw\", std::ios::binary);\n    if (!file) return 1;\n\n    // حساب حجم الملف بتحريك المؤشر للنهاية ثم القراءة\n    file.seekg(0, std::ios::end);\n    auto size = file.tellg();\n    file.seekg(0, std::ios::beg);\n\n    // تخصيص مخزن بحجم الملف وقراءة البايتات الخام\n    std::vector<unsigned char> data(size);\n    file.read(reinterpret_cast<char*>(data.data()), size);\n\n    std::cout << \"تم تحميل \" << size << \" بايت\" << '\\n';\n    return data.empty() ? 1 : 0;\n}",
+          "explanationArabic": "هذا النمط الأساسي لتحميل أي أصل ثنائي في البرامج الحقيقية (صور، أصوات، نماذج ثلاثية الأبعاد). seekg(end) يذهب للنهاية، tellg يُرجع الموضع = الحجم، seekg(beg) يرجع للبداية. read يقرأ بايتات خام. reinterpret_cast ضروري لأن read يتعامل مع char* بينما نحتاج unsigned char.",
+          "relatedTokens": [
+            "std::ifstream",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "كتابة ملف ثنائي — حفظ بيانات خام",
+          "code": "#include <fstream>\n#include <vector>\n#include <cstdint>\n#include <iostream>\n\nint main() {\n    // بيانات بكسلات صورة 2×2 بسيطة (RGBA)\n    std::vector<uint8_t> pixels = {\n        255, 0, 0, 255,     // بكسل أحمر\n        0, 255, 0, 255,     // بكسل أخضر\n        0, 0, 255, 255,     // بكسل أزرق\n        255, 255, 0, 255    // بكسل أصفر\n    };\n\n    std::ofstream file(\"output.raw\", std::ios::binary);\n    if (!file) return 1;\n\n    // كتابة البايتات كما هي بالضبط — بدون أي تحويل\n    file.write(reinterpret_cast<const char*>(pixels.data()),\n               pixels.size());\n\n    std::cout << \"تم حفظ \" << pixels.size() << \" بايت\" << '\\n';\n    return 0;\n}",
+          "explanationArabic": "write يكتب بايتات خام كما هي. مع binary لا يحدث أي تحويل للأحرف. هذا النمط يُستخدم لحفظ لقطات الشاشة، تصدير النسيج، أو كتابة تنسيقات ملفات مخصصة. reinterpret_cast هنا آمن لأننا نتعامل مع بايتات خام.",
+          "relatedTokens": [
+            "std::ofstream"
+          ]
+        },
+        {
+          "titleArabic": "قراءة وكتابة في نفس الملف مع fstream",
+          "code": "#include <fstream>\n#include <string>\n#include <iostream>\n\nint main() {\n    // فتح للقراءة والكتابة معًا\n    std::fstream file(\"config.txt\", std::ios::in | std::ios::out);\n    if (!file) return 1;\n\n    std::string line;\n    std::streampos write_pos;\n\n    // البحث عن السطر المطلوب تعديله\n    while (std::getline(file, line)) {\n        if (line.find(\"difficulty=\") != std::string::npos) {\n            // حفظ موضع ما بعد هذا السطر للكتابة لاحقًا\n            write_pos = file.tellg();\n            break;\n        }\n    }\n\n    // تحريك مؤشر الكتابة للموضع المحفوظ وكتابة القيمة الجديدة\n    file.seekp(write_pos);\n    file << \"difficulty=hard\" << '\\n';\n\n    std::cout << \"تم تعديل الإعداد\" << '\\n';\n    return 0;\n}",
+          "explanationArabic": "fstream يجمع القراءة والكتابة. seekg يُحرّك مؤشر القراءة (get position) وseekp يُحرّك مؤشر الكتابة (put position). tellg يحفظ الموضع الحالي للقراءة. هذا النمط شائع لتعديل ملفات الإعدادات دون إعادة كتابتها كاملة. ملاحظة: seekg وseekp قد يكونان نفس المؤشر في بعض التطبيقات لكن لا تعتمد على ذلك.",
+          "relatedTokens": [
+            "std::fstream",
+            "std::ios"
+          ]
+        },
+        {
+          "titleArabic": "تحميل ملف نصي كاملًا دفعة واحدة",
+          "code": "#include <fstream>\n#include <sstream>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::ifstream file(\"shader.vert\");\n    if (!file) return 1;\n\n    // rdbuf() يُرجع المخزن الداخلي للملف\n    // تمريره لـ << ينسخ كل المحتوى إلى stringstream\n    std::stringstream buffer;\n    buffer << file.rdbuf();\n\n    std::string content = buffer.str();\n    std::cout << \"حجم الشيدر: \" << content.size() << \" حرف\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "هذا النمط شائع لتحميل ملفات الشيدر (GLSL) أو ملفات التهيئة (JSON) التي تحتاجها كاملة في الذاكرة. rdbuf ينسخ كل شيء بكفاءة. انتبه: هذا يحمّل الملف كاملًا في الذاكرة، لذلك لا يناسب الملفات الكبيرة جدًا (مئات الميغابايت). للملفات الكبيرة، استخدم getline في حلقة.",
+          "relatedTokens": [
+            "std::ifstream",
+            "std::stringstream"
+          ]
+        },
+        {
+          "titleArabic": "التحقق من وجود ملف قبل الفتح مع filesystem",
+          "code": "#include <fstream>\n#include <filesystem>\n#include <iostream>\n\nnamespace fs = std::filesystem;\n\nint main() {\n    fs::path p = \"save_data.json\";\n\n    // exists يتحقق من وجود الملف أو المجلد\n    if (!fs::exists(p)) {\n        std::cout << \"لا يوجد ملف حفظ — سأنشئ واحدًا جديدًا\" << '\\n';\n        std::ofstream file(p);\n        file << \"{\\\"level\\\": 1, \\\"score\\\": 0}\";\n        return 0;\n    }\n\n    // file_size يُرجع الحجم بالبايتات — مفيد قبل التحميل\n    auto size = fs::file_size(p);\n    std::cout << \"ملف الحفظ موجود، حجمه: \" << size << \" بايت\" << '\\n';\n\n    return 0;\n}",
+          "explanationArabic": "filesystem (C++17) توفر أدوات محمولة للتحقق من الملفات قبل التعامل معها. exists أنسب من محاولة فتح ifstream ثم فحص is_open لأن نية الكود أوضح. file_size مفيد لاتخاذ قرار: هل أحمّل الملف كاملًا أم أقرأه جزءًا جزءًا؟",
+          "relatedTokens": [
+            "std::filesystem::exists",
+            "std::filesystem::file_size",
+            "std::filesystem::path",
+            "std::ifstream",
+            "std::ofstream"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان ios::binary للملفات الثنائية",
+          "code": "#include <fstream>\n#include <vector>\n#include <iostream>\n\nint main() {\n    // ❌ بدون binary: على ويندوز يُحوّل كل \\r\\n لـ \\n\n    // هذا يُغيّر حجم البيانات ومحتواها صامتًا!\n    // std::ifstream bad(\"image.raw\");\n\n    // ✅ مع binary: البايتات تُقرأ كما هي بالضبط\n    std::ifstream good(\"image.raw\", std::ios::binary);\n    if (!good) return 1;\n\n    std::vector<char> buffer(256);\n    good.read(buffer.data(), 256);\n\n    std::cout << \"قراءة فعلية: \" << good.gcount() << \" بايت\" << '\\n';\n    // gcount() يُرجع عدد البايتات التي قُرأت فعلًا\n    // قد يكون أقل من 256 عند نهاية الملف\n\n    return good.gcount() > 0 ? 0 : 1;\n}",
+          "explanationArabic": "هذا من أكثر الأخطاء فخامة: بدون binary على ويندوز، ifstream تُحوّل كل \\r\\n (سطر جديد ويندوز) لـ \\n (سطر جديد يونكس). للنصوص هذا ميزة، لكن للبيانات الثنائية (صور، أصوات، ملفات مهيكلة) هذا يُفسد البيانات صامتًا دون أي خطأ. على لينكس التأثير أقل لكن استخدم binary دائمًا للملفات الثنائية لضمان السلوك المتسق.",
+          "relatedTokens": [
+            "std::ifstream",
+            "std::ios"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: الكتابة لملف فاشل تصمت",
+          "code": "#include <fstream>\n#include <iostream>\n\nint main() {\n    std::ofstream file(\"/readonly/folder/data.txt\");\n\n    // ❌ بدون تحقق: الكتابة التالية تصمت ولا تكتب شيء!\n    // لا يوجد استثناء، لا يوجد خطأ — البيانات تضيع ببساطة\n    // file << \"بيانات مهمة\" << '\\n';\n\n    // ✅ التحقق بعد الفتح يكشف المشكلة فورًا\n    if (!file) {\n        std::cerr << \"فشل فتح الملف: صلاحية مرفوضة أو مسار غير موجود\" << '\\n';\n        return 1;\n    }\n\n    file << \"بيانات مهمة\" << '\\n';\n\n    // حتى بعد نجاح الفتح، يمكن فحص الحالة بعد الكتابة\n    if (!file.good()) {\n        std::cerr << \"فشلت الكتابة (مثلاً: امتلأ القرص)\" << '\\n';\n        return 1;\n    }\n\n    return 0;\n}",
+          "explanationArabic": "أخطر شيء في ofstream أن فشل الكتابة لا يُرمي استثناء ولا يُبلغ عن الخطأ. الملف يبدو عاديًا لكنه فارغ أو ناقص. التحقق من !file بعد الفتح خطوة دفاعية أساسية. good() بعد الكتابة يكشف مشاكل مثل امتلاء القرص. إذا أردت استثناءات تلقائية، استخدم file.exceptions(ofstream::failbit | ofstream::badbit).",
+          "relatedTokens": [
+            "std::ofstream"
+          ]
+        },
+        {
+          "titleArabic": "cout vs cerr — لماذا يهم مع الملفات",
+          "code": "#include <iostream>\n#include <fstream>\n\nint main() {\n    std::ifstream file(\"missing.txt\");\n\n    if (!file.is_open()) {\n        // cerr للأخطاء — يذهب لـ stderr ويظهر فورًا\n        // حتى لو استخدم المستخدم: ./program > output.txt\n        // سيبقى cerr على الشاشة بينما cout يذهب للملف\n        std::cerr << \"خطأ: لا يمكن فتح missing.txt\" << '\\n';\n        return 1;\n    }\n\n    // cout للنتائج العادية — يذهب لـ stdout\n    std::cout << \"تم فتح الملف بنجاح\" << '\\n';\n    return 0;\n}",
+          "explanationArabic": "عند التعامل مع الملفات، الأخطاء يجب أن تذهب لـ cerr لا cout. السبب: المستخدم قد يُوجّه stdout لملف (./program > output.txt) لكنه يتوقع أن تظهر الأخطاء على الشاشة. لو استخدمت cout للخطأ، لن يراه المستخدم أبدًا عند التوجيه لملف. cerr يضمن ظهور الأخطاء دائمًا.",
+          "relatedTokens": [
+            "std::cerr",
+            "std::cout",
+            "std::ifstream"
+          ]
+        },
+        {
+          "titleArabic": "ملخص أوضاع الفتح في جدول واحد",
+          "code": "#include <fstream>\n\nint main() {\n    // الوضع الافتراضي لكل نوع:\n    std::ifstream r(\"a.txt\");           // ios::in فقط (قراءة)\n    std::ofstream w(\"b.txt\");           // ios::out | ios::trunc (كتابة + قطع)\n    std::ofstream a(\"c.txt\", std::ios::app); // ios::out | ios::app (إلحاق)\n    std::fstream  rw(\"d.txt\", std::ios::in | std::ios::out); // قراءة + كتابة\n    std::ifstream bin(\"e.bin\", std::ios::binary); // قراءة ثنائية\n\n    // تجميع أوضاع متعددة بالمعامل |\n    // std::fstream f(\"data\", std::ios::in | std::ios::out | std::ios::binary);\n\n    return 0;\n}",
+          "explanationArabic": "كل نوع له وضع افتراضي: ifstream للقراءة، ofstream للكتابة مع القطع. ios::app يُبدّل القطع بإلحاق. ios::binary يُضاف لأي نوع عند التعامل مع بيانات غير نصية. المعامل | يجمع الأوضاع. فهم هذه الأوضاع يمنع أخطاء مثل قطع ملف كنت تريد الإلحاق فيه.",
+          "relatedTokens": [
+            "std::ifstream",
+            "std::ofstream",
+            "std::fstream",
+            "std::ios"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::ifstream",
+        "std::ofstream",
+        "std::fstream",
+        "std::filesystem::exists",
+        "std::filesystem::path",
+        "std::stringstream",
+        "std::cerr"
+      ]
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_LockMixer",
+    "slug": "mix-lock-mixer",
+    "titleArabic": "قفل mixer obtaining its الداخلية mutex",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-lock-mixer",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-lock-mixer.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "قفل mixer obtaining its الداخلية mutex",
+    "actualMeaningArabic": "قفل mixer obtaining its الداخلية mutex.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى قفل mixer obtaining its الداخلية mutex داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه void وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Lock a mixer by obtaining its internal mutex."
+  },
+  "signature": {
+    "raw": "void MIX_LockMixer(MIX_Mixer *mixer);",
+    "returnType": "void",
+    "parameters": [
+      "MIX_Mixer *mixer"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "mixer",
+        "type": "MIX_Mixer *",
+        "descriptionArabic": "يمثل المعامل mixer من النوع MIX_Mixer * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the mixer to lock. May be NULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "While locked, the mixer will not be able to mix more audio or change\nits internal state in another thread. Those other threads will block\nuntil the mixer is unlocked again.",
+      "Under the hood, this function calls SDL_LockMutex(), so all the same\nrules apply: the lock can be recursive, it must be unlocked the same\nnumber of times from the same thread that locked it, etc.",
+      "Just about every SDL_mixer API also locks the mixer while\ndoing its work, as does the SDL audio device thread while actual mixing\nis in progress, so basic use of this library never requires the app to\nexplicitly lock the device to be thread safe. There are two scenarios\nwhere this can be useful, however:",
+      "The app has a provided a callback that the mixing thread might call,\nand there is some app state that needs to be protected against race\nconditions as changes are made and mixing progresses simultaneously. Any\nlock can be used for this, but this is a conveniently-available\nlock.",
+      "The app wants to make multiple, atomic changes to the mix. For\nexample, to start several tracks at the exact same moment, one would\nlock the mixer, call MIX_PlayTrack\nmultiple times, and then unlock again; all the tracks will start mixing\non the same sample frame.",
+      "Each call to this function must be paired with a call to MIX_UnlockMixer from the same thread. It\nis safe to lock a mixer multiple times; it remains locked until the\nfinal matching unlock call.",
+      "Do not lock the mixer for significant amounts of time, or it can\ncause audio dropouts. Just do simple things quickly and unlock\nagain.",
+      "Locking a NULL mixer is a safe no-op."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_LockMixer",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_UnlockMixer",
+        "route": "#ref/sdl3-mixer/functions/mix-unlock-mixer",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

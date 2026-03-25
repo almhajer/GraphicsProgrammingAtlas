@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_raii.hpp • القسم 36 من 64 • الأسطر 15751-16200 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_raii.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_raii.hpp.html">vulkan_raii.hpp</a> /
+        <span>القسم 36 من 64 • الأسطر 15751-16200</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_raii.hpp</h1>
+      <p class="page-description">القسم 36 من 64 • الأسطر 15751-16200</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-35.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-37.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_raii.hpp</span>
+        <span class="source-stat">القسم: 36/64</span>
+        <span class="source-stat">الأسطر: 15751-16200</span>
+        <span class="source-stat">حجم الملف: 1.69 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>
+      return static_cast&lt;Result&gt;( result );
+    }
+
+    // wrapper function for command vkCreateSemaphore, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSemaphore.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;Semaphore&gt;::type
+                         Device::createSemaphore( SemaphoreCreateInfo const &amp;         createInfo,
+                               Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateSemaphore &amp;&amp; &quot;Function &lt;vkCreateSemaphore&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::Semaphore semaphore;
+      Result                          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateSemaphore( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                               reinterpret_cast&lt;const VkSemaphoreCreateInfo *&gt;( &amp;createInfo ),
+                                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                               reinterpret_cast&lt;VkSemaphore *&gt;( &amp;semaphore ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createSemaphore&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, Semaphore( *this, *reinterpret_cast&lt;VkSemaphore *&gt;( &amp;semaphore ), allocator ) );
+    }
+
+    // wrapper function for command vkCreateQueryPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateQueryPool.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;QueryPool&gt;::type
+                         Device::createQueryPool( QueryPoolCreateInfo const &amp;         createInfo,
+                               Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateQueryPool &amp;&amp; &quot;Function &lt;vkCreateQueryPool&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::QueryPool queryPool;
+      Result                          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateQueryPool( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                               reinterpret_cast&lt;const VkQueryPoolCreateInfo *&gt;( &amp;createInfo ),
+                                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                               reinterpret_cast&lt;VkQueryPool *&gt;( &amp;queryPool ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createQueryPool&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, QueryPool( *this, *reinterpret_cast&lt;VkQueryPool *&gt;( &amp;queryPool ), allocator ) );
+    }
+
+    // wrapper function for command vkGetQueryPoolResults, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueryPoolResults.html
+    template &lt;typename DataType&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;DataType&gt;&gt;
+      QueryPool::getResults( uint32_t firstQuery, uint32_t queryCount, size_t dataSize, DeviceSize stride, QueryResultFlags flags ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetQueryPoolResults &amp;&amp; &quot;Function &lt;vkGetQueryPoolResults&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_ASSERT( dataSize % sizeof( DataType ) == 0 );
+      std::vector&lt;DataType&gt; data( dataSize / sizeof( DataType ) );
+      Result                result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetQueryPoolResults( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                   static_cast&lt;VkQueryPool&gt;( m_queryPool ),
+                                                                                   firstQuery,
+                                                                                   queryCount,
+                                                                                   data.size() * sizeof( DataType ),
+                                                                                   reinterpret_cast&lt;void *&gt;( data.data() ),
+                                                                                   static_cast&lt;VkDeviceSize&gt;( stride ),
+                                                                                   static_cast&lt;VkQueryResultFlags&gt;( flags ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::QueryPool::getResults&quot;, { Result::eSuccess, Result::eNotReady } );
+
+      return ResultValue&lt;std::vector&lt;DataType&gt;&gt;( result, std::move( data ) );
+    }
+
+    // wrapper function for command vkGetQueryPoolResults, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetQueryPoolResults.html
+    template &lt;typename DataType&gt;
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;DataType&gt;
+                                           QueryPool::getResult( uint32_t firstQuery, uint32_t queryCount, DeviceSize stride, QueryResultFlags flags ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetQueryPoolResults &amp;&amp; &quot;Function &lt;vkGetQueryPoolResults&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      DataType data;
+      Result   result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetQueryPoolResults( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                   static_cast&lt;VkQueryPool&gt;( m_queryPool ),
+                                                                                   firstQuery,
+                                                                                   queryCount,
+                                                                                   sizeof( DataType ),
+                                                                                   reinterpret_cast&lt;void *&gt;( &amp;data ),
+                                                                                   static_cast&lt;VkDeviceSize&gt;( stride ),
+                                                                                   static_cast&lt;VkQueryResultFlags&gt;( flags ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::QueryPool::getResult&quot;, { Result::eSuccess, Result::eNotReady } );
+
+      return ResultValue&lt;DataType&gt;( result, std::move( data ) );
+    }
+
+    // wrapper function for command vkCreateBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;Buffer&gt;::type
+      Device::createBuffer( BufferCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateBuffer &amp;&amp; &quot;Function &lt;vkCreateBuffer&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::Buffer buffer;
+      Result                       result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateBuffer( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                            reinterpret_cast&lt;const VkBufferCreateInfo *&gt;( &amp;createInfo ),
+                                                                            reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                            reinterpret_cast&lt;VkBuffer *&gt;( &amp;buffer ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createBuffer&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, Buffer( *this, *reinterpret_cast&lt;VkBuffer *&gt;( &amp;buffer ), allocator ) );
+    }
+
+    // wrapper function for command vkCreateImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImage.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;Image&gt;::type
+      Device::createImage( ImageCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateImage &amp;&amp; &quot;Function &lt;vkCreateImage&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::Image image;
+      Result                      result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateImage( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                           reinterpret_cast&lt;const VkImageCreateInfo *&gt;( &amp;createInfo ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkImage *&gt;( &amp;image ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createImage&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, Image( *this, *reinterpret_cast&lt;VkImage *&gt;( &amp;image ), allocator ) );
+    }
+
+    // wrapper function for command vkGetImageSubresourceLayout, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetImageSubresourceLayout.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE SubresourceLayout Image::getSubresourceLayout( const ImageSubresource &amp; subresource ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetImageSubresourceLayout &amp;&amp; &quot;Function &lt;vkGetImageSubresourceLayout&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      SubresourceLayout layout;
+      getDispatcher()-&gt;vkGetImageSubresourceLayout( static_cast&lt;VkDevice&gt;( m_device ),
+                                                    static_cast&lt;VkImage&gt;( m_image ),
+                                                    reinterpret_cast&lt;const VkImageSubresource *&gt;( &amp;subresource ),
+                                                    reinterpret_cast&lt;VkSubresourceLayout *&gt;( &amp;layout ) );
+
+      return layout;
+    }
+
+    // wrapper function for command vkCreateImageView, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImageView.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;ImageView&gt;::type
+                         Device::createImageView( ImageViewCreateInfo const &amp;         createInfo,
+                               Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateImageView &amp;&amp; &quot;Function &lt;vkCreateImageView&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::ImageView view;
+      Result                          result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateImageView( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                               reinterpret_cast&lt;const VkImageViewCreateInfo *&gt;( &amp;createInfo ),
+                                                                               reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                               reinterpret_cast&lt;VkImageView *&gt;( &amp;view ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createImageView&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, ImageView( *this, *reinterpret_cast&lt;VkImageView *&gt;( &amp;view ), allocator ) );
+    }
+
+    // wrapper function for command vkCreateCommandPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;CommandPool&gt;::type
+                         Device::createCommandPool( CommandPoolCreateInfo const &amp;       createInfo,
+                                 Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateCommandPool &amp;&amp; &quot;Function &lt;vkCreateCommandPool&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::CommandPool commandPool;
+      Result                            result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateCommandPool( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                 reinterpret_cast&lt;const VkCommandPoolCreateInfo *&gt;( &amp;createInfo ),
+                                                                                 reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                                 reinterpret_cast&lt;VkCommandPool *&gt;( &amp;commandPool ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createCommandPool&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, CommandPool( *this, *reinterpret_cast&lt;VkCommandPool *&gt;( &amp;commandPool ), allocator ) );
+    }
+
+    // wrapper function for command vkResetCommandPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetCommandPool.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type CommandPool::reset( CommandPoolResetFlags flags ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkResetCommandPool &amp;&amp; &quot;Function &lt;vkResetCommandPool&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkResetCommandPool(
+        static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkCommandPool&gt;( m_commandPool ), static_cast&lt;VkCommandPoolResetFlags&gt;( flags ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::CommandPool::reset&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkAllocateCommandBuffers, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateCommandBuffers.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;CommandBuffer&gt;&gt;::type
+                         Device::allocateCommandBuffers( CommandBufferAllocateInfo const &amp; allocateInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkAllocateCommandBuffers &amp;&amp; &quot;Function &lt;vkAllocateCommandBuffers&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      std::vector&lt;VULKAN_HPP_NAMESPACE::CommandBuffer&gt; commandBuffers( allocateInfo.commandBufferCount );
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkAllocateCommandBuffers( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                                      reinterpret_cast&lt;const VkCommandBufferAllocateInfo *&gt;( &amp;allocateInfo ),
+                                                                                      reinterpret_cast&lt;VkCommandBuffer *&gt;( commandBuffers.data() ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::allocateCommandBuffers&quot; );
+      std::vector&lt;CommandBuffer&gt; commandBuffersRAII;
+      if ( result == Result::eSuccess )
+      {
+        commandBuffersRAII.reserve( commandBuffers.size() );
+        for ( auto &amp; commandBuffer : commandBuffers )
+        {
+          commandBuffersRAII.emplace_back(
+            *this, *reinterpret_cast&lt;VkCommandBuffer *&gt;( &amp;commandBuffer ), static_cast&lt;VkCommandPool&gt;( allocateInfo.commandPool ) );
+        }
+      }
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, std::move( commandBuffersRAII ) );
+    }
+
+    // wrapper function for command vkBeginCommandBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkBeginCommandBuffer.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type CommandBuffer::begin( const CommandBufferBeginInfo &amp; beginInfo ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkBeginCommandBuffer &amp;&amp; &quot;Function &lt;vkBeginCommandBuffer&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkBeginCommandBuffer( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                                                  reinterpret_cast&lt;const VkCommandBufferBeginInfo *&gt;( &amp;beginInfo ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::CommandBuffer::begin&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkEndCommandBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkEndCommandBuffer.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type CommandBuffer::end() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkEndCommandBuffer &amp;&amp; &quot;Function &lt;vkEndCommandBuffer&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkEndCommandBuffer( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::CommandBuffer::end&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkResetCommandBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetCommandBuffer.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type CommandBuffer::reset( CommandBufferResetFlags flags ) const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkResetCommandBuffer &amp;&amp; &quot;Function &lt;vkResetCommandBuffer&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;(
+        getDispatcher()-&gt;vkResetCommandBuffer( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkCommandBufferResetFlags&gt;( flags ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::CommandBuffer::reset&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkCmdCopyBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyBuffer( VULKAN_HPP_NAMESPACE::Buffer         srcBuffer,
+                                                      VULKAN_HPP_NAMESPACE::Buffer         dstBuffer,
+                                                      ArrayProxy&lt;const BufferCopy&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyBuffer &amp;&amp; &quot;Function &lt;vkCmdCopyBuffer&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyBuffer( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                        static_cast&lt;VkBuffer&gt;( srcBuffer ),
+                                        static_cast&lt;VkBuffer&gt;( dstBuffer ),
+                                        regions.size(),
+                                        reinterpret_cast&lt;const VkBufferCopy *&gt;( regions.data() ) );
+    }
+
+    // wrapper function for command vkCmdCopyImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyImage.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyImage( VULKAN_HPP_NAMESPACE::Image         srcImage,
+                                                     ImageLayout                         srcImageLayout,
+                                                     VULKAN_HPP_NAMESPACE::Image         dstImage,
+                                                     ImageLayout                         dstImageLayout,
+                                                     ArrayProxy&lt;const ImageCopy&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyImage &amp;&amp; &quot;Function &lt;vkCmdCopyImage&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyImage( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                       static_cast&lt;VkImage&gt;( srcImage ),
+                                       static_cast&lt;VkImageLayout&gt;( srcImageLayout ),
+                                       static_cast&lt;VkImage&gt;( dstImage ),
+                                       static_cast&lt;VkImageLayout&gt;( dstImageLayout ),
+                                       regions.size(),
+                                       reinterpret_cast&lt;const VkImageCopy *&gt;( regions.data() ) );
+    }
+
+    // wrapper function for command vkCmdCopyBufferToImage, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyBufferToImage( VULKAN_HPP_NAMESPACE::Buffer              srcBuffer,
+                                                             VULKAN_HPP_NAMESPACE::Image               dstImage,
+                                                             ImageLayout                               dstImageLayout,
+                                                             ArrayProxy&lt;const BufferImageCopy&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyBufferToImage &amp;&amp; &quot;Function &lt;vkCmdCopyBufferToImage&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyBufferToImage( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                               static_cast&lt;VkBuffer&gt;( srcBuffer ),
+                                               static_cast&lt;VkImage&gt;( dstImage ),
+                                               static_cast&lt;VkImageLayout&gt;( dstImageLayout ),
+                                               regions.size(),
+                                               reinterpret_cast&lt;const VkBufferImageCopy *&gt;( regions.data() ) );
+    }
+
+    // wrapper function for command vkCmdCopyImageToBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyImageToBuffer.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyImageToBuffer( VULKAN_HPP_NAMESPACE::Image               srcImage,
+                                                             ImageLayout                               srcImageLayout,
+                                                             VULKAN_HPP_NAMESPACE::Buffer              dstBuffer,
+                                                             ArrayProxy&lt;const BufferImageCopy&gt; const &amp; regions ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyImageToBuffer &amp;&amp; &quot;Function &lt;vkCmdCopyImageToBuffer&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyImageToBuffer( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                               static_cast&lt;VkImage&gt;( srcImage ),
+                                               static_cast&lt;VkImageLayout&gt;( srcImageLayout ),
+                                               static_cast&lt;VkBuffer&gt;( dstBuffer ),
+                                               regions.size(),
+                                               reinterpret_cast&lt;const VkBufferImageCopy *&gt;( regions.data() ) );
+    }
+
+    // wrapper function for command vkCmdUpdateBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdUpdateBuffer.html
+    template &lt;typename DataType&gt;
+    VULKAN_HPP_INLINE void CommandBuffer::updateBuffer( VULKAN_HPP_NAMESPACE::Buffer       dstBuffer,
+                                                        DeviceSize                         dstOffset,
+                                                        ArrayProxy&lt;const DataType&gt; const &amp; data ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdUpdateBuffer &amp;&amp; &quot;Function &lt;vkCmdUpdateBuffer&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdUpdateBuffer( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                          static_cast&lt;VkBuffer&gt;( dstBuffer ),
+                                          static_cast&lt;VkDeviceSize&gt;( dstOffset ),
+                                          data.size() * sizeof( DataType ),
+                                          reinterpret_cast&lt;const void *&gt;( data.data() ) );
+    }
+
+    // wrapper function for command vkCmdFillBuffer, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdFillBuffer.html
+    VULKAN_HPP_INLINE void
+      CommandBuffer::fillBuffer( VULKAN_HPP_NAMESPACE::Buffer dstBuffer, DeviceSize dstOffset, DeviceSize size, uint32_t data ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdFillBuffer &amp;&amp; &quot;Function &lt;vkCmdFillBuffer&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdFillBuffer( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                        static_cast&lt;VkBuffer&gt;( dstBuffer ),
+                                        static_cast&lt;VkDeviceSize&gt;( dstOffset ),
+                                        static_cast&lt;VkDeviceSize&gt;( size ),
+                                        data );
+    }
+
+    // wrapper function for command vkCmdPipelineBarrier, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html
+    VULKAN_HPP_INLINE void CommandBuffer::pipelineBarrier( PipelineStageFlags                            srcStageMask,
+                                                           PipelineStageFlags                            dstStageMask,
+                                                           DependencyFlags                               dependencyFlags,
+                                                           ArrayProxy&lt;const MemoryBarrier&gt; const &amp;       memoryBarriers,
+                                                           ArrayProxy&lt;const BufferMemoryBarrier&gt; const &amp; bufferMemoryBarriers,
+                                                           ArrayProxy&lt;const ImageMemoryBarrier&gt; const &amp;  imageMemoryBarriers ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdPipelineBarrier &amp;&amp; &quot;Function &lt;vkCmdPipelineBarrier&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdPipelineBarrier( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                             static_cast&lt;VkPipelineStageFlags&gt;( srcStageMask ),
+                                             static_cast&lt;VkPipelineStageFlags&gt;( dstStageMask ),
+                                             static_cast&lt;VkDependencyFlags&gt;( dependencyFlags ),
+                                             memoryBarriers.size(),
+                                             reinterpret_cast&lt;const VkMemoryBarrier *&gt;( memoryBarriers.data() ),
+                                             bufferMemoryBarriers.size(),
+                                             reinterpret_cast&lt;const VkBufferMemoryBarrier *&gt;( bufferMemoryBarriers.data() ),
+                                             imageMemoryBarriers.size(),
+                                             reinterpret_cast&lt;const VkImageMemoryBarrier *&gt;( imageMemoryBarriers.data() ) );
+    }
+
+    // wrapper function for command vkCmdBeginQuery, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginQuery.html
+    VULKAN_HPP_INLINE void
+      CommandBuffer::beginQuery( VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query, QueryControlFlags flags ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdBeginQuery &amp;&amp; &quot;Function &lt;vkCmdBeginQuery&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdBeginQuery(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkQueryPool&gt;( queryPool ), query, static_cast&lt;VkQueryControlFlags&gt;( flags ) );
+    }
+
+    // wrapper function for command vkCmdEndQuery, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndQuery.html
+    VULKAN_HPP_INLINE void CommandBuffer::endQuery( VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdEndQuery &amp;&amp; &quot;Function &lt;vkCmdEndQuery&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdEndQuery( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkQueryPool&gt;( queryPool ), query );
+    }
+
+    // wrapper function for command vkCmdResetQueryPool, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdResetQueryPool.html
+    VULKAN_HPP_INLINE void
+      CommandBuffer::resetQueryPool( VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t firstQuery, uint32_t queryCount ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdResetQueryPool &amp;&amp; &quot;Function &lt;vkCmdResetQueryPool&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdResetQueryPool( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkQueryPool&gt;( queryPool ), firstQuery, queryCount );
+    }
+
+    // wrapper function for command vkCmdWriteTimestamp, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdWriteTimestamp.html
+    VULKAN_HPP_INLINE void
+      CommandBuffer::writeTimestamp( PipelineStageFlagBits pipelineStage, VULKAN_HPP_NAMESPACE::QueryPool queryPool, uint32_t query ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdWriteTimestamp &amp;&amp; &quot;Function &lt;vkCmdWriteTimestamp&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdWriteTimestamp(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), static_cast&lt;VkPipelineStageFlagBits&gt;( pipelineStage ), static_cast&lt;VkQueryPool&gt;( queryPool ), query );
+    }
+
+    // wrapper function for command vkCmdCopyQueryPoolResults, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyQueryPoolResults.html
+    VULKAN_HPP_INLINE void CommandBuffer::copyQueryPoolResults( VULKAN_HPP_NAMESPACE::QueryPool queryPool,
+                                                                uint32_t                        firstQuery,
+                                                                uint32_t                        queryCount,
+                                                                VULKAN_HPP_NAMESPACE::Buffer    dstBuffer,
+                                                                DeviceSize                      dstOffset,
+                                                                DeviceSize                      stride,
+                                                                QueryResultFlags                flags ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdCopyQueryPoolResults &amp;&amp; &quot;Function &lt;vkCmdCopyQueryPoolResults&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdCopyQueryPoolResults( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                                  static_cast&lt;VkQueryPool&gt;( queryPool ),
+                                                  firstQuery,
+                                                  queryCount,
+                                                  static_cast&lt;VkBuffer&gt;( dstBuffer ),
+                                                  static_cast&lt;VkDeviceSize&gt;( dstOffset ),
+                                                  static_cast&lt;VkDeviceSize&gt;( stride ),
+                                                  static_cast&lt;VkQueryResultFlags&gt;( flags ) );
+    }
+
+    // wrapper function for command vkCmdExecuteCommands, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdExecuteCommands.html
+    VULKAN_HPP_INLINE void
+      CommandBuffer::executeCommands( ArrayProxy&lt;const VULKAN_HPP_NAMESPACE::CommandBuffer&gt; const &amp; commandBuffers ) const VULKAN_HPP_NOEXCEPT
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCmdExecuteCommands &amp;&amp; &quot;Function &lt;vkCmdExecuteCommands&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      getDispatcher()-&gt;vkCmdExecuteCommands(
+        static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), commandBuffers.size(), reinterpret_cast&lt;const VkCommandBuffer *&gt;( commandBuffers.data() ) );
+    }
+
+    // wrapper function for command vkCreateEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateEvent.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;Event&gt;::type
+      Device::createEvent( EventCreateInfo const &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator ) const VULKAN_HPP_NOEXCEPT_WHEN_NO_EXCEPTIONS
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkCreateEvent &amp;&amp; &quot;Function &lt;vkCreateEvent&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      VULKAN_HPP_NAMESPACE::Event event;
+      Result                      result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkCreateEvent( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                           reinterpret_cast&lt;const VkEventCreateInfo *&gt;( &amp;createInfo ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkEvent *&gt;( &amp;event ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Device::createEvent&quot; );
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result, Event( *this, *reinterpret_cast&lt;VkEvent *&gt;( &amp;event ), allocator ) );
+    }
+
+    // wrapper function for command vkGetEventStatus, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetEventStatus.html
+    VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Event::getStatus() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkGetEventStatus &amp;&amp; &quot;Function &lt;vkGetEventStatus&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkGetEventStatus( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkEvent&gt;( m_event ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Event::getStatus&quot;, { Result::eEventSet, Result::eEventReset } );
+
+      return static_cast&lt;Result&gt;( result );
+    }
+
+    // wrapper function for command vkSetEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkSetEvent.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Event::set() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkSetEvent &amp;&amp; &quot;Function &lt;vkSetEvent&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+
+      Result result = static_cast&lt;Result&gt;( getDispatcher()-&gt;vkSetEvent( static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkEvent&gt;( m_event ) ) );
+      VULKAN_HPP_NAMESPACE::detail::resultCheck( result, VULKAN_HPP_RAII_NAMESPACE_STRING &quot;::Event::set&quot; );
+
+      return VULKAN_HPP_NAMESPACE::detail::createResultValueType( result );
+    }
+
+    // wrapper function for command vkResetEvent, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetEvent.html
+    VULKAN_HPP_INLINE typename ResultValueType&lt;void&gt;::type Event::reset() const
+    {
+      VULKAN_HPP_ASSERT( getDispatcher()-&gt;vkResetEvent &amp;&amp; &quot;Function &lt;vkResetEvent&gt; requires &lt;VK_VERSION_1_0&gt;&quot; );
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_raii.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-35.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_raii.hpp--section-37.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

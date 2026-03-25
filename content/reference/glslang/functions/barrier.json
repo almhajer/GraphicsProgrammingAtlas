@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "glslang",
+    "displayName": "GLSLang",
+    "displayNameArabic": "GLSLang",
+    "description": "مرجع عربي لعناصر GLSL وGLSLang من التوجيهات حتى الدوال والعناصر المضمنة."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "barrier",
+    "slug": "barrier",
+    "titleArabic": "تفرض نقطة تزامن بين invocations داخل Workgroup واحدة قبل متابعة التنفيذ إلى ما بعدها",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/glslang/functions/barrier",
+    "contentPath": "content/reference/glslang/functions/barrier.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تفرض نقطة تزامن بين invocations داخل Workgroup واحدة قبل متابعة التنفيذ إلى ما بعدها",
+    "actualMeaningArabic": "تفرض نقطة تزامن بين invocations داخل Workgroup واحدة قبل متابعة التنفيذ إلى ما بعدها.",
+    "purposeArabic": "تستخدم عندما تتبادل invocations البيانات عبر shared memory داخل Compute Shader.",
+    "whyUseArabic": "تجعل نتائج الكتابة المشتركة مرئية بالتسلسل المطلوب قبل القراءة اللاحقة داخل Workgroup.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء ليست نصاً أو تعريفاً فقط، بل الأثر الذي يحدثه على الحالة أو المورد المستهدف.",
+    "sourceDescription": "تفرض نقطة تزامن بين invocations داخل Workgroup واحدة قبل متابعة التنفيذ إلى ما بعدها."
+  },
+  "signature": {
+    "raw": "",
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "تستخدم عندما تتبادل invocations البيانات عبر shared memory داخل Compute Shader."
+    ],
+    "notes": [
+      "تمنع كل invocation من تجاوز هذه النقطة حتى تصل بقية invocations في Workgroup نفسها إليها بحسب القواعد المسموحة.",
+      "تجعل نتائج الكتابة المشتركة مرئية بالتسلسل المطلوب قبل القراءة اللاحقة داخل Workgroup.",
+      "تفيد داخل الشيدر نفسه، لكنها لا تغني عن مزامنات Vulkan بين dispatches أو المراحل الخارجية؛ هي تزامن محلي داخل Workgroup."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "#version 460\nlayout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;\nshared vec4 tileCache[64];\nlayout(set = 0, binding = 0, rgba8) uniform writeonly image2D outputImage;\n\nvoid main() {\n uint localIndex = gl_LocalInvocationIndex;\n tileCache[localIndex] = vec4(float(localIndex) / 63.0, 0.2, 1.0, 1.0);\n barrier();\n\n ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);\n imageStore(outputImage, pixel, tileCache[localIndex]);\n}"
+  },
+  "links": {
+    "officialUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "sourceUrl": "https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.html",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/glsl/reference/functions.json",
+    "category": "الدوال المضمنة",
+    "packageKey": "",
+    "packageName": ""
+  }
+}

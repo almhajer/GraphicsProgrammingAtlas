@@ -1,0 +1,257 @@
+{
+  "key": "animation",
+  "title": "الأنيميشن بين الإطارات",
+  "icon": null,
+  "description": "",
+  "items": [
+    {
+      "sectionKey": "animation",
+      "sectionTitle": "الأنيميشن بين الإطارات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Button",
+        "ImGui::ProgressBar",
+        "ImGui::IsItemHovered",
+        "ImGui::PushStyleColor",
+        "ImGuiIO"
+      ],
+      "instructions": [],
+      "notes": [
+        "Fade واللون والحجم كلها قيم عددية عادية يحدثها التطبيق.",
+        "استخدام DeltaTime يجعل السلوك أكثر استقراراً بين الأجهزة المختلفة.",
+        "يمكن توسيع النمط نفسه ليشمل ظهور القوائم وفتح العناصر وتدرج المؤشرات."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يحفظ التطبيق alpha وscale وprogress وhover_mix كحالة بين الإطارات. في كل Frame يحدثها وفق DeltaTime وحالة Hover/Press، ثم يمررها إلى SetNextWindowBgAlpha وPushStyleColor وProgressBar.",
+        "code": "alpha += (target_alpha - alpha) * io.DeltaTime * 8.0f;\nscale += (target_scale - scale) * io.DeltaTime * 8.0f;\nprogress = fmodf(progress + io.DeltaTime * 0.25f, 1.0f);\nhover_mix += ((hovered ? 1.0f : 0.0f) - hover_mix) * io.DeltaTime * 12.0f;",
+        "fullCode": "#include <imgui.h>\n#include <cmath>\n\nvoid DrawAnimationExample() {\n    static bool panel_open = true;\n    static float alpha = 0.18f;\n    static float scale = 0.92f;\n    static float progress = 0.0f;\n    static float hover_mix = 0.0f;\n    static float press_flash = 0.0f;\n\n    ImGuiIO& io = ImGui::GetIO();\n    const float target_alpha = panel_open ? 0.96f : 0.10f;\n    const float target_scale = panel_open ? 1.0f : 0.94f;\n    alpha += (target_alpha - alpha) * io.DeltaTime * 8.0f;\n    scale += (target_scale - scale) * io.DeltaTime * 8.0f;\n    progress = fmodf(progress + io.DeltaTime * 0.25f, 1.0f);\n    press_flash = ImMax(0.0f, press_flash - io.DeltaTime * 2.5f);\n\n    ImGui::SetNextWindowBgAlpha(alpha);\n    ImGui::SetNextWindowSize(ImVec2(320.0f * scale, 220.0f * scale));\n    ImGui::Begin(\"Animated Tools\");\n    if (ImGui::Button(panel_open ? \"Fade Out\" : \"Fade In\")) {\n        panel_open = !panel_open;\n        press_flash = 1.0f;\n    }\n\n    const bool hovered = ImGui::IsItemHovered();\n    hover_mix += ((hovered ? 1.0f : 0.0f) - hover_mix) * io.DeltaTime * 12.0f;\n\n    ImVec4 base_color(0.20f, 0.36f, 0.58f, 1.0f);\n    ImVec4 hover_color(0.32f, 0.52f, 0.82f, 1.0f);\n    ImVec4 animated_color(\n        base_color.x + (hover_color.x - base_color.x) * hover_mix,\n        base_color.y + (hover_color.y - base_color.y) * hover_mix,\n        base_color.z + (hover_color.z - base_color.z) * hover_mix,\n        1.0f\n    );\n\n    ImGui::PushStyleColor(ImGuiCol_PlotHistogram, animated_color);\n    ImGui::ProgressBar(progress, ImVec2(260.0f, 0.0f), \"Loading\");\n    ImGui::PopStyleColor();\n\n    ImGui::Text(\"alpha: %.2f\", alpha);\n    ImGui::Text(\"scale: %.2f\", scale);\n    ImGui::Text(\"hover_mix: %.2f\", hover_mix);\n    ImGui::Text(\"press_flash: %.2f\", press_flash);\n    ImGui::End();\n}",
+        "explanation": "المثال يجمع أكثر من أثر بصري داخل نفس الصفحة: Fade للنافذة، تدرج حجم، Progress متحرك، وتغير لون يعتمد على Hover. كلها مبنية على interpolation يملكها التطبيق.",
+        "expectedResult": "تظهر نافذة أدوات تتغير شفافيتها وحجمها تدريجياً، ويتحرك شريط تقدم باستمرار، كما يستجيب لون العنصر للتفاعل Hover/Press بدل الانتقال المفاجئ.",
+        "importantNote": "Dear ImGui لا يقدم غالباً Animation system عالي المستوى كما في بعض أطر UI الأخرى؛ أنت من يبني القيم الوسيطة ثم يمررها كل Frame."
+      },
+      "guiRepresentation": {
+        "title": "Animated Tools",
+        "mockup": "Fade In / Fade Out\nHover -> تغير لون تدريجي\nProgress -> يتحرك باستمرار\nScale -> يتغير مع حالة اللوحة",
+        "explanation": "الصورة تركز على أن كل الأثر البصري مبني من قيم تتغير بين الإطارات ثم ترسم في نافذة واحدة."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "Fade وHover وProgress داخل نافذة أدوات",
+      "shortTooltip": "مثال مستقل يجمع Fade In/Out وتدرج اللون وتدرج الحجم وHover وPress وProgress متحرك داخل Dear ImGui.",
+      "description": "هذا المثال يوضح كيف تبنى الأنيميشن في Dear ImGui عبر تحديث قيم مثل alpha وscale وprogress وhover_mix بين الإطارات بدلاً من الاعتماد على نظام Animation عالي المستوى جاهز.",
+      "officialArabicDescription": "الأنيميشن هنا ليست خاصية خفية داخل Dear ImGui؛ التطبيق نفسه يحسب interpolation ثم يمرر القيم الناتجة إلى شفافية النافذة وألوان الزر وحجم اللوحة وشريط التقدم.",
+      "realMeaning": "المعنى الحقيقي أن Dear ImGui تقرأ القيم الحالية فقط، بينما الزمن والتحويلات والتدرجات تبقى مسؤولية كاملة على التطبيق في كل Frame.",
+      "whenToUse": "استخدم هذا النمط عندما تريد Fade لنافذة أو Hover أكثر وضوحاً أو Press flash أو Progress indicator أو Transition بسيط عند فتح عناصر الأدوات.",
+      "practicalBenefit": "يجعل أدواتك أقل جموداً وأكثر قابلية للقراءة البصرية من دون مغادرة أسلوب Dear ImGui المباشر أو بناء محرك Motion منفصل.",
+      "misuseImpact": "إذا مزجت القيم من دون DeltaTime أو تركت الأنيميشن تعتمد على FPS مباشرة، فسيختلف السلوك كثيراً بين الأجهزة والإطارات السريعة والبطيئة."
+    },
+    {
+      "sectionKey": "animation",
+      "sectionTitle": "الأنيميشن بين الإطارات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::SetNextWindowSize",
+        "ImGui::SetNextWindowBgAlpha",
+        "ImGui::Button",
+        "ImGuiIO",
+        "ImGuiWindowFlags_NoDecoration"
+      ],
+      "instructions": [],
+      "notes": [
+        "يمكنك تطبيق النمط نفسه على panels وmodals وtooltips المؤقتة.",
+        "العمر الزمني للـ Toast يحفظ في متغير واضح حتى لا تبقى الرسالة معلقة بلا منطق.",
+        "عرض الشريط الجانبي نفسه قيمة عددية يمكن أن تقودها interpolation مباشرة."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يحفظ التطبيق sidebar_width وtoast_alpha وtoast_lifetime، ويحدثها في كل Frame ثم يستعملها مع SetNextWindowSize وSetNextWindowBgAlpha.",
+        "code": "sidebar_width += (target_width - sidebar_width) * io.DeltaTime * 10.0f;\ntoast_alpha += (target_alpha - toast_alpha) * io.DeltaTime * 9.0f;\nImGui::SetNextWindowSize(ImVec2(sidebar_width, 0.0f));\nImGui::SetNextWindowBgAlpha(toast_alpha);",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawAnimatedSidebarExample() {\n    static bool sidebar_open = true;\n    static float sidebar_width = 120.0f;\n    static float toast_alpha = 0.0f;\n    static float toast_lifetime = 0.0f;\n\n    ImGuiIO& io = ImGui::GetIO();\n    const float target_width = sidebar_open ? 280.0f : 94.0f;\n    sidebar_width += (target_width - sidebar_width) * io.DeltaTime * 10.0f;\n\n    if (toast_lifetime > 0.0f) {\n        toast_lifetime -= io.DeltaTime;\n    }\n    const float target_alpha = toast_lifetime > 0.0f ? 0.96f : 0.0f;\n    toast_alpha += (target_alpha - toast_alpha) * io.DeltaTime * 9.0f;\n\n    ImGui::SetNextWindowPos(ImVec2(24.0f, 82.0f));\n    ImGui::SetNextWindowSize(ImVec2(sidebar_width, 340.0f));\n    ImGui::Begin(\"Sidebar\", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);\n    if (ImGui::Button(sidebar_open ? \"Collapse\" : \"Expand\")) {\n        sidebar_open = !sidebar_open;\n    }\n    if (ImGui::Button(\"Show Toast\")) {\n        toast_lifetime = 2.4f;\n    }\n    ImGui::Separator();\n    ImGui::Text(\"width: %.1f\", sidebar_width);\n    ImGui::Text(\"toast_alpha: %.2f\", toast_alpha);\n    ImGui::Text(\"toast_lifetime: %.2f\", toast_lifetime);\n    ImGui::End();\n\n    if (toast_alpha > 0.02f) {\n        ImGui::SetNextWindowPos(ImVec2(860.0f, 42.0f));\n        ImGui::SetNextWindowBgAlpha(toast_alpha);\n        ImGui::Begin(\"Toast\", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);\n        ImGui::Text(\"Save completed\");\n        ImGui::Text(\"The notification fades out automatically.\");\n        ImGui::End();\n    }\n}",
+        "explanation": "المثال يربط عرض الشريط الجانبي وقيمة شفافية الـ Toast بحالة محفوظة بين الإطارات. لذلك يتحرك العرض ويتلاشى التنبيه تدريجيًا بدل القفز المباشر.",
+        "expectedResult": "تفتح الـ Sidebar وتغلق بسلاسة، وعند الضغط على زر التنبيه تظهر Toast أعلى الواجهة ثم تتلاشى تدريجياً من تلقاء نفسها.",
+        "importantNote": "هذا النوع من الأنيميشن في Dear ImGui يعتمد كلياً على تحديث القيم بين الإطارات، لا على نظام مؤقت داخلي مخفي."
+      },
+      "guiRepresentation": {
+        "title": "Animated Sidebar",
+        "mockup": "Sidebar -> Expand / Collapse\nToast -> Fade In / Fade Out\nالحالة -> width + alpha + lifetime\nالمعنى -> انتقالات بين الإطارات",
+        "explanation": "الصورة تجمع أنيميشن فتح/إغلاق شريط جانبي مع Notification عابرة حتى يظهر الاستخدام العملي بوضوح."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "Sidebar متحركة مع Toast notification وتدرج ظهور",
+      "shortTooltip": "مثال مستقل يوضح فتح وإغلاق Sidebar مع Fade لرسالة Toast داخل Dear ImGui.",
+      "description": "يعرض هذا المثال نوعين شائعين من الأنيميشن في أدوات المطور: شريط جانبي يتحرك بعرض متدرج، ورسالة Toast تظهر ثم تتلاشى مع مرور الوقت.",
+      "officialArabicDescription": "Dear ImGui لا تقدم Sidebar animation أو Toast lifecycle جاهزة غالباً، لذلك يحدث التطبيق width وalpha وlifetime بنفسه ثم يمررها إلى التخطيط والرسم في كل Frame.",
+      "realMeaning": "المعنى الحقيقي أن أي فتح/إغلاق متحرك أو نافذة عابرة في Dear ImGui هو مجرد حالة منطقية وقيم انتقالية يحسبها التطبيق بين الإطارات.",
+      "whenToUse": "استخدمه في محررات الأدوات التي تريد شريطاً جانبياً يفتح ويغلق بسلاسة أو رسائل نجاح قصيرة مثل Save complete أو Shader reloaded.",
+      "practicalBenefit": "يجعل الواجهة أكثر وضوحاً وهدوءاً للمستخدم، ويعطي مثالاً عملياً على أنيميشن فتح/إغلاق ورسائل مؤقتة داخل نمط Immediate Mode.",
+      "misuseImpact": "إذا لم تربط Fade بالزمن الفعلي أو لم تضع شرطاً واضحاً لعمر الرسالة فقد تبقى الـ Toast عالقة أو تختفي بسرعة غير متسقة بين الأجهزة."
+    },
+    {
+      "sectionKey": "animation",
+      "sectionTitle": "الأنيميشن بين الإطارات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::Button",
+        "ImGui::SliderFloat",
+        "ImDrawList",
+        "ImGuiIO"
+      ],
+      "instructions": [],
+      "notes": [
+        "يغطي هذا المثال طلب أمثلة الانفجار داخل ImGui.",
+        "يمكن ربط القيم نفسها لاحقاً بنظام VFX حقيقي في المحرك.",
+        "المعاينة هنا تكفي لشرح الفكرة البصرية داخل أداة تحرير."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يضغط المستخدم زر Trigger، فتبدأ القيم بالتحرك من جديد، ثم يعرض Canvas دوائر نبضية وشظايا صغيرة تتسع وتبهت مع الزمن.",
+        "code": "blast_time += io.DeltaTime;\nradius = blast_time * blast_speed;\ndraw_list->AddCircle(center, radius, IM_COL32(...));",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawExplosionEditorExample() {\n    static float blast_time = 1.0f;\n    static float blast_speed = 96.0f;\n    static float shard_spread = 78.0f;\n\n    ImGuiIO& io = ImGui::GetIO();\n    blast_time += io.DeltaTime;\n\n    ImGui::Begin(\"Explosion Editor\");\n    if (ImGui::Button(\"Trigger Explosion\")) {\n        blast_time = 0.0f;\n    }\n    ImGui::SliderFloat(\"Blast Speed\", &blast_speed, 40.0f, 180.0f);\n    ImGui::SliderFloat(\"Shard Spread\", &shard_spread, 24.0f, 160.0f);\n\n    ImVec2 canvas_min = ImGui::GetCursorScreenPos();\n    ImVec2 canvas_size(340.0f, 220.0f);\n    ImGui::InvisibleButton(\"explosion_canvas\", canvas_size);\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n    ImVec2 center(canvas_min.x + 170.0f, canvas_min.y + 110.0f);\n    float radius = blast_time * blast_speed;\n    float alpha = ImClamp(1.0f - blast_time * 0.55f, 0.0f, 1.0f);\n\n    draw_list->AddRectFilled(canvas_min, ImVec2(canvas_min.x + canvas_size.x, canvas_min.y + canvas_size.y), IM_COL32(18, 24, 34, 255), 14.0f);\n    draw_list->AddCircleFilled(center, 18.0f + blast_time * 18.0f, IM_COL32(255, 183, 78, (int)(alpha * 120.0f)));\n    draw_list->AddCircle(center, radius, IM_COL32(255, 208, 116, (int)(alpha * 255.0f)), 0, 3.0f);\n    draw_list->AddCircle(center, radius * 0.72f, IM_COL32(255, 120, 84, (int)(alpha * 180.0f)), 0, 2.0f);\n\n    for (int i = 0; i < 8; ++i) {\n        float x = center.x + ((i - 3.5f) * 12.0f) * blast_time;\n        float y = center.y + ((i % 3) - 1.0f) * shard_spread * 0.12f * blast_time;\n        draw_list->AddRectFilled(ImVec2(x - 4.0f, y - 4.0f), ImVec2(x + 4.0f, y + 4.0f), IM_COL32(255, 206, 128, (int)(alpha * 255.0f)), 2.0f);\n    }\n\n    ImGui::Text(\"Blast time: %.2f\", blast_time);\n    ImGui::End();\n}",
+        "explanation": "كل ما يراه المستخدم من انفجار هنا ناتج عن تحديث قيم بسيطة ثم تحويلها إلى رسم فوري داخل Canvas: دوائر، شدة، وشظايا صغيرة.",
+        "expectedResult": "تظهر معاينة انفجار واضحة بنبضة مركزية وشظايا متناثرة تتسع وتبهت مع الزمن، ويمكن إعادة تشغيلها وتعديلها من النافذة نفسها.",
+        "importantNote": "هذا مثال محرر مؤثر انفجار داخل ImGui، وليس نظام VFX نهائياً في محرك ألعاب كامل."
+      },
+      "guiRepresentation": {
+        "title": "Explosion Editor",
+        "mockup": "Trigger Explosion\nBlast Speed / Shard Spread\nPreview -> pulse + shards\nالمعنى -> محرر انفجار بصري",
+        "explanation": "الصورة توضح الانفجار كمحرر مؤثر داخل الواجهة مع معاينة واضحة وقيم قابلة للضبط."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "محرر انفجار تفاعلي مع نبضة وقطع متناثرة",
+      "shortTooltip": "مثال مستقل يوضح بناء Explosion preview داخل Dear ImGui عبر تحديث الشدة والنبضة وشظايا مرسومة بين الإطارات.",
+      "description": "يعرض هذا المثال محرر تأثير انفجار صغير: زر Trigger، منزلقات للقوة والانتشار، ومعاينة بصرية توضح النبضة والشظايا المتناثرة داخل Canvas.",
+      "realMeaning": "الانفجار هنا ليس مؤثراً جاهزاً من Dear ImGui، بل قيم مثل intensity وradius وtime_since_blast يملكها التطبيق ثم يحولها إلى دوائر وشظايا وخطوط داخل الواجهة.",
+      "whenToUse": "استخدمه في محررات المؤثرات البصرية وواجهات الـ VFX tools ولوحات ضبط الانفجار أو shockwave.",
+      "practicalBenefit": "يجعل ضبط الانفجار عملية بصرية تفاعلية مباشرة من دون الخروج من واجهة الأدوات أو الاعتماد على تخمين الأرقام وحدها.",
+      "misuseImpact": "إذا عرضت الانفجار كنصوص ومعاملات فقط بلا معاينة واضحة فسيصعب فهم أثر القيم مثل القوة ونصف القطر والنبضة."
+    },
+    {
+      "sectionKey": "animation",
+      "sectionTitle": "الأنيميشن بين الإطارات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::SliderFloat",
+        "ImGui::ColorEdit4",
+        "ImDrawList",
+        "ImVec4"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي طلب الوهج بشكل مستقل.",
+        "يمكن ربط اللون نفسه مباشرة بـ Theme أو مادة أو ضوء داخل المشروع.",
+        "الفكرة نفسها صالحة لمؤشرات HUD أو highlights أو أزرار مضيئة."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "يضبط المستخدم intensity وradius وcolor، ثم يرسم التطبيق طبقات متدرجة من نفس اللون بألفا مختلفة حول مركز مضيء.",
+        "code": "for (int layer = 0; layer < 4; ++layer) {\n    draw_list->AddCircleFilled(center, radius + layer * 18.0f, glow_color);\n}",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawGlowEditorExample() {\n    static float glow_radius = 28.0f;\n    static float glow_intensity = 0.86f;\n    static float glow_color[4] = {0.35f, 0.74f, 1.0f, 1.0f};\n\n    ImGui::Begin(\"Glow Editor\");\n    ImGui::SliderFloat(\"Glow Radius\", &glow_radius, 12.0f, 72.0f);\n    ImGui::SliderFloat(\"Glow Intensity\", &glow_intensity, 0.10f, 1.0f);\n    ImGui::ColorEdit4(\"Glow Color\", glow_color);\n\n    ImVec2 canvas_min = ImGui::GetCursorScreenPos();\n    ImVec2 canvas_size(320.0f, 200.0f);\n    ImGui::InvisibleButton(\"glow_canvas\", canvas_size);\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n    ImVec2 center(canvas_min.x + 160.0f, canvas_min.y + 96.0f);\n\n    draw_list->AddRectFilled(canvas_min, ImVec2(canvas_min.x + canvas_size.x, canvas_min.y + canvas_size.y), IM_COL32(15, 20, 30, 255), 14.0f);\n    for (int layer = 4; layer >= 1; --layer) {\n        float layer_radius = glow_radius + layer * 18.0f;\n        int alpha = (int)(glow_intensity * 34.0f * layer);\n        draw_list->AddCircleFilled(center, layer_radius, IM_COL32((int)(glow_color[0] * 255.0f), (int)(glow_color[1] * 255.0f), (int)(glow_color[2] * 255.0f), alpha));\n    }\n    draw_list->AddCircleFilled(center, glow_radius, IM_COL32(255, 244, 220, 255));\n    draw_list->AddCircle(center, glow_radius + 8.0f, IM_COL32(255, 255, 255, 120), 0, 2.0f);\n    ImGui::Text(\"Glow intensity: %.2f\", glow_intensity);\n    ImGui::End();\n}",
+        "explanation": "يعرض المثال طبقات سطوع متزايدة حول عنصر أساسي مضيء، لذلك يفهم المستخدم الفرق بين اللون الأساسي وبين الوهج المحيط به.",
+        "expectedResult": "تظهر دائرة مضيئة مع هالة واضحة حولها، ويمكن تغيير نصف قطر الوهج ولونه وشدته مباشرة من محرر الواجهة.",
+        "importantNote": "هذا المثال يغطي طلب أمثلة الوهج داخل ImGui بوصفه أداة تحرير ومعاينة، لا مرحلة Bloom حقيقية من renderer."
+      },
+      "guiRepresentation": {
+        "title": "Glow Editor",
+        "mockup": "Glow Radius / Intensity / Color\nPreview -> bright core + outer halo\nالمعنى -> محرر وهج مرئي",
+        "explanation": "الصورة تركز على العنصر المضيء والهالة المحيطة به كمعاينة واضحة وسريعة."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "محرر وهج Glow مع طبقات سطوع متدرجة",
+      "shortTooltip": "مثال مستقل يوضح Glow/Bloom style preview داخل Dear ImGui عبر دوائر وطبقات سطوع متدرجة.",
+      "description": "يبني هذا المثال محرر وهج بسيط يربط بين شدة الوهج ونصف قطره ولونه وبين معاينة مرئية فورية داخل Canvas.",
+      "realMeaning": "الوهج هنا ليس Bloom renderer كاملاً، بل تقريب بصري داخل الواجهة يوضح كيف تتدرج الطبقات اللونية والسطوع حول العنصر المضيء.",
+      "whenToUse": "استخدمه في محررات الثيمات، وواجهات الإضاءة، وأدوات الـ VFX، ولوحات الخصائص التي تحتاج ضبط glow intensity بسرعة.",
+      "practicalBenefit": "يجعل ضبط شدة الوهج ولونه أكثر وضوحاً من النصوص والأرقام المجردة، ويمنح المستخدم معاينة فورية مفيدة.",
+      "misuseImpact": "إذا لم تُظهر الفرق بين الطبقة المضيئة والطبقة الأساسية فسيصعب فهم معنى شدة الوهج أو نصف قطره."
+    },
+    {
+      "sectionKey": "animation",
+      "sectionTitle": "الأنيميشن بين الإطارات",
+      "header": "imgui.h",
+      "headerTooltip": "ملف الترويسة العام الذي يجب تضمينه لاستخدام الواجهة العامة لـ Dear ImGui وأنواعها ودوالها الأساسية.",
+      "sourceUrl": "https://github.com/ocornut/imgui/blob/master/imgui.h",
+      "threadSafety": "واجهة Dear ImGui العامة ليست آمنة لاستخدام نفس السياق من عدة خيوط في الوقت نفسه. أنشئ السياق وهيئ ImGuiIO وابن عناصر الواجهة من خيط الواجهة نفسه أو من خيط يملك السياق الحالي حصراً.",
+      "related": [
+        "ImGui::SliderFloat",
+        "ImGui::SliderInt",
+        "ImDrawList",
+        "ImGuiIO"
+      ],
+      "instructions": [],
+      "notes": [
+        "هذا المثال يغطي طلب أمثلة التطاير والجسيمات داخل ImGui.",
+        "يمكن ربط هذه القيم لاحقاً بملفات VFX أو أنظمة محاكاة أكبر.",
+        "الفكرة نفسها صالحة للدخان والشرر والنثار الخفيف."
+      ],
+      "lifecycle": [],
+      "frameSimulation": [],
+      "executionMap": null,
+      "usageExample": {
+        "scenario": "تحدد النافذة عدد الجسيمات وسرعتها وانتشارها، ثم يرسم التطبيق نقاطاً صغيرة تبتعد من المركز وفق lifetime متحرك.",
+        "code": "particle_time += io.DeltaTime;\npos.x = center.x + dir_x * spread * particle_time;\ndraw_list->AddCircleFilled(pos, 3.0f, IM_COL32(...));",
+        "fullCode": "#include <imgui.h>\n\nvoid DrawScatterEditorExample() {\n    static float particle_time = 0.0f;\n    static float scatter_speed = 1.2f;\n    static float scatter_spread = 72.0f;\n    static int particle_count = 14;\n\n    particle_time += ImGui::GetIO().DeltaTime;\n    if (particle_time > 1.6f) {\n        particle_time = 0.0f;\n    }\n\n    ImGui::Begin(\"Scatter Editor\");\n    ImGui::SliderFloat(\"Speed\", &scatter_speed, 0.2f, 3.0f);\n    ImGui::SliderFloat(\"Spread\", &scatter_spread, 20.0f, 140.0f);\n    ImGui::SliderInt(\"Count\", &particle_count, 6, 24);\n\n    ImVec2 canvas_min = ImGui::GetCursorScreenPos();\n    ImVec2 canvas_size(340.0f, 210.0f);\n    ImGui::InvisibleButton(\"scatter_canvas\", canvas_size);\n    ImDrawList* draw_list = ImGui::GetWindowDrawList();\n    ImVec2 center(canvas_min.x + 170.0f, canvas_min.y + 104.0f);\n\n    draw_list->AddRectFilled(canvas_min, ImVec2(canvas_min.x + canvas_size.x, canvas_min.y + canvas_size.y), IM_COL32(17, 24, 35, 255), 14.0f);\n    draw_list->AddCircleFilled(center, 8.0f, IM_COL32(255, 202, 114, 255));\n\n    for (int i = 0; i < particle_count; ++i) {\n        float n = (float)i / (float)particle_count;\n        float dx = cosf(n * IM_PI * 2.0f);\n        float dy = sinf(n * IM_PI * 2.0f);\n        float dist = scatter_spread * particle_time * scatter_speed;\n        ImVec2 pos(center.x + dx * dist, center.y + dy * dist * 0.72f);\n        draw_list->AddCircleFilled(pos, 3.0f + n * 2.0f, IM_COL32(111, 192, 255, 220));\n    }\n\n    ImGui::Text(\"Scatter time: %.2f\", particle_time);\n    ImGui::End();\n}",
+        "explanation": "المثال يوزع الجسيمات على اتجاهات متعددة ثم يبعدها تدريجياً عن المركز مع الزمن. بذلك يصبح التبعثر والتطاير سلوكاً واضحاً وقابلاً للضبط من الواجهة نفسها.",
+        "expectedResult": "تظهر معاينة جسيمات متناثرة من مركز واحد إلى اتجاهات عديدة، ويمكن التحكم في عددها وسرعتها ونطاق انتشارها داخل المحرر.",
+        "importantNote": "هذا المثال يغطي طلب التطاير داخل ImGui كمعاينة أدوات، لا كنظام particles نهائي في المحرك."
+      },
+      "guiRepresentation": {
+        "title": "Scatter Editor",
+        "mockup": "Speed / Spread / Count\nPreview -> particles from center\nالمعنى -> محرر تطاير وجسيمات",
+        "explanation": "الصورة توضح المركز والجسيمات المنتشرة حوله كأداة واضحة لضبط التبعثر."
+      },
+      "parameterExample": "",
+      "values": [],
+      "parameters": [],
+      "signature": null,
+      "returns": null,
+      "kind": "example",
+      "name": "محرر تطاير وجسيمات متناثرة",
+      "shortTooltip": "مثال مستقل يوضح Scatter/Particles preview داخل Dear ImGui مع سرعة وتباعد وكثافة.",
+      "description": "يعرض هذا المثال تأثير تطاير بصري مبسط داخل نافذة الأدوات: جسيمات تتحرك من مركز واحد إلى اتجاهات متعددة مع التحكم في السرعة والكثافة ونطاق التبعثر.",
+      "realMeaning": "التطاير هنا ليس نظام particles مكتمل، بل معاينة تشرح كيف تتغير مواضع الجسيمات عند تحديث lifetime وvelocity وspread بين الإطارات داخل UI.",
+      "whenToUse": "استخدمه في محررات الشرر والغبار والقصاصات الورقية وواجهات الـ scatter أو sparks داخل أدوات الـ VFX.",
+      "practicalBenefit": "يعطي المطور تصوراً فورياً لمعنى التبعثر والكثافة بدلاً من الاعتماد على أرقام لا يرى أثرها إلا خارج الواجهة.",
+      "misuseImpact": "إذا لم تربط الكثافة والسرعة والانتشار بمعاينة مرئية فسيكون ضبط التبعثر غامضاً وصعب المعايرة."
+    }
+  ]
+}

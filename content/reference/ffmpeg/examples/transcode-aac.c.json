@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "example",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "transcode_aac.c",
+    "slug": "transcode-aac.c",
+    "titleArabic": "transcode_aac.c",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/example/transcode-aac.c",
+    "contentPath": "content/reference/ffmpeg/examples/transcode-aac.c.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "مثال transcode صوتية أكثر تركيزًا على AAC والمتطلبات الشائعة قبل encoder.",
+    "actualMeaningArabic": "مثال transcode صوتية أكثر تركيزًا على AAC والمتطلبات الشائعة قبل encoder.",
+    "purposeArabic": "مثال transcode صوتية أكثر تركيزًا على AAC والمتطلبات الشائعة قبل encoder.",
+    "whyUseArabic": "مثال transcode صوتية أكثر تركيزًا على AAC والمتطلبات الشائعة قبل encoder.",
+    "carriedValueArabic": "مثال transcode صوتية أكثر تركيزًا على AAC والمتطلبات الشائعة قبل encoder.",
+    "sourceDescription": "مثال transcode صوتية أكثر تركيزًا على AAC والمتطلبات الشائعة قبل encoder."
+  },
+  "signature": {
+    "raw": "// transcode_aac.c - تحويل صوتية إلى AAC\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    if (argc < 3) {\n        printf(\"الاستخدام: %s <ملف_مدخل> <ملف_خرج.m4a>\\n\", argv[0]);\n        return 1;\n    }\n\n    AVFormatContext *in_fmt = NULL;\nn    AVFormatContext *out_fmt = NULL;\nn    AVCodecContext *dec_ctx = NULL;\n    AVCodecContext *enc_ctx = NULL;\n    const AVCodec *dec_codec = NULL;\n    const AVCodec *enc_codec = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *enc_frame = av_frame_alloc();\n\n    // فتح المدخل\n    avformat_open_input(&in_fmt, argv[1], NULL, NULL);\n    avformat_find_stream_info(in_fmt, NULL);\n\n    int stream_idx = av_find_best_stream(in_fmt, AVMEDIA_TYPE_AUDIO, -1, -1, 0, NULL);\n\n    // decoder\n    dec_codec = avcodec_find_decoder(in_fmt->streams[stream_idx]->codecpar->codec_id);\n    dec_ctx = avcodec_alloc_context3(dec_codec);\n    avcodec_parameters_to_context(dec_ctx, in_fmt->streams[stream_idx]->codecpar);\n    avcodec_open2(dec_ctx, dec_codec, NULL);\n\n    // encoder AAC\n    enc_codec = avcodec_find_encoder_by_name(\"aac\");\n    enc_ctx = avcodec_alloc_context3(enc_codec);\n    avcodec_parameters_to_context(enc_ctx, in_fmt->streams[stream_idx]->codecpar);\n    avcodec_open2(enc_ctx, enc_codec, NULL);\n\n    // الخرج\n    const AVOutputFormat *out_fmt_desc = av_guess_format(NULL, NULL, argv[2]);\n    avformat_alloc_output_context2(&out_fmt, out_fmt_desc, NULL, argv[2]);\n    AVStream *out_stream = avformat_new_stream(out_fmt, NULL);\n    avcodec_parameters_copy(out_stream->codecpar, in_fmt->streams[stream_idx]->codecpar);\n    avformat_write_header(out_fmt);\n\n    // تحويل\n    while (av_read_frame(in_fmt, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(dec_ctx, pkt);\n            while (avcodec_receive_frame(dec_ctx, frame) >= 0) {\n                avcodec_send_frame(enc_ctx, frame);\n                while (avcodec_receive_frame(enc_ctx, enc_frame) >= 0) {\n                    av_packet_unref(enc_frame->pkt);\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_write_trailer(out_fmt);\nn    avformat_close_input(&in_fmt);\n    printf(\"تم تحويل إلى AAC بنجاح\\n\");\n\n    av_frame_free(&frame);\n    av_frame_free(&enc_frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&dec_ctx);\n    avcodec_free_context(&enc_ctx);\n    avformat_free_context(out_fmt);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// transcode_aac.c - تحويل صوتية إلى AAC\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    if (argc < 3) {\n        printf(\"الاستخدام: %s <ملف_مدخل> <ملف_خرج.m4a>\n\", argv[0]);\n        return 1;\n    }\n\n    AVFormatContext *in_fmt = NULL;\n    AVFormatContext *out_fmt = NULL;\n    AVCodecContext *dec_ctx = NULL;\n    AVCodecContext *enc_ctx = NULL;\n    const AVCodec *dec_codec = NULL;\n    const AVCodec *enc_codec = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *enc_frame = av_frame_alloc();\n\n    // فتح المدخل\n    avformat_open_input(&in_fmt, argv[1], NULL, NULL);\n    avformat_find_stream_info(in_fmt, NULL);\n\n    int stream_idx = av_find_best_stream(in_fmt, AVMEDIA_TYPE_AUDIO, -1, -1, 0, NULL);\n\n    // decoder\n    dec_codec = avcodec_find_decoder(in_fmt->streams[stream_idx]->codecpar->codec_id);\n    dec_ctx = avcodec_alloc_context3(dec_codec);\n    avcodec_parameters_to_context(dec_ctx, in_fmt->streams[stream_idx]->codecpar);\n    avcodec_open2(dec_ctx, dec_codec, NULL);\n\n    // encoder AAC\n    enc_codec = avcodec_find_encoder_by_name(\"aac\");\n    enc_ctx = avcodec_alloc_context3(enc_codec);\n    avcodec_parameters_to_context(enc_ctx, in_fmt->streams[stream_idx]->codecpar);\n    avcodec_open2(enc_ctx, enc_codec, NULL);\n\n    // الخرج\n    const AVOutputFormat *out_fmt_desc = av_guess_format(NULL, NULL, argv[2]);\n    avformat_alloc_output_context2(&out_fmt, out_fmt_desc, NULL, argv[2]);\n    AVStream *out_stream = avformat_new_stream(out_fmt, NULL);\n    avcodec_parameters_copy(out_stream->codecpar, in_fmt->streams[stream_idx]->codecpar);\n    avformat_write_header(out_fmt);\n\n    // تحويل\n    while (av_read_frame(in_fmt, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(dec_ctx, pkt);\n            while (avcodec_receive_frame(dec_ctx, frame) >= 0) {\n                avcodec_send_frame(enc_ctx, frame);\n                while (avcodec_receive_frame(enc_ctx, enc_frame) >= 0) {\n                    av_packet_unref(enc_frame->pkt);\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_write_trailer(out_fmt);\n    avformat_close_input(&in_fmt);\n    printf(\"تم تحويل إلى AAC بنجاح\n\");\n\n    av_frame_free(&frame);\n    av_frame_free(&enc_frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&dec_ctx);\n    avcodec_free_context(&enc_ctx);\n    avformat_free_context(out_fmt);\n    return 0;\n}"
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/transcode_aac.c.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "FFmpeg",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

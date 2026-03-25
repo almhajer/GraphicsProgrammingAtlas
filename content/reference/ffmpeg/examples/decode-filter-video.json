@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "decode_filter_video.c",
+    "slug": "decode-filter-video",
+    "titleArabic": "فك الفيديو ثم تمريره عبر filter graph",
+    "aliases": [
+      "decode_filter_video",
+      "decode_filter_video"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/decode-filter-video",
+    "contentPath": "content/reference/ffmpeg/examples/decode-filter-video.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "فك الفيديو ثم تمريره عبر filter graph",
+    "actualMeaningArabic": "يبين دخول إطارات الفيديو الخام إلى سلسلة فلاتر بعد فك الترميز.",
+    "purposeArabic": "يبين دخول إطارات الفيديو الخام إلى سلسلة فلاتر بعد فك الترميز.",
+    "whyUseArabic": "يبين دخول إطارات الفيديو الخام إلى سلسلة فلاتر بعد فك الترميز.",
+    "carriedValueArabic": "يبين دخول إطارات الفيديو الخام إلى سلسلة فلاتر بعد فك الترميز.",
+    "sourceDescription": "يبين دخول إطارات الفيديو الخام إلى سلسلة فلاتر بعد فك الترميز."
+  },
+  "signature": {
+    "raw": "// decode_filter_video.c - فك ترميز فيديو + تطبيق فلاتر\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp4\";\n\n    AVFormatContext *fmt_ctx = NULL;\nn    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    AVCodecContext *codec_ctx = avcodec_alloc_context3(codec);\nn    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    // بناء graph: buffer -> hflip -> buffersink\n    AVFilterGraph *graph = avfilter_graph_alloc();\n    avfilter_graph_parse_ptr(graph,\n        \"buffer\"\n        \"[hflip]\"\n        \"buffersink\",\n        NULL);\n    avfilter_graph_config(graph, NULL);\n\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *filt_frame = av_frame_alloc();\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                av_buffersrc_add_frame(graph, frame);\n                while (av_buffersink_get_frame(graph, filt_frame) >= 0) {\n                    printf(\"frame: %dx%d pts=%ld\\n\",\n                           filt_frame->width, filt_frame->height, filt_frame->pts);\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_frame_free(&filt_frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\nn    avformat_close_input(&fmt_ctx);\nnavfilter_graph_free(&graph);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يبين دخول إطارات الفيديو الخام إلى سلسلة فلاتر بعد فك الترميز."
+    ],
+    "notes": [
+      "يبين دخول إطارات الفيديو الخام إلى سلسلة فلاتر بعد فك الترميز."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// decode_filter_video.c - فك ترميز فيديو + تطبيق فلاتر\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp4\";\n\n    AVFormatContext *fmt_ctx = NULL;\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    AVCodecContext *codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    // بناء graph: buffer -> hflip -> buffersink\n    AVFilterGraph *graph = avfilter_graph_alloc();\n    avfilter_graph_parse_ptr(graph,\n        \"buffer\"\n        \"[hflip]\"\n        \"buffersink\",\n        NULL);\n    avfilter_graph_config(graph, NULL);\n\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *filt_frame = av_frame_alloc();\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                av_buffersrc_add_frame(graph, frame);\n                while (av_buffersink_get_frame(graph, filt_frame) >= 0) {\n                    printf(\"frame: %dx%d pts=%ld\n\",\n                           filt_frame->width, filt_frame->height, filt_frame->pts);\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_frame_free(&filt_frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\navfilter_graph_free(&graph);\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "فك الفيديو ثم تمريره عبر filter graph",
+        "code": "// decode_filter_video.c - فك ترميز فيديو + تطبيق فلاتر\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <libavfilter/avfilter.h>\n#include <libavfilter/buffersrc.h>\n#include <libavfilter/buffersink.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp4\";\n\n    AVFormatContext *fmt_ctx = NULL;\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    AVCodecContext *codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    // بناء graph: buffer -> hflip -> buffersink\n    AVFilterGraph *graph = avfilter_graph_alloc();\n    avfilter_graph_parse_ptr(graph,\n        \"buffer\"\n        \"[hflip]\"\n        \"buffersink\",\n        NULL);\n    avfilter_graph_config(graph, NULL);\n\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n    AVFrame *filt_frame = av_frame_alloc();\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                av_buffersrc_add_frame(graph, frame);\n                while (av_buffersink_get_frame(graph, filt_frame) >= 0) {\n                    printf(\"frame: %dx%d pts=%ld\n\",\n                           filt_frame->width, filt_frame->height, filt_frame->pts);\n                }\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_frame_free(&filt_frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\navfilter_graph_free(&graph);\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/decode_filter_video_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "الفلاتر والمعالجة",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

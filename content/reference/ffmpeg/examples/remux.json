@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "remux.c",
+    "slug": "remux",
+    "titleArabic": "نقل الحزم بين حاويتين دون إعادة ترميز",
+    "aliases": [
+      "remux",
+      "remux"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/remux",
+    "contentPath": "content/reference/ffmpeg/examples/remux.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "نقل الحزم بين حاويتين دون إعادة ترميز",
+    "actualMeaningArabic": "يبين remuxing: تغيير الحاوية مع الإبقاء على bitstream نفسها.",
+    "purposeArabic": "يبين remuxing: تغيير الحاوية مع الإبقاء على bitstream نفسها.",
+    "whyUseArabic": "يبين remuxing: تغيير الحاوية مع الإبقاء على bitstream نفسها.",
+    "carriedValueArabic": "يبين remuxing: تغيير الحاوية مع الإبقاء على bitstream نفسها.",
+    "sourceDescription": "يبين remuxing: تغيير الحاوية مع الإبقاء على bitstream نفسها."
+  },
+  "signature": {
+    "raw": "// remux.c - تغيير الحاوي (container) بدون إعادة ترميز\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    if (argc < 3) {\n        printf(\"الاستخدام: %s <ملف_مدخل> <ملف_خرج>\\n\", argv[0]);\n        return 1;\n    }\n\n    AVFormatContext *in_fmt = NULL;\nn    AVFormatContext *out_fmt = NULL;\nn    AVPacket *pkt = av_packet_alloc();\n\n    // فتح المدخل\n    avformat_open_input(&in_fmt, argv[1], NULL, NULL);\nn    avformat_find_stream_info(in_fmt, NULL);\n\n    // إعداد الخرج\n    const AVOutputFormat *out_fmt_desc = av_guess_format(NULL, NULL, argv[2]);\n    avformat_alloc_output_context2(&out_fmt, out_fmt_desc, NULL, argv[2]);\n\n    // نسخ streams\n    for (unsigned i = 0; i < in_fmt->nb_streams; i++) {\nn        AVStream *out_stream = avformat_new_stream(out_fmt, NULL);\nn        avcodec_parameters_copy(out_stream->codecpar, in_fmt->streams[i]->codecpar);\nn    }\nn    avformat_write_header(out_fmt);\n\n    // نسخ الـ packets كما هي\n    while (av_read_frame(in_fmt, pkt) >= 0) {\nn        av_interleaved_write_frame(out_fmt, pkt);\nn        av_packet_unref(pkt);\n    }\n\n    av_write_trailer(out_fmt);\nn    avformat_close_input(&in_fmt);\nn    avformat_free_context(out_fmt);\nn    printf(\"تم الـ remux بنجاح\\n\");\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "الـ remuxing أسرع من التحويل لأنه لا يعيد الترميز - فقط يغيّر الحاوي (container).",
+      "مثال عملي: تحويل ملف MKV إلى MP4 بدون تغيير الترميز."
+    ],
+    "notes": [
+      "الـ remuxing أسرع من التحويل لأنه لا يعيد الترميز - فقط يغيّر الحاوي (container).",
+      "مثال عملي: تحويل ملف MKV إلى MP4 بدون تغيير الترميز."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// remux.c - تغيير الحاوي (container) بدون إعادة ترميز\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    if (argc < 3) {\n        printf(\"الاستخدام: %s <ملف_مدخل> <ملف_خرج>\n\", argv[0]);\n        return 1;\n    }\n\n    AVFormatContext *in_fmt = NULL;\n    AVFormatContext *out_fmt = NULL;\n    AVPacket *pkt = av_packet_alloc();\n\n    // فتح المدخل\n    avformat_open_input(&in_fmt, argv[1], NULL, NULL);\n    avformat_find_stream_info(in_fmt, NULL);\n\n    // إعداد الخرج\n    const AVOutputFormat *out_fmt_desc = av_guess_format(NULL, NULL, argv[2]);\n    avformat_alloc_output_context2(&out_fmt, out_fmt_desc, NULL, argv[2]);\n\n    // نسخ streams\n    for (unsigned i = 0; i < in_fmt->nb_streams; i++) {\n        AVStream *out_stream = avformat_new_stream(out_fmt, NULL);\n        avcodec_parameters_copy(out_stream->codecpar, in_fmt->streams[i]->codecpar);\n    }\n    avformat_write_header(out_fmt);\n\n    // نسخ الـ packets كما هي\n    while (av_read_frame(in_fmt, pkt) >= 0) {\n        av_interleaved_write_frame(out_fmt, pkt);\n        av_packet_unref(pkt);\n    }\n\n    av_write_trailer(out_fmt);\n    avformat_close_input(&in_fmt);\n    avformat_free_context(out_fmt);\n    printf(\"تم الـ remux بنجاح\n\");\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "نقل الحزم بين حاويتين دون إعادة ترميز",
+        "code": "// remux.c - إعادة تغليف (remux) ملف وسائط بدون إعادة ترميز\n#include <libavformat/avformat.h>\n\nint main(int argc, char **argv) {\n    AVFormatContext *input_ctx = NULL;\n    AVFormatContext *output_ctx = NULL;\n    AVPacket *pkt = av_packet_alloc();\n    const AVOutputFormat *out_fmt;\n\n    avformat_open_input(&input_ctx, argv[1], NULL, NULL);\n    avformat_find_stream_info(input_ctx, NULL);\n\n    out_fmt = av_guess_format(argv[3], NULL, NULL);\n    avformat_alloc_output_context2(&output_ctx, out_fmt, NULL, argv[2]);\n\n    // نسخ streams من المدخل إلى الخرج\n    for (int i = 0; i < input_ctx->nb_streams; i++) {\n        AVStream *out_stream = avformat_new_stream(output_ctx, NULL);\n        avcodec_parameters_copy(out_stream->codecpar, input_ctx->streams[i]->codecpar);\n    }\n    avformat_write_header(output_ctx);\n\n    while (av_read_frame(input_ctx, pkt) >= 0) {\n        pkt->stream_index = pkt->stream_index;\n        av_interleaved_write_frame(output_ctx, pkt);\n        av_packet_unref(pkt);\n    }\n    av_write_trailer(output_ctx);\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/remux_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "الحاويات والتحويل",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

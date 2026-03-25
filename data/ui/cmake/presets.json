@@ -1,0 +1,59 @@
+[
+  {
+    "name": "CMakePresets.json",
+    "aliases": [
+      "cmake-presets",
+      "cmake --preset"
+    ],
+    "titleArabic": "ملف يعلن إعدادات configure وbuild وtest القابلة لإعادة الاستخدام على مستوى المشروع",
+    "actualMeaningArabic": "هذا الملف هو واجهة JSON رسمية لتعريف presets مثل configurePresets وbuildPresets وtestPresets حتى يشترك المطور وCI والمحرر في نفس أوامر CMake ومعاملاتها.",
+    "purposeArabic": "يستخدم لتوحيد طريقة تشغيل CMake بين أعضاء الفريق أو الأدوات بدل تكرار أوامر الطرفية في الذاكرة أو الويكي.",
+    "whyUseArabic": "يجعل build directories والخيارات والمولّدات والمتغيرات cache جزءًا معلنًا من المشروع نفسه، ويمكن ربطه مباشرةً بالمحررات وCI.",
+    "carriedValueArabic": "يؤثر قبل configure نفسه لأنه يحدد كيف ستُستدعى أوامر CMake وما القيم والمولدات والمسارات التي ستبدأ بها الجلسة.",
+    "usage": [
+      "يظهر رسمياً في Tutorial Step 3 ضمن Configuration and Cache Variables.",
+      "يمكنه تعريف configurePreset ثم buildPreset يعتمد عليه وtestPreset فوقه.",
+      "يمكن استدعاؤه من الطرفية عبر cmake --preset <name> بدل إعادة كتابة generator وbinaryDir وcacheVariables في كل مرة."
+    ],
+    "notes": [
+      "هو ملف قابل للمشاركة داخل المستودع.",
+      "يدعم الوراثة بين presets لتجنب التكرار.",
+      "ملف CMakePresets.json يخص الإعدادات المشتركة للمشروع، بينما CMakeUserPresets.json يبقى للمخصصات المحلية."
+    ],
+    "instructions": [
+      "ضع فيه الإعدادات المشتركة التي يجب أن تتكرر بين جميع المطورين والأنظمة."
+    ],
+    "example": "{\n  \"version\": 6,\n  \"configurePresets\": [\n    {\n      \"name\": \"debug\",\n      \"generator\": \"Ninja\",\n      \"binaryDir\": \"${sourceDir}/build/debug\",\n      \"cacheVariables\": {\n        \"CMAKE_BUILD_TYPE\": \"Debug\",\n        \"BUILD_TESTING\": \"ON\"\n      }\n    }\n  ]\n}",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html",
+    "related": [
+      "CMakeUserPresets.json",
+      "CMAKE_BUILD_TYPE",
+      "BUILD_TESTING"
+    ]
+  },
+  {
+    "name": "CMakeUserPresets.json",
+    "titleArabic": "ملف presets محلي للمستخدم يضيف أو يخصص إعدادات لا تريد مشاركتها مع الجميع",
+    "actualMeaningArabic": "هذا الملف يكمل CMakePresets.json من جهة المستخدم المحلي، وغالباً يحمل مسارات أو مفاتيح أو إعدادات شخصية لا ينبغي تثبيتها داخل المستودع.",
+    "purposeArabic": "يستخدم عندما يحتاج المطور إعدادات محلية خاصة بجهازه أو SDK path مختلف أو override لبعض القيم.",
+    "whyUseArabic": "يحافظ على CMakePresets.json نظيفًا ومشتركًا، بينما يترك المساحات الشخصية خارج التحكم المركزي للمشروع.",
+    "carriedValueArabic": "يغيّر طريقة استدعاء CMake للمستخدم الحالي فقط عبر presets محلية قد ترث أو تعدل presets المشتركة.",
+    "usage": [
+      "مفيد للمسارات المطلقة أو الاعتماديات المثبتة محلياً.",
+      "يمكن أن يرث presets المعلنة في CMakePresets.json ويضيف فوقها cache variables أو environment."
+    ],
+    "notes": [
+      "عادة لا يُشارك داخل المستودع.",
+      "مكمل لنظام presets لا بديل عنه."
+    ],
+    "instructions": [
+      "ضع فيه ما يخص جهازك أنت، وأبقِ ما يحتاجه الجميع في CMakePresets.json."
+    ],
+    "example": "{\n  \"version\": 6,\n  \"configurePresets\": [\n    {\n      \"name\": \"local-debug\",\n      \"inherits\": \"debug\",\n      \"cacheVariables\": {\n        \"SDL3_ROOT\": \"/opt/sdl3\"\n      }\n    }\n  ]\n}",
+    "officialUrl": "https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html",
+    "related": [
+      "CMakePresets.json",
+      "find_package"
+    ]
+  }
+]

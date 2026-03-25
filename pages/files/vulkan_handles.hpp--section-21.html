@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_handles.hpp • القسم 21 من 51 • الأسطر 9001-9450 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_handles.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_handles.hpp.html">vulkan_handles.hpp</a> /
+        <span>القسم 21 من 51 • الأسطر 9001-9450</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_handles.hpp</h1>
+      <p class="page-description">القسم 21 من 51 • الأسطر 9001-9450</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-20.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-22.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_handles.hpp</span>
+        <span class="source-stat">القسم: 21/51</span>
+        <span class="source-stat">الأسطر: 9001-9450</span>
+        <span class="source-stat">حجم الملف: 1.59 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    }
+
+  private:
+    VkCommandPool m_commandPool = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eCommandPool&gt;
+  {
+    using Type = CommandPool;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eCommandPool&gt;
+  {
+    using Type = CommandPool;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkCommandPool, VK_NULL_HANDLE&gt;
+  {
+    using Type = CommandPool;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;CommandPool&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkPipelineCache, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineCache.html
+  class PipelineCache
+  {
+  public:
+    using CType      = VkPipelineCache;
+    using NativeType = VkPipelineCache;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::ePipelineCache;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::ePipelineCache;
+
+  public:
+    PipelineCache() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    PipelineCache( PipelineCache const &amp; rhs )             = default;
+    PipelineCache &amp; operator=( PipelineCache const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    PipelineCache( PipelineCache &amp;&amp; rhs )             = default;
+    PipelineCache &amp; operator=( PipelineCache &amp;&amp; rhs ) = default;
+#else
+    PipelineCache( PipelineCache &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_pipelineCache( exchange( rhs.m_pipelineCache, {} ) ) {}
+
+    PipelineCache &amp; operator=( PipelineCache &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineCache = exchange( rhs.m_pipelineCache, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR PipelineCache( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT PipelineCache( VkPipelineCache pipelineCache ) VULKAN_HPP_NOEXCEPT : m_pipelineCache( pipelineCache ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    PipelineCache &amp; operator=( VkPipelineCache pipelineCache ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineCache = pipelineCache;
+      return *this;
+    }
+#endif
+
+    PipelineCache &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_pipelineCache = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkPipelineCache() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineCache;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineCache != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_pipelineCache == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkPipelineCache m_pipelineCache = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::ePipelineCache&gt;
+  {
+    using Type = PipelineCache;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::ePipelineCache&gt;
+  {
+    using Type = PipelineCache;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkPipelineCache, VK_NULL_HANDLE&gt;
+  {
+    using Type = PipelineCache;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;PipelineCache&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkCuFunctionNVX, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkCuFunctionNVX.html
+  class CuFunctionNVX
+  {
+  public:
+    using CType      = VkCuFunctionNVX;
+    using NativeType = VkCuFunctionNVX;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eCuFunctionNVX;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eCuFunctionNVX;
+
+  public:
+    CuFunctionNVX() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    CuFunctionNVX( CuFunctionNVX const &amp; rhs )             = default;
+    CuFunctionNVX &amp; operator=( CuFunctionNVX const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    CuFunctionNVX( CuFunctionNVX &amp;&amp; rhs )             = default;
+    CuFunctionNVX &amp; operator=( CuFunctionNVX &amp;&amp; rhs ) = default;
+#else
+    CuFunctionNVX( CuFunctionNVX &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_cuFunctionNVX( exchange( rhs.m_cuFunctionNVX, {} ) ) {}
+
+    CuFunctionNVX &amp; operator=( CuFunctionNVX &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cuFunctionNVX = exchange( rhs.m_cuFunctionNVX, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR CuFunctionNVX( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT CuFunctionNVX( VkCuFunctionNVX cuFunctionNVX ) VULKAN_HPP_NOEXCEPT : m_cuFunctionNVX( cuFunctionNVX ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    CuFunctionNVX &amp; operator=( VkCuFunctionNVX cuFunctionNVX ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cuFunctionNVX = cuFunctionNVX;
+      return *this;
+    }
+#endif
+
+    CuFunctionNVX &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cuFunctionNVX = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkCuFunctionNVX() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cuFunctionNVX;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cuFunctionNVX != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cuFunctionNVX == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkCuFunctionNVX m_cuFunctionNVX = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eCuFunctionNVX&gt;
+  {
+    using Type = CuFunctionNVX;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eCuFunctionNVX&gt;
+  {
+    using Type = CuFunctionNVX;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkCuFunctionNVX, VK_NULL_HANDLE&gt;
+  {
+    using Type = CuFunctionNVX;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;CuFunctionNVX&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkCuModuleNVX, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkCuModuleNVX.html
+  class CuModuleNVX
+  {
+  public:
+    using CType      = VkCuModuleNVX;
+    using NativeType = VkCuModuleNVX;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eCuModuleNVX;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eCuModuleNVX;
+
+  public:
+    CuModuleNVX() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    CuModuleNVX( CuModuleNVX const &amp; rhs )             = default;
+    CuModuleNVX &amp; operator=( CuModuleNVX const &amp; rhs ) = default;
+
+#if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    CuModuleNVX( CuModuleNVX &amp;&amp; rhs )             = default;
+    CuModuleNVX &amp; operator=( CuModuleNVX &amp;&amp; rhs ) = default;
+#else
+    CuModuleNVX( CuModuleNVX &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_cuModuleNVX( exchange( rhs.m_cuModuleNVX, {} ) ) {}
+
+    CuModuleNVX &amp; operator=( CuModuleNVX &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cuModuleNVX = exchange( rhs.m_cuModuleNVX, {} );
+      return *this;
+    }
+#endif
+
+    VULKAN_HPP_CONSTEXPR CuModuleNVX( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT CuModuleNVX( VkCuModuleNVX cuModuleNVX ) VULKAN_HPP_NOEXCEPT : m_cuModuleNVX( cuModuleNVX ) {}
+
+#if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    CuModuleNVX &amp; operator=( VkCuModuleNVX cuModuleNVX ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cuModuleNVX = cuModuleNVX;
+      return *this;
+    }
+#endif
+
+    CuModuleNVX &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cuModuleNVX = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkCuModuleNVX() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cuModuleNVX;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cuModuleNVX != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cuModuleNVX == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkCuModuleNVX m_cuModuleNVX = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eCuModuleNVX&gt;
+  {
+    using Type = CuModuleNVX;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eCuModuleNVX&gt;
+  {
+    using Type = CuModuleNVX;
+  };
+
+#if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkCuModuleNVX, VK_NULL_HANDLE&gt;
+  {
+    using Type = CuModuleNVX;
+  };
+#endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;CuModuleNVX&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+
+  // wrapper class for handle VkCudaFunctionNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkCudaFunctionNV.html
+#if defined( VK_ENABLE_BETA_EXTENSIONS )
+  class CudaFunctionNV
+  {
+  public:
+    using CType      = VkCudaFunctionNV;
+    using NativeType = VkCudaFunctionNV;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eCudaFunctionNV;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eCudaFunctionNV;
+
+  public:
+    CudaFunctionNV() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    CudaFunctionNV( CudaFunctionNV const &amp; rhs )             = default;
+    CudaFunctionNV &amp; operator=( CudaFunctionNV const &amp; rhs ) = default;
+
+#  if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    CudaFunctionNV( CudaFunctionNV &amp;&amp; rhs )             = default;
+    CudaFunctionNV &amp; operator=( CudaFunctionNV &amp;&amp; rhs ) = default;
+#  else
+    CudaFunctionNV( CudaFunctionNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_cudaFunctionNV( exchange( rhs.m_cudaFunctionNV, {} ) ) {}
+
+    CudaFunctionNV &amp; operator=( CudaFunctionNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cudaFunctionNV = exchange( rhs.m_cudaFunctionNV, {} );
+      return *this;
+    }
+#  endif
+
+    VULKAN_HPP_CONSTEXPR CudaFunctionNV( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT CudaFunctionNV( VkCudaFunctionNV cudaFunctionNV ) VULKAN_HPP_NOEXCEPT : m_cudaFunctionNV( cudaFunctionNV ) {}
+
+#  if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    CudaFunctionNV &amp; operator=( VkCudaFunctionNV cudaFunctionNV ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cudaFunctionNV = cudaFunctionNV;
+      return *this;
+    }
+#  endif
+
+    CudaFunctionNV &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cudaFunctionNV = {};
+      return *this;
+    }
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT operator VkCudaFunctionNV() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cudaFunctionNV;
+    }
+
+    explicit operator bool() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cudaFunctionNV != VK_NULL_HANDLE;
+    }
+
+    bool operator!() const VULKAN_HPP_NOEXCEPT
+    {
+      return m_cudaFunctionNV == VK_NULL_HANDLE;
+    }
+
+  private:
+    VkCudaFunctionNV m_cudaFunctionNV = {};
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;ObjectType, ObjectType::eCudaFunctionNV&gt;
+  {
+    using Type = CudaFunctionNV;
+  };
+
+  template &lt;&gt;
+  struct CppType&lt;DebugReportObjectTypeEXT, DebugReportObjectTypeEXT::eCudaFunctionNV&gt;
+  {
+    using Type = CudaFunctionNV;
+  };
+
+#  if ( VK_USE_64_BIT_PTR_DEFINES == 1 )
+  template &lt;&gt;
+  struct CppType&lt;VkCudaFunctionNV, VK_NULL_HANDLE&gt;
+  {
+    using Type = CudaFunctionNV;
+  };
+#  endif
+
+  template &lt;&gt;
+  struct isVulkanHandleType&lt;CudaFunctionNV&gt;
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool value = true;
+  };
+#endif /*VK_ENABLE_BETA_EXTENSIONS*/
+
+  // wrapper class for handle VkCudaModuleNV, see https://registry.khronos.org/vulkan/specs/latest/man/html/VkCudaModuleNV.html
+#if defined( VK_ENABLE_BETA_EXTENSIONS )
+  class CudaModuleNV
+  {
+  public:
+    using CType      = VkCudaModuleNV;
+    using NativeType = VkCudaModuleNV;
+
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ObjectType               objectType            = ObjectType::eCudaModuleNV;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DebugReportObjectTypeEXT debugReportObjectType = DebugReportObjectTypeEXT::eCudaModuleNV;
+
+  public:
+    CudaModuleNV() VULKAN_HPP_NOEXCEPT {}  // = default; - try to workaround a compiler issue
+
+    CudaModuleNV( CudaModuleNV const &amp; rhs )             = default;
+    CudaModuleNV &amp; operator=( CudaModuleNV const &amp; rhs ) = default;
+
+#  if !defined( VULKAN_HPP_HANDLES_MOVE_EXCHANGE )
+    CudaModuleNV( CudaModuleNV &amp;&amp; rhs )             = default;
+    CudaModuleNV &amp; operator=( CudaModuleNV &amp;&amp; rhs ) = default;
+#  else
+    CudaModuleNV( CudaModuleNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT : m_cudaModuleNV( exchange( rhs.m_cudaModuleNV, {} ) ) {}
+
+    CudaModuleNV &amp; operator=( CudaModuleNV &amp;&amp; rhs ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cudaModuleNV = exchange( rhs.m_cudaModuleNV, {} );
+      return *this;
+    }
+#  endif
+
+    VULKAN_HPP_CONSTEXPR CudaModuleNV( std::nullptr_t ) VULKAN_HPP_NOEXCEPT {}
+
+    VULKAN_HPP_TYPESAFE_EXPLICIT CudaModuleNV( VkCudaModuleNV cudaModuleNV ) VULKAN_HPP_NOEXCEPT : m_cudaModuleNV( cudaModuleNV ) {}
+
+#  if ( VULKAN_HPP_TYPESAFE_CONVERSION == 1 )
+    CudaModuleNV &amp; operator=( VkCudaModuleNV cudaModuleNV ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cudaModuleNV = cudaModuleNV;
+      return *this;
+    }
+#  endif
+
+    CudaModuleNV &amp; operator=( std::nullptr_t ) VULKAN_HPP_NOEXCEPT
+    {
+      m_cudaModuleNV = {};
+      return *this;
+    }
+</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_handles.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-20.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_handles.hpp--section-22.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

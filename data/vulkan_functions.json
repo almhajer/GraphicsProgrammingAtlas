@@ -1,0 +1,2182 @@
+{
+  "functions": [
+    {
+      "name": "vkCreateInstance",
+      "category": "instance",
+      "returnType": "VkResult",
+      "description": "ينشئ كائن Instance وهو الكائن الأساسي الذي يمثل تطبيق Vulkan. يجب إنشاؤه قبل أي عملية أخرى.",
+      "parameters": [
+        {
+          "name": "pCreateInfo",
+          "type": "const VkInstanceCreateInfo*",
+          "description": "مؤشر إلى هيكل يحتوي على معلومات إنشاء Instance"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "مؤشر إلى دوال تخصيص الذاكرة المخصصة (NULL للاستخدام الافتراضي)"
+        },
+        {
+          "name": "pInstance",
+          "type": "VkInstance*",
+          "description": "مؤشر لمتغير سيتم تخزين معرف Instance فيه"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم إنشاء Instance بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_INITIALIZATION_FAILED": "فشل التهيئة",
+        "VK_ERROR_LAYER_NOT_PRESENT": "طبقة مطلوبة غير موجودة",
+        "VK_ERROR_EXTENSION_NOT_PRESENT": "امتداد مطلوب غير موجود",
+        "VK_ERROR_INCOMPATIBLE_DRIVER": "التعريف غير متوافق"
+      },
+      "example": "// هيكل معلومات التطبيق\nVkApplicationInfo appInfo = {};\nappInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;\nappInfo.pApplicationName = \"تطبيقي الأول\";  // اسم التطبيق\nappInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);  // إصدار التطبيق\nappInfo.pEngineName = \"No Engine\";  // اسم محرك الألعاب\nappInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);  // إصدار المحرك\nappInfo.apiVersion = VK_API_VERSION_1_0;  // إصدار Vulkan API\n\n// هيكل معلومات إنشاء Instance\nVkInstanceCreateInfo createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;\ncreateInfo.pApplicationInfo = &appInfo;  // معلومات التطبيق\n\n// إنشاء Instance\nVkInstance instance;\nVkResult result = vkCreateInstance(&createInfo, nullptr, &instance);\n\n// التحقق من نجاح العملية\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء Instance!\");\n}",
+      "notes": [
+        "Instance يمثل اتصالاً بين التطبيق ومكتبة Vulkan",
+        "يجب تدمير Instance باستخدام vkDestroyInstance عند الانتهاء",
+        "يمكن إنشاء عدة Instance في نفس التطبيق"
+      ],
+      "seeAlso": ["vkDestroyInstance", "vkEnumerateInstanceExtensionProperties", "vkEnumerateInstanceLayerProperties"]
+    },
+    {
+      "name": "vkDestroyInstance",
+      "category": "instance",
+      "returnType": "void",
+      "description": "يدمر كائن Instance ويحرر جميع الموارد المرتبطة به. يجب استدعاؤها قبل إنهاء البرنامج.",
+      "parameters": [
+        {
+          "name": "instance",
+          "type": "VkInstance",
+          "description": "معرف Instance المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "مؤشر إلى دوال تحرير الذاكرة (NULL للاستخدام الافتراضي)"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Instance قبل إنهاء البرنامج\n// يجب تدمير جميع الكائنات المرتبطة به أولاً\n\nvkDestroyDevice(device, nullptr);  // تدمير الجهاز أولاً\n\n// ثم تدمير Instance\nvkDestroyInstance(instance, nullptr);\n\n// تعيين القيمة NULL لتجنب الاستخدام الخاطئ\ninstance = VK_NULL_HANDLE;",
+      "notes": [
+        "يجب تدمير جميع الكائنات المرتبطة بـ Instance قبل تدميره",
+        "لا يمكن استخدام Instance بعد تدميره",
+        "pAllocator يجب أن يكون نفسه المستخدم في vkCreateInstance"
+      ],
+      "seeAlso": ["vkCreateInstance"]
+    },
+    {
+      "name": "vkEnumeratePhysicalDevices",
+      "category": "physical_device",
+      "returnType": "VkResult",
+      "description": "يعيد قائمة بجميع الأجهزة الفيزيائية (GPU) المتاحة في النظام والتي تدعم Vulkan.",
+      "parameters": [
+        {
+          "name": "instance",
+          "type": "VkInstance",
+          "description": "معرف Instance"
+        },
+        {
+          "name": "pPhysicalDeviceCount",
+          "type": "uint32_t*",
+          "description": "مؤشر لتخزين عدد الأجهزة"
+        },
+        {
+          "name": "pPhysicalDevices",
+          "type": "VkPhysicalDevice*",
+          "description": "مصفوفة لتخزين معرفات الأجهزة (NULL للحصول على العدد فقط)"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم بنجاح",
+        "VK_INCOMPLETE": "البيانات غير مكتملة",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_INITIALIZATION_FAILED": "فشل التهيئة"
+      },
+      "example": "// الخطوة 1: الحصول على عدد الأجهزة المتاحة\nuint32_t deviceCount = 0;\nvkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);\n\n// التحقق من وجود أجهزة تدعم Vulkan\nif (deviceCount == 0) {\n    throw std::runtime_error(\"لا توجد بطاقات رسوميات تدعم Vulkan!\");\n}\n\n// الخطوة 2: الحصول على قائمة الأجهزة\nstd::vector<VkPhysicalDevice> devices(deviceCount);\nvkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());\n\n// الخطوة 3: اختيار الجهاز المناسب\nVkPhysicalDevice physicalDevice = VK_NULL_HANDLE;\nfor (const auto& device : devices) {\n    // التحقق من ملاءمة الجهاز\n    if (isDeviceSuitable(device)) {\n        physicalDevice = device;\n        break;\n    }\n}\n\nif (physicalDevice == VK_NULL_HANDLE) {\n    throw std::runtime_error(\"لم يتم العثور على جهاز مناسب!\");\n}",
+      "notes": [
+        "يتم استدعاء الدالة مرتين: الأولى للحصول على العدد، الثانية للحصول على البيانات",
+        "الجهاز الفيزيائي لا يحتاج إلى تدمير",
+        "يمكن استخدام vkGetPhysicalDeviceProperties للحصول على معلومات الجهاز"
+      ],
+      "seeAlso": ["vkGetPhysicalDeviceProperties", "vkGetPhysicalDeviceFeatures", "vkGetPhysicalDeviceQueueFamilyProperties"]
+    },
+    {
+      "name": "vkGetPhysicalDeviceProperties",
+      "category": "physical_device",
+      "returnType": "void",
+      "description": "يعيد الخصائص الأساسية للجهاز الفيزيائي مثل الاسم، الإصدار، والقدرات.",
+      "parameters": [
+        {
+          "name": "physicalDevice",
+          "type": "VkPhysicalDevice",
+          "description": "معرف الجهاز الفيزيائي"
+        },
+        {
+          "name": "pProperties",
+          "type": "VkPhysicalDeviceProperties*",
+          "description": "مؤشر لهيكل سيتم تخزين الخصائص فيه"
+        }
+      ],
+      "returnValues": null,
+      "example": "// الحصول على خصائص الجهاز\nVkPhysicalDeviceProperties deviceProperties;\nvkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);\n\n// طباعة معلومات الجهاز\nstd::cout << \"اسم البطاقة: \" << deviceProperties.deviceName << std::endl;\nstd::cout << \"إصدار API: \" \n          << VK_VERSION_MAJOR(deviceProperties.apiVersion) << \".\"\n          << VK_VERSION_MINOR(deviceProperties.apiVersion) << \".\"\n          << VK_VERSION_PATCH(deviceProperties.apiVersion) << std::endl;\n\n// التحقق من نوع الجهاز\nswitch (deviceProperties.deviceType) {\n    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:\n        std::cout << \"نوع الجهاز: بطاقة مدمجة\" << std::endl;\n        break;\n    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:\n        std::cout << \"نوع الجهاز: بطاقة منفصلة\" << std::endl;\n        break;\n    case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:\n        std::cout << \"نوع الجهاز: بطاقة افتراضية\" << std::endl;\n        break;\n    case VK_PHYSICAL_DEVICE_TYPE_CPU:\n        std::cout << \"نوع الجهاز: معالج مركزي\" << std::endl;\n        break;\n    default:\n        std::cout << \"نوع الجهاز: غير معروف\" << std::endl;\n}",
+      "notes": [
+        "الهيكل يحتوي على: apiVersion, driverVersion, vendorID, deviceID, deviceType, deviceName",
+        "limits و sparseProperties تحتوي على حدود وقدرات الجهاز"
+      ],
+      "seeAlso": ["vkGetPhysicalDeviceFeatures", "vkGetPhysicalDeviceMemoryProperties"]
+    },
+    {
+      "name": "vkGetPhysicalDeviceFeatures",
+      "category": "physical_device",
+      "returnType": "void",
+      "description": "يعيد الميزات الاختيارية التي يدعمها الجهاز الفيزيائي مثل التسطير الهندسي والتصفيح.",
+      "parameters": [
+        {
+          "name": "physicalDevice",
+          "type": "VkPhysicalDevice",
+          "description": "معرف الجهاز الفيزيائي"
+        },
+        {
+          "name": "pFeatures",
+          "type": "VkPhysicalDeviceFeatures*",
+          "description": "مؤشر لهيكل سيتم تخزين الميزات فيه"
+        }
+      ],
+      "returnValues": null,
+      "example": "// الحصول على ميزات الجهاز\nVkPhysicalDeviceFeatures deviceFeatures;\nvkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);\n\n// التحقق من دعم ميزات معينة\nif (deviceFeatures.geometryShader) {\n    std::cout << \"الجهاز يدعم Geometry Shaders\" << std::endl;\n} else {\n    std::cout << \"الجهاز لا يدعم Geometry Shaders\" << std::endl;\n}\n\nif (deviceFeatures.tessellationShader) {\n    std::cout << \"الجهاز يدعم Tessellation Shaders\" << std::endl;\n}\n\nif (deviceFeatures.samplerAnisotropy) {\n    std::cout << \"الجهاز يدعم التصفية المتباينة\" << std::endl;\n}\n\nif (deviceFeatures.fillModeNonSolid) {\n    std::cout << \"الجهاز يدعم وضع Wireframe\" << std::endl;\n}",
+      "notes": [
+        "كل ميزة تمثلها قيمة VkBool32",
+        "يجب تفعيل الميزات المطلوبة عند إنشاء Logical Device",
+        "لا يمكن تفعيل ميزة غير مدعومة"
+      ],
+      "seeAlso": ["vkGetPhysicalDeviceProperties", "vkCreateDevice"]
+    },
+    {
+      "name": "vkGetPhysicalDeviceQueueFamilyProperties",
+      "category": "physical_device",
+      "returnType": "void",
+      "description": "يعيد خصائص عائلات الطوابير في الجهاز الفيزيائي. كل عائلة تدعم أنواعاً معينة من العمليات.",
+      "parameters": [
+        {
+          "name": "physicalDevice",
+          "type": "VkPhysicalDevice",
+          "description": "معرف الجهاز الفيزيائي"
+        },
+        {
+          "name": "pQueueFamilyPropertyCount",
+          "type": "uint32_t*",
+          "description": "مؤشر لتخزين عدد عائلات الطوابير"
+        },
+        {
+          "name": "pQueueFamilyProperties",
+          "type": "VkQueueFamilyProperties*",
+          "description": "مصفوفة لتخزين الخصائص (NULL للحصول على العدد فقط)"
+        }
+      ],
+      "returnValues": null,
+      "example": "// الخطوة 1: الحصول على عدد عائلات الطوابير\nuint32_t queueFamilyCount = 0;\nvkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);\n\n// الخطوة 2: الحصول على خصائص كل عائلة\nstd::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);\nvkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());\n\n// الخطوة 3: إيجاد عائلة تدعم الرسوميات\nint graphicsQueueFamilyIndex = -1;\nfor (uint32_t i = 0; i < queueFamilyCount; i++) {\n    // التحقق من دعم العمليات الرسومية\n    if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {\n        graphicsQueueFamilyIndex = i;\n        std::cout << \"عائلة الطابور \" << i << \" تدعم الرسوميات\" << std::endl;\n        std::cout << \"عدد الطوابير المتاحة: \" << queueFamilies[i].queueCount << std::endl;\n        break;\n    }\n}\n\nif (graphicsQueueFamilyIndex == -1) {\n    throw std::runtime_error(\"لم يتم العثور على عائلة طابور رسومية!\");\n}",
+      "notes": [
+        "أنواع الطوابير: GRAPHICS, COMPUTE, TRANSFER, SPARSE_BINDING",
+        "عائلة واحدة قد تدعم عدة أنواع",
+        "يجب معرفة الفهرس لإنشاء Logical Device"
+      ],
+      "seeAlso": ["vkCreateDevice", "vkGetDeviceQueue"]
+    },
+    {
+      "name": "vkCreateDevice",
+      "category": "device",
+      "returnType": "VkResult",
+      "description": "ينشئ جهازاً منطقياً (Logical Device) يمثل اتصالاً بالجهاز الفيزيائي مع إعدادات محددة.",
+      "parameters": [
+        {
+          "name": "physicalDevice",
+          "type": "VkPhysicalDevice",
+          "description": "الجهاز الفيزيائي المراد الاتصال به"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkDeviceCreateInfo*",
+          "description": "مؤشر لهيكل إعدادات إنشاء الجهاز"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة (NULL للاستخدام الافتراضي)"
+        },
+        {
+          "name": "pDevice",
+          "type": "VkDevice*",
+          "description": "مؤشر لتخزين معرف الجهاز المنطقي"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم إنشاء الجهاز بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_INITIALIZATION_FAILED": "فشل التهيئة",
+        "VK_ERROR_EXTENSION_NOT_PRESENT": "امتداد غير موجود",
+        "VK_ERROR_FEATURE_NOT_PRESENT": "ميزة غير موجودة",
+        "VK_ERROR_TOO_MANY_OBJECTS": "عدد كبير جداً من الكائنات",
+        "VK_ERROR_DEVICE_LOST": "فُقد الاتصال بالجهاز"
+      },
+      "example": "// إعداد أولويات الطابور (قيمة بين 0.0 و 1.0)\nfloat queuePriority = 1.0f;\n\n// هيكل معلومات إنشاء الطابور\nVkDeviceQueueCreateInfo queueCreateInfo = {};\nqueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;\nqueueCreateInfo.queueFamilyIndex = graphicsQueueFamilyIndex;  // فهرس عائلة الطابور\nqueueCreateInfo.queueCount = 1;  // عدد الطوابير المطلوبة\nqueueCreateInfo.pQueuePriorities = &queuePriority;  // أولويات الطوابير\n\n// هيكل ميزات الجهاز (تفعيل الميزات المطلوبة)\nVkPhysicalDeviceFeatures deviceFeatures = {};\ndeviceFeatures.samplerAnisotropy = VK_TRUE;  // تفعيل التصفية المتباينة\ndeviceFeatures.fillModeNonSolid = VK_TRUE;  // تفعيل Wireframe\n\n// هيكل إنشاء الجهاز\nVkDeviceCreateInfo createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;\ncreateInfo.pQueueCreateInfos = &queueCreateInfo;  // معلومات الطوابير\ncreateInfo.queueCreateInfoCount = 1;  // عدد هياكل معلومات الطوابير\ncreateInfo.pEnabledFeatures = &deviceFeatures;  // الميزات المطلوبة\n\n// إضافة الامتدادات المطلوبة (مثل VK_KHR_swapchain)\nstd::vector<const char*> deviceExtensions = {\n    VK_KHR_SWAPCHAIN_EXTENSION_NAME\n};\ncreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());\ncreateInfo.ppEnabledExtensionNames = deviceExtensions.data();\n\n// إنشاء الجهاز المنطقي\nVkDevice device;\nVkResult result = vkCreateDevice(physicalDevice, &createInfo, nullptr, &device);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء الجهاز المنطقي!\");\n}",
+      "notes": [
+        "الجهاز المنطقي يمثل اتصالاً مستقلاً بالـ GPU",
+        "يمكن إنشاء عدة أجهزة منطقية من نفس الجهاز الفيزيائي",
+        "يجب تدميره باستخدام vkDestroyDevice"
+      ],
+      "seeAlso": ["vkDestroyDevice", "vkGetDeviceQueue", "vkCreateCommandPool"]
+    },
+    {
+      "name": "vkDestroyDevice",
+      "category": "device",
+      "returnType": "void",
+      "description": "يدمر الجهاز المنطقي ويحرر جميع الموارد المرتبطة به.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "معرف الجهاز المنطقي المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة (NULL للاستخدام الافتراضي)"
+        }
+      ],
+      "returnValues": null,
+      "example": "// انتظار انتهاء جميع العمليات على الجهاز\nvkDeviceWaitIdle(device);\n\n// تدمير جميع الموارد المرتبطة بالجهاز أولاً\n// ... تدمير Buffers, Images, Pipelines, etc.\n\n// تدمير الجهاز المنطقي\nvkDestroyDevice(device, nullptr);\n\ndevice = VK_NULL_HANDLE;",
+      "notes": [
+        "يجب استدعاء vkDeviceWaitIdle قبل التدمير",
+        "جميع الموارد المرتبطة يجب تدميرها أولاً",
+        "لا يمكن استخدام device بعد التدمير"
+      ],
+      "seeAlso": ["vkCreateDevice", "vkDeviceWaitIdle"]
+    },
+    {
+      "name": "vkGetDeviceQueue",
+      "category": "queue",
+      "returnType": "void",
+      "description": "يحصل على مقبض طابور من الجهاز المنطقي. الطوابير تُستخدم لإرسال الأوامر للتنفيذ.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "معرف الجهاز المنطقي"
+        },
+        {
+          "name": "queueFamilyIndex",
+          "type": "uint32_t",
+          "description": "فهرس عائلة الطابور"
+        },
+        {
+          "name": "queueIndex",
+          "type": "uint32_t",
+          "description": "فهرس الطابور داخل العائلة"
+        },
+        {
+          "name": "pQueue",
+          "type": "VkQueue*",
+          "description": "مؤشر لتخزين مقبض الطابور"
+        }
+      ],
+      "returnValues": null,
+      "example": "// الحصول على طابور الرسوميات\nVkQueue graphicsQueue;\nvkGetDeviceQueue(\n    device,                    // الجهاز المنطقي\n    graphicsQueueFamilyIndex,  // فهرس عائلة الطابور\n    0,                         // فهرس الطابور (الأول)\n    &graphicsQueue             // مقبض الطابور\n);\n\n// الحصول على طابور العرض (إذا كان مختلفاً)\nVkQueue presentQueue;\nif (presentQueueFamilyIndex != graphicsQueueFamilyIndex) {\n    vkGetDeviceQueue(device, presentQueueFamilyIndex, 0, &presentQueue);\n} else {\n    presentQueue = graphicsQueue;  // نفس الطابور\n}",
+      "notes": [
+        "الطوابير تُنشأ تلقائياً مع الجهاز",
+        "لا تحتاج إلى تدمير",
+        "queueIndex يجب أن يكون أقل من queueCount"
+      ],
+      "seeAlso": ["vkQueueSubmit", "vkQueuePresentKHR"]
+    },
+    {
+      "name": "vkQueueSubmit",
+      "category": "queue",
+      "returnType": "VkResult",
+      "description": "يرسل مخازن الأوامر إلى الطابور للتنفيذ على GPU.",
+      "parameters": [
+        {
+          "name": "queue",
+          "type": "VkQueue",
+          "description": "الطابور الذي سيتم إرسال الأوامر إليه"
+        },
+        {
+          "name": "submitCount",
+          "type": "uint32_t",
+          "description": "عدد هياكل الإرسال"
+        },
+        {
+          "name": "pSubmits",
+          "type": "const VkSubmitInfo*",
+          "description": "مؤشر لهياكل معلومات الإرسال"
+        },
+        {
+          "name": "fence",
+          "type": "VkFence",
+          "description": "سياج للإشارة بانتهاء التنفيذ (VK_NULL_HANDLE إذا غير مطلوب)"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإرسال بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_DEVICE_LOST": "فُقد الاتصال بالجهاز"
+      },
+      "example": "// إعداد هيكل الإرسال\nVkSubmitInfo submitInfo = {};\nsubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;\n\n// تحديد إشارات الانتظار (Semaphores)\nVkSemaphore waitSemaphores[] = { imageAvailableSemaphore };\nVkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };\nsubmitInfo.waitSemaphoreCount = 1;\nsubmitInfo.pWaitSemaphores = waitSemaphores;\nsubmitInfo.pWaitDstStageMask = waitStages;\n\n// تحديد مخازن الأوامر للتنفيذ\nsubmitInfo.commandBufferCount = 1;\nsubmitInfo.pCommandBuffers = &commandBuffer;\n\n// تحديد إشارات الإشعار\nVkSemaphore signalSemaphores[] = { renderFinishedSemaphore };\nsubmitInfo.signalSemaphoreCount = 1;\nsubmitInfo.pSignalSemaphores = signalSemaphores;\n\n// إرسال الأوامر للطابور\nVkResult result = vkQueueSubmit(\n    graphicsQueue,     // الطابور\n    1,                 // عدد عمليات الإرسال\n    &submitInfo,       // معلومات الإرسال\n    inFlightFence      // السياج للإشارة بالانتهاء\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إرسال مخزن الأوامر!\");\n}",
+      "notes": [
+        "يمكن إرسال عدة مخازن أوامر دفعة واحدة",
+        "Semaphores تُستخدم لمزامنة العمليات بين الطوابير",
+        "Fence يُستخدم لمزامنة CPU مع GPU"
+      ],
+      "seeAlso": ["vkQueueWaitIdle", "vkCreateSemaphore", "vkCreateFence"]
+    },
+    {
+      "name": "vkQueueWaitIdle",
+      "category": "queue",
+      "returnType": "VkResult",
+      "description": "ينتظر حتى تنتهي جميع العمليات في الطابور. يحجب التنفيذ حتى الانتهاء.",
+      "parameters": [
+        {
+          "name": "queue",
+          "type": "VkQueue",
+          "description": "الطابور المراد انتظاره"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "انتهت جميع العمليات",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_DEVICE_LOST": "فُقد الاتصال بالجهاز"
+      },
+      "example": "// انتظار انتهاء جميع العمليات في الطابور\nVkResult result = vkQueueWaitIdle(graphicsQueue);\n\nif (result != VK_SUCCESS) {\n    std::cerr << \"خطأ في انتظار الطابور!\" << std::endl;\n}\n\n// الآن يمكن التعامل مع الموارد بأمان\n// مثل تحديث Vertex Buffers أو تبديل SwapChain",
+      "notes": [
+        "تحجب التنفيذ حتى تنتهي جميع الأعمال",
+        "استخدم فقط عند الضرورة للتلاؤم",
+        "للمزامنة الدقيقة، استخدم Semaphores و Fences"
+      ],
+      "seeAlso": ["vkDeviceWaitIdle", "vkQueueSubmit"]
+    },
+    {
+      "name": "vkDeviceWaitIdle",
+      "category": "device",
+      "returnType": "VkResult",
+      "description": "ينتظر حتى تنتهي جميع العمليات على جميع طوابير الجهاز.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "انتهت جميع العمليات",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_DEVICE_LOST": "فُقد الاتصال بالجهاز"
+      },
+      "example": "// انتظار خمول الجهاز بالكامل\nvkDeviceWaitIdle(device);\n\n// الآن يمكن إعادة إنشاء SwapChain بأمان\n// أو تحديث موارد مشتركة بين عدة طوابير\n\n// مثال: عند تغيير حجم النافذة\nvoid onWindowResize() {\n    vkDeviceWaitIdle(device);  // انتظار انتهاء العمليات\n    \n    // تدمير SwapChain القديم\n    cleanupSwapChain();\n    \n    // إنشاء SwapChain جديد بالأبعاد الجديدة\n    recreateSwapChain();\n}",
+      "notes": [
+        "ينتظر جميع الطوابير",
+        "بطيء جداً - استخدم بحذر",
+        "مفيد قبل إعادة إنشاء الموارد"
+      ],
+      "seeAlso": ["vkQueueWaitIdle"]
+    },
+    {
+      "name": "vkCreateCommandPool",
+      "category": "command_buffer",
+      "returnType": "VkResult",
+      "description": "ينشئ مستودع مخازن الأوامر. المستودع يدير تخصيص مخازن الأوامر من عائلة طابور معينة.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkCommandPoolCreateInfo*",
+          "description": "مؤشر لهيكل إعدادات المستودع"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pCommandPool",
+          "type": "VkCommandPool*",
+          "description": "مؤشر لتخزين معرف المستودع"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم إنشاء المستودع بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// هيكل معلومات إنشاء المستودع\nVkCommandPoolCreateInfo poolInfo = {};\npoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;\n\n// تحديد عائلة الطابور\npoolInfo.queueFamilyIndex = graphicsQueueFamilyIndex;\n\n// إضافة أعلام اختيارية\npoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;  // السماح بإعادة تعيين مخزن الأوامر\n// أو:\n// poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;  // للمخازن قصيرة العمر\n\n// إنشاء المستودع\nVkCommandPool commandPool;\nVkResult result = vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء مستودع الأوامر!\");\n}",
+      "notes": [
+        "يجب تحديد عائلة الطابور المناسبة",
+        "TRANSIENT_BIT يُحسّن أداء المخازن المؤقتة",
+        "RESET_COMMAND_BUFFER_BIT يسمح بإعادة استخدام المخازن"
+      ],
+      "seeAlso": ["vkDestroyCommandPool", "vkAllocateCommandBuffers", "vkResetCommandPool"]
+    },
+    {
+      "name": "vkDestroyCommandPool",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يدمر مستودع مخازن الأوامر وجميع المخازن المرتبطة به.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "commandPool",
+          "type": "VkCommandPool",
+          "description": "معرف المستودع المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير مستودع الأوامر\n// ملاحظة: جميع مخازن الأوامر من هذا المستودع ستُدمّر تلقائياً\n\nvkDestroyCommandPool(device, commandPool, nullptr);\ncommandPool = VK_NULL_HANDLE;",
+      "notes": [
+        "يدمر جميع مخازن الأوامر المخصصة من هذا المستودع",
+        "لا حاجة لتدمير المخازن يدوياً"
+      ],
+      "seeAlso": ["vkCreateCommandPool"]
+    },
+    {
+      "name": "vkAllocateCommandBuffers",
+      "category": "command_buffer",
+      "returnType": "VkResult",
+      "description": "يخصص مخازن أوامر من المستودع. مخازن الأوامر تُستخدم لتسجيل أوامر الرسم.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pAllocateInfo",
+          "type": "const VkCommandBufferAllocateInfo*",
+          "description": "مؤشر لهيكل معلومات التخصيص"
+        },
+        {
+          "name": "pCommandBuffers",
+          "type": "VkCommandBuffer*",
+          "description": "مصفوفة لتخزين مقابض مخازن الأوامر"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم التخصيص بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// هيكل معلومات تخصيص مخازن الأوامر\nVkCommandBufferAllocateInfo allocInfo = {};\nallocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;\nallocInfo.commandPool = commandPool;  // المستودع\nallocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;  // مستوى أولي\nallocInfo.commandBufferCount = MAX_FRAMES_IN_FLIGHT;  // عدد المخازن\n\n// تخصيص المخازن\nstd::vector<VkCommandBuffer> commandBuffers(MAX_FRAMES_IN_FLIGHT);\nVkResult result = vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data());\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل تخصيص مخازن الأوامر!\");\n}\n\n// المخازن جاهزة للتسجيل\nfor (size_t i = 0; i < commandBuffers.size(); i++) {\n    std::cout << \"تم تخصيص مخزن الأوامر \" << i << std::endl;\n}",
+      "notes": [
+        "PRIMARY: يمكن إرسالها مباشرة للطابور",
+        "SECONDARY: لا يمكن إرسالها مباشرة، تُستخدم للتنفيذ الثانوي",
+        "يجب تحريرها بـ vkFreeCommandBuffers أو تدمير المستودع"
+      ],
+      "seeAlso": ["vkFreeCommandBuffers", "vkBeginCommandBuffer", "vkEndCommandBuffer"]
+    },
+    {
+      "name": "vkFreeCommandBuffers",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يحرر مخازن أوامر مخصصة ويعيدها للمستودع.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "commandPool",
+          "type": "VkCommandPool",
+          "description": "المستودع الذي تم التخصيص منه"
+        },
+        {
+          "name": "commandBufferCount",
+          "type": "uint32_t",
+          "description": "عدد المخازن المراد تحريرها"
+        },
+        {
+          "name": "pCommandBuffers",
+          "type": "const VkCommandBuffer*",
+          "description": "مصفوفة المخازن المراد تحريرها"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تحرير مخزن أوامر واحد\nvkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);\n\n// تحرير عدة مخازن\nstd::vector<VkCommandBuffer> buffersToFree = {cmd1, cmd2, cmd3};\nvkFreeCommandBuffers(\n    device,\n    commandPool,\n    static_cast<uint32_t>(buffersToFree.size()),\n    buffersToFree.data()\n);\n\n// تعيين القيم NULL بعد التحرير\nfor (auto& buf : buffersToFree) {\n    buf = VK_NULL_HANDLE;\n}",
+      "notes": [
+        "يمكن تحرير المخازن حتى أثناء استخدامها",
+        "المستودع يدير الذاكرة داخلياً"
+      ],
+      "seeAlso": ["vkAllocateCommandBuffers"]
+    },
+    {
+      "name": "vkBeginCommandBuffer",
+      "category": "command_buffer",
+      "returnType": "VkResult",
+      "description": "يبدأ تسجيل أوامر في مخزن الأوامر. يجب استدعاؤها قبل تسجيل أي أوامر.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر المراد تسجيله"
+        },
+        {
+          "name": "pBeginInfo",
+          "type": "const VkCommandBufferBeginInfo*",
+          "description": "مؤشر لهيكل معلومات البداية"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم البدء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// هيكل معلومات بداية التسجيل\nVkCommandBufferBeginInfo beginInfo = {};\nbeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;\n\n// تحديد كيفية استخدام المخزن\nbeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;  // استخدام مرة واحدة\n// الخيارات الأخرى:\n// VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT  // استمرار Render Pass\n// VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT  // استخدام متزامن\n\n// للـ Secondary Command Buffer\n// VkCommandBufferInheritanceInfo inheritanceInfo = {};\n// beginInfo.pInheritanceInfo = &inheritanceInfo;\n\n// بدء التسجيل\nVkResult result = vkBeginCommandBuffer(commandBuffer, &beginInfo);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل بدء تسجيل مخزن الأوامر!\");\n}\n\n// الآن يمكن تسجيل الأوامر...\n// vkCmdBindPipeline(...)\n// vkCmdDraw(...)\n// ...",
+      "notes": [
+        "يجب إنهاء التسجيل بـ vkEndCommandBuffer",
+        "لا يمكن تسجيل مخزن قيد الاستخدام",
+        "ONE_TIME_SUBMIT_BIT يُحسّن الأداء للمخازن المؤقتة"
+      ],
+      "seeAlso": ["vkEndCommandBuffer", "vkResetCommandBuffer"]
+    },
+    {
+      "name": "vkEndCommandBuffer",
+      "category": "command_buffer",
+      "returnType": "VkResult",
+      "description": "ينهي تسجيل مخزن الأوامر. يجب استدعاؤها قبل إرسال المخزن للطابور.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر المراد إنهاء تسجيله"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنهاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// إنهاء تسجيل مخزن الأوامر\nVkResult result = vkEndCommandBuffer(commandBuffer);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنهاء تسجيل مخزن الأوامر!\");\n}\n\n// المخزن جاهز للإرسال\nstd::cout << \"مخزن الأوامر جاهز للتنفيذ\" << std::endl;",
+      "notes": [
+        "إذا فشل، يجب إعادة تعيين المخزن",
+        "لا يمكن إضافة أوامر بعد الإنهاء",
+        "يمكن إعادة التسجيل بعد vkResetCommandBuffer"
+      ],
+      "seeAlso": ["vkBeginCommandBuffer", "vkResetCommandBuffer"]
+    },
+    {
+      "name": "vkResetCommandBuffer",
+      "category": "command_buffer",
+      "returnType": "VkResult",
+      "description": "يعيد تعيين مخزن الأوامر إلى الحالة الأولية، مما يسمح بإعادة التسجيل.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر المراد إعادة تعيينه"
+        },
+        {
+          "name": "flags",
+          "type": "VkCommandBufferResetFlags",
+          "description": "أعلام إعادة التعيين"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم إعادة التعيين بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// إعادة تعيين مخزن الأوامر\nVkResult result = vkResetCommandBuffer(\n    commandBuffer,\n    VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT  // تحرير الموارد\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إعادة تعيين مخزن الأوامر!\");\n}\n\n// الآن يمكن إعادة التسجيل من البداية\nvkBeginCommandBuffer(commandBuffer, &beginInfo);\n// ...",
+      "notes": [
+        "RELEASE_RESOURCES_BIT يُحرر الموارد الداخلية",
+        "لا يمكن إعادة تعيين مخزن قيد الاستخدام",
+        "يتطلب VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT"
+      ],
+      "seeAlso": ["vkBeginCommandBuffer", "vkResetCommandPool"]
+    },
+    {
+      "name": "vkCreateSemaphore",
+      "category": "synchronization",
+      "returnType": "VkResult",
+      "description": "ينشئ إشارة (Semaphore) لمزامنة العمليات بين الطوابير، خاصة للعرض والرسم.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkSemaphoreCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pSemaphore",
+          "type": "VkSemaphore*",
+          "description": "مؤشر لتخزين معرف الإشارة"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// هيكل معلومات إنشاء الإشارة\nVkSemaphoreCreateInfo semaphoreInfo = {};\nsemaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;\n// لا توجد أعلام خاصة حالياً\n\n// إنشاء إشارة انتظار الصورة\nVkSemaphore imageAvailableSemaphore;\nVkResult result = vkCreateSemaphore(\n    device,\n    &semaphoreInfo,\n    nullptr,\n    &imageAvailableSemaphore\n);\n\n// إنشاء إشارة انتهاء الرسم\nVkSemaphore renderFinishedSemaphore;\nresult = vkCreateSemaphore(\n    device,\n    &semaphoreInfo,\n    nullptr,\n    &renderFinishedSemaphore\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء الإشارات!\");\n}",
+      "notes": [
+        "تُستخدم لمزامنة GPU إلى GPU",
+        "imageAvailable: تُشير أن الصورة جاهزة للرسم",
+        "renderFinished: تُشير أن الرسم انتهى ويمكن عرضه"
+      ],
+      "seeAlso": ["vkDestroySemaphore", "vkQueueSubmit", "vkAcquireNextImageKHR"]
+    },
+    {
+      "name": "vkDestroySemaphore",
+      "category": "synchronization",
+      "returnType": "void",
+      "description": "يدمر إشارة التزامن.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "semaphore",
+          "type": "VkSemaphore",
+          "description": "معرف الإشارة المراد تدميرها"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير الإشارات\nvkDestroySemaphore(device, imageAvailableSemaphore, nullptr);\nvkDestroySemaphore(device, renderFinishedSemaphore, nullptr);\n\nimageAvailableSemaphore = VK_NULL_HANDLE;\nrenderFinishedSemaphore = VK_NULL_HANDLE;",
+      "notes": [
+        "لا يجب تدمير إشارة قيد الاستخدام",
+        "انتظر خمول الجهاز قبل التدمير"
+      ],
+      "seeAlso": ["vkCreateSemaphore"]
+    },
+    {
+      "name": "vkCreateFence",
+      "category": "synchronization",
+      "returnType": "VkResult",
+      "description": "ينشئ سياجاً (Fence) لمزامنة CPU مع GPU. يُستخدم لمعرفة متى تنتهي عملية على GPU.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkFenceCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pFence",
+          "type": "VkFence*",
+          "description": "مؤشر لتخزين معرف السياج"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// هيكل معلومات إنشاء السياج\nVkFenceCreateInfo fenceInfo = {};\nfenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;\n\n// إنشاء السياج بحالة مُشارة (للسماح بالانتظار الأول)\nfenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;\n\n// إنشاء سياج لكل إطار\nstd::vector<VkFence> inFlightFences(MAX_FRAMES_IN_FLIGHT);\n\nfor (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {\n    VkResult result = vkCreateFence(\n        device,\n        &fenceInfo,\n        nullptr,\n        &inFlightFences[i]\n    );\n    \n    if (result != VK_SUCCESS) {\n        throw std::runtime_error(\"فشل إنشاء السياج!\");\n    }\n}",
+      "notes": [
+        "تُستخدم لمزامنة CPU مع GPU",
+        "SIGNALED_BIT يُنشئ السياج في حالة مُشارة",
+        "يجب إعادة تعيينه يدوياً قبل كل استخدام"
+      ],
+      "seeAlso": ["vkDestroyFence", "vkWaitForFences", "vkResetFences"]
+    },
+    {
+      "name": "vkDestroyFence",
+      "category": "synchronization",
+      "returnType": "void",
+      "description": "يدمر سياجاً.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "fence",
+          "type": "VkFence",
+          "description": "معرف السياج المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير جميع السياجات\nfor (size_t i = 0; i < inFlightFences.size(); i++) {\n    vkDestroyFence(device, inFlightFences[i], nullptr);\n    inFlightFences[i] = VK_NULL_HANDLE;\n}",
+      "notes": [
+        "لا يجب تدمير سياج قيد الانتظار"
+      ],
+      "seeAlso": ["vkCreateFence"]
+    },
+    {
+      "name": "vkWaitForFences",
+      "category": "synchronization",
+      "returnType": "VkResult",
+      "description": "ينتظر حتى تُشير سياج واحد أو أكثر. يحجب CPU حتى تنتهي GPU.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "fenceCount",
+          "type": "uint32_t",
+          "description": "عدد السياجات"
+        },
+        {
+          "name": "pFences",
+          "type": "const VkFence*",
+          "description": "مصفوفة السياجات"
+        },
+        {
+          "name": "waitAll",
+          "type": "VkBool32",
+          "description": "VK_TRUE لانتظار الجميع، VK_FALSE لأي واحد"
+        },
+        {
+          "name": "timeout",
+          "type": "uint64_t",
+          "description": "وقت الانتظار بالنانوثانية (UINT64_MAX للانتظار اللانهائي)"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تمت الإشارة بالسياجات",
+        "VK_TIMEOUT": "انتهى الوقت",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_DEVICE_LOST": "فُقد الجهاز"
+      },
+      "example": "// انتظار السياج الحالي (للإطار الحالي)\nVkResult result = vkWaitForFences(\n    device,\n    1,                              // عدد السياجات\n    &inFlightFences[currentFrame],  // السياج\n    VK_TRUE,                        // انتظار الكل\n    UINT64_MAX                      // انتظار لانهائي\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل انتظار السياج!\");\n}\n\n// الآن الإطار السابق انتهى، يمكن إعادة استخدام الموارد",
+      "notes": [
+        "UINT64_MAX للانتظار اللانهائي",
+        "waitAll=TRUE ينتظر جميع السياجات",
+        "يجب إعادة تعيين السياج بعد الانتظار"
+      ],
+      "seeAlso": ["vkResetFences", "vkGetFenceStatus"]
+    },
+    {
+      "name": "vkResetFences",
+      "category": "synchronization",
+      "returnType": "VkResult",
+      "description": "يعيد تعيين سياج واحد أو أكثر إلى الحالة غير المُشارة.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "fenceCount",
+          "type": "uint32_t",
+          "description": "عدد السياجات"
+        },
+        {
+          "name": "pFences",
+          "type": "const VkFence*",
+          "description": "مصفوفة السياجات"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم إعادة التعيين بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// إعادة تعيين السياج للاستخدام الجديد\nVkResult result = vkResetFences(\n    device,\n    1,                              // عدد السياجات\n    &inFlightFences[currentFrame]   // السياج\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إعادة تعيين السياج!\");\n}\n\n// الآن السياج جاهز للاستخدام مع vkQueueSubmit",
+      "notes": [
+        "يجب أن يكون السياج مُشارة",
+        "يُستخدم قبل كل إرسال جديد"
+      ],
+      "seeAlso": ["vkWaitForFences", "vkQueueSubmit"]
+    },
+    {
+      "name": "vkCreateSwapchainKHR",
+      "category": "swapchain",
+      "returnType": "VkResult",
+      "description": "ينشئ سلسلة التبديل (Swapchain) التي تدير الصور المعروضة على الشاشة.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkSwapchainCreateInfoKHR*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pSwapchain",
+          "type": "VkSwapchainKHR*",
+          "description": "مؤشر لتخزين معرف السلسلة"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_DEVICE_LOST": "فُقد الجهاز",
+        "VK_ERROR_SURFACE_LOST_KHR": "فُقدت السطح",
+        "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR": "النافذة قيد الاستخدام"
+      },
+      "example": "// إعداد معلومات السطح\nVkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(formats);\nVkPresentModeKHR presentMode = chooseSwapPresentMode(presentModes);\nVkExtent2D extent = chooseSwapExtent(capabilities);\n\n// تحديد عدد الصور\nuint32_t imageCount = capabilities.minImageCount + 1;\nif (capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount) {\n    imageCount = capabilities.maxImageCount;\n}\n\n// هيكل معلومات إنشاء السلسلة\nVkSwapchainCreateInfoKHR createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;\ncreateInfo.surface = surface;  // السطح\n\ncreateInfo.minImageCount = imageCount;  // عدد الصور\ncreateInfo.imageFormat = surfaceFormat.format;  // تنسيق الصور\ncreateInfo.imageColorSpace = surfaceFormat.colorSpace;  // فضاء الألوان\ncreateInfo.imageExtent = extent;  // أبعاد الصور\ncreateInfo.imageArrayLayers = 1;  // عدد الطبقات\ncreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;  // استخدام الرسم\n\n// إعداد الطوابير\nuint32_t queueFamilyIndices[] = {\n    graphicsQueueFamilyIndex,\n    presentQueueFamilyIndex\n};\n\nif (graphicsQueueFamilyIndex != presentQueueFamilyIndex) {\n    createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;\n    createInfo.queueFamilyIndexCount = 2;\n    createInfo.pQueueFamilyIndices = queueFamilyIndices;\n} else {\n    createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;\n    createInfo.queueFamilyIndexCount = 0;\n    createInfo.pQueueFamilyIndices = nullptr;\n}\n\ncreateInfo.preTransform = capabilities.currentTransform;  // التحويل\ncreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;  // الشفافية\ncreateInfo.presentMode = presentMode;  // وضع العرض\ncreateInfo.clipped = VK_TRUE;  // قص البيكسلات المخفية\ncreateInfo.oldSwapchain = VK_NULL_HANDLE;  // السلسلة القديمة\n\n// إنشاء السلسلة\nVkSwapchainKHR swapchain;\nVkResult result = vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء سلسلة التبديل!\");\n}",
+      "notes": [
+        "يجب تفعيل امتداد VK_KHR_swapchain",
+        "CONCURRENT: عدة طوابير يمكنها الوصول",
+        "EXCLUSIVE: طابور واحد (أفضل أداءً)"
+      ],
+      "seeAlso": ["vkDestroySwapchainKHR", "vkGetSwapchainImagesKHR", "vkAcquireNextImageKHR"]
+    },
+    {
+      "name": "vkDestroySwapchainKHR",
+      "category": "swapchain",
+      "returnType": "void",
+      "description": "يدمر سلسلة التبديل.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "swapchain",
+          "type": "VkSwapchainKHR",
+          "description": "معرف السلسلة المراد تدميرها"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير سلسلة التبديل\nvkDestroySwapchainKHR(device, swapchain, nullptr);\nswapchain = VK_NULL_HANDLE;",
+      "notes": [
+        "يجب تدميرها قبل السطح وقبل الجهاز",
+        "صور السلسلة تُدمّر تلقائياً"
+      ],
+      "seeAlso": ["vkCreateSwapchainKHR"]
+    },
+    {
+      "name": "vkGetSwapchainImagesKHR",
+      "category": "swapchain",
+      "returnType": "VkResult",
+      "description": "يحصل على صور سلسلة التبديل.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "swapchain",
+          "type": "VkSwapchainKHR",
+          "description": "معرف السلسلة"
+        },
+        {
+          "name": "pSwapchainImageCount",
+          "type": "uint32_t*",
+          "description": "مؤشر لعدد الصور"
+        },
+        {
+          "name": "pSwapchainImages",
+          "type": "VkImage*",
+          "description": "مصفوفة لتخزين الصور"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم بنجاح",
+        "VK_INCOMPLETE": "بيانات غير مكتملة",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// الخطوة 1: الحصول على عدد الصور\nuint32_t imageCount;\nvkGetSwapchainImagesKHR(device, swapchain, &imageCount, nullptr);\n\n// الخطوة 2: الحصول على الصور\nstd::vector<VkImage> swapchainImages(imageCount);\nvkGetSwapchainImagesKHR(device, swapchain, &imageCount, swapchainImages.data());\n\n// الخطوة 3: إنشاء Image Views لكل صورة\nstd::vector<VkImageView> swapchainImageViews(imageCount);\n\nfor (size_t i = 0; i < imageCount; i++) {\n    VkImageViewCreateInfo createInfo = {};\n    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;\n    createInfo.image = swapchainImages[i];\n    createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;\n    createInfo.format = swapchainImageFormat;\n    createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;\n    createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;\n    createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;\n    createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;\n    createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;\n    createInfo.subresourceRange.baseMipLevel = 0;\n    createInfo.subresourceRange.levelCount = 1;\n    createInfo.subresourceRange.baseArrayLayer = 0;\n    createInfo.subresourceRange.layerCount = 1;\n    \n    vkCreateImageView(device, &createInfo, nullptr, &swapchainImageViews[i]);\n}",
+      "notes": [
+        "الصور مملوكة للسلسلة ولا يجب تدميرها",
+        "عدد الصور قد يختلف عن minImageCount"
+      ],
+      "seeAlso": ["vkCreateSwapchainKHR", "vkCreateImageView"]
+    },
+    {
+      "name": "vkAcquireNextImageKHR",
+      "category": "swapchain",
+      "returnType": "VkResult",
+      "description": "يحصل على فهرس الصورة التالية المتاحة للرسم من سلسلة التبديل.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "swapchain",
+          "type": "VkSwapchainKHR",
+          "description": "معرف السلسلة"
+        },
+        {
+          "name": "timeout",
+          "type": "uint64_t",
+          "description": "وقت الانتظار بالنانوثانية"
+        },
+        {
+          "name": "semaphore",
+          "type": "VkSemaphore",
+          "description": "إشارة تُشار عند توفر الصورة"
+        },
+        {
+          "name": "fence",
+          "type": "VkFence",
+          "description": "سياج يُشار عند توفر الصورة (اختياري)"
+        },
+        {
+          "name": "pImageIndex",
+          "type": "uint32_t*",
+          "description": "مؤشر لتخزين فهرس الصورة"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم بنجاح",
+        "VK_TIMEOUT": "انتهى الوقت",
+        "VK_NOT_READY": "الصورة غير جاهزة",
+        "VK_SUBOPTIMAL_KHR": "السلسلة ليست مثالية",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_DEVICE_LOST": "فُقد الجهاز",
+        "VK_ERROR_OUT_OF_DATE_KHR": "السلسلة قديمة",
+        "VK_ERROR_SURFACE_LOST_KHR": "فُقد السطح"
+      },
+      "example": "// الحصول على الصورة التالية\nuint32_t imageIndex;\nVkResult result = vkAcquireNextImageKHR(\n    device,\n    swapchain,\n    UINT64_MAX,              // انتظار لانهائي\n    imageAvailableSemaphore, // إشارة عند توفر الصورة\n    VK_NULL_HANDLE,          // لا سياج\n    &imageIndex              // فهرس الصورة\n);\n\n// معالجة حالات إعادة إنشاء السلسلة\nif (result == VK_ERROR_OUT_OF_DATE_KHR) {\n    // تغيير حجم النافذة - يجب إعادة إنشاء السلسلة\n    recreateSwapChain();\n    return;\n} else if (result == VK_SUBOPTIMAL_KHR) {\n    // السلسلة تعمل لكن ليست مثالية\n    // يمكن المتابعة أو إعادة الإنشاء\n} else if (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل الحصول على صورة السلسلة!\");\n}\n\n// imageIndex الآن يحتوي على فهرس الصورة للرسم\n// يمكن استخدامه مع commandBuffers[imageIndex]",
+      "notes": [
+        "يجب استخدام Semaphore أو Fence",
+        "OUT_OF_DATE يتطلب إعادة إنشاء السلسلة",
+        "SUBOPTIMAL يعني أن السلسلة تعمل لكن ليست مثالية"
+      ],
+      "seeAlso": ["vkQueuePresentKHR", "vkCreateSwapchainKHR"]
+    },
+    {
+      "name": "vkQueuePresentKHR",
+      "category": "swapchain",
+      "returnType": "VkResult",
+      "description": "يعرض الصورة المرسومة على الشاشة.",
+      "parameters": [
+        {
+          "name": "queue",
+          "type": "VkQueue",
+          "description": "طابور العرض"
+        },
+        {
+          "name": "pPresentInfo",
+          "type": "const VkPresentInfoKHR*",
+          "description": "مؤشر لهيكل معلومات العرض"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم العرض بنجاح",
+        "VK_SUBOPTIMAL_KHR": "السلسلة ليست مثالية",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_DEVICE_LOST": "فُقد الجهاز",
+        "VK_ERROR_OUT_OF_DATE_KHR": "السلسلة قديمة",
+        "VK_ERROR_SURFACE_LOST_KHR": "فُقد السطح"
+      },
+      "example": "// إعداد هيكل العرض\nVkPresentInfoKHR presentInfo = {};\npresentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;\n\n// تحديد إشارات الانتظار\nVkSemaphore waitSemaphores[] = { renderFinishedSemaphore };\npresentInfo.waitSemaphoreCount = 1;\npresentInfo.pWaitSemaphores = waitSemaphores;\n\n// تحديد السلسلة والصورة\nVkSwapchainKHR swapchains[] = { swapchain };\npresentInfo.swapchainCount = 1;\npresentInfo.pSwapchains = swapchains;\npresentInfo.pImageIndices = &imageIndex;\n\n// نتائج العرض (اختياري)\npresentInfo.pResults = nullptr;\n\n// عرض الصورة\nVkResult result = vkQueuePresentKHR(presentQueue, &presentInfo);\n\n// معالجة النتيجة\nif (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||\n    framebufferResized) {\n    framebufferResized = false;\n    recreateSwapChain();\n} else if (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل عرض الصورة!\");\n}",
+      "notes": [
+        "ينتظر إشارة renderFinishedSemaphore",
+        "يمكن عرض عدة سلاسل دفعة واحدة",
+        "يجب معالجة OUT_OF_DATE و SUBOPTIMAL"
+      ],
+      "seeAlso": ["vkAcquireNextImageKHR", "vkQueueSubmit"]
+    },
+    {
+      "name": "vkCreateImageView",
+      "category": "image",
+      "returnType": "VkResult",
+      "description": "ينشئ عرضاً للصورة (Image View) الذي يصف كيفية الوصول للصورة.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkImageViewCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pView",
+          "type": "VkImageView*",
+          "description": "مؤشر لتخزين معرف العرض"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// إنشاء Image View لصورة السلسلة\nVkImageViewCreateInfo createInfo = {};\ncreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;\ncreateInfo.image = image;  // الصورة\n\n// نوع العرض\ncreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;\n// الخيارات: 1D, 2D, 3D, CUBE, 2D_ARRAY, CUBE_ARRAY\n\n// تنسيق الصورة\ncreateInfo.format = format;\n\n// تحويل المكونات\ncreateInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;  // بدون تحويل\ncreateInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;\ncreateInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;\ncreateInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;\n\n// نطاق الموارد الفرعية\ncreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;  // جانب اللون\ncreateInfo.subresourceRange.baseMipLevel = 0;  // مستوى Mip الأول\ncreateInfo.subresourceRange.levelCount = 1;    // عدد مستويات Mip\ncreateInfo.subresourceRange.baseArrayLayer = 0;  // الطبقة الأولى\ncreateInfo.subresourceRange.layerCount = 1;      // عدد الطبقات\n\nVkImageView imageView;\nVkResult result = vkCreateImageView(device, &createInfo, nullptr, &imageView);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء Image View!\");\n}",
+      "notes": [
+        "Image View ضروري لاستخدام الصورة",
+        "يحدد كيفية تفسير الصورة",
+        "يجب تدميره قبل الصورة"
+      ],
+      "seeAlso": ["vkDestroyImageView", "vkCreateImage"]
+    },
+    {
+      "name": "vkDestroyImageView",
+      "category": "image",
+      "returnType": "void",
+      "description": "يدمر عرض الصورة.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "imageView",
+          "type": "VkImageView",
+          "description": "معرف العرض المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Image View\nvkDestroyImageView(device, imageView, nullptr);\nimageView = VK_NULL_HANDLE;",
+      "notes": [
+        "يجب تدميره قبل الصورة المرتبطة"
+      ],
+      "seeAlso": ["vkCreateImageView"]
+    },
+    {
+      "name": "vkCreateShaderModule",
+      "category": "shader",
+      "returnType": "VkResult",
+      "description": "ينشئ وحدة تظليل (Shader Module) من كود SPIR-V المُجمّع.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkShaderModuleCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pShaderModule",
+          "type": "VkShaderModule*",
+          "description": "مؤشر لتخزين معرف الوحدة"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// قراءة كود SPIR-V من ملف\nstatic std::vector<char> readFile(const std::string& filename) {\n    std::ifstream file(filename, std::ios::ate | std::ios::binary);\n    if (!file.is_open()) {\n        throw std::runtime_error(\"فشل فتح الملف: \" + filename);\n    }\n    size_t fileSize = (size_t)file.tellg();\n    std::vector<char> buffer(fileSize);\n    file.seekg(0);\n    file.read(buffer.data(), fileSize);\n    file.close();\n    return buffer;\n}\n\n// إنشاء Shader Module\nVkShaderModule createShaderModule(const std::vector<char>& code) {\n    VkShaderModuleCreateInfo createInfo = {};\n    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;\n    createInfo.codeSize = code.size();\n    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());\n    \n    VkShaderModule shaderModule;\n    VkResult result = vkCreateShaderModule(\n        device, &createInfo, nullptr, &shaderModule\n    );\n    \n    if (result != VK_SUCCESS) {\n        throw std::runtime_error(\"فشل إنشاء Shader Module!\");\n    }\n    \n    return shaderModule;\n}\n\n// الاستخدام\nauto vertShaderCode = readFile(\"shaders/vert.spv\");\nauto fragShaderCode = readFile(\"shaders/frag.spv\");\n\nVkShaderModule vertShaderModule = createShaderModule(vertShaderCode);\nVkShaderModule fragShaderModule = createShaderModule(fragShaderCode);",
+      "notes": [
+        "يجب تجميع GLSL إلى SPIR-V باستخدام glslc أو glslangValidator",
+        "يمكن إعادة استخدام الوحدة لعدة Pipelines",
+        "يجب تدميرها بعد إنشاء Pipeline"
+      ],
+      "seeAlso": ["vkDestroyShaderModule", "vkCreateGraphicsPipelines"]
+    },
+    {
+      "name": "vkDestroyShaderModule",
+      "category": "shader",
+      "returnType": "void",
+      "description": "يدمر وحدة التظليل.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "shaderModule",
+          "type": "VkShaderModule",
+          "description": "معرف الوحدة المراد تدميرها"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Shader Modules بعد إنشاء Pipeline\nvkDestroyShaderModule(device, vertShaderModule, nullptr);\nvkDestroyShaderModule(device, fragShaderModule, nullptr);\n\n// Pipeline يحتفظ بنسخته الخاصة من Shader",
+      "notes": [
+        "يمكن تدميرها بعد إنشاء Pipeline",
+        "Pipeline تحتفظ بالكود داخلياً"
+      ],
+      "seeAlso": ["vkCreateShaderModule"]
+    },
+    {
+      "name": "vkCreatePipelineLayout",
+      "category": "pipeline",
+      "returnType": "VkResult",
+      "description": "ينشئ تخطيط Pipeline الذي يحدد الموارد (Uniforms, Textures) المستخدمة.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkPipelineLayoutCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pPipelineLayout",
+          "type": "VkPipelineLayout*",
+          "description": "مؤشر لتخزين معرف التخطيط"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// هيكل معلومات إنشاء Pipeline Layout\nVkPipelineLayoutCreateInfo pipelineLayoutInfo = {};\npipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;\n\n// Descriptor Set Layouts (للـ Uniforms و Textures)\npipelineLayoutInfo.setLayoutCount = 1;  // عدد التخطيطات\npipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;\n\n// Push Constants (بيانات صغيرة سريعة)\nVkPushConstantRange pushConstantRange = {};\npushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;\npushConstantRange.offset = 0;\npushConstantRange.size = sizeof(PushConstantData);\n\npipelineLayoutInfo.pushConstantRangeCount = 1;\npipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;\n\n// إنشاء التخطيط\nVkPipelineLayout pipelineLayout;\nVkResult result = vkCreatePipelineLayout(\n    device, &pipelineLayoutInfo, nullptr, &pipelineLayout\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء Pipeline Layout!\");\n}",
+      "notes": [
+        "يحدد هيكل Descriptor Sets",
+        "Push Constants للبيانات الصغيرة المتغيرة",
+        "يجب تدميره بعد جميع Pipelines المرتبطة"
+      ],
+      "seeAlso": ["vkDestroyPipelineLayout", "vkCreateGraphicsPipelines"]
+    },
+    {
+      "name": "vkDestroyPipelineLayout",
+      "category": "pipeline",
+      "returnType": "void",
+      "description": "يدمر تخطيط Pipeline.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pipelineLayout",
+          "type": "VkPipelineLayout",
+          "description": "معرف التخطيط المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Pipeline Layout\nvkDestroyPipelineLayout(device, pipelineLayout, nullptr);\npipelineLayout = VK_NULL_HANDLE;",
+      "notes": [
+        "يجب تدمير جميع Pipelines المرتبطة أولاً"
+      ],
+      "seeAlso": ["vkCreatePipelineLayout"]
+    },
+    {
+      "name": "vkCreateRenderPass",
+      "category": "render_pass",
+      "returnType": "VkResult",
+      "description": "ينشئ عملية تمرير الرسم (Render Pass) التي تحدد مراحل الرسم والمرفقات.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkRenderPassCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pRenderPass",
+          "type": "VkRenderPass*",
+          "description": "مؤشر لتخزين معرف العملية"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// وصف مرفق اللون (Color Attachment)\nVkAttachmentDescription colorAttachment = {};\ncolorAttachment.format = swapchainImageFormat;  // تنسيق الصورة\ncolorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;  // بدون Multisampling\ncolorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;  // مسح عند البدء\ncolorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;  // حفظ النتيجة\ncolorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;  // لا Stencil\ncolorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;\ncolorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;  // التخطيط الأولي\ncolorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;  // للعرض\n\n// مرجع مرفق اللون\nVkAttachmentReference colorAttachmentRef = {};\ncolorAttachmentRef.attachment = 0;  // فهرس المرفق\ncolorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;\n\n// وصف المرفق الفرعي\nVkSubpassDescription subpass = {};\nsubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;\nsubpass.colorAttachmentCount = 1;\nsubpass.pColorAttachments = &colorAttachmentRef;\n\n// تبعية المرفق الفرعي\nVkSubpassDependency dependency = {};\ndependency.srcSubpass = VK_SUBPASS_EXTERNAL;  // قبل RenderPass\ndependency.dstSubpass = 0;  // المرفق الفرعي الأول\ndependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;\ndependency.srcAccessMask = 0;\ndependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;\ndependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;\n\n// هيكل معلومات RenderPass\nVkRenderPassCreateInfo renderPassInfo = {};\nrenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;\nrenderPassInfo.attachmentCount = 1;\nrenderPassInfo.pAttachments = &colorAttachment;\nrenderPassInfo.subpassCount = 1;\nrenderPassInfo.pSubpasses = &subpass;\nrenderPassInfo.dependencyCount = 1;\nrenderPassInfo.pDependencies = &dependency;\n\nVkRenderPass renderPass;\nVkResult result = vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء Render Pass!\");\n}",
+      "notes": [
+        "يحدد كيفية التعامل مع المرفقات",
+        "loadOp: CLEAR, LOAD, DONT_CARE",
+        "finalLayout يحدد التخطيط النهائي للصورة"
+      ],
+      "seeAlso": ["vkDestroyRenderPass", "vkCmdBeginRenderPass"]
+    },
+    {
+      "name": "vkDestroyRenderPass",
+      "category": "render_pass",
+      "returnType": "void",
+      "description": "يدمر عملية تمرير الرسم.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "renderPass",
+          "type": "VkRenderPass",
+          "description": "معرف العملية المراد تدميرها"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Render Pass\nvkDestroyRenderPass(device, renderPass, nullptr);\nrenderPass = VK_NULL_HANDLE;",
+      "notes": [
+        "يجب تدمير جميع Framebuffers المرتبطة أولاً"
+      ],
+      "seeAlso": ["vkCreateRenderPass"]
+    },
+    {
+      "name": "vkCreateFramebuffer",
+      "category": "framebuffer",
+      "returnType": "VkResult",
+      "description": "ينشئ مخزن الإطار (Framebuffer) الذي يربط Image Views بـ Render Pass.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkFramebufferCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pFramebuffer",
+          "type": "VkFramebuffer*",
+          "description": "مؤشر لتخزين معرف المخزن"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// إنشاء Framebuffer لكل صورة في SwapChain\nstd::vector<VkFramebuffer> swapchainFramebuffers;\n\nfor (size_t i = 0; i < swapchainImageViews.size(); i++) {\n    VkImageView attachments[] = {\n        swapchainImageViews[i]  // Image View للصورة\n    };\n    \n    VkFramebufferCreateInfo framebufferInfo = {};\n    framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;\n    framebufferInfo.renderPass = renderPass;  // Render Pass المرتبط\n    framebufferInfo.attachmentCount = 1;\n    framebufferInfo.pAttachments = attachments;\n    framebufferInfo.width = swapchainExtent.width;   // العرض\n    framebufferInfo.height = swapchainExtent.height;  // الارتفاع\n    framebufferInfo.layers = 1;  // عدد الطبقات\n    \n    VkFramebuffer framebuffer;\n    VkResult result = vkCreateFramebuffer(\n        device, &framebufferInfo, nullptr, &framebuffer\n    );\n    \n    if (result != VK_SUCCESS) {\n        throw std::runtime_error(\"فشل إنشاء Framebuffer!\");\n    }\n    \n    swapchainFramebuffers.push_back(framebuffer);\n}",
+      "notes": [
+        "يجب أن تتطابق المرفقات مع Render Pass",
+        "الأبعاد يجب أن تكون ضمن حدود الجهاز"
+      ],
+      "seeAlso": ["vkDestroyFramebuffer", "vkCreateRenderPass"]
+    },
+    {
+      "name": "vkDestroyFramebuffer",
+      "category": "framebuffer",
+      "returnType": "void",
+      "description": "يدمر مخزن الإطار.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "framebuffer",
+          "type": "VkFramebuffer",
+          "description": "معرف المخزن المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير جميع Framebuffers\nfor (auto framebuffer : swapchainFramebuffers) {\n    vkDestroyFramebuffer(device, framebuffer, nullptr);\n}\nswapchainFramebuffers.clear();",
+      "notes": [
+        "يجب تدميرها قبل Render Pass و Image Views"
+      ],
+      "seeAlso": ["vkCreateFramebuffer"]
+    },
+    {
+      "name": "vkCreateGraphicsPipelines",
+      "category": "pipeline",
+      "returnType": "VkResult",
+      "description": "ينشئ واحدة أو أكثر من خطوط أنابيب الرسوميات (Graphics Pipelines).",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pipelineCache",
+          "type": "VkPipelineCache",
+          "description": "مخزن Pipeline (VK_NULL_HANDLE إذا غير مطلوب)"
+        },
+        {
+          "name": "createInfoCount",
+          "type": "uint32_t",
+          "description": "عدد Pipelines المراد إنشاؤها"
+        },
+        {
+          "name": "pCreateInfos",
+          "type": "const VkGraphicsPipelineCreateInfo*",
+          "description": "مصفوفة هياكل المعلومات"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pPipelines",
+          "type": "VkPipeline*",
+          "description": "مصفوفة لتخزين معرفات Pipelines"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم إنشاء جميع Pipelines بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// مرحلة التظليل الرأسي\nVkPipelineShaderStageCreateInfo vertShaderStageInfo = {};\nvertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;\nvertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;\nvertShaderStageInfo.module = vertShaderModule;\nvertShaderStageInfo.pName = \"main\";  // اسم دالة الدخول\n\n// مرحلة التظليل الجزئي\nVkPipelineShaderStageCreateInfo fragShaderStageInfo = {};\nfragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;\nfragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;\nfragShaderStageInfo.module = fragShaderModule;\nfragShaderStageInfo.pName = \"main\";\n\nVkPipelineShaderStageCreateInfo shaderStages[] = {\n    vertShaderStageInfo, fragShaderStageInfo\n};\n\n// الإدخال الرأسي (Vertex Input)\nVkPipelineVertexInputStateCreateInfo vertexInputInfo = {};\nvertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;\nvertexInputInfo.vertexBindingDescriptionCount = 1;\nvertexInputInfo.pVertexBindingDescriptions = &bindingDescription;\nvertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();\nvertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();\n\n// تجميع الإدخال (Input Assembly)\nVkPipelineInputAssemblyStateCreateInfo inputAssembly = {};\ninputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;\ninputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;  // رسم مثلثات\ninputAssembly.primitiveRestartEnable = VK_FALSE;\n\n// إطار العرض و المقص\nVkViewport viewport = {};\nviewport.x = 0.0f;\nviewport.y = 0.0f;\nviewport.width = (float)swapchainExtent.width;\nviewport.height = (float)swapchainExtent.height;\nviewport.minDepth = 0.0f;\nviewport.maxDepth = 1.0f;\n\nVkRect2D scissor = {};\nscissor.offset = {0, 0};\nscissor.extent = swapchainExtent;\n\nVkPipelineViewportStateCreateInfo viewportState = {};\nviewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;\nviewportState.viewportCount = 1;\nviewportState.pViewports = &viewport;\nviewportState.scissorCount = 1;\nviewportState.pScissors = &scissor;\n\n// التنقيط (Rasterizer)\nVkPipelineRasterizationStateCreateInfo rasterizer = {};\nrasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;\nrasterizer.depthClampEnable = VK_FALSE;\nrasterizer.rasterizerDiscardEnable = VK_FALSE;\nrasterizer.polygonMode = VK_POLYGON_MODE_FILL;  // تعبئة المضلعات\nrasterizer.lineWidth = 1.0f;\nrasterizer.cullMode = VK_CULL_MODE_BACK_BIT;  // إخفاء الظهر\nrasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;\nrasterizer.depthBiasEnable = VK_FALSE;\n\n// Multisampling\nVkPipelineMultisampleStateCreateInfo multisampling = {};\nmultisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;\nmultisampling.sampleShadingEnable = VK_FALSE;\nmultisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;\n\n// مزج الألوان (Color Blending)\nVkPipelineColorBlendAttachmentState colorBlendAttachment = {};\ncolorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | \n                                       VK_COLOR_COMPONENT_G_BIT | \n                                       VK_COLOR_COMPONENT_B_BIT | \n                                       VK_COLOR_COMPONENT_A_BIT;\ncolorBlendAttachment.blendEnable = VK_FALSE;  // بدون مزج\n\nVkPipelineColorBlendStateCreateInfo colorBlending = {};\ncolorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;\ncolorBlending.logicOpEnable = VK_FALSE;\ncolorBlending.attachmentCount = 1;\ncolorBlending.pAttachments = &colorBlendAttachment;\n\n// معلومات Pipeline الديناميكية (اختياري)\nVkDynamicState dynamicStates[] = {\n    VK_DYNAMIC_STATE_VIEWPORT,\n    VK_DYNAMIC_STATE_LINE_WIDTH\n};\n\nVkPipelineDynamicStateCreateInfo dynamicState = {};\ndynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;\ndynamicState.dynamicStateCount = 2;\ndynamicState.pDynamicStates = dynamicStates;\n\n// هيكل إنشاء Pipeline النهائي\nVkGraphicsPipelineCreateInfo pipelineInfo = {};\npipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;\npipelineInfo.stageCount = 2;\npipelineInfo.pStages = shaderStages;\npipelineInfo.pVertexInputState = &vertexInputInfo;\npipelineInfo.pInputAssemblyState = &inputAssembly;\npipelineInfo.pViewportState = &viewportState;\npipelineInfo.pRasterizationState = &rasterizer;\npipelineInfo.pMultisampleState = &multisampling;\npipelineInfo.pColorBlendState = &colorBlending;\npipelineInfo.layout = pipelineLayout;\npipelineInfo.renderPass = renderPass;\npipelineInfo.subpass = 0;\n\nVkPipeline graphicsPipeline;\nVkResult result = vkCreateGraphicsPipelines(\n    device,\n    VK_NULL_HANDLE,  // بدون Cache\n    1,               // عدد Pipelines\n    &pipelineInfo,\n    nullptr,\n    &graphicsPipeline\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء Graphics Pipeline!\");\n}",
+      "notes": [
+        "Pipeline object ثابت - يجب إنشاء واحد لكل إعداد مختلف",
+        "Pipeline Cache يُسرّع إنشاء Pipelines مشابهة",
+        "Dynamic State يسمح بتغيير بعض الإعدادات بدون إعادة الإنشاء"
+      ],
+      "seeAlso": ["vkDestroyPipeline", "vkCmdBindPipeline"]
+    },
+    {
+      "name": "vkDestroyPipeline",
+      "category": "pipeline",
+      "returnType": "void",
+      "description": "يدمر خط الأنابيب.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pipeline",
+          "type": "VkPipeline",
+          "description": "معرف Pipeline المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Graphics Pipeline\nvkDestroyPipeline(device, graphicsPipeline, nullptr);\ngraphicsPipeline = VK_NULL_HANDLE;",
+      "notes": [
+        "يمكن تدمير Pipeline قيد الاستخدام (سيتم التدمير فعلياً بعد الانتهاء)"
+      ],
+      "seeAlso": ["vkCreateGraphicsPipelines"]
+    },
+    {
+      "name": "vkCmdBeginRenderPass",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يبدأ Render Pass في مخزن الأوامر.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر"
+        },
+        {
+          "name": "pRenderPassBegin",
+          "type": "const VkRenderPassBeginInfo*",
+          "description": "مؤشر لهيكل معلومات البداية"
+        },
+        {
+          "name": "contents",
+          "type": "VkSubpassContents",
+          "description": "طريقة التنفيذ (INLINE أو SECONDARY)"
+        }
+      ],
+      "returnValues": null,
+      "example": "// هيكل معلومات بدء Render Pass\nVkRenderPassBeginInfo renderPassInfo = {};\nrenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;\nrenderPassInfo.renderPass = renderPass;  // Render Pass\nrenderPassInfo.framebuffer = framebuffer;  // Framebuffer\nrenderPassInfo.renderArea.offset = {0, 0};  // منطقة الرسم\nrenderPassInfo.renderArea.extent = swapchainExtent;\n\n// لون المسح (Clear Color)\nVkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};  // أسود\nrenderPassInfo.clearValueCount = 1;\nrenderPassInfo.pClearValues = &clearColor;\n\n// بدء Render Pass\nvkCmdBeginRenderPass(\n    commandBuffer,\n    &renderPassInfo,\n    VK_SUBPASS_CONTENTS_INLINE  // تنفيذ مباشر\n);\n\n// الآن يمكن تسجيل أوامر الرسم...\n// vkCmdBindPipeline(...)\n// vkCmdDraw(...)\n\n// إنهاء Render Pass\nvkCmdEndRenderPass(commandBuffer);",
+      "notes": [
+        "INLINE: الأوامر تُسجل مباشرة",
+        "SECONDARY_COMMAND_BUFFERS: استخدام مخازن ثانوية",
+        "يجب إنهاؤه بـ vkCmdEndRenderPass"
+      ],
+      "seeAlso": ["vkCmdEndRenderPass", "vkCreateRenderPass"]
+    },
+    {
+      "name": "vkCmdEndRenderPass",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "ينهي Render Pass الحالي في مخزن الأوامر.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر"
+        }
+      ],
+      "returnValues": null,
+      "example": "// إنهاء Render Pass بعد انتهاء الرسم\nvkCmdEndRenderPass(commandBuffer);\n\n// الآن Render Pass انتهى، يمكن الانتقال لعملية أخرى\n// أو إنهاء مخزن الأوامر",
+      "notes": [
+        "يجب أن يكون Render Pass نشطاً"
+      ],
+      "seeAlso": ["vkCmdBeginRenderPass"]
+    },
+    {
+      "name": "vkCmdBindPipeline",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يربط Pipeline بمخزن الأوامر للتنفيذ.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر"
+        },
+        {
+          "name": "pipelineBindPoint",
+          "type": "VkPipelineBindPoint",
+          "description": "نقطة الربط (GRAPHICS أو COMPUTE)"
+        },
+        {
+          "name": "pipeline",
+          "type": "VkPipeline",
+          "description": "Pipeline المراد ربطه"
+        }
+      ],
+      "returnValues": null,
+      "example": "// ربط Graphics Pipeline\nvkCmdBindPipeline(\n    commandBuffer,\n    VK_PIPELINE_BIND_POINT_GRAPHICS,  // للرسوميات\n    graphicsPipeline\n);\n\n// الآن Pipeline مربوط، يمكن الرسم\n// vkCmdDraw(...)\n\n// لربط Compute Pipeline:\n// vkCmdBindPipeline(\n//     commandBuffer,\n//     VK_PIPELINE_BIND_POINT_COMPUTE,\n//     computePipeline\n// );",
+      "notes": [
+        "Pipeline يبقى مربطاً حتى ربط pipeline آخر",
+        "كل نوع (Graphics/Compute) له ربط منفصل"
+      ],
+      "seeAlso": ["vkCreateGraphicsPipelines", "vkCmdDraw"]
+    },
+    {
+      "name": "vkCmdDraw",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يرسم بدائيات (Primitives) بدون استخدام Vertex Buffer.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر"
+        },
+        {
+          "name": "vertexCount",
+          "type": "uint32_t",
+          "description": "عدد الرؤوس"
+        },
+        {
+          "name": "instanceCount",
+          "type": "uint32_t",
+          "description": "عدد النسخ (1 بدون Instancing)"
+        },
+        {
+          "name": "firstVertex",
+          "type": "uint32_t",
+          "description": "فهرس الرأس الأول"
+        },
+        {
+          "name": "firstInstance",
+          "type": "uint32_t",
+          "description": "فهرس النسخة الأولى"
+        }
+      ],
+      "returnValues": null,
+      "example": "// رسم مثلث (3 رؤوس)\nvkCmdDraw(\n    commandBuffer,\n    3,     // 3 رؤوس للمثلث\n    1,     // نسخة واحدة\n    0,     // البدء من الرأس 0\n    0      // النسخة الأولى\n);\n\n// رسم 100 مثلث باستخدام Instancing\nvkCmdDraw(\n    commandBuffer,\n    3,      // 3 رؤوس\n    100,    // 100 نسخة\n    0,      // الرأس الأول\n    0       // النسخة الأولى\n);\n\n// مع Vertex Shader:\n// gl_VertexIndex: فهرس الرأس الحالي (0 إلى vertexCount-1)\n// gl_InstanceIndex: فهرس النسخة الحالية (0 إلى instanceCount-1)",
+      "notes": [
+        "للرسم بدون Vertex Buffer، يُولّد Vertex Shader الرؤوس",
+        "Instancing يُستخدم لرسم عدة نسخ بـ Draw Call واحد"
+      ],
+      "seeAlso": ["vkCmdDrawIndexed", "vkCmdBindVertexBuffers"]
+    },
+    {
+      "name": "vkCmdDrawIndexed",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يرسم بدائيس باستخدام Index Buffer لإعادة استخدام الرؤوس.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر"
+        },
+        {
+          "name": "indexCount",
+          "type": "uint32_t",
+          "description": "عدد الفهارس"
+        },
+        {
+          "name": "instanceCount",
+          "type": "uint32_t",
+          "description": "عدد النسخ"
+        },
+        {
+          "name": "firstIndex",
+          "type": "uint32_t",
+          "description": "فهرس البداية"
+        },
+        {
+          "name": "vertexOffset",
+          "type": "int32_t",
+          "description": "إزاحة الرؤوس"
+        },
+        {
+          "name": "firstInstance",
+          "type": "uint32_t",
+          "description": "فهرس النسخة الأولى"
+        }
+      ],
+      "returnValues": null,
+      "example": "// ربط Index Buffer أولاً\nvkCmdBindIndexBuffer(\n    commandBuffer,\n    indexBuffer,\n    0,  // إزاحة\n    VK_INDEX_TYPE_UINT32  // نوع الفهارس\n);\n\n// رسم مستطيل (مثلثين = 6 فهارس)\nvkCmdDrawIndexed(\n    commandBuffer,\n    6,     // 6 فهارس (مثلثين)\n    1,     // نسخة واحدة\n    0,     // البدء من الفهرس 0\n    0,     // بدون إزاحة رؤوس\n    0      // النسخة الأولى\n);\n\n// مثال: رسم نموذج 3D\nvkCmdDrawIndexed(\n    commandBuffer,\n    model.indexCount,  // عدد فهارس النموذج\n    1,\n    0,\n    0,\n    0\n);",
+      "notes": [
+        "vertexOffset يُضاف لكل فهرس",
+        "نوع الفهرس: UINT16 أو UINT32"
+      ],
+      "seeAlso": ["vkCmdDraw", "vkCmdBindIndexBuffer"]
+    },
+    {
+      "name": "vkCmdBindVertexBuffers",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يربط Vertex Buffers بمخزن الأوامر.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر"
+        },
+        {
+          "name": "firstBinding",
+          "type": "uint32_t",
+          "description": "فهرس الربط الأول"
+        },
+        {
+          "name": "bindingCount",
+          "type": "uint32_t",
+          "description": "عدد Buffers المراد ربطها"
+        },
+        {
+          "name": "pBuffers",
+          "type": "const VkBuffer*",
+          "description": "مصفوفة Buffers"
+        },
+        {
+          "name": "pOffsets",
+          "type": "const VkDeviceSize*",
+          "description": "مصفوفة الإزاحات"
+        }
+      ],
+      "returnValues": null,
+      "example": "// ربط Vertex Buffer واحد\nVkBuffer vertexBuffers[] = { vertexBuffer };\nVkDeviceSize offsets[] = { 0 };\n\nvkCmdBindVertexBuffers(\n    commandBuffer,\n    0,  // ربط رقم 0\n    1,  // عدد Buffers\n    vertexBuffers,\n    offsets\n);\n\n// ربط عدة Vertex Buffers (مثلاً: مواقع وألوان منفصلة)\nVkBuffer buffers[] = { positionBuffer, colorBuffer };\nVkDeviceSize bufferOffsets[] = { 0, 0 };\n\nvkCmdBindVertexBuffers(\n    commandBuffer,\n    0,  // البدء من الربط 0\n    2,  // ربط 2 buffers\n    buffers,\n    bufferOffsets\n);\n\n// الآن يمكن الرسم باستخدام Vertex Buffer\nvkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);",
+      "notes": [
+        "يمكن ربط عدة Buffers دفعة واحدة",
+        "الربط يبقى حتى ربط جديد"
+      ],
+      "seeAlso": ["vkCmdDraw", "vkCmdDrawIndexed"]
+    },
+    {
+      "name": "vkCmdBindIndexBuffer",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يربط Index Buffer بمخزن الأوامر.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر"
+        },
+        {
+          "name": "buffer",
+          "type": "VkBuffer",
+          "description": "Index Buffer"
+        },
+        {
+          "name": "offset",
+          "type": "VkDeviceSize",
+          "description": "الإزاحة بالبايت"
+        },
+        {
+          "name": "indexType",
+          "type": "VkIndexType",
+          "description": "نوع الفهارس (UINT16 أو UINT32)"
+        }
+      ],
+      "returnValues": null,
+      "example": "// ربط Index Buffer\nvkCmdBindIndexBuffer(\n    commandBuffer,\n    indexBuffer,\n    0,                       // بدون إزاحة\n    VK_INDEX_TYPE_UINT32     // فهارس 32-bit\n);\n\n// إذا كان Index Buffer يستخدم 16-bit:\n// vkCmdBindIndexBuffer(\n//     commandBuffer,\n//     indexBuffer,\n//     0,\n//     VK_INDEX_TYPE_UINT16\n// );\n\n// الآن يمكن الرسم باستخدام الفهارس\nvkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);",
+      "notes": [
+        "UINT16: حتى 65535 رأس",
+        "UINT32: حتى 4 مليار رأس"
+      ],
+      "seeAlso": ["vkCmdDrawIndexed", "vkCmdBindVertexBuffers"]
+    },
+    {
+      "name": "vkCreateBuffer",
+      "category": "buffer",
+      "returnType": "VkResult",
+      "description": "ينشئ مخزناً (Buffer) لتخزين البيانات على GPU.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkBufferCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pBuffer",
+          "type": "VkBuffer*",
+          "description": "مؤشر لتخزين معرف المخزن"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// إنشاء Vertex Buffer\nVkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();\n\nVkBufferCreateInfo bufferInfo = {};\nbufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;\nbufferInfo.size = bufferSize;  // حجم المخزن بالبايت\nbufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;  // استخدام Vertex\nbufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;  // طابور واحد\n\nVkBuffer vertexBuffer;\nVkResult result = vkCreateBuffer(\n    device, &bufferInfo, nullptr, &vertexBuffer\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء Vertex Buffer!\");\n}\n\n// الآن يجب تخصيص ذاكرة وربطها بالـ Buffer\n// vkGetBufferMemoryRequirements(...)\n// vkAllocateMemory(...)\n// vkBindBufferMemory(...)",
+      "notes": [
+        "Buffer بدون ذاكرة - يجب ربط الذاكرة يدوياً",
+        "usage يحدد كيفية استخدام المخزن"
+      ],
+      "seeAlso": ["vkDestroyBuffer", "vkAllocateMemory", "vkBindBufferMemory"]
+    },
+    {
+      "name": "vkDestroyBuffer",
+      "category": "buffer",
+      "returnType": "void",
+      "description": "يدمر المخزن.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "buffer",
+          "type": "VkBuffer",
+          "description": "معرف المخزن المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Buffer\nvkDestroyBuffer(device, vertexBuffer, nullptr);\nvertexBuffer = VK_NULL_HANDLE;\n\n// يجب تحرير الذاكرة المرتبطة أيضاً\nvkFreeMemory(device, vertexBufferMemory, nullptr);",
+      "notes": [
+        "يجب تحرير الذاكرة المرتبطة يدوياً"
+      ],
+      "seeAlso": ["vkCreateBuffer", "vkFreeMemory"]
+    },
+    {
+      "name": "vkAllocateMemory",
+      "category": "memory",
+      "returnType": "VkResult",
+      "description": "يخصص ذاكرة على الجهاز (GPU Memory).",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pAllocateInfo",
+          "type": "const VkMemoryAllocateInfo*",
+          "description": "مؤشر لهيكل معلومات التخصيص"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pMemory",
+          "type": "VkDeviceMemory*",
+          "description": "مؤشر لتخزين معرف الذاكرة"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم التخصيص بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_TOO_MANY_OBJECTS": "عدد كبير جداً من الكائنات",
+        "VK_ERROR_MEMORY_MAP_FAILED": "فشل تعيين الذاكرة"
+      },
+      "example": "// الحصول على متطلبات الذاكرة للـ Buffer\nVkMemoryRequirements memRequirements;\nvkGetBufferMemoryRequirements(device, buffer, &memRequirements);\n\n// إيجاد نوع الذاكرة المناسب\nuint32_t memoryTypeIndex = findMemoryType(\n    memRequirements.memoryTypeBits,\n    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |    // مرئية للـ CPU\n    VK_MEMORY_PROPERTY_HOST_COHERENT_BIT    // متماسكة تلقائياً\n);\n\n// هيكل معلومات التخصيص\nVkMemoryAllocateInfo allocInfo = {};\nallocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;\nallocInfo.allocationSize = memRequirements.size;  // الحجم\nallocInfo.memoryTypeIndex = memoryTypeIndex;      // نوع الذاكرة\n\n// تخصيص الذاكرة\nVkDeviceMemory bufferMemory;\nVkResult result = vkAllocateMemory(\n    device, &allocInfo, nullptr, &bufferMemory\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل تخصيص الذاكرة!\");\n}\n\n// ربط الذاكرة بالـ Buffer\nvkBindBufferMemory(device, buffer, bufferMemory, 0);",
+      "notes": [
+        "أنواع الذاكرة تختلف حسب الجهاز",
+        "HOST_VISIBLE: يمكن الوصول من CPU",
+        "DEVICE_LOCAL: أسرع للـ GPU"
+      ],
+      "seeAlso": ["vkFreeMemory", "vkMapMemory", "vkBindBufferMemory"]
+    },
+    {
+      "name": "vkFreeMemory",
+      "category": "memory",
+      "returnType": "void",
+      "description": "يحرر ذاكرة الجهاز.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "memory",
+          "type": "VkDeviceMemory",
+          "description": "معرف الذاكرة المراد تحريرها"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تحرير الذاكرة\nvkFreeMemory(device, bufferMemory, nullptr);\nbufferMemory = VK_NULL_HANDLE;",
+      "notes": [
+        "يجب تحرير الذاكرة قبل تدمير الجهاز"
+      ],
+      "seeAlso": ["vkAllocateMemory"]
+    },
+    {
+      "name": "vkMapMemory",
+      "category": "memory",
+      "returnType": "VkResult",
+      "description": "يعين ذاكرة GPU إلى عنوان CPU قابل للوصول.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "memory",
+          "type": "VkDeviceMemory",
+          "description": "الذاكرة المراد تعيينها"
+        },
+        {
+          "name": "offset",
+          "type": "VkDeviceSize",
+          "description": "الإزاحة بالبايت"
+        },
+        {
+          "name": "size",
+          "type": "VkDeviceSize",
+          "description": "الحجم بالبايت (VK_WHOLE_SIZE للكل)"
+        },
+        {
+          "name": "flags",
+          "type": "VkMemoryMapFlags",
+          "description": "أعلام (حالياً 0)"
+        },
+        {
+          "name": "ppData",
+          "type": "void**",
+          "description": "مؤشر للمؤشر للبيانات المعينة"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم التعيين بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_MEMORY_MAP_FAILED": "فشل التعيين"
+      },
+      "example": "// تعيين الذاكرة للكتابة\nvoid* data;\nVkResult result = vkMapMemory(\n    device,\n    bufferMemory,\n    0,                  // إزاحة 0\n    bufferSize,         // الحجم الكامل\n    0,                  // بدون أعلام\n    &data               // المؤشر للبيانات\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل تعيين الذاكرة!\");\n}\n\n// نسخ البيانات إلى الذاكرة\nmemcpy(data, vertices.data(), bufferSize);\n\n// إذا لم تكن الذاكرة متماسكة، يجب مسح التخزين المؤقت\n// vkFlushMappedMemoryRanges(...)\n\n// إلغاء التعيين\nvkUnmapMemory(device, bufferMemory);",
+      "notes": [
+        "HOST_VISIBLE مطلوب للتعيين",
+        "HOST_COHERENT يُغني عن vkFlushMappedMemoryRanges",
+        "يجب إلغاء التعيين بـ vkUnmapMemory"
+      ],
+      "seeAlso": ["vkUnmapMemory", "vkFlushMappedMemoryRanges"]
+    },
+    {
+      "name": "vkUnmapMemory",
+      "category": "memory",
+      "returnType": "void",
+      "description": "يلغي تعيين الذاكرة من CPU.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "memory",
+          "type": "VkDeviceMemory",
+          "description": "الذاكرة المراد إلغاء تعيينها"
+        }
+      ],
+      "returnValues": null,
+      "example": "// إلغاء تعيين الذاكرة بعد نسخ البيانات\nvkUnmapMemory(device, bufferMemory);\n\n// الآن المؤشر غير صالح\n// data = nullptr;",
+      "notes": [
+        "يجب عدم استخدام المؤشر بعد إلغاء التعيين"
+      ],
+      "seeAlso": ["vkMapMemory"]
+    },
+    {
+      "name": "vkCreateDescriptorSetLayout",
+      "category": "descriptor",
+      "returnType": "VkResult",
+      "description": "ينشئ تخطيط مجموعة الواصف (Descriptor Set Layout) الذي يحدد أنواع الموارد.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkDescriptorSetLayoutCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pSetLayout",
+          "type": "VkDescriptorSetLayout*",
+          "description": "مؤشر لتخزين معرف التخطيط"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز"
+      },
+      "example": "// واصف الـ Uniform Buffer\nVkDescriptorSetLayoutBinding uboLayoutBinding = {};\nuboLayoutBinding.binding = 0;  // رقم الربط في Shader\nuboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;\nuboLayoutBinding.descriptorCount = 1;  // عدد الواصفات\nuboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;  // مرحلة Vertex\nuboLayoutBinding.pImmutableSamplers = nullptr;  // بدون Samplers\n\n// واصف الـ Sampler\nVkDescriptorSetLayoutBinding samplerLayoutBinding = {};\nsamplerLayoutBinding.binding = 1;\nsamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;\nsamplerLayoutBinding.descriptorCount = 1;\nsamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;\n\n// تجميع الربطات\nstd::array<VkDescriptorSetLayoutBinding, 2> bindings = {\n    uboLayoutBinding, samplerLayoutBinding\n};\n\nVkDescriptorSetLayoutCreateInfo layoutInfo = {};\nlayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;\nlayoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());\nlayoutInfo.pBindings = bindings.data();\n\nVkDescriptorSetLayout descriptorSetLayout;\nVkResult result = vkCreateDescriptorSetLayout(\n    device, &layoutInfo, nullptr, &descriptorSetLayout\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء Descriptor Set Layout!\");\n}",
+      "notes": [
+        "binding يطابق الترقيم في Shader",
+        "يمكن ربط عدة stages بنفس الواصف"
+      ],
+      "seeAlso": ["vkDestroyDescriptorSetLayout", "vkCreateDescriptorPool"]
+    },
+    {
+      "name": "vkDestroyDescriptorSetLayout",
+      "category": "descriptor",
+      "returnType": "void",
+      "description": "يدمر تخطيط مجموعة الواصف.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "descriptorSetLayout",
+          "type": "VkDescriptorSetLayout",
+          "description": "معرف التخطيط المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Descriptor Set Layout\nvkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);",
+      "notes": [
+        "يجب تدمير جميع Pipelines المرتبطة أولاً"
+      ],
+      "seeAlso": ["vkCreateDescriptorSetLayout"]
+    },
+    {
+      "name": "vkCreateDescriptorPool",
+      "category": "descriptor",
+      "returnType": "VkResult",
+      "description": "ينشئ مستودع الواصفات لتخصيص Descriptor Sets.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pCreateInfo",
+          "type": "const VkDescriptorPoolCreateInfo*",
+          "description": "مؤشر لهيكل معلومات الإنشاء"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تخصيص الذاكرة"
+        },
+        {
+          "name": "pDescriptorPool",
+          "type": "VkDescriptorPool*",
+          "description": "مؤشر لتخزين معرف المستودع"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم الإنشاء بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_FRAGMENTATION_EXT": "تفتت الذاكرة"
+      },
+      "example": "// أحجام الواصفات\nstd::array<VkDescriptorPoolSize, 2> poolSizes = {};\n\n// Uniform Buffers\npoolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;\npoolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);\n\n// Combined Image Samplers\npoolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;\npoolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);\n\nVkDescriptorPoolCreateInfo poolInfo = {};\npoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;\npoolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());\npoolInfo.pPoolSizes = poolSizes.data();\npoolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);  // أقصى عدد Sets\npoolInfo.flags = 0;  // بدون أعلام خاصة\n\nVkDescriptorPool descriptorPool;\nVkResult result = vkCreateDescriptorPool(\n    device, &poolInfo, nullptr, &descriptorPool\n);\n\nif (result != VK_SUCCESS) {\n    throw std::runtime_error(\"فشل إنشاء Descriptor Pool!\");\n}",
+      "notes": [
+        "maxSets: الحد الأقصى لمجموعات الواصفات",
+        "FREE_DESCRIPTOR_SET_BIT يسمح بـ vkFreeDescriptorSets"
+      ],
+      "seeAlso": ["vkDestroyDescriptorPool", "vkAllocateDescriptorSets"]
+    },
+    {
+      "name": "vkDestroyDescriptorPool",
+      "category": "descriptor",
+      "returnType": "void",
+      "description": "يدمر مستودع الواصفات.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "descriptorPool",
+          "type": "VkDescriptorPool",
+          "description": "معرف المستودع المراد تدميره"
+        },
+        {
+          "name": "pAllocator",
+          "type": "const VkAllocationCallbacks*",
+          "description": "دوال تحرير الذاكرة"
+        }
+      ],
+      "returnValues": null,
+      "example": "// تدمير Descriptor Pool\nvkDestroyDescriptorPool(device, descriptorPool, nullptr);\ndescriptorPool = VK_NULL_HANDLE;",
+      "notes": [
+        "يُدمّر جميع Descriptor Sets المرتبطة تلقائياً"
+      ],
+      "seeAlso": ["vkCreateDescriptorPool"]
+    },
+    {
+      "name": "vkAllocateDescriptorSets",
+      "category": "descriptor",
+      "returnType": "VkResult",
+      "description": "يخصص مجموعات واصفات من المستودع.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "pAllocateInfo",
+          "type": "const VkDescriptorSetAllocateInfo*",
+          "description": "مؤشر لهيكل معلومات التخصيص"
+        },
+        {
+          "name": "pDescriptorSets",
+          "type": "VkDescriptorSet*",
+          "description": "مصفوفة لتخزين معرفات المجموعات"
+        }
+      ],
+      "returnValues": {
+        "VK_SUCCESS": "تم التخصيص بنجاح",
+        "VK_ERROR_OUT_OF_HOST_MEMORY": "نفدت ذاكرة المضيف",
+        "VK_ERROR_OUT_OF_DEVICE_MEMORY": "نفدت ذاكرة الجهاز",
+        "VK_ERROR_OUT_OF_POOL_MEMORY": "نفد المستودع",
+        "VK_ERROR_FRAGMENTED_POOL": "تفتت المستودع"
+      },
+      "example": "// تخصيص Descriptor Set لكل إطار\nstd::vector<VkDescriptorSet> descriptorSets(MAX_FRAMES_IN_FLIGHT);\n\nfor (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {\n    VkDescriptorSetAllocateInfo allocInfo = {};\n    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;\n    allocInfo.descriptorPool = descriptorPool;\n    allocInfo.descriptorSetCount = 1;\n    allocInfo.pSetLayouts = &descriptorSetLayout;\n    \n    VkResult result = vkAllocateDescriptorSets(\n        device, &allocInfo, &descriptorSets[i]\n    );\n    \n    if (result != VK_SUCCESS) {\n        throw std::runtime_error(\"فشل تخصيص Descriptor Set!\");\n    }\n}",
+      "notes": [
+        "لا حاجة لتحريرها يدوياً مع المستودع",
+        "يجب تحديثها بـ vkUpdateDescriptorSets"
+      ],
+      "seeAlso": ["vkFreeDescriptorSets", "vkUpdateDescriptorSets"]
+    },
+    {
+      "name": "vkUpdateDescriptorSets",
+      "category": "descriptor",
+      "returnType": "void",
+      "description": "يحدث محتوى مجموعات الواصفات.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "VkDevice",
+          "description": "الجهاز المنطقي"
+        },
+        {
+          "name": "descriptorWriteCount",
+          "type": "uint32_t",
+          "description": "عدد عمليات الكتابة"
+        },
+        {
+          "name": "pDescriptorWrites",
+          "type": "const VkWriteDescriptorSet*",
+          "description": "مصفوفة عمليات الكتابة"
+        },
+        {
+          "name": "descriptorCopyCount",
+          "type": "uint32_t",
+          "description": "عدد عمليات النسخ"
+        },
+        {
+          "name": "pDescriptorCopies",
+          "type": "const VkCopyDescriptorSet*",
+          "description": "مصفوفة عمليات النسخ"
+        }
+      ],
+      "returnValues": null,
+      "example": "// معلومات الـ Uniform Buffer\nVkDescriptorBufferInfo bufferInfo = {};\nbufferInfo.buffer = uniformBuffers[i];\nbufferInfo.offset = 0;\nbufferInfo.range = sizeof(UniformBufferObject);\n\n// معلومات الـ Image\nVkDescriptorImageInfo imageInfo = {};\nimageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;\nimageInfo.imageView = textureImageView;\nimageInfo.sampler = textureSampler;\n\n// كتابة الـ Uniform Buffer\nVkWriteDescriptorSet descriptorWrite = {};\ndescriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;\ndescriptorWrite.dstSet = descriptorSets[i];  // المجموعة\ndescriptorWrite.dstBinding = 0;  // رقم الربط\ndescriptorWrite.dstArrayElement = 0;  // فهرس المصفوفة\ndescriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;\ndescriptorWrite.descriptorCount = 1;\ndescriptorWrite.pBufferInfo = &bufferInfo;\n\n// كتابة الـ Sampler\nVkWriteDescriptorSet samplerWrite = {};\nsamplerWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;\nsamplerWrite.dstSet = descriptorSets[i];\nsamplerWrite.dstBinding = 1;\nsamplerWrite.dstArrayElement = 0;\nsamplerWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;\nsamplerWrite.descriptorCount = 1;\nsamplerWrite.pImageInfo = &imageInfo;\n\n// تحديث الواصفات\nstd::array<VkWriteDescriptorSet, 2> writes = { descriptorWrite, samplerWrite };\nvkUpdateDescriptorSets(\n    device,\n    static_cast<uint32_t>(writes.size()),\n    writes.data(),\n    0,       // بدون نسخ\n    nullptr\n);",
+      "notes": [
+        "يجب تحديث كل واصف قبل استخدامه",
+        "يمكن تحديث عدة واصفات دفعة واحدة"
+      ],
+      "seeAlso": ["vkAllocateDescriptorSets"]
+    },
+    {
+      "name": "vkCmdBindDescriptorSets",
+      "category": "command_buffer",
+      "returnType": "void",
+      "description": "يربط مجموعات الواصفات بمخزن الأوامر.",
+      "parameters": [
+        {
+          "name": "commandBuffer",
+          "type": "VkCommandBuffer",
+          "description": "مخزن الأوامر"
+        },
+        {
+          "name": "pipelineBindPoint",
+          "type": "VkPipelineBindPoint",
+          "description": "نقطة الربط (GRAPHICS أو COMPUTE)"
+        },
+        {
+          "name": "layout",
+          "type": "VkPipelineLayout",
+          "description": "تخطيط Pipeline"
+        },
+        {
+          "name": "firstSet",
+          "type": "uint32_t",
+          "description": "فهرس المجموعة الأولى"
+        },
+        {
+          "name": "descriptorSetCount",
+          "type": "uint32_t",
+          "description": "عدد المجموعات"
+        },
+        {
+          "name": "pDescriptorSets",
+          "type": "const VkDescriptorSet*",
+          "description": "مصفوفة المجموعات"
+        },
+        {
+          "name": "dynamicOffsetCount",
+          "type": "uint32_t",
+          "description": "عدد الإزاحات الديناميكية"
+        },
+        {
+          "name": "pDynamicOffsets",
+          "type": "const uint32_t*",
+          "description": "مصفوفة الإزاحات الديناميكية"
+        }
+      ],
+      "returnValues": null,
+      "example": "// ربط Descriptor Set\nvkCmdBindDescriptorSets(\n    commandBuffer,\n    VK_PIPELINE_BIND_POINT_GRAPHICS,  // للرسوميات\n    pipelineLayout,                    // التخطيط\n    0,                                 // المجموعة الأولى\n    1,                                 // عدد المجموعات\n    &descriptorSets[currentFrame],     // المجموعة\n    0,                                 // بدون إزاحات ديناميكية\n    nullptr\n);\n\n// الآن Shaders يمكنها الوصول لـ Uniforms و Textures\n// vkCmdDraw(...);",
+      "notes": [
+        "يتم الربط قبل أوامر الرسم",
+        "يمكن ربط عدة مجموعات دفعة واحدة"
+      ],
+      "seeAlso": ["vkCmdBindPipeline", "vkAllocateDescriptorSets"]
+    }
+  ]
+}

@@ -1,0 +1,1347 @@
+{
+  "referenceData": {
+    "std::vector": {
+      "title": "std::vector",
+      "type": "حاوية STL",
+      "description": "مصفوفة ديناميكية تنمو تلقائيًا عند الإضافة وتوفر وصولًا عشوائيًا سريعًا O(1). تُخصّص ذاكرة متجاورة وتعيد تخصيصها عند الامتلاء بنسخ العناصر لموقع جديد.",
+      "usage": "الحاوية الأكثر استخدامًا في C++ لتخزين عدد متغير من العناصر. هي الخيار الافتراضي الأول لأي مجموعة عناصر تحتاج وصولًا عشوائيًا.",
+      "example": "std::vector<int> v = {1, 2, 3};\nv.push_back(4);",
+      "includeHeader": "#include <vector>",
+      "usageExamples": [
+        {
+          "titleArabic": "إضافة عناصر والوصول إليها",
+          "code": "#include <vector>\n#include <iostream>\n\nstd::vector<int> scores;\nscores.push_back(90);   // إضافة في النهاية\nscores.push_back(85);\nscores.emplace_back(95); // يبني العنصر في المكان مباشرة (أكفأ للأنواع المعقدة)\n\n// الوصول العشوائي بـ operator[] — لا يتحقق من الحدود\nstd::cout << scores[0]; // 90\n\n// at() يتحقق من الحدود ويرمي out_of_range عند تجاوزها\nstd::cout << scores.at(1); // 85\n\n// size() يُرجع عدد العناصر الحالي (من نوع size_t)\nstd::cout << \"Count: \" << scores.size(); // 3",
+          "explanationArabic": "push_back تنسخ العنصر أو تنقله إلى النهاية. emplace_back تبني العنصر في مكانه مباشرةً داخل الحاوية وتتجنب النسخ المؤقت. operator[] سريع لكنه لا يتحقق من الحدود — استخدمه عندما تكون متأكدًا من صحة الفهرس. at() أبطأ قليلًا لكنه آمن لأنه يتحقق."
+        },
+        {
+          "titleArabic": "reserve + emplace_back: تجنب إعادة التخصيص في حلقة",
+          "code": "#include <vector>\n\n// قراءة عدد العناصر من مكان ما\nconst size_t count = 10000;\n\nstd::vector<float> vertices;\nvertices.reserve(count);  // تخصيص الذاكرة مرة واحدة بدون تهيئة العناصر\n\nfor (size_t i = 0; i < count; ++i) {\n    vertices.emplace_back(static_cast<float>(i));\n    // لا تحدث إعادة تخصيص هنا لأن السعة كافية\n}\n\n// size() = عدد العناصر الفعلي\n// capacity() = المساحة المحجوزة فعليًا\n// بعد reserve: capacity >= count, size = 0 حتى نبدأ الإضافة\nstd::cout << \"size: \" << vertices.size();       // 10000\nstd::cout << \"capacity: \" << vertices.capacity(); // 10000 أو أكثر",
+          "explanationArabic": "بدون reserve، كلما امتلأت الحاوية تُعيد تخصيص ذاكرة أكبر وتنسخ كل العناصر القديمة. في حلقة كبيرة هذا يعني عدة عمليات نسخ مكلفة. reserve تحجز السعة مقدمًا فتُلغي كل إعادة التخصيص. الفرق بين reserve وresize: reserve يُخصّص الذاكرة فقط (size لا يتغير)، أما resize فيغيّر size ويُهيّئ العناصر الجديدة."
+        },
+        {
+          "titleArabic": "خطأ شائع: إبطال المكرر (iterator invalidation)",
+          "code": "#include <vector>\n\nstd::vector<int> v = {10, 20, 30, 40, 50};\n\n// ❌ خطأ: push_back قد يُعيد تخصيص الذاكرة فيُبطل it\n// for (auto it = v.begin(); it != v.end(); ++it) {\n//     if (*it == 30) v.push_back(99); // it أصبح غير صالح!\n// }\n\n// ✅ صحيح: إزالة عنصر مع تحديث المكرر\nfor (auto it = v.begin(); it != v.end(); /* لا نزيد هنا */ ) {\n    if (*it == 30) {\n        it = v.erase(it); // erase يُرجع مكرر العنصر التالي\n    } else {\n        ++it;\n    }\n}\n// v = {10, 20, 40, 50}",
+          "explanationArabic": "إضافة عنصر بـ push_back قد تُسبب إعادة تخصيص if size == capacity. عندئذ كل المكررات والمؤشرات والمراجع للعناصر تصبح غير صالحة (dangling). القاعدة: لا تُضف عناصر لحاوية بينما تُكرر عليها بـ begin/end. erase أكثر أمانًا لأنه يُرجع مكرر العنصر التالي مباشرةً. انتبه: erase يجعل كل المكررات بعد العنصر المحذوف غير صالحة أيضًا."
+        }
+      ],
+      "related": [
+        "std::array",
+        "std::span",
+        "size_t",
+        "std::deque",
+        "std::reserve"
+      ]
+    },
+    "std::string": {
+      "title": "std::string",
+      "type": "حاوية STL",
+      "description": "حاوية سلاسل نصية (تخصّص std::basic_string<char>) تدير الذاكرة تلقائيًا وتوفر عمليات البحث والقطع والدمج والتحويل. عناصرها من نوع char وليس بالضرورة UTF-8 صالحًا.",
+      "usage": "النوع الأساسي للنصوص في C++. لا تمثل بالضرورة نصًا مشفرًا بمعيار معيّن — هي مجرد تسلسل بايتات char.",
+      "example": "std::string name = \"Atlas\";\nname += \" Guide\";",
+      "includeHeader": "#include <string>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء وربط واستخراج أجزاء",
+          "code": "#include <string>\n#include <iostream>\n\n// بناء من نص خام\nstd::string path = \"/assets/textures/hero.png\";\n\n// find() يُرجع الموضع أو npos إذا لم يُجد\nauto pos = path.rfind('/');\nif (pos != std::string::npos) {\n    // substr(pos, count) يُرجع سلسلة فرعية\n    std::string filename = path.substr(pos + 1);\n    std::cout << filename; // hero.png\n}\n\n// starts_with و ends_with (C++20) أنظف من المقارنة اليدوية\nif (path.ends_with(\".png\")) {\n    std::cout << \"ملف صورة\";\n}",
+          "explanationArabic": "rfind يبحث من النهاية للخلف — مناسب لفصل اسم الملف من المسار. npos هو ثابت خاص يعني 'لم يُعثر'. substr يأخذ موضع البداية والعدد (ليس النهاية). starts_with/ends_with أوضح من find == 0 أو compare."
+        },
+        {
+          "titleArabic": "تحويل رقم إلى نص وبالعكس",
+          "code": "#include <string>\n#include <string_view>\n\n// C++11: to_string لتحويل الأنواع العددية إلى نص\nstd::string width_str = std::to_string(1920);\nstd::string version = std::to_string(3.14f);\n\n// C++17: stoi / stof / stod لتحويل نص إلى عدد\n// هذه ترمي std::invalid_argument إذا لم يكن النص رقمًا صالحًا\ntry {\n    int w = std::stoi(\"1920\");     // 1920\n    float f = std::stof(\"3.14\");    // 3.14f\n    int base = std::stoi(\"ff\", nullptr, 16); // 255 (أساس 16)\n} catch (const std::invalid_argument&) {\n    // النص ليس رقمًا\n} catch (const std::out_of_range&) {\n    // الرقم أكبر من أن يتسع في النوع المستهدف\n}",
+          "explanationArabic": "to_string بسيطة لكنها لا تتحكم في التنسيق (عدد الخانات العشرية مثلاً). stoi/stof تتجاهل المسافات البادئة وتقرأ حتى أول حرف غير رقمي. المعامل الثالث لـ stoi يحدد أساس العد (2، 8، 10، 16). الانتباه: هذه الدوال ترمي استثناءات — لا تستخدمها على بيانات غير موثوقة دون try/catch."
+        },
+        {
+          "titleArabic": "خطأ شائع: مقارنة نصوص بـ == مع const char* الأداء",
+          "code": "#include <string>\n\nstd::string input = \"save\";\n\n// ✅ صحيح منطقيًا: == يعمل لكنه قد يُنشئ string مؤقت\nif (input == \"save\") { /* ... */ }\n\n// الأفضل أداءً في الحلقات الكثيرة: استخدام string_view\n// لأنه لا يُنشئ نسخة ولا حاوية مؤقتة\n#include <string_view>\nvoid handle(std::string_view command) {\n    if (command == \"save\")   { /* ... */ }\n    if (command == \"load\")   { /* ... */ }\n    if (command == \"quit\")   { /* ... */ }\n}\n\n// الاستدعاء مباشرة — لا نسخة\nhandle(input);         // من string\nhandle(\"save\");       // من const char*\nhandle(std::string_view(\"save\")); // صريح",
+          "explanationArabic": "عند مقارنة std::string بـ const char* عبر ==، يحتاج المُصرِّف أحيانًا لبناء string مؤقت لاستدعاء operator==. في حلقة ضيقة أو مقارنات كثيرة، استخدام string_view في توقيع الدالة يتفادى هذا تمامًا لأن string_view يمكنه الارتباط بـ const char* مباشرةً بدون تخصيص."
+        }
+      ],
+      "related": [
+        "std::string_view",
+        "char",
+        "std::stringstream",
+        "std::stoi",
+        "std::to_string"
+      ]
+    },
+    "std::string_view": {
+      "title": "std::string_view",
+      "type": "عرض (C++17)",
+      "description": "عرض غير مالك لسلسلة نصية — مؤشر للحرف الأول وطول. لا يُخصّص ذاكرة ولا ينسخ. يمكنه الارتباط بـ const char* و std::string و substr. حجمه = مؤشرين (16 بايت عادةً).",
+      "usage": "يُستخدم في تواقيع الدوال التي تقرأ النص فقط دون تعديله. البديل الأكفأ لـ const std::string& في معظم الحالات.",
+      "example": "void print(std::string_view sv) { std::cout << sv; }\nprint(\"hello\");",
+      "includeHeader": "#include <string_view>",
+      "usageExamples": [
+        {
+          "titleArabic": "توقيع دالة يقبل كل أنواع النصوص",
+          "code": "#include <string_view>\n#include <string>\n#include <iostream>\n\n// يقبل: const char*, std::string, std::string_view, substr()\nvoid log(std::string_view tag, std::string_view message) {\n    std::cout << '[' << tag << \"] \" << message << '\\n';\n}\n\nlog(\"INFO\", \"بدء التحميل\");           // const char*\nstd::string module = \"Renderer\";\nlog(module, \"جاهز\");                    // std::string\nlog(\"WARN\", std::string(\"ذاكرة منخفضة\")); // std::string مؤقت\nlog(\"DEBUG\", module.substr(0, 3));        // string_view من substr",
+          "explanationArabic": "string_view يحل مشكلة تضخم التوقيعات. بدل كتابة عدة حمولات لـ const char* و const std::string&، حمولة واحدة تكفي. لا يحدث أي نسخ عند التحويل من أي من هذه الأنواع. substr() على string_view يُرجع string_view آخر — لا يُنشئ string جديدًا."
+        },
+        {
+          "titleArabic": "تجزئة نص بدون نسخ",
+          "code": "#include <string_view>\n#include <vector>\n\nstd::vector<std::string_view> split(std::string_view sv, char delim) {\n    std::vector<std::string_view> parts;\n    while (!sv.empty()) {\n        auto pos = sv.find(delim);\n        if (pos == std::string_view::npos) {\n            parts.push_back(sv);\n            break;\n        }\n        parts.push_back(sv.substr(0, pos));\n        sv.remove_prefix(pos + 1); // يتخطى المُحدِّد بدون نسخ\n    }\n    return parts;\n}\n\n// النتيجة: كل عنصر string_view يشير للنص الأصلي\nauto parts = split(\"red,green,blue\", ',');\n// parts = {\"red\", \"green\", \"blue\"} — صفر نسخ!",
+          "explanationArabic": "remove_prefix و remove_suffix يُعدّلان العرض بدون نسخ — يُزيلان أحرفًا من البداية أو النهاية. هذا يجعل التجزئة خالية من التخصيص تمامًا. انتبه: العناصر المُرجعة تشير للنص الأصلي — إذا أُلغي النص الأصلي تصبح العروض dangling."
+        },
+        {
+          "titleArabic": "خطأ شائع: تخزين string_view لفترة أطول من مصدره",
+          "code": "#include <string_view>\n#include <string>\n\n// ❌ كارثة: sv يشير لـ temp التي تُدمَّر عند نهاية السطر\n// std::string_view sv = std::string(\"temporary\");\n// std::cout << sv; // UB: dangling pointer!\n\n// ❌ نفس المشكلة مع دالة تُرجع string محلي\n// std::string_view bad() {\n//     std::string local = \"hello\";\n//     return local; // local يُدمَّر، sv يشير لمكان محرر\n// }\n\n// ✅ صحيح: النص الأصلي يعيش أطول من العرض\nstd::string name = \"Atlas\";           // يعيش في النطاق\nstd::string_view sv = name;             // آمن: name حي\n\n// ✅ صحيح: string literals تعيش طوال البرنامج\nstd::string_view lit = \"hello\";        // آمن: literal ثابت\n\n// ✅ إذا احتجت ملكية: انسخ لـ string\nstd::string owned = std::string(sv);",
+          "explanationArabic": "string_view لا يملك — هو مجرد نافذة قراءة على ذاكرة شخص آخر. إذا أُلغي المصدر يصبح العرض dangling وقراءته UB. القاعدة الذهبية: لا تُخزّن string_view إلا إذا كنت متأكدًا أن المصدر يعيش أطول. عند الشك، انسخ لـ std::string."
+        }
+      ],
+      "related": [
+        "std::string",
+        "const",
+        "std::span",
+        "std::string"
+      ]
+    },
+    "std::array": {
+      "title": "std::array",
+      "type": "حاوية STL",
+      "description": "غلاف لصفيف C ثابت الحجم يضيف واجهة حاوية قياسية مع معرفة الحجم وقت الترجمة. لا يُخصّص ذاكرة ديناميكية — حجمه يساوي تمامًا sizeof(T) * N. يدعم at() للتحقق من الحدود و size() و begin()/end() وبقية واجهة الحاويات. لا يمكن تغيير حجمه بعد التعريف.",
+      "usage": "البديل الآمن لصفيف C الخام T arr[N] عندما يكون الحجم معلومًا مسبقًا. يُستخدم كثيرًا في رسوميات الحاسوب لمتجهات الألوان (RGB) والإحداثيات (xyzw) والقصاصات.",
+      "example": "std::array<float, 3> pos = {0.0f, 1.0f, 0.0f};",
+      "includeHeader": "#include <array>",
+      "usageExamples": [
+        {
+          "titleArabic": "إحداثيات ثلاثية الأبعاد مع at() الآمن",
+          "code": "#include <array>\n#include <iostream>\n\nstd::array<float, 3> position = {1.0f, 2.0f, 3.0f};\n\n// at() يتحقق من الحدود — أبطأ قليلًا لكنه آمن\nstd::cout << position.at(0); // 1.0f\n\n// operator[] لا يتحقق — أسرع لكن خطر عند فهرس خاطئ\nstd::cout << position[1]; // 2.0f\n\n// size() معروف وقت الترجمة — لا يُحسب في وقت التشغيل\nstd::cout << \"size: \" << position.size(); // 3\n\n// المرور بمدى\nfor (auto& coord : position) {\n    coord *= 2.0f; // تعديل كل عنصر\n}\n// position = {2.0f, 4.0f, 6.0f}",
+          "explanationArabic": "std::array يضيف واجهة حاوية كاملة فوق الصفيف الخام: at() للتحقق، size() للعدد، begin()/end() للمدى. الفرق عن vector: الحجم ثابت — لا يوجد push_back ولا reserve. sizeof(array<float,3>) يساوي sizeof(float)*3 بالضبط (12 بايت) بدون أي حمل إضافي."
+        },
+        {
+          "titleArabic": "fill وتبديل المصفوفات",
+          "code": "#include <array>\n#include <algorithm>\n\n// تهيئة كل العناصر بقيمة واحدة\nstd::array<int, 4> scores;\nscores.fill(0);  // {0, 0, 0, 0}\n\n// التبديل بين مصفوفتين من نفس الحجم والنوع\nstd::array<int, 4> prev = scores;\nscores[0] = 100;\nscores.swap(prev);  // scores تعود {0,0,0,0} و prev تصبح {100,0,0,0}\n\n// std::sort يعمل لأن array لديها begin/end\nstd::array<int, 5> nums = {5, 3, 1, 4, 2};\nstd::sort(nums.begin(), nums.end());\n// nums = {1, 2, 3, 4, 5}",
+          "explanationArabic": "fill تعيّن كل العناصر لقيمة واحدة — مفيد للتهيئة. swap يُبدّل محتويات مصفوفتين بنفس الحجم في O(1) لأنه يُبدّل البيانات الداخلية فقط لا ينسخ عنصرًا عنصرًا. لأن array توفر begin/end، كل خوارزميات STL مثل sort و find و reverse تعمل عليها مباشرة."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان تهيئة عنصر",
+          "code": "#include <array>\n#include <iostream>\n\n// ❌ التهيئة الجزئية: العناصر المتبقية تُهيّأ بصفر (للأنواع العددية فقط)\nstd::array<int, 5> partial = {1, 2};\n// partial = {1, 2, 0, 0, 0} — العناصر الثلاثة الباقية = 0\n\n// ❌ خطأ: بدون أي تهيئة، القيم غير معرّفة (garbage) للأنواع العددية المحلية\n// std::array<int, 3> uninitialized;\n// std::cout << uninitialized[0]; // UB: قيمة عشوائية\n\n// ✅ صحيح: التهيئة الكاملة أو fill\nstd::array<int, 3> safe = {0, 0, 0};\nstd::array<int, 3> safe2 = {};          // كلها صفر\nstd::array<int, 3> safe3;\nsafe3.fill(0);                         // تعيين صريح\n\n// ✅ صحيح: الأنواع التي لديها مُنشئ افتراضي تُهيّأ تلقائيًا\nstd::array<std::string, 2> strs; // كلتاهما سلاسل فارغة \"\"",
+          "explanationArabic": "التهيئة بـ {} تُهيّئ كل العناصر بصفر للأنواع العددية. بدون تهيئة، العناصر العددية المحلية (stack) تكون قيمًا عشوائية — هذا يختلف عن vector التي تُهيّئ بالقيمة الافتراضية. التهيئة الجزئية {1, 2} تضع 1 و 2 ثم تملأ الباقي بصفر. القاعدة: هَيّئ دائمًا array محلي بالكامل أو استخدم fill."
+        }
+      ],
+      "related": [
+        "std::vector",
+        "std::span",
+        "size_t",
+        "std::sort",
+        "std::fill"
+      ]
+    },
+    "std::deque": {
+      "title": "std::deque",
+      "type": "حاوية STL",
+      "description": "حاوية ديناميكية مزدوجة الطرف تسمح بالإدراج والحذف السريع من كلا الطرفين مع وصول عشوائي. تُخزن العناصر في كتل ذاكرة منفصلة لا في كتلة واحدة متجاورة مثل vector.",
+      "usage": "حاوية أساسية لـ std::queue. تفيد عند الحاجة لإدراج سريع في كلا الطرفين.",
+      "example": "std::deque<int> dq;\ndq.push_front(1);\ndq.push_back(2);",
+      "includeHeader": "#include <deque>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج من كلا الطرفين والوصول العشوائي",
+          "code": "#include <deque>\n#include <iostream>\n\nstd::deque<int> dq;\ndq.push_back(10);   // النهاية: {10}\ndq.push_back(20);   // النهاية: {10, 20}\ndq.push_front(5);   // البداية: {5, 10, 20}\ndq.push_front(1);   // البداية: {1, 5, 10, 20}\n\n// الوصول العشوائي مثل vector\nstd::cout << dq[0];  // 1\nstd::cout << dq.at(2); // 10 (آمن: يتحقق من الحدود)\n\n// front و back للوصول السريع للطرفين\nstd::cout << dq.front(); // 1\nstd::cout << dq.back();  // 20",
+          "explanationArabic": "push_front وpush_back كلاهما O(1) — الفرق الأساسي عن vector التي push_front فيها O(n). الوصول العشوائي متاح لكنه أبطأ قليلًا بسبب الكتل المنفصلة."
+        },
+        {
+          "titleArabic": "حذف من كلا الطرفين — لا إبطال للمكررات",
+          "code": "#include <deque>\n#include <iostream>\n\nstd::deque<int> dq = {10, 20, 30, 40, 50};\n\n// pop_front و pop_back كلاهما O(1)\ndq.pop_front(); // {20, 30, 40, 50}\ndq.pop_back();  // {20, 30, 40}\n\n// عكس deque بدون حاوية مؤقتة\nstd::deque<int> nums = {1, 2, 3, 4};\nfor (size_t i = 0; i < nums.size() / 2; ++i) {\n    int front_val = nums.front();\n    int back_val = nums.back();\n    nums.front() = back_val;\n    nums.back() = front_val;\n    nums.pop_front();\n    if (!nums.empty()) nums.pop_back();\n}\n// مع فرض حجم زوجي: nums تُعكَس",
+          "explanationArabic": "عكس vector، الإدراج والحذف في كلا الطرفين لا يُعيد تخصيص الذاكرة ولا يُبطِل المكررات. هذا يجعل deque مناسبة عند الحاجة لإضافة وحذف متوازن."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام deque بدل vector عندما لا تحتاج push_front",
+          "code": "#include <deque>\n#include <vector>\n\n// ❌ لا فائدة من deque هنا: لا تُدرج في البداية أصلًا\n// std::deque<int> dq;\n// dq.push_back(1);\n// dq.push_back(2);\n// for (int i = 0; i < dq.size(); ++i) { /* ... */ }\n\n// ✅ vector أنسب: وصول عشوائي أسرع وتوطين محلي أفضل\nstd::vector<int> v;\nv.push_back(1);\nv.push_back(2);\nfor (int i = 0; i < v.size(); ++i) { /* ... */ }\n\n// ✅ استخدم deque فقط عندما تحتاج فعلًا:\n// 1. push_front أو pop_front\n// 2. إدراج/cذف من كلا الطرفين\n// 3. الحاوية الداخلية لـ queue",
+          "explanationArabic": "vector أسرع في الوصول العشوائي وأفضل في التوطين المحلي. deque تُخزن في كتل منفصلة. القاعدة: إذا لم تُدرج في البداية أصلًا فـ vector أنسب."
+        }
+      ],
+      "related": [
+        "std::vector",
+        "std::list",
+        "std::queue"
+      ]
+    },
+    "std::list": {
+      "title": "std::list",
+      "type": "حاوية STL",
+      "description": "قائمة مرتبطة مزدوجة تسمح بالإدراج والحذف في أي موضع بتعقيد O(1) لكن بدون وصول عشوائي. العناصر مُخزّنة في عُقد منفصلة في الذاكرة (ليست متجاورة مثل vector). تُوفّر مكررات ثنائية الاتجاه وsplice لنقل عقد بين قوائم بدون نسخ.",
+      "usage": "حالات كثرة الإدراج والحذف في الوسط مثل قوائم الانتظار أو أنظمة الكيانات. أنسب من vector عندما لا تحتاج وصولًا عشوائيًا لكنك تُدرج وتحذف كثيرًا في المنتصف. أقل شيوعًا من vector — فكّر مرتين قبل استخدامها.",
+      "example": "std::list<int> lst = {1, 2, 3};\nlst.insert(++lst.begin(), 10);",
+      "includeHeader": "#include <list>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج وحذف في المنتصف",
+          "code": "#include <list>\n#include <iostream>\n\nint main() {\n    std::list<int> lst = {10, 30, 50};\n    auto it = lst.begin();\n    ++it; // يشير لـ 30\n    lst.insert(it, 20); // {10, 20, 30, 50}\n    lst.erase(it);       // {10, 20, 50}\n    for (int x : lst) std::cout << x << ' '; // 10 20 50\n}",
+          "explanationArabic": "insert وerase بمكرر O(1) في list لأنها تُعدّل الروابط فقط. في vector، الإدراج في المنتصف O(n) لأنها تنسخ كل العناصر بعد نقطة الإدراج."
+        },
+        {
+          "titleArabic": "splice: نقل عقد بدون نسخ",
+          "code": "#include <list>\n#include <iostream>\n\nint main() {\n    std::list<int> a = {1, 2, 3};\n    std::list<int> b = {40, 50};\n    auto it = a.begin(); ++it; // يشير لـ 2\n    a.splice(it, b); // ينقل كل عناصر b إلى a قبل 2\n    // a = {1, 40, 50, 2, 3}, b = فارغة\n    for (int x : a) std::cout << x << ' ';\n}",
+          "explanationArabic": "splice ينقل عُقدًا بين قوائم بتعديل المؤشرات فقط — لا نسخ عناصر. هذا أسرع من erase + insert. مفيد عند إعادة تنظيم قوائم أو دمجها."
+        },
+        {
+          "titleArabic": "متى تستخدم list بدل vector",
+          "code": "#include <list>\n#include <vector>\n\n// ✅ vector: وصول عشوائي + إدراج في النهاية\nstd::vector<int> v = {1, 2, 3};\nv.push_back(4);  // سريع\n// v[1] = 20;     // سريع O(1)\n\n// ✅ list: إدراج/حذف في المنتصف\nstd::list<int> lst = {1, 2, 3};\nlst.push_back(4); // سريع\n// لا يوجد lst[1]! يجب استخدام المكررات\nauto it = lst.begin(); ++it;\nlst.insert(it, 20); // سريع O(1) — في vector يكون O(n)",
+          "explanationArabic": "vector أفضل في معظم الحالات: وصول عشوائي O(1)، تخزين متجاور (أفضل للكاش)، أقل ذاكرة. list أفضل فقط عند كثرة الإدراج والحذف في المنتصف. إذا لم تكن متأكدًا، استخدم vector."
+        }
+      ],
+      "related": [
+        "std::vector",
+        "std::deque",
+        "std::forward_list"
+      ]
+    },
+    "std::forward_list": {
+      "title": "std::forward_list",
+      "type": "حاوية STL",
+      "description": "قائمة مرتبطة أحادية الارتباط — كل عقدة تحتوي مؤشرًا للعقدة التالية فقط (بدون مؤشر للسابقة). هذا يجعلها أصغر من std::list بعقدة واحدة لكل عنصر (توفير 8 بايت على 64-bit). لا تدعم الوصول العشوائي ولا push_back ولا size() — هذه العمليات تحتاج المرور على القائمة كاملة. إدراج وحذف بعد عقدة معينة بتعقيد O(1) لأنه لا يحتاج تحديث مؤشرات سابقة.",
+      "usage": "تُستخدم عندما يكون الذاكرة ضيقة والأداء حرج والحاجة لإدراج وحذف من المقدمة فقط — مثل قوائم الانتظار LIFO أو قوائم المهام أو التسلسلات التي تُمرّر مرة واحدة. الخيار الأنسب عندما لا تحتاج المرور للخلف أو معرفة الحجم.",
+      "example": "std::forward_list<int> list;\nlist.push_front(1);",
+      "includeHeader": "#include <forward_list>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج وحذف بـ insert_after و erase_after",
+          "code": "#include <forward_list>\n#include <iostream>\n\nstd::forward_list<int> nums = {10, 30, 40};\n\n// insert_after: يُدرج بعد المكرر — لا يُدرج قبله\nauto it = nums.begin(); // يشير لـ 10\nnums.insert_after(it, 20); // {10, 20, 30, 40}\n\n// erase_after: يحذف العنصر بعد المكرر\nnums.erase_after(it); // يحذف 20 → {10, 30, 40}\n\n// المرور للأمام فقط\nfor (int x : nums) {\n    std::cout << x << ' '; // 10 30 40\n}",
+          "explanationArabic": "forward_list لا تملك insert(it) ولا erase(it) — فقط insert_after و erase_after. السبب: بدون مؤشر للعقدة السابقة لا يمكن تعديلها. هذا هو الثمن الذي تدفعه مقابل توفير 8 بايت لكل عقدة. begin() يُرجع مكرر يشير للعنصر الأول ويمكنك المرور للأمام فقط."
+        },
+        {
+          "titleArabic": "البحث مع insert_after: لا يوجد find مدمج",
+          "code": "#include <forward_list>\n#include <iostream>\n\nstd::forward_list<std::string> tasks = {\"render\", \"physics\", \"audio\"};\n\n// لا يوجد find() مدمج — استخدم std::find أو before_begin()\nauto it = std::find(tasks.begin(), tasks.end(), \"physics\");\nif (it != tasks.end()) {\n    tasks.insert_after(it, \"input\");\n}\n// {\"render\", \"physics\", \"input\", \"audio\"}\n\n// before_begin(): مكرر خاص قبل العنصر الأول\n// مفيد لإدراج في المقدمة بدون push_front\nauto pos = tasks.before_begin();\ntasks.insert_after(pos, \"init\");\n// {\"init\", \"render\", \"physics\", \"input\", \"audio\"}\n\n// push_front أبسط لكن insert_after(before_begin()) مفيد في دوال عامة\nfor (const auto& t : tasks) {\n    std::cout << t << ' ';\n}",
+          "explanationArabic": "before_begin() مكرر خاص يشير لما قبل العنصر الأول — لا يشير لعنصر حقيقي لكنه يسمح بـ insert_after(pos) كـ push_front. هذا مفيد في القوالب لأنك لا تحتاج حالة خاصة للمقدمة. std::find يعمل مع forward_list لكنه بحث خطي O(n) — لا يوجد بحث أسرع في القوائم المرتبطة."
+        },
+        {
+          "titleArabic": "متى تستخدم forward_list بدل vector أو list",
+          "code": "#include <forward_list>\n#include <vector>\n\n// ✅ forward_list: عندما تحتاج إدراج سريع من المقدمة فقط\n// ولا تحتاج size() ولا المرور للخلف\n// مثال: قائمة مهام تُضاف للمقدمة وتُعالج من المقدمة\nstd::forward_list<int> lifo;\nlifo.push_front(1);\nlifo.push_front(2);\nlifo.pop_front(); // يُزيل 2\n\n// ❌ لا تستخدمها لو تحتاج:\n// - الوصول العشوائي → vector\n// - push_back → vector أو deque أو list\n// - size() → vector أو list (forward_list لا تملكها!)\n// - المرور للخلف → list\n\n// ⚠️ ملاحظة: size() غير موجودة في forward_list\n// std::distance(begin, end) يعطي الحجم لكنها O(n)\n// auto count = std::distance(lifo.begin(), lifo.end());",
+          "explanationArabic": "forward_list تُضحي بعمليات شائعة (size, push_back, المرور للخلف) مقابل توفير ذاكرة لكل عقدة. في الممارسة vector أفضل في معظم الحالات بسبب تجاوز الذاكرة المؤقتة (cache locality). استخدم forward_list فقط عندما تكون الذاكرة ضيقة فعلًا أو عندما يكون الإدراج من المقدمة هو العملية الوحيدة المطلوبة."
+        }
+      ],
+      "related": [
+        "std::list",
+        "std::vector",
+        "std::deque"
+      ]
+    },
+    "std::map": {
+      "title": "std::map",
+      "type": "حاوية STL",
+      "description": "حاوية ترابطية تربط مفتاحًا فريدًا بقيمة مع الحفاظ على الترتيب التصاعدي حسب المفتاح. داخليةً تستخدم شجرة بحث ثنائية متوازنة (غالبًا red-black tree). بحث وإدراج وحذف بتعقيد O(log n). تحتاج المفتاح أن يدعم operator<.",
+      "usage": "تُستخدم عند الحاجة لبحث سريع بمفتاح مع الحفاظ على الترتيب. أنسب من unordered_map عند الحاجة للمرور بالترتيب أو أقرب مفتاح.",
+      "example": "std::map<std::string, int> ages;\nages[\"Ali\"] = 25;",
+      "includeHeader": "#include <map>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج والمرور بالترتيب",
+          "code": "#include <map>\n#include <iostream>\n\nstd::map<std::string, int> scores;\nscores.insert({\"Ali\", 90});\nscores.insert({\"Sara\", 95});\nscores.insert({\"Omar\", 88});\n\n// المرور دائمًا بالترتيب التصاعدي حسب المفتاح\nfor (const auto& [name, score] : scores) {\n    std::cout << name << \": \" << score << '\\n';\n}\n// المخرج مرتب أبجديًا: Ali, Omar, Sara",
+          "explanationArabic": "العناصر في map مرتبة دائمًا حسب المفتاح — هذا الفرق الأساسي عن unordered_map. insert لا يُعدّل القيمة إذا كان المفتاح موجودًا (يُرجع زوجًا فيه مكرر وbool). Structured binding (const auto& [k,v]) يُبسّط المرور على الأزواج."
+        },
+        {
+          "titleArabic": "lower_bound و upper_bound: نطاق مرتب",
+          "code": "#include <map>\n\nstd::map<int, std::string> events;\nevents[10] = \"بدء التحميل\";\nevents[20] = \"اكتمل التحميل\";\nevents[30] = \"بدء المعالجة\";\nevents[40] = \"اكتملت المعالجة\";\n\n// lower_bound: أول عنصر بمفتاح >= 20\nauto low = events.lower_bound(20);\n// upper_bound: أول عنصر بمفتاح > 20\nauto high = events.upper_bound(20);\n\n// النطاق [low, high) يحتوي العناصر بمفتاح 20 فقط\nfor (auto it = low; it != high; ++it) {\n    std::cout << it->second << '\\n'; // \"اكتمل التحميل\"\n}\n\n// استخدام عملي: كل الأحداث بين 15 و35\nfor (auto it = events.lower_bound(15); it != events.upper_bound(35); ++it) {\n    std::cout << it->first << \": \" << it->second << '\\n';\n}",
+          "explanationArabic": "lower_bound/upper_bound يستفيدان من الترتيب الداخلي فيبحثان بـ O(log n). هذا مستحيل في unordered_map. النطاق [lower_bound(x), upper_bound(x)) يُعطي جميع العناصر بمفتاح x (مفيد في multimap). النمط شائع في الأنظمة الزمنية والمعالجة بالأولوية."
+        },
+        {
+          "titleArabic": "خطأ شائع: operator[] للبحث فقط",
+          "code": "#include <map>\n\nstd::map<std::string, int> config;\n\n// ❌ خطأ: operator[] يُنشئ عنصرًا بقيمة 0 إذا لم يكن موجودًا\n// if (config[\"debug\"] == 1) { ... }\n// // الآن config يحتوي {\"debug\": 0} حتى لو لم نرد ذلك!\n\n// ✅ صحيح: استخدم find أو count للبحث فقط\nif (auto it = config.find(\"debug\"); it != config.end()) {\n    if (it->second == 1) { /* ... */ }\n}\n\n// ✅ أو contains (C++20) — الأنظف\nif (config.contains(\"debug\")) {\n    int val = config.at(\"debug\"); // at() آمن ويرمي إن غاب\n}",
+          "explanationArabic": "operator[] في map يُنشئ عنصرًا بقيمة افتراضية (0 للأعداد، فارغ للنصوص) إذا غاب المفتاح. هذا سلوك مدفوع لصالح الإدراج المريح لكنه كارثي عند البحث. استخدم find أو contains (C++20) للبحث، وat() للوصول الآمن الذي يتحقق من الوجود."
+        }
+      ],
+      "related": [
+        "std::unordered_map",
+        "std::set",
+        "std::pair",
+        "std::multimap"
+      ]
+    },
+    "std::set": {
+      "title": "std::set",
+      "type": "حاوية STL",
+      "description": "حاوية تخزن عناصر فريدة مرتبة تصاعديًا تلقائيًا. داخليةً تستخدم شجرة بحث ثنائية متوازنة (red-black tree). البحث والإضافة والحذف بتعقيد O(log n). لا تسمح بالوصول العشوائي — المرور يكون بالترتيب فقط عبر المكررات. تحتاج العنصر أن يدعم operator<.",
+      "usage": "تفيد عند الحاجة لمنع التكرار والحفاظ على الترتيب مع بحث سريع. شائعة لتتبع العناصر الفريدة مثل الأسماء أو المعرفات أو الكلمات المفتاحية.",
+      "example": "std::set<int> s = {3, 1, 2};\ns.insert(4);",
+      "includeHeader": "#include <set>",
+      "usageExamples": [
+        {
+          "titleArabic": "إضافة وبحث ومنع التكرار",
+          "code": "#include <set>\n#include <string>\n#include <iostream>\n\nstd::set<std::string> keywords;\n\n// insert يُرجع زوجًا (مكرر، bool) — bool يُخبرك إن كان أُضيف فعلًا\nauto [it, ok] = keywords.insert(\"render\");\nstd::cout << ok; // true\n\nauto [it2, ok2] = keywords.insert(\"render\");\nstd::cout << ok2; // false — موجود مسبقًا\n\n// find: O(log n) — أسرع من البحث الخطي\nif (keywords.find(\"render\") != keywords.end()) {\n    std::cout << \"موجود\";\n}\n\n// contains (C++20) — أنظف\nif (keywords.contains(\"update\")) { /* ... */ }\n\n// المرور دائمًا بالترتيب التصاعدي\nfor (const auto& kw : keywords) {\n    std::cout << kw << '\\n';\n}",
+          "explanationArabic": "set ترفض التكرار تلقائيًا — insert يُرجع bool يُخبرك إن كان الإدراج حدث. find أسرع من البحث في vector لأنه O(log n) بدل O(n). لا يوجد operator[] لأن العناصر ليست مفاتيح لقيم — العنصر نفسه هو المفتاح والقيمة."
+        },
+        {
+          "titleArabic": "حذف عناصر و count مع lower_bound",
+          "code": "#include <set>\n\nstd::set<int> nums = {10, 20, 30, 40, 50};\n\n// erase بالقيمة — يُرجع عدد العناصر المحذوفة (0 أو 1 في set)\nsize_t removed = nums.erase(30); // removed = 1\n\n// erase بالمكرر — أسرع لأنه لا يبحث\nauto it = nums.find(20);\nif (it != nums.end()) {\n    nums.erase(it); // لا يعيد مكرر في set (عكس vector)\n}\n\n// count دائمًا 0 أو 1 في set (مفيد كـ bool)\nif (nums.count(40)) { /* موجود */ }\n\n// lower_bound: أول عنصر >= 25\nauto lb = nums.lower_bound(25);\n// lb يشير لـ 40",
+          "explanationArabic": "erase بالقيمة يبحث ثم يحذف — إذا كان لديك المكرر فعلًا فاستخدم erase(it) لأنه أسرع. count في set يُرجع 0 أو 1 فقط — استخدم contains (C++20) لأنه أوضح نيةً. lower_bound يستفيد من الترتيب الداخلي للبحث بـ O(log n)."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام set عندما يكفي unordered_set",
+          "code": "#include <set>\n#include <unordered_set>\n#include <string>\n\n// ❌ لا تحتاج الترتيب هنا — unordered_set أسرع\n// std::set<std::string> visited;\n// visited.insert(\"node_a\");\n// if (visited.contains(\"node_a\")) { /* ... */ }\n\n// ✅ الأفضل: unordered_set — بحث O(1) بدل O(log n)\nstd::unordered_set<std::string> visited;\nvisited.insert(\"node_a\");\nif (visited.contains(\"node_a\")) { /* ... */ }\n\n// ✅ استخدم set فقط إذا احتجت:\n// 1. المرور بالترتيب\n// 2. lower_bound / upper_bound (نطاق مرتب)\n// 3. أقرب عنصر لأعلى أو أسفل\nstd::set<int> timeline = {10, 20, 30, 40};\nauto it = timeline.lower_bound(25); // أول عنصر >= 25 → 30",
+          "explanationArabic": "set أبطأ من unordered_set في كل العمليات الأساسية (O(log n) vs O(1)). استخدم set فقط إذا استفدت فعلًا من الترتيب. إذا كنت فقط تتحقق من الوجود أو تمنع التكرار ف unordered_set أنسب. القاعدة: ابدأ بـ unordered_set وانتقل لـ set فقط عند الحاجة الفعلية للترتيب."
+        }
+      ],
+      "related": [
+        "std::map",
+        "std::unordered_set",
+        "std::multiset",
+        "std::less"
+      ]
+    },
+    "std::multimap": {
+      "title": "std::multimap",
+      "type": "حاوية STL",
+      "description": "حاوية ترابطية مرتبة تسمح بمفاتيح مكررة — كل مفتاح يمكن أن يرتبط بعدة قيم. داخليةً تستخدم شجرة بحث ثنائية متوازنة (red-black tree) مثل std::map. العناصر بنفس المفتاح تكون متجاورة في المرور. لا تدعم operator[] لأن المفتاح ليس فريدًا.",
+      "usage": "تُستخدم عند الحاجة لربط عدة قيم بنفس المفتاح مع الحفاظ على الترتيب — مثل فهرسة مستندات متعددة بنفس الكلمة المفتاحية، أو تجميع أحداث بنفس الطابع الزمني، أو قاموس يسمح معاني متعددة لنفس الكلمة.",
+      "example": "std::multimap<std::string, int> scores;\nscores.insert({\"Ali\", 90});",
+      "includeHeader": "#include <map>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج عدة قيم لنفس المفتاح واستخراجها",
+          "code": "#include <map>\n#include <iostream>\n\nstd::multimap<std::string, int> grades;\n\n// insert يسمح بتكرار المفتاح بحرية\ngrades.insert({\"Ali\", 90});\ngrades.insert({\"Ali\", 85});\ngrades.insert({\"Sara\", 95});\ngrades.insert({\"Ali\", 88});\n\n// count: عدد القيم لهذا المفتاح\nstd::cout << grades.count(\"Ali\"); // 3\n\n// النطاق [lower_bound, upper_bound) يحتوي كل قيم المفتاح\nauto range = grades.equal_range(\"Ali\");\nfor (auto it = range.first; it != range.second; ++it) {\n    std::cout << it->second << ' '; // 90 85 88\n}\n\n// find يُرجع أول عنصر بالمفتاح فقط\nauto it = grades.find(\"Ali\");\nstd::cout << it->second; // 90 (الأول فقط)",
+          "explanationArabic": "multimap لا تملك operator[] لأن المفتاح ليس فريدًا — أيهما تُرجع؟ استخدم insert دائمًا. equal_range يُرجع زوج مكررات يحددان نطاق كل العناصر بالمفتاح. count يُخبرك كم عنصرًا قبل المرور. find يُرجع الأول فقط — لا يكفي لو تريد الكل."
+        },
+        {
+          "titleArabic": "lower_bound و upper_bound: نطاق مرتب فعال",
+          "code": "#include <map>\n#include <iostream>\n\nstd::multimap<int, std::string> log;\nlog.insert({1, \"بدء\"});\nlog.insert({1, \"تحميل\"});\nlog.insert({2, \"معالجة\"});\nlog.insert({2, \"تحقق\"});\nlog.insert({3, \"انتهاء\"});\n\n// جميع الأحداث بالمستوى 2\nfor (auto it = log.lower_bound(2); it != log.upper_bound(2); ++it) {\n    std::cout << it->second << ' '; // معالجة تحقق\n}\n\n// ❌ لا تستخدم find لو تريد الكل\nauto f = log.find(2);\n// f يشير للأول فقط — الباقي مخفي\n\n// ✅ equal_range أنظف للمرور على الكل\nauto [lo, hi] = log.equal_range(2);\nfor (auto it = lo; it != hi; ++it) {\n    std::cout << it->second << '\\n';\n}",
+          "explanationArabic": "lower_bound/upper_bound يستفيدان من شجرة البحث فيبحثان بـ O(log n). النمط [lower_bound(k), upper_bound(k)) يُعطي كل العناصر بالمفتاح k. equal_range يفعل الشيء نفسه في استدعاء واحد — أنظف وأقل عرضة للخطأ. هذا الفرق الجوهري عن map حيث المفتاح فريد فلا حاجة للنطاق."
+        },
+        {
+          "titleArabic": "متى تستخدم multimap بدل map أو unordered_multimap",
+          "code": "#include <map>\n#include <unordered_map>\n\n// ✅ multimap: تحتاج ترتيب + مفاتيح مكررة\n// مثال: أحداث مرتبة زمنيًا بنفس الأولوية\nstd::multimap<int, std::string> timeline;\ntimeline.insert({5, \"render\"});\ntimeline.insert({5, \"physics\"}); // نفس الأولوية\n// المرور يُعطيهم بالترتيب التصاعدي\n\n// ✅ unordered_multimap: لا تحتاج ترتيب — أسرع\nstd::unordered_multimap<std::string, int> index;\nindex.insert({\"shader\", 1});\nindex.insert({\"shader\", 2}); // بحث O(1) بدل O(log n)\n\n// ❌ map: لا تسمح بتكرار المفتاح\n// std::map<int, std::string> m;\n// m.insert({5, \"a\"});\n// m.insert({5, \"b\"}); // الثانية مُتجاهلة!\n\n// بديل شائع: map<string, vector<int>> بدل multimap\n// لكنه أقل كفاءة عند الإدراج المتكرر\n// لأنه يحتاج البحث ثم push_back في vector",
+          "explanationArabic": "multimap أنسب من map<string, vector<T>> عند الإدراج المتكرر لأنها لا تحتاج البحث ثم push_back. unordered_multimap أسرع في البحث O(1) لكنها لا تحافظ على الترتيب. القاعدة: استخدم multimap فقط إذا استفدت فعلًا من الترتيب الداخلي."
+        }
+      ],
+      "related": [
+        "std::map",
+        "std::set",
+        "std::pair"
+      ]
+    },
+    "std::multiset": {
+      "title": "std::multiset",
+      "type": "حاوية STL",
+      "description": "حاوية مرتبة تسمح بعناصر مكررة — كل قيمة يمكن أن تظهر عدة مرات وتكون متجاورة في المرور. داخليةً تستخدم شجرة بحث ثنائية متوازنة (red-black tree) مثل std::set. البحث والإدراج والحذف بتعقيد O(log n). لا تدعم operator[].",
+      "usage": "تُستخدم عند الحاجة لتخزين عناصر مرتبة مع السماح بالتكرار — مثل ترتيب درجات الطلاب، أو تتبع أحداث مرتبة زمنيًا، أو عدّ تكرار القيم مع الحفاظ على الترتيب. أنسب من vector+sort عند الإدراج المتكرر بين عمليات القراءة.",
+      "example": "std::multiset<int> values;\nvalues.insert(5);\nvalues.insert(5);",
+      "includeHeader": "#include <set>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج مكرر واستخراج بنطاق",
+          "code": "#include <set>\n#include <iostream>\n\nstd::multiset<int> temps = {22, 25, 22, 20, 25, 22};\n\n// العناصر مرتبة تلقائيًا مع السماح بالتكرار\nfor (int t : temps) {\n    std::cout << t << ' '; // 20 22 22 22 25 25\n}\n\n// count: كم مرة ظهرت القيمة\nstd::cout << temps.count(22); // 3\n\n// equal_range: نطاق كل العناصر بالقيمة المحددة\nauto [lo, hi] = temps.equal_range(22);\nfor (auto it = lo; it != hi; ++it) {\n    std::cout << *it << ' '; // 22 22 22\n}\n\n// find: يُرجع أول ظهور فقط\nauto it = temps.find(25);\nstd::cout << *it; // 25",
+          "explanationArabic": "multiset تحافظ على الترتيب مع كل إدراج — لا تحتاج sort يدوي. count يُخبرك بعدد التكرارات. equal_range يُحدد نطاق كل ظهورات القيمة. find يُرجع الأول فقط. الفرق عن set: insert لا يرفض التكرار بل يُضيفه في موضعه الصحيح."
+        },
+        {
+          "titleArabic": "حذف: erase بالقيمة يحذف الكل",
+          "code": "#include <set>\n#include <iostream>\n\nstd::multiset<int> data = {10, 20, 20, 30, 20, 40};\n\n// ⚠️ erase بالقيمة يحذف كل الظهورات!\ndata.erase(20);\n// data = {10, 30, 40} — كل الـ 20 محذوفة\n\n// لحذف ظهور واحد فقط: ابحث ثم erase بالمكرر\nstd::multiset<int> nums = {10, 20, 20, 30};\nauto it = nums.find(20);\nif (it != nums.end()) {\n    nums.erase(it); // يحذف أول 20 فقط → {10, 20, 30}\n}\n\nfor (int x : nums) {\n    std::cout << x << ' '; // 10 20 30\n}",
+          "explanationArabic": "erase(value) في multiset يحذف كل ظهورات القيمة — هذا يختلف عن set حيث يحذف ظهورًا واحدًا فقط. لحذف عنصر واحد ابحث بـ find ثم مرر المكرر لـ erase(it). هذا الفرق المهم بين set و multiset قد يسبب أخطاء غير متوقعة."
+        },
+        {
+          "titleArabic": "استخدام عملي: متوسط متحرك مع الترتيب",
+          "code": "#include <set>\n#include <iostream>\n#include <numeric>\n\n// multiset أنسب من vector+sort لحساب متوسط متحرك\n// لأن الإدراج O(log n) والترتيب محفوظ دائمًا\nstd::multiset<int> window;\n\nint readings[] = {50, 30, 70, 20, 60};\n\nfor (int r : readings) {\n    window.insert(r);\n    // أكبر وأصغر عنصر في O(1) via begin/rbegin\n    int min = *window.begin();\n    int max = *window.rbegin();\n    std::cout << \"range: \" << min << \"-\" << max << '\\n';\n}\n// range: 50-50\n// range: 30-50\n// range: 30-70\n// range: 20-70\n// range: 20-70\n\n// ❌ مع vector ستحتاج sort بعد كل إدراج → O(n log n)\n// ✅ مع multiset الإدراج O(log n) والترتيب تلقائي",
+          "explanationArabic": "multiset مثالية للحسابات التي تحتاج قيمًا مرتبة مع تحديثات متكررة. begin() يُرجع الأصغر وrbegin() يُرجع الأكبر — كلاهما O(1). مع vector ستحتاج sort بعد كل إدراج مما يجعلها O(n log n) بدل O(log n) لكل إدراج."
+        }
+      ],
+      "related": [
+        "std::set",
+        "std::multimap",
+        "std::vector"
+      ]
+    },
+    "std::unordered_map": {
+      "title": "std::unordered_map",
+      "type": "حاوية STL",
+      "description": "حاوية ترابطية تستخدم جدول تجزئة لربط مفتاح بقيمة. بحث متوسط O(1) أسوأ حالة O(n). لا تحافظ على ترتيب العناصر. تحتاج المفتاح أن يدعم std::hash وoperator==.",
+      "usage": "الخيار الأسرع عادةً للبحث بمفتاح عندما لا تحتاج الترتيب. الخيار الافتراضي للكاش والخرائط والمظهرات.",
+      "example": "std::unordered_map<std::string, int> cache;\ncache[\"key\"] = 42;",
+      "includeHeader": "#include <unordered_map>",
+      "usageExamples": [
+        {
+          "titleArabic": "إدراج والبحث بأمان بـ find",
+          "code": "#include <unordered_map>\n#include <string>\n\nstd::unordered_map<std::string, int> texture_cache;\n\n// إدراج بدون إدراج مزدوج\nauto [it, inserted] = texture_cache.emplace(\"hero\", 1);\nif (!inserted) {\n    // المفتاح موجود مسبقًا — it يشير للعنصر القديم\n}\n\n// البحث بأمان — find لا يُنشئ عنصرًا جديدًا\nauto found = texture_cache.find(\"hero\");\nif (found != texture_cache.end()) {\n    int id = found->second; // first = المفتاح, second = القيمة\n}\n\n// ❌ تحذير: operator[] يُنشئ عنصرًا بقيمة افتراضية إذا لم يُجد المفتاح\n// int id = texture_cache[\"missing\"]; // يُضيف {\"missing\", 0} بدون قصد!",
+          "explanationArabic": "emplace يُرجع زوجًا (مكرر، bool) يُخبرك إن كان الإدراج حدث فعلًا. find يُرجع مكرر ولا يُعدّل الحاوية — استخدمه عند عدم التأكد من وجود المفتاح. operator[] مريح لكنه خطير لأنه يُنشئ عنصرًا جديدًا بصمت إذا غاب المفتاح."
+        },
+        {
+          "titleArabic": "حساب التكرارات (frequency map)",
+          "code": "#include <unordered_map>\n#include <vector>\n#include <string>\n\nstd::vector<std::string> words = {\"gpu\", \"cpu\", \"gpu\", \"ram\", \"cpu\", \"gpu\"};\n\nstd::unordered_map<std::string, int> freq;\nfor (const auto& w : words) {\n    freq[w]++;  // آمن هنا: نريد إنشاء العنصر إذا لم يكن موجودًا\n}\n// freq = {\"gpu\": 3, \"cpu\": 2, \"ram\": 1}\n\n// أو باستخدام try_emplace (C++17) الأوضح:\nstd::unordered_map<std::string, int> freq2;\nfor (const auto& w : words) {\n    auto [it, ok] = freq2.try_emplace(w, 0);\n    it->second++;\n}",
+          "explanationArabic": "operator[] مناسب هنا لأننا نريد فعلًا إنشاء عداد إذا لم يكن موجودًا. try_emplace أوضح: يُدرج فقط إذا غاب المفتاح ويرجع مكررًا للعنصر (الجديد أو الموجود). الفرق عن emplace: try_emplace لا يُعدّل القيمة إذا كان المفتاح موجودًا بينما emplace قد يُعدّلها."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام مفتاح بدون hash",
+          "code": "#include <unordered_map>\n\nstruct Vec2 {\n    float x, y;\n    bool operator==(const Vec2& o) const { return x == o.x && y == o.y; }\n};\n\n// ❌ خطأ ترجمة: Vec2 لا يملك std::hash\n// std::unordered_map<Vec2, int> grid;\n\n// ✅ الحل: تخصيص std::hash للنوع\nnamespace std {\ntemplate<>\nstruct hash<Vec2> {\n    size_t operator()(const Vec2& v) const noexcept {\n        auto hx = std::hash<float>{}(v.x);\n        auto hy = std::hash<float>{}(v.y);\n        return hx ^ (hy << 1); // دمج بسيط\n    }\n};\n}\n\n// الآن يعمل\nstd::unordered_map<Vec2, int> grid;\ngrid[{1.0f, 2.0f}] = 42;",
+          "explanationArabic": "unordered_map يحتاج شيئين من المفتاح: operator== للمقارنة وstd::hash لتوزيع العناصر في الدلو. الأنواع القياسية (int, string) لديها hash جاهز. الأنواع المخصصة تحتاج تخصيصًا صريحًا داخل namespace std. إذا لم تستطع تخصيص hash أو أردت ترتيبًا، استخدم std::map بدلًا من ذلك."
+        }
+      ],
+      "related": [
+        "std::map",
+        "std::unordered_set",
+        "std::hash",
+        "std::pair"
+      ]
+    },
+    "std::unordered_set": {
+      "title": "std::unordered_set",
+      "type": "حاوية STL",
+      "description": "حاوية تخزن قيمًا فريدة باستخدام جدول تجزئة. بحث متوسط O(1) بدون ترتيب.",
+      "usage": "تفيد عند الحاجة لعضوية سريعة وفريدة بدون الحفاظ على الترتيب.",
+      "example": "std::unordered_set<int> seen;\nseen.insert(5);",
+      "includeHeader": "#include <unordered_set>",
+      "usageExamples": [
+        {
+          "titleArabic": "تصفية التكرار من مصفوفة",
+          "code": "#include <unordered_set>\n#include <vector>\n#include <string>\n\nstd::vector<std::string> words = {\"gpu\", \"cpu\", \"gpu\", \"ram\", \"cpu\"};\nstd::unordered_set<std::string> unique;\nfor (const auto& w : words) {\n    unique.insert(w); // التكرار يُرفض تلقائيًا\n}\n// unique = {\"gpu\", \"cpu\", \"ram\"} — الترتيب غير مضمون",
+          "explanationArabic": "insert يُرجع زوجًا (مكرر، bool) — bool يُخبرك إن كان الإدراج حدث. التكرار يُرفض صمتًا بدون خطأ. لا يوجد operator[] لأن العناصر ليست مفاتيح لقيم."
+        },
+        {
+          "titleArabic": "التحقق من العضوية بسرعة",
+          "code": "#include <unordered_set>\n\nstd::unordered_set<int> reserved = {0, 1, 2, 255};\n\nif (reserved.contains(42)) { /* C++20 */ }\nif (reserved.count(42))   { /* C++17: 0 أو 1 */ }\nif (reserved.find(42) != reserved.end()) { /* كلاسيكي */ }",
+          "explanationArabic": "ثلاث طرق للتحقق: contains (C++20) الأنظف، count أسرع من find عند الحاجة لقيمة bool فقط، find يُرجع مكرر يمكن استخدامه للوصول. الكل O(1) في المتوسط."
+        },
+        {
+          "titleArabic": "خطأ شائع: الاعتماد على الترتيب",
+          "code": "#include <unordered_set>\n\nstd::unordered_set<int> nums = {5, 1, 3};\n// ❌ الترتيب غير مضمون — لا تعتمد عليه\n// for (int n : nums) { /* قد تطبع 3,5,1 أو أي ترتيب */ }\n\n// ❌ لا يوجد lower_bound — يحتاج ترتيب داخلي\n// auto it = nums.lower_bound(2); // خطأ ترجمة!\n\n// ✅ إذا احتجت ترتيبًا: انسخ لـ set\n// std::set<int> ordered(nums.begin(), nums.end());",
+          "explanationArabic": "unordered_set لا تحافظ على أي ترتيب — قد يتغير عند إعادة التجزئة. لا توفر lower_bound/upper_bound لأنها تحتاج شجرة مرتبة. إذا احتجت ترتيبًا استخدم set. إذا احتجت كلاهما (عضوية سريعة + ترتيب) استخدم الاثنين معًا."
+        }
+      ],
+      "related": [
+        "std::set",
+        "std::unordered_map",
+        "std::hash"
+      ]
+    },
+    "std::queue": {
+      "title": "std::queue",
+      "type": "حاوية محولة",
+      "description": "حاوية محولة تتبع مبدأ FIFO (الأول يدخل أول يخرج). تستخدم deque داخليًا افتراضيًا. توفر push وpop وfront وback فقط — لا وصول عشوائي ولا تكرار مباشر.",
+      "usage": "تفيد في قائمة انتظار الأوامر أو معالجة الأحداث بالترتيب أو BFS.",
+      "example": "std::queue<int> tasks;\ntasks.push(1);\nint next = tasks.front();\ntasks.pop();",
+      "includeHeader": "#include <queue>",
+      "usageExamples": [
+        {
+          "titleArabic": "طابور أوامر بسيط",
+          "code": "#include <queue>\n#include <string>\n#include <iostream>\n\nstd::queue<std::string> commands;\ncommands.push(\"تحميل نسيج\");\ncommands.push(\"بناء shader\");\ncommands.push(\"رسم إطار\");\n\n// المعالجة بالترتيب — الأول يدخل أول يخرج\nwhile (!commands.empty()) {\n    std::cout << \"تنفيذ: \" << commands.front() << '\\n';\n    commands.pop(); // pop يُزيل العنصر من الأمام\n}\n// المخرج:\n// تنفيذ: تحميل نسيج\n// تنفيذ: بناء shader\n// تنفيذ: رسم إطار",
+          "explanationArabic": "push تُضيف في النهاية، front تُرجع العنصر الأمامي بدون إزالته، pop تُزيله. الترتيب دائمًا FIFO. لا وصول عشوائي — تصميم متعمّد ليُعبّر عن نية الطابور."
+        },
+        {
+          "titleArabic": "BFS: بحث بالعرض مع طابور",
+          "code": "#include <queue>\n#include <vector>\n\nstd::vector<std::vector<int>> graph = {\n    {1, 2},    // عقدة 0 متصلة بـ 1 و 2\n    {0, 3},    // عقدة 1 متصلة بـ 0 و 3\n    {0, 3},    // عقدة 2 متصلة بـ 0 و 3\n    {1, 2}     // عقدة 3 متصلة بـ 1 و 2\n};\n\nstd::vector<bool> visited(graph.size(), false);\nstd::queue<int> bfs;\nbfs.push(0);\nvisited[0] = true;\n\nwhile (!bfs.empty()) {\n    int node = bfs.front();\n    bfs.pop();\n    // معالجة node هنا\n    for (int neighbor : graph[node]) {\n        if (!visited[neighbor]) {\n            visited[neighbor] = true;\n            bfs.push(neighbor);\n        }\n    }\n}",
+          "explanationArabic": "BFS يعالج العقد بالمستوى: جيران كل عقدة يُضافون للطابور. queue تضمن المعالجة بالترتيب الصحيح. visited تمنع الإضافة المزدوجة."
+        },
+        {
+          "titleArabic": "خطأ شائع: قراءة front بعد pop",
+          "code": "#include <queue>\n#include <iostream>\n\nstd::queue<int> q;\nq.push(10);\nq.push(20);\n\n// ❌ خطأ: pop تُفرّغ العنصر لكن لا تُرجعه\n// int val = q.pop(); // خطأ ترجمة: pop تُرجع void!\n\n// ❌ خطأ: استخدام front بعد pop يُرجع العنصر التالي\n// std::cout << q.front(); // 10\n// q.pop();\n// std::cout << q.front(); // 20 — ليس 10!\n\n// ✅ صحيح: احفظ القيمة قبل pop\nint val = q.front(); // 10\nq.pop();               // أزل 10\nstd::cout << val;      // 10\n\n// ✅ أو استخدم نمط المعالجة في الحلقة\nwhile (!q.empty()) {\n    int current = q.front();\n    q.pop();\n    // عالج current هنا\n}",
+          "explanationArabic": "pop() تُرجع void — لا تُرجع العنصر المحذوف. هذا تصميم متعمّد لأن المرجع يصبح dangling بعد الحذف. القاعدة: front لقراءة القيمة ثم pop للحذف."
+        }
+      ],
+      "related": [
+        "std::deque",
+        "std::stack",
+        "std::priority_queue"
+      ]
+    },
+    "std::stack": {
+      "title": "std::stack",
+      "type": "حاوية محولة",
+      "description": "حاوية محولة تتبع مبدأ LIFO (الآخر يدخل أول يخرج). تستخدم deque داخليًا افتراضيًا. توفر push وpop وtop فقط — لا وصول عشوائي ولا تكرار مباشر.",
+      "usage": "تفيد في خوارزميات التراجع والمكدسات وتحليل الأقواس وتتبع حالة الاستدعاءات.",
+      "example": "std::stack<int> frames;\nframes.push(1);\nint top = frames.top();\nframes.pop();",
+      "includeHeader": "#include <stack>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحليل أقواس متوازنة",
+          "code": "#include <stack>\n#include <string>\n#include <iostream>\n\nbool is_balanced(const std::string& expr) {\n    std::stack<char> s;\n    for (char c : expr) {\n        if (c == '(' || c == '[' || c == '{') {\n            s.push(c); // اقفل القوس المفتوح\n        } else if (c == ')' || c == ']' || c == '}') {\n            if (s.empty()) return false; // قوس إغلاق بدون فتح\n            char open = s.top();\n            s.pop();\n            // تحقق من التطابق\n            if (c == ')' && open != '(') return false;\n            if (c == ']' && open != '[') return false;\n            if (c == '}' && open != '{') return false;\n        }\n    }\n    return s.empty(); // صحيح فقط إذا أُغلقت كل الأقواس\n}\n\nstd::cout << is_balanced(\"(a + [b * {c}])\"); // true\nstd::cout << is_balanced(\"(a + b\");          // false",
+          "explanationArabic": "المكدس يُخزن الأقواس المفتوحة. عند قوس إغلاق نتحقق من تطابقه مع آخر قوس مفتوح (top). في النهاية يجب أن يكون المكدس فارغًا."
+        },
+        {
+          "titleArabic": "عكس سلسلة أو تسلسل",
+          "code": "#include <stack>\n#include <string>\n#include <iostream>\n\nstd::string reverse_string(std::string s) {\n    std::stack<char> st;\n    for (char c : s) st.push(c);\n    std::string result;\n    result.reserve(s.size());\n    while (!st.empty()) {\n        result += st.top(); // آخر عنصر مُدخل = أول من يُقرأ\n        st.pop();\n    }\n    return result;\n}\n\nstd::cout << reverse_string(\"hello\"); // olleh",
+          "explanationArabic": "LIFO يعكس الترتيب تلقائيًا. هذا أبسط من العكس اليدوي لكنه أبطأ — استخدم std::reverse للأسرع."
+        },
+        {
+          "titleArabic": "خطأ شائع: الوصول لـ top على مكدس فارغ",
+          "code": "#include <stack>\n#include <iostream>\n\nstd::stack<int> s;\n\n// ❌ خطأ: top على مكدس فارغ = سلوك غير معرّف (UB)\n// int val = s.top(); // UB!\n\n// ❌ pop على مكدس فارغ = UB أيضًا\n// s.pop(); // UB!\n\n// ✅ صحيح: افحص دائمًا قبل الوصول\nif (!s.empty()) {\n    int val = s.top();\n    s.pop();\n}\n\n// ✅ أو في حلقة آمنة\nwhile (!s.empty()) {\n    int current = s.top();\n    s.pop();\n    // عالج current\n}",
+          "explanationArabic": "std::stack لا تتحقق من الفراغ — top أو pop على مكدس فارغ هو UB. القاعدة: افحص empty() دائمًا قبل top أو pop. نفس القاعدة لـ queue."
+        }
+      ],
+      "related": [
+        "std::queue",
+        "std::deque",
+        "std::vector"
+      ]
+    },
+    "std::priority_queue": {
+      "title": "std::priority_queue",
+      "type": "حاوية محولة",
+      "description": "حاوية محولة تعطي دائمًا العنصر الأكبر (أو الأصغر) عند القراءة. تستخدم كومة ثنائية داخليًا. الإدراج والقراءة بتعقيد O(log n).",
+      "usage": "تفيد عند معالجة العناصر حسب الأولوية مثل جدولة المهام أو خوارزميات Dijkstra أو اختيار أقصر مسار.",
+      "example": "std::priority_queue<int> pq;\npq.push(3); pq.push(1); pq.push(5);\nstd::cout << pq.top(); // 5",
+      "includeHeader": "#include <queue>",
+      "usageExamples": [
+        {
+          "titleArabic": "min-heap: دمج قوائم مرتبة",
+          "code": "#include <queue>\n#include <vector>\n#include <functional>\n\n// المعامل الثالث std::greater<int> يعكس الكومة فتصبح min-heap\n// الحاوية الداخلية std::vector<int> مطلوبة عند تغيير المقارنة\nstd::priority_queue<int, std::vector<int>, std::greater<int>> min_pq;\n\n// ندفع عناصر من قائمتين مرتبتين مفترضتين\nmin_pq.push(5); min_pq.push(1); min_pq.push(8);  // القائمة الأولى\nmin_pq.push(3); min_pq.push(4);                   // القائمة الثانية\n\nstd::vector<int> merged;\nwhile (!min_pq.empty()) {\n    merged.push_back(min_pq.top());  // top() يُرجع الأصغر في min-heap\n    min_pq.pop();                     // pop() يُزيل الأصغر\n}\n// merged = {1, 3, 4, 5, 8}",
+          "explanationArabic": "بدون std::greater تكون الكومة max-heap (الافتراضي). عند تمرير std::greater كمعامل ثالث تنعكس الأولوية فيصبح top() يُرجع الأصغر. الحاوية الداخلية (المعامل الثاني) يجب تحديدها صراحةً عند تغيير المقارنة لأن المُصرِّف لا يستطيع استنتاجها."
+        },
+        {
+          "titleArabic": "min-heap مع lambda: خوارزمية Dijkstra",
+          "code": "#include <queue>\n#include <vector>\n#include <climits>\n\nstruct Edge { int node; int weight; };\n\n// lambda يعكس الترتيب: الأصغر وزنًا = أعلى أولوية\nauto cmp = [](const Edge& a, const Edge& b) { return a.weight > b.weight; };\n\n// decltype(cmp) يستنتج نوع Lambda وcmp يُمرَّر للمُنشئ\nstd::priority_queue<Edge, std::vector<Edge>, decltype(cmp)> dijkstra(cmp);\n\ndijkstra.push({0, 0}); // العقدة 0 بمسافة 0\nstd::vector<int> dist(5, INT_MAX);\ndist[0] = 0;\n\nwhile (!dijkstra.empty()) {\n    auto [u, d] = dijkstra.top();\n    dijkstra.pop();\n    if (d > dist[u]) continue;  // تخطي النسخ القديمة غير المُحدَّثة\n    // افتراض: graph[u] يحتوي أزواج {جار، وزن}\n    for (auto [v, w] : graph[u]) {\n        if (dist[u] + w < dist[v]) {\n            dist[v] = dist[u] + w;\n            dijkstra.push({v, dist[v]});  // دفع بمسافة جديدة (نسخة أحدث)\n        }\n    }\n}",
+          "explanationArabic": "لا يمكن استخدام std::greater مباشرة لأن البنية Edge لا تدعم operator>. Lambda يحل هذه المشكلة. ملاحظة مهمة: priority_queue لا تدعم تعديل عنصر موجود، لذلك ندفع نسخة جديدة عند تحسن المسافة ونتجاهل النسخ القديمة عبر if (d > dist[u]) continue. هذا يعني أن الكومة قد تحتوي عناصر قديمة لكنها لا تُؤثر على الصحة."
+        },
+        {
+          "titleArabic": "max-heap مع operator<: جدولة مهام",
+          "code": "#include <queue>\n#include <string>\n#include <iostream>\n\nstruct Task {\n    int priority;\n    std::string name;\n    // operator< يجعل العنصر ذو الأولوية الأصغر \"أقل\" في الكومة\n    // فيعني ذلك أن الأعلى أولوية يصعد للقمة (max-heap)\n    bool operator<(const Task& o) const { return priority < o.priority; }\n};\n\n// لا نحتاج تحديد مقارنة: max-heap الافتراضي يستخدم operator<\nstd::priority_queue<Task> scheduler;\n\nscheduler.push({2, \"تحديث شاشة\"});\nscheduler.push({5, \"معالجة إدخال\"});\nscheduler.push({1, \"تسجيل سجل\"});\n\nwhile (!scheduler.empty()) {\n    auto t = scheduler.top();\n    scheduler.pop();\n    std::cout << t.priority << \": \" << t.name << '\\n';\n}\n// المخرج:\n// 5: معالجة إدخال\n// 2: تحديث شاشة\n// 1: تسجيل سجل",
+          "explanationArabic": "max-heap الافتراضي يستدعي operator< داخليًا. عندما نُرجع true عند priority < o.priority فإن العنصر ذو الأولوية الأكبر يُعتبر \"أكبر\" في الكومة فيصعد للقمة. هذا يعني أن كتابة operator< باتجاه واحد تحدد اتجاه الكومة بالكامل. الفائدة: لا حاجة لlambda ولا لتحديد المعاملات الثانية والثالثة."
+        }
+      ],
+      "related": [
+        "std::queue",
+        "std::vector",
+        "std::less",
+        "std::greater"
+      ]
+    },
+    "std::span": {
+      "title": "std::span",
+      "type": "عرض (C++20)",
+      "description": "عرض غير مالك لتسلسل عناصر متجاورة في الذاكرة — مؤشر للعنصر الأول وطول. يوفر وصولًا عشوائيًا O(1) وbegin/end للمدى بدون نسخ أو تخصيص. حجمه ثابت = مؤشرين (16 بايت عادةً). يمكنه الارتباط بـ vector وarray وصفائف C الخام. يمكن جعله للقراءة فقط عبر span<const T>.",
+      "usage": "البديل الأكفأ لتمرير حاويات أو أجزاء منها إلى دوال بدون نسخ. شائع جدًا في البرمجة الرسومية لتمرير بيانات الرؤوس (vertices) والقصاصات (indices) والبيانات الثنائية. هو نظير std::string_view لكن للعناصر العامة بدل النصوص.",
+      "example": "void process(std::span<float> data) {\n    for (auto& v : data) v *= 2.0f;\n}",
+      "includeHeader": "#include <span>",
+      "usageExamples": [
+        {
+          "titleArabic": "دالة تقبل كل أنواع الحاويات المتجاورة",
+          "code": "#include <span>\n#include <vector>\n#include <array>\n#include <iostream>\n\n// تقبل: vector, array, صفيف C خام، جزء من أي منها\nvoid normalize(std::span<float> values) {\n    float max_val = 0.0f;\n    for (float v : values) max_val = std::max(max_val, v);\n    if (max_val > 0.0f) {\n        for (auto& v : values) v /= max_val;\n    }\n}\n\nstd::vector<float> a = {3.0f, 6.0f, 9.0f};\nstd::array<float, 4> b = {2.0f, 4.0f, 6.0f, 8.0f};\nfloat c[] = {5.0f, 10.0f};\n\nnormalize(a);  // من vector — لا نسخ\nnormalize(b);  // من array — لا نسخ\nnormalize(c);  // من صفيف C خام — لا نسخ",
+          "explanationArabic": "span يحل مشكلة تضخم التوقيعات مثل string_view لكن للبيانات العامة. بدل كتابة عدة حمولات لكل حاوية، حمولة واحدة بـ span تكفي. لا يحدث أي نسخ عند التحويل من أي حاوية متجاورة. ملاحظة: span يتطلب عناصر متجاورة في الذاكرة — لا يعمل مع list أو forward_list."
+        },
+        {
+          "titleArabic": "قص جزء من حاوية بدون نسخ",
+          "code": "#include <span>\n#include <vector>\n#include <iostream>\n\nstd::vector<float> vertices = {\n    // x, y, z لكل رأس\n    0.0f, 0.0f, 0.0f,  // رأس 0\n    1.0f, 0.0f, 0.0f,  // رأس 1\n    1.0f, 1.0f, 0.0f,  // رأس 2\n    0.0f, 1.0f, 0.0f   // رأس 3\n};\n\n// subspan(first, count) يُرجع عرضًا لجزء بدون نسخ\nstd::span<float> second_vertex = std::span(vertices).subspan(3, 3);\n// second_vertex = {1.0f, 0.0f, 0.0f}\n\n// first<N>() و last<N>() اختصارات شائعة\nauto first_two = std::span(vertices).first<6>();  // أول رأسين\nauto last_two  = std::span(vertices).last<6>();   // آخر رأسين\n\n// تعديل عبر span يُعدّل الحاوية الأصلية\nsecond_vertex[0] = 99.0f;\nstd::cout << vertices[3]; // 99.0f — التغيير ظهر في الأصل",
+          "explanationArabic": "subspan وfirst وlast تُنشئ عروضًا جزئية بدون نسخ — تشير لنفس الذاكرة. المعامل الأول لـ subspan هو موضع البداية والثاني هو العدد (ليس النهاية). first<N> وlast<N> يأخذان عدد العناصر كقالب. لأن span لا يملك، التعديل عبره يُعدّل البيانات الأصلية مباشرة."
+        },
+        {
+          "titleArabic": "خطأ شائع: تخزين span لفترة أطول من مصدره",
+          "code": "#include <span>\n#include <vector>\n\n// ❌ كارثة: span يشير لـ data التي تُدمَّر عند نهاية الدالة\n// std::span<int> bad_slice() {\n//     std::vector<int> data = {1, 2, 3};\n//     return std::span(data); // data تُدمَّر — span يصبح dangling!\n// }\n\n// ❌ نفس المشكلة مع span محلي\n// {\n//     std::vector<int> v = {1, 2, 3};\n//     std::span<int> s = v;\n// } // v تُدمَّر هنا — s كان سيكون dangling لو استمر\n\n// ✅ صحيح: المصدر يعيش أطول من span\nstd::vector<int> data = {10, 20, 30};\nstd::span<int> s = data; // آمن: data حي\n\n// ✅ صحيح: صفائف C الخام المحلية تعيش في نفس النطاق\nint arr[] = {1, 2, 3};\nstd::span<int> sa = arr; // آمن: نفس النطاق\n\n// ✅ للقراءة فقط: استخدم span<const T>\nvoid read_only(std::span<const int> data) {\n    // data[0] = 5; // ❌ خطأ ترجمة: لا يمكن التعديل\n    int x = data[0]; // ✅ قراءة مسموحة\n}",
+          "explanationArabic": "span مثل string_view: لا يملك — هو مجرد نافذة على ذاكرة شخص آخر. إذا أُلغي المصدر يصبح العرض dangling. القاعدة: لا تُخزّن span ولا تُرجعه من دالة إذا كان المصدر محليًا. استخدم span<const T> عندما لا تحتاج تعديل البيانات — هذا يمنع التعديل العرضي ويُوضح النية."
+        }
+      ],
+      "related": [
+        "std::vector",
+        "std::array",
+        "std::string_view",
+        "const",
+        "std::ranges"
+      ]
+    },
+    "std::unique_ptr": {
+      "title": "std::unique_ptr",
+      "type": "مؤشر ذكي",
+      "description": "مؤشر ذكي يمتلك كائنًا حصريًا ويحرره تلقائيًا عند انتهاء عمره عبر delete (أو deleter مخصص). لا يمكن نسخه — يمكن فقط نقل ملكيته. حجمه يساوي مؤشرًا خامًا واحدًا.",
+      "usage": "الخيار الافتراضي الأول لملكية الذاكرة الديناميكية في C++ الحديث. يستبدل new/delete اليدوي في كل الحالات تقريبًا.",
+      "example": "auto ptr = std::make_unique<int>(7);\nauto ptr2 = std::move(ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "ملكية بسيطة مع make_unique",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Texture {\n    int width, height;\n    Texture(int w, int h) : width(w), height(h) {\n        std::cout << \"Texture created\\n\";\n    }\n    ~Texture() {\n        std::cout << \"Texture destroyed\\n\";\n    }\n};\n\n// make_unique يُخصّص ويبني الكائن في تخصيص واحد (استثناء آمن)\nauto tex = std::make_unique<Texture>(1920, 1080);\n\n// الوصول كالمؤشر الخام\nstd::cout << tex->width;  // 1920\n\n// *tex يُرجع مرجع للكائن\n// tex.get() يُرجع المؤشر الخام (نادرًا ما تحتاجه)\n\n// عند خروج tex من النطاق يُستدعى ~Texture تلقائيًا",
+          "explanationArabic": "make_unique أنفع من new لأنه يمنع تسرب الذاكرة حتى لو رمى المُنشئ استثناءً (لا يبقى مؤشر عائم). المؤشر الخام يُرجع بـ get() لكن استخدامه مباشرةً يُضعف فائدة المؤشر الذكي. عامل -> وعامل * يوفّران نفس واجهة المؤشر الخام."
+        },
+        {
+          "titleArabic": "نقل الملكية بين الدوال",
+          "code": "#include <memory>\n\nstruct Buffer {\n    float data[1024];\n};\n\n// ✅ نقل الملكية إلى الدالة — بعد الاستدعاء caller يفقد الملكية\nvoid process(std::unique_ptr<Buffer> buf) {\n    // buf يملك الكائن الآن\n    // عند انتهاء الدالة يُحرر تلقائيًا\n}\n\n// ✅ إرجاع ملكية من دالة — الأنظف\nstd::unique_ptr<Buffer> create_buffer() {\n    return std::make_unique<Buffer>(); // NRVO أو نقل ضمني (C++17)\n}\n\n// الاستخدام\nauto buf = create_buffer();\nprocess(std::move(buf));  // نقل صريح — buf يصبح nullptr بعدها\n\n// ❌ لا تحاول استخدام buf بعد النقل\n// buf->data[0] = 1.0f;  // سلوك غير معرّف ( UB )",
+          "explanationArabic": "unique_ptr يحذف نسخ المُنشئ ونسخ التعيين لكنه يسمح بالنقل. std::move لا ينقل شيئًا فعلًا — هو مجرد cast يُخبر المُصرِّف أن المالك الأصلي لم يعد يحتاج الكائن. بعد النقل يصبح المؤشر الأصلي nullptr. في C++17، إرجاع unique_ptr محلي من دالة لا يحتاج std::move بسبب copy elision المضمون."
+        },
+        {
+          "titleArabic": "خطأ شائع: shared_ptr من this",
+          "code": "#include <memory>\n\nstruct Node {\n    std::unique_ptr<Node> left;\n    std::unique_ptr<Node> right;\n\n    // ❌ خطأ: هذا يُنشئ shared_ptr منفصل يدير نفس الكائن\n    // سيُحرر الكائن مرتين!\n    // std::shared_ptr<Node> get_shared_bad() {\n    //     return std::shared_ptr<Node>(this);\n    // }\n\n    // ✅ صحيح: لا تستخدم unique_ptr إذا تحتاج shared_ptr من this\n    // استخدم shared_ptr + enable_shared_from_this بدلًا من ذلك\n};\n\n// ❌ خطأ آخر: لا تخلط unique_ptr و shared_ptr لنفس الكائن\n// auto up = std::make_unique<int>(42);\n// auto sp = std::shared_ptr<int>(up.get()); // كارثة: حاويان مختلفان\n// // عند تدمير up يُحذف الكائن، ثم sp يحاول حذفه مجددًا",
+          "explanationArabic": "القاعدة: لا تبنِ مؤشرًا ذكيًا آخر من get() أبدًا لأن كلا الحاويين سيظنان أنهما المالك الوحيد. إذا احتجت ملكية مشتركة من داخل الكائن نفسه، فالتصميم الصحيح هو استخدام shared_ptr مع enable_shared_from_this من البداية. unique_ptr يعني 'أنا المالك الوحيد' — لا تكسر هذه القاعدة."
+        }
+      ],
+      "related": [
+        "std::make_unique",
+        "new",
+        "delete",
+        "std::shared_ptr",
+        "std::move"
+      ]
+    },
+    "std::shared_ptr": {
+      "title": "std::shared_ptr",
+      "type": "مؤشر ذكي",
+      "description": "مؤشر ذكي يسمح بملكية مشتركة عبر عداد مرجعي (control block). يُحذف الكائن والـ control block عند انتهاء آخر shared_ptr. يمكن نسخه ونقله. حجمه أكبر من مؤشر خام بسبب تخزين مؤشرين.",
+      "usage": "يظهر عندما تحتاج أكثر من جهة ملكية الكائن نفسه خلال فترات زمنية مختلفة. استخدم unique_ptr أولًا وانتقل لـ shared_ptr فقط عند الحاجة الفعلية للملكية المشتركة.",
+      "example": "auto ptr = std::make_shared<int>(42);\nauto copy = ptr;",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "ملكية مشتركة مع make_shared",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Mesh {\n    std::string name;\n    Mesh(std::string n) : name(std::move(n)) {\n        std::cout << \"Mesh created: \" << name << '\\n';\n    }\n    ~Mesh() { std::cout << \"Mesh destroyed: \" << name << '\\n'; }\n};\n\nauto mesh = std::make_shared<Mesh>(\"hero\");\nstd::cout << \"use_count: \" << mesh.use_count(); // 1\n\nauto mesh2 = mesh; // نسخ — عداد مرجعي يصبح 2\nstd::cout << \"use_count: \" << mesh.use_count(); // 2\n\nmesh2.reset(); // mesh2 يتخلى عن الملكية\nstd::cout << \"use_count: \" << mesh.use_count(); // 1\n\n// عند خروج mesh من النطاق: use_count يصبح 0 فيُحذف Mesh",
+          "explanationArabic": "make_shared يُخصّص الكائن والـ control block في تخصيص واحد (أنسب من shared_ptr(new T)). use_count() يُرجع عدد shared_ptr التي تشير لنفس الكائن — مفيد للتصحيح لكن لا تستخدمه للتحكم المنطقي. reset() يُحرر الملكية ويُنقص العداد."
+        },
+        {
+          "titleArabic": "نقل بدل النسخ عند الإمكان",
+          "code": "#include <memory>\n\nstruct Resource {\n    int id;\n    Resource(int i) : id(i) {}\n};\n\nstd::shared_ptr<Resource> create_resource() {\n    return std::make_shared<Resource>(1); // NRVO — لا نسخة إضافية\n}\n\n// ✅ نقل: لا يزيد العداد المرجعي\nstd::shared_ptr<Resource> a = create_resource(); // use_count = 1\nstd::shared_ptr<Resource> b = std::move(a);       // use_count = 1 (نقل)\n// a أصبح nullptr الآن\n\n// ❌ نسخ: يزيد العداد المرجعي\nstd::shared_ptr<Resource> c = create_resource(); // use_count = 1\nstd::shared_ptr<Resource> d = c;                   // use_count = 2 (نسخ)",
+          "explanationArabic": "std::move على shared_ptr ينقل الملكية بدون زيادة العداد — a يصبح nullptr وb يأخذ مكانه. النسخ يزيد العداد ويعني أن كلاهما يملك. استخدم النقل عندما تعرف أن المالك الأصلي لن يحتاج الكائن مجددًا. انتبه: نقل shared_ptr أرخص من النسخ لكنه أغلى من نقل unique_ptr بسبب تحديث العداد."
+        },
+        {
+          "titleArabic": "خطأ شائع: حلقة مرجعية",
+          "code": "#include <memory>\n\nstruct Node {\n    std::shared_ptr<Node> next;  // ❌ قد يُسبب حلقة مرجعية\n    // ~Node() لا يُستدعى أبدًا إذا كانت هناك حلقة!\n};\n\n// ❌ كارثة: كلا العقدتين تشيران للأخرى بالملكية\n// auto a = std::make_shared<Node>();\n// auto b = std::make_shared<Node>();\n// a->next = b;\n// b->next = a;\n// // use_count = 2 لكلتا العقدتين — لن يُحذف أيهما!\n\n// ✅ الحل: استخدم weak_ptr للإشارة غير المالكة\nstruct SafeNode {\n    std::shared_ptr<SafeNode> next;\n    std::weak_ptr<SafeNode> prev; // لا يزيد العداد\n};\n\nauto x = std::make_shared<SafeNode>();\nauto y = std::make_shared<SafeNode>();\nx->next = y;   // shared_ptr: يزيد العداد\ny->prev = x;   // weak_ptr: لا يزيد العداد\n// عند خروج x وy: يُحذفان بشكل صحيح",
+          "explanationArabic": "الحلقة المرجعية تحدث عندما يمتلك A→B وB→A عبر shared_ptr. العداد لا يصل للصفر أبدًا فلا يُحذف شيء — هذا تسرب ذاكرة. weak_ptr يحل هذا لأنه لا يزيد العداد. القاعدة: إذا كان الاتجاه 'أب→ابن' ملكية و'ابن→أب' مجرد إشارة، فاجعل 'ابن→أب' بـ weak_ptr."
+        }
+      ],
+      "related": [
+        "std::make_shared",
+        "std::weak_ptr",
+        "std::unique_ptr",
+        "std::enable_shared_from_this"
+      ]
+    },
+    "std::weak_ptr": {
+      "title": "std::weak_ptr",
+      "type": "مؤشر ذكي",
+      "description": "مؤشر ذكي مراقب لا يملك الكائن — لا يزيد العداد المرجعي لـ shared_ptr ولا يمنع تدمير الكائن. يُنشأ من shared_ptr ويُستخدم لمراقبة الكائن: lock() يُرجع shared_ptr إذا الكائن لا يزال حيًا أو nullptr إذا دُمّر. يُستخدم أساسًا لكسر الحلقات المرجعية (circular references) بين shared_ptr.",
+      "usage": "يظهر عند بنية بيانات ذات مراجع متبادلة — مثل شجرة عقد أب/ابن، أو كائنات تُراقب بعضها (observer pattern)، أو تخزين مؤقت يشير لكائنات قد تُدمّر. القاعدة: إذا كان A يملك B بـ shared_ptr فلا يجب أن يملك B أيضًا A بـ shared_ptr — استخدم weak_ptr في اتجاه واحد على الأقل.",
+      "example": "std::weak_ptr<int> observer = shared;\nif (auto locked = observer.lock()) { /* حي */ }",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "كسر حلقة مرجعية: أب وابن",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Node;\n\nstruct Node {\n    std::string name;\n    std::shared_ptr<Node> child;  // يملك الابن\n    std::weak_ptr<Node> parent;   // لا يملك الأب — حلقة مكسورة\n\n    ~Node() { std::cout << name << \" destroyed\\n\"; }\n};\n\nvoid demo() {\n    auto parent = std::make_shared<Node>();\n    parent->name = \"root\";\n\n    parent->child = std::make_shared<Node>();\n    parent->child->name = \"leaf\";\n\n    // الابن يشير للأب بـ weak_ptr — لا يزيد العداد\n    parent->child->parent = parent;\n\n    std::cout << \"parent use_count: \" << parent.use_count(); // 1 (child لا يملكه)\n    std::cout << \"child use_count: \" << parent->child.use_count(); // 1\n\n} // كلاهما يُدمَّر هنا — لا تسرب لأن الحلقة مكسورة\n// المخرج: leaf destroyed, root destroyed",
+          "explanationArabic": "لو كان parent في Node هو shared_ptr بدل weak_ptr فكلاهما سيملك الآخر — العداد لن يصل لـ 0 أبدًا وسيحدث تسرب ذاكرة. weak_ptr يحل هذه المشكلة لأنه لا يزيد العداد. عند خروج demo() يصل use_count لـ 0 فيُدمَّر الابن أولًا ثم الأب."
+        },
+        {
+          "titleArabic": "lock(): التحقق من أن الكائن لا يزال حيًا",
+          "code": "#include <memory>\n#include <iostream>\n\nstd::weak_ptr<int> observer;\n\nvoid check() {\n    // lock() يُرجع shared_ptr إذا الكائن حي، أو nullptr إذا دُمّر\n    if (auto ptr = observer.lock()) {\n        std::cout << \"alive: \" << *ptr << '\\n';\n    } else {\n        std::cout << \"destroyed\\n\";\n    }\n}\n\nint main() {\n    {\n        auto sp = std::make_shared<int>(42);\n        observer = sp;\n        check(); // alive: 42\n    } // sp تُدمَّر هنا\n    check(); // destroyed\n\n    // ⚠️ لا تستخدم observer مباشرة — لا يملك * أو ->\n    // *observer; // خطأ ترجمة!\n    // observer->foo(); // خطأ ترجمة!\n}",
+          "explanationArabic": "weak_ptr لا يدعم * ولا -> لأنه لا يملك الكائن وقد يكون مدمّرًا. lock() هو الطريقة الوحيدة للوصول — يُرجع shared_ptr يزيد العداد مؤقتًا ويضمن بقاء الكائن أثناء الاستخدام. إذا كان الكائن مدمّرًا يُرجع nullptr. هذا النمط شائع في التخزين المؤقت (cache) الذي يشير لكائنات قد يُحررها مالكها."
+        },
+        {
+          "titleArabic": "expired() و use_count: فحص بدون قفل",
+          "code": "#include <memory>\n#include <iostream>\n\nauto sp = std::make_shared<int>(99);\nstd::weak_ptr<int> wp = sp;\n\n// expired(): true إذا لم يبقَ أي shared_ptr يملك الكائن\nstd::cout << wp.expired(); // false\n\n// use_count(): عدد shared_ptr التي تملك الكائن (قد يكون 0)\nstd::cout << wp.use_count(); // 1\n\nsp.reset(); // يُحرر الملكية\nstd::cout << wp.expired(); // true\nstd::cout << wp.use_count(); // 0\n\n// ⚠️ تحذير: لا تفحص expired() ثم تستخدم lock() لاحقًا\n// بين الفحص والاستخدام قد يُدمَّر الكائن في خيط آخر!\n// ❌ if (!wp.expired()) { /* قد يُدمّر هنا! */ auto p = wp.lock(); }\n// ✅ استخدم lock() مباشرة وافحص النتيجة\n// if (auto p = wp.lock()) { /* آمن */ }",
+          "explanationArabic": "expired() و use_count() مفيدان للتشخيص لكنهما غير آمنين في البرمجة المتزامنة — الحالة قد تتغير بين الفحص والاستخدام. lock() هو النهج الآمن لأنه يُرجع shared_ptr يضمن بقاء الكائن. use_count على weak_ptr يُرجع نفس قيمة use_count على shared_ptr."
+        }
+      ],
+      "related": [
+        "std::shared_ptr",
+        "std::make_shared",
+        "std::enable_shared_from_this"
+      ]
+    },
+    "std::enable_shared_from_this": {
+      "title": "std::enable_shared_from_this",
+      "type": "فئة أساسية",
+      "description": "فئة أساسية قالب (CRTP) تسمح لكائن مملوك بـ shared_ptr بإنتاج shared_ptr جديد يشير إلى نفسه بأمان. توفر الدالة shared_from_this() التي تُرجع shared_ptr يشير للكائن نفسه ويزيد العداد المرجعي بشكل صحيح. بدونها، إنشاء shared_ptr من this داخل دالة عضو يُنشئ عدادًا مرجعيًا منفصلًا ويؤدي لتدمير مزدوج.",
+      "usage": "يظهر عندما يحتاج الكائن تمرير shared_ptr لنفسه لدالة أخرى أو تخزينه في حاوية — مثل عقدة شجرة تحتاج إرجاع shared_ptr لنفسها، أو كائن يُسجّل نفسه في مدير أحداث. لا تُورَّث منها إلا إذا كان الكائن سيُدار بـ shared_ptr فعلًا.",
+      "example": "class Node : public std::enable_shared_from_this<Node> {\npublic:\n    std::shared_ptr<Node> self() { return shared_from_this(); }\n};",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "المشكلة: shared_ptr(this) يسبب تدميرًا مزدوجًا",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Bad {\n    std::shared_ptr<Bad> getSelf() {\n        // ❌ كارثة: shared_ptr(this) يُنشئ عدادًا مرجعيًا جديدًا!\n        // لا يعرف عن shared_ptr آخر يملك الكائن بالفعل\n        return std::shared_ptr<Bad>(this);\n    }\n    ~Bad() { std::cout << \"destroyed\\n\"; }\n};\n\nvoid crash() {\n    auto ptr = std::make_shared<Bad>();\n    // use_count = 1\n\n    auto self = ptr->getSelf();\n    // الآن عدادان منفصلان يشيران لنفس الكائن!\n    // ptr عداده 1، self عداده 1 — الكائن فعليًا مملوك مرتين\n\n} // ptr و self يُدمّران — يُستدعى المُدمّر مرتين!\n// المخرج: destroyed, destroyed — تدمير مزدوج = سلوك غير محدد",
+          "explanationArabic": "shared_ptr(this) لا يعرف أن الكائن مملوك بـ shared_ptr آخر. ينشئ عدادًا مرجعيًا منفصلًا. عند تدمير كلا الـ shared_ptr يُستدعى المُدمّر مرتين لنفس الكائن — هذا سلوك غير محدد (undefined behavior) وقد يسبب انهيارًا أو تسربًا. هذا هو السبب الوحيد لوجود enable_shared_from_this."
+        },
+        {
+          "titleArabic": "الحل: enable_shared_from_this مع shared_from_this()",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Good : public std::enable_shared_from_this<Good> {\n    std::shared_ptr<Good> getSelf() {\n        // ✅ shared_from_this() يستخدم نفس العداد المرجعي\n        return shared_from_this();\n    }\n    ~Good() { std::cout << \"destroyed\\n\"; }\n};\n\nvoid safe() {\n    auto ptr = std::make_shared<Good>();\n    // use_count = 1\n\n    auto self = ptr->getSelf();\n    // use_count = 2 — نفس العداد!\n\n    std::cout << ptr.use_count(); // 2\n\n} // ptr و self يُدمّران → use_count يصل 0 → مُدمّر واحد فقط\n// المخرج: destroyed (مرة واحدة فقط)",
+          "explanationArabic": "enable_shared_from_this يخزن weak_ptr داخليًا عند إنشاء shared_ptr أولي بـ make_shared. shared_from_this() يستخدم هذا الـ weak_ptr لإنشاء shared_ptr يشارك نفس العداد. النتيجة: use_count دقيق والمُدمّر يُستدعى مرة واحدة فقط. يجب إنشاء الكائن بـ make_shared وليس new لكي يعمل هذا الآلية."
+        },
+        {
+          "titleArabic": "خطأ شائع: استدعاء shared_from_this قبل make_shared",
+          "code": "#include <memory>\n\nstruct Node : public std::enable_shared_from_this<Node> {\n    void registerSelf() {\n        // ❌ لو لم يُنشأ الكائن بـ make_shared بعد\n        // shared_from_this() يرمي bad_weak_ptr!\n        auto self = shared_from_this();\n    }\n};\n\n// ❌ خطأ: الكائن ليس مملوكًا بـ shared_ptr بعد\n// Node n;\n// n.registerSelf(); // bad_weak_ptr thrown!\n\n// ❌ خطأ: new لا يُفعّل enable_shared_from_this\n// auto raw = new Node();\n// raw->registerSelf(); // bad_weak_ptr thrown!\n\n// ✅ صحيح: make_shared يُفعّل الآلية\nauto node = std::make_shared<Node>();\nnode->registerSelf(); // يعمل — use_count يصبح 2",
+          "explanationArabic": "enable_shared_from_this يعمل فقط إذا أُنشئ الكائن بـ make_shared (أو shared_ptr مع new). لو أنشأته على المكدس أو بـ new مباشر فالـ weak_ptr الداخلي فارغ وshared_from_this() يرمي bad_weak_ptr. هذه قيد مهم يجب مراعاته في التصميم."
+        }
+      ],
+      "related": [
+        "std::shared_ptr",
+        "std::weak_ptr"
+      ]
+    },
+    "std::make_unique": {
+      "title": "std::make_unique",
+      "type": "دالة مصنع",
+      "description": "دالة قالب تنشئ كائنًا على الذاكرة الديناميكية وتعيده داخل unique_ptr. تُمرر حجج المُنشئ مباشرةً فتبني الكائن في المكان. متوفرة منذ C++14. أنظف وأأمن من new مباشرة لأنها تمنع تسرب الذاكرة عند الاستثناءات.",
+      "usage": "الطريقة الوحيدة المفضلة لإنشاء unique_ptr. لا تستخدم unique_ptr(new T(...)) أبدًا — make_unique أنظف وأأمن ولا يُكرر اسم النوع. تُستخدم لإنشاء كائنات polymorphic أو كائنات كبيرة تحتاج عمرًا مخصصًا أو كائنات اختيارية (اختيار في وقت التشغيل).",
+      "example": "auto ptr = std::make_unique<int>(7);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء unique_ptr لعدة أنواع",
+          "code": "#include <memory>\n#include <string>\n#include <vector>\n#include <iostream>\n\n// إنشاء unique_ptr لـ int بحجة المُنشئ\nauto num = std::make_unique<int>(42);\nstd::cout << *num; // 42\n\n// إنشاء unique_ptr لـ string — يمرر الحجج لمُنشئ string\nauto text = std::make_unique<std::string>(5, 'x');\nstd::cout << *text; // xxxxx\n\n// إنشاء unique_ptr لـ vector بحجم 10 وقيمة أولية 0\nauto vec = std::make_unique<std::vector<int>>(10, 0);\nstd::cout << vec->size(); // 10\n\n// unique_ptr لا يُنسخ — يُنقل فقط\nauto moved = std::move(num);\n// num الآن nullptr\n// std::cout << *num; // ❌ سلوك غير محدد!",
+          "explanationArabic": "make_unique تُمرر الحجج مباشرة لمُنشئ النوع مثل make_shared. unique_ptr لا يسمح بالنسخ — النقل ينقل الملكية ويترك المصدر فارغًا. هذا يضمن مالكًا واحدًا فقط في كل لحظة."
+        },
+        {
+          "titleArabic": "لماذا make_unique أفضل من unique_ptr(new T)",
+          "code": "#include <memory>\n\nstruct Widget {\n    int a, b;\n    Widget(int x, int y) : a(x), b(y) {}\n};\n\n// ❌ unique_ptr(new T): يُكرر اسم النوع + أقل أمانًا\n// auto p = std::unique_ptr<Widget>(new Widget(1, 2));\n// Widget مكتوب مرتين! ومعقد بصريًا\n\n// ✅ make_unique: أنظف + النوع مكتوب مرة واحدة\nauto p = std::make_unique<Widget>(1, 2);\n\n// ❌ مشكلة أمان الاستثناءات مع new:\n// void process(std::unique_ptr<A> a, std::unique_ptr<B> b);\n// process(\n//     std::unique_ptr<A>(new A),  // 1. new A → نجح\n//     std::unique_ptr<B>(new B)   // 2. new B → رمى استثناءً\n// ); // 3. unique_ptr<A> لم يُبنَ بعد → A تسرب!\n\n// ✅ make_unique آمن: لا تخصيص منفصل عن الحاوي\n// process(\n//     std::make_unique<A>(),  // لو رمى A لا يوجد تسرب\n//     std::make_unique<B>()   // لأن التخصيص والحاوية في خطوة واحدة\n// );",
+          "explanationArabic": "مع new، ترتيب تقييم وسائط الدالة غير محدد. قد ينجح new A ثم يرمي new B استثناءً قبل بناء unique_ptr فيُسرب A. make_unique يُنفذ new والمُنشئ في تعبير واحد فلا يوجد نافذة للتسرب. هذا نفس سبب تفضيل make_shared."
+        },
+        {
+          "titleArabic": "make_unique مع المصفوفات: C++ فريد من نوعه",
+          "code": "#include <memory>\n#include <iostream>\n\n// make_unique<T[]>(n) تنشئ مصفوفة ديناميكية بحجم n\n// العناصر تُهيأ بقيمة افتراضية (0 للأعداد)\nauto arr = std::make_unique<int[]>(5);\nfor (int i = 0; i < 5; ++i) {\n    std::cout << arr[i] << ' '; // 0 0 0 0 0\n}\n\n// ⚠️ لا يمكن تمرر قيم أولية فردية — فقط الحجم\n// auto bad = std::make_unique<int[]>(5, 1, 2, 3); // ❌ خطأ ترجمة\n\n// ✅ بديل: استخدم vector بدل المصفوفة\nauto vec = std::make_unique<std::vector<int>>(\n    std::initializer_list<int>{1, 2, 3, 4, 5}\n);\n\n// ⚠️ ملاحظة: unique_ptr<T[]> يستدعي delete[] تلقائيًا\n// لكنه لا يدعم begin/end — المرور يدوي بالفهرسة فقط\n// vector أنسب في 99% من الحالات",
+          "explanationArabic": "make_unique<T[]>(n) حالة خاصة لإنشاء مصفوفات ديناميكية. لكن vector أفضل في معظم الحالات لأنه يدعم begin/end وsize وresize. استخدم make_unique<T[]>() فقط عند الحاجة لتوافق مع واجهة C أو عند ضبط الذاكرة بدقة. لا تنسَ أن unique_ptr<T[]> يستدعي delete[] تلقائيًا."
+        }
+      ],
+      "related": [
+        "std::unique_ptr",
+        "new",
+        "auto"
+      ]
+    },
+    "std::make_shared": {
+      "title": "std::make_shared",
+      "type": "دالة مصنع",
+      "description": "دالة قالب تُنشئ كائنًا على الذاكرة الديناميكية وتعيده داخل shared_ptr. تُخصّص الكائن والـ control block (العداد المرجعي والWeak count) في تخصيص واحد — هذا أنسب من shared_ptr(new T(...)) الذي يحتاج تخصيصين منفصلين. تُمرر حجج المُنشئ مباشرةً لها فتبني الكائن في المكان.",
+      "usage": "الطريقة الوحيدة المفضلة لإنشاء shared_ptr. لا تستخدم shared_ptr(new T(...)) أبدًا إلا إذا كنت تحتاج deleter مخصص أو إذا كان النوع يمنع الوصول لمُنشئه.",
+      "example": "auto ptr = std::make_shared<std::string>(\"Atlas\");",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء shared_ptr لعدة أنواع",
+          "code": "#include <memory>\n#include <string>\n#include <vector>\n#include <iostream>\n\n// إنشاء shared_ptr لـ int\nauto num = std::make_shared<int>(42);\nstd::cout << *num << ' ' << num.use_count(); // 42 1\n\n// إنشاء shared_ptr لـ string — يمرر الحجج لمُنشئ string\nauto text = std::make_shared<std::string>(5, 'x');\nstd::cout << *text; // xxxxx\n\n// إنشاء shared_ptr لـ vector\nauto vec = std::make_shared<std::vector<int>>(10, 0);\n// vector<int> بحجم 10 وقيمة أولية 0\nstd::cout << vec->size(); // 10\n\n// النسخ يزيد العداد\nauto copy = num; // use_count يصبح 2\nstd::cout << num.use_count(); // 2",
+          "explanationArabic": "make_shared تُمرر الحجج مباشرة لمُنشئ النوع — لا تحتاج كتابة النوع مرتين. use_count() يُرجع عدد shared_ptr التي تشير لنفس الكائن. النسخ يزيد العداد لأن كلاهما يملك الآن."
+        },
+        {
+          "titleArabic": "لماذا make_shared أفضل من shared_ptr(new T)",
+          "code": "#include <memory>\n\nstruct Large {\n    char data[1024];\n};\n\n// ❌ shared_ptr(new T): تخصيصان منفصلان\n// 1. new Large → تخصيص للكائن (1024 بايت)\n// 2. shared_ptr داخليًا → تخصيص لـ control block (~16 بايت)\n// المجموع: تخصيصان + تجزئة ذاكرة (cache miss أكثر)\n// auto bad = std::shared_ptr<Large>(new Large);\n\n// ✅ make_shared: تخصيص واحد\n// الكائن + control block في كتلة واحدة متجاورة\n// المجموع: تخصيص واحد + تجاوز أفضل للذاكرة المؤقتة\nauto good = std::make_shared<Large>();\n\n// ❌ مشكلة أمان الاستثناءات مع new:\n// void dangerous(std::shared_ptr<A> a, std::shared_ptr<B> b);\n// dangerous(std::shared_ptr<A>(new A), std::shared_ptr<B>(new B));\n// ترتيب التقييم غير محدد! قد يحدث:\n// 1. new A → نجح\n// 2. new B → رمى استثناءً\n// 3. الكائن A تسرّب لأن shared_ptr لم يُبنَ بعد!\n\n// ✅ make_shared آمن: لا تخصيص منفصل عن الحاوي\n// dangerous(std::make_shared<A>(), std::make_shared<B>());\n// لو رمى make_shared<B> استثناءً لا يوجد تسرب",
+          "explanationArabic": "make_shared يُخصّص كتلة واحدة متجاورة تحتوي الكائن والـ control block — هذا أسرع ويُحسّن تجاوز الذاكرة المؤقتة (cache locality). مع new، تخصيصان منفصلان يعنيان تجزئة في الذاكرة. الأهم: make_shared يمنع تسرب الذاكرة عند الاستثناءات لأن التخصيص والحاوية في خطوة واحدة."
+        },
+        {
+          "titleArabic": "خطأ شائع: العيب الوحيد لـ make_shared مع weak_ptr",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Big {\n    char data[4096];\n    ~Big() { std::cout << \"Big destroyed\\n\"; }\n};\n\nvoid demonstrate_delay() {\n    auto sp = std::make_shared<Big>();\n    std::weak_ptr<Big> wp = sp;\n\n    sp.reset(); // use_count يصبح 0 لكن Big لا يُدمَّر فورًا!\n    // السبب: make_shared وضع الكائن والـ control block في تخصيص واحد\n    // control block لا يُحرر حتى يُحرر آخر weak_ptr\n    // لكن الكائن نفسه يُستدعى مُدمّره عند use_count == 0\n\n    // Big يُدمَّر هنا عند خروج wp من النطاق (لاحظ التأخير)\n    // في التطبيقات العادية هذا لا يُلاحظ\n}\n\n// ❌ لا تحلّ هذا بـ shared_ptr(new T) إلا إذا كانت الذاكرة كبيرة جدًا\n// واستمرت weak_ptr لفترة طويلة — حالة نادرة جدًا\n\n// ✅ القاعدة: استخدم make_shared دائمًا\n// العيب فقط نظري: تأخير تحرير الذاكرة (لا المُدمّر) مع weak_ptr\n// المُدمّر يُستدعى في الوقت الصحيح دائمًا",
+          "explanationArabic": "مع make_shared، الكائن والـ control block في كتلة واحدة. عند use_count == 0 يُستدعى مُدمّر الكائن فورًا لكن الذاكرة لا تُحرر حتى يُحرر الـ control block (عند انتهاء آخر weak_ptr). هذا يعني أن 4096 بايت تبقى محجوزة مؤقتًا رغم أن المُدمّر نُفّذ. في الممارسة هذا نادر التأثير — استخدم make_shared دائمًا."
+        }
+      ],
+      "related": [
+        "std::shared_ptr",
+        "std::make_unique",
+        "std::weak_ptr",
+        "auto",
+        "new"
+      ]
+    },
+    "std::function": {
+      "title": "std::function",
+      "type": "غلاف استدعاء",
+      "description": "غلاف نوعي يمكنه تخزين أي كائن قابل للاستدعاء (callable) يتوافق مع التوقيع المحدد: دالة عادية، دالة عضو، lambda، كائن يُعرّف operator(). يُخصّص ذاكرة ديناميكية داخليًا لحفظ الكائن المُخزَّن — حجمه ثابت (~32 بايت عادةً) لكنه قد يُخصّص على الكومة للكائنات الكبيرة. يُحقق type erasure — يخفي النوع الفعلي خلف واجهة موحدة.",
+      "usage": "يظهر عند الحاجة لتخزين أو تمرير دالة بشكل عام في وقت التشغيل مثل ردادات الأحداث (callbacks) أو أنظمة الأوامر أو جداول العمليات. أنسب من القوالب عندما لا تعرف النوع وقت الترجمة.",
+      "example": "std::function<int(int,int)> op = [](int a, int b) { return a + b; };",
+      "includeHeader": "#include <functional>",
+      "usageExamples": [
+        {
+          "titleArabic": "تخزين lambda ودوال مختلفة بنفس التوقيع",
+          "code": "#include <functional>\n#include <iostream>\n#include <cmath>\n\n// توقيع: يأخذ float ويُرجع float\nusing MathOp = std::function<float(float)>;\n\nMathOp op = [](float x) { return x * x; }; // lambda\nstd::cout << op(3.0f); // 9.0f\n\n// يمكن إعادة تعيينه بدالة عادية\nfloat negate(float x) { return -x; }\nop = negate;\nstd::cout << op(5.0f); // -5.0f\n\n// أو بدالة من المكتبة\nop = std::sqrt;\nstd::cout << op(16.0f); // 4.0f",
+          "explanationArabic": "std::function يُخفي النوع الفعلي خلف توقيع واحد — يمكنه حمل lambda أو دالة عادية أو مؤشر دالة. إعادة التعيين تغيّر الكائن المُخزَّن ديناميكيًا. المُصرِّف يتأكد أن كل كائن يُطابق التوقيع وقت التعيين."
+        },
+        {
+          "titleArabic": "نظام أحداث بـ callback",
+          "code": "#include <functional>\n#include <string>\n#include <vector>\n#include <iostream>\n\n// كل مستمع له نفس التوقيع\nusing Listener = std::function<void(const std::string&)>;\n\nclass EventBus {\n    std::vector<Listener> listeners;\npublic:\n    // يسجل أي callable يتوافق مع التوقيع\n    void on(Listener listener) {\n        listeners.push_back(std::move(listener)); // نقل أنسب من النسخ\n    }\n    void emit(const std::string& event) {\n        for (auto& fn : listeners) fn(event);\n    }\n};\n\nEventBus bus;\nbus.on([](const std::string& e) { std::cout << \"Lambda: \" << e << '\\n'; });\nbus.on([](const std::string& e) { std::cout << \"Log: \" << e << '\\n'; });\nbus.emit(\"click\");",
+          "explanationArabic": "std::function يُمكّن أنماط مثل نظام الأحداث لأنه يُخزّن أي callable بنفس التوقيع في حاوية واحدة. بدونها تحتاج قالب لكل نوع callable. استخدم std::move عند التسجيل لتجنب نسخ الكائن الداخلي."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام std::function بدل القالب عندما يكفي",
+          "code": "#include <functional>\n#include <iostream>\n\n// ❌ أبطأ: std::function يُخصّص على الكومة أحيانًا ويمنع inline\n// void apply(std::function<int(int)> fn, int val) {\n//     return fn(val);\n// }\n\n// ✅ الأسرع: القالب يُسمح بـ inline ولا يُخصّص\n// المُصرِّف يُولّد نسخة لكل نوع — لا حمل وقت التشغيل\ntemplate<typename F>\nint apply(F&& fn, int val) {\n    return fn(val);\n}\n\napply([](int x) { return x * 2; }, 5); // inline — أسرع\n\n// ✅ استخدم std::function فقط عندما تحتاج:\n// 1. تخزين الدالة في متغير أو حاوية (لا تعرف النوع وقت الترجمة)\n// 2. تمريرها عبر واجهة ثابتة (virtual function member)\nstd::function<int(int)> stored = [](int x) { return x + 1; };\nint result = stored(10); // لا يمكن inline — حمل وقت التشغيل",
+          "explanationArabic": "std::function يمنع المُصرِّف من عمل inline لأنه يُخفي النوع الفعلي (type erasure). القالب أنسب عندما تعرف النوع وقت الترجمة لأنه يُسمح بـ inline ويُزيل الحمل. القاعدة: استخدم القالب أولًا، وانتقل لـ std::function فقط عند الحاجة لتخزين callable أو تمريره عبر واجهة غير قالبية."
+        }
+      ],
+      "related": [
+        "auto",
+        "template",
+        "std::move",
+        "lambda",
+        "std::bind"
+      ]
+    },
+    "std::move": {
+      "title": "std::move",
+      "type": "دالة أداة",
+      "description": "تحوّل كائنًا إلى مرجع rval لتمكين نقل موارده بدل نسخها. لا ينقل فعلًا بل يُعدّ للنقل.",
+      "usage": "يظهر عند نقل ملكية كائن مثل unique_ptr أو حاوية كبيرة.",
+      "example": "std::vector<int> a = {1, 2, 3};\nstd::vector<int> b = std::move(a);",
+      "usageExamples": [
+        {
+          "titleArabic": "نقل حاوية كبيرة بدل نسخها",
+          "code": "#include <vector>\n#include <string>\n#include <iostream>\n\nstd::vector<std::string> data = {\"alpha\", \"beta\", \"gamma\"};\n\n// بدون move: يُنسخ كل عنصر — بطيء مع الحاويات الكبيرة\n// std::vector<std::string> copy = data; // نسخ\n\n// مع move: يُنقل المُؤشِّر الداخلي فقط — O(1)\nstd::vector<std::string> taken = std::move(data);\n\nstd::cout << taken.size(); // 3\nstd::cout << data.size();  // 0 — data الآن في حالة غير محددة\nstd::cout << data.empty(); // true — لكن لا تعتمد على محتواها",
+          "explanationArabic": "std::move لا يُنفّذ النقل بنفسه — هو فقط يُحوّل الكائن إلى مرجع rval. المُنشئ أو عامل التعيين هو من يُنفّذ النقل الفعلي. بعد النقل، الكائن المصدر في حالة صالحة لكن غير محددة — آمن أن تُدمره أو تُعيّنه، لكن لا تقرأ قيمته."
+        },
+        {
+          "titleArabic": "نقل unique_ptr — الحالة الأكثر شيوعًا",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Texture {\n    int id;\n    Texture(int i) : id(i) { std::cout << \"إنشاء \" << id << '\\n'; }\n    ~Texture() { std::cout << \"تدمير \" << id << '\\n'; }\n};\n\nauto tex = std::make_unique<Texture>(42);\n\n// ❌ لا يمكن النسخ — unique_ptr يحظر النسخ\n// auto copy = tex; // خطأ ترجمة\n\n// ✅ النقل يُنقل الملكية — لا يُنشئ كائنًا جديدًا\nauto owner = std::make_unique<Texture>(99);\nauto new_owner = std::move(owner);\n\n// owner الآن nullptr — لا يحمل أي ملكية\nif (!owner) {\n    std::cout << \"owner فارغ بعد النقل\";\n}\n// new_owner يحمل الملكية وسيُدمّر الكائن عند خروجه من النطاق",
+          "explanationArabic": "unique_ptr يُمنع نسخه بالتصميم — الملكية الحصرية لا تتجزأ. std::move هو الطريقة الوحيدة لنقل ملكيته. بعد النقل يصبح nullptr — هذا سلوك مضمون وليس غير محدد. هذه الحالة الأكثر وضوحًا لفائدة move لأن البديل هو النسخ المحظور."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام move مع كائن سيعود من دالة",
+          "code": "#include <vector>\n\n// ❌ لا حاجة لـ move عند الإرجاع — المُصرِّف يُطبّق RVO أو NRVO\n// std::vector<int> make_data() {\n//     std::vector<int> v = {1, 2, 3};\n//     return std::move(v); // أسوأ! يمنع RVO\n// }\n\n// ✅ الأفضل: أرجع المتغير مباشرة\nstd::vector<int> make_data() {\n    std::vector<int> v = {1, 2, 3};\n    return v; // المُصرِّف يُزيل النسخ تلقائيًا (RVO)\n}\n\n// ✅ استخدم move فقط عند الإرجاع لو لم يكن المتغير محليًا\nstd::vector<int> wrapper(std::vector<int>& input) {\n    return std::move(input); // input ليس محليًا — move مطلوب\n}",
+          "explanationArabic": "عند إرجاع متغير محلي، المُصرِّف يُطبّق Copy Elision (RVO/NRVO) وهو أسرع من move لأنه يبني الكائن مباشرة في مكان الاستقبال. إضافة std::move قد تمنع هذه التحسينات. القاعدة: لا تُضف move عند إرجاع متغير محلي — أضفها فقط إذا كان الكائن معاملًا أو عضوًا وليس متغيرًا محليًا."
+        }
+      ],
+      "related": [
+        "std::forward",
+        "std::unique_ptr",
+        "auto"
+      ]
+    },
+    "std::forward": {
+      "title": "std::forward",
+      "type": "دالة أداة",
+      "description": "يُمرر المعامل بنوعه الأصلي في سياق القوالب. أساسي في perfect forwarding.",
+      "usage": "يظهر في القوالب لتمرير الحجج بحالتها الأصلية.",
+      "example": "template<typename T>\nvoid wrapper(T&& arg) { target(std::forward<T>(arg)); }",
+      "usageExamples": [
+        {
+          "titleArabic": "perfect forwarding: تمرير حجج بحالتها الأصلية",
+          "code": "#include <utility>\n#include <iostream>\n#include <string>\n\nvoid process(const std::string& s) {\n    std::cout << \"const ref: \" << s << '\\n';\n}\nvoid process(std::string&& s) {\n    std::cout << \"rvalue ref: \" << s << '\\n';\n}\n\n// wrapper يُمرر الحجة بنوعها الأصلي إلى process\ntemplate<typename T>\nvoid wrapper(T&& arg) {\n    process(std::forward<T>(arg)); // إذا كانت lvalue → const ref، إذا كانت rvalue → rvalue ref\n}\n\nstd::string name = \"Atlas\";\nwrapper(name);              // lvalue → يستدعي process(const string&)\nwrapper(std::string(\"temp\")); // rvalue → يستدعي process(string&&)\nwrapper(\"literal\");         // rvalue → يستدعي process(string&&)",
+          "explanationArabic": "T&& مع القوالب ليس مرجع rval عاديًا — هو forwarding reference (أو universal reference). عندما تمرر lvalue يصبح T = string& وT&& = string& (مرجع rval لمرجع lvalue ينهار لمرجع lvalue). عندما تمرر rvalue يصبح T = string وT&& = string&&. std::forward يُعيد تحويله للنوع الأصلي فتستدعي الحمولة الصحيحة."
+        },
+        {
+          "titleArabic": "مُنشئ ينقل أو ينسخ حسب نوع الحجة",
+          "code": "#include <utility>\n#include <string>\n\nclass Buffer {\n    std::string data_;\npublic:\n    // مُنشئ يقبل أي نوع ويُمرره لـ data_ بنوعه الأصلي\n    template<typename T>\n    explicit Buffer(T&& val) : data_(std::forward<T>(val)) {}\n};\n\nstd::string owned = \"hello\";\nBuffer a(owned);              // نسخ: T = string& → data_(owned)\nBuffer b(std::string(\"world\")); // نقل: T = string → data_(std::move(temp))\nBuffer c(\"literal\");          // نقل: T = const char* → data_(\"literal\")",
+          "explanationArabic": "المُنشئ القالب يُمرر الحجة لـ data_ بنوعها الأصلي. إذا كانت lvalue يُنسخ، وإذا كانت rvalue يُنقل. هذا أفضل من كتابة مُنشئين منفصلين (واحد للنسخ وواحد للنقل) لأنهما يُغطيان كل الحالات بنسخة واحدة. الانتباه: هذا لا يعمل مع الـ overloading لأن القالب يُمتص كل الحالات — احذر من التعارض مع مُنشئات أخرى."
+        },
+        {
+          "titleArabic": "خطأ شائع: std::forward بدل std::move خارج القوالب",
+          "code": "#include <utility>\n#include <string>\n\nvoid take_ownership(std::string&& s) {\n    // ❌ لا تستخدم forward هنا — ليس في سياق قالب\n    // std::forward<std::string>(s); // يعمل لكنه مضلل\n\n    // ✅ std::move هو الصحيح في الدوال العادية\n    auto stored = std::move(s);\n}\n\n// ❌ خطأ: forward يحتاج نوع القالب صريحًا خارج القوالب\n// void wrong(std::string& s) {\n//     std::forward(s); // خطأ ترجمة: لا يعرف T\n// }\n\n// ✅ القاعدة: استخدم forward فقط داخل قوالب مع T&&\n// واستخدم move في كل الحالات الأخرى\ntemplate<typename T>\nvoid correct(T&& arg) {\n    target(std::forward<T>(arg)); // ✅ صحيح: داخل قالب\n}",
+          "explanationArabic": "std::forward يحتاج تحديد النوع T صراحةً — داخل القالب يُستنتج تلقائيًا من المعامل. خارجه يجب كتابته يدويًا وهذا يُفقد فائدته. std::move لا يحتاج نوعًا — هو دائمًا cast لـ rval. القاعدة البسيطة: في دالة عادية استخدم move، وفي قالب مع forwarding reference استخدم forward."
+        }
+      ],
+      "related": [
+        "std::move",
+        "template",
+        "typename"
+      ]
+    },
+    "std::atomic": {
+      "title": "std::atomic",
+      "type": "نوع التزامن",
+      "description": "غلاف يجعل العمليات على القيمة ذرية لا يُقاطعها خيط آخر.",
+      "usage": "يظهر عند مشاركة متغير بسيط بين خيوط بدون mutex.",
+      "example": "std::atomic<int> counter{0};\ncounter.fetch_add(1);",
+      "usageExamples": [
+        {
+          "titleArabic": "عداد آمن بين خيوط متعددة",
+          "code": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<int> counter{0};\n\nvoid increment(int times) {\n    for (int i = 0; i < times; ++i) {\n        counter.fetch_add(1, std::memory_order_relaxed);\n        // relaxed: لا يُفرض ترتيبًا على العمليات الأخرى — الأسرع\n    }\n}\n\nstd::thread t1(increment, 100000);\nstd::thread t2(increment, 100000);\nt1.join();\nt2.join();\n\n// النتيجة دائمًا 200000 — لا تضيع أي عملية\nstd::cout << counter.load();",
+          "explanationArabic": "fetch_add تُنفّذ القراءة والزيادة والكتابة كوحدة ذرية واحدة — لا يمكن لخيطين أن يقرآ نفس القيمة ويُزياداها معًا. memory_order_relaxed هو الأسرع لأنه لا يُفرض ترتيبًا على الذاكرة — مناسب للعدادات البسيطة التي لا تُتحقق بشروط أخرى."
+        },
+        {
+          "titleArabic": "علم إيقاف (flag) مع memory_order_acquire/release",
+          "code": "#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<bool> ready{false};\nint data = 0;\n\n// الخيط المنتج\nstd::thread producer([&] {\n    data = 42; // كتابة عادية\n    ready.store(true, std::memory_order_release);\n    // release: كل الكتابات السابقة (data=42) تصبح مرئية عند الاستيقاظ\n});\n\n// الخيط المستهلك\nstd::thread consumer([&] {\n    while (!ready.load(std::memory_order_acquire)) {\n        // انتظار مُزدحم — في التطبيق الحقيقي استخدم condition_variable\n    }\n    // acquire: يضمن رؤية data=42 المكتوب قبل release\n    std::cout << data; // مضمون: 42\n});\n\nproducer.join();\nconsumer.join();",
+          "explanationArabic": "memory_order_release/acquire يُشكّلان زوجًا: release يضمن أن كل الكتابات قبلها مرئية لأي خيط يرى القيمة عبر acquire. بدون هذا الزوج، المُصرِّف أو المعالج قد يُعيد ترتيب data=42 بعد store(true). relaxed لا يكفي هنا لأنه لا يضمن ترتيب الذاكرة."
+        },
+        {
+          "titleArabic": "خطأ شائع: استبدال atomic بـ volatile",
+          "code": "#include <atomic>\n\n// ❌ volatile لا يوفر ذرية — عدّاد volatile يفقد عمليات\n// volatile int bad_counter = 0;\n// // ++bad_counter يقرأ ثم يزيد ثم يكتب — ثلاث خطوات غير ذرية!\n// // خيطان قد يقرآ نفس القيمة فيُزياداها مرة واحدة بدل مرتين\n\n// ❌ volatile لا يوفر ترتيب ذاكرة — لا يمنع إعادة الترتيب\n// volatile bool flag = false;\n// // المعالج قد يُعيد ترتيب الكتابات حول flag\n\n// ✅ atomic هو الصحيح: يوفر الذرية وترتيب الذاكرة\nstd::atomic<int> counter{0};\ncounter++; // ذري: يقرأ ويزيد ويكتب كوحدة واحدة\n\n// ✅ atomic_flag أبسط وأسرع لعلم بسيط\nstd::atomic_flag lock = ATOMIC_FLAG_INIT;\n// test_and_set: ذري — يُرجع القيمة القديمة ويضع true\n// clear: يُعيد القيمة لـ false",
+          "explanationArabic": "volatile في C++ يخبر المُصرِّف فقط 'لا تُزِل القراءة/الكتابة' — لا يمنع التزامن ولا يوفر ذرية ولا ترتيب ذاكرة. ++volatile_int ثلاث عمليات منفصلة (قراءة، زيادة، كتابة) يمكن تقاطعها. atomic::operator++ عملية ذرية واحدة. القاعدة: لا تستخدم volatile أبدًا للتزامن في C++ — استخدم atomic."
+        }
+      ],
+      "related": [
+        "std::thread",
+        "std::mutex",
+        "volatile"
+      ]
+    },
+    "std::thread": {
+      "title": "std::thread",
+      "type": "نوع التزامن",
+      "description": "يمثل خيط تنفيذ مستقل يمكن تشغيل دالة أو lambda فيه بالتوازي.",
+      "usage": "يظهر عند الحاجة لتوازي فعلي بين مهام مستقلة.",
+      "example": "std::thread t([]{ do_work(); });\nt.join();",
+      "usageExamples": [
+        {
+          "titleArabic": "تشغيل دالة في خيط منفصل وانتظارها",
+          "code": "#include <thread>\n#include <iostream>\n\nvoid print_message(const std::string& msg) {\n    std::cout << msg << '\\n';\n}\n\nint main() {\n    std::thread t(print_message, \"مرحبًا من الخيط الجديد\");\n    t.join(); // ينتظر انتهاء الخيط قبل المتابعة\n    std::cout << \"الخيط الرئيسي واصل العمل\\n\";\n}",
+          "explanationArabic": "std::thread ينشئ خيطًا جديدًا ينفذ print_message فورًا. join يُجمّد الخيط الرئيسي حتى ينتهي الخيط الجديد — بدون join سيدمر مُنشئ thread الكائن عند نهاية النطاق ويُستدعى std::terminate."
+        },
+        {
+          "titleArabic": "تقسيم عمل على عدة خيوط مع mutex",
+          "code": "#include <thread>\n#include <mutex>\n#include <vector>\n#include <iostream>\n\nstd::mutex mtx;\nint total = 0;\n\nvoid sum_range(int start, int end) {\n    int local_sum = 0;\n    for (int i = start; i < end; ++i) {\n        local_sum += i;\n    }\n    std::lock_guard<std::mutex> lock(mtx);\n    total += local_sum;\n    // القفل فقط عند الجمع النهائي — لا داخل الحلقة\n}\n\nint main() {\n    std::vector<std::thread> threads;\n    int chunk = 250;\n    for (int i = 0; i < 1000; i += chunk) {\n        threads.emplace_back(sum_range, i, i + chunk);\n    }\n    for (auto& t : threads) {\n        t.join();\n    }\n    std::cout << total; // 499500\n}",
+          "explanationArabic": "كل خيط يجمع جزءه محليًا أولًا (local_sum) ثم يُضيفه للمجموع تحت قفل. هذا أسرع بكثير من قفل كل عملية إضافة فردية لأن القفل يحدث 4 مرات فقط بدل 1000. lock_guard يضمن فتح القفل حتى لو ألقى الكود استثناءً."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان join أو detach",
+          "code": "#include <thread>\n\nvoid task() {\n    // عمل طويل\n}\n\nint main() {\n    std::thread t(task);\n    // ❌ نهاية النطاق بدون join أو detach\n    // البرنامج يستدعي std::terminate فورًا\n    // ✅ الحل: t.join(); أو t.detach();\n}",
+          "explanationArabic": "إذا دُمّر كائن std::thread وكان لا يزال joinable (أي لم يُستدعَ join أو detach)، يستدعي المُدمِّر std::terminate وينتهي البرنامج فورًا. هذا تصميم متعمّد لمنع الخيوط اليتيمة التي تصل لذاكرة مُحرَّرة. القاعدة: كل خيط إما join أو detach قبل نهاية نطاقه."
+        }
+      ],
+      "related": [
+        "std::mutex",
+        "std::atomic",
+        "std::future"
+      ]
+    },
+    "std::mutex": {
+      "title": "std::mutex",
+      "type": "نوع التزامن",
+      "description": "قفل استبعاد متبادل يحمي قسمًا حرجًا من الوصول المتزامن. خيط واحد فقط يستطيع أخذ القفل في لحظة ما — باقي الخيوط تنتظر حتى يُحرر.",
+      "usage": "يظهر عند مشاركة بيانات بين خيوط ويجب ضمان وصول حصري.",
+      "example": "std::mutex m;\nstd::lock_guard<std::mutex> lock(m);",
+      "includeHeader": "#include <mutex>",
+      "usageExamples": [
+        {
+          "titleArabic": "حماية متغير مشترك مع lock_guard",
+          "code": "#include <mutex>\n#include <thread>\n#include <iostream>\n\nstd::mutex mtx;\nint counter = 0;\n\nvoid safe_increment(int times) {\n    for (int i = 0; i < times; ++i) {\n        std::lock_guard<std::mutex> lock(mtx);\n        // القفل مأخوذ هنا — خيط واحد فقط ينفذ هذه المنطقة\n        ++counter;\n        // القفل يُحرر تلقائيًا عند نهاية النطاق (})\n    }\n}\n\nint main() {\n    std::thread t1(safe_increment, 100000);\n    std::thread t2(safe_increment, 100000);\n    t1.join();\n    t2.join();\n    std::cout << counter; // دائمًا 200000\n}",
+          "explanationArabic": "lock_guard يأخذ القفل عند بنائه ويحرره عند تدميره (RAII) — لا تحتاج unlock يدوي أبدًا. بدون القفل، ++counter ليست ذرية (تقرأ ثم تزيد ثم تكتب) فيمكن لخيطين قراءة نفس القيمة. القفل هنا داخل الحلقة — هذا صحيح منطقيًا لكنه بطيء لأن القفل/التحرير يحدث 200000 مرة."
+        },
+        {
+          "titleArabic": "تقليص القفل: اجمع محليًا ثم اقفل",
+          "code": "#include <mutex>\n#include <thread>\n#include <vector>\n#include <iostream>\n\nstd::mutex mtx;\nstd::vector<int> results;\n\nvoid compute_and_store(int id) {\n    // عمل مكلف بدون قفل — لا يصل لبيانات مشتركة\n    int local_result = id * id;\n\n    // القفل فقط عند الكتابة للمتغير المشترك\n    {\n        std::lock_guard<std::mutex> lock(mtx);\n        results.push_back(local_result);\n    }\n    // القفل مُحرر — باقي الخيوط تستطيع الكتابة\n}\n\nint main() {\n    std::vector<std::thread> threads;\n    for (int i = 0; i < 8; ++i) {\n        threads.emplace_back(compute_and_store, i);\n    }\n    for (auto& t : threads) t.join();\n    // results = {0, 1, 4, 9, 16, 25, 36, 49} (الترتيب قد يختلف)\n}",
+          "explanationArabic": "القاعدة الأساسية: قلّل مدة القفل قدر الإمكان. العمل المحلي لا يحتاج حماية — القفل فقط عند لمس البيانات المشتركة. النطاق { } حول lock_guard يحدد بدقة متى يُحرر القفل — بدون هذا النطاق سيمتد القفل لنهاية الدالة. هذا النمط أسرع بكثير من قفل الحلقة كاملة."
+        },
+        {
+          "titleArabic": "خطأ شائع: قفل يدوي بدون RAII",
+          "code": "#include <mutex>\n\nstd::mutex mtx;\nint data = 0;\n\n// ❌ خطأ: إذا رمى الكود استثناءً لا يُفتح القفل — deadlock!\n// void bad() {\n//     mtx.lock();\n//     data += 10;\n//     if (data > 100) throw std::runtime_error(\"كبير جداً\");\n//     // القفل لا يُفتح أبداً لأن throw يتخطى unlock\n//     mtx.unlock();\n// }\n\n// ✅ صحيح: lock_guard يُحرر القفل حتى مع الاستثناء\nvoid good() {\n    std::lock_guard<std::mutex> lock(mtx);\n    data += 10;\n    if (data > 100) throw std::runtime_error(\"كبير جداً\");\n    // lock_guard يُستدعى ~lock_guard عند الخروج (حتى بـ throw)\n    // القفل مضمون الإفلات\n}\n\n// ❌ خطأ آخر: نسخ mutex — محظور تمامًا\n// std::mutex m2 = mtx; // خطأ ترجمة: mutex غير قابل للنسخ",
+          "explanationArabic": "lock()/unlock() اليدوي خطر لأن أي مسار خروج غير متوقع (استثناء، return مبكر، break) يترك القفل مأخوذًا. lock_guard يحل هذا بالـ RAII: المُدمِّر يُحرر القفل دائمًا. mutex غير قابل للنسخ أو النقل بالتصميم — هذا يمنع أخطاء مثل قفلين يشيران لنفس mutex أو نسيان أي قفل مأخوذ."
+        }
+      ],
+      "related": [
+        "std::thread",
+        "std::lock_guard",
+        "std::unique_lock",
+        "std::atomic",
+        "std::scoped_lock"
+      ]
+    },
+    "std::recursive_mutex": {
+      "title": "std::recursive_mutex",
+      "type": "نوع التزامن",
+      "description": "مثل std::mutex لكن يسمح لنفس الخيط بأخذ القفل عدة مرات متداخلة.",
+      "usage": "يظهر عندما تدعو دالة تحمي قسمًا حرجًا دالة أخرى تحمي نفس القسم.",
+      "example": "std::recursive_mutex m;\nstd::lock_guard<std::recursive_mutex> lock(m);",
+      "related": [
+        "std::mutex",
+        "std::lock_guard",
+        "std::shared_mutex"
+      ]
+    },
+    "std::shared_mutex": {
+      "title": "std::shared_mutex",
+      "type": "نوع التزامن",
+      "description": "قفل قراءة-كتابة يسمح لعدة خيوط بالقراءة المتوازية في نفس اللحظة أو بخيط واحد بالكتابة الحصرية (C++17). القراءة لا تمنع قراءة أخرى، لكنها تمنع الكتابة. الكتابة تمنع القراءة والكتابة معًا. يُنفَّذ داخليًا عبر آلية تفرّق بين قفل مشترك (shared) وقفل حصري (exclusive).",
+      "usage": "مفيد لبيانات تُقرأ كثيرًا وتُكتب قليلًا مثل ذاكرة التخزين المؤقت (cache) أو إعدادات التطبيق أو قوائم الموارد. إذا كانت القراءة والكتابة متقاربتين فـ std::mutex أنسب لأن حمل shared_mutex أعلى.",
+      "example": "std::shared_mutex rw;\n{ std::shared_lock sl(rw); read(); }\n{ std::unique_lock ul(rw); write(); }",
+      "includeHeader": "#include <shared_mutex>",
+      "usageExamples": [
+        {
+          "titleArabic": "قفل قراءة متوازي وقفل كتابة حصري",
+          "code": "#include <shared_mutex>\n#include <mutex>\n#include <thread>\n#include <vector>\n#include <iostream>\n\nstd::shared_mutex rw_mutex;\nint shared_data = 0;\n\nvoid reader(int id) {\n    // shared_lock: يسمح لعدة قراءات بالتوازي\n    std::shared_lock<std::shared_mutex> lock(rw_mutex);\n    std::cout << \"قارئ \" << id << \": \" << shared_data << '\\n';\n    // عند خروج lock من النطاق يُحرر القفل تلقائيًا\n}\n\nvoid writer(int value) {\n    // unique_lock: قفل حصري — ينتظر كل القراءات أن تنتهي\n    std::unique_lock<std::shared_mutex> lock(rw_mutex);\n    shared_data = value;\n    std::cout << \"كاتب: أصبحت القيمة \" << shared_data << '\\n';\n}\n\nint main() {\n    std::vector<std::thread> threads;\n    // 3 قراءات متوازية — يمكنهم العمل في نفس اللحظة\n    for (int i = 0; i < 3; ++i)\n        threads.emplace_back(reader, i);\n    // كتابة واحدة — تنتظر القراءات ثم تحصر القفل\n    threads.emplace_back(writer, 42);\n    for (auto& t : threads) t.join();\n}",
+          "explanationArabic": "shared_lock يأخذ قفلًا مشتركًا — عدة خيوط يمكنها أخذ shared_lock في نفس الوقت. unique_lock يأخذ قفلًا حصريًا — ينتظر حتى يُحرر كل الأقفال المشتركة ثم يمنع أي قفل جديد. هذا يُحقق توازيًا حقيقيًا في القراءة مع حماية الكتابة."
+        },
+        {
+          "titleArabic": "ذاكرة تخزين مؤقت تُقرأ كثيرًا وتُكتب قليلًا",
+          "code": "#include <shared_mutex>\n#include <string>\n#include <unordered_map>\n#include <optional>\n\nclass TextureCache {\n    std::unordered_map<std::string, int> cache_;\n    mutable std::shared_mutex mutex_;\n\npublic:\n    // القراءة: قفل مشترك — عدة خيوط تقرأ معًا\n    std::optional<int> get(const std::string& name) const {\n        std::shared_lock<std::shared_mutex> lock(mutex_);\n        auto it = cache_.find(name);\n        if (it != cache_.end()) return it->second;\n        return std::nullopt;\n    }\n\n    // الكتابة: قفل حصري — خيط واحد فقط\n    void put(const std::string& name, int texture_id) {\n        std::unique_lock<std::shared_mutex> lock(mutex_);\n        cache_[name] = texture_id;\n    }\n\n    // التحقق من الوجود: قراءة فقط — قفل مشترك\n    bool contains(const std::string& name) const {\n        std::shared_lock<std::shared_mutex> lock(mutex_);\n        return cache_.count(name) > 0;\n    }\n};",
+          "explanationArabic": "mutable يسمح بتعديل mutex_ داخل دوال const لأن القفل نفسه ليس جزءًا من الحالة المنطقية. get و contains يستخدمان shared_lock لأنهما لا يُعدّلان البيانات — عدة خيوط تستطيع الاستدعاء في نفس الوقت. put يستخدم unique_lock لأنه يُعدّل الحاوية. هذا النمط هو الاستخدام الأكثر شيوعًا لـ shared_mutex."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام unique_lock للقراءة",
+          "code": "#include <shared_mutex>\n#include <thread>\n#include <iostream>\n\nstd::shared_mutex rw;\nint data = 0;\n\nvoid bad_reader() {\n    // ❌ unique_lock يأخذ قفلًا حصريًا حتى للقراءة!\n    // هذا يُلغي كل فائدة shared_mutex — القراءات تنتظر بعضها\n    // std::unique_lock<std::shared_mutex> lock(rw);\n    // std::cout << data << '\\n';\n}\n\nvoid good_reader() {\n    // ✅ shared_lock للقراءة — يسمح بتوازي القراءات\n    std::shared_lock<std::shared_mutex> lock(rw);\n    std::cout << data << '\\n';\n}\n\nvoid writer() {\n    // ✅ unique_lock للكتابة — قفل حصري\n    std::unique_lock<std::shared_mutex> lock(rw);\n    ++data;\n}\n\n// ❌ خطأ آخر: استخدام std::mutex بدل shared_mutex لكاش يُقرأ كثيرًا\n// std::mutex plain_mutex;\n// // كل القراءات تتسلسل — لا توازي حتى في القراءة!\n// // إذا كان 10 خيوط تقرأ، تعمل واحدًا تلو الآخر",
+          "explanationArabic": "الفرق الجوهري: shared_lock يسمح بتوازي القراءات، unique_lock يحصر الوصول كليًا. استخدام unique_lock للقراءة يُلغي فائدة shared_mutex تمامًا ويجعلها أبطأ من std::mutex العادي لأن shared_mutex له حمل داخلي أعلى. القاعدة: قراءة = shared_lock دائمًا، كتابة = unique_lock دائمًا."
+        }
+      ],
+      "related": [
+        "std::mutex",
+        "std::shared_lock",
+        "std::unique_lock",
+        "std::lock_guard",
+        "std::recursive_mutex"
+      ]
+    },
+    "std::promise": {
+      "title": "std::promise",
+      "type": "نوع التزامن",
+      "description": "كائن يُمثّل جانب الإرسال في قناة اتصال بين خيوط. يربط بـ std::future عبر get_future() — الخيط المنتج يكتب القيمة بـ set_value() والخيط المستهلك يقرأها بـ future::get(). كل promise يُنتج future واحدًا فقط. يمكنه أيضًا إرسال استثناء بـ set_exception() بدل قيمة عادية. إذا دُمّر promise بدون set_value أو set_exception، يُستدعى future::get() ويرمي std::future_error مع broken_promise.",
+      "usage": "يظهر عندما تحتاج نقل نتيجة من خيط إلى آخر بطريقة يدوية — عندما لا يكفي std::async لأنك تتحكم في الخيط بنفسك. شائع في أنظمة المهام والأنابيب (pipelines) حيث يُنتج خيط نتيجة لخيط آخر.",
+      "example": "std::promise<int> prom;\nstd::future<int> fut = prom.get_future();\nprom.set_value(42);",
+      "includeHeader": "#include <future>",
+      "usageExamples": [
+        {
+          "titleArabic": "إرسال نتيجة من خيط منفصل",
+          "code": "#include <future>\n#include <thread>\n#include <iostream>\n\nstd::promise<int> prom;\nstd::future<int> fut = prom.get_future();\n\n// الخيط المنتج: يُنفّذ عملًا ثم يُرسل النتيجة\nstd::thread producer([&prom] {\n    int result = 42 * 2; // محاكاة حساب\n    prom.set_value(result); // يُرسل القيمة — future يصبح جاهزًا\n});\n\n// الخيط المستهلك: ينتظر ويقرأ النتيجة\nint value = fut.get(); // يحجب حتى set_value — يُرجع 84\nstd::cout << value;\n\nproducer.join();",
+          "explanationArabic": "get_future() يُنشئ future مرتبطًا بـ promise — يجب استدعاؤه قبل تمرير promise للخيط. set_value() يُفعّل future ويُخزّن القيمة في الحالة المشتركة. get() يحجب حتى يصبح future جاهزًا ثم يُرجع القيمة. ملاحظة: get_future() يُستدعى مرة واحدة فقط — استدعاؤه مرتين يرمي future_error."
+        },
+        {
+          "titleArabic": "إرسال استثناء من الخيط المنتج",
+          "code": "#include <future>\n#include <thread>\n#include <iostream>\n#include <stdexcept>\n\nstd::promise<void> prom;\nstd::future<void> fut = prom.get_future();\n\nstd::thread worker([&prom] {\n    try {\n        // عمل قد يفشل\n        bool success = false;\n        if (!success) {\n            prom.set_exception(\n                std::make_exception_ptr(\n                    std::runtime_error(\"فشل تحميل الملمس\")\n                )\n            );\n            return;\n        }\n        prom.set_value();\n    } catch (...) {\n        // إعادة توجيه أي استثناء غير متوقع\n        prom.set_exception(std::current_exception());\n    }\n});\n\ntry {\n    fut.get(); // يُرمي runtime_error هنا!\n} catch (const std::runtime_error& e) {\n    std::cout << \"خطأ من الخيط: \" << e.what();\n}\n\nworker.join();",
+          "explanationArabic": "set_exception يحوّل الاستثناء إلى future — المستهلك يراه عبر get() التي تُعيد رميه. make_exception_ptr يبني exception_ptr من أي استثناء. current_exception() يلتقط الاستثناء الحالي داخل catch ويمرره — مفيد لإعادة توجيه استثناءات غير متوقعة. هذا النمط أنظف من محاولة رمي استثناء عبر حدود الخيوط مباشرة (مستحيل فعلًا)."
+        },
+        {
+          "titleArabic": "خطأ شائع: تدمير promise بدون إرسال قيمة",
+          "code": "#include <future>\n#include <thread>\n\n// ❌ كارثة: prom يُدمَّر بدون set_value أو set_exception\n// std::future<int> broken() {\n//     std::promise<int> prom;\n//     std::future<int> fut = prom.get_future();\n//     std::thread([&prom] {\n//         // لو رمى هنا استثناء ولم يُمسكه...\n//         // prom يُدمَّر بدون set_value\n//     }).detach();\n//     return fut;\n// }\n// // fut.get() يرمي std::future_error: broken_promise\n\n// ✅ صحيح: تأكد دائمًا من set_value أو set_exception\nstd::future<int> safe() {\n    std::promise<int> prom;\n    std::future<int> fut = prom.get_future();\n    std::thread([&prom] {\n        try {\n            prom.set_value(42);\n        } catch (...) {\n            prom.set_exception(std::current_exception());\n        }\n    }).detach();\n    return fut;\n}\n\n// ✅ أو أفضل: لا تستخدم detach أصلًا — استخدم join\n// واجعل الخيط مضمون الانتهاء قبل تدمير promise",
+          "explanationArabic": "عند تدمير promise بدون إرسال قيمة أو استثناء، يُخزَّن broken_promise في الحالة المشتركة. عندما يحاول المستهلك استدعاء get() يُرمى future_error. هذا يمنع الانتظار الأبدي — أفضل من التسكع بلا نهاية. القاعدة: في كل مسار خروج من الخيط المنتج، استدعِ set_value أو set_exception."
+        }
+      ],
+      "related": [
+        "std::future",
+        "std::async",
+        "std::thread",
+        "std::exception_ptr",
+        "std::current_exception"
+      ]
+    },
+    "std::condition_variable": {
+      "title": "std::condition_variable",
+      "type": "نوع التزامن",
+      "description": "آلية إشعار تسمح لخيط بالانتظار حتى يُنبّهه خيط آخر أن شرطًا ما تحقق. يعمل دائمًا مع std::unique_lock<std::mutex> — عند استدعاء wait() يُحرر القفل مؤقتًا وينام الخيط، وعند الإيقاظ يُعاود أخذ القفل قبل العودة. notify_one() يُيقظ خيطًا واحدًا وnotify_all() يُيقظ الكل. لا يعمل مع std::shared_mutex — لذلك استخدم std::condition_variable_any إذا احتجت قفل قراءة-كتابة.",
+      "usage": "الآلية الأساسية لأنماط الإنتاج-الاستهلاك (producer-consumer) وقوائم الانتظار والإشارات بين خيوط. بديل أنظف من الانتظار المُزدحم (busy-wait) مع atomic لأنه لا يستهلك معالجًا أثناء الانتظار.",
+      "example": "std::condition_variable cv;\ncv.wait(lock, []{ return ready; });\ncv.notify_one();",
+      "includeHeader": "#include <condition_variable>",
+      "usageExamples": [
+        {
+          "titleArabic": "نمط الإنتاج-الاستهلاك مع طابور بسيط",
+          "code": "#include <condition_variable>\n#include <mutex>\n#include <queue>\n#include <thread>\n#include <iostream>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nstd::queue<int> tasks;\nbool done = false;\n\n// المستهلك: ينتظر حتى يوجد عنصر أو ينتهي الإنتاج\nvoid consumer() {\n    std::unique_lock<std::mutex> lock(mtx);\n    while (!done || !tasks.empty()) {\n        // wait مع lambda: يتحقق من الشرط، إن كان خاطئًا يُحرر القفل وينام\n        // عند الإيقاظ يُعاود أخذ القفل ويتحقق مجددًا\n        cv.wait(lock, [&] { return !tasks.empty() || done; });\n\n        if (!tasks.empty()) {\n            int job = tasks.front();\n            tasks.pop();\n            lock.unlock(); // حرر القفل أثناء المعالجة\n            std::cout << \"معالجة: \" << job << '\\n';\n            lock.lock(); // أعد القفل للدورة التالية\n        }\n    }\n}\n\n// المنتج: يُضيف عناصر ويُنبّه المستهلك\nvoid producer() {\n    for (int i = 1; i <= 5; ++i) {\n        {\n            std::lock_guard<std::mutex> lock(mtx);\n            tasks.push(i);\n        }\n        cv.notify_one(); // يُوقظ خيطًا واحدًا ينتظر\n    }\n    {\n        std::lock_guard<std::mutex> lock(mtx);\n        done = true;\n    }\n    cv.notify_all(); // يُوقظ كل الخيوط لتفحص done\n}",
+          "explanationArabic": "wait مع lambda (الشكل الثاني) يحل مشكلة الاستيقاظ الكاذب (spurious wakeup) — يتحقق من الشرط في حلقة ضمنية. بدون lambda يجب كتابة while يدويًا. notify_one يُوقظ خيطًا واحدًا فقط — أنسب لمستهلك واحد. notify_all يُوقظ الكل — ضروري عند الإنهاء لأن عدة خيوط قد تنتظر. حرر القفل أثناء المعالجة لتسمح للمنتج بالإضافة بالتوازي."
+        },
+        {
+          "titleArabic": "انتظار بمدة زمنية مع wait_for",
+          "code": "#include <condition_variable>\n#include <mutex>\n#include <chrono>\n#include <iostream>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nbool data_ready = false;\n\nvoid wait_with_timeout() {\n    std::unique_lock<std::mutex> lock(mtx);\n\n    // wait_for: ينتظر حتى 500ms أو حتى يتحقق الشرط\n    bool success = cv.wait_for(lock, std::chrono::milliseconds(500),\n        [&] { return data_ready; }\n    );\n\n    if (success) {\n        std::cout << \"البيانات جاهزة\\n\";\n    } else {\n        std::cout << \"انتهت المهلة — لم تصل بيانات\\n\";\n    }\n}\n\nvoid producer_delayed() {\n    std::this_thread::sleep_for(std::chrono::milliseconds(200));\n    {\n        std::lock_guard<std::mutex> lock(mtx);\n        data_ready = true;\n    }\n    cv.notify_one(); // يُوقظ قبل انتهاء المهلة\n}",
+          "explanationArabic": "wait_for مع lambda يُرجع bool: true إذا تحقق الشرط، false إذا انتهت المهلة. بدون lambda يُرجع cv_status (timeout أو no_timeout) لكنه لا يتحقق من الشرط — أنصح دائمًا باستخدام الشكل مع lambda. wait_for لا يضمن انتظار المدة كاملة — يستيقظ فورًا عند notify. هذا أنظف من الانتظار المُزدحم لأن الخيط ينام فعلًا ولا يستهلك معالجًا."
+        },
+        {
+          "titleArabic": "خطأ شائع: notify بدون قفل أو فقدان الإشعار",
+          "code": "#include <condition_variable>\n#include <mutex>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nbool ready = false;\n\n// ❌ خطأ: notify قبل أن يبدأ المستهلك الانتظار\n// المنتج يُنبّه لكن لا أحد ينتظر — الإشعار يضيع!\n// void lost_wakeup() {\n//     ready = true;\n//     cv.notify_one(); // لا أحد ينتظر — ضاعت!\n//     // المستهلك يبدأ wait بعد هذا فينتظر للأبد\n// }\n\n// ✅ صحيح: غيّر الشرط تحت القفل قبل notify\nvoid safe_notify() {\n    {\n        std::lock_guard<std::mutex> lock(mtx);\n        ready = true;\n    } // القفل يُحرر هنا\n    cv.notify_one(); // آمن: حتى لو بدأ المستهلك wait بعد هذا،\n    // سيتحقق من ready فورًا ولن ينام\n}\n\n// ❌ خطأ آخر: استخدام lock_guard بدل unique_lock مع wait\n// std::lock_guard<std::mutex> lock(mtx);\n// cv.wait(lock, [&]{ return ready; });\n// // خطأ ترجمة: wait يحتاج unique_lock لأنه يُحرر القفل داخليًا\n\n// ✅ wait يحتاج unique_lock حصريًا\nstd::unique_lock<std::mutex> lock(mtx);\ncv.wait(lock, [&]{ return ready; });",
+          "explanationArabic": "فقدان الإشعار (lost wakeup) هو خطأ كلاسيكي: المنتج يُرسل notify قبل أن ينام المستهلك فيُضاع الإشعار. الحل: تغيير الشرط تحت القفل. إذا بدأ المستهلك wait بعد notify، سيتحقق من ready فورًا (لأن wait يأخذ القفل أولًا ثم يتحقق). wait يحتاج unique_lock لأنه يُحرر القفل داخليًا — lock_guard لا يدعم هذا."
+        }
+      ],
+      "related": [
+        "std::mutex",
+        "std::unique_lock",
+        "std::thread",
+        "std::atomic",
+        "std::condition_variable_any"
+      ]
+    },
+    "std::lock_guard": {
+      "title": "std::lock_guard",
+      "type": "نوع التزامن",
+      "description": "غلاف RAII بسيط لقفل mutex. يأخذ القفل عند البناء ويحرره عند الخروج.",
+      "usage": "الخيار الأسهل لحماية قسم حرج عندما لا تحتاج فتح القفل مبكرًا.",
+      "example": "std::lock_guard<std::mutex> lock(m);",
+      "related": [
+        "std::mutex",
+        "std::unique_lock",
+        "std::scoped_lock"
+      ]
+    },
+    "std::ifstream": {
+      "title": "std::ifstream",
+      "type": "تدفق ملف",
+      "description": "تدفق إدخال لقراءة الملفات النصية والثنائية. يدير فتح الملف وإغلاقه تلقائيًا عند خروج الكائن من النطاق (RAII). يتحول إلى false تلقائيًا عند فشل الفتح.",
+      "usage": "يُستخدم لقراءة محتوى ملفات نصية أو ثنائية. يُفتح عند الإنشاء ويُغلق تلقائيًا عند نهاية العمر.",
+      "example": "std::ifstream file(\"data.txt\");\nstd::string line;\nwhile (std::getline(file, line)) { /* */ }",
+      "includeHeader": "#include <fstream>",
+      "usageExamples": [
+        {
+          "titleArabic": "فتح ملف والتحقق من نجاح الفتح",
+          "code": "#include <fstream>\n#include <iostream>\n\nint main() {\n    std::ifstream file(\"data.txt\");\n    if (!file.is_open()) {\n        std::cout << \"فشل فتح الملف\";\n        return 1;\n    }\n    std::cout << \"تم فتح الملف بنجاح\";\n}",
+          "explanationArabic": "is_open() تتحقق أن الملف فُتح فعلًا. ifstream يتحول إلى false عند فشل الفتح، لذلك يمكن استخدامه مباشرة في if. الملف يُغلق تلقائيًا عند خروج file من النطاق."
+        },
+        {
+          "titleArabic": "قراءة الملف سطرًا بسطر",
+          "code": "#include <fstream>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::ifstream file(\"notes.txt\");\n    std::string line;\n    int line_count = 0;\n    while (std::getline(file, line)) {\n        std::cout << line << \"\\n\";\n        ++line_count;\n    }\n    std::cout << \"عدد الأسطر: \" << line_count;\n}",
+          "explanationArabic": "getline تقرأ سطرًا كاملًا حتى حرف السطر الجديد وتتجاوزه. تعيد false عند نهاية الملف أو عند خطأ القراءة. هذا النمط هو الطريقة الأكثر شيوعًا لقراءة ملف نصي سطرًا بسطر."
+        },
+        {
+          "titleArabic": "قراءة الملف كاملًا دفعة واحدة",
+          "code": "#include <fstream>\n#include <sstream>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::ifstream file(\"data.txt\");\n    std::stringstream buffer;\n    buffer << file.rdbuf();\n    std::string content = buffer.str();\n    std::cout << \"الحجم: \" << content.size();\n}",
+          "explanationArabic": "rdbuf() يُرجع مؤشر المخزن الداخلي للملف. تمريره إلى << ينسخ كل محتوى الملف إلى stringstream. هذا مفيد عندما تحتاج المحتوى كاملًا في الذاكرة مثل تحميل ملف shader أو config. انتبه: هذا يحمّل كل شيء في الذاكرة، لذلك لا يناسب الملفات الكبيرة جدًا."
+        }
+      ],
+      "related": [
+        "std::ofstream",
+        "std::fstream",
+        "std::string",
+        "std::stringstream"
+      ]
+    },
+    "std::sort": {
+      "title": "std::sort",
+      "type": "خوارزمية STL",
+      "description": "خوارزمية ترتيب عامة بتعقيد O(n log n) تُرتب العناصر في مجال محدد. تُغيّر الترتيب الأصلي للحاوية. تقبل مقارنة مخصصة لتغيير معنى الترتيب.",
+      "usage": "تُستخدم لترتيب عناصر مصفوفة أو حاوية. الافتراضي تصاعدي.",
+      "example": "std::vector<int> v = {3, 1, 2};\nstd::sort(v.begin(), v.end());",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "ترتيب تصاعدي (السلوك الافتراضي)",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {4, 1, 3, 2};\n    std::sort(v.begin(), v.end());\n    for (int x : v) std::cout << x << \" \"; // 1 2 3 4\n}",
+          "explanationArabic": "بدون مقارنة مخصصة، sort تُرتب تصاعديًا باستخدام operator< الافتراضي. begin() وend() يُحددان المجال. الترتيب يحدث في المكان (in-place) دون إنشاء حاوية جديدة."
+        },
+        {
+          "titleArabic": "ترتيب تنازلي بمقارنة lambda",
+          "code": "#include <algorithm>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {4, 1, 3, 2};\n    std::sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n    for (int x : v) std::cout << x << \" \"; // 4 3 2 1\n}",
+          "explanationArabic": "المقارنة المخصصة تتطلب دالة تُرجع true إذا كان a يجب أن يأتي قبل b. بتبديل > بدل < نعكس الترتيب. lambda هنا هو أبسط طريقة لتمرير مقارنة مخصصة."
+        },
+        {
+          "titleArabic": "ترتيب حسب خاصية معينة",
+          "code": "#include <algorithm>\n#include <string>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> names = {\"Atlas\", \"Ali\", \"Nora\"};\n    std::sort(names.begin(), names.end(), [](const std::string& a, const std::string& b) {\n        return a.size() < b.size();\n    });\n    for (const auto& n : names) std::cout << n << \" \"; // Ali Nora Atlas\n}",
+          "explanationArabic": "sort لا تقتصر على الأرقام. هنا نرتب الأسماء حسب الطول. المبدأ نفسه: مرر مقارنة توضح معنى \"أولى\" لعناصرك. تمرير const& يمنع النسخ غير الضروري للسلاسل."
+        }
+      ],
+      "related": [
+        "std::vector",
+        "std::array",
+        "std::less"
+      ]
+    },
+    "std::memcpy": {
+      "title": "std::memcpy",
+      "type": "دالة ذاكرة",
+      "description": "تنسخ بايتات من مكان لآخر مباشرة دون اعتبار النوع. سريعة لكن غير آمنة نوعيًا. لا تتحقق من تداخل المجالات.",
+      "usage": "تظهر في شيفرة منخفضة المستوى تحتاج نقل بيانات خام مثل buffer uploads أو mapped memory.",
+      "example": "std::memcpy(dst, src, count * sizeof(float));",
+      "includeHeader": "#include <cstring>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ مصفوفة أعداد",
+          "code": "#include <cstring>\n#include <iostream>\n\nint main() {\n    int source[3] = {1, 2, 3};\n    int target[3] = {};\n    std::memcpy(target, source, sizeof(source));\n    for (int x : target) std::cout << x << \" \"; // 1 2 3\n}",
+          "explanationArabic": "sizeof(source) يُرجع الحجم الكلي بالبايتات (3 × 4 = 12). memcpy تنسخ البايتات كما هي دون أي تحويل. هذا يعمل لأن المصدر والوجهة من نفس النوع."
+        },
+        {
+          "titleArabic": "نسخ بيانات ثنائية خام",
+          "code": "#include <cstring>\n#include <cstdint>\n#include <iostream>\n\nint main() {\n    uint8_t vertex_data[8] = {1, 0, 0, 0, 0, 0, 128, 63};\n    uint8_t staging[8] = {};\n    std::memcpy(staging, vertex_data, sizeof(vertex_data));\n    std::cout << \"first byte: \" << (int)staging[0]; // 1\n}",
+          "explanationArabic": "memcpy تتعامل مع الذاكرة كبايتات خام بغض النظر عن المعنى. هذا مفيد عند العمل مع بيانات ثنائية مثل vertex buffers أو ملفات صور. انتبه: sizeof على مصفوفة يُرجع الحجم الكلي، لكن على مؤشر يُرجع حجم المؤشر فقط."
+        },
+        {
+          "titleArabic": "خطأ شائع: نسخ كائنات تحتاج semantics أعلى",
+          "code": "#include <cstring>\n#include <string>\n\n// ❌ خطأ: memcpy على string تنسخ المؤشر الداخلي لا النص\n// std::string a = \"hello\";\n// std::string b;\n// std::memcpy(&b, &a, sizeof(std::string));\n// الآن a و b يشيران لنفس الذاكرة — تدمير أحدهما يُبطل الآخر\n\n// ✅ صحيح: استخدم النسخ العادي للكائنات\n// std::string b = a;\n\n// memcpy مناسب فقط لأنواع بسيطة (POD):\nstruct Vertex { float x, y, z; };\nVertex src{1, 2, 3};\nVertex dst{};\nstd::memcpy(&dst, &src, sizeof(Vertex));",
+          "explanationArabic": "memcpy تنسخ البايتات فقط دون استدعاء مُنشئ نسخ أو تدمير. هذا يعمل على الأنواع البسيطة (POD) مثل الأعداد أو البُنى التي تحتوي أعدادًا فقط. على أنواع تمتلك موارد (string, vector, unique_ptr) يُسبب سلوكًا غير محدد."
+        }
+      ],
+      "related": [
+        "size_t",
+        "void",
+        "const",
+        "std::vector"
+      ]
+    },
+    "std::filesystem::path": {
+      "title": "std::filesystem::path",
+      "type": "نوع مسار (C++17)",
+      "description": "يمثل مسار ملف أو مجلد بطريقة محمولة بين الأنظمة.",
+      "usage": "يُستخدم لتمثيل ومعالجة مسارات الملفات بدل std::string الخام.",
+      "example": "std::filesystem::path p = \"assets\" / \"textures\" / \"img.png\";",
+      "related": [
+        "std::filesystem",
+        "std::string",
+        "std::ifstream"
+      ]
+    },
+    "std::chrono::duration": {
+      "title": "std::chrono::duration",
+      "type": "نوع زمني",
+      "description": "يمثل فترة زمنية بوحدة محددة. قالب نوعي يتحقق من وحدات الزمن وقت الترجمة.",
+      "usage": "يُستخدم لحساب الفروق الزمنية وتمثيل المهلات.",
+      "example": "auto timeout = std::chrono::milliseconds(100);",
+      "related": [
+        "std::chrono::time_point",
+        "std::chrono",
+        "std::thread"
+      ]
+    },
+    "std::chrono::time_point": {
+      "title": "std::chrono::time_point",
+      "type": "نوع زمني",
+      "description": "يمثل لحظة زمنية مرتبطة بساعة معينة.",
+      "usage": "يظهر عند قياس الزمن مثل حساب مدة تنفيذ عملية.",
+      "example": "auto start = std::chrono::steady_clock::now();",
+      "related": [
+        "std::chrono::duration",
+        "std::chrono",
+        "std::chrono::steady_clock"
+      ]
+    },
+    "std::chrono::steady_clock": {
+      "title": "std::chrono::steady_clock",
+      "type": "ساعة زمنية",
+      "description": "ساعة لا يمكن ضبطها للوراء أبدًا. مثالية لقياس الفترات الزمنية.",
+      "usage": "الخيار الأفضل لقياس مدة تنفيذ عمليات أو deltaTime في الألعاب.",
+      "example": "auto start = std::chrono::steady_clock::now();\nauto end = std::chrono::steady_clock::now();",
+      "related": [
+        "std::chrono::duration",
+        "std::chrono::time_point"
+      ]
+    },
+    "std::allocator": {
+      "title": "std::allocator",
+      "type": "قالب تخصيص",
+      "description": "القالب الافتراضي لتخصيص الذاكرة للحاويات القياسية.",
+      "usage": "نادرًا ما تتعامل معه مباشرة. هو المعامل الأخير الافتراضي لكل حاوية.",
+      "example": "std::vector<int, std::allocator<int>> v;",
+      "related": [
+        "std::vector",
+        "new",
+        "delete"
+      ]
+    },
+    "std::numeric_limits": {
+      "title": "std::numeric_limits",
+      "type": "حدود عددية",
+      "description": "قالب يوفر معلومات عن حدود وأنواع الأنواع العددية مثل أكبر وأصغر قيمة ممكنة وعدد البتات ودقة الفاصلة العائمة. يُستخدم بدل الأرقام السحرية.",
+      "usage": "يُستخدم لمعرفة الحدود القصوى والدنيا للأنواع مثل int أو float أو uint32_t.",
+      "example": "int max = std::numeric_limits<int>::max();",
+      "includeHeader": "#include <limits>",
+      "usageExamples": [
+        {
+          "titleArabic": "أكبر وأصغر قيمة لنوع",
+          "code": "#include <limits>\n#include <iostream>\n\nint main() {\n    std::cout << \"int max: \" << std::numeric_limits<int>::max() << \"\\n\";\n    std::cout << \"int min: \" << std::numeric_limits<int>::min() << \"\\n\";\n    std::cout << \"uint32_t max: \" << std::numeric_limits<uint32_t>::max() << \"\\n\";\n    std::cout << \"double max: \" << std::numeric_limits<double>::max();\n}",
+          "explanationArabic": "max() تُرجع أكبر قيمة ممكنة للنوع. min() تُرجع أصغر قيمة (للأنواع الموقعة تكون سالبة). هذا أوضح وأكثر دقة من كتابة أرقام سحرية مثل 2147483647."
+        },
+        {
+          "titleArabic": "استخدام كقيمة ابتدائية للبحث عن الأصغر",
+          "code": "#include <limits>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> values = {50, 20, 80, 10};\n    int smallest = std::numeric_limits<int>::max();\n    for (int v : values) {\n        if (v < smallest) smallest = v;\n    }\n    std::cout << \"الأصغر: \" << smallest; // 10\n}",
+          "explanationArabic": "تهيئة المتغير بـ max() يضمن أن أي قيمة فعلية ستكون أصغر منه. هذا نمط شائع في خوارزميات البحث عن الأصغر أو الأقصر. أفضل من استخدام رقم عشوائي كبير لأن max() دائمًا أكبر من أي قيمة حقيقية."
+        },
+        {
+          "titleArabic": "التحقق من خصائص النوع",
+          "code": "#include <limits>\n#include <iostream>\n\nint main() {\n    std::cout << \"int is signed: \" << std::numeric_limits<int>::is_signed << \"\\n\";\n    std::cout << \"int bits: \" << std::numeric_limits<int>::digits << \"\\n\";\n    std::cout << \"float digits10: \" << std::numeric_limits<float>::digits10 << \"\\n\";\n    std::cout << \"double is exact: \" << std::numeric_limits<double>::is_exact;\n}",
+          "explanationArabic": "is_signed تخبر إن كان النوع موقّعًا. digits تُرجع عدد البتات (بدون إشارة). digits10 تُرجع عدد الأرقام العشرية التي يمكن تمثيلها بدقة. is_exact تخبر إن كان النوع يمثل القيم بالضبط (الأعداد الصحيحة) أو بتقريب (الفاصلة العائمة)."
+        }
+      ],
+      "related": [
+        "int",
+        "uint32_t",
+        "float",
+        "double",
+        "size_t"
+      ]
+    },
+    "std::pair": {
+      "title": "std::pair",
+      "type": "نوع بيانات",
+      "description": "نوع يجمع قيمتين من نوعين قد يكونان مختلفين في كائن واحد. يوفر الوصول عبر first وsecond. يُستخدم كناتج من دوال ترجع قيمتين أو كعنصر في حاويات ترابطية مثل std::map.",
+      "usage": "يُستخدم لتمرير أو إرجاع قيمتين معًا. شائع مع std::map وinsert.",
+      "example": "std::pair<int, double> p(1, 2.5);\nauto [x, y] = p;",
+      "includeHeader": "#include <utility>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء زوج والوصول إلى عناصره",
+          "code": "#include <utility>\n#include <iostream>\n\nint main() {\n    std::pair<int, double> p(1, 2.5);\n    std::cout << \"first: \" << p.first << \"\\n\";\n    std::cout << \"second: \" << p.second; // 2.5\n}",
+          "explanationArabic": "pair<int, double> يُصرح عن زوج من int وdouble. first يصل للعنصر الأول وsecond للثاني. الأنواع تُحدد صراحةً عند التصريح."
+        },
+        {
+          "titleArabic": "make_pair واستنتاج الأنواع",
+          "code": "#include <utility>\n#include <iostream>\n\nint main() {\n    auto p = std::make_pair(10, 3.14);\n    std::cout << p.first << \" \" << p.second; // 10 3.14\n}",
+          "explanationArabic": "make_pair يستنتج الأنواع تلقائيًا من القيم الممررة. هذا أسهل من كتابة الأنواع يدويًا خاصة مع أسماء أنواع طويلة."
+        },
+        {
+          "titleArabic": "structured binding لفك الزوج",
+          "code": "#include <utility>\n#include <iostream>\n#include <string>\n\nstd::pair<std::string, int> get_info() {\n    return {\"Atlas\", 42};\n}\n\nint main() {\n    auto [name, value] = get_info();\n    std::cout << name << \" \" << value; // Atlas 42\n}",
+          "explanationArabic": "auto [a, b] = pair يفك الزوج إلى متغيرين مستقلين. هذا أوضح من استخدام first وsecond. مفيد جدًا عند إرجاع زوج من دالة."
+        }
+      ],
+      "related": [
+        "std::map",
+        "std::tuple",
+        "std::make_pair",
+        "struct"
+      ]
+    },
+    "std::tuple": {
+      "title": "std::tuple",
+      "type": "نوع مساعد",
+      "description": "يجمع عدة قيم من أنواع مختلفة تحت كيان واحد. توسيع عام لـ std::pair.",
+      "usage": "يُستخدم عند إرجاع عدة قيم من دالة.",
+      "example": "auto result = std::make_tuple(1, \"hello\", 3.14);\nauto [a, b, c] = result;",
+      "related": [
+        "std::pair",
+        "std::variant",
+        "std::get"
+      ]
+    },
+    "std::optional": {
+      "title": "std::optional",
+      "type": "نوع أداة (C++17)",
+      "description": "غلاف يحمل قيمة من نوع T أو لا يحمل شيئًا (حالة فارغة). بديل نظيف للمؤشرات الفارغة أو القيم السحرية مثل -1. لا يُخصّص ذاكرة ديناميكية — حجمه يساوي sizeof(T) + bool تقريبًا.",
+      "usage": "يُستخدم للتعبير عن نتيجة قد لا تكون موجودة مثل البحث الفاشل أو التحليل الذي قد يفشل. أنظف من إرجاع مؤشر nullptr أو قيمة سحرية.",
+      "example": "std::optional<int> find(int id) {\n    if (exists(id)) return values[id];\n    return std::nullopt;\n}",
+      "includeHeader": "#include <optional>",
+      "usageExamples": [
+        {
+          "titleArabic": "بحث قد يفشل: value_or و has_value",
+          "code": "#include <optional>\n#include <string>\n\nstd::optional<std::string> find_extension(std::string_view filename) {\n    auto pos = filename.rfind('.');\n    if (pos == std::string_view::npos) return std::nullopt;\n    return std::string(filename.substr(pos + 1));\n}\n\nauto ext = find_extension(\"hero.png\");\n\n// has_value() أو operator bool للتحقق\nif (ext.has_value()) {\n    std::cout << *ext; // * يُرجع القيمة (UB إذا كان فارغًا!)\n}\n\n// value_or: أرجع القيمة أو بديلًا — الأكثر استخدامًا\nstd::string result = find_extension(\"README\").value_or(\"(لا امتداد)\");\n// result = \"(لا امتداد)\"",
+          "explanationArabic": "value_or أنسب عندما تريد قيمة فعلية بغض النظر عن النجاح. * و value يفترضان وجود قيمة — استخدمهما فقط بعد التحقق بـ has_value أو operator bool. nullopt هو الطريقة الصحيحة لإنشاء optional فارغ — لا تستخدم {} لأنها قد تُفسر كقيمة افتراضية."
+        },
+        {
+          "titleArabic": "تحويل نص قد يفشل بـ optional",
+          "code": "#include <optional>\n#include <string>\n#include <charconv>\n\n// تحويل نص إلى عدد بأمان — لا استثناءات\nstd::optional<int> safe_stoi(std::string_view sv) {\n    int value;\n    auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), value);\n    if (ec != std::errc{}) return std::nullopt;\n    return value;\n}\n\nauto width = safe_stoi(\"1920\");   // optional<int>{1920}\nauto bad  = safe_stoi(\"abc\");    // optional<int>{nullopt}\n\n// الاستخدام مع value_or\nint w = safe_stoi(input).value_or(800); // افتراضي إذا فشل التحويل",
+          "explanationArabic": "from_chars (C++17) لا ترمي استثناءات — تُرجع errc بدلًا من ذلك. لفّها بـ optional فتحصل على واجهة أنظف من stoi التي ترمي. هذا النمط مفيد عند قراءة مدخلات مستخدم أو ملفات إعدادات حيث الفشل متوقع ولا يجب أن يكون استثناءً."
+        },
+        {
+          "titleArabic": "خطأ شائع: * على optional فارغ",
+          "code": "#include <optional>\n\nstd::optional<int> maybe_empty = std::nullopt;\n\n// ❌ سلوك غير معرّف (UB) — لا تحقق من وجود قيمة\n// int x = *maybe_empty;\n\n// ❌ value() يرمي std::bad_optional_access — أفضل من UB لكن لا يزال خطأ\n// int y = maybe_empty.value(); // يرمي!\n\n// ✅ الطرق الصحيحة:\nif (maybe_empty) {\n    int x = *maybe_empty; // آمن بعد التحقق\n}\n\n// ✅ أو value_or لبديل افتراضي\nint z = maybe_empty.value_or(0);\n\n// ✅ أو and_then (C++23) لسلسلة العمليات\n// auto result = maybe_empty.and_then([](int v) -> std::optional<int> {\n//     return v > 0 ? std::optional{v * 2} : std::nullopt;\n// });",
+          "explanationArabic": "الفرق بين * و value(): كلاهما يتطلبان وجود قيمة، لكن * يُنتج UB بينما value() يرمي bad_optional_access. value_or لا يحتاج تحققًا مسبقًا وهو الأنسب في معظم الحالات. القاعدة: لا تستخدم * ولا value() دون التحقق أولًا بـ if أو operator bool."
+        }
+      ],
+      "related": [
+        "std::variant",
+        "std::any",
+        "nullptr",
+        "std::nullopt",
+        "std::from_chars"
+      ]
+    },
+    "std::variant": {
+      "title": "std::variant",
+      "type": "نوع أداة (C++17)",
+      "description": "حاوية نوعية آمنة تحمل قيمة من أحد عدة أنواع محددة وقت الترجمة. حجمه يساوي أكبر نوع + بعض التمييز. بديل آمن نوعيًا لـ union — يعرف دائمًا أي نوع يحمله عبر index().",
+      "usage": "يُستخدم عند الحاجة لقيمة قد تكون من عدة أنواع معروفين مسبقًا. أنسب من std::any عندما تعرف الأنواع المحتملة.",
+      "example": "std::variant<int, std::string> value = \"hello\";\nstd::visit([](auto& v) { /* */ }, value);",
+      "includeHeader": "#include <variant>",
+      "usageExamples": [
+        {
+          "titleArabic": "تمثيل قيم تكوينية متنوعة",
+          "code": "#include <variant>\n#include <string>\n#include <iostream>\n\nusing ConfigValue = std::variant<int, double, std::string, bool>;\n\nConfigValue width = 1920;\nConfigValue name = std::string(\"Atlas\");\nConfigValue enabled = true;\n\n// index() يُرجع فهرس النوع الحالي (0-based)\nstd::cout << width.index();  // 0 (int)\nstd::cout << name.index();   // 2 (string)\n\n// holds_alternative: تحقق نوعي آمن\nif (std::holds_alternative<int>(width)) {\n    int w = std::get<int>(width); // آمن: نعرف أنه int\n}",
+          "explanationArabic": "holds_alternative يتحقق من النوع بدون استثناء. std::get يُرجع القيمة إذا كان النوع صحيحًا ويرمي bad_variant_access إذا لم يكن. index() يُرجع رقم النوع الحالي — مفيد في switch أو للتصحيح. ترتيب الأنواع في القالب يحدد أرقام index."
+        },
+        {
+          "titleArabic": "std::visit: معالجة كل الأنواع بشكل موحد",
+          "code": "#include <variant>\n#include <string>\n#include <iostream>\n\nusing Value = std::variant<int, double, std::string>;\n\nValue v = std::string(\"hello\");\n\n// visit تستدعي lambda مع النوع الفعلي — لا تحتاج if/else لكل نوع\nstd::visit([](auto&& arg) {\n    using T = std::decay_t<decltype(arg)>;\n    if constexpr (std::is_same_v<T, int>) {\n        std::cout << \"int: \" << arg << '\\n';\n    } else if constexpr (std::is_same_v<T, double>) {\n        std::cout << \"double: \" << arg << '\\n';\n    } else if constexpr (std::is_same_v<T, std::string>) {\n        std::cout << \"string: \" << arg << '\\n';\n    }\n}, v);\n// المخرج: string: hello",
+          "explanationArabic": "visit تستدعي الزائر (lambda) مع النوع الفعلي — المُصرِّف يُولّد نسخة من Lambda لكل نوع. if constexpr (C++17) يتحقق من النوع وقت الترجمة فيُستبعد الأكواد غير المناسبة. هذا أنظف من سلسلة holds_alternative + get."
+        },
+        {
+          "titleArabic": "خطأ شائع: get بدون تحقق",
+          "code": "#include <variant>\n#include <string>\n\nstd::variant<int, std::string> v = 42;\n\n// ❌ يرمي std::bad_variant_access لأن v يحتوي int لا string\n// auto s = std::get<std::string>(v);\n\n// ❌ get_by_index يرمي أيضًا إذا كان الفهرس خاطئًا\n// auto wrong = std::get<1>(v); // فهرس 1 = string، لكن v = int\n\n// ✅ استخدم get_if للحصول على مؤشر أو nullptr\nif (auto* s = std::get_if<std::string>(&v)) {\n    std::cout << *s; // آمن: s ليس nullptr فقط إذا كان النوع صحيحًا\n} else {\n    // النوع ليس string\n}\n\n// ✅ أو holds_alternative قبل get\nif (std::holds_alternative<int>(v)) {\n    int n = std::get<int>(v); // مضمون أن لا يرمي\n}",
+          "explanationArabic": "std::get يرمي bad_variant_access إذا كان النوع خاطئًا — لا تستخدمه دون التحقق. get_if أنسب: يُرجع مؤشرًا للقيمة أو nullptr إذا كان النوع خاطئًا. holds_alternative + get نمط شائع لكنه يحتاج فحصين. get_if يحتاج فحصًا واحدًا فقط."
+        }
+      ],
+      "related": [
+        "std::optional",
+        "std::any",
+        "union",
+        "std::visit",
+        "std::get"
+      ]
+    },
+    "std::any": {
+      "title": "std::any",
+      "type": "نوع أداة (C++17)",
+      "description": "حاوية آمنة نوعيًا تحمل قيمة من أي نوع. تحتاج std::any_cast للوصول.",
+      "usage": "يُستخدم عندما لا تعرف النوع مسبقًا مع أمان نوعي.",
+      "example": "std::any value = 42;\nint v = std::any_cast<int>(value);",
+      "related": [
+        "std::variant",
+        "std::optional",
+        "void"
+      ]
+    },
+    "std::nullopt": {
+      "title": "std::nullopt",
+      "type": "ثابت (C++17)",
+      "description": "كائن خاص يمثل عدم وجود قيمة. يُستخدم مع optional.",
+      "usage": "يظهر كقيمة إرجاع عندما لا توجد نتيجة.",
+      "example": "std::optional<int> result = std::nullopt;",
+      "related": [
+        "std::optional",
+        "nullptr"
+      ]
+    },
+    "std::bitset": {
+      "title": "std::bitset",
+      "type": "حاوية بتات",
+      "description": "حاوية ثابتة الحجم لعدد محدد من البتات مع عمليات منطقية.",
+      "usage": "مفيدة للأعلام والخيارات والتمثيل الثنائي.",
+      "example": "std::bitset<8> flags;\nflags.set(0);\nflags.test(0);",
+      "related": [
+        "uint32_t",
+        "std::atomic"
+      ]
+    },
+    "std::initializer_list": {
+      "title": "std::initializer_list",
+      "type": "نوع أداة",
+      "description": "وكيل خفيف لقائمة ثوابت من نوع واحد. يُمكّن التهيئة بـ {1,2,3}.",
+      "usage": "يظهر في مُنشئات الحاويات والدوال التي تقبل قوالب تهيئة.",
+      "example": "std::vector<int> v = {1, 2, 3};",
+      "related": [
+        "std::vector",
+        "std::array",
+        "auto"
+      ]
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "qsv_decode.c",
+    "slug": "qsv-decode",
+    "titleArabic": "فك فيديو باستخدام Intel QSV",
+    "aliases": [
+      "qsv_decode",
+      "qsv_decode"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/qsv-decode",
+    "contentPath": "content/reference/ffmpeg/examples/qsv-decode.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "فك فيديو باستخدام Intel QSV",
+    "actualMeaningArabic": "يبين مسار Quick Sync Video في فك الترميز.",
+    "purposeArabic": "يبين مسار Quick Sync Video في فك الترميز.",
+    "whyUseArabic": "يبين مسار Quick Sync Video في فك الترميز.",
+    "carriedValueArabic": "يبين مسار Quick Sync Video في فك الترميز.",
+    "sourceDescription": "يبين مسار Quick Sync Video في فك الترميز."
+  },
+  "signature": {
+    "raw": "// qsv_decode.c - فك ترميز فيديو باستخدام Intel Quick Sync Video\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp4\";\n    AVFormatContext *fmt_ctx = NULL;\n    AVCodecContext *codec_ctx = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    // تفعيل QSV hardware acceleration\n    codec_ctx->hw_device_ctx = av_hwdevice_ctx_alloc(codec);\n    av_hwdevice_ctx_create_hw_frames(codec_ctx, codec_ctx->hw_device_ctx, 32, 0);\n    av_hwframe_ctx_get_buffer(codec_ctx->hw_device_ctx, frame, 0);\n\n    printf(\"QSV decode مفعّل: %s\\n\", codec->long_name);\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                printf(\"frame: %dx%d\\n\", frame->width, frame->height);\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يبين مسار Quick Sync Video في فك الترميز."
+    ],
+    "notes": [
+      "يبين مسار Quick Sync Video في فك الترميز."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// qsv_decode.c - فك ترميز فيديو باستخدام Intel Quick Sync Video\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp4\";\n    AVFormatContext *fmt_ctx = NULL;\n    AVCodecContext *codec_ctx = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    // تفعيل QSV hardware acceleration\n    codec_ctx->hw_device_ctx = av_hwdevice_ctx_alloc(codec);\n    av_hwdevice_ctx_create_hw_frames(codec_ctx, codec_ctx->hw_device_ctx, 32, 0);\n    av_hwframe_ctx_get_buffer(codec_ctx->hw_device_ctx, frame, 0);\n\n    printf(\"QSV decode مفعّل: %s\n\", codec->long_name);\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                printf(\"frame: %dx%d\n\", frame->width, frame->height);\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "فك فيديو باستخدام Intel QSV",
+        "code": "// qsv_decode.c - فك ترميز فيديو باستخدام Intel Quick Sync Video\n#include <libavcodec/avcodec.h>\n#include <libavformat/avformat.h>\n#include <stdio.h>\n\nint main(int argc, char **argv) {\n    const char *filename = argc > 1 ? argv[1] : \"input.mp4\";\n    AVFormatContext *fmt_ctx = NULL;\n    AVCodecContext *codec_ctx = NULL;\n    AVFrame *frame = av_frame_alloc();\n    AVPacket *pkt = av_packet_alloc();\n\n    avformat_open_input(&fmt_ctx, filename, NULL, NULL);\n    avformat_find_stream_info(fmt_ctx, NULL);\n\n    int stream_idx = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, 0, NULL);\n    const AVCodec *codec = avcodec_find_decoder(fmt_ctx->streams[stream_idx]->codecpar->codec_id);\n    codec_ctx = avcodec_alloc_context3(codec);\n    avcodec_parameters_to_context(codec_ctx, fmt_ctx->streams[stream_idx]->codecpar);\n    avcodec_open2(codec_ctx, codec, NULL);\n\n    // تفعيل QSV hardware acceleration\n    codec_ctx->hw_device_ctx = av_hwdevice_ctx_alloc(codec);\n    av_hwdevice_ctx_create_hw_frames(codec_ctx, codec_ctx->hw_device_ctx, 32, 0);\n    av_hwframe_ctx_get_buffer(codec_ctx->hw_device_ctx, frame, 0);\n\n    printf(\"QSV decode مفعّل: %s\n\", codec->long_name);\n\n    while (av_read_frame(fmt_ctx, pkt) >= 0) {\n        if (pkt->stream_index == stream_idx) {\n            avcodec_send_packet(codec_ctx, pkt);\n            while (avcodec_receive_frame(codec_ctx, frame) >= 0) {\n                printf(\"frame: %dx%d\n\", frame->width, frame->height);\n            }\n        }\n        av_packet_unref(pkt);\n    }\n\n    av_frame_free(&frame);\n    av_packet_free(&pkt);\n    avcodec_free_context(&codec_ctx);\n    avformat_close_input(&fmt_ctx);\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/qsv_decode_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "التسريع العتادي",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

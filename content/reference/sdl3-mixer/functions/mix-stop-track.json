@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-mixer",
+    "displayName": "SDL3_mixer",
+    "displayNameArabic": "SDL3_mixer",
+    "description": "ملحق SDL3 الرسمي للصوت والمزج وتشغيل الملفات والمسارات الصوتية."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "MIX_StopTrack",
+    "slug": "mix-stop-track",
+    "titleArabic": "Halt a currently-playing track",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-mixer/functions/mix-stop-track",
+    "contentPath": "content/reference/sdl3-mixer/functions/mix-stop-track.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Halt a currently-playing track",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل MIX Stop Track داخل SDL3_mixer، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل MIX Stop Track داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true if the track has stopped, false on error; call\nSDL_GetError() for details. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Halt a currently-playing track, possibly fading out over time."
+  },
+  "signature": {
+    "raw": "bool MIX_StopTrack(MIX_Track *track, Sint64 fade_out_frames);",
+    "returnType": "bool",
+    "parameters": [
+      "MIX_Track *track",
+      "Sint64 fade_out_frames"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL_mixer/blob/main/include/SDL3_mixer/SDL_mixer.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "track",
+        "type": "MIX_Track *",
+        "descriptionArabic": "يمثل المعامل track من النوع MIX_Track * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the track to halt."
+      },
+      {
+        "name": "fade_out_frames",
+        "type": "Sint64",
+        "descriptionArabic": "يمثل المعامل fade_out_frames من النوع Sint64 القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the number of sample frames to spend fading out to silence before\nhalting. 0 to stop immediately."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL_mixer 3.0.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "If fade_out_frames is > 0, the track does not stop\nmixing immediately, but rather fades to silence over that many sample\nframes before stopping. Sample frames are specific to the input assigned\nto the track, to allow for sample-perfect mixing. MIX_TrackMSToFrames () can be used to\nconvert milliseconds to an appropriate value here.",
+      "If the track ends normally while the fade-out is still in progress,\nthe audio stops there; the fade is not adjusted to be shorter if it will\nlast longer than the audio remaining.",
+      "Once a track has completed any fadeout and come to a stop, it will\ncall its MIX_TrackStoppedCallback , if\nany. It is legal to assign the track a new input and/or restart it\nduring this callback.",
+      "It is legal to halt a track that's already stopped. It does nothing,\nand returns true."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true if the track has stopped, false on error; call\nSDL_GetError() for details.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3_mixer/MIX_StopTrack",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "MIX_PlayTrack",
+        "route": "#ref/sdl3-mixer/functions/mix-play-track",
+        "libraryId": "sdl3-mixer",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "SDL3_mixer API",
+    "packageKey": "mixer",
+    "packageName": "SDL3_mixer"
+  }
+}

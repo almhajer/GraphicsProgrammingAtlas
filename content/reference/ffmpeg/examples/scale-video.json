@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "examples",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "scale_video.c",
+    "slug": "scale-video",
+    "titleArabic": "تحجيم الفيديو وتحويل صيغة البكسل",
+    "aliases": [
+      "scale_video",
+      "scale_video"
+    ]
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/examples/scale-video",
+    "contentPath": "content/reference/ffmpeg/examples/scale-video.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "تحجيم الفيديو وتحويل صيغة البكسل",
+    "actualMeaningArabic": "يبين استخدام libswscale لتغيير الحجم أو صيغة الصورة.",
+    "purposeArabic": "يبين استخدام libswscale لتغيير الحجم أو صيغة الصورة.",
+    "whyUseArabic": "يبين استخدام libswscale لتغيير الحجم أو صيغة الصورة.",
+    "carriedValueArabic": "يبين استخدام libswscale لتغيير الحجم أو صيغة الصورة.",
+    "sourceDescription": "يبين استخدام libswscale لتغيير الحجم أو صيغة الصورة."
+  },
+  "signature": {
+    "raw": "// scale_video.c - تحجيم وتحويل صيغ الصور باستخدام libswscale\n#include <libswscale/swscale.h>\n#include <stdio.h>\n\nint main(void) {\n    // تحويل من 1920x1080 YUV420P إلى 1280x720 RGB24\n    struct SwsContext *sws = sws_getContext(\n        1920, 1080, AV_PIX_FMT_YUV420P,\n        1280, 720, AV_PIX_FMT_RGB24,\nn        SWS_BILINEAR, NULL, NULL, NULL\n    );\n\n    if (!sws) {\n        fprintf(stderr, \"فشل إنشاء SwsContext\\n\");\n        return 1;\n    }\n\n    // ملء frame وهم بلون أحمر\n    int src_stride[1] = {1920 * 3};  // YUV420P: width * 3 bytes per row\n    uint8_t *src_data[3] = {0};\n    memset(src_data[0], 0, 1920 * 1080);\n    memset(src_data[1], 128, 1920 * 1080 / 4);  // U\n    memset(src_data[2], 255, 1920 * 1080 / 4);  // V\n\n    int dst_stride[1] = {1280 * 3};   // RGB24: width * 3 bytes per row\n    uint8_t dst_data[1280 * 720 * 3];\n    memset(dst_data, 0, sizeof(dst_data));\n\n    // تحويل\n    sws_scale(sws,\n        (const uint8_t *const *)src_data, src_stride,\n        0, 1080,\n        dst_data, dst_stride\n    );\n    printf(\"تم تحويل الصورة بنجاح\\n\");\n\n    sws_freeContext(&sws);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "يبين استخدام libswscale لتغيير الحجم أو صيغة الصورة."
+    ],
+    "notes": [
+      "يبين استخدام libswscale لتغيير الحجم أو صيغة الصورة."
+    ],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// scale_video.c - تحجيم وتحويل صيغ الصور باستخدام libswscale\n#include <libswscale/swscale.h>\n#include <stdio.h>\n\nint main(void) {\n    // تحويل من 1920x1080 YUV420P إلى 1280x720 RGB24\n    struct SwsContext *sws = sws_getContext(\n        1920, 1080, AV_PIX_FMT_YUV420P,\n        1280, 720, AV_PIX_FMT_RGB24,\n        SWS_BILINEAR, NULL, NULL, NULL\n    );\n\n    if (!sws) {\n        fprintf(stderr, \"فشل إنشاء SwsContext\n\");\n        return 1;\n    }\n\n    // ملء frame وهم بلون أحمر\n    int src_stride[1] = {1920 * 3};  // YUV420P: width * 3 bytes per row\n    uint8_t *src_data[3] = {0};\n    memset(src_data[0], 0, 1920 * 1080);\n    memset(src_data[1], 128, 1920 * 1080 / 4);  // U\n    memset(src_data[2], 255, 1920 * 1080 / 4);  // V\n\n    int dst_stride[1] = {1280 * 3};   // RGB24: width * 3 bytes per row\n    uint8_t dst_data[1280 * 720 * 3];\n    memset(dst_data, 0, sizeof(dst_data));\n\n    // تحويل\n    sws_scale(sws,\n        (const uint8_t *const *)src_data, src_stride,\n        0, 1080,\n        dst_data, dst_stride\n    );\n    printf(\"تم تحويل الصورة بنجاح\n\");\n\n    sws_freeContext(&sws);\n    return 0;\n}",
+    "examples": [
+      {
+        "title": "تحجيم الفيديو وتحويل صيغة البكسل",
+        "code": "// scale_video.c - تحجيم وتحويل صيغ الصور باستخدام libswscale\n#include <libswscale/swscale.h>\n#include <stdio.h>\n\nint main(void) {\n    // تحويل من 1920x1080 YUV420P إلى 1280x720 RGB24\n    struct SwsContext *sws = sws_getContext(\n        1920, 1080, AV_PIX_FMT_YUV420P,\n        1280, 720, AV_PIX_FMT_RGB24,\n        SWS_BILINEAR, NULL, NULL, NULL\n    );\n\n    if (!sws) {\n        fprintf(stderr, \"فشل إنشاء SwsContext\n\");\n        return 1;\n    }\n\n    // ملء frame وهم بلون أحمر\n    int src_stride[1] = {1920 * 3};  // YUV420P: width * 3 bytes per row\n    uint8_t *src_data[3] = {0};\n    memset(src_data[0], 0, 1920 * 1080);\n    memset(src_data[1], 128, 1920 * 1080 / 4);  // U\n    memset(src_data[2], 255, 1920 * 1080 / 4);  // V\n\n    int dst_stride[1] = {1280 * 3};   // RGB24: width * 3 bytes per row\n    uint8_t dst_data[1280 * 720 * 3];\n    memset(dst_data, 0, sizeof(dst_data));\n\n    // تحويل\n    sws_scale(sws,\n        (const uint8_t *const *)src_data, src_stride,\n        0, 1080,\n        dst_data, dst_stride\n    );\n    printf(\"تم تحويل الصورة بنجاح\n\");\n\n    sws_freeContext(&sws);\n    return 0;\n}"
+      }
+    ]
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/scale_video_8c-example.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "الصور والتحجيم",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

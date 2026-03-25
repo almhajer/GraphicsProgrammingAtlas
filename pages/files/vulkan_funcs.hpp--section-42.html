@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_funcs.hpp • القسم 42 من 73 • الأسطر 18451-18900 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_funcs.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_funcs.hpp.html">vulkan_funcs.hpp</a> /
+        <span>القسم 42 من 73 • الأسطر 18451-18900</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_funcs.hpp</h1>
+      <p class="page-description">القسم 42 من 73 • الأسطر 18451-18900</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-41.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-43.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_funcs.hpp</span>
+        <span class="source-stat">القسم: 42/73</span>
+        <span class="source-stat">الأسطر: 18451-18900</span>
+        <span class="source-stat">حجم الملف: 2.19 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreateRayTracingPipelinesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRayTracingPipelinesKHR.html
+  template &lt;typename PipelineAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename PipelineAllocator::value_type, Pipeline&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreateRayTracingPipelinesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;Pipeline, PipelineAllocator&gt;&gt;
+                                         Device::createRayTracingPipelinesKHR( DeferredOperationKHR                                      deferredOperation,
+                                          PipelineCache                                             pipelineCache,
+                                          ArrayProxy&lt;const RayTracingPipelineCreateInfoKHR&gt; const &amp; createInfos,
+                                          Optional&lt;const AllocationCallbacks&gt;                       allocator,
+                                          Dispatch const &amp;                                          d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateRayTracingPipelinesKHR &amp;&amp; &quot;Function &lt;vkCreateRayTracingPipelinesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#  endif
+
+    std::vector&lt;Pipeline, PipelineAllocator&gt; pipelines( createInfos.size() );
+    Result                                   result = static_cast&lt;Result&gt;( d.vkCreateRayTracingPipelinesKHR( m_device,
+                                                                           static_cast&lt;VkDeferredOperationKHR&gt;( deferredOperation ),
+                                                                           static_cast&lt;VkPipelineCache&gt;( pipelineCache ),
+                                                                           createInfos.size(),
+                                                                           reinterpret_cast&lt;const VkRayTracingPipelineCreateInfoKHR *&gt;( createInfos.data() ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkPipeline *&gt;( pipelines.data() ) ) );
+    detail::resultCheck( result,
+                         VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createRayTracingPipelinesKHR&quot;,
+                         { Result::eSuccess, Result::eOperationDeferredKHR, Result::eOperationNotDeferredKHR, Result::ePipelineCompileRequiredEXT },
+                         m_device,
+                         pipelines,
+                         allocator.get(),
+                         d );
+
+    return ResultValue&lt;std::vector&lt;Pipeline, PipelineAllocator&gt;&gt;( result, std::move( pipelines ) );
+  }
+
+  // wrapper function for command vkCreateRayTracingPipelinesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRayTracingPipelinesKHR.html
+  template &lt;typename PipelineAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename PipelineAllocator::value_type, Pipeline&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreateRayTracingPipelinesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;Pipeline, PipelineAllocator&gt;&gt;
+                                         Device::createRayTracingPipelinesKHR( DeferredOperationKHR                                      deferredOperation,
+                                          PipelineCache                                             pipelineCache,
+                                          ArrayProxy&lt;const RayTracingPipelineCreateInfoKHR&gt; const &amp; createInfos,
+                                          Optional&lt;const AllocationCallbacks&gt;                       allocator,
+                                          PipelineAllocator const &amp;                                 pipelineAllocator,
+                                          Dispatch const &amp;                                          d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateRayTracingPipelinesKHR &amp;&amp; &quot;Function &lt;vkCreateRayTracingPipelinesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#  endif
+
+    std::vector&lt;Pipeline, PipelineAllocator&gt; pipelines( createInfos.size(), {}, pipelineAllocator );
+    Result                                   result = static_cast&lt;Result&gt;( d.vkCreateRayTracingPipelinesKHR( m_device,
+                                                                           static_cast&lt;VkDeferredOperationKHR&gt;( deferredOperation ),
+                                                                           static_cast&lt;VkPipelineCache&gt;( pipelineCache ),
+                                                                           createInfos.size(),
+                                                                           reinterpret_cast&lt;const VkRayTracingPipelineCreateInfoKHR *&gt;( createInfos.data() ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkPipeline *&gt;( pipelines.data() ) ) );
+    detail::resultCheck( result,
+                         VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createRayTracingPipelinesKHR&quot;,
+                         { Result::eSuccess, Result::eOperationDeferredKHR, Result::eOperationNotDeferredKHR, Result::ePipelineCompileRequiredEXT },
+                         m_device,
+                         pipelines,
+                         allocator.get(),
+                         d );
+
+    return ResultValue&lt;std::vector&lt;Pipeline, PipelineAllocator&gt;&gt;( result, std::move( pipelines ) );
+  }
+
+  // wrapper function for command vkCreateRayTracingPipelinesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRayTracingPipelinesKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateRayTracingPipelinesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;Pipeline&gt; Device::createRayTracingPipelineKHR( DeferredOperationKHR                    deferredOperation,
+                                                                                                    PipelineCache                           pipelineCache,
+                                                                                                    const RayTracingPipelineCreateInfoKHR &amp; createInfo,
+                                                                                                    Optional&lt;const AllocationCallbacks&gt;     allocator,
+                                                                                                    Dispatch const &amp;                        d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateRayTracingPipelinesKHR &amp;&amp; &quot;Function &lt;vkCreateRayTracingPipelinesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#  endif
+
+    Pipeline pipeline;
+    Result   result = static_cast&lt;Result&gt;( d.vkCreateRayTracingPipelinesKHR( m_device,
+                                                                           static_cast&lt;VkDeferredOperationKHR&gt;( deferredOperation ),
+                                                                           static_cast&lt;VkPipelineCache&gt;( pipelineCache ),
+                                                                           1,
+                                                                           reinterpret_cast&lt;const VkRayTracingPipelineCreateInfoKHR *&gt;( &amp;createInfo ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkPipeline *&gt;( &amp;pipeline ) ) );
+    detail::resultCheck( result,
+                         VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createRayTracingPipelineKHR&quot;,
+                         { Result::eSuccess, Result::eOperationDeferredKHR, Result::eOperationNotDeferredKHR, Result::ePipelineCompileRequiredEXT } );
+
+    return ResultValue&lt;Pipeline&gt;( result, std::move( pipeline ) );
+  }
+
+#  ifndef VULKAN_HPP_NO_SMART_HANDLE
+  // wrapper function for command vkCreateRayTracingPipelinesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRayTracingPipelinesKHR.html
+  template &lt;typename Dispatch,
+            typename PipelineAllocator,
+            typename std::enable_if&lt;std::is_same&lt;typename PipelineAllocator::value_type, UniqueHandle&lt;Pipeline, Dispatch&gt;&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreateRayTracingPipelinesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;UniqueHandle&lt;Pipeline, Dispatch&gt;, PipelineAllocator&gt;&gt;
+                                         Device::createRayTracingPipelinesKHRUnique( DeferredOperationKHR                                      deferredOperation,
+                                                PipelineCache                                             pipelineCache,
+                                                ArrayProxy&lt;const RayTracingPipelineCreateInfoKHR&gt; const &amp; createInfos,
+                                                Optional&lt;const AllocationCallbacks&gt;                       allocator,
+                                                Dispatch const &amp;                                          d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateRayTracingPipelinesKHR &amp;&amp; &quot;Function &lt;vkCreateRayTracingPipelinesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#    endif
+
+    std::vector&lt;Pipeline&gt; pipelines( createInfos.size() );
+    Result                result = static_cast&lt;Result&gt;( d.vkCreateRayTracingPipelinesKHR( m_device,
+                                                                           static_cast&lt;VkDeferredOperationKHR&gt;( deferredOperation ),
+                                                                           static_cast&lt;VkPipelineCache&gt;( pipelineCache ),
+                                                                           createInfos.size(),
+                                                                           reinterpret_cast&lt;const VkRayTracingPipelineCreateInfoKHR *&gt;( createInfos.data() ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkPipeline *&gt;( pipelines.data() ) ) );
+    detail::resultCheck( result,
+                         VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createRayTracingPipelinesKHRUnique&quot;,
+                         { Result::eSuccess, Result::eOperationDeferredKHR, Result::eOperationNotDeferredKHR, Result::ePipelineCompileRequiredEXT },
+                         m_device,
+                         pipelines,
+                         allocator.get(),
+                         d );
+    std::vector&lt;UniqueHandle&lt;Pipeline, Dispatch&gt;, PipelineAllocator&gt; uniquePipelines;
+    uniquePipelines.reserve( createInfos.size() );
+    detail::ObjectDestroy&lt;Device, Dispatch&gt; deleter( *this, allocator, d );
+    for ( auto const &amp; pipeline : pipelines )
+    {
+      uniquePipelines.push_back( UniqueHandle&lt;Pipeline, Dispatch&gt;( pipeline, deleter ) );
+    }
+    return ResultValue&lt;std::vector&lt;UniqueHandle&lt;Pipeline, Dispatch&gt;, PipelineAllocator&gt;&gt;( result, std::move( uniquePipelines ) );
+  }
+
+  // wrapper function for command vkCreateRayTracingPipelinesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRayTracingPipelinesKHR.html
+  template &lt;typename Dispatch,
+            typename PipelineAllocator,
+            typename std::enable_if&lt;std::is_same&lt;typename PipelineAllocator::value_type, UniqueHandle&lt;Pipeline, Dispatch&gt;&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkCreateRayTracingPipelinesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;std::vector&lt;UniqueHandle&lt;Pipeline, Dispatch&gt;, PipelineAllocator&gt;&gt;
+                                         Device::createRayTracingPipelinesKHRUnique( DeferredOperationKHR                                      deferredOperation,
+                                                PipelineCache                                             pipelineCache,
+                                                ArrayProxy&lt;const RayTracingPipelineCreateInfoKHR&gt; const &amp; createInfos,
+                                                Optional&lt;const AllocationCallbacks&gt;                       allocator,
+                                                PipelineAllocator const &amp;                                 pipelineAllocator,
+                                                Dispatch const &amp;                                          d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateRayTracingPipelinesKHR &amp;&amp; &quot;Function &lt;vkCreateRayTracingPipelinesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#    endif
+
+    std::vector&lt;Pipeline&gt; pipelines( createInfos.size() );
+    Result                result = static_cast&lt;Result&gt;( d.vkCreateRayTracingPipelinesKHR( m_device,
+                                                                           static_cast&lt;VkDeferredOperationKHR&gt;( deferredOperation ),
+                                                                           static_cast&lt;VkPipelineCache&gt;( pipelineCache ),
+                                                                           createInfos.size(),
+                                                                           reinterpret_cast&lt;const VkRayTracingPipelineCreateInfoKHR *&gt;( createInfos.data() ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkPipeline *&gt;( pipelines.data() ) ) );
+    detail::resultCheck( result,
+                         VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createRayTracingPipelinesKHRUnique&quot;,
+                         { Result::eSuccess, Result::eOperationDeferredKHR, Result::eOperationNotDeferredKHR, Result::ePipelineCompileRequiredEXT },
+                         m_device,
+                         pipelines,
+                         allocator.get(),
+                         d );
+    std::vector&lt;UniqueHandle&lt;Pipeline, Dispatch&gt;, PipelineAllocator&gt; uniquePipelines( pipelineAllocator );
+    uniquePipelines.reserve( createInfos.size() );
+    detail::ObjectDestroy&lt;Device, Dispatch&gt; deleter( *this, allocator, d );
+    for ( auto const &amp; pipeline : pipelines )
+    {
+      uniquePipelines.push_back( UniqueHandle&lt;Pipeline, Dispatch&gt;( pipeline, deleter ) );
+    }
+    return ResultValue&lt;std::vector&lt;UniqueHandle&lt;Pipeline, Dispatch&gt;, PipelineAllocator&gt;&gt;( result, std::move( uniquePipelines ) );
+  }
+
+  // wrapper function for command vkCreateRayTracingPipelinesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRayTracingPipelinesKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateRayTracingPipelinesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE ResultValue&lt;UniqueHandle&lt;Pipeline, Dispatch&gt;&gt;
+                                         Device::createRayTracingPipelineKHRUnique( DeferredOperationKHR                    deferredOperation,
+                                               PipelineCache                           pipelineCache,
+                                               const RayTracingPipelineCreateInfoKHR &amp; createInfo,
+                                               Optional&lt;const AllocationCallbacks&gt;     allocator,
+                                               Dispatch const &amp;                        d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#    if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateRayTracingPipelinesKHR &amp;&amp; &quot;Function &lt;vkCreateRayTracingPipelinesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#    endif
+
+    Pipeline pipeline;
+    Result   result = static_cast&lt;Result&gt;( d.vkCreateRayTracingPipelinesKHR( m_device,
+                                                                           static_cast&lt;VkDeferredOperationKHR&gt;( deferredOperation ),
+                                                                           static_cast&lt;VkPipelineCache&gt;( pipelineCache ),
+                                                                           1,
+                                                                           reinterpret_cast&lt;const VkRayTracingPipelineCreateInfoKHR *&gt;( &amp;createInfo ),
+                                                                           reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                           reinterpret_cast&lt;VkPipeline *&gt;( &amp;pipeline ) ) );
+    detail::resultCheck( result,
+                         VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createRayTracingPipelineKHRUnique&quot;,
+                         { Result::eSuccess, Result::eOperationDeferredKHR, Result::eOperationNotDeferredKHR, Result::ePipelineCompileRequiredEXT } );
+
+    return ResultValue&lt;UniqueHandle&lt;Pipeline, Dispatch&gt;&gt;(
+      result, UniqueHandle&lt;Pipeline, Dispatch&gt;( pipeline, detail::ObjectDestroy&lt;Device, Dispatch&gt;( *this, allocator, d ) ) );
+  }
+#  endif /* VULKAN_HPP_NO_SMART_HANDLE */
+#endif   /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetRayTracingShaderGroupHandlesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRayTracingShaderGroupHandlesKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetRayTracingShaderGroupHandlesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getRayTracingShaderGroupHandlesKHR(
+    Pipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void * pData, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetRayTracingShaderGroupHandlesKHR(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkPipeline&gt;( pipeline ), firstGroup, groupCount, dataSize, pData ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetRayTracingShaderGroupHandlesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRayTracingShaderGroupHandlesKHR.html
+  template &lt;typename DataType,
+            typename DataTypeAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename DataTypeAllocator::value_type, DataType&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetRayTracingShaderGroupHandlesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;DataType, DataTypeAllocator&gt;&gt;::type
+    Device::getRayTracingShaderGroupHandlesKHR( Pipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetRayTracingShaderGroupHandlesKHR &amp;&amp;
+                       &quot;Function &lt;vkGetRayTracingShaderGroupHandlesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt; or &lt;VK_NV_ray_tracing&gt;&quot; );
+#  endif
+
+    VULKAN_HPP_ASSERT( dataSize % sizeof( DataType ) == 0 );
+    std::vector&lt;DataType, DataTypeAllocator&gt; data( dataSize / sizeof( DataType ) );
+    Result                                   result = static_cast&lt;Result&gt;( d.vkGetRayTracingShaderGroupHandlesKHR(
+      m_device, static_cast&lt;VkPipeline&gt;( pipeline ), firstGroup, groupCount, data.size() * sizeof( DataType ), reinterpret_cast&lt;void *&gt;( data.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getRayTracingShaderGroupHandlesKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( data ) );
+  }
+
+  // wrapper function for command vkGetRayTracingShaderGroupHandlesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRayTracingShaderGroupHandlesKHR.html
+  template &lt;typename DataType, typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetRayTracingShaderGroupHandlesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;DataType&gt;::type
+                       Device::getRayTracingShaderGroupHandleKHR( Pipeline pipeline, uint32_t firstGroup, uint32_t groupCount, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetRayTracingShaderGroupHandlesKHR &amp;&amp;
+                       &quot;Function &lt;vkGetRayTracingShaderGroupHandlesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt; or &lt;VK_NV_ray_tracing&gt;&quot; );
+#  endif
+
+    DataType data;
+    Result   result = static_cast&lt;Result&gt;( d.vkGetRayTracingShaderGroupHandlesKHR(
+      m_device, static_cast&lt;VkPipeline&gt;( pipeline ), firstGroup, groupCount, sizeof( DataType ), reinterpret_cast&lt;void *&gt;( &amp;data ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getRayTracingShaderGroupHandleKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( data ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetRayTracingCaptureReplayShaderGroupHandlesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRayTracingCaptureReplayShaderGroupHandlesKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetRayTracingCaptureReplayShaderGroupHandlesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::getRayTracingCaptureReplayShaderGroupHandlesKHR(
+    Pipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void * pData, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkGetRayTracingCaptureReplayShaderGroupHandlesKHR(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkPipeline&gt;( pipeline ), firstGroup, groupCount, dataSize, pData ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkGetRayTracingCaptureReplayShaderGroupHandlesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRayTracingCaptureReplayShaderGroupHandlesKHR.html
+  template &lt;typename DataType,
+            typename DataTypeAllocator,
+            typename Dispatch,
+            typename std::enable_if&lt;std::is_same&lt;typename DataTypeAllocator::value_type, DataType&gt;::value, int&gt;::type,
+            typename std::enable_if&lt;IS_DISPATCHED( vkGetRayTracingCaptureReplayShaderGroupHandlesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;std::vector&lt;DataType, DataTypeAllocator&gt;&gt;::type
+                       Device::getRayTracingCaptureReplayShaderGroupHandlesKHR(
+      Pipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetRayTracingCaptureReplayShaderGroupHandlesKHR &amp;&amp;
+                       &quot;Function &lt;vkGetRayTracingCaptureReplayShaderGroupHandlesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#  endif
+
+    VULKAN_HPP_ASSERT( dataSize % sizeof( DataType ) == 0 );
+    std::vector&lt;DataType, DataTypeAllocator&gt; data( dataSize / sizeof( DataType ) );
+    Result                                   result = static_cast&lt;Result&gt;( d.vkGetRayTracingCaptureReplayShaderGroupHandlesKHR(
+      m_device, static_cast&lt;VkPipeline&gt;( pipeline ), firstGroup, groupCount, data.size() * sizeof( DataType ), reinterpret_cast&lt;void *&gt;( data.data() ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getRayTracingCaptureReplayShaderGroupHandlesKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( data ) );
+  }
+
+  // wrapper function for command vkGetRayTracingCaptureReplayShaderGroupHandlesKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRayTracingCaptureReplayShaderGroupHandlesKHR.html
+  template &lt;typename DataType, typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetRayTracingCaptureReplayShaderGroupHandlesKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;DataType&gt;::type
+    Device::getRayTracingCaptureReplayShaderGroupHandleKHR( Pipeline pipeline, uint32_t firstGroup, uint32_t groupCount, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkGetRayTracingCaptureReplayShaderGroupHandlesKHR &amp;&amp;
+                       &quot;Function &lt;vkGetRayTracingCaptureReplayShaderGroupHandlesKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#  endif
+
+    DataType data;
+    Result   result = static_cast&lt;Result&gt;( d.vkGetRayTracingCaptureReplayShaderGroupHandlesKHR(
+      m_device, static_cast&lt;VkPipeline&gt;( pipeline ), firstGroup, groupCount, sizeof( DataType ), reinterpret_cast&lt;void *&gt;( &amp;data ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::getRayTracingCaptureReplayShaderGroupHandleKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( data ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkCmdTraceRaysIndirectKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdTraceRaysIndirectKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdTraceRaysIndirectKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::traceRaysIndirectKHR( const StridedDeviceAddressRegionKHR * pRaygenShaderBindingTable,
+                                                              const StridedDeviceAddressRegionKHR * pMissShaderBindingTable,
+                                                              const StridedDeviceAddressRegionKHR * pHitShaderBindingTable,
+                                                              const StridedDeviceAddressRegionKHR * pCallableShaderBindingTable,
+                                                              DeviceAddress                         indirectDeviceAddress,
+                                                              Dispatch const &amp;                      d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdTraceRaysIndirectKHR( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ),
+                                 reinterpret_cast&lt;const VkStridedDeviceAddressRegionKHR *&gt;( pRaygenShaderBindingTable ),
+                                 reinterpret_cast&lt;const VkStridedDeviceAddressRegionKHR *&gt;( pMissShaderBindingTable ),
+                                 reinterpret_cast&lt;const VkStridedDeviceAddressRegionKHR *&gt;( pHitShaderBindingTable ),
+                                 reinterpret_cast&lt;const VkStridedDeviceAddressRegionKHR *&gt;( pCallableShaderBindingTable ),
+                                 static_cast&lt;VkDeviceAddress&gt;( indirectDeviceAddress ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCmdTraceRaysIndirectKHR, see https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdTraceRaysIndirectKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdTraceRaysIndirectKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::traceRaysIndirectKHR( const StridedDeviceAddressRegionKHR &amp; raygenShaderBindingTable,
+                                                              const StridedDeviceAddressRegionKHR &amp; missShaderBindingTable,
+                                                              const StridedDeviceAddressRegionKHR &amp; hitShaderBindingTable,
+                                                              const StridedDeviceAddressRegionKHR &amp; callableShaderBindingTable,
+                                                              DeviceAddress                         indirectDeviceAddress,
+                                                              Dispatch const &amp;                      d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCmdTraceRaysIndirectKHR &amp;&amp; &quot;Function &lt;vkCmdTraceRaysIndirectKHR&gt; requires &lt;VK_KHR_ray_tracing_pipeline&gt;&quot; );
+#  endif
+
+    d.vkCmdTraceRaysIndirectKHR( m_commandBuffer,
+                                 reinterpret_cast&lt;const VkStridedDeviceAddressRegionKHR *&gt;( &amp;raygenShaderBindingTable ),
+                                 reinterpret_cast&lt;const VkStridedDeviceAddressRegionKHR *&gt;( &amp;missShaderBindingTable ),
+                                 reinterpret_cast&lt;const VkStridedDeviceAddressRegionKHR *&gt;( &amp;hitShaderBindingTable ),
+                                 reinterpret_cast&lt;const VkStridedDeviceAddressRegionKHR *&gt;( &amp;callableShaderBindingTable ),
+                                 static_cast&lt;VkDeviceAddress&gt;( indirectDeviceAddress ) );
+  }
+#endif /* VULKAN_HPP_DISABLE_ENHANCED_MODE */
+
+  // wrapper function for command vkGetRayTracingShaderGroupStackSizeKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetRayTracingShaderGroupStackSizeKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkGetRayTracingShaderGroupStackSizeKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE DeviceSize Device::getRayTracingShaderGroupStackSizeKHR( Pipeline             pipeline,
+                                                                             uint32_t             group,
+                                                                             ShaderGroupShaderKHR groupShader,
+                                                                             Dispatch const &amp;     d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;DeviceSize&gt;( d.vkGetRayTracingShaderGroupStackSizeKHR(
+      static_cast&lt;VkDevice&gt;( m_device ), static_cast&lt;VkPipeline&gt;( pipeline ), group, static_cast&lt;VkShaderGroupShaderKHR&gt;( groupShader ) ) );
+  }
+
+  // wrapper function for command vkCmdSetRayTracingPipelineStackSizeKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetRayTracingPipelineStackSizeKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCmdSetRayTracingPipelineStackSizeKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_INLINE void CommandBuffer::setRayTracingPipelineStackSizeKHR( uint32_t pipelineStackSize, Dispatch const &amp; d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    d.vkCmdSetRayTracingPipelineStackSizeKHR( static_cast&lt;VkCommandBuffer&gt;( m_commandBuffer ), pipelineStackSize );
+  }
+
+  //=== VK_KHR_sampler_ycbcr_conversion ===
+
+  // wrapper function for command vkCreateSamplerYcbcrConversionKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSamplerYcbcrConversionKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateSamplerYcbcrConversionKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE Result Device::createSamplerYcbcrConversionKHR( const SamplerYcbcrConversionCreateInfo * pCreateInfo,
+                                                                                         const AllocationCallbacks *              pAllocator,
+                                                                                         SamplerYcbcrConversion *                 pYcbcrConversion,
+                                                                                         Dispatch const &amp;                         d ) const VULKAN_HPP_NOEXCEPT
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+    return static_cast&lt;Result&gt;( d.vkCreateSamplerYcbcrConversionKHR( static_cast&lt;VkDevice&gt;( m_device ),
+                                                                     reinterpret_cast&lt;const VkSamplerYcbcrConversionCreateInfo *&gt;( pCreateInfo ),
+                                                                     reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( pAllocator ),
+                                                                     reinterpret_cast&lt;VkSamplerYcbcrConversion *&gt;( pYcbcrConversion ) ) );
+  }
+
+#ifndef VULKAN_HPP_DISABLE_ENHANCED_MODE
+  // wrapper function for command vkCreateSamplerYcbcrConversionKHR, see
+  // https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSamplerYcbcrConversionKHR.html
+  template &lt;typename Dispatch, typename std::enable_if&lt;IS_DISPATCHED( vkCreateSamplerYcbcrConversionKHR ), bool&gt;::type&gt;
+  VULKAN_HPP_NODISCARD VULKAN_HPP_INLINE typename ResultValueType&lt;SamplerYcbcrConversion&gt;::type Device::createSamplerYcbcrConversionKHR(
+    const SamplerYcbcrConversionCreateInfo &amp; createInfo, Optional&lt;const AllocationCallbacks&gt; allocator, Dispatch const &amp; d ) const
+  {
+    VULKAN_HPP_ASSERT( d.getVkHeaderVersion() == VK_HEADER_VERSION );
+#  if ( VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1 )
+    VULKAN_HPP_ASSERT( d.vkCreateSamplerYcbcrConversionKHR &amp;&amp;
+                       &quot;Function &lt;vkCreateSamplerYcbcrConversionKHR&gt; requires &lt;VK_KHR_sampler_ycbcr_conversion&gt; or &lt;VK_VERSION_1_1&gt;&quot; );
+#  endif
+
+    SamplerYcbcrConversion ycbcrConversion;
+    Result                 result = static_cast&lt;Result&gt;( d.vkCreateSamplerYcbcrConversionKHR( m_device,
+                                                                              reinterpret_cast&lt;const VkSamplerYcbcrConversionCreateInfo *&gt;( &amp;createInfo ),
+                                                                              reinterpret_cast&lt;const VkAllocationCallbacks *&gt;( allocator.get() ),
+                                                                              reinterpret_cast&lt;VkSamplerYcbcrConversion *&gt;( &amp;ycbcrConversion ) ) );
+    detail::resultCheck( result, VULKAN_HPP_NAMESPACE_STRING &quot;::Device::createSamplerYcbcrConversionKHR&quot; );
+
+    return detail::createResultValueType( result, std::move( ycbcrConversion ) );
+  }
+
+#  ifndef VULKAN_HPP_NO_SMART_HANDLE</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_funcs.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-41.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_funcs.hpp--section-43.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

@@ -1,0 +1,518 @@
+{
+  "referenceGuides": {
+    "std::forward_list": {
+      "fullProjectNoteArabic": "std::forward_list قائمة مرتبطة أحادية الارتباط أخف من std::list لأنها لا تخزن مؤشرًا للعنصر السابق. فائدتها في السيناريوهات التي تحتاج إدراجًا وحذفًا سريعًا في المقدمة فقط مع توفير ذاكرة.",
+      "projectStepsArabic": [
+        "استخدمها عندما تكون الإدراجات والحذف في المقدمة فقط ولا تحتاج المرور للخلف.",
+        "لا توفر size() لأن حسابها يتطلب مرورًا كاملًا — إذا احتجت الحجم فاستخدم list أو vector.",
+        "استخدم insert_after وerase_after بدل insert وerase لأنها أحادية الارتباط."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إدراج في المقدمة",
+          "code": "#include <forward_list>\n\nint main() {\n    std::forward_list<int> lst;\n    lst.push_front(3);\n    lst.push_front(2);\n    lst.push_front(1);\n    return lst.front();\n}",
+          "explanationArabic": "push_front يضيف في المقدمة بكفاءة O(1). forward_list أخف من list لأن كل عنصر يحتاج مؤشرًا واحدًا فقط.",
+          "relatedTokens": [
+            "std::forward_list"
+          ]
+        },
+        {
+          "titleArabic": "إدراج بعد عنصر محدد",
+          "code": "#include <forward_list>\n\nint main() {\n    std::forward_list<int> lst = {1, 3, 4};\n    auto it = lst.begin();\n    lst.insert_after(it, 2);\n    return *std::next(it);\n}",
+          "explanationArabic": "insert_after يضيف بعد المؤشر لا قبله. هذا لأن القائمة أحادية الارتباط لا تستطيع الوصول للعنصر السابق.",
+          "relatedTokens": [
+            "std::forward_list",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: لا يوجد size()",
+          "code": "#include <forward_list>\n#include <algorithm>\n\nint main() {\n    std::forward_list<int> lst = {1, 2, 3};\n    int count = std::distance(lst.begin(), lst.end());\n    return count;\n}",
+          "explanationArabic": "forward_list لا توفر size() لأن حسابه يتطلب مرورًا خطيًا. استخدم std::distance إذا احتجت العدد. هذا تصميم متعمّد لتوفير الذاكرة — كل عنصر يوفر مؤشر prev.",
+          "relatedTokens": [
+            "std::forward_list"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::list",
+        "std::vector",
+        "std::deque"
+      ]
+    },
+    "std::multimap": {
+      "fullProjectNoteArabic": "std::multimap مثل std::map لكنها تسمح بمفاتيح مكررة. فائدتها عندما تحتاج ربط عدة قيم بنفس المفتاح مع الحفاظ على الترتيب.",
+      "projectStepsArabic": [
+        "استخدمها عندما يكون المفتاح غير فريد طبيعيًا مثل عدة أحداث في نفس التوقيت.",
+        "استخدم equal_range للحصول على نطاق كل القيم المرتبطة بمفتاح واحد.",
+        "لا تستخدم operator[] لأنه غير متوفر في multimap."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إدراج قيم متعددة لنفس المفتاح",
+          "code": "#include <map>\n#include <string>\n\nint main() {\n    std::multimap<std::string, int> events;\n    events.insert({\"day1\", 10});\n    events.insert({\"day1\", 20});\n    events.insert({\"day2\", 30});\n    return events.count(\"day1\");\n}",
+          "explanationArabic": "insert يسمح بتكرار المفتاح. count يعيد عدد العناصر بهذا المفتاح (2 هنا). العناصر مرتبة حسب المفتاح.",
+          "relatedTokens": [
+            "std::multimap",
+            "std::string"
+          ]
+        },
+        {
+          "titleArabic": "الحصول على كل قيم مفتاح عبر equal_range",
+          "code": "#include <map>\n#include <string>\n\nint main() {\n    std::multimap<std::string, int> data;\n    data.insert({\"x\", 1});\n    data.insert({\"x\", 2});\n    data.insert({\"x\", 3});\n    auto [low, high] = data.equal_range(\"x\");\n    int sum = 0;\n    for (auto it = low; it != high; ++it) sum += it->second;\n    return sum;\n}",
+          "explanationArabic": "equal_range يُرجع زوج مكررات يمثلان نطاق كل العناصر بالمفتاح المحدد. هذا أنظف من البحث اليدوي.",
+          "relatedTokens": [
+            "std::multimap",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: محاولة استخدام operator[]",
+          "code": "#include <map>\n#include <string>\n\nint main() {\n    std::multimap<std::string, int> mm;\n    mm.insert({\"key\", 10});\n    // mm[\"key\"] = 20; // خطأ ترجمة: multimap لا توفر operator[]\n    auto it = mm.find(\"key\");\n    return it != mm.end() ? it->second : 0;\n}",
+          "explanationArabic": "operator[] غير متوفر لأنه غير واضح المعنى مع المفاتيح المكررة: أي قيمة تُعدّل؟ استخدم find أو equal_range بدلًا من ذلك.",
+          "relatedTokens": [
+            "std::multimap",
+            "std::map"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::map",
+        "std::set",
+        "std::multiset"
+      ]
+    },
+    "std::multiset": {
+      "fullProjectNoteArabic": "std::multiset مثل std::set لكنها تسمح بعناصر مكررة مع الحفاظ على الترتيب. فائدتها عندما تحتاج مجموعة مرتبة مع تكرار مسموح مثل عدّاد مرتب أو سجل أحداث.",
+      "projectStepsArabic": [
+        "استخدمها عندما تحتاج الترتيب مع السماح بالتكرار.",
+        "count تعيد عدد تكرارات العنصر.",
+        "equal_range يُرجع نطاق كل نسخ من العنصر."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إدراج عناصر مكررة",
+          "code": "#include <set>\n\nint main() {\n    std::multiset<int> ms;\n    ms.insert(5);\n    ms.insert(5);\n    ms.insert(3);\n    return ms.count(5);\n}",
+          "explanationArabic": "عكس set، multiset تقبل التكرار. count يعيد عدد النسخ (2 هنا). الترتيب محفوظ دائمًا.",
+          "relatedTokens": [
+            "std::multiset"
+          ]
+        },
+        {
+          "titleArabic": "حذف نسخة واحدة",
+          "code": "#include <set>\n\nint main() {\n    std::multiset<int> ms = {1, 2, 2, 3};\n    auto it = ms.find(2);\n    if (it != ms.end()) ms.erase(it);\n    return ms.count(2);\n}",
+          "explanationArabic": "erase بالمكرر يحذف نسخة واحدة فقط. erase بالقيمة يحذف كل النسخ. هذا فرق مهم عن set.",
+          "relatedTokens": [
+            "std::multiset"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: erase بالقيمة تحذف الكل",
+          "code": "#include <set>\n\nint main() {\n    std::multiset<int> ms = {1, 2, 2, 2, 3};\n    // ms.erase(2); // يحذف كل النسخ الثلاث! count يصبح 0\n    auto it = ms.find(2);\n    if (it != ms.end()) ms.erase(it); // يحذف نسخة واحدة فقط\n    return ms.count(2);\n}",
+          "explanationArabic": "في multiset، erase بالقيمة يحذف كل النسخ لا نسخة واحدة. لحذف نسخة واحدة استخدم erase بالمكرر. هذا يختلف عن set حيث لا فرق لأن العناصر فريدة.",
+          "relatedTokens": [
+            "std::multiset",
+            "std::set"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::set",
+        "std::multimap",
+        "std::vector"
+      ]
+    },
+    "std::weak_ptr": {
+      "fullProjectNoteArabic": "std::weak_ptr مؤشر ذكي مراقب لا يملك الكائن ولا يزيد العداد المرجعي. فائدته في كسر الحلقات المرجعية مع shared_ptr — يشير للكائن دون إطالة عمره.",
+      "projectStepsArabic": [
+        "استخدمها للإشارة غير المالكة من ابن إلى أب في بنية شجرية.",
+        "استخدم lock() للحصول على shared_ptr مؤقت يتحقق من أن الكائن لا يزال حيًا.",
+        "لا تستخدمها وحدها — تحتاج دائمًا shared_ptr يملك الكائن فعليًا."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "مراقبة كائن مملوك بـ shared_ptr",
+          "code": "#include <memory>\n\nint main() {\n    auto shared = std::make_shared<int>(42);\n    std::weak_ptr<int> observer = shared;\n    return observer.expired() ? 0 : 1;\n}",
+          "explanationArabic": "weak_ptr يشير لـ shared_ptr دون زيادة العداد. expired() يفحص إن كان الكائن لا يزال حيًا.",
+          "relatedTokens": [
+            "std::weak_ptr",
+            "std::shared_ptr",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "lock للحصول على shared_ptr مؤقت",
+          "code": "#include <memory>\n\nint main() {\n    auto shared = std::make_shared<int>(42);\n    std::weak_ptr<int> weak = shared;\n    if (auto locked = weak.lock()) {\n        return *locked;\n    }\n    return 0;\n}",
+          "explanationArabic": "lock() تُرجع shared_ptr إذا كان الكائن حيًا أو shared_ptr فارغ إذا دُمّر. هذا الأنمط الآمن للوصول عبر weak_ptr.",
+          "relatedTokens": [
+            "std::weak_ptr",
+            "std::shared_ptr",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "كسر حلقة مرجعية",
+          "code": "#include <memory>\n\nstruct Node {\n    std::shared_ptr<Node> next;\n    std::weak_ptr<Node> prev;\n};\n\nint main() {\n    auto a = std::make_shared<Node>();\n    auto b = std::make_shared<Node>();\n    a->next = b;\n    b->prev = a;\n    return a.use_count();\n}",
+          "explanationArabic": "prev بـ weak_ptr لا يزيد العداد فلا تحدث حلقة مرجعية. عند خروج a وb يُحذفان بشكل صحيح.",
+          "relatedTokens": [
+            "std::weak_ptr",
+            "std::shared_ptr",
+            "auto"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::shared_ptr",
+        "std::enable_shared_from_this",
+        "std::make_shared"
+      ]
+    },
+    "std::enable_shared_from_this": {
+      "fullProjectNoteArabic": "std::enable_shared_from_this فئة أساسية تسمح لكائن مملوك بـ shared_ptr بإنتاج shared_ptr آمن يشير إلى نفسه. بدونها، بناء shared_ptr من this يُنشئ عدادًا مرجعيًا منفصلًا فيُسبب حذفًا مزدوجًا.",
+      "projectStepsArabic": [
+        "وارث منها عندما تحتاج إرجاع shared_ptr من this داخل دالة عضو.",
+        "استخدم shared_from_this() بدل shared_ptr(this) دائمًا.",
+        "تأكد أن الكائن مملوك بـ shared_ptr قبل استدعاء shared_from_this()."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "إرجاع shared_ptr من داخل الكائن",
+          "code": "#include <memory>\n#include <vector>\n\nstruct Node : public std::enable_shared_from_this<Node> {\n    std::vector<std::shared_ptr<Node>> children;\n\n    void add_child() {\n        children.push_back(shared_from_this());\n    }\n};\n\nint main() {\n    auto node = std::make_shared<Node>();\n    node->add_child();\n    return node.use_count();\n}",
+          "explanationArabic": "shared_from_this() يُرجع shared_ptr يشترك نفس العداد المرجعي مع node. هذا آمن لأنه لا يُنشئ عدادًا منفصلًا.",
+          "relatedTokens": [
+            "std::enable_shared_from_this",
+            "std::shared_ptr",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: shared_ptr(this)",
+          "code": "#include <memory>\n\nstruct Bad {\n    std::shared_ptr<Bad> get_self() {\n        return std::shared_ptr<Bad>(this); // كارثة!\n    }\n};\n\nint main() {\n    auto ptr = std::make_shared<Bad>();\n    auto self = ptr->get_self();\n    // الآن عدادان منفصلان لنفس الكائن\n    // سيُحذف مرتين عند خروج كليهما!\n    return 0;\n}",
+          "explanationArabic": "shared_ptr(this) يُنشئ عدادًا مرجعيًا جديدًا لا يعرف عن العداد الأصلي. عند تدمير كلا الحاويين يُحذف الكائن مرتين. هذا سلوك غير معرّف.",
+          "relatedTokens": [
+            "std::enable_shared_from_this",
+            "std::shared_ptr"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: shared_from_this قبل make_shared",
+          "code": "#include <memory>\n\nstruct Node : public std::enable_shared_from_this<Node> {\n    std::shared_ptr<Node> self() { return shared_from_this(); }\n};\n\nint main() {\n    // Node n;\n    // n.self(); // خطأ: bad_weak_ptr — الكائن ليس مملوكًا بـ shared_ptr\n    auto node = std::make_shared<Node>();\n    auto s = node->self(); // صحيح\n    return s.use_count();\n}",
+          "explanationArabic": "shared_from_this() يتطلب أن الكائن مملوك بـ shared_ptr فعلًا. إذا أُنشئ على المكدس أو بـ new مباشرة يرمي bad_weak_ptr.",
+          "relatedTokens": [
+            "std::enable_shared_from_this",
+            "std::shared_ptr",
+            "std::make_shared"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::shared_ptr",
+        "std::weak_ptr",
+        "std::make_shared"
+      ]
+    },
+    "std::recursive_mutex": {
+      "fullProjectNoteArabic": "std::recursive_mutex مثل std::mutex لكنها تسمح لنفس الخيط بأخذ القفل عدة مرات متداخلة. فائدتها عندما تدعو دالة تحمي قسمًا حرجًا دالة أخرى تحمي نفس القفل.",
+      "projectStepsArabic": [
+        "استخدمها فقط عندما تحتاج قفلًا متداخلًا من نفس الخيط ولا تستطيع إعادة هيكلة الكود.",
+        "فضل إعادة الهيكلة لتجنب التداخل بدل استخدام recursive_mutex.",
+        "عدد مرات القفل يجب أن يساوي عدد مرات الفتح."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قفل متداخل من نفس الخيط",
+          "code": "#include <mutex>\n\nstd::recursive_mutex rmtx;\nint data = 0;\n\nvoid inner() {\n    std::lock_guard<std::recursive_mutex> lock(rmtx);\n    ++data;\n}\n\nvoid outer() {\n    std::lock_guard<std::recursive_mutex> lock(rmtx);\n    inner(); // نفس الخيط يأخذ القفل مرة أخرى\n}\n\nint main() {\n    outer();\n    return data;\n}",
+          "explanationArabic": "مع mutex عادي هذا يسبب deadlock. recursive_mutex تسمح بنفس الخيط بأخذ القفل عدة مرات وتحرره عند كل lock_guard.",
+          "relatedTokens": [
+            "std::recursive_mutex",
+            "std::lock_guard"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن mutex العادي",
+          "code": "#include <mutex>\n\nstd::mutex mtx;\nstd::recursive_mutex rmtx;\n\nint main() {\n    std::lock_guard<std::recursive_mutex> l1(rmtx);\n    std::lock_guard<std::recursive_mutex> l2(rmtx); // صحيح مع recursive\n    return 0;\n}",
+          "explanationArabic": "مع mutex عادي، l2 يسبب deadlock لأن الخيط يحاول أخذ قفل يملكه بالفعل. recursive_mutex تحل هذا لكنها أبطأ قليلًا من mutex.",
+          "relatedTokens": [
+            "std::recursive_mutex",
+            "std::mutex"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدامها كبديل لإعادة الهيكلة",
+          "code": "#include <mutex>\n\nstd::recursive_mutex rmtx;\n\n// ❌ هذا تصميم ضعيف: التداخل يخفي مشكلة هيكلية\n// void a() { lock_guard lock(rmtx); b(); }\n// void b() { lock_guard lock(rmtx); c(); }\n// void c() { lock_guard lock(rmtx); /* عمل */ }\n\n// ✅ الأفضل: افصل القسم الحرج إلى دالة واحدة\nstd::mutex mtx;\nvoid c() {\n    std::lock_guard<std::mutex> lock(mtx);\n    /* عمل */\n}\nvoid b() { c(); }\nvoid a() { c(); }\n\nint main() { a(); return 0; }",
+          "explanationArabic": "recursive_mutex غالبًا تُستخدم لتغطية تصميم سيء. إذا أمكن، أعد الهيكلة لجعل القفل في مكان واحد. recursive_mutex أنسب عندما يكون التداخل ناتجًا عن callback أو حدث لا تتحكم في ترتيبه.",
+          "relatedTokens": [
+            "std::recursive_mutex",
+            "std::mutex",
+            "std::lock_guard"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::mutex",
+        "std::shared_mutex",
+        "std::lock_guard"
+      ]
+    },
+    "std::filesystem::path": {
+      "fullProjectNoteArabic": "std::filesystem::path يمثل مسار ملف أو مجلد بطريقة محمولة بين الأنظمة. يفصل بين مكونات المسار ويوفر عمليات مثل فصل الاسم والامتداد والوالد. هو بديل std::string الخام للمسارات لأنه يتعامل مع الفوارق بين / و \\ والترميز.",
+      "projectStepsArabic": [
+        "استخدمه بدل std::string لتمثيل المسارات لأنه يتعامل مع فوارق الأنظمة.",
+        "استخدم operator/ لدمج المسارات بدل الجمع اليدوي.",
+        "لا تفترض أن الفاصل هو / — استخدم دوال path بدلًا من ذلك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "بناء مسار محمول",
+          "code": "#include <filesystem>\n\nint main() {\n    std::filesystem::path p = \"assets\" / \"textures\" / \"hero.png\";\n    return p.filename().string().size();\n}",
+          "explanationArabic": "operator/ يدمج المكونات بالفاصل الصحيح للنظام. هذا أنظف من الجمع اليدوي بالسلاسل.",
+          "relatedTokens": [
+            "std::filesystem::path"
+          ]
+        },
+        {
+          "titleArabic": "فصل مكونات المسار",
+          "code": "#include <filesystem>\n#include <iostream>\n\nint main() {\n    std::filesystem::path p = \"/assets/textures/hero.png\";\n    auto parent = p.parent_path();\n    auto name = p.stem();\n    auto ext = p.extension();\n    return ext == \".png\" ? 1 : 0;\n}",
+          "explanationArabic": "parent_path يُرجع الجزء الأبلي. stem يُرجع الاسم بدون امتداد. extension يُرجع الامتداد مع النقطة.",
+          "relatedTokens": [
+            "std::filesystem::path"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: جمع مسارات بالسلاسل",
+          "code": "#include <filesystem>\n#include <string>\n\nint main() {\n    // ❌ خاطئ على Windows: الفاصل قد يكون \\\n    // std::string bad = \"assets\" + \"/\" + \"file.png\";\n\n    // ✅ صحيح: operator/ يختار الفاصل المناسب\n    std::filesystem::path good = \"assets\" / \"file.png\";\n    return good.has_extension() ? 1 : 0;\n}",
+          "explanationArabic": "الجمع بالسلاسل يفترض / كفاصل وهو صحيح على Linux/macOS لكنه خاطئ على Windows. operator/ يعمل على كل الأنظمة.",
+          "relatedTokens": [
+            "std::filesystem::path",
+            "std::string"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::filesystem",
+        "std::ifstream",
+        "std::string"
+      ]
+    },
+    "std::chrono::time_point": {
+      "fullProjectNoteArabic": "std::chrono::time_point يمثل لحظة زمنية مرتبطة بساعة معينة. هو نتيجة now() من أي ساعة. الطرح بين نقطتين يعطي duration. لا يمكن إضافة نقطتين معًا.",
+      "projectStepsArabic": [
+        "استخدم auto مع now() لأن النوع قد يختلف بين الساعات.",
+        "اطرح نقطتين للحصول على الفترة الزمنية بينهما.",
+        "لا تحاول إضافة time_point لـ time_point — هذا لا معنى له."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "حساب الفترة بين نقطتين زمنيتين",
+          "code": "#include <chrono>\n\nint main() {\n    auto start = std::chrono::steady_clock::now();\n    auto end = std::chrono::steady_clock::now();\n    auto elapsed = end - start;\n    return elapsed.count() >= 0 ? 1 : 0;\n}",
+          "explanationArabic": "الطرح بين time_point يعطي duration. count() يُرجع القيمة العددية بالوحدة الافتراضية للساعة.",
+          "relatedTokens": [
+            "std::chrono::time_point",
+            "std::chrono::steady_clock",
+            "auto"
+          ]
+        },
+        {
+          "titleArabic": "تحويل الطرح إلى وحدة محددة",
+          "code": "#include <chrono>\n\nint main() {\n    auto t1 = std::chrono::steady_clock::now();\n    auto t2 = std::chrono::steady_clock::now();\n    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);\n    return static_cast<int>(ms.count());\n}",
+          "explanationArabic": "duration_cast يحول الفترة الزمنية للوحدة المطلوبة. الطرح ينتج duration بالوحدة الأصلية للساعة ثم نحولها.",
+          "relatedTokens": [
+            "std::chrono::time_point",
+            "std::chrono::duration",
+            "std::chrono::steady_clock"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: إضافة time_point لـ time_point",
+          "code": "#include <chrono>\n\nint main() {\n    auto now = std::chrono::steady_clock::now();\n    // auto wrong = now + now; // خطأ ترجمة: لا يمكن إضافة نقطتين\n    auto later = now + std::chrono::seconds(5); // صحيح: نقطة + فترة\n    return 0;\n}",
+          "explanationArabic": "time_point + time_point لا معنى له — لا يمكنك إضافة لحظتين زمنيتين. يمكنك إضافة time_point + duration للحصول على نقطة مستقبلية.",
+          "relatedTokens": [
+            "std::chrono::time_point",
+            "std::chrono::duration"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::chrono::steady_clock",
+        "std::chrono::duration",
+        "std::chrono::system_clock"
+      ]
+    },
+    "std::shared_mutex": {
+      "fullProjectNoteArabic": "std::shared_mutex قفل قراءة-كتابة يسمح لعدة خيوط بالقراءة المتوازية أو بخيط واحد بالكتابة الحصرية (C++17). القراءة لا تمنع قراءة أخرى لكنها تمنع الكتابة. الكتابة تمنع القراءة والكتابة معًا. مفيد للبيانات التي تُقرأ كثيرًا وتُكتب قليلًا.",
+      "projectStepsArabic": [
+        "استخدم shared_lock للقراءة المتوازية وunique_lock للكتابة الحصرية.",
+        "لا تستخدمه إذا كانت القراءة والكتابة متقاربتين — mutex عادي أنسب.",
+        "استخدم condition_variable_any بدل condition_variable مع shared_mutex."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "قراءة متوازية مع حماية الكتابة",
+          "code": "#include <shared_mutex>\n#include <map>\n#include <string>\n\nstd::shared_mutex rw_mtx;\nstd::map<std::string, int> cache;\n\nint read(const std::string& key) {\n    std::shared_lock lock(rw_mtx);\n    auto it = cache.find(key);\n    return it != cache.end() ? it->second : -1;\n}\n\nvoid write(const std::string& key, int val) {\n    std::unique_lock lock(rw_mtx);\n    cache[key] = val;\n}\n\nint main() {\n    write(\"x\", 42);\n    return read(\"x\");\n}",
+          "explanationArabic": "shared_lock يسمح لعدة خياط بالقراءة في نفس الوقت. unique_lock يحصل على قفل حصري للكتابة. هذا أنسب من mutex عادي عندما القراءة أكبر بكثير من الكتابة.",
+          "relatedTokens": [
+            "std::shared_mutex",
+            "std::shared_lock",
+            "std::unique_lock"
+          ]
+        },
+        {
+          "titleArabic": "الفرق عن mutex العادي",
+          "code": "#include <shared_mutex>\n#include <mutex>\n\nstd::shared_mutex rw;\nstd::mutex reg;\n\nint main() {\n    // مع mutex عادي: كل القراءات متسلسلة\n    // مع shared_mutex: القراءات متوازية\n    return 0;\n}",
+          "explanationArabic": "mutex عادي يجعل كل العمليات متسلسلة حتى القراءات. shared_mutex يسمح بقراءات متوازية لكنه أبطأ قليلًا من mutex العادي لكل عملية بسبب التفرقة بين القفلين.",
+          "relatedTokens": [
+            "std::shared_mutex",
+            "std::mutex"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام condition_variable مع shared_mutex",
+          "code": "#include <shared_mutex>\n#include <condition_variable>\n\nstd::shared_mutex rw;\n// std::condition_variable cv; // خطأ: لا يعمل مع shared_mutex\nstd::condition_variable_any cv_any; // صحيح\n\nint main() {\n    std::unique_lock<std::shared_mutex> lock(rw);\n    cv_any.wait(lock);\n    return 0;\n}",
+          "explanationArabic": "condition_variable يتطلب unique_lock<mutex> فقط. مع shared_mutex استخدم condition_variable_any الذي يعمل مع أي نوع قفل.",
+          "relatedTokens": [
+            "std::shared_mutex",
+            "std::condition_variable",
+            "std::unique_lock"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::mutex",
+        "std::recursive_mutex",
+        "std::condition_variable"
+      ]
+    },
+    "std::promise": {
+      "fullProjectNoteArabic": "std::promise يمثل جانب الإرسال في قناة اتصال بين خيوط. يربط بـ std::future عبر get_future() — الخيط المنتج يكتب القيمة بـ set_value() والخيط المستهلك يقرأها بـ future::get(). كل promise يُنتج future واحدًا فقط.",
+      "projectStepsArabic": [
+        "أنشئ promise في الخيط المنتج ومرّر future للخيط المستهلك عبر get_future().",
+        "استخدم set_value() لكتابة القيمة أو set_exception() لإرسال استثناء.",
+        "تأكد من استدعاء set_value أو set_exception قبل تدمير promise وإلا يُرمى broken_promise."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نقل نتيجة بين خيوط",
+          "code": "#include <future>\n#include <thread>\n\nint main() {\n    std::promise<int> prom;\n    std::future<int> fut = prom.get_future();\n    std::thread t([&prom]() { prom.set_value(42); });\n    int result = fut.get();\n    t.join();\n    return result;\n}",
+          "explanationArabic": "promise يُنتج future عبر get_future(). الخيط المنتج يستدعي set_value() والخيط المستهلك يستدعي get() الذي يحجب حتى تُكتب القيمة.",
+          "relatedTokens": [
+            "std::promise",
+            "std::future",
+            "std::thread"
+          ]
+        },
+        {
+          "titleArabic": "إرسال استثناء بدل قيمة",
+          "code": "#include <future>\n#include <stdexcept>\n#include <thread>\n\nint main() {\n    std::promise<int> prom;\n    auto fut = prom.get_future();\n    std::thread t([&prom]() {\n        try {\n            throw std::runtime_error(\"fail\");\n        } catch (...) {\n            prom.set_exception(std::current_exception());\n        }\n    });\n    try {\n        fut.get();\n    } catch (const std::runtime_error&) {\n        t.join();\n        return 1;\n    }\n    t.join();\n    return 0;\n}",
+          "explanationArabic": "set_exception ينقل الاستثناء للخيط المستهلك. عند استدعاء get() يُرمى الاستثناء الأصلي. هذا أنظف من نقل أكواد خطأ يدويًا.",
+          "relatedTokens": [
+            "std::promise",
+            "std::future",
+            "std::runtime_error"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان set_value يسبب broken_promise",
+          "code": "#include <future>\n#include <thread>\n\nint main() {\n    std::promise<int> prom;\n    auto fut = prom.get_future();\n    { std::thread t([&prom]() { /* نسيان set_value! */ }); t.join(); }\n    try {\n        fut.get(); // يرمي std::future_error: broken_promise\n    } catch (const std::future_error&) {\n        return 1;\n    }\n    return 0;\n}",
+          "explanationArabic": "عند تدمير promise بدون set_value أو set_exception، ينتقل future لحالة broken_promise. استدعاء get() بعدها يرمي future_error. هذا تصميم متعمّد لمنع الخيوط من الانتظار إلى الأبد.",
+          "relatedTokens": [
+            "std::promise",
+            "std::future",
+            "std::future_error"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::future",
+        "std::async",
+        "std::packaged_task"
+      ]
+    },
+    "std::condition_variable": {
+      "fullProjectNoteArabic": "std::condition_variable آلية إشعار تسمح لخيط بالانتظار حتى يُنبّهه خيط آخر أن شرطًا ما تحقق. يعمل دائمًا مع std::unique_lock<std::mutex> — عند wait() يُحرر القفل مؤقتًا وينام الخيط، وعند الإيقاظ يُعاود أخذ القفل قبل العودة.",
+      "projectStepsArabic": [
+        "استخدم دائمًا wait مع lambda يفحص الشرط لحماية من الإيقاظ الكاذب (spurious wakeup).",
+        "استخدم notify_one() لإيقاظ خيط واحد وnotify_all() لإيقاظ الكل.",
+        "لا يعمل مع shared_mutex — استخدم condition_variable_any بدلًا من ذلك."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "نمط الإنتاج-الاستهلاك البسيط",
+          "code": "#include <mutex>\n#include <condition_variable>\n#include <queue>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nstd::queue<int> q;\n\nvoid producer() {\n    std::lock_guard<std::mutex> lock(mtx);\n    q.push(42);\n    cv.notify_one();\n}\n\nint consumer() {\n    std::unique_lock<std::mutex> lock(mtx);\n    cv.wait(lock, [] { return !q.empty(); });\n    int val = q.front();\n    q.pop();\n    return val;\n}\n\nint main() {\n    producer();\n    return consumer();\n}",
+          "explanationArabic": "wait مع lambda يفحص الشرط ويحمي من الإيقاظ الكاذب. notify_one يُيقظ خيطًا واحدًا ينتظر. القفل يُحرر أثناء الانتظار ويُعاود الأخذ عند الإيقاظ.",
+          "relatedTokens": [
+            "std::condition_variable",
+            "std::mutex",
+            "std::unique_lock"
+          ]
+        },
+        {
+          "titleArabic": "الفرق بين notify_one و notify_all",
+          "code": "#include <mutex>\n#include <condition_variable>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nbool ready = false;\n\nint main() {\n    // notify_one: يُيقظ خيطًا واحدًا فقط — أنسب لمنتج-مستهلك\n    // notify_all: يُيقظ كل الخيوط — أنسب لمرحلة متعددة (barrier)\n    std::unique_lock<std::mutex> lock(mtx);\n    ready = true;\n    cv.notify_all();\n    return 0;\n}",
+          "explanationArabic": "notify_one أنسب عندما كل إيقاظ يعالج حدثًا واحدًا (منتج-مستهلك). notify_all أنسب عندما تحتاج كل الخيوط للتحقق من شرط (مثل إشارة إيقاف عامة).",
+          "relatedTokens": [
+            "std::condition_variable",
+            "std::mutex",
+            "std::unique_lock"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: wait بدون فحص الشرط",
+          "code": "#include <mutex>\n#include <condition_variable>\n\nstd::mutex mtx;\nstd::condition_variable cv;\nbool data_ready = false;\n\nint main() {\n    std::unique_lock<std::mutex> lock(mtx);\n    // cv.wait(lock); // خطر: إيقاظ كاذب ممكن!\n    cv.wait(lock, [] { return data_ready; }); // صحيح: lambda يحمي\n    return 0;\n}",
+          "explanationArabic": "wait بدون lambda قد يعود بسبب إيقاظ كاذب (spurious wakeup) حتى لو لم يُستدعَ notify. دائمًا استخدم wait مع lambda يفحص الشرط الفعلي. هذا ليس خطأ في الكود بل سلوك معرّف في المعيار.",
+          "relatedTokens": [
+            "std::condition_variable",
+            "std::mutex",
+            "std::unique_lock"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::mutex",
+        "std::shared_mutex",
+        "std::promise"
+      ]
+    },
+    "std::allocator": {
+      "fullProjectNoteArabic": "std::allocator هو القالب الافتراضي لتخصيص الذاكرة للحاويات القياسية. يُخفي new/delete خلف واجهة موحدة. نادرًا ما تحتاج التعامل معه مباشرة لأن الحاويات تستخدمه افتراضيًا.",
+      "projectStepsArabic": [
+        "لا تستخدمه مباشرة إلا إذا كنت تبني حاوية مخصصة أو تحتاج تخصيص ذاكرة بسيط.",
+        "هو المعامل الأخير الافتراضي لكل حاوية مثل vector<T, allocator<T>>.",
+        "إذا احتجت تخصيص ذاكرة مختلفًا، ورّث منه أو استبدله بمخصص مخصص."
+      ],
+      "standaloneExamplesArabic": [
+        {
+          "titleArabic": "تخصيص ذاكرة مباشر",
+          "code": "#include <memory>\n\nint main() {\n    std::allocator<int> alloc;\n    int* ptr = alloc.allocate(3);\n    alloc.construct(ptr + 0, 10);\n    alloc.construct(ptr + 1, 20);\n    alloc.construct(ptr + 2, 30);\n    int sum = ptr[0] + ptr[1] + ptr[2];\n    alloc.destroy(ptr + 2);\n    alloc.destroy(ptr + 1);\n    alloc.destroy(ptr + 0);\n    alloc.deallocate(ptr, 3);\n    return sum;\n}",
+          "explanationArabic": "allocate تحجز ذاكرة بدون تهيئة. construct تبني الكائن في المكان. destroy تُستدعي المُدمّر. deallocate تُحرر الذاكرة. هذا منخفض المستوى — استخدم make_unique بدلًا من ذلك.",
+          "relatedTokens": [
+            "std::allocator"
+          ]
+        },
+        {
+          "titleArabic": "استخدامه كمعامل حاوية",
+          "code": "#include <memory>\n#include <vector>\n\nint main() {\n    std::allocator<int> my_alloc;\n    std::vector<int, std::allocator<int>> v(my_alloc);\n    v.push_back(42);\n    return v[0];\n}",
+          "explanationArabic": "هذا يوضح أن allocator هو المعامل الثاني لـ vector. عادةً لا تحتاج تحديده لأنه الافتراضي.",
+          "relatedTokens": [
+            "std::allocator",
+            "std::vector"
+          ]
+        },
+        {
+          "titleArabic": "خطأ شائع: نسيان destroy قبل deallocate",
+          "code": "#include <memory>\n\nint main() {\n    std::allocator<int> alloc;\n    int* ptr = alloc.allocate(1);\n    alloc.construct(ptr, 42);\n    // alloc.deallocate(ptr, 1); // خطأ: لم نستدعِ destroy!\n    alloc.destroy(ptr);\n    alloc.deallocate(ptr, 1);\n    return 0;\n}",
+          "explanationArabic": "deallocate تُحرر الذاكرة فقط ولا تُستدعي المُدمّر. مع الأنواع البسيطة مثل int لا فرق، لكن مع الأنواع التي تملك موارد مثل string يُسبب تسربًا. هذا بالضبط لماذا unique_ptr أنسب.",
+          "relatedTokens": [
+            "std::allocator",
+            "std::unique_ptr"
+          ]
+        }
+      ],
+      "followUps": [
+        "std::vector",
+        "new",
+        "delete",
+        "std::unique_ptr"
+      ]
+    }
+  }
+}

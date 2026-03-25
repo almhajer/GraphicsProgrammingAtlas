@@ -1,0 +1,490 @@
+{
+  "macros": [
+    {
+      "name": "VK_MAKE_VERSION",
+      "syntax": "VK_MAKE_VERSION(major, minor, patch)",
+      "description": "ينشئ رقم إصدار بصيغة Vulkan من الأرقام الرئيسية والفرعية والتصحيحية.",
+      "parameters": [
+        {
+          "name": "major",
+          "type": "uint32_t",
+          "description": "الرقم الرئيسي للإصدار"
+        },
+        {
+          "name": "minor",
+          "type": "uint32_t",
+          "description": "الرقم الفرعي للإصدار"
+        },
+        {
+          "name": "patch",
+          "type": "uint32_t",
+          "description": "رقم التصحيح"
+        }
+      ],
+      "returnValue": "رقم الإصدار بصيغة uint32_t",
+      "example": "// إنشاء رقم إصدار التطبيق\nuint32_t appVersion = VK_MAKE_VERSION(1, 0, 0);\n// النتيجة: (1 << 22) | (0 << 12) | 0 = 4194304\n\n// إنشاء رقم إصدار المحرك\nuint32_t engineVersion = VK_MAKE_VERSION(2, 5, 3);\n\n// الاستخدام في VkApplicationInfo\nVkApplicationInfo appInfo = {};\nappInfo.applicationVersion = VK_MAKE_VERSION(1, 2, 3);\nappInfo.engineVersion = VK_MAKE_VERSION(4, 5, 6);",
+      "notes": [
+        "الحد الأقصى: major=0x3FF (1023), minor=0xFFF (4095), patch=0xFFF (4095)",
+        "الرقم الرئيسي يُخزن في البتات 22-31",
+        "الرقم الفرعي يُخزن في البتات 12-21",
+        "رقم التصحيح يُخزن في البتات 0-11"
+      ]
+    },
+    {
+      "name": "VK_VERSION_MAJOR",
+      "syntax": "VK_VERSION_MAJOR(version)",
+      "description": "يستخرج الرقم الرئيسي من رقم إصدار Vulkan.",
+      "parameters": [
+        {
+          "name": "version",
+          "type": "uint32_t",
+          "description": "رقم الإصدار الكامل"
+        }
+      ],
+      "returnValue": "الرقم الرئيسي (0-1023)",
+      "example": "uint32_t version = VK_MAKE_VERSION(1, 2, 3);\nuint32_t major = VK_VERSION_MAJOR(version);  // major = 1\n\n// استخدام عملي: طباعة إصدار API\nVkPhysicalDeviceProperties props;\nvkGetPhysicalDeviceProperties(device, &props);\n\nstd::cout << \"Vulkan \" \n          << VK_VERSION_MAJOR(props.apiVersion) << \".\"\n          << VK_VERSION_MINOR(props.apiVersion) << \".\"\n          << VK_VERSION_PATCH(props.apiVersion) << std::endl;",
+      "notes": [
+        "يستخرج البتات 22-31",
+        "مفيد لفحص توافق الإصدارات"
+      ]
+    },
+    {
+      "name": "VK_VERSION_MINOR",
+      "syntax": "VK_VERSION_MINOR(version)",
+      "description": "يستخرج الرقم الفرعي من رقم إصدار Vulkan.",
+      "parameters": [
+        {
+          "name": "version",
+          "type": "uint32_t",
+          "description": "رقم الإصدار الكامل"
+        }
+      ],
+      "returnValue": "الرقم الفرعي (0-4095)",
+      "example": "uint32_t version = VK_MAKE_VERSION(1, 2, 3);\nuint32_t minor = VK_VERSION_MINOR(version);  // minor = 2",
+      "notes": [
+        "يستخرج البتات 12-21"
+      ]
+    },
+    {
+      "name": "VK_VERSION_PATCH",
+      "syntax": "VK_VERSION_PATCH(version)",
+      "description": "يستخرج رقم التصحيح من رقم إصدار Vulkan.",
+      "parameters": [
+        {
+          "name": "version",
+          "type": "uint32_t",
+          "description": "رقم الإصدار الكامل"
+        }
+      ],
+      "returnValue": "رقم التصحيح (0-4095)",
+      "example": "uint32_t version = VK_MAKE_VERSION(1, 2, 3);\nuint32_t patch = VK_VERSION_PATCH(version);  // patch = 3",
+      "notes": [
+        "يستخرج البتات 0-11"
+      ]
+    },
+    {
+      "name": "VK_API_VERSION_1_0",
+      "syntax": "VK_API_VERSION_1_0",
+      "description": "ثابت يمثل إصدار Vulkan 1.0.",
+      "parameters": [],
+      "returnValue": "رقم إصدار Vulkan 1.0 (0x400000)",
+      "example": "// تحديد إصدار API المطلوب\nVkApplicationInfo appInfo = {};\nappInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;\nappInfo.apiVersion = VK_API_VERSION_1_0;  // طلب Vulkan 1.0\n\n// التحقق من دعم الإصدار\nif (props.apiVersion >= VK_API_VERSION_1_0) {\n    std::cout << \"الجهاز يدعم Vulkan 1.0 على الأقل\" << std::endl;\n}",
+      "notes": [
+        "القيمة: VK_MAKE_VERSION(1, 0, 0)"
+      ]
+    },
+    {
+      "name": "VK_API_VERSION_1_1",
+      "syntax": "VK_API_VERSION_1_1",
+      "description": "ثابت يمثل إصدار Vulkan 1.1.",
+      "parameters": [],
+      "returnValue": "رقم إصدار Vulkan 1.1 (0x401000)",
+      "example": "// تحديد إصدار API 1.1\nVkApplicationInfo appInfo = {};\nappInfo.apiVersion = VK_API_VERSION_1_1;",
+      "notes": [
+        "يضيف: subgroup operations, protected memory, ميزات متعددة"
+      ]
+    },
+    {
+      "name": "VK_API_VERSION_1_2",
+      "syntax": "VK_API_VERSION_1_2",
+      "description": "ثابت يمثل إصدار Vulkan 1.2.",
+      "parameters": [],
+      "returnValue": "رقم إصدار Vulkan 1.2 (0x402000)",
+      "example": "appInfo.apiVersion = VK_API_VERSION_1_2;",
+      "notes": [
+        "يضيف: timeline semaphores, descriptor indexing, spirv 1.4"
+      ]
+    },
+    {
+      "name": "VK_API_VERSION_1_3",
+      "syntax": "VK_API_VERSION_1_3",
+      "description": "ثابت يمثل إصدار Vulkan 1.3.",
+      "parameters": [],
+      "returnValue": "رقم إصدار Vulkan 1.3 (0x403000)",
+      "example": "appInfo.apiVersion = VK_API_VERSION_1_3;",
+      "notes": [
+        "يضيف: dynamic rendering, synchronization2, maintenance4"
+      ]
+    },
+    {
+      "name": "VK_NULL_HANDLE",
+      "syntax": "VK_NULL_HANDLE",
+      "description": "ثابت يمثل غياب مقبض صالح، ويُستخدم لتهيئة المقابض قبل الإنشاء أو لإعادتها إلى حالة الغياب بعد التدمير.",
+      "parameters": [],
+      "returnValue": "قيمة تشير إلى غياب مقبض صالح، وتكون عادة 0 أو nullptr بحسب الترويسة.",
+      "example": "// تهيئة المقابض إلى حالة الغياب\nVkInstance instance = VK_NULL_HANDLE;\nVkDevice device = VK_NULL_HANDLE;\nVkBuffer buffer = VK_NULL_HANDLE;\n\n// التحقق من أن المثيل لم يُنشأ بعد\nif (instance == VK_NULL_HANDLE) {\n    vkCreateInstance(&createInfo, nullptr, &instance);\n}\n\n// إعادة المقابض إلى حالة الغياب بعد التدمير\nvkDestroyInstance(instance, nullptr);\ninstance = VK_NULL_HANDLE;",
+      "notes": [
+        "يُستخدم للتحقق من أن الكائن لم يُنشأ بعد أو أنه لم يعد صالحاً بعد التدمير.",
+        "إعادة تعيين المقبض إليه بعد التدمير تمنع بقاء قيمة قديمة قد تُستخدم بالخطأ."
+      ]
+    },
+    {
+      "name": "VK_DEFINE_HANDLE",
+      "syntax": "VK_DEFINE_HANDLE(object)",
+      "description": "ماكرو يعرّف نوع مقبض جديد قابل للإرسال داخل ترويسات فولكان.",
+      "parameters": [
+        {
+          "name": "object",
+          "type": "identifier",
+          "description": "اسم نوع المقبض"
+        }
+      ],
+      "returnValue": "لا يوجد (تعريف نوع)",
+      "example": "// تعريف داخلي في ترويسة فولكان\nVK_DEFINE_HANDLE(VkInstance)\nVK_DEFINE_HANDLE(VkDevice)\nVK_DEFINE_HANDLE(VkQueue)\n\n// النتيجة تكون تعريف typedef قريباً من:\n// typedef struct VkInstance_T* VkInstance;",
+      "notes": [
+        "يُستخدم داخل ترويسات فولكان لبناء أنواع المقابض الرسمية.",
+        "غالباً لا يحتاج التطبيق إلى استدعائه مباشرة."
+      ]
+    },
+    {
+      "name": "VK_DEFINE_NON_DISPATCHABLE_HANDLE",
+      "syntax": "VK_DEFINE_NON_DISPATCHABLE_HANDLE(object)",
+      "description": "ماكرو يعرّف نوع مقبض غير قابل للإرسال داخل ترويسات فولكان.",
+      "parameters": [
+        {
+          "name": "object",
+          "type": "identifier",
+          "description": "اسم نوع المقبض"
+        }
+      ],
+      "returnValue": "لا يوجد (تعريف نوع)",
+      "example": "// تعريف داخلي في ترويسة فولكان\nVK_DEFINE_NON_DISPATCHABLE_HANDLE(VkBuffer)\nVK_DEFINE_NON_DISPATCHABLE_HANDLE(VkImage)\nVK_DEFINE_NON_DISPATCHABLE_HANDLE(VkSemaphore)\n\n// على أنظمة 64 بت قد تكون النتيجة تعريف مؤشر معتم\n// وعلى أنظمة 32 بت قد تكون النتيجة عدداً بعرض 64 بت",
+      "notes": [
+        "يُستخدم للمقابض غير القابلة للإرسال مثل VkBuffer وVkImage وVkSemaphore.",
+        "يختلف تمثيله الداخلي بحسب المنصة وتعريفات الترويسة."
+      ]
+    },
+    {
+      "name": "VK_MAX_PHYSICAL_DEVICE_NAME_SIZE",
+      "syntax": "VK_MAX_PHYSICAL_DEVICE_NAME_SIZE",
+      "description": "الحد الأقصى لطول اسم الجهاز الفيزيائي بالبايت.",
+      "parameters": [],
+      "returnValue": "256",
+      "example": "VkPhysicalDeviceProperties props;\nvkGetPhysicalDeviceProperties(device, &props);\n\n// اسم الجهاز محدد بهذا الحجم\nchar deviceName[VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];\nstrcpy(deviceName, props.deviceName);\n\nstd::cout << \"اسم البطاقة: \" << props.deviceName << std::endl;",
+      "notes": [
+        "القيمة: 256 بايت",
+        "يشمل محرف الإنهاء null"
+      ]
+    },
+    {
+      "name": "VK_UUID_SIZE",
+      "syntax": "VK_UUID_SIZE",
+      "description": "حجم المعرف الفريد العالمي (UUID) بالبايت.",
+      "parameters": [],
+      "returnValue": "16",
+      "example": "VkPhysicalDeviceProperties props;\nvkGetPhysicalDeviceProperties(device, &props);\n\n// طباعة UUID الجهاز\nstd::cout << \"Device UUID: \";\nfor (int i = 0; i < VK_UUID_SIZE; i++) {\n    printf(\"%02x\", (unsigned char)props.pipelineCacheUUID[i]);\n}\nstd::cout << std::endl;",
+      "notes": [
+        "القيمة: 16 بايت (128 بت)",
+        "يُستخدم لـ pipelineCacheUUID"
+      ]
+    },
+    {
+      "name": "VK_LUID_SIZE",
+      "syntax": "VK_LUID_SIZE",
+      "description": "حجم المعرف الفريد المحلي (LUID) بالبايت.",
+      "parameters": [],
+      "returnValue": "8",
+      "example": "// استخدام LUID للربط مع DirectX\nVkPhysicalDeviceIDProperties idProps = {};\nidProps.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;\n\nVkPhysicalDeviceProperties2 props2 = {};\nprops2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;\nprops2.pNext = &idProps;\n\nvkGetPhysicalDeviceProperties2(device, &props2);\n\nif (idProps.deviceLUIDValid) {\n    // LUID متاح للتكامل مع DXGI\n    memcpy(&dxgiAdapterLuid, idProps.deviceLUID, VK_LUID_SIZE);\n}",
+      "notes": [
+        "القيمة: 8 بايت (64 بت)",
+        "يُستخدم للتكامل مع DirectX/Windows"
+      ]
+    },
+    {
+      "name": "VK_MAX_EXTENSION_NAME_SIZE",
+      "syntax": "VK_MAX_EXTENSION_NAME_SIZE",
+      "description": "الحد الأقصى لطول اسم الامتداد بالبايت.",
+      "parameters": [],
+      "returnValue": "256",
+      "example": "VkExtensionProperties extProps;\nvkEnumerateInstanceExtensionProperties(nullptr, &count, &extProps);\n\n// اسم الامتداد محدود بهذا الحجم\nchar extName[VK_MAX_EXTENSION_NAME_SIZE];\nstrcpy(extName, extProps.extensionName);",
+      "notes": [
+        "القيمة: 256 بايت"
+      ]
+    },
+    {
+      "name": "VK_MAX_DESCRIPTION_SIZE",
+      "syntax": "VK_MAX_DESCRIPTION_SIZE",
+      "description": "الحد الأقصى لطول الوصف بالبايت.",
+      "parameters": [],
+      "returnValue": "256",
+      "example": "// يُستخدم في وصف الطبقات والأخطاء\nVkLayerProperties layerProps;\n// layerProps.description محدود بهذا الحجم",
+      "notes": [
+        "القيمة: 256 بايت"
+      ]
+    },
+    {
+      "name": "VK_ATTACHMENT_UNUSED",
+      "syntax": "VK_ATTACHMENT_UNUSED",
+      "description": "قيمة تشير إلى أن مرفقاً غير مستخدم في Render Pass.",
+      "parameters": [],
+      "returnValue": "~0U (0xFFFFFFFF)",
+      "example": "// مرفق فرعي بدون مرفق لون\nVkSubpassDescription subpass = {};\nsubpass.colorAttachmentCount = 1;\n\nVkAttachmentReference colorRef = {};\ncolorRef.attachment = 0;  // استخدام المرفق الأول\n\n// مرفق العمق غير مستخدم\nVkAttachmentReference depthRef = {};\ndepthRef.attachment = VK_ATTACHMENT_UNUSED;  // لا يوجد عمق\ndepthRef.layout = VK_IMAGE_LAYOUT_UNDEFINED;\n\nsubpass.pDepthStencilAttachment = &depthRef;",
+      "notes": [
+        "القيمة: 0xFFFFFFFF",
+        "تُستخدم للإشارة لعدم وجود مرفق"
+      ]
+    },
+    {
+      "name": "VK_SUBPASS_EXTERNAL",
+      "syntax": "VK_SUBPASS_EXTERNAL",
+      "description": "قيمة تشير إلى ما قبل أو بعد Render Pass في تبعيات المرفقات الفرعية.",
+      "parameters": [],
+      "returnValue": "~0U (0xFFFFFFFF)",
+      "example": "// تبعية بين الخارج وأول مرفق فرعي\nVkSubpassDependency dependency = {};\n\n// المصدر: قبل Render Pass\ndependency.srcSubpass = VK_SUBPASS_EXTERNAL;\ndependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;\ndependency.srcAccessMask = 0;\n\n// الوجهة: أول مرفق فرعي\ndependency.dstSubpass = 0;  // المرفق الفرعي الأول\ndependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;\ndependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;\n\n// هذا يضمن انتظار الصورة حتى تكون جاهزة للكتابة",
+      "notes": [
+        "القيمة: 0xFFFFFFFF",
+        "srcSubpass = VK_SUBPASS_EXTERNAL: قبل Render Pass",
+        "dstSubpass = VK_SUBPASS_EXTERNAL: بعد Render Pass"
+      ]
+    },
+    {
+      "name": "VK_QUEUE_FAMILY_IGNORED",
+      "syntax": "VK_QUEUE_FAMILY_IGNORED",
+      "description": "قيمة تشير إلى تجاهل عائلة الطابور في السياق المشترك الحصري.",
+      "parameters": [],
+      "returnValue": "~0U (0xFFFFFFFF)",
+      "example": "// إنشاء Buffer بطابور واحد (EXCLUSIVE)\nVkBufferCreateInfo bufferInfo = {};\nbufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;\nbufferInfo.queueFamilyIndexCount = 0;  // غير مستخدم\nbufferInfo.pQueueFamilyIndices = nullptr;\n\n// حاجز Buffer بدون تغيير عائلة الطابور\nVkBufferMemoryBarrier barrier = {};\nbarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;\nbarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;\n// لا يوجد نقل ملكية بين الطوابير",
+      "notes": [
+        "القيمة: 0xFFFFFFFF",
+        "يُستخدم عند عدم الحاجة لنقل الملكية"
+      ]
+    },
+    {
+      "name": "VK_QUEUE_FAMILY_EXTERNAL",
+      "syntax": "VK_QUEUE_FAMILY_EXTERNAL",
+      "description": "قيمة تشير إلى عائلة طابور خارجية (من تطبيق أو عملية أخرى).",
+      "parameters": [],
+      "returnValue": "~1U (0xFFFFFFFE)",
+      "example": "// نقل ملكية Buffer من طابور داخلي لخارجي\nVkBufferMemoryBarrier barrier = {};\nbarrier.srcQueueFamilyIndex = graphicsQueueFamilyIndex;  // طابورنا\nbarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_EXTERNAL;  // طابور خارجي\n\n// أو العكس: استقبال من طابور خارجي\nbarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_EXTERNAL;\nbarrier.dstQueueFamilyIndex = graphicsQueueFamilyIndex;",
+      "notes": [
+        "القيمة: 0xFFFFFFFE",
+        "للمشاركة بين العمليات"
+      ]
+    },
+    {
+      "name": "VK_REMAINING_MIP_LEVELS",
+      "syntax": "VK_REMAINING_MIP_LEVELS",
+      "description": "قيمة تشير إلى استخدام جميع مستويات Mip المتبقية.",
+      "parameters": [],
+      "returnValue": "~0U (0xFFFFFFFF)",
+      "example": "VkImageViewCreateInfo createInfo = {};\ncreateInfo.subresourceRange.baseMipLevel = 0;  // البدء من أول مستوى\ncreateInfo.subresourceRange.levelCount = VK_REMAINING_MIP_LEVELS;  // جميع المستويات\n\n// هذا يعادل:\n// createInfo.subresourceRange.levelCount = image.mipLevels - baseMipLevel;",
+      "notes": [
+        "القيمة: 0xFFFFFFFF",
+        "مفيد عند عدم معرفة عدد المستويات مسبقاً"
+      ]
+    },
+    {
+      "name": "VK_REMAINING_ARRAY_LAYERS",
+      "syntax": "VK_REMAINING_ARRAY_LAYERS",
+      "description": "قيمة تشير إلى استخدام جميع الطبقات المتبقية.",
+      "parameters": [],
+      "returnValue": "~0U (0xFFFFFFFF)",
+      "example": "VkImageViewCreateInfo createInfo = {};\ncreateInfo.subresourceRange.baseArrayLayer = 2;  // البدء من الطبقة 2\ncreateInfo.subresourceRange.layerCount = VK_REMAINING_ARRAY_LAYERS;  // جميع الطبقات الباقية",
+      "notes": [
+        "القيمة: 0xFFFFFFFF"
+      ]
+    },
+    {
+      "name": "VK_WHOLE_SIZE",
+      "syntax": "VK_WHOLE_SIZE",
+      "description": "قيمة تشير إلى استخدام الحجم الكامل للمورد.",
+      "parameters": [],
+      "returnValue": "~0ULL (0xFFFFFFFFFFFFFFFF)",
+      "example": "// تعيين الذاكرة بالكامل\nvkMapMemory(\n    device,\n    memory,\n    0,                  // إزاحة 0\n    VK_WHOLE_SIZE,      // الحجم الكامل\n    0,\n    &data\n);\n\n// نسخ Buffer بالكامل\nVkBufferCopy copyRegion = {};\ncopyRegion.srcOffset = 0;\ncopyRegion.dstOffset = 0;\ncopyRegion.size = VK_WHOLE_SIZE;  // نسخ الكل\n\nvkCmdCopyBuffer(cmdBuffer, srcBuffer, dstBuffer, 1, &copyRegion);",
+      "notes": [
+        "القيمة: 0xFFFFFFFFFFFFFFFF",
+        "يُستخدم في offset و size parameters"
+      ]
+    },
+    {
+      "name": "VK_TRUE",
+      "syntax": "VK_TRUE",
+      "description": "قيمة منطقية صحيحة في Vulkan.",
+      "parameters": [],
+      "returnValue": "1",
+      "example": "VkBool32 isEnabled = VK_TRUE;\n\nif (deviceFeatures.geometryShader == VK_TRUE) {\n    // الجهاز يدعم Geometry Shader\n}\n\n// تفعيل ميزة\nVkPhysicalDeviceFeatures features = {};\nfeatures.samplerAnisotropy = VK_TRUE;\nfeatures.fillModeNonSolid = VK_TRUE;",
+      "notes": [
+        "القيمة: 1",
+        "نوع VkBool32 هو uint32_t"
+      ]
+    },
+    {
+      "name": "VK_FALSE",
+      "syntax": "VK_FALSE",
+      "description": "قيمة منطقية خاطئة في Vulkan.",
+      "parameters": [],
+      "returnValue": "0",
+      "example": "VkBool32 isSupported = VK_FALSE;\n\n// تعطيل ميزة\nVkPhysicalDeviceFeatures features = {};\nfeatures.geometryShader = VK_FALSE;  // لا نحتاج Geometry Shader\n\n// التحقق\nif (isSupported == VK_FALSE) {\n    std::cout << \"الميزة غير مدعومة\" << std::endl;\n}",
+      "notes": [
+        "القيمة: 0"
+      ]
+    },
+    {
+      "name": "VK_KHR_SWAPCHAIN_EXTENSION_NAME",
+      "syntax": "VK_KHR_SWAPCHAIN_EXTENSION_NAME",
+      "description": "اسم امتداد Swapchain كسلسلة نصية.",
+      "parameters": [],
+      "returnValue": "\"VK_KHR_swapchain\"",
+      "example": "// التحقق من دعم الامتداد\nuint32_t extensionCount;\nvkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);\nstd::vector<VkExtensionProperties> extensions(extensionCount);\nvkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, extensions.data());\n\nbool swapchainSupported = false;\nfor (const auto& ext : extensions) {\n    if (strcmp(ext.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {\n        swapchainSupported = true;\n        break;\n    }\n}\n\n// تفعيل الامتداد\nconst char* deviceExtensions[] = {\n    VK_KHR_SWAPCHAIN_EXTENSION_NAME\n};\n\nVkDeviceCreateInfo createInfo = {};\ncreateInfo.enabledExtensionCount = 1;\ncreateInfo.ppEnabledExtensionNames = deviceExtensions;",
+      "notes": [
+        "مطلوب للعرض على الشاشة",
+        "يجب تفعيله على الجهاز المنطقي"
+      ]
+    },
+    {
+      "name": "VK_KHR_SWAPCHAIN_SPEC_VERSION",
+      "syntax": "VK_KHR_SWAPCHAIN_SPEC_VERSION",
+      "description": "رقم إصدار مواصفة امتداد Swapchain.",
+      "parameters": [],
+      "returnValue": "رقم الإصدار (يتغير مع التحديثات)",
+      "example": "// التحقق من إصدار الامتداد\nVkExtensionProperties props;\n// ... الحصول على الخصائص\n\nif (props.specVersion >= VK_KHR_SWAPCHAIN_SPEC_VERSION) {\n    // الإصدار مدعوم\n}",
+      "notes": [
+        "يتغير مع كل تحديث للامتداد"
+      ]
+    },
+    {
+      "name": "VK_COLOR_COMPONENT_R_BIT",
+      "syntax": "VK_COLOR_COMPONENT_R_BIT",
+      "description": "بت مكون اللون الأحمر في قناع الكتابة.",
+      "parameters": [],
+      "returnValue": "0x00000001",
+      "example": "VkPipelineColorBlendAttachmentState blendAttachment = {};\n// كتابة جميع المكونات\nblendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | \n                                  VK_COLOR_COMPONENT_G_BIT | \n                                  VK_COLOR_COMPONENT_B_BIT | \n                                  VK_COLOR_COMPONENT_A_BIT;\n\n// كتابة الأحمر فقط\nblendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT;",
+      "notes": [
+        "القيمة: 0x1"
+      ]
+    },
+    {
+      "name": "VK_COLOR_COMPONENT_G_BIT",
+      "syntax": "VK_COLOR_COMPONENT_G_BIT",
+      "description": "بت مكون اللون الأخضر في قناع الكتابة.",
+      "parameters": [],
+      "returnValue": "0x00000002",
+      "example": "// كتابة الأخضر والأزرق فقط\nblendAttachment.colorWriteMask = VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;",
+      "notes": [
+        "القيمة: 0x2"
+      ]
+    },
+    {
+      "name": "VK_COLOR_COMPONENT_B_BIT",
+      "syntax": "VK_COLOR_COMPONENT_B_BIT",
+      "description": "بت مكون اللون الأزرق في قناع الكتابة.",
+      "parameters": [],
+      "returnValue": "0x00000004",
+      "example": "blendAttachment.colorWriteMask = VK_COLOR_COMPONENT_B_BIT;",
+      "notes": [
+        "القيمة: 0x4"
+      ]
+    },
+    {
+      "name": "VK_COLOR_COMPONENT_A_BIT",
+      "syntax": "VK_COLOR_COMPONENT_A_BIT",
+      "description": "بت مكون الشفافية (Alpha) في قناع الكتابة.",
+      "parameters": [],
+      "returnValue": "0x00000008",
+      "example": "// كتابة RGB بدون Alpha\nblendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | \n                                  VK_COLOR_COMPONENT_G_BIT | \n                                  VK_COLOR_COMPONENT_B_BIT;\n// أو إضافة Alpha\nblendAttachment.colorWriteMask |= VK_COLOR_COMPONENT_A_BIT;",
+      "notes": [
+        "القيمة: 0x8"
+      ]
+    },
+    {
+      "name": "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT",
+      "syntax": "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT",
+      "description": "مرحلة بداية Pipeline - قبل أي معالجة.",
+      "parameters": [],
+      "returnValue": "0x00000001",
+      "example": "// انتظار في بداية Pipeline\nVkSubmitInfo submitInfo = {};\nVkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT };\nsubmitInfo.pWaitDstStageMask = waitStages;\n\n// هذا يعني: يمكن البدء فوراً عند استقبال الإشارة",
+      "notes": [
+        "أول مرحلة في Pipeline",
+        "لا توجد عمليات فعلية هنا"
+      ]
+    },
+    {
+      "name": "VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT",
+      "syntax": "VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT",
+      "description": "مرحلة إخراج مرفق اللون - عند الكتابة للصورة النهائية.",
+      "parameters": [],
+      "returnValue": "0x00000400",
+      "example": "// الانتظار حتى تصبح الصورة جاهزة للكتابة\nVkSubmitInfo submitInfo = {};\nVkPipelineStageFlags waitStages[] = { \n    VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT \n};\nsubmitInfo.pWaitDstStageMask = waitStages;\n\n// هذا يضمن عدم الكتابة للصورة قبل أن تكون جاهزة",
+      "notes": [
+        "مرحلة الكتابة لمرفق اللون",
+        "شائع الاستخدام مع Swapchain"
+      ]
+    },
+    {
+      "name": "VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT",
+      "syntax": "VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT",
+      "description": "مرحلة تنفيذ Fragment Shader.",
+      "parameters": [],
+      "returnValue": "0x00000080",
+      "example": "// حاجز للوصول للـ Textures في Fragment Shader\nVkImageMemoryBarrier barrier = {};\nbarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;\n\n// في vkCmdPipelineBarrier\nvkCmdPipelineBarrier(\n    commandBuffer,\n    VK_PIPELINE_STAGE_TRANSFER_BIT,           // بعد النسخ\n    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,    // قبل استخدام Fragment Shader\n    0, 1, nullptr, 0, nullptr, 1, &barrier\n);",
+      "notes": [
+        "مرحلة تنفيذ Fragment Shader",
+        "تُستخدم للوصول للـ Textures و Uniforms"
+      ]
+    },
+    {
+      "name": "VK_PIPELINE_STAGE_VERTEX_INPUT_BIT",
+      "syntax": "VK_PIPELINE_STAGE_VERTEX_INPUT_BIT",
+      "description": "مرحلة إدخال الرؤوس - قراءة Vertex Buffers و Index Buffers.",
+      "parameters": [],
+      "returnValue": "0x00000002",
+      "example": "// حاجز لتحديث Vertex Buffer\nVkBufferMemoryBarrier barrier = {};\nbarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;  // بعد النسخ\nbarrier.dstAccessMask = VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;  // للقراءة\n\nvkCmdPipelineBarrier(\n    commandBuffer,\n    VK_PIPELINE_STAGE_TRANSFER_BIT,\n    VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,\n    0, 0, nullptr, 1, &barrier, 0, nullptr\n);",
+      "notes": [
+        "تشمل قراءة Vertex و Index attributes"
+      ]
+    },
+    {
+      "name": "VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT",
+      "syntax": "VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT",
+      "description": "وصول الكتابة لمرفق اللون.",
+      "parameters": [],
+      "returnValue": "0x00000800",
+      "example": "VkSubpassDependency dependency = {};\ndependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;\ndependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;\n\n// هذا يسمح بالكتابة لمرفق اللون",
+      "notes": [
+        "للكتابة أثناء Render Pass"
+      ]
+    },
+    {
+      "name": "VK_ACCESS_SHADER_READ_BIT",
+      "syntax": "VK_ACCESS_SHADER_READ_BIT",
+      "description": "وصول القراءة من Shader (Uniform Buffers, Textures, Storage Buffers).",
+      "parameters": [],
+      "returnValue": "0x00000020",
+      "example": "// تجهيز Texture للقراءة في Shader\nVkImageMemoryBarrier barrier = {};\nbarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;\nbarrier.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;\nbarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;",
+      "notes": [
+        "لقراءة Uniforms, Textures, Storage Buffers"
+      ]
+    },
+    {
+      "name": "VK_ACCESS_TRANSFER_WRITE_BIT",
+      "syntax": "VK_ACCESS_TRANSFER_WRITE_BIT",
+      "description": "وصول الكتابة أثناء عمليات النقل (نسخ Buffer/Image).",
+      "parameters": [],
+      "returnValue": "0x00001000",
+      "example": "// تجهيز Image للنسخ إليها\nVkImageMemoryBarrier barrier = {};\nbarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;\nbarrier.dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;\nbarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;\n\n// الآن يمكن النسخ للصورة\nvkCmdCopyBufferToImage(...);",
+      "notes": [
+        "لعمليات vkCmdCopy* و vkCmdClear*"
+      ]
+    }
+  ]
+}

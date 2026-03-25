@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="يحتوي على النواة الأساسية لواجهة Vulkan: الأنواع، الهياكل، التعدادات، وتصريحات الدوال العامة بعيداً عن ترويسات المنصات.">
+  <title>vulkan_core.h • القسم 9 من 57 • الأسطر 3601-4050 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_core.h">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_core.h.html">vulkan_core.h</a> /
+        <span>القسم 9 من 57 • الأسطر 3601-4050</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_core.h</h1>
+      <p class="page-description">القسم 9 من 57 • الأسطر 3601-4050</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-8.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-10.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_core.h</span>
+        <span class="source-stat">القسم: 9/57</span>
+        <span class="source-stat">الأسطر: 3601-4050</span>
+        <span class="source-stat">حجم الملف: 1.21 MB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>    VkSampleCountFlags    framebufferColorSampleCounts;
+    VkSampleCountFlags    framebufferDepthSampleCounts;
+    VkSampleCountFlags    framebufferStencilSampleCounts;
+    VkSampleCountFlags    framebufferNoAttachmentsSampleCounts;
+    uint32_t              maxColorAttachments;
+    VkSampleCountFlags    sampledImageColorSampleCounts;
+    VkSampleCountFlags    sampledImageIntegerSampleCounts;
+    VkSampleCountFlags    sampledImageDepthSampleCounts;
+    VkSampleCountFlags    sampledImageStencilSampleCounts;
+    VkSampleCountFlags    storageImageSampleCounts;
+    uint32_t              maxSampleMaskWords;
+    VkBool32              timestampComputeAndGraphics;
+    float                 timestampPeriod;
+    uint32_t              maxClipDistances;
+    uint32_t              maxCullDistances;
+    uint32_t              maxCombinedClipAndCullDistances;
+    uint32_t              discreteQueuePriorities;
+    float                 pointSizeRange[2];
+    float                 lineWidthRange[2];
+    float                 pointSizeGranularity;
+    float                 lineWidthGranularity;
+    VkBool32              strictLines;
+    VkBool32              standardSampleLocations;
+    VkDeviceSize          optimalBufferCopyOffsetAlignment;
+    VkDeviceSize          optimalBufferCopyRowPitchAlignment;
+    VkDeviceSize          nonCoherentAtomSize;
+} VkPhysicalDeviceLimits;
+
+typedef struct VkPhysicalDeviceMemoryProperties {
+    uint32_t        memoryTypeCount;
+    VkMemoryType    memoryTypes[VK_MAX_MEMORY_TYPES];
+    uint32_t        memoryHeapCount;
+    VkMemoryHeap    memoryHeaps[VK_MAX_MEMORY_HEAPS];
+} VkPhysicalDeviceMemoryProperties;
+
+typedef struct VkPhysicalDeviceSparseProperties {
+    VkBool32    residencyStandard2DBlockShape;
+    VkBool32    residencyStandard2DMultisampleBlockShape;
+    VkBool32    residencyStandard3DBlockShape;
+    VkBool32    residencyAlignedMipSize;
+    VkBool32    residencyNonResidentStrict;
+} VkPhysicalDeviceSparseProperties;
+
+typedef struct VkPhysicalDeviceProperties {
+    uint32_t                            apiVersion;
+    uint32_t                            driverVersion;
+    uint32_t                            vendorID;
+    uint32_t                            deviceID;
+    VkPhysicalDeviceType                deviceType;
+    char                                deviceName[VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];
+    uint8_t                             pipelineCacheUUID[VK_UUID_SIZE];
+    VkPhysicalDeviceLimits              limits;
+    VkPhysicalDeviceSparseProperties    sparseProperties;
+} VkPhysicalDeviceProperties;
+
+typedef struct VkQueueFamilyProperties {
+    VkQueueFlags    queueFlags;
+    uint32_t        queueCount;
+    uint32_t        timestampValidBits;
+    VkExtent3D      minImageTransferGranularity;
+} VkQueueFamilyProperties;
+
+typedef struct VkDeviceQueueCreateInfo {
+    VkStructureType             sType;
+    const void*                 pNext;
+    VkDeviceQueueCreateFlags    flags;
+    uint32_t                    queueFamilyIndex;
+    uint32_t                    queueCount;
+    const float*                pQueuePriorities;
+} VkDeviceQueueCreateInfo;
+
+typedef struct VkDeviceCreateInfo {
+    VkStructureType                    sType;
+    const void*                        pNext;
+    VkDeviceCreateFlags                flags;
+    uint32_t                           queueCreateInfoCount;
+    const VkDeviceQueueCreateInfo*     pQueueCreateInfos;
+    // enabledLayerCount is legacy and should not be used
+    uint32_t                           enabledLayerCount;
+    // ppEnabledLayerNames is legacy and should not be used
+    const char* const*                 ppEnabledLayerNames;
+    uint32_t                           enabledExtensionCount;
+    const char* const*                 ppEnabledExtensionNames;
+    const VkPhysicalDeviceFeatures*    pEnabledFeatures;
+} VkDeviceCreateInfo;
+
+typedef struct VkExtensionProperties {
+    char        extensionName[VK_MAX_EXTENSION_NAME_SIZE];
+    uint32_t    specVersion;
+} VkExtensionProperties;
+
+typedef struct VkLayerProperties {
+    char        layerName[VK_MAX_EXTENSION_NAME_SIZE];
+    uint32_t    specVersion;
+    uint32_t    implementationVersion;
+    char        description[VK_MAX_DESCRIPTION_SIZE];
+} VkLayerProperties;
+
+typedef struct VkSubmitInfo {
+    VkStructureType                sType;
+    const void*                    pNext;
+    uint32_t                       waitSemaphoreCount;
+    const VkSemaphore*             pWaitSemaphores;
+    const VkPipelineStageFlags*    pWaitDstStageMask;
+    uint32_t                       commandBufferCount;
+    const VkCommandBuffer*         pCommandBuffers;
+    uint32_t                       signalSemaphoreCount;
+    const VkSemaphore*             pSignalSemaphores;
+} VkSubmitInfo;
+
+typedef struct VkMappedMemoryRange {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkDeviceMemory     memory;
+    VkDeviceSize       offset;
+    VkDeviceSize       size;
+} VkMappedMemoryRange;
+
+typedef struct VkMemoryAllocateInfo {
+    VkStructureType    sType;
+    const void*        pNext;
+    VkDeviceSize       allocationSize;
+    uint32_t           memoryTypeIndex;
+} VkMemoryAllocateInfo;
+
+typedef struct VkMemoryRequirements {
+    VkDeviceSize    size;
+    VkDeviceSize    alignment;
+    uint32_t        memoryTypeBits;
+} VkMemoryRequirements;
+
+typedef struct VkSparseMemoryBind {
+    VkDeviceSize               resourceOffset;
+    VkDeviceSize               size;
+    VkDeviceMemory             memory;
+    VkDeviceSize               memoryOffset;
+    VkSparseMemoryBindFlags    flags;
+} VkSparseMemoryBind;
+
+typedef struct VkSparseBufferMemoryBindInfo {
+    VkBuffer                     buffer;
+    uint32_t                     bindCount;
+    const VkSparseMemoryBind*    pBinds;
+} VkSparseBufferMemoryBindInfo;
+
+typedef struct VkSparseImageOpaqueMemoryBindInfo {
+    VkImage                      image;
+    uint32_t                     bindCount;
+    const VkSparseMemoryBind*    pBinds;
+} VkSparseImageOpaqueMemoryBindInfo;
+
+typedef struct VkImageSubresource {
+    VkImageAspectFlags    aspectMask;
+    uint32_t              mipLevel;
+    uint32_t              arrayLayer;
+} VkImageSubresource;
+
+typedef struct VkSparseImageMemoryBind {
+    VkImageSubresource         subresource;
+    VkOffset3D                 offset;
+    VkExtent3D                 extent;
+    VkDeviceMemory             memory;
+    VkDeviceSize               memoryOffset;
+    VkSparseMemoryBindFlags    flags;
+} VkSparseImageMemoryBind;
+
+typedef struct VkSparseImageMemoryBindInfo {
+    VkImage                           image;
+    uint32_t                          bindCount;
+    const VkSparseImageMemoryBind*    pBinds;
+} VkSparseImageMemoryBindInfo;
+
+typedef struct VkBindSparseInfo {
+    VkStructureType                             sType;
+    const void*                                 pNext;
+    uint32_t                                    waitSemaphoreCount;
+    const VkSemaphore*                          pWaitSemaphores;
+    uint32_t                                    bufferBindCount;
+    const VkSparseBufferMemoryBindInfo*         pBufferBinds;
+    uint32_t                                    imageOpaqueBindCount;
+    const VkSparseImageOpaqueMemoryBindInfo*    pImageOpaqueBinds;
+    uint32_t                                    imageBindCount;
+    const VkSparseImageMemoryBindInfo*          pImageBinds;
+    uint32_t                                    signalSemaphoreCount;
+    const VkSemaphore*                          pSignalSemaphores;
+} VkBindSparseInfo;
+
+typedef struct VkSparseImageFormatProperties {
+    VkImageAspectFlags          aspectMask;
+    VkExtent3D                  imageGranularity;
+    VkSparseImageFormatFlags    flags;
+} VkSparseImageFormatProperties;
+
+typedef struct VkSparseImageMemoryRequirements {
+    VkSparseImageFormatProperties    formatProperties;
+    uint32_t                         imageMipTailFirstLod;
+    VkDeviceSize                     imageMipTailSize;
+    VkDeviceSize                     imageMipTailOffset;
+    VkDeviceSize                     imageMipTailStride;
+} VkSparseImageMemoryRequirements;
+
+typedef struct VkFenceCreateInfo {
+    VkStructureType       sType;
+    const void*           pNext;
+    VkFenceCreateFlags    flags;
+} VkFenceCreateInfo;
+
+typedef struct VkSemaphoreCreateInfo {
+    VkStructureType           sType;
+    const void*               pNext;
+    VkSemaphoreCreateFlags    flags;
+} VkSemaphoreCreateInfo;
+
+typedef struct VkQueryPoolCreateInfo {
+    VkStructureType                  sType;
+    const void*                      pNext;
+    VkQueryPoolCreateFlags           flags;
+    VkQueryType                      queryType;
+    uint32_t                         queryCount;
+    VkQueryPipelineStatisticFlags    pipelineStatistics;
+} VkQueryPoolCreateInfo;
+
+typedef struct VkBufferCreateInfo {
+    VkStructureType        sType;
+    const void*            pNext;
+    VkBufferCreateFlags    flags;
+    VkDeviceSize           size;
+    VkBufferUsageFlags     usage;
+    VkSharingMode          sharingMode;
+    uint32_t               queueFamilyIndexCount;
+    const uint32_t*        pQueueFamilyIndices;
+} VkBufferCreateInfo;
+
+typedef struct VkImageCreateInfo {
+    VkStructureType          sType;
+    const void*              pNext;
+    VkImageCreateFlags       flags;
+    VkImageType              imageType;
+    VkFormat                 format;
+    VkExtent3D               extent;
+    uint32_t                 mipLevels;
+    uint32_t                 arrayLayers;
+    VkSampleCountFlagBits    samples;
+    VkImageTiling            tiling;
+    VkImageUsageFlags        usage;
+    VkSharingMode            sharingMode;
+    uint32_t                 queueFamilyIndexCount;
+    const uint32_t*          pQueueFamilyIndices;
+    VkImageLayout            initialLayout;
+} VkImageCreateInfo;
+
+typedef struct VkSubresourceLayout {
+    VkDeviceSize    offset;
+    VkDeviceSize    size;
+    VkDeviceSize    rowPitch;
+    VkDeviceSize    arrayPitch;
+    VkDeviceSize    depthPitch;
+} VkSubresourceLayout;
+
+typedef struct VkComponentMapping {
+    VkComponentSwizzle    r;
+    VkComponentSwizzle    g;
+    VkComponentSwizzle    b;
+    VkComponentSwizzle    a;
+} VkComponentMapping;
+
+typedef struct VkImageViewCreateInfo {
+    VkStructureType            sType;
+    const void*                pNext;
+    VkImageViewCreateFlags     flags;
+    VkImage                    image;
+    VkImageViewType            viewType;
+    VkFormat                   format;
+    VkComponentMapping         components;
+    VkImageSubresourceRange    subresourceRange;
+} VkImageViewCreateInfo;
+
+typedef struct VkCommandPoolCreateInfo {
+    VkStructureType             sType;
+    const void*                 pNext;
+    VkCommandPoolCreateFlags    flags;
+    uint32_t                    queueFamilyIndex;
+} VkCommandPoolCreateInfo;
+
+typedef struct VkCommandBufferAllocateInfo {
+    VkStructureType         sType;
+    const void*             pNext;
+    VkCommandPool           commandPool;
+    VkCommandBufferLevel    level;
+    uint32_t                commandBufferCount;
+} VkCommandBufferAllocateInfo;
+
+typedef struct VkCommandBufferInheritanceInfo {
+    VkStructureType                  sType;
+    const void*                      pNext;
+    VkRenderPass                     renderPass;
+    uint32_t                         subpass;
+    VkFramebuffer                    framebuffer;
+    VkBool32                         occlusionQueryEnable;
+    VkQueryControlFlags              queryFlags;
+    VkQueryPipelineStatisticFlags    pipelineStatistics;
+} VkCommandBufferInheritanceInfo;
+
+typedef struct VkCommandBufferBeginInfo {
+    VkStructureType                          sType;
+    const void*                              pNext;
+    VkCommandBufferUsageFlags                flags;
+    const VkCommandBufferInheritanceInfo*    pInheritanceInfo;
+} VkCommandBufferBeginInfo;
+
+typedef struct VkBufferCopy {
+    VkDeviceSize    srcOffset;
+    VkDeviceSize    dstOffset;
+    VkDeviceSize    size;
+} VkBufferCopy;
+
+typedef struct VkImageSubresourceLayers {
+    VkImageAspectFlags    aspectMask;
+    uint32_t              mipLevel;
+    uint32_t              baseArrayLayer;
+    uint32_t              layerCount;
+} VkImageSubresourceLayers;
+
+typedef struct VkBufferImageCopy {
+    VkDeviceSize                bufferOffset;
+    uint32_t                    bufferRowLength;
+    uint32_t                    bufferImageHeight;
+    VkImageSubresourceLayers    imageSubresource;
+    VkOffset3D                  imageOffset;
+    VkExtent3D                  imageExtent;
+} VkBufferImageCopy;
+
+typedef struct VkImageCopy {
+    VkImageSubresourceLayers    srcSubresource;
+    VkOffset3D                  srcOffset;
+    VkImageSubresourceLayers    dstSubresource;
+    VkOffset3D                  dstOffset;
+    VkExtent3D                  extent;
+} VkImageCopy;
+
+typedef struct VkDispatchIndirectCommand {
+    uint32_t    x;
+    uint32_t    y;
+    uint32_t    z;
+} VkDispatchIndirectCommand;
+
+typedef struct VkPipelineCacheHeaderVersionOne {
+    uint32_t                        headerSize;
+    VkPipelineCacheHeaderVersion    headerVersion;
+    uint32_t                        vendorID;
+    uint32_t                        deviceID;
+    uint8_t                         pipelineCacheUUID[VK_UUID_SIZE];
+} VkPipelineCacheHeaderVersionOne;
+
+typedef struct VkEventCreateInfo {
+    VkStructureType       sType;
+    const void*           pNext;
+    VkEventCreateFlags    flags;
+} VkEventCreateInfo;
+
+typedef struct VkBufferViewCreateInfo {
+    VkStructureType            sType;
+    const void*                pNext;
+    VkBufferViewCreateFlags    flags;
+    VkBuffer                   buffer;
+    VkFormat                   format;
+    VkDeviceSize               offset;
+    VkDeviceSize               range;
+} VkBufferViewCreateInfo;
+
+typedef struct VkShaderModuleCreateInfo {
+    VkStructureType              sType;
+    const void*                  pNext;
+    VkShaderModuleCreateFlags    flags;
+    size_t                       codeSize;
+    const uint32_t*              pCode;
+} VkShaderModuleCreateInfo;
+
+typedef struct VkPipelineCacheCreateInfo {
+    VkStructureType               sType;
+    const void*                   pNext;
+    VkPipelineCacheCreateFlags    flags;
+    size_t                        initialDataSize;
+    const void*                   pInitialData;
+} VkPipelineCacheCreateInfo;
+
+typedef struct VkSpecializationMapEntry {
+    uint32_t    constantID;
+    uint32_t    offset;
+    size_t      size;
+} VkSpecializationMapEntry;
+
+typedef struct VkSpecializationInfo {
+    uint32_t                           mapEntryCount;
+    const VkSpecializationMapEntry*    pMapEntries;
+    size_t                             dataSize;
+    const void*                        pData;
+} VkSpecializationInfo;
+
+typedef struct VkPipelineShaderStageCreateInfo {
+    VkStructureType                     sType;
+    const void*                         pNext;
+    VkPipelineShaderStageCreateFlags    flags;
+    VkShaderStageFlagBits               stage;
+    VkShaderModule                      module;
+    const char*                         pName;
+    const VkSpecializationInfo*         pSpecializationInfo;
+} VkPipelineShaderStageCreateInfo;
+
+typedef struct VkComputePipelineCreateInfo {
+    VkStructureType                    sType;
+    const void*                        pNext;
+    VkPipelineCreateFlags              flags;
+    VkPipelineShaderStageCreateInfo    stage;
+    VkPipelineLayout                   layout;
+    VkPipeline                         basePipelineHandle;
+    int32_t                            basePipelineIndex;
+} VkComputePipelineCreateInfo;
+
+typedef struct VkPushConstantRange {
+    VkShaderStageFlags    stageFlags;
+    uint32_t              offset;
+    uint32_t              size;
+} VkPushConstantRange;
+
+typedef struct VkPipelineLayoutCreateInfo {
+    VkStructureType                 sType;
+    const void*                     pNext;
+    VkPipelineLayoutCreateFlags     flags;
+    uint32_t                        setLayoutCount;
+    const VkDescriptorSetLayout*    pSetLayouts;
+    uint32_t                        pushConstantRangeCount;
+    const VkPushConstantRange*      pPushConstantRanges;
+} VkPipelineLayoutCreateInfo;
+
+typedef struct VkSamplerCreateInfo {
+    VkStructureType         sType;
+    const void*             pNext;
+    VkSamplerCreateFlags    flags;
+    VkFilter                magFilter;
+    VkFilter                minFilter;
+    VkSamplerMipmapMode     mipmapMode;
+    VkSamplerAddressMode    addressModeU;
+    VkSamplerAddressMode    addressModeV;
+    VkSamplerAddressMode    addressModeW;
+    float                   mipLodBias;
+    VkBool32                anisotropyEnable;
+    float                   maxAnisotropy;
+    VkBool32                compareEnable;
+    VkCompareOp             compareOp;</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_core.h.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-8.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_core.h--section-10.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

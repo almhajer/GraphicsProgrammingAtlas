@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_realloc",
+    "slug": "sdl-realloc",
+    "titleArabic": "Change the size of allocated memory",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-realloc",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-realloc.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Change the size of allocated memory",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL realloc داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL realloc داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (void *) Returns a pointer to the newly allocated memory, or NULL if\nallocation failed. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Change the size of allocated memory."
+  },
+  "signature": {
+    "raw": "void * SDL_realloc(void *mem, size_t size);",
+    "returnType": "void *",
+    "parameters": [
+      "void *mem",
+      "size_t size"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_stdinc.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "mem",
+        "type": "void *",
+        "descriptionArabic": "يمثل المعامل mem من النوع void * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "a pointer to allocated memory to reallocate, or NULL."
+      },
+      {
+        "name": "size",
+        "type": "size_t",
+        "descriptionArabic": "يمثل المعامل size من النوع size_t القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the new size of the memory."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "The memory returned by this function must be freed with SDL_free ().",
+      "If size is 0, it will be set to 1. Note that this is\nunlike some other C runtime realloc implementations, which\nmay treat realloc(mem, 0) the same way as\n free(mem) .",
+      "If mem is NULL, the behavior of this function is\nequivalent to SDL_malloc (). Otherwise, the\nfunction can have one of three possible outcomes:",
+      "If it returns the same pointer as mem , it means that\n mem was resized in place without freeing.",
+      "If it returns a different non-NULL pointer, it means that\n mem was freed and cannot be dereferenced anymore.",
+      "If it returns NULL (indicating failure), then mem will\nremain valid and must still be freed with SDL_free ().",
+      "If the allocation is successfully resized, the returned pointer is\nguaranteed to be aligned to either the fundamental alignment\n( alignof(max_align_t) in C11 and later) or\n 2 * sizeof(void *) , whichever is smaller."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(void *) Returns a pointer to the newly allocated memory, or NULL if\nallocation failed.",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_realloc",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_free",
+        "route": "#ref/sdl3-core/functions/sdl-free",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_malloc",
+        "route": "#ref/sdl3-core/macros/sdl-malloc",
+        "libraryId": "sdl3-core",
+        "kindId": "macros"
+      },
+      {
+        "name": "SDL_calloc",
+        "route": "#ref/sdl3-core/functions/sdl-calloc",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Standard Library\nFunctionality",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

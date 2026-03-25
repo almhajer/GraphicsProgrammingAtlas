@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ترويسة C++ ضمن طبقة Vulkan-Hpp تعرض واجهات وأنواعاً مغلفة بصياغة أحدث من الواجهة C التقليدية.">
+  <title>vulkan_video.hpp • القسم 8 من 13 • الأسطر 3151-3600 - ArabicVulkan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/main.css?v=20260318-file-pages-cursor106">
+  <link rel="stylesheet" href="../../css/file-pages.css?v=20260318-file-pages-cursor106">
+</head>
+<body class="file-standalone-body">
+  <main class="standalone-page">
+    <div class="standalone-topbar">
+      <a class="standalone-link" href="../../index.html">العودة إلى الصفحة الرئيسية</a>
+      <a class="standalone-link" href="./index.html">فهرس الملفات</a>
+      <a class="standalone-link" href="./vulkan_video.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="../../sdk_include/vulkan/vulkan_video.hpp">فتح الملف الأصلي</a>
+    </div>
+
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">الرئيسية</a> /
+        <a href="./index.html">الملفات</a> /
+        <a href="./vulkan_video.hpp.html">vulkan_video.hpp</a> /
+        <span>القسم 8 من 13 • الأسطر 3151-3600</span>
+      </nav>
+      <h1 class="page-title">📄 vulkan_video.hpp</h1>
+      <p class="page-description">القسم 8 من 13 • الأسطر 3151-3600</p>
+    </div>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_video.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_video.hpp--section-7.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_video.hpp--section-9.html">القسم التالي</a>
+    </div>
+  
+
+    <section class="source-panel">
+      <div class="source-toolbar">
+        <span class="source-stat">الملف: vulkan_video.hpp</span>
+        <span class="source-stat">القسم: 8/13</span>
+        <span class="source-stat">الأسطر: 3151-3600</span>
+        <span class="source-stat">حجم الملف: 265.2 KB</span>
+        <span class="source-stat">آخر تعديل: 2026-01-30</span>
+      </div>
+      <pre class="source-block"><code>      {
+        return !operator==( rhs );
+      }
+
+    public:
+      uint16_t luma_weight_l0_flag   = {};
+      uint16_t chroma_weight_l0_flag = {};
+      uint16_t luma_weight_l1_flag   = {};
+      uint16_t chroma_weight_l1_flag = {};
+    };
+
+    struct EncodeH265WeightTable
+    {
+      using NativeType = StdVideoEncodeH265WeightTable;
+
+      operator StdVideoEncodeH265WeightTable const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265WeightTable *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265WeightTable &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265WeightTable *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265WeightTable const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265WeightTable *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265WeightTable *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265WeightTable *&gt;( this );
+      }
+
+      bool operator==( EncodeH265WeightTable const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( flags == rhs.flags ) &amp;&amp; ( luma_log2_weight_denom == rhs.luma_log2_weight_denom ) &amp;&amp;
+               ( delta_chroma_log2_weight_denom == rhs.delta_chroma_log2_weight_denom ) &amp;&amp; ( delta_luma_weight_l0 == rhs.delta_luma_weight_l0 ) &amp;&amp;
+               ( luma_offset_l0 == rhs.luma_offset_l0 ) &amp;&amp; ( delta_chroma_weight_l0 == rhs.delta_chroma_weight_l0 ) &amp;&amp;
+               ( delta_chroma_offset_l0 == rhs.delta_chroma_offset_l0 ) &amp;&amp; ( delta_luma_weight_l1 == rhs.delta_luma_weight_l1 ) &amp;&amp;
+               ( luma_offset_l1 == rhs.luma_offset_l1 ) &amp;&amp; ( delta_chroma_weight_l1 == rhs.delta_chroma_weight_l1 ) &amp;&amp;
+               ( delta_chroma_offset_l1 == rhs.delta_chroma_offset_l1 );
+      }
+
+      bool operator!=( EncodeH265WeightTable const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return !operator==( rhs );
+      }
+
+    public:
+      VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::EncodeH265WeightTableFlags              flags                          = {};
+      uint8_t                                                                                   luma_log2_weight_denom         = {};
+      int8_t                                                                                    delta_chroma_log2_weight_denom = {};
+      ArrayWrapper1D&lt;int8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF&gt;                                   delta_luma_weight_l0           = {};
+      ArrayWrapper1D&lt;int8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF&gt;                                   luma_offset_l0                 = {};
+      ArrayWrapper2D&lt;int8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF, STD_VIDEO_H265_MAX_CHROMA_PLANES&gt; delta_chroma_weight_l0         = {};
+      ArrayWrapper2D&lt;int8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF, STD_VIDEO_H265_MAX_CHROMA_PLANES&gt; delta_chroma_offset_l0         = {};
+      ArrayWrapper1D&lt;int8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF&gt;                                   delta_luma_weight_l1           = {};
+      ArrayWrapper1D&lt;int8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF&gt;                                   luma_offset_l1                 = {};
+      ArrayWrapper2D&lt;int8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF, STD_VIDEO_H265_MAX_CHROMA_PLANES&gt; delta_chroma_weight_l1         = {};
+      ArrayWrapper2D&lt;int8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF, STD_VIDEO_H265_MAX_CHROMA_PLANES&gt; delta_chroma_offset_l1         = {};
+    };
+
+    struct EncodeH265SliceSegmentHeaderFlags
+    {
+      using NativeType = StdVideoEncodeH265SliceSegmentHeaderFlags;
+
+      operator StdVideoEncodeH265SliceSegmentHeaderFlags const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265SliceSegmentHeaderFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265SliceSegmentHeaderFlags &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265SliceSegmentHeaderFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265SliceSegmentHeaderFlags const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265SliceSegmentHeaderFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265SliceSegmentHeaderFlags *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265SliceSegmentHeaderFlags *&gt;( this );
+      }
+
+      bool operator==( EncodeH265SliceSegmentHeaderFlags const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( first_slice_segment_in_pic_flag == rhs.first_slice_segment_in_pic_flag ) &amp;&amp;
+               ( dependent_slice_segment_flag == rhs.dependent_slice_segment_flag ) &amp;&amp; ( slice_sao_luma_flag == rhs.slice_sao_luma_flag ) &amp;&amp;
+               ( slice_sao_chroma_flag == rhs.slice_sao_chroma_flag ) &amp;&amp; ( num_ref_idx_active_override_flag == rhs.num_ref_idx_active_override_flag ) &amp;&amp;
+               ( mvd_l1_zero_flag == rhs.mvd_l1_zero_flag ) &amp;&amp; ( cabac_init_flag == rhs.cabac_init_flag ) &amp;&amp;
+               ( cu_chroma_qp_offset_enabled_flag == rhs.cu_chroma_qp_offset_enabled_flag ) &amp;&amp;
+               ( deblocking_filter_override_flag == rhs.deblocking_filter_override_flag ) &amp;&amp;
+               ( slice_deblocking_filter_disabled_flag == rhs.slice_deblocking_filter_disabled_flag ) &amp;&amp;
+               ( collocated_from_l0_flag == rhs.collocated_from_l0_flag ) &amp;&amp;
+               ( slice_loop_filter_across_slices_enabled_flag == rhs.slice_loop_filter_across_slices_enabled_flag ) &amp;&amp; ( reserved == rhs.reserved );
+      }
+
+      bool operator!=( EncodeH265SliceSegmentHeaderFlags const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return !operator==( rhs );
+      }
+
+    public:
+      uint32_t first_slice_segment_in_pic_flag              : 1;
+      uint32_t dependent_slice_segment_flag                 : 1;
+      uint32_t slice_sao_luma_flag                          : 1;
+      uint32_t slice_sao_chroma_flag                        : 1;
+      uint32_t num_ref_idx_active_override_flag             : 1;
+      uint32_t mvd_l1_zero_flag                             : 1;
+      uint32_t cabac_init_flag                              : 1;
+      uint32_t cu_chroma_qp_offset_enabled_flag             : 1;
+      uint32_t deblocking_filter_override_flag              : 1;
+      uint32_t slice_deblocking_filter_disabled_flag        : 1;
+      uint32_t collocated_from_l0_flag                      : 1;
+      uint32_t slice_loop_filter_across_slices_enabled_flag : 1;
+      uint32_t reserved                                     : 20;
+    };
+
+    struct EncodeH265SliceSegmentHeader
+    {
+      using NativeType = StdVideoEncodeH265SliceSegmentHeader;
+
+      operator StdVideoEncodeH265SliceSegmentHeader const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265SliceSegmentHeader *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265SliceSegmentHeader &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265SliceSegmentHeader *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265SliceSegmentHeader const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265SliceSegmentHeader *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265SliceSegmentHeader *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265SliceSegmentHeader *&gt;( this );
+      }
+
+      bool operator==( EncodeH265SliceSegmentHeader const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( flags == rhs.flags ) &amp;&amp; ( slice_type == rhs.slice_type ) &amp;&amp; ( slice_segment_address == rhs.slice_segment_address ) &amp;&amp;
+               ( collocated_ref_idx == rhs.collocated_ref_idx ) &amp;&amp; ( MaxNumMergeCand == rhs.MaxNumMergeCand ) &amp;&amp;
+               ( slice_cb_qp_offset == rhs.slice_cb_qp_offset ) &amp;&amp; ( slice_cr_qp_offset == rhs.slice_cr_qp_offset ) &amp;&amp;
+               ( slice_beta_offset_div2 == rhs.slice_beta_offset_div2 ) &amp;&amp; ( slice_tc_offset_div2 == rhs.slice_tc_offset_div2 ) &amp;&amp;
+               ( slice_act_y_qp_offset == rhs.slice_act_y_qp_offset ) &amp;&amp; ( slice_act_cb_qp_offset == rhs.slice_act_cb_qp_offset ) &amp;&amp;
+               ( slice_act_cr_qp_offset == rhs.slice_act_cr_qp_offset ) &amp;&amp; ( slice_qp_delta == rhs.slice_qp_delta ) &amp;&amp; ( reserved1 == rhs.reserved1 ) &amp;&amp;
+               ( pWeightTable == rhs.pWeightTable );
+      }
+
+      bool operator!=( EncodeH265SliceSegmentHeader const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return !operator==( rhs );
+      }
+
+    public:
+      VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::EncodeH265SliceSegmentHeaderFlags flags = {};
+      VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::H265SliceType slice_type = VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::H265SliceType::eB;
+      uint32_t                                                        slice_segment_address        = {};
+      uint8_t                                                         collocated_ref_idx           = {};
+      uint8_t                                                         MaxNumMergeCand              = {};
+      int8_t                                                          slice_cb_qp_offset           = {};
+      int8_t                                                          slice_cr_qp_offset           = {};
+      int8_t                                                          slice_beta_offset_div2       = {};
+      int8_t                                                          slice_tc_offset_div2         = {};
+      int8_t                                                          slice_act_y_qp_offset        = {};
+      int8_t                                                          slice_act_cb_qp_offset       = {};
+      int8_t                                                          slice_act_cr_qp_offset       = {};
+      int8_t                                                          slice_qp_delta               = {};
+      uint16_t                                                        reserved1                    = {};
+      const VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::EncodeH265WeightTable * pWeightTable = {};
+    };
+
+    struct EncodeH265ReferenceListsInfoFlags
+    {
+      using NativeType = StdVideoEncodeH265ReferenceListsInfoFlags;
+
+      operator StdVideoEncodeH265ReferenceListsInfoFlags const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265ReferenceListsInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceListsInfoFlags &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265ReferenceListsInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceListsInfoFlags const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265ReferenceListsInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceListsInfoFlags *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265ReferenceListsInfoFlags *&gt;( this );
+      }
+
+      bool operator==( EncodeH265ReferenceListsInfoFlags const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( ref_pic_list_modification_flag_l0 == rhs.ref_pic_list_modification_flag_l0 ) &amp;&amp;
+               ( ref_pic_list_modification_flag_l1 == rhs.ref_pic_list_modification_flag_l1 ) &amp;&amp; ( reserved == rhs.reserved );
+      }
+
+      bool operator!=( EncodeH265ReferenceListsInfoFlags const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return !operator==( rhs );
+      }
+
+    public:
+      uint32_t ref_pic_list_modification_flag_l0 : 1;
+      uint32_t ref_pic_list_modification_flag_l1 : 1;
+      uint32_t reserved                          : 30;
+    };
+
+    struct EncodeH265ReferenceListsInfo
+    {
+      using NativeType = StdVideoEncodeH265ReferenceListsInfo;
+
+      operator StdVideoEncodeH265ReferenceListsInfo const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265ReferenceListsInfo *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceListsInfo &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265ReferenceListsInfo *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceListsInfo const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265ReferenceListsInfo *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceListsInfo *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265ReferenceListsInfo *&gt;( this );
+      }
+
+      bool operator==( EncodeH265ReferenceListsInfo const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( flags == rhs.flags ) &amp;&amp; ( num_ref_idx_l0_active_minus1 == rhs.num_ref_idx_l0_active_minus1 ) &amp;&amp;
+               ( num_ref_idx_l1_active_minus1 == rhs.num_ref_idx_l1_active_minus1 ) &amp;&amp; ( RefPicList0 == rhs.RefPicList0 ) &amp;&amp;
+               ( RefPicList1 == rhs.RefPicList1 ) &amp;&amp; ( list_entry_l0 == rhs.list_entry_l0 ) &amp;&amp; ( list_entry_l1 == rhs.list_entry_l1 );
+      }
+
+      bool operator!=( EncodeH265ReferenceListsInfo const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return !operator==( rhs );
+      }
+
+    public:
+      VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::EncodeH265ReferenceListsInfoFlags flags                        = {};
+      uint8_t                                                                             num_ref_idx_l0_active_minus1 = {};
+      uint8_t                                                                             num_ref_idx_l1_active_minus1 = {};
+      ArrayWrapper1D&lt;uint8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF&gt;                            RefPicList0                  = {};
+      ArrayWrapper1D&lt;uint8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF&gt;                            RefPicList1                  = {};
+      ArrayWrapper1D&lt;uint8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF&gt;                            list_entry_l0                = {};
+      ArrayWrapper1D&lt;uint8_t, STD_VIDEO_H265_MAX_NUM_LIST_REF&gt;                            list_entry_l1                = {};
+    };
+
+    struct EncodeH265PictureInfoFlags
+    {
+      using NativeType = StdVideoEncodeH265PictureInfoFlags;
+
+      operator StdVideoEncodeH265PictureInfoFlags const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265PictureInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265PictureInfoFlags &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265PictureInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265PictureInfoFlags const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265PictureInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265PictureInfoFlags *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265PictureInfoFlags *&gt;( this );
+      }
+
+      bool operator==( EncodeH265PictureInfoFlags const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( is_reference == rhs.is_reference ) &amp;&amp; ( IrapPicFlag == rhs.IrapPicFlag ) &amp;&amp;
+               ( used_for_long_term_reference == rhs.used_for_long_term_reference ) &amp;&amp; ( discardable_flag == rhs.discardable_flag ) &amp;&amp;
+               ( cross_layer_bla_flag == rhs.cross_layer_bla_flag ) &amp;&amp; ( pic_output_flag == rhs.pic_output_flag ) &amp;&amp;
+               ( no_output_of_prior_pics_flag == rhs.no_output_of_prior_pics_flag ) &amp;&amp;
+               ( short_term_ref_pic_set_sps_flag == rhs.short_term_ref_pic_set_sps_flag ) &amp;&amp;
+               ( slice_temporal_mvp_enabled_flag == rhs.slice_temporal_mvp_enabled_flag ) &amp;&amp; ( reserved == rhs.reserved );
+      }
+
+      bool operator!=( EncodeH265PictureInfoFlags const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return !operator==( rhs );
+      }
+
+    public:
+      uint32_t is_reference                    : 1;
+      uint32_t IrapPicFlag                     : 1;
+      uint32_t used_for_long_term_reference    : 1;
+      uint32_t discardable_flag                : 1;
+      uint32_t cross_layer_bla_flag            : 1;
+      uint32_t pic_output_flag                 : 1;
+      uint32_t no_output_of_prior_pics_flag    : 1;
+      uint32_t short_term_ref_pic_set_sps_flag : 1;
+      uint32_t slice_temporal_mvp_enabled_flag : 1;
+      uint32_t reserved                        : 23;
+    };
+
+    struct EncodeH265LongTermRefPics
+    {
+      using NativeType = StdVideoEncodeH265LongTermRefPics;
+
+      operator StdVideoEncodeH265LongTermRefPics const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265LongTermRefPics *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265LongTermRefPics &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265LongTermRefPics *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265LongTermRefPics const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265LongTermRefPics *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265LongTermRefPics *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265LongTermRefPics *&gt;( this );
+      }
+
+      bool operator==( EncodeH265LongTermRefPics const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( num_long_term_sps == rhs.num_long_term_sps ) &amp;&amp; ( num_long_term_pics == rhs.num_long_term_pics ) &amp;&amp; ( lt_idx_sps == rhs.lt_idx_sps ) &amp;&amp;
+               ( poc_lsb_lt == rhs.poc_lsb_lt ) &amp;&amp; ( used_by_curr_pic_lt_flag == rhs.used_by_curr_pic_lt_flag ) &amp;&amp;
+               ( delta_poc_msb_present_flag == rhs.delta_poc_msb_present_flag ) &amp;&amp; ( delta_poc_msb_cycle_lt == rhs.delta_poc_msb_cycle_lt );
+      }
+
+      bool operator!=( EncodeH265LongTermRefPics const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return !operator==( rhs );
+      }
+
+    public:
+      uint8_t                                                            num_long_term_sps          = {};
+      uint8_t                                                            num_long_term_pics         = {};
+      ArrayWrapper1D&lt;uint8_t, STD_VIDEO_H265_MAX_LONG_TERM_REF_PICS_SPS&gt; lt_idx_sps                 = {};
+      ArrayWrapper1D&lt;uint8_t, STD_VIDEO_H265_MAX_LONG_TERM_PICS&gt;         poc_lsb_lt                 = {};
+      uint16_t                                                           used_by_curr_pic_lt_flag   = {};
+      ArrayWrapper1D&lt;uint8_t, STD_VIDEO_H265_MAX_DELTA_POC&gt;              delta_poc_msb_present_flag = {};
+      ArrayWrapper1D&lt;uint8_t, STD_VIDEO_H265_MAX_DELTA_POC&gt;              delta_poc_msb_cycle_lt     = {};
+    };
+
+    struct EncodeH265PictureInfo
+    {
+      using NativeType = StdVideoEncodeH265PictureInfo;
+
+      operator StdVideoEncodeH265PictureInfo const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265PictureInfo *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265PictureInfo &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265PictureInfo *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265PictureInfo const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265PictureInfo *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265PictureInfo *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265PictureInfo *&gt;( this );
+      }
+
+      bool operator==( EncodeH265PictureInfo const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( flags == rhs.flags ) &amp;&amp; ( pic_type == rhs.pic_type ) &amp;&amp; ( sps_video_parameter_set_id == rhs.sps_video_parameter_set_id ) &amp;&amp;
+               ( pps_seq_parameter_set_id == rhs.pps_seq_parameter_set_id ) &amp;&amp; ( pps_pic_parameter_set_id == rhs.pps_pic_parameter_set_id ) &amp;&amp;
+               ( short_term_ref_pic_set_idx == rhs.short_term_ref_pic_set_idx ) &amp;&amp; ( PicOrderCntVal == rhs.PicOrderCntVal ) &amp;&amp;
+               ( TemporalId == rhs.TemporalId ) &amp;&amp; ( reserved1 == rhs.reserved1 ) &amp;&amp; ( pRefLists == rhs.pRefLists ) &amp;&amp;
+               ( pShortTermRefPicSet == rhs.pShortTermRefPicSet ) &amp;&amp; ( pLongTermRefPics == rhs.pLongTermRefPics );
+      }
+
+      bool operator!=( EncodeH265PictureInfo const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return !operator==( rhs );
+      }
+
+    public:
+      VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::EncodeH265PictureInfoFlags flags = {};
+      VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::H265PictureType pic_type = VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::H265PictureType::eP;
+      uint8_t                                                           sps_video_parameter_set_id               = {};
+      uint8_t                                                           pps_seq_parameter_set_id                 = {};
+      uint8_t                                                           pps_pic_parameter_set_id                 = {};
+      uint8_t                                                           short_term_ref_pic_set_idx               = {};
+      int32_t                                                           PicOrderCntVal                           = {};
+      uint8_t                                                           TemporalId                               = {};
+      ArrayWrapper1D&lt;uint8_t, 7&gt;                                        reserved1                                = {};
+      const VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::EncodeH265ReferenceListsInfo * pRefLists           = {};
+      const VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::H265ShortTermRefPicSet *       pShortTermRefPicSet = {};
+      const VULKAN_HPP_NAMESPACE::VULKAN_HPP_VIDEO_NAMESPACE::EncodeH265LongTermRefPics *    pLongTermRefPics    = {};
+    };
+
+    struct EncodeH265ReferenceInfoFlags
+    {
+      using NativeType = StdVideoEncodeH265ReferenceInfoFlags;
+
+      operator StdVideoEncodeH265ReferenceInfoFlags const &amp;() const VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;const StdVideoEncodeH265ReferenceInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceInfoFlags &amp;() VULKAN_HPP_NOEXCEPT
+      {
+        return *reinterpret_cast&lt;StdVideoEncodeH265ReferenceInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceInfoFlags const *() const VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;const StdVideoEncodeH265ReferenceInfoFlags *&gt;( this );
+      }
+
+      operator StdVideoEncodeH265ReferenceInfoFlags *() VULKAN_HPP_NOEXCEPT
+      {
+        return reinterpret_cast&lt;StdVideoEncodeH265ReferenceInfoFlags *&gt;( this );
+      }
+
+      bool operator==( EncodeH265ReferenceInfoFlags const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {
+        return ( used_for_long_term_reference == rhs.used_for_long_term_reference ) &amp;&amp; ( unused_for_reference == rhs.unused_for_reference ) &amp;&amp;
+               ( reserved == rhs.reserved );
+      }
+
+      bool operator!=( EncodeH265ReferenceInfoFlags const &amp; rhs ) const VULKAN_HPP_NOEXCEPT
+      {</code></pre>
+    </section>
+
+    
+    <div class="chunk-pager">
+      <a class="standalone-link" href="./vulkan_video.hpp.html">ملخص الملف</a>
+      <a class="standalone-link" href="./vulkan_video.hpp--section-7.html">القسم السابق</a>
+      <a class="standalone-link" href="./vulkan_video.hpp--section-9.html">القسم التالي</a>
+    </div>
+  
+  </main>
+</body>
+</html>

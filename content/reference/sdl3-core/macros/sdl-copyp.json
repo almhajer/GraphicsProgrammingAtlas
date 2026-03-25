@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "macros",
+    "displayName": "Macros",
+    "displayNameArabic": "الماكرو",
+    "description": "توسعات نصية أو قيم توليدية يطبقها المعالج المسبق قبل الترجمة."
+  },
+  "identity": {
+    "name": "SDL_copyp",
+    "slug": "sdl-copyp",
+    "titleArabic": "A macro to copy memory between objects",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/macros/sdl-copyp",
+    "contentPath": "content/reference/sdl3-core/macros/sdl-copyp.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "A macro to copy memory between objects",
+    "actualMeaningArabic": "يمثل هذا الماكرو ماكرو SDL copyp، أي توسعاً نصياً أو قيمة توليدية تؤثر في الكود قبل الترجمة.",
+    "purposeArabic": "",
+    "whyUseArabic": "",
+    "carriedValueArabic": "الماكرو يوسع إلى #define SDL_copyp(dst, src) \\\n { SDL_COMPILE_TIME_ASSERT(SDL_copyp, sizeof (*(dst)) == sizeof (*(src))); } \\\n SDL_memcpy((dst), (src), sizeof(*(src))) أو إلى تعبير مشتق منه، والقيمة الحقيقية هنا هي المعنى الذي يضيفه هذا التوسع إلى الكود.",
+    "sourceDescription": "A macro to copy memory between objects, with basic type checking."
+  },
+  "signature": {
+    "raw": "#define SDL_copyp(dst, src) \\\n { SDL_COMPILE_TIME_ASSERT(SDL_copyp, sizeof (*(dst)) == sizeof (*(src))); } \\\n SDL_memcpy((dst), (src), sizeof(*(src)))",
+    "returnType": "#define",
+    "parameters": [
+      "dst",
+      "src) \\\n { SDL_COMPILE_TIME_ASSERT(SDL_copyp",
+      "sizeof (*(dst)) == sizeof (*(src))); } \\\n SDL_memcpy((dst)",
+      "(src)",
+      "sizeof(*(src))"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_stdinc.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "SDL_memcpy and SDL_memmove do not care where you copy\nmemory to and from, which can lead to bugs. This macro aims to avoid\nmost of those bugs by making sure that the source and destination are\nboth pointers to objects that are the same size. It does not check that\nthe objects are the same type , just that the copy will not\noverflow either object.",
+      "The size check happens at compile time, and the compiler will throw\nan error if the objects are different sizes.",
+      "Generally this is intended to copy a single object, not an array.",
+      "This macro looks like it double-evaluates its parameters, but the\nextras them are in sizeof sections, which generate no code\nnor side-effects."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "It is safe to call this function from any thread.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_copyp",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Standard Library\nFunctionality",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

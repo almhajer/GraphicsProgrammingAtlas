@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "macros",
+    "displayName": "Macros",
+    "displayNameArabic": "الماكرو",
+    "description": "توسعات نصية أو قيم توليدية يطبقها المعالج المسبق قبل الترجمة."
+  },
+  "identity": {
+    "name": "SDL_TARGETING",
+    "slug": "sdl-targeting",
+    "titleArabic": "A macro to tag a function as targeting a specific CPU\narchitecture",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/macros/sdl-targeting",
+    "contentPath": "content/reference/sdl3-core/macros/sdl-targeting.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "A macro to tag a function as targeting a specific CPU\narchitecture",
+    "actualMeaningArabic": "يمثل هذا الماكرو ماكرو SDL TARGETING، أي توسعاً نصياً أو قيمة توليدية تؤثر في الكود قبل الترجمة.",
+    "purposeArabic": "",
+    "whyUseArabic": "",
+    "carriedValueArabic": "الماكرو يوسع إلى #define SDL_TARGETING(x) __attribute__((target(x))) أو إلى تعبير مشتق منه، والقيمة الحقيقية هنا هي المعنى الذي يضيفه هذا التوسع إلى الكود.",
+    "sourceDescription": "A macro to tag a function as targeting a specific CPU\narchitecture."
+  },
+  "signature": {
+    "raw": "#define SDL_TARGETING(x) __attribute__((target(x)))",
+    "returnType": "#define",
+    "parameters": [
+      "x) __attribute__((target(x))"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_intrin.h"
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "This is a hint to the compiler that a function should be built with\nsupport for a CPU instruction set that might be different than the rest\nof the program.",
+      "The particulars of this are explained in the GCC documentation:",
+      "https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-target-function-attribute",
+      "An example of using this feature is to turn on SSE2 support for a\nspecific function, even if the rest of the source code is not compiled\nto use SSE2 code:",
+      "#ifdef SDL_SSE2_INTRINSICS\n static void SDL_TARGETING ( \"sse2\" ) DoSomethingWithSSE2 ( char * x ) {\n ... use SSE2 intrinsic functions , etc ...\n }\n #endif\n\n // later...\n #ifdef SDL_SSE2_INTRINSICS\n if ( SDL_HasSSE2 ()) {\n DoSomethingWithSSE2 ( str );\n }\n #endif\n The application is, on a whole, built without SSE2 instructions, so\nit will run on Intel machines that don't support SSE2. But then at\nruntime, it checks if the system supports the instructions, and then\ncalls into a function that uses SSE2 opcodes. The ifdefs make sure that\nthis code isn't used on platforms that don't have SSE2 at all.",
+      "On compilers without target support, this is defined to nothing.",
+      "This symbol is used by SDL internally, but apps and other libraries\nare welcome to use it for their own interfaces as well."
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_TARGETING",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Compiler Intrinsics\nDetection",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}

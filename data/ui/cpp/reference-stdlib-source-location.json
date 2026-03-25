@@ -1,0 +1,33 @@
+{
+  "referenceData": {
+    "std::source_location": {
+      "title": "std::source_location",
+      "type": "نوع معلومات المصدر",
+      "description": "يحفظ معلومات موقع الكود المصدري: اسم الملف، رقم السطر، رقم العمود، واسم الدالة. يُستخدم كمعامل افتراضي في الدوال — المُجمّع يملأ القيم تلقائيًا. بديل حديث لماكروات __FILE__ و__LINE__ و__func__. متوفر في C++20.",
+      "usage": "تسجيل الأخطاء مع موقعها في الكود، رسائل تصحيح تحتوي اسم الملف والسطر تلقائيًا، تتبع استدعاءات الدوال.",
+      "example": "void log(const std::string& msg, const std::source_location& loc = std::source_location::current());",
+      "includeHeader": "#include <source_location>",
+      "usageExamples": [
+        {
+          "titleArabic": "تسجيل الأخطاء مع موقعها",
+          "code": "#include <iostream>\n#include <source_location>\n#include <string>\n\nvoid log_error(const std::string& msg,\n               const std::source_location& loc = std::source_location::current()) {\n    std::cerr << \"[خطأ] \" << loc.file_name() << ':'\n              << loc.line() << \" في \"\n              << loc.function_name() << \": \"\n              << msg << '\\n';\n}\n\nint main() {\n    int x = -1;\n    if (x < 0) {\n        log_error(\"القيمة سالبة\");\n        // [خطأ] main.cpp:16 في main: القيمة سالبة\n    }\n}",
+          "explanationArabic": "source_location::current() يملأ تلقائيًا بمعلومات مكان الاستدعاء. file_name() يُرجع اسم الملف، line() رقم السطر، function_name() اسم الدالة. المُجمّع يُعالج هذا في وقت التجميع بدون أي تكلفة تشغيلية."
+        },
+        {
+          "titleArabic": "بديل لماكروات __FILE__ و__LINE__",
+          "code": "#include <iostream>\n#include <source_location>\n\n// الطريقة القديمة بالماكروات — غير أنيقة\n#define OLD_LOG(msg) std::cerr << __FILE__ << \":\" << __LINE__ << \": \" << msg << '\\n'\n\n// الطريقة الحديثة — آمنة ونظيفة\nvoid modern_log(const std::string& msg,\n                const std::source_location& loc = std::source_location::current()) {\n    std::cerr << loc.file_name() << \":\" << loc.line() << \": \" << msg << '\\n';\n}\n\nint main() {\n    OLD_LOG(\"قديم\");       // يعمل لكنه ماكرو — مشاكل محتملة\n    modern_log(\"حديث\");     // دالة عادية — آمنة ونظيفة\n}",
+          "explanationArabic": "الماكروات لها مشاكل: لا تلتزم بالنطاق، قد تُسبب سلوكًا غير متوقع. source_location يعمل كمعامل افتراضي عادي — آمن نوعيًا، يلتزم بالنطاق، ويعطي معلومات أكثر (اسم الدالة وعمود)."
+        },
+        {
+          "titleArabic": "تتبع استدعاءات الدوال",
+          "code": "#include <iostream>\n#include <source_location>\n#include <string>\n\nclass Tracer {\n    int indent = 0;\npublic:\n    void enter(const std::string& name,\n               const std::source_location& loc = std::source_location::current()) {\n        std::cout << std::string(indent, ' ') << \"→ \" << name\n                  << \" (\" << loc.file_name() << \":\" << loc.line() << \")\" << '\\n';\n        indent += 2;\n    }\n\n    void exit(const std::string& name) {\n        indent -= 2;\n        std::cout << std::string(indent, ' ') << \"← \" << name << '\\n';\n    }\n};\n\nstatic Tracer tracer;\n\nvoid process_data() {\n    tracer.enter(__func__);\n    // معالجة البيانات هنا\n    tracer.exit(__func__);\n}\n\nint main() {\n    tracer.enter(__func__);\n    process_data();\n    tracer.exit(__func__);\n    // → main (main.cpp:29)\n    //   → process_data (main.cpp:20)\n    //   ← process_data\n    // ← main\n}",
+          "explanationArabic": "source_location مع نظام تتبع الاستدعاءات يُنشئ سجلًا بصريًا لتنفيذ البرنامج. مفيد لتصحيح الأخطاء وفهم تدفق التنفيذ. indent يُظهر عمق الاستدعاء بشكل بصري."
+        }
+      ],
+      "related": [
+        "std::cerr",
+        "std::filesystem::path"
+      ]
+    }
+  }
+}

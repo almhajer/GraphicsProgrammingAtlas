@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg لمعالجة الصوت والفيديو."
+  },
+  "kind": {
+    "id": "example",
+    "displayName": "Examples",
+    "displayNameArabic": "الأمثلة",
+    "description": "أمثلة برمجية توضح استخدام FFmpeg."
+  },
+  "identity": {
+    "name": "encode_audio.c",
+    "slug": "encode-audio.c",
+    "titleArabic": "encode_audio.c",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/ffmpeg/example/encode-audio.c",
+    "contentPath": "content/reference/ffmpeg/examples/encode-audio.c.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "يبين خط encoder الصوتية من AVFrame خامة إلى AVPacket مضغوطة.",
+    "actualMeaningArabic": "يبين خط encoder الصوتية من AVFrame خامة إلى AVPacket مضغوطة.",
+    "purposeArabic": "يبين خط encoder الصوتية من AVFrame خامة إلى AVPacket مضغوطة.",
+    "whyUseArabic": "يبين خط encoder الصوتية من AVFrame خامة إلى AVPacket مضغوطة.",
+    "carriedValueArabic": "يبين خط encoder الصوتية من AVFrame خامة إلى AVPacket مضغوطة.",
+    "sourceDescription": "يبين خط encoder الصوتية من AVFrame خامة إلى AVPacket مضغوطة."
+  },
+  "signature": {
+    "raw": "// encode_audio.c - ترميز samples صوتية خامة إلى حزم مضغوطة\n#include <libavcodec/avcodec.h>\n#include <libavutil/frame_alloc.h>\n#include <libavutil/opt.h>\n#include <stdio.h>\n\nint main(void) {\n    const AVCodec *codec = avcodec_find_encoder(AV_CODEC_ID_AAC);\n    if (!codec) {\n        fprintf(stderr, \"AAC encoder غير متوفر\\n\");\n        return 1;\n    }\n\n    AVCodecContext *ctx = avcodec_alloc_context3(codec);\n    ctx->sample_rate = 44100;\n    ctx->ch_layout = AV_CH_LAYOUT_STEREO;\n    ctx->sample_fmt = AV_SAMPLE_FMT_FLTP;\n    ctx->bit_rate = 128000;\n    avcodec_open2(ctx, codec, NULL);\n\n    // إنشاء frame فارغ\n    AVFrame *frame = av_frame_alloc();\n    frame->nb_samples = ctx->frame_size;\n    frame->format = ctx->sample_fmt;\n    frame->ch_layout = ctx->ch_layout;\nn    av_frame_get_buffer(frame, 0);\n\n    // ملء الـ frame بعينات صوتية خامة\n    float *samples = (float *)frame->data[0];\n    for (int i = 0; i < frame->nb_samples * 2; i++) {\n        samples[i] = 0.5f * sinf(2.0f * 3.14159f * i / (frame->nb_samples * 2));\n    }\n\n    // ترميز\n    AVPacket *pkt = av_packet_alloc();\n    frame->pts = 0;\n    int pts_step = frame->nb_samples;\n\n    for (int i = 0; i < 100; i++) {\n        frame->pts = i * pts_step;\n        int ret = avcodec_send_frame(ctx, frame);\n        while (ret >= 0) {\n            ret = avcodec_receive_packet(ctx, pkt);\n            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) break;\nn            printf(\"encoded: packet size=%d pts=%ld\\n\", pkt->size, pkt->pts);\n            av_packet_unref(pkt);\n        }\n    }\n\n    av_packet_free(&pkt);\n    av_frame_free(&frame);\n    avcodec_free_context(&ctx);\n    return 0;\n}",
+    "returnType": "",
+    "parameters": [],
+    "header": "",
+    "headerUrl": ""
+  },
+  "details": {
+    "parameters": [],
+    "fields": [],
+    "values": [],
+    "usage": [],
+    "notes": [],
+    "remarks": [],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "",
+    "threadSafety": "",
+    "example": "// encode_audio.c - ترميز samples صوتية خامة إلى حزم مضغوطة\n#include <libavcodec/avcodec.h>\n#include <libavutil/frame_alloc.h>\n#include <libavutil/opt.h>\n#include <stdio.h>\n\nint main(void) {\n    const AVCodec *codec = avcodec_find_encoder(AV_CODEC_ID_AAC);\n    if (!codec) {\n        fprintf(stderr, \"AAC encoder غير متوفر\n\");\n        return 1;\n    }\n\n    AVCodecContext *ctx = avcodec_alloc_context3(codec);\n    ctx->sample_rate = 44100;\n    ctx->ch_layout = AV_CH_LAYOUT_STEREO;\n    ctx->sample_fmt = AV_SAMPLE_FMT_FLTP;\n    ctx->bit_rate = 128000;\n    avcodec_open2(ctx, codec, NULL);\n\n    // إنشاء frame فارغ\n    AVFrame *frame = av_frame_alloc();\n    frame->nb_samples = ctx->frame_size;\n    frame->format = ctx->sample_fmt;\n    frame->ch_layout = ctx->ch_layout;\n    av_frame_get_buffer(frame, 0);\n\n    // ملء الـ frame بعينات صوتية خامة\n    float *samples = (float *)frame->data[0];\n    for (int i = 0; i < frame->nb_samples * 2; i++) {\n        samples[i] = 0.5f * sinf(2.0f * 3.14159f * i / (frame->nb_samples * 2));\n    }\n\n    // ترميز\n    AVPacket *pkt = av_packet_alloc();\n    frame->pts = 0;\n    int pts_step = frame->nb_samples;\n\n    for (int i = 0; i < 100; i++) {\n        frame->pts = i * pts_step;\n        int ret = avcodec_send_frame(ctx, frame);\n        while (ret >= 0) {\n            ret = avcodec_receive_packet(ctx, pkt);\n            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) break;\n            printf(\"encoded: packet size=%d pts=%ld\n\", pkt->size, pkt->pts);\n            av_packet_unref(pkt);\n        }\n    }\n\n    av_packet_free(&pkt);\n    av_frame_free(&frame);\n    avcodec_free_context(&ctx);\n    return 0;\n}"
+  },
+  "links": {
+    "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/encode_audio.c.html",
+    "sourceUrl": "",
+    "related": []
+  },
+  "source": {
+    "dataset": "data/ui/ffmpeg/search.json",
+    "category": "FFmpeg",
+    "packageKey": "ffmpeg",
+    "packageName": "FFmpeg"
+  }
+}

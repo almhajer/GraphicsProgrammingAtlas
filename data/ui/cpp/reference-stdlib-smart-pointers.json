@@ -1,0 +1,1845 @@
+{
+  "referenceData": {
+    "std::unique_ptr": {
+      "title": "std::unique_ptr",
+      "type": "مؤشر ذكي",
+      "description": "مؤشر ذكي يمتلك كائنًا حصريًا ويحرره تلقائيًا عند انتهاء عمره عبر delete (أو deleter مخصص). لا يمكن نسخه — يمكن فقط نقل ملكيته. حجمه يساوي مؤشرًا خامًا واحدًا.",
+      "usage": "الخيار الافتراضي الأول لملكية الذاكرة الديناميكية في C++ الحديث. يستبدل new/delete اليدوي في كل الحالات تقريبًا.",
+      "example": "auto ptr = std::make_unique<int>(7);\nauto ptr2 = std::move(ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "ملكية بسيطة مع make_unique",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Texture {\n    int width, height;\n    Texture(int w, int h) : width(w), height(h) {\n        std::cout << \"Texture created\\n\";\n    }\n    ~Texture() {\n        std::cout << \"Texture destroyed\\n\";\n    }\n};\n\n// make_unique يُخصّص ويبني الكائن في تخصيص واحد (استثناء آمن)\nauto tex = std::make_unique<Texture>(1920, 1080);\n\n// الوصول كالمؤشر الخام\nstd::cout << tex->width;  // 1920\n\n// *tex يُرجع مرجع للكائن\n// tex.get() يُرجع المؤشر الخام (نادرًا ما تحتاجه)\n\n// عند خروج tex من النطاق يُستدعى ~Texture تلقائيًا",
+          "explanationArabic": "make_unique أنفع من new لأنه يمنع تسرب الذاكرة حتى لو رمى المُنشئ استثناءً (لا يبقى مؤشر عائم). المؤشر الخام يُرجع بـ get() لكن استخدامه مباشرةً يُضعف فائدة المؤشر الذكي. عامل -> وعامل * يوفّران نفس واجهة المؤشر الخام."
+        },
+        {
+          "titleArabic": "نقل الملكية بين الدوال",
+          "code": "#include <memory>\n\nstruct Buffer {\n    float data[1024];\n};\n\n// ✅ نقل الملكية إلى الدالة — بعد الاستدعاء caller يفقد الملكية\nvoid process(std::unique_ptr<Buffer> buf) {\n    // buf يملك الكائن الآن\n    // عند انتهاء الدالة يُحرر تلقائيًا\n}\n\n// ✅ إرجاع ملكية من دالة — الأنظف\nstd::unique_ptr<Buffer> create_buffer() {\n    return std::make_unique<Buffer>(); // NRVO أو نقل ضمني (C++17)\n}\n\n// الاستخدام\nauto buf = create_buffer();\nprocess(std::move(buf));  // نقل صريح — buf يصبح nullptr بعدها\n\n// ❌ لا تحاول استخدام buf بعد النقل\n// buf->data[0] = 1.0f;  // سلوك غير معرّف ( UB )",
+          "explanationArabic": "unique_ptr يحذف نسخ المُنشئ ونسخ التعيين لكنه يسمح بالنقل. std::move لا ينقل شيئًا فعلًا — هو مجرد cast يُخبر المُصرِّف أن المالك الأصلي لم يعد يحتاج الكائن. بعد النقل يصبح المؤشر الأصلي nullptr. في C++17، إرجاع unique_ptr محلي من دالة لا يحتاج std::move بسبب copy elision المضمون."
+        },
+        {
+          "titleArabic": "خطأ شائع: shared_ptr من this",
+          "code": "#include <memory>\n\nstruct Node {\n    std::unique_ptr<Node> left;\n    std::unique_ptr<Node> right;\n\n    // ❌ خطأ: هذا يُنشئ shared_ptr منفصل يدير نفس الكائن\n    // سيُحرر الكائن مرتين!\n    // std::shared_ptr<Node> get_shared_bad() {\n    //     return std::shared_ptr<Node>(this);\n    // }\n\n    // ✅ صحيح: لا تستخدم unique_ptr إذا تحتاج shared_ptr من this\n    // استخدم shared_ptr + enable_shared_from_this بدلًا من ذلك\n};\n\n// ❌ خطأ آخر: لا تخلط unique_ptr و shared_ptr لنفس الكائن\n// auto up = std::make_unique<int>(42);\n// auto sp = std::shared_ptr<int>(up.get()); // كارثة: حاويان مختلفان\n// // عند تدمير up يُحذف الكائن، ثم sp يحاول حذفه مجددًا",
+          "explanationArabic": "القاعدة: لا تبنِ مؤشرًا ذكيًا آخر من get() أبدًا لأن كلا الحاويين سيظنان أنهما المالك الوحيد. إذا احتجت ملكية مشتركة من داخل الكائن نفسه، فالتصميم الصحيح هو استخدام shared_ptr مع enable_shared_from_this من البداية. unique_ptr يعني 'أنا المالك الوحيد' — لا تكسر هذه القاعدة."
+        }
+      ],
+      "related": [
+        "std::make_unique",
+        "new",
+        "delete",
+        "std::shared_ptr",
+        "std::move"
+      ]
+    },
+    "std::shared_ptr": {
+      "title": "std::shared_ptr",
+      "type": "مؤشر ذكي",
+      "description": "مؤشر ذكي يسمح بملكية مشتركة عبر عداد مرجعي (control block). يُحذف الكائن والـ control block عند انتهاء آخر shared_ptr. يمكن نسخه ونقله. حجمه أكبر من مؤشر خام بسبب تخزين مؤشرين.",
+      "usage": "يظهر عندما تحتاج أكثر من جهة ملكية الكائن نفسه خلال فترات زمنية مختلفة. استخدم unique_ptr أولًا وانتقل لـ shared_ptr فقط عند الحاجة الفعلية للملكية المشتركة.",
+      "example": "auto ptr = std::make_shared<int>(42);\nauto copy = ptr;",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "ملكية مشتركة مع make_shared",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Mesh {\n    std::string name;\n    Mesh(std::string n) : name(std::move(n)) {\n        std::cout << \"Mesh created: \" << name << '\\n';\n    }\n    ~Mesh() { std::cout << \"Mesh destroyed: \" << name << '\\n'; }\n};\n\nauto mesh = std::make_shared<Mesh>(\"hero\");\nstd::cout << \"use_count: \" << mesh.use_count(); // 1\n\nauto mesh2 = mesh; // نسخ — عداد مرجعي يصبح 2\nstd::cout << \"use_count: \" << mesh.use_count(); // 2\n\nmesh2.reset(); // mesh2 يتخلى عن الملكية\nstd::cout << \"use_count: \" << mesh.use_count(); // 1\n\n// عند خروج mesh من النطاق: use_count يصبح 0 فيُحذف Mesh",
+          "explanationArabic": "make_shared يُخصّص الكائن والـ control block في تخصيص واحد (أنسب من shared_ptr(new T)). use_count() يُرجع عدد shared_ptr التي تشير لنفس الكائن — مفيد للتصحيح لكن لا تستخدمه للتحكم المنطقي. reset() يُحرر الملكية ويُنقص العداد."
+        },
+        {
+          "titleArabic": "نقل بدل النسخ عند الإمكان",
+          "code": "#include <memory>\n\nstruct Resource {\n    int id;\n    Resource(int i) : id(i) {}\n};\n\nstd::shared_ptr<Resource> create_resource() {\n    return std::make_shared<Resource>(1); // NRVO — لا نسخة إضافية\n}\n\n// ✅ نقل: لا يزيد العداد المرجعي\nstd::shared_ptr<Resource> a = create_resource(); // use_count = 1\nstd::shared_ptr<Resource> b = std::move(a);       // use_count = 1 (نقل)\n// a أصبح nullptr الآن\n\n// ❌ نسخ: يزيد العداد المرجعي\nstd::shared_ptr<Resource> c = create_resource(); // use_count = 1\nstd::shared_ptr<Resource> d = c;                   // use_count = 2 (نسخ)",
+          "explanationArabic": "std::move على shared_ptr ينقل الملكية بدون زيادة العداد — a يصبح nullptr وb يأخذ مكانه. النسخ يزيد العداد ويعني أن كلاهما يملك. استخدم النقل عندما تعرف أن المالك الأصلي لن يحتاج الكائن مجددًا. انتبه: نقل shared_ptr أرخص من النسخ لكنه أغلى من نقل unique_ptr بسبب تحديث العداد."
+        },
+        {
+          "titleArabic": "خطأ شائع: حلقة مرجعية",
+          "code": "#include <memory>\n\nstruct Node {\n    std::shared_ptr<Node> next;  // ❌ قد يُسبب حلقة مرجعية\n    // ~Node() لا يُستدعى أبدًا إذا كانت هناك حلقة!\n};\n\n// ❌ كارثة: كلا العقدتين تشيران للأخرى بالملكية\n// auto a = std::make_shared<Node>();\n// auto b = std::make_shared<Node>();\n// a->next = b;\n// b->next = a;\n// // use_count = 2 لكلتا العقدتين — لن يُحذف أيهما!\n\n// ✅ الحل: استخدم weak_ptr للإشارة غير المالكة\nstruct SafeNode {\n    std::shared_ptr<SafeNode> next;\n    std::weak_ptr<SafeNode> prev; // لا يزيد العداد\n};\n\nauto x = std::make_shared<SafeNode>();\nauto y = std::make_shared<SafeNode>();\nx->next = y;   // shared_ptr: يزيد العداد\ny->prev = x;   // weak_ptr: لا يزيد العداد\n// عند خروج x وy: يُحذفان بشكل صحيح",
+          "explanationArabic": "الحلقة المرجعية تحدث عندما يمتلك A→B وB→A عبر shared_ptr. العداد لا يصل للصفر أبدًا فلا يُحذف شيء — هذا تسرب ذاكرة. weak_ptr يحل هذا لأنه لا يزيد العداد. القاعدة: إذا كان الاتجاه 'أب→ابن' ملكية و'ابن→أب' مجرد إشارة، فاجعل 'ابن→أب' بـ weak_ptr."
+        }
+      ],
+      "related": [
+        "std::make_shared",
+        "std::weak_ptr",
+        "std::unique_ptr",
+        "std::enable_shared_from_this"
+      ]
+    },
+    "std::weak_ptr": {
+      "title": "std::weak_ptr",
+      "type": "مؤشر ذكي",
+      "description": "مؤشر ذكي مراقب لا يمتلك الكائن. يُستخدم لكسر الحلقات المرجعية مع shared_ptr.",
+      "usage": "يظهر للإشارة إلى كائن مملوك بـ shared_ptr دون إطالة عمره.",
+      "example": "std::weak_ptr<int> observer = shared;\nif (auto locked = observer.lock()) { /* حي */ }",
+      "related": [
+        "std::shared_ptr",
+        "std::make_shared",
+        "std::enable_shared_from_this"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "مراقبة كائن بدون إطالة عمره",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    auto sp = std::make_shared<int>(42);\n    std::weak_ptr<int> wp = sp;\n    std::cout << wp.use_count(); // 1 — weak_ptr لا يزيد العداد\n    if (auto locked = wp.lock()) {\n        std::cout << *locked; // 42\n    }\n    sp.reset();\n    std::cout << wp.expired(); // true\n}",
+          "explanationArabic": "weak_ptr لا يزيد العداد المرجعي. lock تُنشئ shared_ptr مؤقت إذا كان الكائن حيًا أو nullptr إذا أُلغي. expired تتحقق بدون إنشاء shared_ptr."
+        },
+        {
+          "titleArabic": "كسر حلقة مرجعية",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Node {\n    std::string name;\n    std::shared_ptr<Node> next;\n    std::weak_ptr<Node> prev;\n};\n\nauto a = std::make_shared<Node>();\na->name = \"A\";\nauto b = std::make_shared<Node>();\nb->name = \"B\";\na->next = b;\nb->prev = a;\nstd::cout << b->prev.lock()->name; // A\n}",
+          "explanationArabic": "prev هو weak_ptr فلا يزيد العداد. عند تدمير a وb يُحرر الكائنان بشكل صحيح. لو كان prev هو shared_ptr لحصل تسرب ذاكرة."
+        },
+        {
+          "titleArabic": "lock يُرجع nullptr إذا انتهى الكائن",
+          "code": "#include <memory>\n\nstd::weak_ptr<int> wp;\n{\n    auto sp = std::make_shared<int>(10);\n    wp = sp;\n} // sp يُدمَّر هنا\n\nauto locked = wp.lock();\nif (!locked) {\n    // الكائن لم يعد موجودًا\n}",
+          "explanationArabic": "بعد تدمير آخر shared_ptr، lock يُرجع shared_ptr فارغ (nullptr). لا تستخدم wp.lock() بدون التحقق من النتيجة."
+        }
+      ]
+    },
+    "std::enable_shared_from_this": {
+      "title": "std::enable_shared_from_this",
+      "type": "فئة أساسية",
+      "description": "فئة أساسية تسمح لكائن مملوك بـ shared_ptr بإنتاج shared_ptr آمن يشير إلى نفسه.",
+      "usage": "تفيد عند إرجاع shared_ptr للكائن نفسه من داخل دالة عضو.",
+      "example": "class Node : public std::enable_shared_from_this<Node> {\npublic:\n    std::shared_ptr<Node> self() { return shared_from_this(); }\n};",
+      "related": [
+        "std::shared_ptr",
+        "std::weak_ptr"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إرجاع shared_ptr من داخل الكائن",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Node : public std::enable_shared_from_this<Node> {\n    std::shared_ptr<Node> get_self() {\n        return shared_from_this();\n    }\n};\n\nint main() {\n    auto n = std::make_shared<Node>();\n    auto self = n->get_self();\n    std::cout << n.use_count(); // 2\n}",
+          "explanationArabic": "shared_from_this يُرجع shared_ptr يشير لنفس الكائن ويزيد العداد. يجب أن يكون الكائن مملوكًا بـ shared_ptr أولًا."
+        },
+        {
+          "titleArabic": "تمرير this لدالة تحتاج shared_ptr",
+          "code": "#include <memory>\n\nvoid process(std::shared_ptr<struct Node> node);\n\nstruct Node : public std::enable_shared_from_this<Node> {\n    void register_self() {\n        process(shared_from_this()); // آمن\n    }\n};",
+          "explanationArabic": "تمرير this مباشرة يُنشئ shared_ptr منفصل يُسبب حذفًا مزدوجًا. shared_from_this آمن لأنه يُشارك نفس control block."
+        },
+        {
+          "titleArabic": "لا تستخدمه مع unique_ptr",
+          "code": "#include <memory>\n\nstruct Bad : public std::enable_shared_from_this<Bad> {};\n\n// auto b = std::make_unique<Bad>();\n// b->shared_from_this(); // يرمي bad_weak_ptr!\n\n// يجب أن يكون الكائن مملوكًا بـ shared_ptr\nauto good = std::make_shared<Bad>();\ngood->shared_from_this(); // يعمل",
+          "explanationArabic": "shared_from_this يحتاج control block من shared_ptr. مع unique_ptr لا يوجد control block فيُرمي استثناء. لا تورث enable_shared_from_this إلا إذا كنت ستستخدم shared_ptr."
+        }
+      ]
+    },
+    "std::make_unique": {
+      "title": "std::make_unique",
+      "type": "دالة مصنع",
+      "description": "تنشئ كائنًا على الذاكرة الديناميكية وتعيده داخل unique_ptr.",
+      "usage": "الطريقة المفضلة لإنشاء unique_ptr بدل new مباشرة.",
+      "example": "auto ptr = std::make_unique<int>(7);",
+      "related": [
+        "std::unique_ptr",
+        "new",
+        "auto"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء unique_ptr لعدة أنواع",
+          "code": "#include <memory>\n#include <string>\n#include <iostream>\n\nint main() {\n    auto p1 = std::make_unique<int>(42);\n    auto p2 = std::make_unique<std::string>(5, 'x');\n    std::cout << *p1 << \" \" << *p2; // 42 xxxxx\n}",
+          "explanationArabic": "make_unique تُمرر الحجج لمُنشئ النوع. أنظف من new لأنها تمنع تسرب الذاكرة عند الاستثناءات."
+        },
+        {
+          "titleArabic": "إنشاء مصفوفة ديناميكية",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    auto arr = std::make_unique<int[]>(10);\n    for (int i = 0; i < 10; ++i) arr[i] = i * i;\n    std::cout << arr[4]; // 16\n}",
+          "explanationArabic": "make_unique<int[]>(n) تُنشئ مصفوفة بحجم n. الوصول بـ operator[] كالمصفوفة العادية. تُحرر تلقائيًا عند نهاية العمر."
+        },
+        {
+          "titleArabic": "لماذا make_unique أفضل من new",
+          "code": "#include <memory>\n\n// ❌ قد يسبب تسربًا عند الاستثناء\n// void bad() {\n//     auto p = new int(42);\n//     throw std::runtime_error(\"oops\"); // تسرب!\n//     delete p; // لن يُنفَّذ\n// }\n\n// ✅ make_unique آمن مع الاستثناءات\nvoid good() {\n    auto p = std::make_unique<int>(42);\n    throw std::runtime_error(\"oops\"); // لا تسرب — unique_ptr يُحرر\n}",
+          "explanationArabic": "مع new، أي استثناء قبل delete يُسبب تسربًا. make_unique يُحرر تلقائيًا حتى مع الاستثناءات بفضل RAII."
+        }
+      ]
+    },
+    "std::make_shared": {
+      "title": "std::make_shared",
+      "type": "دالة مصنع",
+      "description": "دالة قالب تُنشئ كائنًا على الذاكرة الديناميكية وتعيده داخل shared_ptr. تُخصّص الكائن والـ control block (العداد المرجعي والWeak count) في تخصيص واحد — هذا أنسب من shared_ptr(new T(...)) الذي يحتاج تخصيصين منفصلين. تُمرر حجج المُنشئ مباشرةً لها فتبني الكائن في المكان.",
+      "usage": "الطريقة الوحيدة المفضلة لإنشاء shared_ptr. لا تستخدم shared_ptr(new T(...)) أبدًا إلا إذا كنت تحتاج deleter مخصص أو إذا كان النوع يمنع الوصول لمُنشئه.",
+      "example": "auto ptr = std::make_shared<std::string>(\"Atlas\");",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء shared_ptr لعدة أنواع",
+          "code": "#include <memory>\n#include <string>\n#include <vector>\n#include <iostream>\n\n// إنشاء shared_ptr لـ int\nauto num = std::make_shared<int>(42);\nstd::cout << *num << ' ' << num.use_count(); // 42 1\n\n// إنشاء shared_ptr لـ string — يمرر الحجج لمُنشئ string\nauto text = std::make_shared<std::string>(5, 'x');\nstd::cout << *text; // xxxxx\n\n// إنشاء shared_ptr لـ vector\nauto vec = std::make_shared<std::vector<int>>(10, 0);\n// vector<int> بحجم 10 وقيمة أولية 0\nstd::cout << vec->size(); // 10\n\n// النسخ يزيد العداد\nauto copy = num; // use_count يصبح 2\nstd::cout << num.use_count(); // 2",
+          "explanationArabic": "make_shared تُمرر الحجج مباشرة لمُنشئ النوع — لا تحتاج كتابة النوع مرتين. use_count() يُرجع عدد shared_ptr التي تشير لنفس الكائن. النسخ يزيد العداد لأن كلاهما يملك الآن."
+        },
+        {
+          "titleArabic": "لماذا make_shared أفضل من shared_ptr(new T)",
+          "code": "#include <memory>\n\nstruct Large {\n    char data[1024];\n};\n\n// ❌ shared_ptr(new T): تخصيصان منفصلان\n// 1. new Large → تخصيص للكائن (1024 بايت)\n// 2. shared_ptr داخليًا → تخصيص لـ control block (~16 بايت)\n// المجموع: تخصيصان + تجزئة ذاكرة (cache miss أكثر)\n// auto bad = std::shared_ptr<Large>(new Large);\n\n// ✅ make_shared: تخصيص واحد\n// الكائن + control block في كتلة واحدة متجاورة\n// المجموع: تخصيص واحد + تجاوز أفضل للذاكرة المؤقتة\nauto good = std::make_shared<Large>();\n\n// ❌ مشكلة أمان الاستثناءات مع new:\n// void dangerous(std::shared_ptr<A> a, std::shared_ptr<B> b);\n// dangerous(std::shared_ptr<A>(new A), std::shared_ptr<B>(new B));\n// ترتيب التقييم غير محدد! قد يحدث:\n// 1. new A → نجح\n// 2. new B → رمى استثناءً\n// 3. الكائن A تسرّب لأن shared_ptr لم يُبنَ بعد!\n\n// ✅ make_shared آمن: لا تخصيص منفصل عن الحاوي\n// dangerous(std::make_shared<A>(), std::make_shared<B>());\n// لو رمى make_shared<B> استثناءً لا يوجد تسرب",
+          "explanationArabic": "make_shared يُخصّص كتلة واحدة متجاورة تحتوي الكائن والـ control block — هذا أسرع ويُحسّن تجاوز الذاكرة المؤقتة (cache locality). مع new، تخصيصان منفصلان يعنيان تجزئة في الذاكرة. الأهم: make_shared يمنع تسرب الذاكرة عند الاستثناءات لأن التخصيص والحاوية في خطوة واحدة."
+        },
+        {
+          "titleArabic": "خطأ شائع: العيب الوحيد لـ make_shared مع weak_ptr",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Big {\n    char data[4096];\n    ~Big() { std::cout << \"Big destroyed\\n\"; }\n};\n\nvoid demonstrate_delay() {\n    auto sp = std::make_shared<Big>();\n    std::weak_ptr<Big> wp = sp;\n\n    sp.reset(); // use_count يصبح 0 لكن Big لا يُدمَّر فورًا!\n    // السبب: make_shared وضع الكائن والـ control block في تخصيص واحد\n    // control block لا يُحرر حتى يُحرر آخر weak_ptr\n    // لكن الكائن نفسه يُستدعى مُدمّره عند use_count == 0\n\n    // Big يُدمَّر هنا عند خروج wp من النطاق (لاحظ التأخير)\n    // في التطبيقات العادية هذا لا يُلاحظ\n}\n\n// ❌ لا تحلّ هذا بـ shared_ptr(new T) إلا إذا كانت الذاكرة كبيرة جدًا\n// واستمرت weak_ptr لفترة طويلة — حالة نادرة جدًا\n\n// ✅ القاعدة: استخدم make_shared دائمًا\n// العيب فقط نظري: تأخير تحرير الذاكرة (لا المُدمّر) مع weak_ptr\n// المُدمّر يُستدعى في الوقت الصحيح دائمًا",
+          "explanationArabic": "مع make_shared، الكائن والـ control block في كتلة واحدة. عند use_count == 0 يُستدعى مُدمّر الكائن فورًا لكن الذاكرة لا تُحرر حتى يُحرر الـ control block (عند انتهاء آخر weak_ptr). هذا يعني أن 4096 بايت تبقى محجوزة مؤقتًا رغم أن المُدمّر نُفّذ. في الممارسة هذا نادر التأثير — استخدم make_shared دائمًا."
+        }
+      ],
+      "related": [
+        "std::shared_ptr",
+        "std::make_unique",
+        "std::weak_ptr",
+        "auto",
+        "new"
+      ]
+    },
+    "std::function": {
+      "title": "std::function",
+      "type": "غلاف استدعاء",
+      "description": "غلاف نوعي يمكنه تخزين أي كائن قابل للاستدعاء (callable) يتوافق مع التوقيع المحدد: دالة عادية، دالة عضو، lambda، كائن يُعرّف operator(). يُخصّص ذاكرة ديناميكية داخليًا لحفظ الكائن المُخزَّن — حجمه ثابت (~32 بايت عادةً) لكنه قد يُخصّص على الكومة للكائنات الكبيرة. يُحقق type erasure — يخفي النوع الفعلي خلف واجهة موحدة.",
+      "usage": "يظهر عند الحاجة لتخزين أو تمرير دالة بشكل عام في وقت التشغيل مثل ردادات الأحداث (callbacks) أو أنظمة الأوامر أو جداول العمليات. أنسب من القوالب عندما لا تعرف النوع وقت الترجمة.",
+      "example": "std::function<int(int,int)> op = [](int a, int b) { return a + b; };",
+      "includeHeader": "#include <functional>",
+      "usageExamples": [
+        {
+          "titleArabic": "تخزين lambda ودوال مختلفة بنفس التوقيع",
+          "code": "#include <functional>\n#include <iostream>\n#include <cmath>\n\n// توقيع: يأخذ float ويُرجع float\nusing MathOp = std::function<float(float)>;\n\nMathOp op = [](float x) { return x * x; }; // lambda\nstd::cout << op(3.0f); // 9.0f\n\n// يمكن إعادة تعيينه بدالة عادية\nfloat negate(float x) { return -x; }\nop = negate;\nstd::cout << op(5.0f); // -5.0f\n\n// أو بدالة من المكتبة\nop = std::sqrt;\nstd::cout << op(16.0f); // 4.0f",
+          "explanationArabic": "std::function يُخفي النوع الفعلي خلف توقيع واحد — يمكنه حمل lambda أو دالة عادية أو مؤشر دالة. إعادة التعيين تغيّر الكائن المُخزَّن ديناميكيًا. المُصرِّف يتأكد أن كل كائن يُطابق التوقيع وقت التعيين."
+        },
+        {
+          "titleArabic": "نظام أحداث بـ callback",
+          "code": "#include <functional>\n#include <string>\n#include <vector>\n#include <iostream>\n\n// كل مستمع له نفس التوقيع\nusing Listener = std::function<void(const std::string&)>;\n\nclass EventBus {\n    std::vector<Listener> listeners;\npublic:\n    // يسجل أي callable يتوافق مع التوقيع\n    void on(Listener listener) {\n        listeners.push_back(std::move(listener)); // نقل أنسب من النسخ\n    }\n    void emit(const std::string& event) {\n        for (auto& fn : listeners) fn(event);\n    }\n};\n\nEventBus bus;\nbus.on([](const std::string& e) { std::cout << \"Lambda: \" << e << '\\n'; });\nbus.on([](const std::string& e) { std::cout << \"Log: \" << e << '\\n'; });\nbus.emit(\"click\");",
+          "explanationArabic": "std::function يُمكّن أنماط مثل نظام الأحداث لأنه يُخزّن أي callable بنفس التوقيع في حاوية واحدة. بدونها تحتاج قالب لكل نوع callable. استخدم std::move عند التسجيل لتجنب نسخ الكائن الداخلي."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام std::function بدل القالب عندما يكفي",
+          "code": "#include <functional>\n#include <iostream>\n\n// ❌ أبطأ: std::function يُخصّص على الكومة أحيانًا ويمنع inline\n// void apply(std::function<int(int)> fn, int val) {\n//     return fn(val);\n// }\n\n// ✅ الأسرع: القالب يُسمح بـ inline ولا يُخصّص\n// المُصرِّف يُولّد نسخة لكل نوع — لا حمل وقت التشغيل\ntemplate<typename F>\nint apply(F&& fn, int val) {\n    return fn(val);\n}\n\napply([](int x) { return x * 2; }, 5); // inline — أسرع\n\n// ✅ استخدم std::function فقط عندما تحتاج:\n// 1. تخزين الدالة في متغير أو حاوية (لا تعرف النوع وقت الترجمة)\n// 2. تمريرها عبر واجهة ثابتة (virtual function member)\nstd::function<int(int)> stored = [](int x) { return x + 1; };\nint result = stored(10); // لا يمكن inline — حمل وقت التشغيل",
+          "explanationArabic": "std::function يمنع المُصرِّف من عمل inline لأنه يُخفي النوع الفعلي (type erasure). القالب أنسب عندما تعرف النوع وقت الترجمة لأنه يُسمح بـ inline ويُزيل الحمل. القاعدة: استخدم القالب أولًا، وانتقل لـ std::function فقط عند الحاجة لتخزين callable أو تمريره عبر واجهة غير قالبية."
+        }
+      ],
+      "related": [
+        "auto",
+        "template",
+        "std::move",
+        "lambda",
+        "std::bind"
+      ]
+    },
+    "std::move": {
+      "title": "std::move",
+      "type": "دالة أداة",
+      "description": "تحوّل كائنًا إلى مرجع rval لتمكين نقل موارده بدل نسخها. لا ينقل فعلًا بل يُعدّ للنقل.",
+      "usage": "يظهر عند نقل ملكية كائن مثل unique_ptr أو حاوية كبيرة.",
+      "example": "std::vector<int> a = {1, 2, 3};\nstd::vector<int> b = std::move(a);",
+      "usageExamples": [
+        {
+          "titleArabic": "نقل حاوية كبيرة بدل نسخها",
+          "code": "#include <vector>\n#include <string>\n#include <iostream>\n\nstd::vector<std::string> data = {\"alpha\", \"beta\", \"gamma\"};\n\n// بدون move: يُنسخ كل عنصر — بطيء مع الحاويات الكبيرة\n// std::vector<std::string> copy = data; // نسخ\n\n// مع move: يُنقل المُؤشِّر الداخلي فقط — O(1)\nstd::vector<std::string> taken = std::move(data);\n\nstd::cout << taken.size(); // 3\nstd::cout << data.size();  // 0 — data الآن في حالة غير محددة\nstd::cout << data.empty(); // true — لكن لا تعتمد على محتواها",
+          "explanationArabic": "std::move لا يُنفّذ النقل بنفسه — هو فقط يُحوّل الكائن إلى مرجع rval. المُنشئ أو عامل التعيين هو من يُنفّذ النقل الفعلي. بعد النقل، الكائن المصدر في حالة صالحة لكن غير محددة — آمن أن تُدمره أو تُعيّنه، لكن لا تقرأ قيمته."
+        },
+        {
+          "titleArabic": "نقل unique_ptr — الحالة الأكثر شيوعًا",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Texture {\n    int id;\n    Texture(int i) : id(i) { std::cout << \"إنشاء \" << id << '\\n'; }\n    ~Texture() { std::cout << \"تدمير \" << id << '\\n'; }\n};\n\nauto tex = std::make_unique<Texture>(42);\n\n// ❌ لا يمكن النسخ — unique_ptr يحظر النسخ\n// auto copy = tex; // خطأ ترجمة\n\n// ✅ النقل يُنقل الملكية — لا يُنشئ كائنًا جديدًا\nauto owner = std::make_unique<Texture>(99);\nauto new_owner = std::move(owner);\n\n// owner الآن nullptr — لا يحمل أي ملكية\nif (!owner) {\n    std::cout << \"owner فارغ بعد النقل\";\n}\n// new_owner يحمل الملكية وسيُدمّر الكائن عند خروجه من النطاق",
+          "explanationArabic": "unique_ptr يُمنع نسخه بالتصميم — الملكية الحصرية لا تتجزأ. std::move هو الطريقة الوحيدة لنقل ملكيته. بعد النقل يصبح nullptr — هذا سلوك مضمون وليس غير محدد. هذه الحالة الأكثر وضوحًا لفائدة move لأن البديل هو النسخ المحظور."
+        },
+        {
+          "titleArabic": "خطأ شائع: استخدام move مع كائن سيعود من دالة",
+          "code": "#include <vector>\n\n// ❌ لا حاجة لـ move عند الإرجاع — المُصرِّف يُطبّق RVO أو NRVO\n// std::vector<int> make_data() {\n//     std::vector<int> v = {1, 2, 3};\n//     return std::move(v); // أسوأ! يمنع RVO\n// }\n\n// ✅ الأفضل: أرجع المتغير مباشرة\nstd::vector<int> make_data() {\n    std::vector<int> v = {1, 2, 3};\n    return v; // المُصرِّف يُزيل النسخ تلقائيًا (RVO)\n}\n\n// ✅ استخدم move فقط عند الإرجاع لو لم يكن المتغير محليًا\nstd::vector<int> wrapper(std::vector<int>& input) {\n    return std::move(input); // input ليس محليًا — move مطلوب\n}",
+          "explanationArabic": "عند إرجاع متغير محلي، المُصرِّف يُطبّق Copy Elision (RVO/NRVO) وهو أسرع من move لأنه يبني الكائن مباشرة في مكان الاستقبال. إضافة std::move قد تمنع هذه التحسينات. القاعدة: لا تُضف move عند إرجاع متغير محلي — أضفها فقط إذا كان الكائن معاملًا أو عضوًا وليس متغيرًا محليًا."
+        }
+      ],
+      "related": [
+        "std::forward",
+        "std::unique_ptr",
+        "auto"
+      ]
+    },
+    "std::forward": {
+      "title": "std::forward",
+      "type": "دالة أداة",
+      "description": "يُمرر المعامل بنوعه الأصلي في سياق القوالب. أساسي في perfect forwarding.",
+      "usage": "يظهر في القوالب لتمرير الحجج بحالتها الأصلية.",
+      "example": "template<typename T>\nvoid wrapper(T&& arg) { target(std::forward<T>(arg)); }",
+      "usageExamples": [
+        {
+          "titleArabic": "perfect forwarding: تمرير حجج بحالتها الأصلية",
+          "code": "#include <utility>\n#include <iostream>\n#include <string>\n\nvoid process(const std::string& s) {\n    std::cout << \"const ref: \" << s << '\\n';\n}\nvoid process(std::string&& s) {\n    std::cout << \"rvalue ref: \" << s << '\\n';\n}\n\n// wrapper يُمرر الحجة بنوعها الأصلي إلى process\ntemplate<typename T>\nvoid wrapper(T&& arg) {\n    process(std::forward<T>(arg)); // إذا كانت lvalue → const ref، إذا كانت rvalue → rvalue ref\n}\n\nstd::string name = \"Atlas\";\nwrapper(name);              // lvalue → يستدعي process(const string&)\nwrapper(std::string(\"temp\")); // rvalue → يستدعي process(string&&)\nwrapper(\"literal\");         // rvalue → يستدعي process(string&&)",
+          "explanationArabic": "T&& مع القوالب ليس مرجع rval عاديًا — هو forwarding reference (أو universal reference). عندما تمرر lvalue يصبح T = string& وT&& = string& (مرجع rval لمرجع lvalue ينهار لمرجع lvalue). عندما تمرر rvalue يصبح T = string وT&& = string&&. std::forward يُعيد تحويله للنوع الأصلي فتستدعي الحمولة الصحيحة."
+        },
+        {
+          "titleArabic": "مُنشئ ينقل أو ينسخ حسب نوع الحجة",
+          "code": "#include <utility>\n#include <string>\n\nclass Buffer {\n    std::string data_;\npublic:\n    // مُنشئ يقبل أي نوع ويُمرره لـ data_ بنوعه الأصلي\n    template<typename T>\n    explicit Buffer(T&& val) : data_(std::forward<T>(val)) {}\n};\n\nstd::string owned = \"hello\";\nBuffer a(owned);              // نسخ: T = string& → data_(owned)\nBuffer b(std::string(\"world\")); // نقل: T = string → data_(std::move(temp))\nBuffer c(\"literal\");          // نقل: T = const char* → data_(\"literal\")",
+          "explanationArabic": "المُنشئ القالب يُمرر الحجة لـ data_ بنوعها الأصلي. إذا كانت lvalue يُنسخ، وإذا كانت rvalue يُنقل. هذا أفضل من كتابة مُنشئين منفصلين (واحد للنسخ وواحد للنقل) لأنهما يُغطيان كل الحالات بنسخة واحدة. الانتباه: هذا لا يعمل مع الـ overloading لأن القالب يُمتص كل الحالات — احذر من التعارض مع مُنشئات أخرى."
+        },
+        {
+          "titleArabic": "خطأ شائع: std::forward بدل std::move خارج القوالب",
+          "code": "#include <utility>\n#include <string>\n\nvoid take_ownership(std::string&& s) {\n    // ❌ لا تستخدم forward هنا — ليس في سياق قالب\n    // std::forward<std::string>(s); // يعمل لكنه مضلل\n\n    // ✅ std::move هو الصحيح في الدوال العادية\n    auto stored = std::move(s);\n}\n\n// ❌ خطأ: forward يحتاج نوع القالب صريحًا خارج القوالب\n// void wrong(std::string& s) {\n//     std::forward(s); // خطأ ترجمة: لا يعرف T\n// }\n\n// ✅ القاعدة: استخدم forward فقط داخل قوالب مع T&&\n// واستخدم move في كل الحالات الأخرى\ntemplate<typename T>\nvoid correct(T&& arg) {\n    target(std::forward<T>(arg)); // ✅ صحيح: داخل قالب\n}",
+          "explanationArabic": "std::forward يحتاج تحديد النوع T صراحةً — داخل القالب يُستنتج تلقائيًا من المعامل. خارجه يجب كتابته يدويًا وهذا يُفقد فائدته. std::move لا يحتاج نوعًا — هو دائمًا cast لـ rval. القاعدة البسيطة: في دالة عادية استخدم move، وفي قالب مع forwarding reference استخدم forward."
+        }
+      ],
+      "related": [
+        "std::move",
+        "template",
+        "typename"
+      ]
+    },
+    "std::pair": {
+      "title": "std::pair",
+      "type": "نوع بيانات",
+      "description": "نوع يجمع قيمتين من نوعين قد يكونان مختلفين في كائن واحد. يوفر الوصول عبر first وsecond. يُستخدم كناتج من دوال ترجع قيمتين أو كعنصر في حاويات ترابطية مثل std::map.",
+      "usage": "يُستخدم لتمرير أو إرجاع قيمتين معًا. شائع مع std::map وinsert.",
+      "example": "std::pair<int, double> p(1, 2.5);\nauto [x, y] = p;",
+      "includeHeader": "#include <utility>",
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء زوج والوصول إلى عناصره",
+          "code": "#include <utility>\n#include <iostream>\n\nint main() {\n    std::pair<int, double> p(1, 2.5);\n    std::cout << \"first: \" << p.first << \"\\n\";\n    std::cout << \"second: \" << p.second; // 2.5\n}",
+          "explanationArabic": "pair<int, double> يُصرح عن زوج من int وdouble. first يصل للعنصر الأول وsecond للثاني. الأنواع تُحدد صراحةً عند التصريح."
+        },
+        {
+          "titleArabic": "make_pair واستنتاج الأنواع",
+          "code": "#include <utility>\n#include <iostream>\n\nint main() {\n    auto p = std::make_pair(10, 3.14);\n    std::cout << p.first << \" \" << p.second; // 10 3.14\n}",
+          "explanationArabic": "make_pair يستنتج الأنواع تلقائيًا من القيم الممررة. هذا أسهل من كتابة الأنواع يدويًا خاصة مع أسماء أنواع طويلة."
+        },
+        {
+          "titleArabic": "structured binding لفك الزوج",
+          "code": "#include <utility>\n#include <iostream>\n#include <string>\n\nstd::pair<std::string, int> get_info() {\n    return {\"Atlas\", 42};\n}\n\nint main() {\n    auto [name, value] = get_info();\n    std::cout << name << \" \" << value; // Atlas 42\n}",
+          "explanationArabic": "auto [a, b] = pair يفك الزوج إلى متغيرين مستقلين. هذا أوضح من استخدام first وsecond. مفيد جدًا عند إرجاع زوج من دالة."
+        }
+      ],
+      "related": [
+        "std::map",
+        "std::tuple",
+        "std::make_pair",
+        "struct"
+      ]
+    },
+    "std::tuple": {
+      "title": "std::tuple",
+      "type": "نوع مساعد",
+      "description": "يجمع عدة قيم من أنواع مختلفة تحت كيان واحد. توسيع عام لـ std::pair.",
+      "usage": "يُستخدم عند إرجاع عدة قيم من دالة.",
+      "example": "auto result = std::make_tuple(1, \"hello\", 3.14);\nauto [a, b, c] = result;",
+      "related": [
+        "std::pair",
+        "std::variant",
+        "std::get"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إرجاع عدة قيم من دالة",
+          "code": "#include <tuple>\n#include <iostream>\n\nstd::tuple<int, double, std::string> get_data() {\n    return {42, 3.14, \"hello\"};\n}\n\nint main() {\n    auto [a, b, c] = get_data();\n    std::cout << a << \" \" << b << \" \" << c;\n}",
+          "explanationArabic": "tuple يجمع عدة قيم. structured binding (C++17) يفكها إلى متغيرات مستقلة."
+        },
+        {
+          "titleArabic": "make_tuple واستنتاج الأنواع",
+          "code": "#include <tuple>\n#include <iostream>\n\nint main() {\n    auto t = std::make_tuple(1, 2.5, \"text\");\n    std::cout << std::get<0>(t) << \" \";\n    std::cout << std::get<1>(t) << \" \";\n    std::cout << std::get<2>(t);\n}",
+          "explanationArabic": "make_tuple يستنتج الأنواع. std::get<N> يصل للعنصر بالفهرس وقت الترجمة."
+        },
+        {
+          "titleArabic": "tuple_size و tuple_element",
+          "code": "#include <tuple>\n#include <iostream>\n\nusing T = std::tuple<int, double, std::string>;\n\nint main() {\n    std::cout << std::tuple_size_v<T>; // 3\n    using First = std::tuple_element_t<0, T>; // int\n}",
+          "explanationArabic": "tuple_size_v يُرجع عدد العناصر. tuple_element_t<N, T> يُرجع نوع العنصر N. مفيد في القوالب."
+        }
+      ]
+    },
+    "std::optional": {
+      "title": "std::optional",
+      "type": "نوع أداة (C++17)",
+      "description": "غلاف يحمل قيمة من نوع T أو لا يحمل شيئًا (حالة فارغة). بديل نظيف للمؤشرات الفارغة أو القيم السحرية مثل -1. لا يُخصّص ذاكرة ديناميكية — حجمه يساوي sizeof(T) + bool تقريبًا.",
+      "usage": "يُستخدم للتعبير عن نتيجة قد لا تكون موجودة مثل البحث الفاشل أو التحليل الذي قد يفشل. أنظف من إرجاع مؤشر nullptr أو قيمة سحرية.",
+      "example": "std::optional<int> find(int id) {\n    if (exists(id)) return values[id];\n    return std::nullopt;\n}",
+      "includeHeader": "#include <optional>",
+      "usageExamples": [
+        {
+          "titleArabic": "بحث قد يفشل: value_or و has_value",
+          "code": "#include <optional>\n#include <string>\n\nstd::optional<std::string> find_extension(std::string_view filename) {\n    auto pos = filename.rfind('.');\n    if (pos == std::string_view::npos) return std::nullopt;\n    return std::string(filename.substr(pos + 1));\n}\n\nauto ext = find_extension(\"hero.png\");\n\n// has_value() أو operator bool للتحقق\nif (ext.has_value()) {\n    std::cout << *ext; // * يُرجع القيمة (UB إذا كان فارغًا!)\n}\n\n// value_or: أرجع القيمة أو بديلًا — الأكثر استخدامًا\nstd::string result = find_extension(\"README\").value_or(\"(لا امتداد)\");\n// result = \"(لا امتداد)\"",
+          "explanationArabic": "value_or أنسب عندما تريد قيمة فعلية بغض النظر عن النجاح. * و value يفترضان وجود قيمة — استخدمهما فقط بعد التحقق بـ has_value أو operator bool. nullopt هو الطريقة الصحيحة لإنشاء optional فارغ — لا تستخدم {} لأنها قد تُفسر كقيمة افتراضية."
+        },
+        {
+          "titleArabic": "تحويل نص قد يفشل بـ optional",
+          "code": "#include <optional>\n#include <string>\n#include <charconv>\n\n// تحويل نص إلى عدد بأمان — لا استثناءات\nstd::optional<int> safe_stoi(std::string_view sv) {\n    int value;\n    auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), value);\n    if (ec != std::errc{}) return std::nullopt;\n    return value;\n}\n\nauto width = safe_stoi(\"1920\");   // optional<int>{1920}\nauto bad  = safe_stoi(\"abc\");    // optional<int>{nullopt}\n\n// الاستخدام مع value_or\nint w = safe_stoi(input).value_or(800); // افتراضي إذا فشل التحويل",
+          "explanationArabic": "from_chars (C++17) لا ترمي استثناءات — تُرجع errc بدلًا من ذلك. لفّها بـ optional فتحصل على واجهة أنظف من stoi التي ترمي. هذا النمط مفيد عند قراءة مدخلات مستخدم أو ملفات إعدادات حيث الفشل متوقع ولا يجب أن يكون استثناءً."
+        },
+        {
+          "titleArabic": "خطأ شائع: * على optional فارغ",
+          "code": "#include <optional>\n\nstd::optional<int> maybe_empty = std::nullopt;\n\n// ❌ سلوك غير معرّف (UB) — لا تحقق من وجود قيمة\n// int x = *maybe_empty;\n\n// ❌ value() يرمي std::bad_optional_access — أفضل من UB لكن لا يزال خطأ\n// int y = maybe_empty.value(); // يرمي!\n\n// ✅ الطرق الصحيحة:\nif (maybe_empty) {\n    int x = *maybe_empty; // آمن بعد التحقق\n}\n\n// ✅ أو value_or لبديل افتراضي\nint z = maybe_empty.value_or(0);\n\n// ✅ أو and_then (C++23) لسلسلة العمليات\n// auto result = maybe_empty.and_then([](int v) -> std::optional<int> {\n//     return v > 0 ? std::optional{v * 2} : std::nullopt;\n// });",
+          "explanationArabic": "الفرق بين * و value(): كلاهما يتطلبان وجود قيمة، لكن * يُنتج UB بينما value() يرمي bad_optional_access. value_or لا يحتاج تحققًا مسبقًا وهو الأنسب في معظم الحالات. القاعدة: لا تستخدم * ولا value() دون التحقق أولًا بـ if أو operator bool."
+        }
+      ],
+      "related": [
+        "std::variant",
+        "std::any",
+        "nullptr",
+        "std::nullopt",
+        "std::from_chars"
+      ]
+    },
+    "std::variant": {
+      "title": "std::variant",
+      "type": "نوع أداة (C++17)",
+      "description": "حاوية نوعية آمنة تحمل قيمة من أحد عدة أنواع محددة وقت الترجمة. حجمه يساوي أكبر نوع + بعض التمييز. بديل آمن نوعيًا لـ union — يعرف دائمًا أي نوع يحمله عبر index().",
+      "usage": "يُستخدم عند الحاجة لقيمة قد تكون من عدة أنواع معروفين مسبقًا. أنسب من std::any عندما تعرف الأنواع المحتملة.",
+      "example": "std::variant<int, std::string> value = \"hello\";\nstd::visit([](auto& v) { /* */ }, value);",
+      "includeHeader": "#include <variant>",
+      "usageExamples": [
+        {
+          "titleArabic": "تمثيل قيم تكوينية متنوعة",
+          "code": "#include <variant>\n#include <string>\n#include <iostream>\n\nusing ConfigValue = std::variant<int, double, std::string, bool>;\n\nConfigValue width = 1920;\nConfigValue name = std::string(\"Atlas\");\nConfigValue enabled = true;\n\n// index() يُرجع فهرس النوع الحالي (0-based)\nstd::cout << width.index();  // 0 (int)\nstd::cout << name.index();   // 2 (string)\n\n// holds_alternative: تحقق نوعي آمن\nif (std::holds_alternative<int>(width)) {\n    int w = std::get<int>(width); // آمن: نعرف أنه int\n}",
+          "explanationArabic": "holds_alternative يتحقق من النوع بدون استثناء. std::get يُرجع القيمة إذا كان النوع صحيحًا ويرمي bad_variant_access إذا لم يكن. index() يُرجع رقم النوع الحالي — مفيد في switch أو للتصحيح. ترتيب الأنواع في القالب يحدد أرقام index."
+        },
+        {
+          "titleArabic": "std::visit: معالجة كل الأنواع بشكل موحد",
+          "code": "#include <variant>\n#include <string>\n#include <iostream>\n\nusing Value = std::variant<int, double, std::string>;\n\nValue v = std::string(\"hello\");\n\n// visit تستدعي lambda مع النوع الفعلي — لا تحتاج if/else لكل نوع\nstd::visit([](auto&& arg) {\n    using T = std::decay_t<decltype(arg)>;\n    if constexpr (std::is_same_v<T, int>) {\n        std::cout << \"int: \" << arg << '\\n';\n    } else if constexpr (std::is_same_v<T, double>) {\n        std::cout << \"double: \" << arg << '\\n';\n    } else if constexpr (std::is_same_v<T, std::string>) {\n        std::cout << \"string: \" << arg << '\\n';\n    }\n}, v);\n// المخرج: string: hello",
+          "explanationArabic": "visit تستدعي الزائر (lambda) مع النوع الفعلي — المُصرِّف يُولّد نسخة من Lambda لكل نوع. if constexpr (C++17) يتحقق من النوع وقت الترجمة فيُستبعد الأكواد غير المناسبة. هذا أنظف من سلسلة holds_alternative + get."
+        },
+        {
+          "titleArabic": "خطأ شائع: get بدون تحقق",
+          "code": "#include <variant>\n#include <string>\n\nstd::variant<int, std::string> v = 42;\n\n// ❌ يرمي std::bad_variant_access لأن v يحتوي int لا string\n// auto s = std::get<std::string>(v);\n\n// ❌ get_by_index يرمي أيضًا إذا كان الفهرس خاطئًا\n// auto wrong = std::get<1>(v); // فهرس 1 = string، لكن v = int\n\n// ✅ استخدم get_if للحصول على مؤشر أو nullptr\nif (auto* s = std::get_if<std::string>(&v)) {\n    std::cout << *s; // آمن: s ليس nullptr فقط إذا كان النوع صحيحًا\n} else {\n    // النوع ليس string\n}\n\n// ✅ أو holds_alternative قبل get\nif (std::holds_alternative<int>(v)) {\n    int n = std::get<int>(v); // مضمون أن لا يرمي\n}",
+          "explanationArabic": "std::get يرمي bad_variant_access إذا كان النوع خاطئًا — لا تستخدمه دون التحقق. get_if أنسب: يُرجع مؤشرًا للقيمة أو nullptr إذا كان النوع خاطئًا. holds_alternative + get نمط شائع لكنه يحتاج فحصين. get_if يحتاج فحصًا واحدًا فقط."
+        }
+      ],
+      "related": [
+        "std::optional",
+        "std::any",
+        "union",
+        "std::visit",
+        "std::get"
+      ]
+    },
+    "std::any": {
+      "title": "std::any",
+      "type": "نوع أداة (C++17)",
+      "description": "حاوية آمنة نوعيًا تحمل قيمة من أي نوع. تحتاج std::any_cast للوصول.",
+      "usage": "يُستخدم عندما لا تعرف النوع مسبقًا مع أمان نوعي.",
+      "example": "std::any value = 42;\nint v = std::any_cast<int>(value);",
+      "related": [
+        "std::variant",
+        "std::optional",
+        "void"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تخزين أي نوع",
+          "code": "#include <any>\n#include <iostream>\n\nint main() {\n    std::any value = 42;\n    value = std::string(\"hello\");\n    value = 3.14;\n    std::cout << std::any_cast<double>(value); // 3.14\n}",
+          "explanationArabic": "any يحمل قيمة من أي نوع. any_cast يسترجع القيمة بالنوع الصحيح."
+        },
+        {
+          "titleArabic": "any_cast يرمي عند نوع خاطئ",
+          "code": "#include <any>\n#include <iostream>\n\nint main() {\n    std::any value = 42;\n    try {\n        auto s = std::any_cast<std::string>(value);\n    } catch (const std::bad_any_cast& e) {\n        std::cout << \"نوع خاطئ\";\n    }\n}",
+          "explanationArabic": "any_cast يرمي bad_any_cast إذا كان النوع خاطئًا. استخدم any_cast مع مؤشر للحصول على nullptr بدل استثناء."
+        },
+        {
+          "titleArabic": "التحقق من النوع قبل الاسترجاع",
+          "code": "#include <any>\n#include <iostream>\n\nint main() {\n    std::any value = 42;\n    if (value.type() == typeid(int)) {\n        std::cout << std::any_cast<int>(value);\n    }\n    std::cout << value.has_value(); // true\n}",
+          "explanationArabic": "type() يُرجع type_info. has_value() يتحقق من وجود قيمة. reset() يُفرغ."
+        }
+      ]
+    },
+    "std::nullopt": {
+      "title": "std::nullopt",
+      "type": "ثابت (C++17)",
+      "description": "كائن خاص يمثل عدم وجود قيمة. يُستخدم مع optional.",
+      "usage": "يظهر كقيمة إرجاع عندما لا توجد نتيجة.",
+      "example": "std::optional<int> result = std::nullopt;",
+      "related": [
+        "std::optional",
+        "nullptr"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "إنشاء optional فارغ",
+          "code": "#include <optional>\n#include <iostream>\n\nint main() {\n    std::optional<int> x = std::nullopt;\n    std::cout << x.has_value(); // false\n}",
+          "explanationArabic": "nullopt يُنشئ optional بدون قيمة. هو الثابت الوحيد الصحيح لإنشاء optional فارغ."
+        },
+        {
+          "titleArabic": "استخدامه كقيمة إرجاع",
+          "code": "#include <optional>\n\nstd::optional<int> find(int id) {\n    if (id < 0) return std::nullopt;\n    return id * 2;\n}",
+          "explanationArabic": "nullopt أنظف من return {} لأنه أوضح نية. القارئ يعرف فورًا أن القيمة غير موجودة."
+        },
+        {
+          "titleArabic": "لا تستخدم {} للفراغ",
+          "code": "#include <optional>\n\n// ❌ قد تُفسر كقيمة افتراضية\n// std::optional<int> x = {};\n\n// ✅ nullopt واضح وغير مُبهم\nstd::optional<int> x = std::nullopt;",
+          "explanationArabic": "{} قد تُفسر كقيمة افتراضية (0 للأعداد). nullopt لا يُسبب التباسًا."
+        }
+      ]
+    },
+    "std::monostate": {
+      "title": "std::monostate",
+      "type": "نوع أداة (C++17)",
+      "description": "نوع فارغ يُستخدم كبديل في std::variant عند الحاجة لحالة بدون بيانات.",
+      "usage": "يظهر كأول بديل في variant لتمثيل حالة 'لا قيمة'.",
+      "example": "std::variant<std::monostate, int, std::string> value;",
+      "related": [
+        "std::variant",
+        "std::optional"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "حالة فارغة في variant",
+          "code": "#include <variant>\n#include <iostream>\n\nint main() {\n    std::variant<std::monostate, int, std::string> v;\n    std::cout << v.index(); // 0 (monostate)\n}",
+          "explanationArabic": "monostate يسمح لـ variant بأن يكون 'فارغًا'. مفيد كحالة ابتدائية."
+        },
+        {
+          "titleArabic": "تمثيل أمر بدون بيانات",
+          "code": "#include <variant>\n#include <string>\n\nusing Command = std::variant<std::monostate, int, std::string>;\n\nCommand cmd = std::monostate{}; // لا بيانات\n// cmd = 42; // بيانات عددية\n// cmd = std::string(\"text\"); // بيانات نصية",
+          "explanationArabic": "monostate كبديل أول في variant يسمح بحالة 'لا شيء' بدون تحديد نوع حقيقي."
+        },
+        {
+          "titleArabic": "التحقق من monostate",
+          "code": "#include <variant>\n#include <iostream>\n\nusing V = std::variant<std::monostate, int>;\n\nint main() {\n    V v;\n    if (std::holds_alternative<std::monostate>(v))\n        std::cout << \"فارغ\";\n}",
+          "explanationArabic": "holds_alternative يتحقق من النوع. مع monostate تعني أن variant لا يحمل بيانات حقيقية."
+        }
+      ]
+    },
+    "std::bitset": {
+      "title": "std::bitset",
+      "type": "حاوية بتات",
+      "description": "حاوية ثابتة الحجم لعدد محدد من البتات مع عمليات منطقية.",
+      "usage": "مفيدة للأعلام والخيارات والتمثيل الثنائي.",
+      "example": "std::bitset<8> flags;\nflags.set(0);\nflags.test(0);",
+      "related": [
+        "uint32_t",
+        "std::atomic"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تمثيل أعلام ثنائية",
+          "code": "#include <bitset>\n#include <iostream>\n\nint main() {\n    std::bitset<8> flags;\n    flags.set(0); // بت 0 = 1\n    flags.set(3); // بت 3 = 1\n    std::cout << flags; // 00001001\n}",
+          "explanationArabic": "bitset<N> يُنشئ N بت. set يُفعّل بت. test يتحقق. يطبع كنص ثنائي."
+        },
+        {
+          "titleArabic": "العمليات المنطقية",
+          "code": "#include <bitset>\n#include <iostream>\n\nint main() {\n    std::bitset<4> a(\"1010\");\n    std::bitset<4> b(\"1100\");\n    std::cout << (a & b) << \"\\n\"; // 1000\n    std::cout << (a | b) << \"\\n\"; // 1110\n    std::cout << (a ^ b);          // 0110\n}",
+          "explanationArabic": "يدعم AND وOR وXOR وNOT. كلها تعمل على كل البتات دفعة واحدة."
+        },
+        {
+          "titleArabic": "عد البتات المفعلة",
+          "code": "#include <bitset>\n#include <iostream>\n\nint main() {\n    std::bitset<8> flags(\"10110101\");\n    std::cout << flags.count(); // 5\n    std::cout << flags.size();  // 8\n}",
+          "explanationArabic": "count يُرجع عدد البتات المفعلة (1). size يُرجع الحجم الكلي."
+        }
+      ]
+    },
+    "std::initializer_list": {
+      "title": "std::initializer_list",
+      "type": "نوع أداة",
+      "description": "وكيل خفيف لقائمة ثوابت من نوع واحد. يُمكّن التهيئة بـ {1,2,3}.",
+      "usage": "يظهر في مُنشئات الحاويات والدوال التي تقبل قوالب تهيئة.",
+      "example": "std::vector<int> v = {1, 2, 3};",
+      "related": [
+        "std::vector",
+        "std::array",
+        "auto"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تهيئة حاوية",
+          "code": "#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {1, 2, 3};\n    for (int x : v) std::cout << x << \" \";\n}",
+          "explanationArabic": "{1, 2, 3} تُنشئ initializer_list يمرر لمُنشئ الحاوية. هذا ما يُمكّن التهيئة بـ {}."
+        },
+        {
+          "titleArabic": "دالة تقبل قائمة تهيئة",
+          "code": "#include <initializer_list>\n#include <iostream>\n\nint sum(std::initializer_list<int> list) {\n    int total = 0;\n    for (int x : list) total += x;\n    return total;\n}\n\nint main() {\n    std::cout << sum({1, 2, 3, 4}); // 10\n}",
+          "explanationArabic": "initializer_list يسمح بتمرير {1,2,3} كمعامل. مفيد للدوال التي تقبل عددًا متغيرًا من القيم."
+        },
+        {
+          "titleArabic": "لا يمكن تغيير حجمه",
+          "code": "#include <initializer_list>\n\nstd::initializer_list<int> list = {1, 2, 3};\n// list.push_back(4); // لا يوجد push_back\n// list.resize(10);    // لا يوجد resize\n// initializer_list للقراءة فقط — لا يُعدّل ولا يُغيّر حجمه",
+          "explanationArabic": "initializer_list للقراءة فقط. إذا احتجت تعديل انسخه لحاوية مثل vector."
+        }
+      ]
+    },
+    "std::reference_wrapper": {
+      "title": "std::reference_wrapper",
+      "type": "نوع مساعد",
+      "description": "غلاف قابل للنسخ يحمل مرجعًا إلى كائن. يُستخدم لتخزين مراجع في حاويات.",
+      "usage": "يظهر عند الحاجة لتخزين مراجع في حاويات أو مع std::bind.",
+      "example": "int x = 10;\nstd::vector<std::reference_wrapper<int>> refs;\nrefs.push_back(x);",
+      "related": [
+        "std::ref",
+        "std::cref",
+        "std::vector"
+      ],
+      "usageExamples": [
+        {
+          "titleArabic": "تخزين مراجع في حاوية",
+          "code": "#include <functional>\n#include <vector>\n#include <iostream>\n\nint main() {\n    int a = 10, b = 20, c = 30;\n    std::vector<std::reference_wrapper<int>> refs;\n    refs.push_back(a);\n    refs.push_back(b);\n    refs.push_back(c);\n    refs[0] = 99;\n    std::cout << a; // 99 — التعديل أثر على الأصل\n}",
+          "explanationArabic": "reference_wrapper يسمح بتخزين مراجع في حاويات. التعديل عبره يُعدّل المتغير الأصلي."
+        },
+        {
+          "titleArabic": "std::ref و std::cref",
+          "code": "#include <functional>\n#include <vector>\n\nint x = 42;\nstd::vector<std::reference_wrapper<int>> v;\nv.push_back(std::ref(x));  // مرجع قابل للتعديل\n// v.push_back(std::cref(x)); // مرجع للقراءة فقط",
+          "explanationArabic": "ref يُنشئ reference_wrapper قابل للتعديل. cref يُنشئ reference_wrapper للقراءة فقط."
+        },
+        {
+          "titleArabic": "لا تستخدمه إذا احتجت ملكية",
+          "code": "#include <functional>\n\n// ❌ مرجع لـ محلي — يصبح dangling\n// std::reference_wrapper<int> bad() {\n//     int x = 10;\n//     return std::ref(x);\n// }\n\n// ✅ استخدم المؤشرات الذكية أو القيم للملكية\n// أو تأكد أن المرجع يعيش أطول من reference_wrapper",
+          "explanationArabic": "reference_wrapper لا يملك — مثل مرجع عادي. تأكد أن المتغير الأصلي يعيش أطول."
+        }
+      ]
+    },
+    "std::expected": {
+      "title": "std::expected",
+      "type": "نوع أداة (C++23)",
+      "description": "نوع يحمل قيمة أو خطأ بدون استثناءات. بديل آمن لرمي الاستثناءات في الحالات التي يكون فيها الفشل متوقعًا.",
+      "usage": "عندما يكون الفشل جزءًا طبيعيًا من المنطق وليس استثناءً نادرًا.",
+      "example": "std::expected<int,std::string> r = parse(input);\nif (r) use(*r);",
+      "includeHeader": "#include <expected>",
+      "usageExamples": [
+        {
+          "titleArabic": "إرجاع قيمة أو خطأ",
+          "code": "#include <expected>\n#include <string>\n\nstd::expected<int, std::string> divide(int a, int b) {\n    if (b == 0) return std::unexpected(\"القسمة على صفر\");\n    return a / b;\n}\n\nint main() {\n    auto r = divide(10, 3);\n    if (r.has_value())\n        int val = r.value();\n}",
+          "explanationArabic": "has_value() يتحقق إن كانت هناك قيمة. value() يُرجعها. unexpected() يُنشئ القيمة الخطأ."
+        },
+        {
+          "titleArabic": "استخدام value_or كبديل",
+          "code": "#include <expected>\n#include <string>\n\nstd::expected<int, std::string> try_parse(std::string s) {\n    if (s.empty()) return std::unexpected(\"فارغ\");\n    return s.size();\n}\n\nint main() {\n    auto r = try_parse(\"\");\n    int v = r.value_or(0);",
+          "explanationArabic": "value_or(default) يُرجع القيمة إن وُجدت أو البديل إن كان هناك خطأ. مناسب عند عدم الحاجة لمعالجة الخطأ."
+        },
+        {
+          "titleArabic": "تحويل الخطأ باستخدام transform_error",
+          "code": "#include <expected>\n#include <string>\n\nstd::expected<int, int> compute(int x) {\n    if (x < 0) return std::unexpected(-1);\n    return x * 2;\n}\n\nint main() {\n    auto r = compute(-5);\n    auto msg = r.error_or(0);",
+          "explanationArabic": "error_or(default) يُرجع الخطأ إن وُجد أو البديل. مفيد لاستخراج رسالة الخطأ عند الحاجة."
+        }
+      ],
+      "related": [
+        "std::optional",
+        "std::variant",
+        "std::result_of"
+      ]
+    },
+    "std::clamp": {
+      "title": "std::clamp",
+      "type": "خوارزمية STL",
+      "description": "يُقيّد قيمة ضمن نطاق [min, max]. يُرجع القيمة إن كانت ضمن النطاق أو الحد الأقرب إن كانت خارجه.",
+      "usage": "لتقييم قيمة بين حد أدنى وأعلى مثل تحديد حجم أو لون.",
+      "example": "int v = std::clamp(150, 0, 255);",
+      "includeHeader": "#include <algorithm>",
+      "usageExamples": [
+        {
+          "titleArabic": "تقييد قيمة ضمن نطاق",
+          "code": "#include <algorithm>\n\nint r = 300;\nint clamped = std::clamp(r, 0, 255);",
+          "explanationArabic": "clamp يُرجع 255 لأن 300 أكبر من الحد الأعلى. أنظف من if/else اليدوي."
+        },
+        {
+          "titleArabic": "تقييم مكون لون",
+          "code": "#include <algorithm>\n\nfloat normalize(float v) {\n    return std::clamp(v, 0.0f, 1.0f);\n}",
+          "explanationArabic": "يضمن أن القيمة بين 0 و 1. شائع في رسوميات الحاسوب لتطبيع المكونات."
+        },
+        {
+          "titleArabic": "لا يعكس الحدود",
+          "code": "#include <algorithm>\n\nint v = std::clamp(100, 255, 0);",
+          "explanationArabic": "إذا كان min > max فالسلوك غير معرّف. تأكد دائمًا أن min <= max."
+        }
+      ],
+      "related": [
+        "std::min",
+        "std::max",
+        "std::algorithm"
+      ]
+    },
+    "std::exchange": {
+      "title": "std::exchange",
+      "type": "دالة أداة",
+      "description": "يُعيّن قيمة جديدة لمتغير ويُرجع قيمته القديمة في عملية واحدة ذرية منطقيًا.",
+      "usage": "عندما تحتاج استبدال قيمة واستخدام القديمة في نفس الوقت.",
+      "example": "int old = std::exchange(x, 42);",
+      "includeHeader": "#include <utility>",
+      "usageExamples": [
+        {
+          "titleArabic": "استبدال واسترجاع القديمة",
+          "code": "#include <utility>\n\nint state = 0;\nint prev = std::exchange(state, 1);",
+          "explanationArabic": "state يصبح 1 و prev يحمل 0. أنظف من حفظ القديمة يدويًا ثم التعيين."
+        },
+        {
+          "titleArabic": "نقل ملكية في المُدمّر",
+          "code": "#include <utility>\n#include <vector>\n\nstruct Widget {\n    std::vector<int> data;\n    std::vector<int> release() {\n        return std::exchange(data, {});\n    }\n};",
+          "explanationArabic": "exchange يُفرّغ data ويُرجع محتواها القديم. أنظف من std::move + clear."
+        },
+        {
+          "titleArabic": "تبديل حالة",
+          "code": "#include <utility>\n\nbool flag = false;\nbool was = std::exchange(flag, true);",
+          "explanationArabic": "was = false و flag = true. مفيد لمعرفة الحالة السابقة أثناء التغيير."
+        }
+      ],
+      "related": [
+        "std::swap",
+        "std::move"
+      ]
+    },
+    "std::as_const": {
+      "title": "std::as_const",
+      "type": "دالة أداة (C++17)",
+      "description": "يُحوّل مرجعًا إلى مرجع const. يمنع التعديل غير المقصود عبر المرجع.",
+      "usage": "لتمرير كائن كـ const لدالة تُعيد const& دون نسخ.",
+      "example": "const auto& cr = std::as_const(obj);",
+      "includeHeader": "#include <utility>",
+      "usageExamples": [
+        {
+          "titleArabic": "منع التعديل عبر المرجع",
+          "code": "#include <utility>\n#include <string>\n\nstd::string s = \"hello\";\nconst std::string& cr = std::as_const(s);",
+          "explanationArabic": "as_const يُرجع const& دون نسخ. مفيد لاستدعاء النسخة const من دالة محمّلة."
+        },
+        {
+          "titleArabic": "استدعاء النسخة const من دالة",
+          "code": "#include <utility>\n\nstruct S {\n    int get() { return 1; }\n    int get() const { return 2; }\n};\n\nS s;\nint v = std::as_const(s).get();",
+          "explanationArabic": "as_const(s) يُرجع const& فتُستدعى النسخة const من get() وتُرجع 2."
+        },
+        {
+          "titleArabic": "لا يحوّل النوع بل يضيف const فقط",
+          "code": "#include <utility>\n\nint x = 10;\nconst int& cr = std::as_const(x);",
+          "explanationArabic": "as_const لا يُنشئ نسخة — يُرجع مرجع const للكائن الأصلي. مثل static_cast<const T&>."
+        }
+      ],
+      "related": [
+        "std::move",
+        "const",
+        "static_cast"
+      ]
+    },
+    "std::invoke": {
+      "title": "std::invoke",
+      "type": "دالة أداة",
+      "description": "يستدعي أي كائن قابل للاستدعاء (دالة، lambda، مؤشر دالة، عضو كائن) بنفس الصيغة الموحدة.",
+      "usage": "عند كتابة كود عام يعمل مع أي نوع قابل للاستدعاء.",
+      "example": "std::invoke(func, arg1, arg2);",
+      "includeHeader": "#include <functional>",
+      "usageExamples": [
+        {
+          "titleArabic": "استدعاء دالة عادية",
+          "code": "#include <functional>\n#include <iostream>\n\nint add(int a, int b) { return a + b; }\n\nint main() {\n    int r = std::invoke(add, 3, 4);",
+          "explanationArabic": "invoke يستدعي add(3,4) وينتج 7. نفس نتيجة الاستدعاء المباشر لكن موحد."
+        },
+        {
+          "titleArabic": "استدعاء lambda",
+          "code": "#include <functional>\n\nauto fn = [](int x) { return x * 2; };\nint r = std::invoke(fn, 5);",
+          "explanationArabic": "invoke يعمل مع lambda مثل أي callable آخر. مفيد في القوالب."
+        },
+        {
+          "titleArabic": "استدعاء مؤشر عضو",
+          "code": "#include <functional>\n#include <string>\n\nstruct Person {\n    std::string name;\n};\n\nPerson p{\"Ali\"};\nstd::string& n = std::invoke(&Person::name, p);",
+          "explanationArabic": "invoke يستدعي مؤشر العضو على الكائن. مفيد في كود عام لا يعرف نوع Callable مسبقًا."
+        }
+      ],
+      "related": [
+        "std::function",
+        "std::bind_front",
+        "std::forward"
+      ]
+    },
+    "std::visit": {
+      "title": "std::visit",
+      "type": "دالة أداة",
+      "description": "يُطبّق كائن زائر (visitor) على العنصر الفعلي داخل std::variant. يُستدعى الزائر المناسب حسب النوع الفعلي.",
+      "usage": "للتعامل مع variant بطريقة آمنة نوعيًا دون فحص يدوي.",
+      "example": "std::visit([](auto& v){ use(v); }, my_variant);",
+      "includeHeader": "#include <variant>",
+      "usageExamples": [
+        {
+          "titleArabic": "زيارة variant بـ lambda عام",
+          "code": "#include <variant>\n#include <string>\n#include <iostream>\n\nstd::variant<int, std::string> v = 42;\n\nstd::visit([](auto& val) {\n    std::cout << val;\n}, v);",
+          "explanationArabic": "lambda العام يُطابق أي نوع داخل variant. إذا كان int يطبع 42، وإذا كان string يطبع النص."
+        },
+        {
+          "titleArabic": "زيارة بأنواع مختلفة",
+          "code": "#include <variant>\n#include <string>\n\nstd::variant<int, double, std::string> v = 3.14;\n\nstd::visit([](auto&& arg) {\n    using T = std::decay_t<decltype(arg)>;\n    if constexpr (std::is_same_v<T, int>) {}\n    else if constexpr (std::is_same_v<T, double>) {}\n}, v);",
+          "explanationArabic": "if constexpr مع is_same_v يفحص النوع فعليًا وقت الترجمة. كل فرع يُترجم فقط لنوعه."
+        },
+        {
+          "titleArabic": "overloaded لعدة lambdas",
+          "code": "#include <variant>\n\ntemplate<class... Fs> struct overloaded : Fs... {\n    using Fs::operator()...;\n};\n\ntemplate<class... Fs> overloaded(Fs...) -> overloaded<Fs...>;\n\nstd::variant<int, float> v = 1.0f;\nstd::visit(overloaded{\n    [](int) {},\n    [](float) {}\n}, v);",
+          "explanationArabic": "overloaded يُنشئ زائرًا من عدة lambdas. كل lambda يتعامل مع نوع مختلف من variant."
+        }
+      ],
+      "related": [
+        "std::variant",
+        "std::holds_alternative",
+        "std::get"
+      ]
+    },
+    "std::get": {
+      "title": "std::get",
+      "type": "دالة أداة",
+      "description": "يُرجع العنصر المحدد من tuple أو variant أو pair بالفهرس أو النوع. يرمي استثناء إذا كان النوع خاطئًا.",
+      "usage": "للوصول لعنصر محدد في tuple أو pair أو variant.",
+      "example": "auto val = std::get<0>(my_tuple);",
+      "includeHeader": "#include <utility>",
+      "usageExamples": [
+        {
+          "titleArabic": "الوصول لعنصر tuple بالفهرس",
+          "code": "#include <tuple>\n\nauto t = std::make_tuple(10, 3.14, \"hi\");\nint x = std::get<0>(t);",
+          "explanationArabic": "get<0> يُرجع العنصر الأول. الفهرس ثابت وقت الترجمة ويجب أن يكون صالحًا."
+        },
+        {
+          "titleArabic": "الوصول لعنصر tuple بالنوع",
+          "code": "#include <tuple>\n\nauto t = std::make_tuple(10, 3.14, \"hi\");\ndouble d = std::get<double>(t);",
+          "explanationArabic": "get<double> يبحث عن عنصر من نوع double. يرمي bad_variant_access إذا كان النوع غير موجود."
+        },
+        {
+          "titleArabic": "الوصول لعنصر variant",
+          "code": "#include <variant>\n\nstd::variant<int, std::string> v = \"hello\";\nstd::string& s = std::get<std::string>(v);",
+          "explanationArabic": "get بالنوع يُرجع مرجع للعنصر إذا كان النوع مطابقًا. يرمي bad_variant_access إذا لم يطابق."
+        }
+      ],
+      "related": [
+        "std::tuple",
+        "std::pair",
+        "std::variant",
+        "std::visit"
+      ]
+    },
+    "std::holds_alternative": {
+      "title": "std::holds_alternative",
+      "type": "دالة فحص",
+      "description": "يتحقق مما إذا كان variant يحمل نوعًا محددًا حاليًا. يُرجع true إذا تطابق النوع.",
+      "usage": "لفحص نوع العنصر الفعلي داخل variant قبل استخراجه.",
+      "example": "if (std::holds_alternative<int>(v)) use(std::get<int>(v));",
+      "includeHeader": "#include <variant>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص النوع قبل الاستخراج",
+          "code": "#include <variant>\n#include <iostream>\n\nstd::variant<int, std::string> v = 42;\nif (std::holds_alternative<int>(v))\n    std::cout << std::get<int>(v);",
+          "explanationArabic": "holds_alternative يتحقق بأمان قبل get لتجنب الاستثناء. أنظف من index() == 0."
+        },
+        {
+          "titleArabic": "مع std::visit كبديل",
+          "code": "#include <variant>\n\nstd::variant<int, double> v = 3.0;\nif (std::holds_alternative<double>(v)) {\n    double d = std::get<double>(v);\n}",
+          "explanationArabic": "visit أنظف للتعامل مع كل الأنواع. holds_alternative أنسب عند الاهتمام بنوع واحد فقط."
+        },
+        {
+          "titleArabic": "لا يتحقق من الفهرس بل النوع",
+          "code": "#include <variant>\n\nstd::variant<int, int> v = 42;\nbool b = std::holds_alternative<int>(v);",
+          "explanationArabic": "مع نوعين متطابقين يُرجع true دائمًا. لا يفصل بين البدائل المتطابقة."
+        }
+      ],
+      "related": [
+        "std::variant",
+        "std::get",
+        "std::visit",
+        "std::variant_index"
+      ]
+    },
+    "std::is_same_v": {
+      "title": "std::is_same_v",
+      "type": "سمة نوع",
+      "description": "يتحقق وقت الترجمة مما إذا كان نوعان متطابقين تمامًا. يُرجع bool ثابت.",
+      "usage": "في القوالب و if constexpr لفحص الأنواع وقت الترجمة.",
+      "example": "static_assert(std::is_same_v<int, int>);",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص تطابق نوعين",
+          "code": "#include <type_traits>\n#include <iostream>\n\nstatic_assert(std::is_same_v<int, int>);\nstatic_assert(!std::is_same_v<int, double>);",
+          "explanationArabic": "is_same_v يُرجع true فقط إذا كان النوعان متطابقين. const int و int ليسا نفس النوع."
+        },
+        {
+          "titleArabic": "استخدامه مع if constexpr",
+          "code": "#include <type_traits>\n\ntemplate<typename T>\nvoid process(T val) {\n    if constexpr (std::is_same_v<T, int>) {\n        int x = val;\n    } else {\n        auto x = val;\n    }\n}",
+          "explanationArabic": "if constexpr يُستبعد الفرع الخاطئ وقت الترجمة. مفيد لمعالجة أنواع مختلفة في قالب."
+        },
+        {
+          "titleArabic": "const و reference يُغيّران النوع",
+          "code": "#include <type_traits>\n\nstatic_assert(!std::is_same_v<int, const int>);\nstatic_assert(!std::is_same_v<int, int&>);",
+          "explanationArabic": "is_same_v يفحص النوع بالضبط بما فيه const و reference. استخدم decay_t لإزالتها."
+        }
+      ],
+      "related": [
+        "std::decay_t",
+        "std::remove_reference_t",
+        "if constexpr",
+        "static_assert"
+      ]
+    },
+    "std::decay_t": {
+      "title": "std::decay_t",
+      "type": "سمة نوع",
+      "description": "يُحوّل النوع إلى شكله الطبيعي: يزيل المراجع و const/volatile ويُحوّل المصفوفات والمؤشرات الدالة.",
+      "usage": "للحصول على النوع 'العادي' الذي تمرره الدالة بالقيمة.",
+      "example": "using T = std::decay_t<int&>;",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "إزالة المرجع و const",
+          "code": "#include <type_traits>\n#include <iostream>\n\nstatic_assert(std::is_same_v<std::decay_t<int&>, int>);\nstatic_assert(std::is_same_v<std::decay_t<const int>, int>);",
+          "explanationArabic": "decay_t يُزيل & و const ليعطي النوع الأساسي. مفيد في القوالب."
+        },
+        {
+          "titleArabic": "تحويل المصفوفة لمؤشر",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_same_v<std::decay_t<int[5]>, int*>);",
+          "explanationArabic": "المصفوفة int[5] تتحول لمؤشر int* عبر decay. هذا ما يحدث عند تمرير مصفوفة لمعامل بالقيمة."
+        },
+        {
+          "titleArabic": "استخدامه في القوالب",
+          "code": "#include <type_traits>\n\ntemplate<typename T>\nusing clean_t = std::decay_t<T>;",
+          "explanationArabic": "clean_t يُبسّط أي نوع يُمرر إليه. مفيد كنوع مساعد في البرمجة العامة."
+        }
+      ],
+      "related": [
+        "std::remove_reference_t",
+        "std::is_same_v",
+        "std::remove_cv_t"
+      ]
+    },
+    "std::remove_reference_t": {
+      "title": "std::remove_reference_t",
+      "type": "سمة نوع",
+      "description": "يُزيل المرجع (lvalue أو rvalue) من النوع ويُرجع النوع الأساسي.",
+      "usage": "عند الحاجة للنوع الأساسي بدون مرجع في القوالب.",
+      "example": "using T = std::remove_reference_t<int&>;",
+      "includeHeader": "#include <type_traits>",
+      "usageExamples": [
+        {
+          "titleArabic": "إزالة lvalue reference",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_same_v<std::remove_reference_t<int&>, int>);",
+          "explanationArabic": "remove_reference_t يُزيل & من int& ويُرجع int. لا يُزيل const."
+        },
+        {
+          "titleArabic": "إزالة rvalue reference",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_same_v<std::remove_reference_t<int&&>, int>);",
+          "explanationArabic": "يعمل مع && أيضًا. يُرجع النوع الأساسي int في كلتا الحالتين."
+        },
+        {
+          "titleArabic": "لا يُزيل const",
+          "code": "#include <type_traits>\n\nstatic_assert(std::is_same_v<std::remove_reference_t<const int&>, const int>);",
+          "explanationArabic": "يُزيل المرجع فقط. const int& تصبح const int. استخدم decay_t لإزالة الكل."
+        }
+      ],
+      "related": [
+        "std::decay_t",
+        "std::remove_cv_t",
+        "std::is_same_v"
+      ]
+    },
+    "std::declval": {
+      "title": "std::declval",
+      "type": "أداة قالب",
+      "description": "يُرجع مرجعًا لنوع محدد دون بناء كائن فعلي. يُستخدم فقط في سياقات غير مُقيَّمة وقت الترجمة.",
+      "usage": "في decltype و SFINAE للحصول على نوع مرجعي دون إنشاء كائن.",
+      "example": "decltype(std::declval<T>().size())",
+      "includeHeader": "#include <utility>",
+      "usageExamples": [
+        {
+          "titleArabic": "معرفة نوع الإرجاع دون استدعاء",
+          "code": "#include <utility>\n#include <vector>\n\nusing ReturnType = decltype(std::declval<std::vector<int>>().size());",
+          "explanationArabic": "declval<vector<int>>() يُرجع مرجعًا وهميًا لـ vector. size() يُحدد نوع الإرجاع وهو size_t."
+        },
+        {
+          "titleArabic": "لا يمكن استخدامه في قيمة فعلية",
+          "code": "#include <utility>\n\nusing T = decltype(std::declval<int>());",
+          "explanationArabic": "declval لا يُنشئ كائنًا حقيقيًا. يُستخدم فقط في decltype و sizeof و noexcept وسياقات غير مُقيَّمة."
+        },
+        {
+          "titleArabic": "مع نوع ليس له مُنشئ افتراضي",
+          "code": "#include <utility>\n\nstruct NoDefault {\n    NoDefault() = delete;\n    int get() const;\n};\n\nusing R = decltype(std::declval<NoDefault>().get());",
+          "explanationArabic": "declval يعمل حتى مع أنواع لا تملك مُنشئًا افتراضيًا لأنه لا يبني كائنًا فعليًا."
+        }
+      ],
+      "related": [
+        "decltype",
+        "std::decay_t",
+        "static_assert"
+      ]
+    },
+    "std::unreachable": {
+      "title": "std::unreachable",
+      "type": "دالة (C++23)",
+      "description": "يُعلن أن التنفيذ لن يصل لهذه النقطة أبدًا. يُستدعى std::terminate إذا وصل التنفيذ إليها.",
+      "usage": "بعد switch شامل أو كحالة افتراضية لا يُفترض الوصول إليها.",
+      "example": "default: std::unreachable();",
+      "includeHeader": "#include <utility>",
+      "usageExamples": [
+        {
+          "titleArabic": "بعد switch شامل",
+          "code": "#include <utility>\n\nenum Color { Red, Green, Blue };\n\nint to_int(Color c) {\n    switch (c) {\n        case Red: return 0;\n        case Green: return 1;\n        case Blue: return 2;\n    }\n    std::unreachable();",
+          "explanationArabic": "unreachable يُخبر المُصرِّف أن هذا الفرع لا يُصل إليه. يُحسّن التحذيرات والأداء."
+        },
+        {
+          "titleArabic": "مع if-else شامل",
+          "code": "#include <utility>\n\nint process(bool b) {\n    if (b) return 1;\n    else return 0;\n    std::unreachable();",
+          "explanationArabic": "بعد if-else شامل، unreachable يُزيل تحذير 'not all paths return a value'."
+        },
+        {
+          "titleArabic": "إذا وصل التنفيذ يُستدعى terminate",
+          "code": "#include <utility>\n#include <iostream>\n\nvoid bad() {\n    std::unreachable();",
+          "explanationArabic": "لو وصل التنفيذ لـ unreachable فعلًا يُستدعى std::terminate. هذا خطأ منطقي في الكود."
+        }
+      ],
+      "related": [
+        "std::terminate",
+        "assert",
+        "switch"
+      ]
+    },
+    "std::size": {
+      "title": "std::size",
+      "type": "دالة (C++17)",
+      "description": "يُرجع عدد عناصر الحاوية أو المصفوفة. يعمل مع كل أنواع الحاويات والمصفوفات الأصلية.",
+      "usage": " كبديل موحد لـ .size() يعمل مع المصفوفات الأصلية أيضًا.",
+      "example": "std::size_t n = std::size(arr);",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "حجم مصفوفة أصلية",
+          "code": "#include <iterator>\n\nint arr[] = {1, 2, 3, 4, 5};\nstd::size_t n = std::size(arr);",
+          "explanationArabic": "size يعمل مع المصفوفات الأصلية خلافًا لـ .size(). يُرجع 5 هنا."
+        },
+        {
+          "titleArabic": "حجم حاوية STL",
+          "code": "#include <iterator>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3};\nauto n = std::size(v);",
+          "explanationArabic": "يعمل مع كل حاويات STL. يُرجع نفس نتيجة v.size() لكن بشكل موحد."
+        },
+        {
+          "titleArabic": "استخدامه في القوالب العامة",
+          "code": "#include <iterator>\n\ntemplate<typename C>\nstd::size_t count(const C& c) {\n    return std::size(c);\n}",
+          "explanationArabic": "في قالب يعمل مع مصفوفات وحاويات على حد سواء. size موحد بينهما."
+        }
+      ],
+      "related": [
+        "std::begin",
+        "std::end",
+        "std::size_t"
+      ]
+    },
+    "std::begin / std::end": {
+      "title": "std::begin / std::end",
+      "type": "دالة (C++14)",
+      "description": "يُرجعان مكرر البداية والنهاية لأي حاوية أو مصفوفة. واجهة موحدة للنطاق for والتكرار.",
+      "usage": "للكتابة العامة التي تعمل مع كل أنواع الحاويات والمصفوفات.",
+      "example": "for (auto it = std::begin(c); it != std::end(c); ++it)",
+      "includeHeader": "#include <iterator>",
+      "usageExamples": [
+        {
+          "titleArabic": "التكرار على مصفوفة أصلية",
+          "code": "#include <iterator>\n#include <iostream>\n\nint arr[] = {10, 20, 30};\nfor (auto it = std::begin(arr); it != std::end(arr); ++it)\n    std::cout << *it << ' ';",
+          "explanationArabic": "begin/end يعملان مع المصفوفات الأصلية. النطاق for يستخدمهما ضمنيًا."
+        },
+        {
+          "titleArabic": "استخدام مع حاوية STL",
+          "code": "#include <iterator>\n#include <vector>\n\nstd::vector<int> v = {1, 2, 3};\nauto first = std::begin(v);\nauto last = std::end(v);",
+          "explanationArabic": "مع حاويات STL يُرجعان نفس نتيجة v.begin() و v.end(). الشكل الموحد مفيد في القوالب."
+        },
+        {
+          "titleArabic": "في قالب عام",
+          "code": "#include <iterator>\n\ntemplate<typename C>\nvoid print_all(const C& c) {\n    for (auto it = std::begin(c); it != std::end(c); ++it)\n        ;\n}",
+          "explanationArabic": "القالب يعمل مع مصفوفات وحاويات. begin/end يوفران واجهة موحدة."
+        }
+      ],
+      "related": [
+        "std::size",
+        "std::cbegin",
+        "std::cend",
+        "range-based for"
+      ]
+    },
+    "std::bind_front": {
+      "title": "std::bind_front",
+      "type": "دالة أداة (C++20)",
+      "description": "يُنشئ كائنًا قابلًا للاستدعاء يُثبّت أول معامل أو أكثر ويقبل الباقي لاحقًا.",
+      "usage": "للتطبيق الجزئي للدوال — تثبيت بعض المعاملات مسبقًا.",
+      "example": "auto fn = std::bind_front(func, 42);",
+      "includeHeader": "#include <functional>",
+      "usageExamples": [
+        {
+          "titleArabic": "تثبيت المعامل الأول",
+          "code": "#include <functional>\n#include <iostream>\n\nvoid greet(std::string msg, std::string name) {\n    std::cout << msg << \" \" << name;\n}\n\nauto hello = std::bind_front(greet, \"مرحبًا\");\nhello(\"عالم\");",
+          "explanationArabic": "bind_front يُثبّت 'مرحبًا' كمعامل أول. hello تحتاج فقط الاسم."
+        },
+        {
+          "titleArabic": "بديل أفضل من std::bind",
+          "code": "#include <functional>\n\nint multiply(int a, int b) { return a * b; }\nauto double_it = std::bind_front(multiply, 2);\nint r = double_it(5);",
+          "explanationArabic": "bind_front أبسط وأصح من std::bind. يحافظ على ترتيب المعاملات ويدعم النقل."
+        },
+        {
+          "titleArabic": "مع lambda كبديل",
+          "code": "#include <functional>\n\nint add(int a, int b) { return a + b; }\nauto add10 = [add](int b) { return add(10, b); };",
+          "explanationArabic": "lambda يمكن أن تحل محل bind_front. bind_front أنظف عند تثبيت معامل واحد فقط."
+        }
+      ],
+      "related": [
+        "std::function",
+        "std::invoke",
+        "std::bind"
+      ]
+    },
+    "std::bad_weak_ptr": {
+      "title": "std::bad_weak_ptr",
+      "type": "صنف",
+      "description": "استثناء يُرمى عند محاولة بناء shared_ptr من weak_ptr يشير لكائن تم حذفه بالفعل (expired).",
+      "usage": "يظهر عند استخدام shared_ptr(weak_ptr) بدون فحص expired() أو lock() أولًا.",
+      "example": "std::shared_ptr<int> sp = wp.lock(); // آمن\n// std::shared_ptr<int> sp(wp); // قد يرمى bad_weak_ptr",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "متى يُرمى bad_weak_ptr",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    std::weak_ptr<int> wp;\n    {\n        auto sp = std::make_shared<int>(42);\n        wp = sp;\n    } // sp يُدمر هنا\n\n    try {\n        std::shared_ptr<int> sp2(wp); // bad_weak_ptr!\n    } catch (const std::bad_weak_ptr& e) {\n        std::cout << \"caught: \" << e.what();\n    }\n\n    // ✅ الطريقة الآمنة:\n    if (auto sp3 = wp.lock()) {\n        std::cout << *sp3;\n    } else {\n        std::cout << \"expired\";\n    }",
+          "explanationArabic": "bad_weak_ptr يُرمى فقط عند بناء shared_ptr مباشرة من weak_ptr منتهي. lock() لا يرمي — يُرجع nullptr بدلًا من ذلك. استخدم دائمًا lock() بدل البناء المباشر."
+        }
+      ],
+      "related": [
+        "std::weak_ptr",
+        "std::shared_ptr"
+      ]
+    },
+    "std::allocate_shared": {
+      "title": "std::allocate_shared",
+      "type": "دالة قالب",
+      "description": "مثل make_shared لكن يستخدم مُخصِّص (allocator) مخصص بدل الافتراضي. يُخصّص الكائن والـ control block في تخصيص واحد.",
+      "usage": "يظهر عند الحاجة لاستخدام allocator مخصص مع shared_ptr، مثل مُخصِّص ذاكرة مُجمّعة.",
+      "example": "auto sp = std::allocate_shared<MyType>(my_alloc, arg1, arg2);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدام allocator مخصص",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct MyAlloc {\n    using value_type = int;\n    MyAlloc() = default;\n    template<typename U> MyAlloc(const MyAlloc<U>&) {}\n    int* allocate(size_t n) {\n        std::cout << \"allocating \" << n << \" ints\\n\";\n        return static_cast<int*>(::operator new(n * sizeof(int)));\n    }\n    void deallocate(int* p, size_t) noexcept {\n        ::operator delete(p);\n    }\n};\n\nint main() {\n    MyAlloc alloc;\n    auto sp = std::allocate_shared<int>(alloc, 42);\n    std::cout << *sp; // 42",
+          "explanationArabic": "allocate_shared يأخذ allocator كمعامل أول ثم معاملات المُنشئ. مفيد مع أنظمة تدير الذاكرة بشكل مخصص. مثل make_shared، يُخصّص الكائن والـ control block معًا."
+        }
+      ],
+      "related": [
+        "std::make_shared",
+        "std::shared_ptr",
+        "std::allocator"
+      ]
+    },
+    "std::default_delete": {
+      "title": "std::default_delete",
+      "type": "قالب",
+      "description": "المُحذِّف الافتراضي لـ unique_ptr. يستدعي delete على مؤشر عادي وdelete[] على مصفوفة. يمكن تخصيصه لأنواع تحتاج تحريرًا خاصًا.",
+      "usage": "يظهر كنوع Deleter الافتراضي لـ unique_ptr، أو عند تخصيص كيفية تحرير مورد.",
+      "example": "std::unique_ptr<FILE, std::default_delete<FILE>> fp(fopen(\"f.txt\",\"r\"));",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "تخصيص default_delete لنوع C",
+          "code": "#include <memory>\n#include <cstdio>\n\nstruct FileCloser {\n    void operator()(FILE* f) const {\n        if (f) std::fclose(f);\n    }\n};\n\nint main() {\n    std::unique_ptr<FILE, FileCloser> fp(std::fopen(\"test.txt\", \"r\"));\n    if (fp) {\n        // استخدام fp.get()\n    } // fclose يُستدعى تلقائيًا",
+          "explanationArabic": "default_delete هو النمط الأساسي: deleter هو كائن دالة يستدعي التحرير المناسب. يمكنك كتابة deleter مخصص لأي مورد (ملفات، مقابض، OpenGL objects)."
+        }
+      ],
+      "related": [
+        "std::unique_ptr",
+        "std::shared_ptr"
+      ]
+    },
+    "std::const_pointer_cast": {
+      "title": "std::const_pointer_cast",
+      "type": "دالة قالب",
+      "description": "يُزيل const من shared_ptr. يعمل مثل const_cast لكن على المستوى الذكي. الكائن المشترك نفسه لا يتغير — فقط مؤشر const يصبح mutable.",
+      "usage": "يظهر عند الحاجة لتعديل كائن عبر shared_ptr const مع ضمان أن الكائن فعليًا ليس const.",
+      "example": "std::shared_ptr<int> mutable_ptr = std::const_pointer_cast<int>(const_ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "إزالة const من shared_ptr",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    int val = 42;\n    std::shared_ptr<const int> cp = std::make_shared<const int>(10);\n    std::shared_ptr<int> mp = std::const_pointer_cast<int>(cp);\n    *mp = 99;\n    std::cout << *cp; // 99 — نفس الكائن\n    std::cout << cp.use_count(); // 2",
+          "explanationArabic": "const_pointer_cast لا يُنشئ كائنًا جديدًا — يشير لنفس الكائن. العداد المرجعي يزيد. استخدمه بحذر: إزالة const من كائن const فعليًا يُسبب سلوكًا غير معرّف."
+        }
+      ],
+      "related": [
+        "std::static_pointer_cast",
+        "std::dynamic_pointer_cast",
+        "std::shared_ptr"
+      ]
+    },
+    "std::dynamic_pointer_cast": {
+      "title": "std::dynamic_pointer_cast",
+      "type": "دالة قالب",
+      "description": "تحويل آمن لـ shared_ptr عبر RTTI (dynamic_cast). يُرجع shared_ptr فارغ إذا فشل التحويل. يعمل فقط مع الأنواع متعددة الأشكال (تحتوي virtual function).",
+      "usage": "يظهر عند التحويل الآمن لأسفل (downcast) في التسلسل الوراثي عبر shared_ptr.",
+      "example": "auto derived = std::dynamic_pointer_cast<Derived>(base_ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحويل آمن لأسفل مع shared_ptr",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Base { virtual ~Base() = default; };\nstruct Derived : Base { void greet() { std::cout << \"hello from Derived\\n\"; } };\n\nint main() {\n    std::shared_ptr<Base> bp = std::make_shared<Derived>();\n\n    if (auto dp = std::dynamic_pointer_cast<Derived>(bp)) {\n        dp->greet(); // hello from Derived\n        std::cout << dp.use_count(); // 2 — bp و dp يشيران لنفس الكائن\n    }\n\n    std::shared_ptr<int> wrong = std::dynamic_pointer_cast<int>(bp);\n    std::cout << (wrong == nullptr); // true — التحويل فشل",
+          "explanationArabic": "dynamic_pointer_cast يفحص النوع الفعلي في وقت التشغيل. إذا كان الكائن فعليًا من النوع المطلوب، يُرجع shared_ptr صالح. وإلا nullptr. يتطلب وجود virtual function في Base."
+        }
+      ],
+      "related": [
+        "std::static_pointer_cast",
+        "std::const_pointer_cast",
+        "std::shared_ptr"
+      ]
+    },
+    "std::static_pointer_cast": {
+      "title": "std::static_pointer_cast",
+      "type": "دالة قالب",
+      "description": "تحويل shared_ptr عبر static_cast. لا يتحقق من صحة التحويل في وقت التشغيل. أسرع من dynamic_pointer_cast لكن غير آمن إذا كان التحويل خاطئًا.",
+      "usage": "يظهر عند التحويل بين أنواع مرتبطة في التسلسل الوراثي مع ضمان أن التحويل صحيح.",
+      "example": "auto derived = std::static_pointer_cast<Derived>(base_ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحويل لأسفل مع ثقة بالنوع",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Base { virtual ~Base() = default; };\nstruct Derived : Base { int value = 42; };\n\nint main() {\n    std::shared_ptr<Derived> dp = std::make_shared<Derived>();\n    std::shared_ptr<Base> bp = dp; // تحويل لأعلى — ضمني وآمن\n\n    std::shared_ptr<Derived> dp2 = std::static_pointer_cast<Derived>(bp);\n    std::cout << dp2->value; // 42\n    std::cout << dp2.use_count(); // 3 — dp, bp, dp2",
+          "explanationArabic": "static_pointer_cast لا يتحقق من النوع. إذا كان bp لا يشير فعليًا لـ Derived، فالنتيجة سلوك غير معرّف. استخدمه فقط عندما تكون متأكدًا من النوع. استخدم dynamic_pointer_cast إذا لم تكن متأكدًا."
+        }
+      ],
+      "related": [
+        "std::dynamic_pointer_cast",
+        "std::const_pointer_cast",
+        "std::shared_ptr"
+      ]
+    },
+    "std::get_deleter": {
+      "title": "std::get_deleter",
+      "type": "دالة قالب",
+      "description": "يُرجع مؤشرًا للـ deleter المرتبط بـ shared_ptr. يُرجع nullptr إذا كان نوع Deleter غير مطابق.",
+      "usage": "يظهر عند الحاجة لفحص أو استخدام deleter مخصص مرتبط بـ shared_ptr.",
+      "example": "auto* del = std::get_deleter<MyDeleter>(sp);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص نوع deleter",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct CustomDeleter {\n    void operator()(int* p) const {\n        std::cout << \"custom delete\\n\";\n        delete p;\n    }\n};\n\nint main() {\n    std::shared_ptr<int> sp(new int(42), CustomDeleter{});\n    auto* del = std::get_deleter<CustomDeleter>(sp);\n    if (del) {\n        std::cout << \"has custom deleter\";\n    }\n\n    auto* wrong = std::get_deleter<std::default_delete<int>>(sp);\n    std::cout << (wrong == nullptr); // true — نوع مختلف",
+          "explanationArabic": "get_deleter مفيد لفحص نوع deleter في وقت التشغيل أو للوصول لبيانات deleter مخصص. إذا لم يتطابق النوع، يُرجع nullptr."
+        }
+      ],
+      "related": [
+        "std::shared_ptr",
+        "std::default_delete"
+      ]
+    },
+    "std::owner_less": {
+      "title": "std::owner_less",
+      "type": "قالب",
+      "description": "كائن مقارنة يعتمد على الملكية وليس على قيمة المؤشر. يسمح باستخدام weak_ptr وshared_ptr كمفاتيح في الحاويات المرتبة.",
+      "usage": "يظهر عند استخدام shared_ptr أو weak_ptr كمفتاح في set أو map.",
+      "example": "std::set<std::shared_ptr<int>, std::owner_less<std::shared_ptr<int>>> s;",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "مجموعة من shared_ptr",
+          "code": "#include <memory>\n#include <set>\n#include <iostream>\n\nint main() {\n    auto a = std::make_shared<int>(1);\n    auto b = std::make_shared<int>(2);\n    auto c = a; // نسخة — يشيران لنفس الكائن\n\n    std::set<std::shared_ptr<int>, std::owner_less<std::shared_ptr<int>>> s;\n    s.insert(a);\n    s.insert(b);\n    s.insert(c); // لن يُضاف — a و c يمتلكان نفس الكائن\n    std::cout << s.size(); // 2",
+          "explanationArabic": "owner_less يقارن بناءً على ملكية الكائن (control block) وليس عنوان المؤشر. هذا يعني أن shared_ptr مختلفان يشيران لنفس الكائن يُعتبران متساويين. بدون owner_less، المقارنة الافتراضية تقارن عناوين المؤشرات."
+        }
+      ],
+      "related": [
+        "std::shared_ptr",
+        "std::weak_ptr",
+        "std::set"
+      ]
+    },
+    "std::allocator_traits": {
+      "title": "std::allocator_traits",
+      "type": "قالب",
+      "description": "غلاف موحّد للوصول لخصائص أي allocator. يوفر أنواعًا افتراضية لكل العمليات حتى لو لم يُوفّرها الـ allocator نفسه.",
+      "usage": "يظهر عند كتابة حاويات أو قوالب تعمل مع أي نوع allocator.",
+      "example": "using T = typename std::allocator_traits<Alloc>::value_type;",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدام allocator_traits مع allocator مخصص",
+          "code": "#include <memory>\n#include <iostream>\n\ntemplate<typename Alloc>\nvoid allocate_and_construct(Alloc& alloc, int count) {\n    using Traits = std::allocator_traits<Alloc>;\n    using T = typename Traits::value_type;\n\n    T* ptr = Traits::allocate(alloc, count);\n    for (int i = 0; i < count; ++i) {\n        Traits::construct(alloc, ptr + i, T{});\n    }\n    std::cout << count << \" objects constructed\\n\";\n    for (int i = 0; i < count; ++i) {\n        Traits::destroy(alloc, ptr + i);\n    }\n    Traits::deallocate(alloc, ptr, count);\n}\n\nint main() {\n    std::allocator<int> alloc;\n    allocate_and_construct(alloc, 5);",
+          "explanationArabic": "allocator_traits يوفر واجهة موحدة: allocate, deallocate, construct, destroy. إذا لم يوفر Allocator دالة construct، يستخدم التخصيص الافتراضي (new). هذا يسمح لكتابة كود يعمل مع أي allocator."
+        }
+      ],
+      "related": [
+        "std::allocator",
+        "std::uses_allocator"
+      ]
+    },
+    "std::allocator_arg": {
+      "title": "std::allocator_arg",
+      "type": "ثابت",
+      "description": "وسم (tag) يُمرر لدالة أو مُنشئ ليشير إلى أن المعامل التالي هو allocator وليس معامل عادي. يُستخدم مع scoped_allocator_mode.",
+      "usage": "يظهر عند بناء أزواج أو مجموعات مع allocator في حاويات متداخلة.",
+      "example": "auto p = std::make_pair(std::allocator_arg, alloc, 1, 2.0);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء pair مع allocator",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    std::allocator<int> alloc;\n    auto p = std::make_pair(std::allocator_arg, alloc, 42, 3.14);\n    std::cout << p.first << ' ' << p.second; // 42 3.14",
+          "explanationArabic": "allocator_arg يُخبر make_pair أن المعامل التالي هو allocator. بدون هذا الوسم، لا يمكن تمييز allocator عن المعاملات العادية لأن كلاهما أنواع مختلفة."
+        }
+      ],
+      "related": [
+        "std::allocator_arg_t",
+        "std::uses_allocator",
+        "std::allocator"
+      ]
+    },
+    "std::allocator_arg_t": {
+      "title": "std::allocator_arg_t",
+      "type": "نوع",
+      "description": "نوع الوسم allocator_arg. يُستخدم في تخصيص حمولات الدوال لتمييز المعاملات.",
+      "usage": "يظهر كنوع معامل في دالة تستخدم allocator_arg كقيمة افتراضية.",
+      "example": "void construct(std::allocator_arg_t, Alloc& a, T* p, Args&&... args);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدامه كنوع معامل",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct MyContainer {\n    template<typename Alloc, typename... Args>\n    void emplace(std::allocator_arg_t, Alloc& alloc, Args&&... args) {\n        std::cout << \"constructing with custom allocator\\n\";\n    }\n};\n\nint main() {\n    MyContainer c;\n    std::allocator<int> alloc;\n    c.emplace(std::allocator_arg, alloc, 42);",
+          "explanationArabic": "allocator_arg_t هو النوع وallocator_arg هو القيمة. يُستخدمان معًا لتفعيل allocator-based construction. عادةً لا تحتاج التعامل معه مباشرة إلا عند كتابة حاويات."
+        }
+      ],
+      "related": [
+        "std::allocator_arg",
+        "std::uses_allocator"
+      ]
+    },
+    "std::uses_allocator": {
+      "title": "std::uses_allocator",
+      "type": "قالب",
+      "description": "يكتشف هل النوع T يدعم استخدام allocator. يمكن تخصيصه لأنواعك عبر توفير تخصص. يُستخدم مع scoped_allocator_adaptor.",
+      "usage": "يظهر في قوالب حاويات لتحديد هل يجب تمرير allocator لبناء العناصر.",
+      "example": "static_assert(std::uses_allocator_v<std::vector<int>, std::allocator<int>>);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص دعم allocator",
+          "code": "#include <memory>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    using A = std::allocator<int>;\n    std::cout << std::uses_allocator_v<std::vector<int>, A>; // true\n    std::cout << std::uses_allocator_v<std::string, A>;      // true\n    std::cout << std::uses_allocator_v<int, A>;               // false",
+          "explanationArabic": "uses_allocator يكتشف هل النوع يمكنه قبول allocator. الحاويات القياسية كلها تدعمه. الأنواع الأساسية (int, double) لا تدعمه. يُستخدم داخليًا مع scoped_allocator_adaptor."
+        }
+      ],
+      "related": [
+        "std::allocator",
+        "std::allocator_traits",
+        "std::allocator_arg"
+      ]
+    },
+    "std::pointer_traits": {
+      "title": "std::pointer_traits",
+      "type": "قالب",
+      "description": "يُستخرج معلومات من نوع مؤشر مخصص (element_type, difference_type, pointer_to). يوفر تخصصًا افتراضيًا للمؤشرات الخام.",
+      "usage": "يظهر عند العمل مع مؤشرات مخصصة (fancy pointers) في حاويات أو allocators.",
+      "example": "using T = typename std::pointer_traits<Ptr>::element_type;",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخراج نوع العنصر من مؤشر",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    using T = std::pointer_traits<int*>::element_type;\n    std::cout << typeid(T).name(); // int\n\n    int val = 42;\n    int* ptr = &val;\n    int* p2 = std::pointer_traits<int*>::pointer_to(val);\n    std::cout << *p2; // 42",
+          "explanationArabic": "pointer_traits يسمح بالتعامل مع أي نوع مؤشر بشكل موحد. element_type يُرجع نوع العنصر المُشار إليه. pointer_to يُنشئ مؤشرًا من مرجع. مفيد في القوالب العامة."
+        }
+      ],
+      "related": [
+        "std::allocator_traits",
+        "std::to_address"
+      ]
+    },
+    "std::pointer_safety": {
+      "title": "std::pointer_safety",
+      "type": "نوع",
+      "description": "نوع تعداد يصف نمط سلامة المؤشرات: relaxed (افتراضي)، preferred (مع جمع القمامة)، أو strict. يُستخدم مع get_pointer_safety.",
+      "usage": "يظهر عند فحص نمط سلامة المؤشرات في النظام.",
+      "example": "auto safety = std::get_pointer_safety();",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص نمط سلامة المؤشرات",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    auto safety = std::get_pointer_safety();\n    if (safety == std::pointer_safety::relaxed) {\n        std::cout << \"relaxed — can use pointer arithmetic safely\\n\";\n    } else if (safety == std::pointer_safety::strict) {\n        std::cout << \"strict — pointer arithmetic may be unsafe\\n\";\n    }",
+          "explanationArabic": "معظم الأنظمة تستخدم relaxed مما يعني أن المؤشرات تعمل كالمعتاد. strict يظهر مع أنظمة جمع القمامة. نادرًا ما تحتاج فحصه في التطبيقات العادية."
+        }
+      ],
+      "related": [
+        "std::get_pointer_safety"
+      ]
+    },
+    "std::get_pointer_safety": {
+      "title": "std::get_pointer_safety",
+      "type": "دالة",
+      "description": "يُرجع نمط سلامة المؤشرات الحالي (pointer_safety). يُستخدم لتحديد هل المؤشرات الخام آمنة للاستخدام.",
+      "usage": "يظهر عند كتابة كود يعتمد على سلوك المؤشرات ويحتاج فحص النظام.",
+      "example": "auto s = std::get_pointer_safety();",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "فحص النظام",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    std::cout << static_cast<int>(std::get_pointer_safety());\n    // 0 = relaxed, 1 = preferred, 2 = strict",
+          "explanationArabic": "get_pointer_safety يفحص نمط سلامة المؤشرات. في معظم الأنظمة يُرجع relaxed. مفيد في كود low-level أو portable."
+        }
+      ],
+      "related": [
+        "std::pointer_safety"
+      ]
+    },
+    "std::to_address": {
+      "title": "std::to_address",
+      "type": "دالة قالب",
+      "description": "يُحوّل أي مؤشر (خام أو fancy pointer مثل iterator) إلى مؤشر خام. متاح منذ C++20.",
+      "usage": "يظهر عند الحاجة لعنوان خام من smart pointer أو iterator أو fancy pointer.",
+      "example": "int* raw = std::to_address(smart_ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "الحصول على عنوان خام من iterator",
+          "code": "#include <memory>\n#include <vector>\n#include <iostream>\n\nint main() {\n    std::vector<int> v = {10, 20, 30};\n    auto it = v.begin();\n    int* raw = std::to_address(it);\n    std::cout << *raw; // 10",
+          "explanationArabic": "to_address يعمل مع أي نوع مؤشر: مؤشرات خام، iterators، fancy pointers. أنظف وأكثر عمومية من &*it أو it.operator->(). في C++20، هو الطريقة الموصى بها للحصول على عنوان خام."
+        }
+      ],
+      "related": [
+        "std::addressof",
+        "std::pointer_traits"
+      ]
+    },
+    "std::addressof": {
+      "title": "std::addressof",
+      "type": "دالة قالب",
+      "description": "يُرجع العنوان الحقيقي لكائن حتى لو كان operator& مُعاد تعريفه. لا يستدعي operator&.",
+      "usage": "يظهر عند الحاجة لعنوان حقيقي لكائن قد يكون operator& الخاص به محمّلًا بشكل زائف.",
+      "example": "T* real_ptr = std::addressof(obj);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "الحصول على عنوان حقيقي",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Tricky {\n    int* operator&() { return nullptr; } // operator& مُعاد تعريفه!\n    int value = 42;\n};\n\nint main() {\n    Tricky t;\n    int* fake = &t;       // nullptr — operator& المُعاد تعريفه\n    int* real = std::addressof(t); // العنوان الحقيقي\n    std::cout << real->value; // 42",
+          "explanationArabic": "addressof يُجاوز operator& المحمّل ويُرجع العنوان الفعلي في الذاكرة. نادرًا ما تحتاجه لكنه مهم مع أنواع مثل std::ref أو أنواع مخصصة تُعاد تعريف operator& فيها."
+        }
+      ],
+      "related": [
+        "std::to_address",
+        "std::reference_wrapper"
+      ]
+    },
+    "std::align": {
+      "title": "std::align",
+      "type": "دالة",
+      "description": "يُعدّل مؤشر وحجم مساحة متاحة ليكون المؤشر مُحاذيًا (aligned) لحد محدد. يُرجع المؤشر المُعدّل والمساحة المتبقية.",
+      "usage": "يظهر عند تخصيص ذاكرة تحتاج محاذاة محددة، مثل SIMD أو أنواع مخصصة.",
+      "example": "void* aligned = std::align(16, size, ptr, space);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "محاذاة مؤشر لحد 16 بايت",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    char buffer[64];\n    void* ptr = buffer;\n    std::size_t space = sizeof(buffer);\n    std::size_t size = 32;\n\n    void* aligned = std::align(16, size, ptr, space);\n    if (aligned) {\n        std::cout << \"aligned at offset \"\n                  << (static_cast<char*>(aligned) - buffer) << '\\n';\n    }",
+          "explanationArabic": "align يبحث عن أول عنوان مُحاذي للحد المطلوب ضمن المساحة المتاحة. ptr يُعدّل للمؤشر المُحاذي وspace ينقص بالبايتات المستخدمة. يُرجع nullptr إذا لم تكن المساحة كافية."
+        }
+      ],
+      "related": [
+        "std::aligned_alloc",
+        "std::align_val_t"
+      ]
+    },
+    "std::destroy": {
+      "title": "std::destroy",
+      "type": "دالة قالب",
+      "description": "يُستدعي مُدمِّر العناصر في نطاق [first, last) بدون تحرير الذاكرة. متاح منذ C++17.",
+      "usage": "يظهر عند الحاجة لتدمير عناصر في ذاكرة خام قبل تحريرها.",
+      "example": "std::destroy(first, last);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "تدمير عناصر في ذاكرة خام",
+          "code": "#include <memory>\n#include <iostream>\n\nint main() {\n    std::string* buf = static_cast<std::string*>(::operator new(3 * sizeof(std::string)));\n    for (int i = 0; i < 3; ++i) {\n        new (buf + i) std::string(\"item \" + std::to_string(i));\n    }\n\n    std::destroy(buf, buf + 3); // يستدعي ~string() لكل عنصر\n    ::operator delete(buf); // حرر الذاكرة",
+          "explanationArabic": "destroy يستدعي المُدمّر فقط — لا يُحرر الذاكرة. هذا الفصل مهم: البناء/التدمير vs التخصيص/التحرير. في C++20، std::destroy_at هو البديل لعنصر واحد."
+        }
+      ],
+      "related": [
+        "std::destroy_at",
+        "std::construct_at",
+        "std::uninitialized_fill"
+      ]
+    },
+    "std::destroy_at": {
+      "title": "std::destroy_at",
+      "type": "دالة قالب",
+      "description": "يُستدعي مُدمِّر الكائن المُشار إليه بالمؤشر. لا يُحرر الذاكرة. متاح منذ C++17.",
+      "usage": "يظهر عند تدمير كائن واحد في ذاكرة خام.",
+      "example": "std::destroy_at(ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "تدمير كائن واحد",
+          "code": "#include <memory>\n#include <new>\n\nstruct Widget {\n    ~Widget() { /* cleanup */ }\n};\n\nint main() {\n    void* raw = ::operator new(sizeof(Widget));\n    Widget* w = new (raw) Widget(); // placement new\n    std::destroy_at(w); // يستدعي ~Widget()\n    ::operator delete(raw); // حرر الذاكرة",
+          "explanationArabic": "destroy_at هو الطريقة الحديثة لاستدعاء المُدمّر على كائن في ذاكرة خام. يحل محل p->~T() المباشر وهو أكثر أمانًا لأنه يتعامل مع المصفوفات بشكل صحيح."
+        }
+      ],
+      "related": [
+        "std::destroy",
+        "std::construct_at"
+      ]
+    },
+    "std::construct_at": {
+      "title": "std::construct_at",
+      "type": "دالة قالب",
+      "description": "يُنشئ كائنًا في عنوان ذاكرة محدد (placement new بشكل نظيف). متاح منذ C++20.",
+      "usage": "يظهر عند بناء كائن في ذاكرة خام مُخصصة مسبقًا.",
+      "example": "std::construct_at(ptr, arg1, arg2);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "بناء كائن في ذاكرة خام",
+          "code": "#include <memory>\n#include <iostream>\n\nstruct Point {\n    double x, y;\n    Point(double x, double y) : x(x), y(y) {}\n};\n\nint main() {\n    void* raw = ::operator new(sizeof(Point));\n    Point* p = std::construct_at(static_cast<Point*>(raw), 3.0, 4.0);\n    std::cout << p->x << ' ' << p->y; // 3 4\n    std::destroy_at(p);\n    ::operator delete(raw);",
+          "explanationArabic": "construct_at يحل محل new (ptr) T(args) القديم. أنظف وأكثر أمانًا لأنه يتعامل مع أنواع المصفوفات و lifetime بشكل صحيح. في C++20، هو الطريقة الموصى بها لبناء كائنات في ذاكرة خام."
+        }
+      ],
+      "related": [
+        "std::destroy_at",
+        "std::uninitialized_fill"
+      ]
+    },
+    "std::get_temporary_buffer": {
+      "title": "std::get_temporary_buffer",
+      "type": "دالة قالب",
+      "description": "يُخصص ذاكرة مؤقتة غير مهيأة. قد يُرجع ذاكرة أقل من المطلوب. مُهمل منذ C++17 — استخدم vector أو allocator بدلًا منه.",
+      "usage": "يظهر في كود قديم يحتاج ذاكرة مؤقتة. لا يُنصح باستخدامه في كود جديد.",
+      "example": "auto [ptr, count] = std::get_temporary_buffer<int>(100);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "استخدام بديل حديث",
+          "code": "#include <memory>\n#include <vector>\n\n// ❌ قديم ومُهمل\n// auto [ptr, count] = std::get_temporary_buffer<int>(100);\n// std::return_temporary_buffer(ptr);\n\n// ✅ بديل حديث\nstd::vector<int> temp_buf(100); // آمن ونظيف",
+          "explanationArabic": "get_temporary_buffer غير موثوق: قد يُرجع أقل مما طلبت ولا يُهيئ الذاكرة. vector أنظف وأكثر أمانًا. استخدم vector مع reserve أو allocator مخصص إذا احتجت تحكمًا أكبر."
+        }
+      ],
+      "related": [
+        "std::return_temporary_buffer",
+        "std::allocator"
+      ]
+    },
+    "std::return_temporary_buffer": {
+      "title": "std::return_temporary_buffer",
+      "type": "دالة قالب",
+      "description": "يُحرر ذاكرة مُخصصة بـ get_temporary_buffer. مُهمل منذ C++17.",
+      "usage": "يظهر في كود قديم يُحرر ذاكرة مؤقتة.",
+      "example": "std::return_temporary_buffer(ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "مُهمل — استخدم vector بدلًا منه",
+          "code": "#include <memory>\n#include <vector>\n\n// ❌ قديم\n// auto [ptr, count] = std::get_temporary_buffer<int>(100);\n// ... use ptr ...\n// std::return_temporary_buffer(ptr);\n\n// ✅ بديل حديث — التدمير التلقائي\n{\n    std::vector<int> buf(100);\n    // ... use buf ...\n} // يُحرر تلقائيًا",
+          "explanationArabic": "return_temporary_buffer مُهمل. vector يُحرر تلقائيًا عند خروج النطاق وهو أكثر أمانًا. لا تستخدم get/return_temporary_buffer في كود جديد."
+        }
+      ],
+      "related": [
+        "std::get_temporary_buffer"
+      ]
+    },
+    "std::uninitialized_copy": {
+      "title": "std::uninitialized_copy",
+      "type": "دالة قالب",
+      "description": "ينسخ عناصر من نطاق إلى ذاكرة غير مهيأة باستخدام مُنشئ النسخ. لا يُفترض أن الذاكرة الهدف تحتوي كائنات صالحة.",
+      "usage": "يظهر عند نسخ عناصر إلى ذاكرة خام مُخصصة حديثًا.",
+      "example": "auto result = std::uninitialized_copy(src.begin(), src.end(), dest);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ إلى ذاكرة خام",
+          "code": "#include <memory>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::string src[] = {\"hello\", \"world\"};\n    void* raw = ::operator new(2 * sizeof(std::string));\n    std::string* dest = static_cast<std::string*>(raw);\n\n    std::uninitialized_copy(std::begin(src), std::end(src), dest);\n    std::cout << dest[0] << ' ' << dest[1]; // hello world\n\n    std::destroy(dest, dest + 2);\n    ::operator delete(raw);",
+          "explanationArabic": "uninitialized_copy يبني كائنات جديدة في الذاكرة الهدف عبر مُنشئ النسخ. يختلف عن std::copy الذي يُعيّن على كائنات موجودة. يجب استدعاء destroy بعد الانتهاء."
+        }
+      ],
+      "related": [
+        "std::uninitialized_fill",
+        "std::destroy",
+        "std::uninitialized_copy_n"
+      ]
+    },
+    "std::uninitialized_copy_n": {
+      "title": "std::uninitialized_copy_n",
+      "type": "دالة قالب",
+      "description": "مثل uninitialized_copy لكن يأخذ عددًا بدل نطاق النهاية. ينسخ n عنصرًا.",
+      "usage": "يظهر عند نسخ عدد محدد من عناصر إلى ذاكرة خام.",
+      "example": "auto result = std::uninitialized_copy_n(src, 5, dest);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "نسخ عدد محدد",
+          "code": "#include <memory>\n#include <vector>\n#include <string>\n#include <iostream>\n\nint main() {\n    std::vector<std::string> src = {\"a\", \"b\", \"c\", \"d\", \"e\"};\n    void* raw = ::operator new(3 * sizeof(std::string));\n    auto* dest = static_cast<std::string*>(raw);\n\n    std::uninitialized_copy_n(src.begin(), 3, dest);\n    std::cout << dest[0] << ' ' << dest[2]; // a c\n\n    std::destroy_n(dest, 3);\n    ::operator delete(raw);",
+          "explanationArabic": "uninitialized_copy_n مفيد عندما تعرف العدد المطلوب بدل حساب نهاية النطاق. يُرجع مكرر بعد آخر عنصر مُنسوخ."
+        }
+      ],
+      "related": [
+        "std::uninitialized_copy",
+        "std::destroy_n"
+      ]
+    },
+    "std::uninitialized_fill": {
+      "title": "std::uninitialized_fill",
+      "type": "دالة قالب",
+      "description": "يُنشئ نسخًا من قيمة في ذاكرة غير مهيأة باستخدام المُنشئ النسخ.",
+      "usage": "يظهر عند تهيئة ذاكرة خام بعدد من نسخ قيمة معينة.",
+      "example": "std::uninitialized_fill(first, last, value);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "تهيئة ذاكرة خام بقيمة",
+          "code": "#include <memory>\n#include <string>\n#include <iostream>\n\nint main() {\n    void* raw = ::operator new(3 * sizeof(std::string));\n    auto* dest = static_cast<std::string*>(raw);\n\n    std::uninitialized_fill(dest, dest + 3, std::string(\"hello\"));\n    std::cout << dest[0] << ' ' << dest[2]; // hello hello\n\n    std::destroy(dest, dest + 3);\n    ::operator delete(raw);",
+          "explanationArabic": "uninitialized_fill يبني كائنات جديدة في الذاكرة الهدف. يختلف عن std::fill الذي يُعيّن على كائنات موجودة. مفيد مع custom allocators."
+        }
+      ],
+      "related": [
+        "std::uninitialized_copy",
+        "std::destroy",
+        "std::uninitialized_fill_n"
+      ]
+    },
+    "std::uninitialized_fill_n": {
+      "title": "std::uninitialized_fill_n",
+      "type": "دالة قالب",
+      "description": "مثل uninitialized_fill لكن يأخذ عددًا بدل نطاق النهاية. يُنشئ n نسخة من القيمة.",
+      "usage": "يظهر عند تهيئة عدد محدد من عناصر في ذاكرة خام.",
+      "example": "std::uninitialized_fill_n(dest, 5, value);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "تهيئة عدد محدد",
+          "code": "#include <memory>\n#include <string>\n#include <iostream>\n\nint main() {\n    void* raw = ::operator new(4 * sizeof(std::string));\n    auto* dest = static_cast<std::string*>(raw);\n\n    std::uninitialized_fill_n(dest, 4, std::string(\"test\"));\n    for (int i = 0; i < 4; ++i)\n        std::cout << dest[i] << ' '; // test test test test\n\n    std::destroy_n(dest, 4);\n    ::operator delete(raw);",
+          "explanationArabic": "uninitialized_fill_n يبني n كائنًا جديدًا في الذاكرة الهدف. يُرجع مؤشرًا بعد آخر عنصر. مفيد عندما تعرف العدد بدل حساب النهاية."
+        }
+      ],
+      "related": [
+        "std::uninitialized_fill",
+        "std::destroy_n"
+      ]
+    },
+    "std::declare_no_pointers": {
+      "title": "std::declare_no_pointers",
+      "type": "دالة",
+      "description": "يُخبر جامع القمامة أن النطاق لا يحتوي مؤشرات قابلة للتتبع. مُهمل منذ C++23.",
+      "usage": "يظهر في كود يعمل مع أنظمة جمع القمامة. نادر الاستخدام.",
+      "example": "std::declare_no_pointers(p, size);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "مُهمل — سياق جامع القمامة",
+          "code": "#include <memory>\n\n// يُخبر جامع القمامة ألا يفحص هذا النطاق\n// std::declare_no_pointers(buffer, buffer_size);\n\n// مُهمل في C++23 — لا تستخدمه في كود جديد",
+          "explanationArabic": "declare_no_pointers مُصمم لبيئات جمع القمامة. يُخبر GC أن النطاق يحتوي بيانات خام لا تحتوي مؤشرات. مُهمل لأنه لم يُستخدم عمليًا."
+        }
+      ],
+      "related": [
+        "std::declare_reachable",
+        "std::undeclare_no_pointers"
+      ]
+    },
+    "std::declare_reachable": {
+      "title": "std::declare_reachable",
+      "type": "دالة",
+      "description": "يُعلن أن مؤشر ما يشير لكائن يجب أن يبقى حيًا. مُهمل منذ C++23.",
+      "usage": "يظهر في كود يعمل مع أنظمة جمع القمامة. نادر الاستخدام.",
+      "example": "std::declare_reachable(ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "مُهمل — سياق جامع القمامة",
+          "code": "#include <memory>\n\n// يُخبر جامع القمامة ألا يجمع هذا الكائن\n// void* p = std::declare_reachable(ptr);\n\n// مُهمل في C++23 — لا تستخدمه في كود جديد",
+          "explanationArabic": "declare_reachable مُصمم لمنع جامع القمامة من تحرير كائن لا يزال مطلوبًا. مُهمل لأنه لم يُستخدم عمليًا."
+        }
+      ],
+      "related": [
+        "std::undeclare_reachable",
+        "std::declare_no_pointers"
+      ]
+    },
+    "std::undeclare_no_pointers": {
+      "title": "std::undeclare_no_pointers",
+      "type": "دالة",
+      "description": "يُلغي تأثير declare_no_pointers على نطاق. مُهمل منذ C++23.",
+      "usage": "يظهر في كود يعمل مع أنظمة جمع القمامة. نادر الاستخدام.",
+      "example": "std::undeclare_no_pointers(p, size);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "مُهمل",
+          "code": "#include <memory>\n\n// std::undeclare_no_pointers(buffer, buffer_size);\n// مُهمل في C++23 — لا تستخدمه",
+          "explanationArabic": "يلغي declare_no_pointers. مُهمل مثل بقية دوال GC tracking."
+        }
+      ],
+      "related": [
+        "std::declare_no_pointers"
+      ]
+    },
+    "std::undeclare_reachable": {
+      "title": "std::undeclare_reachable",
+      "type": "دالة",
+      "description": "يُلغي إعلان declare_reachable. مُهمل منذ C++23.",
+      "usage": "يظهر في كود يعمل مع أنظمة جمع القمامة. نادر الاستخدام.",
+      "example": "std::undeclare_reachable(ptr);",
+      "includeHeader": "#include <memory>",
+      "usageExamples": [
+        {
+          "titleArabic": "مُهمل",
+          "code": "#include <memory>\n\n// std::undeclare_reachable(ptr);\n// مُهمل في C++23 — لا تستخدمه",
+          "explanationArabic": "يلغي declare_reachable. مُهمل مثل بقية دوال GC tracking."
+        }
+      ],
+      "related": [
+        "std::declare_reachable"
+      ]
+    },
+    "std::new_handler": {
+      "title": "std::new_handler",
+      "type": "نوع",
+      "description": "نوع مؤشر دالة يُستدعى عندما يفشل operator new في تخصيص الذاكرة. الدالة يجب أن تُحرر ذاكرة أو تُرمي استثناءً.",
+      "usage": "يظهر كنوع معامل لـ set_new_handler أو كنوع إرجاع لـ get_new_handler.",
+      "example": "std::new_handler h = std::set_new_handler(my_handler);",
+      "includeHeader": "#include <new>",
+      "usageExamples": [
+        {
+          "titleArabic": "تعريف معالج فشل التخصيص",
+          "code": "#include <new>\n#include <iostream>\n\nvoid out_of_memory() {\n    std::cerr << \"Memory exhausted!\\n\";\n    std::set_new_handler(nullptr);\n    throw std::bad_alloc();\n}\n\nint main() {\n    std::set_new_handler(out_of_memory);\n    try {\n        while (true) {\n            new int[100000000];\n        }\n    } catch (const std::bad_alloc&) {\n        std::cout << \"Caught bad_alloc\\n\";\n    }",
+          "explanationArabic": "new_handler يُستدعى بشكل متكرر حتى ينجح التخصيص أو يُرمى استثناء. يجب أن يحرر ذاكرة أو يرمي. إذا عاد بدون فعل شيء، سيُستدعى مجددًا (حلقة لا نهائية)."
+        }
+      ],
+      "related": [
+        "std::set_new_handler",
+        "std::get_new_handler",
+        "std::bad_alloc"
+      ]
+    },
+    "std::set_new_handler": {
+      "title": "std::set_new_handler",
+      "type": "دالة",
+      "description": "يُعيّن دالة تُستدعى عند فشل operator new. يُرجع المعالج السابق.",
+      "usage": "يظهر عند الحاجة للتعامل مع نفاد الذاكرة بشكل مخصص.",
+      "example": "std::new_handler old = std::set_new_handler(my_handler);",
+      "includeHeader": "#include <new>",
+      "usageExamples": [
+        {
+          "titleArabic": "تعيين معالج نفاد الذاكرة",
+          "code": "#include <new>\n#include <iostream>\n\nvoid handle_oom() {\n    static bool tried = false;\n    if (!tried) {\n        tried = true;\n        std::cout << \"Freeing cache...\\n\";\n        return; // حاول مجددًا\n    }\n    std::cout << \"Giving up\\n\";\n    throw std::bad_alloc();\n}\n\nint main() {\n    std::set_new_handler(handle_oom);",
+          "explanationArabic": "set_new_handler يسمح بتطبيق استراتيجية استرداد ذاكرة قبل رمي bad_alloc. المعالج يُستدعى عند كل فشل. إذا عاد بدون رمي، يحاول new مجددًا."
+        }
+      ],
+      "related": [
+        "std::get_new_handler",
+        "std::new_handler"
+      ]
+    },
+    "std::get_new_handler": {
+      "title": "std::get_new_handler",
+      "type": "دالة",
+      "description": "يُرجع new_handler الحالي. متاح منذ C++11.",
+      "usage": "يظهر عند الحاجة لفحص أو حفظ المعالج الحالي.",
+      "example": "std::new_handler current = std::get_new_handler();",
+      "includeHeader": "#include <new>",
+      "usageExamples": [
+        {
+          "titleArabic": "حفظ واستعادة المعالج",
+          "code": "#include <new>\n#include <iostream>\n\nvoid my_handler() {\n    std::cout << \"OOM!\\n\";\n    throw std::bad_alloc();\n}\n\nint main() {\n    auto old = std::get_new_handler();\n    std::set_new_handler(my_handler);\n    // ... عمليات قد تفشل ...\n    std::set_new_handler(old); // استعادة",
+          "explanationArabic": "get_new_handler يسمح بحفظ المعالج الحالي واستعادته لاحقًا. مفيد في المكتبات التي تحتاج تعديل المعالج مؤقتًا."
+        }
+      ],
+      "related": [
+        "std::set_new_handler",
+        "std::new_handler"
+      ]
+    },
+    "std::nothrow": {
+      "title": "std::nothrow",
+      "type": "ثابت",
+      "description": "كائن من نوع nothrow_t يُمرر لـ operator new لمنع رمي استثناء عند الفشل. يُرجع nullptr بدلًا من رمي bad_alloc.",
+      "usage": "يظهر عند الحاجة لتخصيص ذاكرة بدون استثناءات.",
+      "example": "int* p = new (std::nothrow) int[1000000];\nif (!p) { /* فشل التخصيص */ }",
+      "includeHeader": "#include <new>",
+      "usageExamples": [
+        {
+          "titleArabic": "تخصيص آمن بدون استثناءات",
+          "code": "#include <new>\n#include <iostream>\n\nint main() {\n    int* big = new (std::nothrow) int[1000000000];\n    if (!big) {\n        std::cout << \"Allocation failed — no exception thrown\\n\";\n        return 1;\n    }\n    std::cout << \"Allocated successfully\\n\";\n    delete[] big;",
+          "explanationArabic": "nothrow يمنع new من رمي bad_alloc عند الفشل. يُرجع nullptr بدلًا من ذلك. مفيد في أنظمة لا تستخدم الاستثناءات أو في destructors حيث لا يجب رمي استثناءات. لا ينصح باستخدامه بشكل عام — استخدم smart pointers وtry/catch بدلًا من ذلك."
+        }
+      ],
+      "related": [
+        "std::bad_alloc",
+        "std::operator new"
+      ]
+    },
+    "std::operator new": {
+      "title": "std::operator new",
+      "type": "دالة",
+      "description": "دالة تخصيص الذاكرة الأساسية. new expression تستدعيها داخليًا. يمكن تخصيصها لكل نوع أو بشكل عام.",
+      "usage": "يظهر عند الحاجة لتخصيص ذاكرة خام مباشرة أو تخصيص سلوك new.",
+      "example": "void* raw = ::operator new(1024);",
+      "includeHeader": "#include <new>",
+      "usageExamples": [
+        {
+          "titleArabic": "تخصيص ذاكرة خام",
+          "code": "#include <new>\n#include <iostream>\n\nint main() {\n    void* raw = ::operator new(256);\n    std::cout << \"allocated 256 bytes\\n\";\n    ::operator delete(raw);",
+          "explanationArabic": "::operator new يُخصّص ذاكرة خام بدون استدعاء مُنشئ. يختلف عن new expression الذي يُخصّص ويبني. يُستخدم مع placement new أو custom allocators."
+        },
+        {
+          "titleArabic": "placement new",
+          "code": "#include <new>\n#include <iostream>\n\nstruct Buffer {\n    char data[1024];\n};\n\nint main() {\n    Buffer buf;\n    int* p = new (buf.data) int(42); // placement new\n    std::cout << *p; // 42\n    p->~int(); // يجب استدعاء المُدمّر يدويًا\n    // لا تحرر buf.data — لم تُخصّص ديناميكيًا",
+          "explanationArabic": "placement new يبني كائنًا في ذاكرة موجودة مسبقًا. لا يُخصّص ذاكرة جديدة. يجب استدعاء المُدمّر يدويًا لكن لا تُحرر الذاكرة. شائع في memory pools وcustom allocators."
+        }
+      ],
+      "related": [
+        "std::operator delete",
+        "std::nothrow",
+        "std::bad_alloc"
+      ]
+    },
+    "std::operator delete": {
+      "title": "std::operator delete",
+      "type": "دالة",
+      "description": "دالة تحرير الذاكرة الأساسية. delete expression تستدعيها داخليًا بعد استدعاء المُدمّر.",
+      "usage": "يظهر عند تحرير ذاكرة مُخصصة بـ operator new أو تخصيص سلوك delete.",
+      "example": "::operator delete(raw);",
+      "includeHeader": "#include <new>",
+      "usageExamples": [
+        {
+          "titleArabic": "تحرير ذاكرة خام",
+          "code": "#include <new>\n#include <iostream>\n\nint main() {\n    void* raw = ::operator new(256);\n    // ... استخدام raw ...\n    ::operator delete(raw); // حرر الذاكرة",
+          "explanationArabic": "::operator delete يحرر ذاكرة مُخصصة بـ ::operator new. يختلف عن delete expression الذي يستدعي المُدمّر أولًا. يجب أن تتطابق new/delete: إذا استخدمت operator new فاستخدم operator delete."
+        }
+      ],
+      "related": [
+        "std::operator new",
+        "std::nothrow"
+      ]
+    },
+    "std::raw_storage_iterator": {
+      "title": "std::raw_storage_iterator",
+      "type": "مكرّر إخراج",
+      "description": "مكرّر إخراج يُخصّص ذاكرة غير مهيأة عبر مُخصِّص (allocator) ثم يبني الكائنات فيها باستخدام placement new. يفصل بين تخصيص الذاكرة وبناء الكائن — مفيد في حاويات مخصصة تحتاج بناءً متأخرًا.",
+      "usage": "يُستخدم في بناء حاويات أو خوارزميات تحتاج تخصيص ذاكرة مسبقًا ثم بناء الكائنات لاحقًا. أُهمل في C++17 ويفضّل استبداله بـ std::uninitialized_copy وstd::uninitialized_move.",
+      "example": "#include <memory>\n#include <vector>\n\nstd::vector<int> src = {1, 2, 3};\nstd::allocator<int> alloc;\nint* buf = alloc.allocate(3);\nstd::raw_storage_iterator<int*, int> it(buf);\nstd::copy(src.begin(), src.end(), it);",
+      "includeHeader": "#include <memory>",
+      "related": [
+        "std::allocator",
+        "std::uninitialized_copy",
+        "placement new"
+      ]
+    },
+    "std::begin (initializer_list)": {
+      "title": "std::begin (initializer_list)",
+      "type": "دالة وصول",
+      "description": "إصدار مبالَغ عليه (overload) من std::begin يعمل على std::initializer_list. يُرجع مكرّرًا يُشير إلى أول عنصر في القائمة. يُستخدم في القوالب والخوارزميات العامة لمعالجة initializer_list كأي حاوية أخرى.",
+      "usage": "يظهر عند كتابة قوالب أو خوارزميات تقبل initializer_list كحاوية. يسمح بكتابة كود موحد يعمل مع أي نوع حاوية بما فيها initializer_list.",
+      "example": "#include <initializer_list>\n#include <iterator>\n\nvoid process(std::initializer_list<int> list) {\n    for (auto it = std::begin(list); it != std::end(list); ++it) {\n        // *it\n    }\n}",
+      "includeHeader": "#include <initializer_list>",
+      "related": [
+        "std::end (initializer_list)",
+        "std::initializer_list::begin",
+        "std::initializer_list"
+      ]
+    },
+    "std::end (initializer_list)": {
+      "title": "std::end (initializer_list)",
+      "type": "دالة وصول",
+      "description": "إصدار مبالَغ عليه من std::end يعمل على std::initializer_list. يُرجع مكرّرًا يُشير إلى ما بعد آخر عنصر (past-the-end). يُستخدم مع std::begin في حلقات ونطاقات iterator.",
+      "usage": "يظهر مع std::begin في القوالب والخوارزميات التي تتعامل مع initializer_list كحاوية.",
+      "example": "#include <initializer_list>\n#include <algorithm>\n\nauto sum = [](std::initializer_list<int> list) {\n    return std::accumulate(std::begin(list), std::end(list), 0);\n};\nint total = sum({1, 2, 3, 4}); // 10",
+      "includeHeader": "#include <initializer_list>",
+      "related": [
+        "std::begin (initializer_list)",
+        "std::initializer_list::end",
+        "std::initializer_list"
+      ]
+    },
+    "std::initializer_list::begin": {
+      "title": "std::initializer_list::begin",
+      "type": "دالة عضو",
+      "description": "دالة عضو في initializer_list تُرجع مكرّرًا const يُشير إلى أول عنصر. تختلف عن std::begin المبالَغ عليه بأنها تُستدعى مباشرة على الكائن بينما std::begin تعمل عبر ADL أو التحميل الزائد.",
+      "usage": "تُستخدم عند الحاجة للوصول المباشر إلى مكرّرات initializer_list. في معظم الحالات std::begin(list) أنسب لأنه يعمل مع كل أنواع الحاويات.",
+      "example": "#include <initializer_list>\n\nvoid print(std::initializer_list<int> list) {\n    for (auto it = list.begin(); it != list.end(); ++it) {\n        // *it — المكرّر من نوع const T*\n    }\n}",
+      "includeHeader": "#include <initializer_list>",
+      "related": [
+        "std::initializer_list::end",
+        "std::begin (initializer_list)",
+        "std::initializer_list"
+      ]
+    },
+    "std::auto_ptr": {
+      "title": "std::auto_ptr",
+      "type": "مؤشر ذكي (مهمل)",
+      "description": "مؤشر ذكي قديم من C++98 يُدير ملكية حصرية عبر النسخ المُحوَّل (transfer-on-copy). أُلغي في C++17 تمامًا. مشكلته الأساسية أن النسخ ينقل الملكية بصمتًا مما يسبب سلوكًا غير متوقع مع حاويات STL.",
+      "usage": "لا تستخدمه أبدًا في كود جديد. يُذكر فقط لفهم كود قديم أو عند ترحيل مشاريع C++98/03. استبدله بـ std::unique_ptr.",
+      "example": "#include <memory> // C++98 فقط\n\n// ❌ مهمل — لا تستخدمه\n// std::auto_ptr<int> a(new int(42));\n// std::auto_ptr<int> b = a; // a يصبح nullptr بصمتًا!\n\n// ✅ البديل الحديث\nstd::unique_ptr<int> a = std::make_unique<int>(42);",
+      "includeHeader": "#include <memory> (مهمل — لا تستخدمه)",
+      "related": [
+        "std::unique_ptr",
+        "std::shared_ptr",
+        "std::make_unique"
+      ]
+    },
+    "std::auto_ptr_ref": {
+      "title": "std::auto_ptr_ref",
+      "type": "نوع مساعد (مهمل)",
+      "description": "نوع مساعد داخلي كان يُستخدم لتنفيذ النسخ المُحوَّل لـ std::auto_ptr. يسمح بتمرير auto_ptr كمعامل مؤقت (rvalue) لبعض الدوال. أُلغي مع auto_ptr في C++17.",
+      "usage": "لا تتعامل معه مباشرة أبدًا. كان تفصيلًا داخليًا في تنفيذ auto_ptr. يُذكر فقط عند قراءة كود قديم أو رسائل خطأ مترجم قديم.",
+      "example": "// auto_ptr_ref كان يُستخدم داخليًا هكذا:\n// std::auto_ptr<int> a(new int(1));\n// std::auto_ptr<int> b(a);       // يُستخدم auto_ptr_ref هنا\n// ❌ لا تستخدمه — استبدل auto_ptr بـ unique_ptr",
+      "includeHeader": "#include <memory> (مهمل — لا تستخدمه)",
+      "related": [
+        "std::auto_ptr",
+        "std::unique_ptr"
+      ]
+    }
+  }
+}

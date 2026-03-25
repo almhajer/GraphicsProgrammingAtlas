@@ -1,0 +1,339 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "generatedAt": "2026-03-25T22:14:00.000Z",
+  "library": {
+    "id": "ffmpeg",
+    "displayName": "FFmpeg",
+    "displayNameArabic": "FFmpeg",
+    "description": "مرجع عربي لمكتبة FFmpeg."
+  },
+  "totalCount": 40,
+  "routes": {
+    "hub": "#ref",
+    "library": "#ref/ffmpeg"
+  },
+  "groups": [
+    {
+      "title": "فتح المصدر وقراءة الحزم",
+      "letter": "ف",
+      "items": [
+        {
+          "name": "avformat_open_input",
+          "slug": "avformat-open-input",
+          "titleArabic": "يفتح ملفًا أو تدفقًا ويجهز AVFormatContext للقراءة",
+          "shortDescription": "نقطة دخول libavformat الفعلية لفتح المصدر وربط الحاوية والسياق.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/avformat_8h.html"
+        },
+        {
+          "name": "avformat_find_stream_info",
+          "slug": "avformat-find-stream-info",
+          "titleArabic": "يقرأ من المصدر بقدر كاف لاكتشاف خصائص الـ streams تلقائيًا",
+          "shortDescription": "يملا حقول AVStream وAVCodecParameters قبل اختيار decoder المناسب.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/avformat_8h.html"
+        },
+        {
+          "name": "av_find_best_stream",
+          "slug": "av-find-best-stream",
+          "titleArabic": "يختار تلقائيًا أفضل stream من نوع وسائط معين داخل الملف",
+          "shortDescription": "يعيد الفهرس الأنسب عمليًا بدل بناء منطق الاختيار يدويًا.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/avformat_8c.html"
+        },
+        {
+          "name": "av_read_frame",
+          "slug": "av-read-frame",
+          "titleArabic": "يسحب الحزمة التالية من المصدر المفتوح على شكل AVPacket",
+          "shortDescription": "يعيد packet مضغوطة من الحاوية، لا frame خامة.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/avformat_8h.html"
+        },
+        {
+          "name": "avformat_close_input",
+          "slug": "avformat-close-input",
+          "titleArabic": "يغلق المصدر المفتوح ويحرر AVFormatContext وما يتبعه",
+          "shortDescription": "ينظف مسار libavformat كله بما فيه السياق والـ streams والـ IO.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/avformat_8h.html"
+        }
+      ]
+    },
+    {
+      "title": "اختيار المفكك وتهيئته وفك الترميز",
+      "letter": "ا",
+      "items": [
+        {
+          "name": "avcodec_find_decoder",
+          "slug": "avcodec-find-decoder",
+          "titleArabic": "يبحث عن decoder مسجل يطابق AVCodecID المطلوب",
+          "shortDescription": "ينقلك من codec_id داخل stream إلى AVCodec فعلي قابل للفتح.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__decoding.html"
+        },
+        {
+          "name": "avcodec_alloc_context3",
+          "slug": "avcodec-alloc-context3",
+          "titleArabic": "يخصص AVCodecContext ويملؤه بالقيم الافتراضية المناسبة",
+          "shortDescription": "يحجز السياق الذي سيحمل حالة decoder أو encoder.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        },
+        {
+          "name": "avcodec_parameters_to_context",
+          "slug": "avcodec-parameters-to-context",
+          "titleArabic": "ينسخ AVCodecParameters إلى AVCodecContext قبل الفتح",
+          "shortDescription": "الجسر العملي بين stream->codecpar وبين AVCodecContext التشغيلي.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        },
+        {
+          "name": "avcodec_open2",
+          "slug": "avcodec-open2",
+          "titleArabic": "يحوّل AVCodecContext من بنية محجوزة إلى decoder أو encoder فعلي جاهز",
+          "shortDescription": "يبني الموارد الداخلية ويجعل السياق صالحًا لـ send/receive.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        },
+        {
+          "name": "avcodec_send_packet",
+          "slug": "avcodec-send-packet",
+          "titleArabic": "يدفع packet مضغوطة إلى decoder ليعالجها تدريجيًا",
+          "shortDescription": "جهة الإدخال في واجهة send/receive الحديثة للفك.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/avcodec_8h.html"
+        },
+        {
+          "name": "avcodec_receive_frame",
+          "slug": "avcodec-receive-frame",
+          "titleArabic": "يسحب الإطار المفكوك من سياق codec بعد إدخال الحزم",
+          "shortDescription": "جهة الإخراج من واجهة send/receive الحديثة للفك.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/avcodec_8h.html"
+        },
+        {
+          "name": "avcodec_get_hw_frames_parameters",
+          "slug": "avcodec-get-hw-frames-parameters",
+          "titleArabic": "يبني AVHWFramesContext مناسبًا لمسار فك الترميز العتادي",
+          "shortDescription": "مساعد مهم لتهيئة hw_frames_ctx عند استخدام decoder عتادي.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__decoding.html#ga58bc4bf1e0ac59e27362597e467efff3"
+        },
+        {
+          "name": "avcodec_flush_buffers",
+          "slug": "avcodec-flush-buffers",
+          "titleArabic": "يمسح buffers الداخلية داخل AVCodecContext لإعادة البدء",
+          "shortDescription": "مفيد بعد seek أو إعادة تموضع القراءة داخل decoder مفتوح.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__misc.html"
+        },
+        {
+          "name": "avcodec_free_context",
+          "slug": "avcodec-free-context",
+          "titleArabic": "يحرر AVCodecContext ويصفّر المؤشر بعد الانتهاء",
+          "shortDescription": "خطوة الإغلاق الصحيحة لسياق codec المفتوح أو المحجوز.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        }
+      ]
+    },
+    {
+      "title": "استكشاف codecs وبناء القوائم",
+      "letter": "ا",
+      "items": [
+        {
+          "name": "avcodec_get_name",
+          "slug": "avcodec-get-name",
+          "titleArabic": "يعيد الاسم النصي القياسي لـ AVCodecID",
+          "shortDescription": "يحوّل معرف codec إلى اسم نصي واضح مثل h264 أو aac.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        },
+        {
+          "name": "av_codec_iterate",
+          "slug": "av-codec-iterate",
+          "titleArabic": "يمر على جميع codecs المسجلة واحدة تلو الأخرى",
+          "shortDescription": "الواجهة الحديثة لاستعراض encoders وdecoders المسجلة في البناء الحالي.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        },
+        {
+          "name": "av_codec_is_encoder",
+          "slug": "av-codec-is-encoder",
+          "titleArabic": "يتحقق هل AVCodec المعطى يعمل كمرمّز",
+          "shortDescription": "يفرز codecs المستعرضة إلى encoders فعلية.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        },
+        {
+          "name": "av_codec_is_decoder",
+          "slug": "av-codec-is-decoder",
+          "titleArabic": "يتحقق هل AVCodec المعطى يعمل كمفكّك",
+          "shortDescription": "يفرز codecs المستعرضة إلى decoders فعلية.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        }
+      ]
+    },
+    {
+      "title": "اختيار المرمّز وتجهيز الإخراج",
+      "letter": "ا",
+      "items": [
+        {
+          "name": "avcodec_find_encoder",
+          "slug": "avcodec-find-encoder",
+          "titleArabic": "يبحث عن encoder مسجل يطابق AVCodecID المطلوب",
+          "shortDescription": "بداية مسار الترميز عندما تريد إنتاج bitstream جديدة مثل H.264 أو AAC.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        },
+        {
+          "name": "avcodec_parameters_from_context",
+          "slug": "avcodec-parameters-from-context",
+          "titleArabic": "ينسخ إعدادات AVCodecContext إلى AVCodecParameters",
+          "shortDescription": "يملأ codecpar الخاصة بـ stream الإخراج من encoder الفعلي.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__core.html"
+        },
+        {
+          "name": "avcodec_send_frame",
+          "slug": "avcodec-send-frame",
+          "titleArabic": "يدفع AVFrame خامة إلى encoder ليبني منها AVPacket مضغوطة",
+          "shortDescription": "جهة الإدخال في واجهة الترميز الحديثة.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__encdec.html"
+        },
+        {
+          "name": "avcodec_receive_packet",
+          "slug": "avcodec-receive-packet",
+          "titleArabic": "يسحب AVPacket المضغوطة الناتجة من encoder بعد إدخال frames",
+          "shortDescription": "جهة الإخراج المقابلة لـ avcodec_send_frame في مسار الترميز.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__encdec.html"
+        }
+      ]
+    },
+    {
+      "title": "مرشحات bitstream للحزم المضغوطة",
+      "letter": "م",
+      "items": [
+        {
+          "name": "av_bsf_alloc",
+          "slug": "av-bsf-alloc",
+          "titleArabic": "يحجز AVBSFContext لمرشح bitstream محدد",
+          "shortDescription": "يبني السياق التشغيلي لمرشح يعمل على AVPacket المضغوطة مباشرة.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__bsf.html"
+        },
+        {
+          "name": "av_bsf_init",
+          "slug": "av-bsf-init",
+          "titleArabic": "يهيئ AVBSFContext بعد تعبئة مدخلاته الأساسية",
+          "shortDescription": "الخطوة التي تجعل BSF قابلة للعمل بعد تعبئة par_in وtime_base_in.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__bsf.html"
+        },
+        {
+          "name": "av_bsf_send_packet",
+          "slug": "av-bsf-send-packet",
+          "titleArabic": "يدفع AVPacket مضغوطة إلى مرشح bitstream",
+          "shortDescription": "الجهة المدخلة في واجهة BSF الحديثة.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__bsf.html"
+        },
+        {
+          "name": "av_bsf_receive_packet",
+          "slug": "av-bsf-receive-packet",
+          "titleArabic": "يسحب AVPacket الناتجة من مرشح bitstream",
+          "shortDescription": "الجهة المخرجة التي تعيد packet المعدلة بعد BSF.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__bsf.html"
+        },
+        {
+          "name": "av_bsf_free",
+          "slug": "av-bsf-free",
+          "titleArabic": "يحرر AVBSFContext بعد انتهاء مرشح bitstream",
+          "shortDescription": "خطوة الإغلاق الصحيحة لسياق BSF بعد اكتمال المعالجة.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavc__bsf.html"
+        }
+      ]
+    },
+    {
+      "title": "تحويل الصور والتحجيم",
+      "letter": "ت",
+      "items": [
+        {
+          "name": "sws_getContext",
+          "slug": "sws-get-context",
+          "titleArabic": "ينشئ SwsContext لربط أبعاد المصدر والوجهة وصيغ البكسل وخوارزمية التحويل",
+          "shortDescription": "يحدد عقدة العمل الأساسية في libswscale.",
+          "officialUrl": "https://ffmpeg.org/doxygen/trunk/group__libsws.html"
+        },
+        {
+          "name": "sws_getCachedContext",
+          "slug": "sws-get-cached-context",
+          "titleArabic": "يعيد SwsContext موجودًا أو يعيد بناءه فقط عند تغير المواصفات",
+          "shortDescription": "يقلل إعادة التخصيص عبر reuse ذكي لسياق libswscale.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__libsws.html"
+        },
+        {
+          "name": "sws_scale",
+          "slug": "sws-scale",
+          "titleArabic": "يحول الإطار بين صيغ بكسل أو أحجام مختلفة",
+          "shortDescription": "الدالة العملية التي تنفذ التحجيم أو التحويل الفعلي.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/trunk/group__libsws.html"
+        },
+        {
+          "name": "sws_isSupportedInput",
+          "slug": "sws-is-supported-input",
+          "titleArabic": "يتحقق هل صيغة البكسل مدعومة كمدخل في libswscale",
+          "shortDescription": "فحص سريع للدعم قبل محاولة بناء سياق التحويل.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__libsws.html"
+        },
+        {
+          "name": "sws_isSupportedOutput",
+          "slug": "sws-is-supported-output",
+          "titleArabic": "يتحقق هل صيغة البكسل مدعومة كمخرج في libswscale",
+          "shortDescription": "يساعد على التحقق من صلاحية صيغة الوجهة قبل التحويل.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__libsws.html"
+        },
+        {
+          "name": "sws_getCoefficients",
+          "slug": "sws-get-coefficients",
+          "titleArabic": "يعيد معاملات مصفوفة التحويل اللوني لفضاء YUV محدد",
+          "shortDescription": "المدخل العملي لضبط الألوان في libswscale.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__libsws.html"
+        },
+        {
+          "name": "sws_setColorspaceDetails",
+          "slug": "sws-set-colorspace-details",
+          "titleArabic": "يضبط معاملات الفضاء اللوني ونطاق اللون داخل SwsContext",
+          "shortDescription": "يتحكم بمصفوفات اللون والنطاق والسطوع والتشبع.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__libsws.html"
+        },
+        {
+          "name": "sws_getColorspaceDetails",
+          "slug": "sws-get-colorspace-details",
+          "titleArabic": "يقرأ إعدادات الفضاء اللوني الحالية من SwsContext",
+          "shortDescription": "يفحص الحالة اللونية المضبوطة داخل السياق الحالي.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__libsws.html"
+        },
+        {
+          "name": "sws_freeContext",
+          "slug": "sws-free-context",
+          "titleArabic": "يحرر SwsContext بعد انتهاء التحويلات",
+          "shortDescription": "ينظف موارد libswscale المرتبطة بالسياق.",
+          "officialUrl": "https://ffmpeg.org/doxygen/trunk/group__libsws.html"
+        }
+      ]
+    },
+    {
+      "title": "استكشاف الأجهزة والتحكم عبر libavdevice",
+      "letter": "ا",
+      "items": [
+        {
+          "name": "avdevice_list_input_sources",
+          "slug": "avdevice-list-input-sources",
+          "titleArabic": "يسرد أجهزة الإدخال المتاحة لجهاز capture أو input device معين",
+          "shortDescription": "يستكشف الكاميرات والميكروفونات ومصادر الإدخال عبر libavdevice.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavd.html"
+        },
+        {
+          "name": "avdevice_list_output_sinks",
+          "slug": "avdevice-list-output-sinks",
+          "titleArabic": "يسرد أجهزة الإخراج المتاحة لجهاز output معين",
+          "shortDescription": "يستكشف مخارج العرض أو الصوت أو الـ sinks الخاصة بالـ device backend.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavd.html"
+        },
+        {
+          "name": "avdevice_app_to_dev_control_message",
+          "slug": "avdevice-app-to-dev-control-message",
+          "titleArabic": "يرسل رسالة تحكم من التطبيق إلى الجهاز",
+          "shortDescription": "قناة أوامر جانبية مثل pause أو تغيير نافذة أو صوت backend.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavd.html"
+        },
+        {
+          "name": "avdevice_dev_to_app_control_message",
+          "slug": "avdevice-dev-to-app-control-message",
+          "titleArabic": "يرسل رسالة تحكم من الجهاز إلى التطبيق",
+          "shortDescription": "يبلغ التطبيق بأحداث backend مثل overflow أو طلب عرض.",
+          "officialUrl": "https://www.ffmpeg.org/doxygen/8.0/group__lavd.html"
+        }
+      ]
+    }
+  ]
+}

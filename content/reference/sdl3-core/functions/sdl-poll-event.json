@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "2026-03-reference-architecture-1",
+  "library": {
+    "id": "sdl3-core",
+    "displayName": "SDL3 API",
+    "displayNameArabic": "SDL3",
+    "description": "النواة الأساسية لـ SDL3: النوافذ، الإدخال، الأحداث، الصوت، والرسم الأساسي."
+  },
+  "kind": {
+    "id": "functions",
+    "displayName": "Functions",
+    "displayNameArabic": "الدوال",
+    "description": "استدعاءات تنفذ فعلاً، تغيّر حالة، أو تعيد نتيجة، أو تبني مورداً."
+  },
+  "identity": {
+    "name": "SDL_PollEvent",
+    "slug": "sdl-poll-event",
+    "titleArabic": "Poll for currently pending events",
+    "aliases": []
+  },
+  "route": {
+    "hash": "#ref/sdl3-core/functions/sdl-poll-event",
+    "contentPath": "content/reference/sdl3-core/functions/sdl-poll-event.json"
+  },
+  "summary": {
+    "actualTranslationArabic": "Poll for currently pending events",
+    "actualMeaningArabic": "تمثل هذه الدالة عملية تشغيل SDL Poll الحدث داخل SDL3، وتنفذ فعلاً عند استدعائها لا مجرد تعريف نظري.",
+    "purposeArabic": "تستخدم هذه الدالة عندما تحتاج إلى تشغيل SDL Poll الحدث داخل التطبيق أو داخل مسار التنفيذ المرتبط بها.",
+    "whyUseArabic": "القيمة الحقيقية هنا هي الأثر التنفيذي الذي يحدثه الاستدعاء أو النتيجة التي يعيدها إلى التطبيق.",
+    "carriedValueArabic": "القيمة العملية لهذا الاستدعاء تظهر في ناتجه (bool) Returns true if this got an event or false if there are none\navailable. وفي التغيير الذي يحدثه على المورد أو الحالة المرتبطة به.",
+    "sourceDescription": "Poll for currently pending events."
+  },
+  "signature": {
+    "raw": "bool SDL_PollEvent(SDL_Event *event);",
+    "returnType": "bool",
+    "parameters": [
+      "SDL_Event *event"
+    ],
+    "header": "",
+    "headerUrl": "https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_events.h"
+  },
+  "details": {
+    "parameters": [
+      {
+        "name": "event",
+        "type": "SDL_Event *",
+        "descriptionArabic": "يمثل المعامل event من النوع SDL_Event * القيمة أو المورد الذي يعتمد عليه هذا الاستدعاء.",
+        "originalDescription": "the SDL_Event structure to be filled\nwith the next event from the queue, or NULL."
+      }
+    ],
+    "fields": [],
+    "values": [],
+    "usage": [
+      "هذا العنصر متاح منذ SDL 3.2.0."
+    ],
+    "notes": [],
+    "remarks": [
+      "If event is not NULL, the next event is removed from the\nqueue and stored in the SDL_Event structure\npointed to by event .",
+      "If event is NULL, it simply returns true if there is an\nevent in the queue, but will not remove it from the queue.",
+      "As this function may implicitly call SDL_PumpEvents (), you can only call this\nfunction in the thread that initialized the video subsystem.",
+      "SDL_PollEvent () is the favored way\nof receiving system events since it can be done from the main loop and\ndoes not suspend the main loop while waiting on an event to be\nposted.",
+      "The common practice is to fully process the event queue once every\nframe, usually as a first step before updating the game's state:",
+      "while ( game_is_still_running ) {\n SDL_Event event ;\n while ( SDL_PollEvent (& event )) { // poll until all events are handled!\n // decide what to do with this event.\n }\n\n // update game state, draw the current frame\n }\n Note that Windows (and possibly other platforms) has a quirk about\nhow it handles events while dragging/resizing a window, which can cause\nthis function to block for significant amounts of time. Technical\nexplanations and solutions are discussed on the wiki:",
+      "https://wiki.libsdl.org/SDL3/AppFreezeDuringDrag"
+    ],
+    "instructions": [],
+    "lifecycle": [],
+    "returns": "(bool) Returns true if this got an event or false if there are none\navailable.",
+    "threadSafety": "يجب استدعاء هذه الدالة من الخيط الرئيسي فقط.",
+    "example": ""
+  },
+  "links": {
+    "officialUrl": "https://wiki.libsdl.org/SDL3/SDL_PollEvent",
+    "sourceUrl": "",
+    "related": [
+      {
+        "name": "SDL_PushEvent",
+        "route": "#ref/sdl3-core/functions/sdl-push-event",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_WaitEvent",
+        "route": "#ref/sdl3-core/functions/sdl-wait-event",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      },
+      {
+        "name": "SDL_WaitEventTimeout",
+        "route": "#ref/sdl3-core/functions/sdl-wait-event-timeout",
+        "libraryId": "sdl3-core",
+        "kindId": "functions"
+      }
+    ]
+  },
+  "source": {
+    "dataset": "data/ui/sdl3.json",
+    "category": "Event Handling",
+    "packageKey": "core",
+    "packageName": "SDL3"
+  }
+}
