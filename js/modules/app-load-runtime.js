@@ -265,19 +265,15 @@
       updateVulkanSidebarSectionCounts();
 
       try {
-        const [cmakeManifest, glslManifest, imguiManifest, gameUiManifest, sdl3Meta, tutorialManifest, fileManifest] = await Promise.all([
+        const [cmakeManifest, glslManifest, sdl3Meta] = await Promise.all([
           fetchJsonData(uiSegmentSources.cmakeSearch.path),
           fetchJsonData(uiSegmentSources.glsl.path),
-          fetchJsonData(uiSegmentSources.imgui.path),
-          fetchJsonData(uiSegmentSources.gameui.path),
-          fetchJsonData(uiSegmentSources.sdl3.path),
-          fetchJsonData(uiSegmentSources.tutorials.path),
-          fetchJsonData(uiSegmentSources.files.path)
+          fetchJsonData(uiSegmentSources.sdl3.path)
         ]);
 
         const tutorialCatalog = getTutorialCatalog();
-        const tutorialTotal = Array.isArray(tutorialManifest?.tutorialCatalog) ? tutorialManifest.tutorialCatalog.length : tutorialCatalog.length;
-        const fileTotal = Object.values(fileManifest?.vulkanFileSections || {}).reduce((total, section) => total + ((section?.files || []).length), 0);
+        const tutorialTotal = Number(uiSegmentSources.tutorials?.countHint) || tutorialCatalog.length;
+        const fileTotal = Number(uiSegmentSources.files?.countHint) || 0;
         const exampleTotal = getGroupedExampleTotal();
         const vulkanTotal = computeVulkanSidebarClusterCount() - tutorialCatalog.length + tutorialTotal + fileTotal;
         setSidebarClusterCount('vulkan-cluster', vulkanTotal);
@@ -295,10 +291,10 @@
         const glslExamplesTotal = Number(glslManifest?.examples?.count) || 0;
         setSidebarClusterCount('glsl-cluster', glslReferenceTotal + glslExamplesTotal);
 
-        const imguiTotal = (imguiManifest?.sections || []).reduce((total, section) => total + (Number(section.count) || 0), 0);
+        const imguiTotal = Number(uiSegmentSources.imgui?.countHint) || 0;
         setSidebarClusterCount('imgui-cluster', imguiTotal);
 
-        const gameUiTotal = (gameUiManifest?.sections || []).reduce((total, section) => total + (Number(section.itemCount) || 0), 0);
+        const gameUiTotal = Number(uiSegmentSources.gameui?.countHint) || 0;
         setSidebarClusterCount('game-ui-cluster', gameUiTotal);
 
         const sdl3Counts = sdl3Meta?.sdl3PackageMeta || {};

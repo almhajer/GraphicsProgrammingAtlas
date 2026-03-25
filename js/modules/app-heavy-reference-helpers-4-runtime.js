@@ -1521,7 +1521,7 @@ function renderSidebarJumpMenu() {
       data-target="${escapeHtml(target.id)}"
       title="${escapeHtml(target.label)}"
       aria-label="اذهب إلى ${escapeHtml(target.label)}">
-      ${escapeHtml(target.shortLabel)}
+      <span class="sidebar-jump-chip-label">${escapeHtml(target.label)}</span>
     </button>
   `).join('');
 }
@@ -1893,7 +1893,7 @@ function toggleSidebarJumpMenu(event) {
   setSidebarJumpMenuOpen(!sidebarJumpMenuOpen);
 }
 
-function jumpToSidebarCluster(clusterId = '') {
+async function jumpToSidebarCluster(clusterId = '') {
   const sidebar = document.getElementById('sidebar');
   const target = document.getElementById(clusterId);
   if (!sidebar || !target) {
@@ -1901,6 +1901,14 @@ function jumpToSidebarCluster(clusterId = '') {
   }
 
   setSidebarJumpMenuOpen(false);
+  if (target.classList.contains('collapsed') && typeof window.toggleSidebarCluster === 'function') {
+    try {
+      await window.toggleSidebarCluster(clusterId);
+    } catch (error) {
+      console.warn('تعذر فتح مجموعة القائمة الجانبية قبل الانتقال إليها:', error);
+    }
+  }
+
   const sidebarRect = sidebar.getBoundingClientRect();
   const targetRect = target.getBoundingClientRect();
   const targetTop = Math.max(sidebar.scrollTop + (targetRect.top - sidebarRect.top) - 12, 0);

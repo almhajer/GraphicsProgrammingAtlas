@@ -20,9 +20,9 @@
     tutorialSupportRuntime: {path: 'js/modules/tutorial-support.js?v=0.0.1', format: 'script'},
     fileSourceViewerRuntime: {path: 'js/modules/file-source-viewer.js', format: 'script'},
     heavyHelper4Runtime: {path: 'js/modules/app-heavy-reference-helpers-4-runtime.js?v=20260326phase577a', format: 'script'},
-    tutorials: {path: 'data/ui/tutorials/index.json', format: 'json'},
+    tutorials: {path: 'data/ui/tutorials/index.json', format: 'json', countHint: 22},
     glsl: {path: 'data/ui/glsl/index.json', format: 'json'},
-    files: {path: 'data/ui/files.json', format: 'json'},
+    files: {path: 'data/ui/files.json', format: 'json', countHint: 48},
     sdl3: {path: 'data/ui/sdl3/meta.json', format: 'json'},
     sdl3CoreFunctionRelations: {path: 'data/ui/sdl3/core-function-relations.json', format: 'json'},
     sdl3CoreSymbolIndex: {path: 'data/ui/sdl3/core-symbol-index.json', format: 'json'},
@@ -44,8 +44,8 @@
     cppReferenceGuides: {path: 'data/ui/cpp/reference-guides-index.json', format: 'json'},
     cppReferenceTooltips: {path: 'data/ui/cpp/reference-tooltip-overrides.json', format: 'json'},
     cppHome: {path: 'data/ui/cpp/home.json', format: 'json'},
-    imgui: {path: 'data/ui/imgui/index.json', format: 'json'},
-    gameui: {path: 'data/ui/game-ui/index.json', format: 'json'},
+    imgui: {path: 'data/ui/imgui/index.json', format: 'json', countHint: 75},
+    gameui: {path: 'data/ui/game-ui/index.json', format: 'json', countHint: 34},
     vulkanSearch: {path: 'data/ui/vulkan-search-tables.json', format: 'json'}
   });
 
