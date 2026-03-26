@@ -11,7 +11,7 @@
   const UI_SEGMENT_SOURCES = Object.freeze({
     homePageRuntime: {path: 'js/modules/home-page.js', format: 'script'},
     referenceTemplatesRuntime: {path: 'js/modules/reference-templates.js', format: 'script'},
-    referenceRuntimePage: {path: 'js/modules/reference-runtime.js', format: 'script'},
+    referenceRuntimePage: {path: 'js/modules/reference-runtime.js?v=0.0.2', format: 'script'},
     indexPagesRuntime: {path: 'js/modules/index-pages.js', format: 'script'},
     vulkanValuePagesRuntime: {path: 'js/modules/vulkan-value-pages.js', format: 'script'},
     vulkanReferencePagesRuntime: {path: 'js/modules/vulkan-reference-pages.js', format: 'script'},

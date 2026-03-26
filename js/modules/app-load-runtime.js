@@ -311,7 +311,11 @@
 
     function finalizeInitialLoad() {
       populateSidebar();
-      showHomePage({skipHistory: true});
+      if (window.location.hash) {
+        handleHashChange();
+      } else {
+        showHomePage({skipHistory: true});
+      }
       warmupSidebarDataInBackground();
       scheduleIdleWarmup(() => {
         void warmupSidebarClusterCounts();
@@ -323,7 +327,11 @@
       replaceVulkanData(buildFallbackVulkanData());
       setVulkanMeta({});
       populateSidebar();
-      showHomePage({skipHistory: true});
+      if (window.location.hash) {
+        handleHashChange();
+      } else {
+        showHomePage({skipHistory: true});
+      }
     }
 
     async function loadData() {

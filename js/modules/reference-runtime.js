@@ -85,6 +85,55 @@
     return `content/reference/${String(libraryId || '').trim()}/${String(kindId || '').trim()}/${String(slug || '').trim()}.json`;
   }
 
+  function getLegacyCanonicalReferenceEntityFallbackSources(libraryId = '', kindId = '', slug = '') {
+    const normalizedLibraryId = String(libraryId || '').trim();
+    const normalizedKindId = String(kindId || '').trim();
+    const normalizedSlug = String(slug || '').trim();
+    if (!normalizedLibraryId || !normalizedKindId || !normalizedSlug) {
+      return [];
+    }
+
+    if (normalizedLibraryId === 'ffmpeg' && normalizedKindId === 'enums') {
+      const compactSlug = normalizedSlug.replace(/-/g, '');
+      if (compactSlug && compactSlug !== normalizedSlug) {
+        return [
+          buildCanonicalReferenceEntitySource(normalizedLibraryId, normalizedKindId, compactSlug)
+        ];
+      }
+    }
+
+    return [];
+  }
+
+  function normalizeLoadedReferenceEntity(entity = null, libraryId = '', kindId = '', slug = '') {
+    if (!entity || typeof entity !== 'object') {
+      return entity;
+    }
+
+    const normalizedLibraryId = String(libraryId || '').trim();
+    const normalizedKindId = String(kindId || '').trim();
+    const normalizedSlug = String(slug || '').trim();
+    if (!normalizedLibraryId || !normalizedKindId || !normalizedSlug) {
+      return entity;
+    }
+
+    return {
+      ...entity,
+      kind: {
+        ...(entity.kind || {}),
+        id: normalizedKindId
+      },
+      identity: {
+        ...(entity.identity || {}),
+        slug: normalizedSlug
+      },
+      route: {
+        ...(entity.route || {}),
+        hash: `#ref/${normalizedLibraryId}/${normalizedKindId}/${normalizedSlug}`
+      }
+    };
+  }
+
   function loadCanonicalReferenceManifest() {
     if (!canonicalReferenceManifestPromise) {
       canonicalReferenceManifestPromise = api.fetchJsonData('content/reference/manifest.json');
@@ -139,9 +188,23 @@
       canonicalReferenceEntityPromises.set(
         cacheKey,
         api.fetchJsonData(buildCanonicalReferenceEntitySource(normalizedLibraryId, normalizedKindId, normalizedSlug))
-          .catch((error) => {
+          .catch(async () => {
+            const fallbackSources = getLegacyCanonicalReferenceEntityFallbackSources(
+              normalizedLibraryId,
+              normalizedKindId,
+              normalizedSlug
+            );
+            for (const source of fallbackSources) {
+              try {
+                const entity = await api.fetchJsonData(source);
+                return normalizeLoadedReferenceEntity(entity, normalizedLibraryId, normalizedKindId, normalizedSlug);
+              } catch (error) {
+                continue;
+              }
+            }
             return null;
           })
+          .then((entity) => normalizeLoadedReferenceEntity(entity, normalizedLibraryId, normalizedKindId, normalizedSlug))
       );
     }
 
