@@ -1,6 +1,6 @@
 {
-  "last_stable_checkpoint": "add-modern-ffmpeg-enum-alias-files",
-  "phase": "add-modern-ffmpeg-enum-alias-files",
+  "last_stable_checkpoint": "add-google-analytics-gtag",
+  "phase": "add-google-analytics-gtag",
   "done": [
     "إصلاح خطأ JSON في reference-guides-stdlib-string.json",
     "إضافة 1035 عنصر جديد إلى home.json (1166→2201)",
@@ -149,7 +149,8 @@
     "نقل دليل القنوات الصوتية من داخل أمثلة SDL3Audio إلى صفحة مستقلة باسم دليل القنوات الصوتية داخل الحزمة نفسها",
     "إعادة توزيع دليل القنوات الصوتية بصريًا إلى Hero وبطاقات ملخص وشبكة اختصارات وشبكة تخطيطات بدل عرضه داخل صفحة الأمثلة",
     "تنظيف دفعة أولى آمنة من الملفات غير المستخدمة بوضوح: حذف الملف الغريب = وملف cpp_elements_extracted.json وملف نتيجة الاختبار المحلي test-results/.last-run.json مع إزالة مجلد test-results بعد فراغه",
-    "تنظيف دفعة ثانية من الملفات الجانبية غير المرتبطة بالموقع أو البناء الحالي: حذف README.txt وpenAI Compatible.agent.md وz.ai.agent.md"
+    "تنظيف دفعة ثانية من الملفات الجانبية غير المرتبطة بالموقع أو البناء الحالي: حذف README.txt وpenAI Compatible.agent.md وz.ai.agent.md",
+    "إضافة Google Analytics GA4 عبر gtag.js في index.html مع تتبع page_view أولي وتنقلات hash داخل الواجهة الأحادية الصفحة"
   ],
   "tested": [
     "home.json تم التحقق من صحته عبر python3 json.load",
@@ -290,19 +291,10 @@
     "رفع نسخ app-segment-registry.js وapp-load-runtime.js في index.html إلى 0.1.1 لتجاوز الكاش في طبقة الإقلاع",
     "إضافة 6 ملفات alias حديثة داخل content/reference/ffmpeg/enums بأسماء slugs المعروضة في الفهرس والبحث مثل av-media-type.json وav-pixel-format.json حتى لا يعود التحميل المباشر يضرب 404 قبل أي fallback"
   ],
-  "next": "الخطوة التالية المنطقية هي تحقق بصري سريع من الروابط المباشرة الأربعة بعد إضافة alias files الحديثة لتعدادات FFmpeg، ثم تعميم نفس الاستراتيجية على أنواع FFmpeg القديمة الأخرى فقط إذا ظهر 404 جديد على مسار حديث مختلف.",
+  "next": "الخطوة التالية المنطقية هي فتح الموقع محليًا أو بعد النشر مع Google Analytics DebugView للتأكد من وصول page_view للتحميل الأول والتنقلات عبر hash، ثم تقرير ما إذا كانت هناك حاجة إلى طبقة موافقة قبل التفعيل العام.",
   "read_next": [
-    "content/reference/ffmpeg/enums/index.json",
-    "content/reference/ffmpeg/enums/av-media-type.json",
-    "content/reference/ffmpeg/enums/av-pixel-format.json",
-    "js/modules/app-load-runtime.js",
-    "js/modules/reference-runtime.js",
-    "js/modules/app-segment-registry.js",
-    "content/reference/cmake/expressions/dollar-platform-id-ids.json",
-    "js/modules/content-catalogs.js",
     ".codex/work-progress.json",
-    "index.html",
-    "js/modules/example-routes.js"
+    "index.html"
   ],
   "changed": [
     "scripts/build-sdl3-audio-package.js",
@@ -491,7 +483,10 @@
     "التحقق النصي من أن finalizeInitialLoad وloadFallbackData في js/modules/app-load-runtime.js يعيدان handleHashChange() عند وجود location.hash",
     "التحقق النصي من رفع js/modules/app-segment-registry.js وjs/modules/app-load-runtime.js في index.html إلى ?v=0.1.1",
     "python3 json.load نجح لملفات alias الحديثة الستة داخل content/reference/ffmpeg/enums",
-    "التحقق من وجود ملفات av-media-type.json وav-pixel-format.json وav-codec-id.json وav-discard.json وav-app-to-dev-message-type.json وav-dev-to-app-message-type.json داخل content/reference/ffmpeg/enums"
+    "التحقق من وجود ملفات av-media-type.json وav-pixel-format.json وav-codec-id.json وav-discard.json وav-app-to-dev-message-type.json وav-dev-to-app-message-type.json داخل content/reference/ffmpeg/enums",
+    "التحقق النصي من وجود gtag.js بالمعرف G-BY7519Q96Q داخل head في index.html",
+    "التحقق النصي من تعطيل send_page_view الافتراضي وإرسال page_view يدويًا عند load وhashchange داخل index.html",
+    "node -e JSON.parse(...) نجح لملف .codex/work-progress.json بعد تحديث مرحلة Google Analytics"
   ],
   "issues": [
     "1078 دالة حرة std::X بدون محتوى — أكبر فجوة حاليًا (std::memmove, std::strcpy, std::strlen, إلخ)",
@@ -502,6 +497,7 @@
     "البحث الداخلي وبعض المسارات القديمة ما زالت تملك fallback إلى showFfmpegReference(name)؛ القائمة الجانبية الثابتة أصبحت الآن تمر عبر canonical route الصريح",
     "لم تُضف فئة variables مستقلة لـ FFmpeg بعد، لأن صفحات lavc المستهدفة هنا قدّمت عمليًا دوالًا وبنى وتعدادات وثوابت عامة أكثر من متغيرات عامة مستقلة قابلة للتوثيق بنفس المستوى",
     "لم يُنفذ اختبار بصري داخل المتصفح لهذه المرحلة بعد؛ التحقق الحالي كان برمجيًا ونصيًا فقط",
-    "فشل حذف .codex/.DS_Store بسبب Operation not permitted داخل هذا المسار رغم نجاح حذف بقية آثار النظام المحلية"
+    "فشل حذف .codex/.DS_Store بسبب Operation not permitted داخل هذا المسار رغم نجاح حذف بقية آثار النظام المحلية",
+    "لم يُتحقق بعد من استقبال أحداث Google Analytics فعليًا داخل DebugView أو لوحة GA4؛ الإضافة الحالية مؤكدة نصيًا فقط"
   ]
 }
