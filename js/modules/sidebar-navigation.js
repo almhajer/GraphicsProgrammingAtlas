@@ -368,6 +368,10 @@ window.__ARABIC_VULKAN_SIDEBAR_NAVIGATION__ = (() => {
     } else if (sectionId === 'sdl3-macros-list') {
       await window.ensureSdl3SectionData('macros');
       callWindowFn('populateSdl3EntityNavSection', 'macros', sectionId);
+    } else if (sectionId.startsWith('cpp-') && sectionId.endsWith('-list')) {
+      await window.ensureUiSegment('cppHome');
+      const cppSectionKey = sectionId.slice(4, -5);
+      callWindowFn('populateCppSidebarSection', cppSectionKey);
     } else if (sectionId === 'tutorials-list') {
       await window.ensureUiSegment('tutorials');
       callWindowFn('populateTutorialsList');
@@ -414,7 +418,6 @@ window.__ARABIC_VULKAN_SIDEBAR_NAVIGATION__ = (() => {
     }
 
     if (clusterId === 'cpp-cluster') {
-      await window.ensureUiSegment('cppReferenceData');
       await window.ensureUiSegment('cppHome');
       window.populateCppList();
     }

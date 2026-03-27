@@ -136,10 +136,154 @@ void main()
 }
 
 function renderPipelineStagesDiagram() {
+  const stageItems = [
+    {
+      key: 'input',
+      number: '1',
+      title: 'Vertex Input',
+      kicker: 'اقرأ البايتات كسمات مفهومة',
+      summary: 'هنا لا يجري الرسم بعد. هذه المرحلة تفسر ذاكرة <code>Vertex Buffer</code> وتفك الحقول مثل الموضع واللون والإحداثيات وفق stride وoffset وformat.',
+      enters: 'بايتات الرؤوس داخل <code>VkBuffer</code> أو رؤوس مولدة داخل <code>Vertex Shader</code> إذا كان الإدخال فارغًا.',
+      leaves: 'قيم منظمة مثل <code>position</code> و<code>color</code> و<code>uv</code> جاهزة لتدخل الشيدر الرأسي.',
+      remember: 'احفظها بهذه الجملة: من الذاكرة الخام إلى حقول مفهومة.',
+      warning: 'إذا أخطأت في <code>binding</code> أو <code>location</code> أو <code>offset</code> فلن ترى خطأً شكليًا فقط، بل ستقرأ الـ GPU بيانات الرؤوس من المكان الخطأ.',
+      chips: `${renderProjectReferenceChip('VkPipelineVertexInputStateCreateInfo')} ${renderProjectReferenceChip('VkVertexInputBindingDescription')} ${renderProjectReferenceChip('VkVertexInputAttributeDescription')}`,
+      gif: 'assets/pipeline_gifs/stage_vertex_input.gif?v=20260327stage3dC',
+      gifAlt: 'رسم متحرك يوضح بشكل أعمق كيف يقرأ Vertex Input صفوف الرؤوس من الذاكرة ويفكها إلى صفات منفصلة قبل دخول بقية خط الأنابيب.',
+      gifSummary: 'تُظهر الحركة أن كل صف من الـ buffer يحتوي حزمة بيانات واحدة، ثم يفكها Vulkan إلى قنوات منفصلة تُمرر لاحقًا إلى الشيدر.',
+      memoryHint: 'اسأل نفسك دائمًا: هل ما في الذاكرة يطابق ما ينتظره الشيدر حرفيًا؟'
+    },
+    {
+      key: 'assembly',
+      number: '2',
+      title: 'Input Assembly',
+      kicker: 'حوّل الرؤوس إلى بدائيات',
+      summary: 'بعد قراءة الرؤوس يجب تحديد كيف تُفهم كأشكال هندسية: هل كل 3 رؤوس تصنع مثلثًا مستقلاً؟ أم شريطًا؟ أم خطوطًا؟',
+      enters: 'رؤوس مرتبة خرجت من مرحلة الإدخال الرأسي.',
+      leaves: '<code>Primitive</code> مثل مثلث أو خط وفق <code>topology</code>.',
+      remember: 'هذه المرحلة لا تحسب الموضع؛ هي فقط تقرر كيف تُجمع الرؤوس.',
+      warning: 'إذا كان ترتيب الرؤوس صحيحًا لكن <code>topology</code> خاطئًا، فالمشكلة لن تكون في الشيدر بل في شكل التجميع نفسه.',
+      chips: `${renderProjectReferenceChip('VkPipelineInputAssemblyStateCreateInfo')} ${renderProjectReferenceChip('VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST')}`,
+      gif: 'assets/pipeline_gifs/stage_input_assembly.gif?v=20260327stage3dC',
+      gifAlt: 'رسم متحرك يوضح كيف تجمع مرحلة Input Assembly الرؤوس إلى بدائية هندسية.',
+      gifSummary: 'الهدف هنا ليس التلوين بعد، بل الاتفاق على أي مجموعة رؤوس تمثل مثلثًا واحدًا أو خطًا واحدًا.',
+      memoryHint: 'احفظها بكلمة واحدة: تجميع.'
+    },
+    {
+      key: 'vertex',
+      number: '3',
+      title: 'Vertex Shader',
+      kicker: 'عالِج كل رأس على حدة',
+      summary: 'كل <code>Vertex</code> يدخل الشيدر منفردًا. هنا تحسب <code>gl_Position</code> وتنقل أي قيم يحتاجها <code>Fragment Shader</code> لاحقًا.',
+      enters: 'رأس واحد مع سماته المفكوكة من الذاكرة.',
+      leaves: 'موضع في فضاء القص + قيم متغيرة ستُستوفى بين الرؤوس لاحقًا.',
+      remember: 'هذه المرحلة تفكر في الرأس الواحد لا في المثلث ككل.',
+      warning: 'إذا لم تكتب <code>gl_Position</code> بشكل صحيح فلن تصل البدائية إلى بقية المسار بالشكل المتوقع مهما كانت البيانات صحيحة.',
+      chips: `${renderProjectReferenceChip('VkPipelineShaderStageCreateInfo')} ${renderProjectReferenceChip('VkShaderModule')}`,
+      gif: 'assets/pipeline_gifs/stage_vertex_shader.gif?v=20260327stage3dC',
+      gifAlt: 'رسم متحرك يوضح مرور كل رأس عبر Vertex Shader وحساب موضعه الجديد.',
+      gifSummary: 'الرأس هنا لا ينتج لون الشاشة مباشرة، بل ينتج موضعًا وقيمًا ستنتقل إلى المراحل اللاحقة.',
+      memoryHint: 'احفظها بهذه الجملة: كل رأس يدخل وحده ويخرج بمكان جديد.'
+    },
+    {
+      key: 'raster',
+      number: '4',
+      title: 'Viewport + Rasterizer',
+      kicker: 'من شكل هندسي إلى شبكة بكسلات',
+      summary: 'بعد معرفة مواضع الرؤوس، تُقص البدائية وتُحوَّل من شكل هندسي مستمر إلى وحدات أصغر اسمها <code>Fragments</code> داخل مساحة الرسم الفعلية.',
+      enters: 'بدائية هندسية في فضاء القص بعد مرورها من الشيدر الرأسي.',
+      leaves: 'سلسلة <code>Fragments</code> موزعة على الشبكة مع إحداثيات وقيم مستوفاة.',
+      remember: 'هنا يبدأ الانتقال من الرياضيات الهندسية إلى منطق البكسلات.',
+      warning: 'إذا كان <code>Viewport</code> أو <code>Scissor</code> أو اتجاه الوجوه غير مضبوط، فقد تبدو المشكلة وكأن الرسم اختفى، بينما السبب فعليًا في تحويل البدائية أو قصها.',
+      chips: `${renderProjectReferenceChip('VkPipelineViewportStateCreateInfo')} ${renderProjectReferenceChip('VkPipelineRasterizationStateCreateInfo')}`,
+      gif: 'assets/pipeline_gifs/stage_rasterization.gif?v=20260327stage3dC',
+      gifAlt: 'رسم متحرك يوضح تحوّل البدائية إلى Fragments داخل Rasterization.',
+      gifSummary: 'المثلث لم يعد شكلاً مجردًا هنا؛ بل صار أجزاء صغيرة مرشحة لتلوين البكسلات.',
+      memoryHint: 'احفظها بكلمتين: قص ثم تفكيك.'
+    },
+    {
+      key: 'fragment',
+      number: '5',
+      title: 'Fragment Shader',
+      kicker: 'احسب لون كل جزء مرئي',
+      summary: 'كل <code>Fragment</code> يدخل الشيدر مع قيم مستوفاة من الرؤوس، ثم يحسب اللون أو العمق أو قد يقرر تجاهل هذا الجزء تمامًا.',
+      enters: 'Fragment واحد + القيم المستوفاة مثل اللون أو الإحداثيات أو نتائج العينات.',
+      leaves: 'لون خرج وبيانات عمق/ستنسل محتملة قبل الدمج النهائي.',
+      remember: 'هذه المرحلة لا تقرأ الشكل كله مرة واحدة؛ بل تعالج كل fragment لوحده.',
+      warning: 'الخلط بين <code>Vertex Shader</code> و<code>Fragment Shader</code> خطأ شائع: الأول يحدد أين يقع الشيء، والثاني يحدد كيف يبدو.',
+      chips: `${renderProjectReferenceChip('VkPipelineShaderStageCreateInfo')} ${renderProjectReferenceChip('VkPipelineLayout')}`,
+      gif: 'assets/pipeline_gifs/stage_fragment_shader.gif?v=20260327stage3dC',
+      gifAlt: 'رسم متحرك يوضح معالجة Fragment Shader لكل Fragment على حدة.',
+      gifSummary: 'هنا تبدأ الأسئلة البصرية: ما اللون؟ هل أقبل هذا الجزء؟ هل أستخدم خامة أو عمقًا أو مزجًا؟',
+      memoryHint: 'احفظها بهذه الجملة: كل fragment يحسب مظهره بنفسه.'
+    },
+    {
+      key: 'output',
+      number: '6',
+      title: 'Color Output',
+      kicker: 'ادمج اللون ثم اكتبه إلى الهدف',
+      summary: 'آخر المسار: خرج <code>Fragment Shader</code> لا يقفز مباشرة إلى الشاشة، بل يمر عبر قواعد المزج ثم يكتب إلى <code>Color Attachment</code> داخل <code>Render Pass</code>.',
+      enters: 'لون ناتج لكل fragment مع حالة المزج والكتابة.',
+      leaves: 'صورة إطار محدثة داخل المرفق اللوني أو ضمن إحدى صور العرض.',
+      remember: 'هذه ليست مرحلة حساب مظهر جديد، بل مرحلة اعتماد النتيجة وكتابتها.',
+      warning: 'إذا كان <code>Render Pass</code> أو تنسيق المرفق أو إعدادات المزج غير متوافقة، فقد ينجح الشيدر ومع ذلك تكون النتيجة النهائية خاطئة أو فارغة.',
+      chips: `${renderProjectReferenceChip('VkPipelineColorBlendStateCreateInfo')} ${renderProjectReferenceChip('VkRenderPass')}`,
+      gif: 'assets/pipeline_gifs/stage_color_output.gif?v=20260327stage3dC',
+      gifAlt: 'رسم متحرك يوضح كتابة الألوان النهائية إلى Color Attachment.',
+      gifSummary: 'هنا يصبح الناتج قابلاً للعرض فعليًا: اللون النهائي يندمج ويُكتب داخل صورة الإطار.',
+      memoryHint: 'احفظها بكلمة واحدة: اكتب.'
+    }
+  ];
+
+  const memoryCards = [
+    {
+      title: 'اقرأ',
+      body: 'ابدأ من الذاكرة: ما شكل الرؤوس في الـ buffer؟ هذا سؤال Vertex Input.'
+    },
+    {
+      title: 'جمّع',
+      body: 'بعد فهم الرؤوس، قرر كيف تتحول إلى مثلثات أو خطوط. هذا دور Input Assembly.'
+    },
+    {
+      title: 'حوّل',
+      body: 'حرّك الرؤوس إلى مواضعها الصحيحة ثم حوّل الشكل إلى fragments داخل مساحة الرسم.'
+    },
+    {
+      title: 'لوّن واكتب',
+      body: 'احسب لون كل fragment ثم ادمجه مع الهدف النهائي داخل Color Attachment.'
+    }
+  ];
+
+  const anchorCards = [
+    {
+      title: 'ما الذي يبقى ثابتًا؟',
+      body: 'أغلب اختيارات الخط هنا تصف حالة ثابتة تُجهّز مرة ثم يُعاد استخدامها مع أوامر الرسم. هذا هو سبب أن <code>Graphics Pipeline</code> يبدو ضخمًا: لأنه يجمع الوصف الثابت دفعة واحدة.'
+    },
+    {
+      title: 'ما الذي يتكرر لكل Vertex أو Fragment؟',
+      body: 'الذي يتكرر فعليًا هو تنفيذ الشيدر على كل رأس أو fragment. أما توصيف كيف يحدث ذلك فيبقى جزءًا من الـ pipeline نفسه.'
+    },
+    {
+      title: 'أين يضيع المبتدئ غالبًا؟',
+      body: 'حين يخلط بين إعدادات “كيف تُقرأ البيانات” وبين “كيف تُحسب الألوان”. لهذا السبب قسّمنا المراحل هنا بحسب نوع السؤال الذي تجيب عنه كل واحدة.'
+    }
+  ];
+
   return `
     <div class="pipeline-diagram">
       <div class="pipeline-diagram-intro content-card prose-card">
-        <p>هذا الرسم يلخّص ما يصفه ${renderProjectReferenceChip('VkGraphicsPipelineCreateInfo')} قبل أن تستدعي ${renderProjectReferenceChip('vkCreateGraphicsPipelines')}. المقصود هنا ليس أن كل مرحلة تُنفّذ كسطر مستقل في الكود، بل أن Vulkan يبني وصفاً ثابتاً يحدد كيف ستتحرك البيانات من ${renderProjectReferenceChip('Vertex')} إن وجدت، حتى الوصول إلى اللون النهائي داخل المرفق اللوني.</p>
+        <p>هذا القسم يشرح <strong>Graphics Pipeline</strong> كممر تعليمي واضح، لا كقائمة حقول طويلة فقط. الفكرة التي يجب أن تثبت في ذهنك هي أن Vulkan لا يسأل: <em>كيف أرسم الآن؟</em> بل يسأل أولاً: <em>ما الوصف الثابت الكامل للمسار الذي ستسلكه البيانات من الرؤوس حتى اللون النهائي؟</em></p>
+        <p>لذلك انظر إلى ${renderProjectReferenceChip('VkGraphicsPipelineCreateInfo')} على أنه <strong>خريطة تنفيذ</strong>: من أين تأتي البيانات، كيف تُفهم، كيف تتحول إلى بدائيات، كيف تمر عبر الشيدر، وكيف تُكتب أخيرًا في المرفق اللوني قبل العرض. إذا حفظت هذا التسلسل، يصبح قراءة بقية هياكل Vulkan أسهل بكثير.</p>
+      </div>
+
+      <div class="pipeline-memory-strip" aria-label="طريقة حفظ سريعة لمراحل Graphics Pipeline">
+        ${memoryCards.map((card, index) => `
+          <article class="pipeline-memory-card">
+            <div class="pipeline-memory-card-badge">${index + 1}</div>
+            <h3>${card.title}</h3>
+            <p>${card.body}</p>
+          </article>
+        `).join('')}
       </div>
 
       <div class="pipeline-animated-visual" aria-label="رسم متحرك لتدفق مراحل Graphics Pipeline">
@@ -164,142 +308,139 @@ function renderPipelineStagesDiagram() {
         <div class="pipeline-visual-sidecar">
           <div class="pipeline-sidecar-card">
             <strong>المدخل</strong>
-            <span>Vertex Buffer / Shader-generated vertices</span>
+            <span>Byte data أو رؤوس مولدة داخل الشيدر. قبل أي شيء يجب أن يعرف Vulkan كيف يقرأ هذه البيانات فعلًا.</span>
+          </div>
+          <div class="pipeline-sidecar-card">
+            <strong>التحول الأوسط</strong>
+            <span>ما بين المدخل والمخرج توجد مرحلتان ذهنيتان مهمتان: <strong>فهم البيانات</strong> ثم <strong>تحويلها إلى أجزاء قابلة للتلوين</strong>.</span>
           </div>
           <div class="pipeline-sidecar-card">
             <strong>المخرجات</strong>
-            <span>Color Attachment داخل ${renderProjectReferenceChip('VkRenderPass')}</span>
+            <span>لون نهائي يكتب إلى <code>Color Attachment</code> داخل ${renderProjectReferenceChip('VkRenderPass')} ثم يصبح قابلاً للتقديم.</span>
           </div>
         </div>
       </div>
 
+      <div class="pipeline-beginner-grid">
+        ${anchorCards.map((card) => `
+          <article class="content-card prose-card pipeline-beginner-card">
+            <h3>${card.title}</h3>
+            <p>${card.body}</p>
+          </article>
+        `).join('')}
+      </div>
+
       <div class="pipeline-gif-hero">
         <figure class="pipeline-gif-card pipeline-gif-card-hero">
-          <img src="assets/pipeline_gifs/pipeline_line.gif?v=20260311dw" alt="رسم متحرك يوضح انتقال البيانات عبر خط Graphics Pipeline كاملًا من Vertex Input حتى Color Output" loading="lazy" decoding="async">
+          <img src="assets/pipeline_gifs/pipeline_line.gif?v=20260327pipelineheroD" alt="رسم متحرك يوضح انتقال البيانات عبر خط Graphics Pipeline كاملًا من Vertex Input حتى Color Output" loading="lazy" decoding="async">
           <figcaption>
+            <div class="pipeline-gif-kicker">الصورة الكبيرة أولًا</div>
             <strong>الخط الكامل للمراحل</strong>
-            <span>تتحرك النبضة الصفراء من قراءة بيانات <code>Vertex</code>، ثم تمر بمرحلة تجميع البدائيات والشيدر والرستر، حتى تصل إلى كتابة اللون النهائي داخل المرفق اللوني.</span>
+            <span>اتبع النبضة الصفراء وكأنها “حزمة بيانات”: تبدأ كبيانات رأس، ثم تُجمع إلى بدائية، ثم تُعاد صياغتها هندسيًا، ثم تتحول إلى fragments، ثم تُحسب ألوانها، ثم تُكتب النتيجة النهائية في صورة الإطار.</span>
+            <ol class="pipeline-hero-points">
+              <li>المراحل الأولى تفهم البيانات والهندسة.</li>
+              <li>المراحل الوسطى تحول الشكل إلى fragments داخل مساحة الرسم.</li>
+              <li>المراحل الأخيرة تحسب اللون وتكتبه في الهدف النهائي.</li>
+            </ol>
           </figcaption>
         </figure>
       </div>
 
       <div class="pipeline-gif-gallery">
-        <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_vertex_input.gif?v=20260311dw" alt="رسم متحرك يوضح انتقال بيانات Vertex من Buffer إلى بداية خط الأنابيب" loading="lazy" decoding="async">
-          <figcaption>
-            <strong>Vertex Input</strong>
-            <span>توضح الحركة كيف يقرأ Vulkan صفات كل <code>Vertex</code> من <code>Vertex Buffer</code> قبل أن تُرسل إلى المراحل الحسابية التالية.</span>
-          </figcaption>
-        </figure>
-
-        <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_input_assembly.gif?v=20260311dw" alt="رسم متحرك يوضح تجميع الرؤوس إلى Primitive داخل Input Assembly" loading="lazy" decoding="async">
-          <figcaption>
-            <strong>Input Assembly</strong>
-            <span>يبين كيف تُجمع الرؤوس إلى <code>Primitive</code> واحدة أو أكثر حسب قيمة <code>topology</code> مثل <code>triangle list</code>.</span>
-          </figcaption>
-        </figure>
-
-        <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_vertex_shader.gif?v=20260311dw" alt="رسم متحرك يوضح تعديل مواضع الرؤوس داخل Vertex Shader" loading="lazy" decoding="async">
-          <figcaption>
-            <strong>Vertex Shader</strong>
-            <span>تُظهر اللقطة أن كل <code>Vertex</code> يدخل الشيدر منفردًا، ثم يخرج بموضع جديد وقيم تمرر لاحقًا إلى باقي المراحل.</span>
-          </figcaption>
-        </figure>
-
-        <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_rasterization.gif?v=20260311dw" alt="رسم متحرك يوضح تحول Primitive إلى Fragments داخل مرحلة Rasterization" loading="lazy" decoding="async">
-          <figcaption>
-            <strong>Rasterization</strong>
-            <span>توضح الشبكة كيف تتحول البدائية من شكل هندسي مستمر إلى <code>Fragments</code> موزعة على شبكة البكسلات داخل <code>Viewport</code>.</span>
-          </figcaption>
-        </figure>
-
-        <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_fragment_shader.gif?v=20260311dw" alt="رسم متحرك يوضح معالجة Fragments وإنتاج اللون داخل Fragment Shader" loading="lazy" decoding="async">
-          <figcaption>
-            <strong>Fragment Shader</strong>
-            <span>يبين كيف يعالج الشيدر كل <code>Fragment</code> على حدة ليحسب اللون أو العمق أو يقرر رفض هذا الجزء قبل الإخراج.</span>
-          </figcaption>
-        </figure>
-
-        <figure class="pipeline-gif-card">
-          <img src="assets/pipeline_gifs/stage_color_output.gif?v=20260311dw" alt="رسم متحرك يوضح كتابة الألوان النهائية إلى Color Attachment" loading="lazy" decoding="async">
-          <figcaption>
-            <strong>Color Output</strong>
-            <span>توضح الأشرطة الملونة كيف يُدمج خرج <code>Fragment Shader</code> ثم يُكتب إلى <code>Color Attachment</code> داخل صورة الإطار.</span>
-          </figcaption>
-        </figure>
+        ${stageItems.map((stage) => `
+          <figure class="pipeline-gif-card">
+            <img src="${stage.gif}" alt="${stage.gifAlt}" loading="lazy" decoding="async">
+            <figcaption>
+              <div class="pipeline-gif-kicker">المرحلة ${stage.number}</div>
+              <strong>${stage.title}</strong>
+              <span>${stage.gifSummary}</span>
+              <p class="pipeline-gif-memory">${stage.memoryHint}</p>
+            </figcaption>
+          </figure>
+        `).join('')}
       </div>
 
-      <div class="pipeline-stage-track" aria-label="مخطط مراحل Graphics Pipeline">
-        <div class="pipeline-stage stage-input">
-          <div class="pipeline-stage-badge">1</div>
-          <h4>Vertex Input</h4>
-          <p>يحدد كيف تُقرأ بيانات <code>Vertex</code> من <code>Buffer</code> أو هل سيُولَّد الشكل داخل الشيدر نفسه.</p>
-          <div class="pipeline-stage-meta">${renderProjectReferenceChip('VkPipelineVertexInputStateCreateInfo')}</div>
-        </div>
+      <div class="pipeline-stage-track" aria-label="ترتيب مراحل Graphics Pipeline">
+        ${stageItems.map((stage) => `
+          <article class="pipeline-stage stage-${stage.key}">
+            <div class="pipeline-stage-badge">${stage.number}</div>
+            <div class="pipeline-stage-kicker">${stage.kicker}</div>
+            <h4>${stage.title}</h4>
+            <p>${stage.remember}</p>
+            <div class="pipeline-stage-meta">${stage.chips}</div>
+          </article>
+        `).join('')}
+      </div>
 
-        <div class="pipeline-stage-arrow" aria-hidden="true"></div>
+      <div class="pipeline-stage-detail-grid">
+        ${stageItems.map((stage) => `
+          <article class="pipeline-stage-detail-card stage-${stage.key}">
+            <div class="pipeline-stage-detail-head">
+              <div class="pipeline-stage-badge">${stage.number}</div>
+              <div class="pipeline-stage-detail-heading">
+                <div class="pipeline-stage-kicker">${stage.kicker}</div>
+                <h3>${stage.title}</h3>
+              </div>
+            </div>
 
-        <div class="pipeline-stage stage-assembly">
-          <div class="pipeline-stage-badge">2</div>
-          <h4>Input Assembly</h4>
-          <p>يحدد كيف تتحول الرؤوس إلى <code>Primitive</code> مثل مثلثات مستقلة باستخدام ${renderProjectReferenceChip('VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST')}.</p>
-          <div class="pipeline-stage-meta">${renderProjectReferenceChip('VkPipelineInputAssemblyStateCreateInfo')}</div>
-        </div>
+            <p class="pipeline-stage-detail-summary">${stage.summary}</p>
 
-        <div class="pipeline-stage-arrow" aria-hidden="true"></div>
+            <div class="pipeline-stage-flow-grid">
+              <div class="pipeline-stage-flow-card">
+                <span>ماذا يدخل؟</span>
+                <p>${stage.enters}</p>
+              </div>
+              <div class="pipeline-stage-flow-card">
+                <span>ماذا يخرج؟</span>
+                <p>${stage.leaves}</p>
+              </div>
+            </div>
 
-        <div class="pipeline-stage stage-vertex">
-          <div class="pipeline-stage-badge">3</div>
-          <h4>Vertex Shader</h4>
-          <p>كل <code>Vertex</code> يمر عبر الشيدر ليُنتج موضعه في فضاء القص وقيمه التي ستنتقل للمراحل التالية.</p>
-          <div class="pipeline-stage-meta">${renderProjectReferenceChip('VkPipelineShaderStageCreateInfo')}</div>
-        </div>
+            <div class="pipeline-stage-memory">
+              <strong>طريقة حفظها</strong>
+              <p>${stage.remember}</p>
+            </div>
 
-        <div class="pipeline-stage-arrow" aria-hidden="true"></div>
+            <div class="pipeline-stage-meta">${stage.chips}</div>
 
-        <div class="pipeline-stage stage-raster">
-          <div class="pipeline-stage-badge">4</div>
-          <h4>Viewport + Rasterizer</h4>
-          <p>تُقص البدائيات، ثم تُحوَّل إلى <code>Fragments</code> داخل مساحة الرسم المحددة بالـ <code>Viewport</code> و<code>Scissor</code>.</p>
-          <div class="pipeline-stage-meta">${renderProjectReferenceChip('VkPipelineViewportStateCreateInfo')} + ${renderProjectReferenceChip('VkPipelineRasterizationStateCreateInfo')}</div>
-        </div>
-
-        <div class="pipeline-stage-arrow" aria-hidden="true"></div>
-
-        <div class="pipeline-stage stage-fragment">
-          <div class="pipeline-stage-badge">5</div>
-          <h4>Fragment Shader</h4>
-          <p>كل <code>Fragment</code> يحسب اللون النهائي أو يرفضه، اعتماداً على الشيدر والموارد المربوطة عبر ${renderProjectReferenceChip('VkPipelineLayout')}.</p>
-          <div class="pipeline-stage-meta">${renderProjectReferenceChip('VkPipelineShaderStageCreateInfo')}</div>
-        </div>
-
-        <div class="pipeline-stage-arrow" aria-hidden="true"></div>
-
-        <div class="pipeline-stage stage-output">
-          <div class="pipeline-stage-badge">6</div>
-          <h4>Color Output</h4>
-          <p>اللون الناتج يندمج مع المرفق اللوني داخل ${renderProjectReferenceChip('VkRenderPass')} وفق إعدادات المزج ثم يُكتب في صورة العرض.</p>
-          <div class="pipeline-stage-meta">${renderProjectReferenceChip('VkPipelineColorBlendStateCreateInfo')}</div>
-        </div>
+            <div class="pipeline-stage-warning">
+              <strong>خطأ شائع</strong>
+              <p>${stage.warning}</p>
+            </div>
+          </article>
+        `).join('')}
       </div>
 
       <div class="pipeline-support-grid">
         <div class="content-card prose-card">
           <div class="info-label">Render Pass</div>
-          <p>${renderProjectReferenceChip('VkRenderPass')} يحدد شكل المرفقات التي سيكتب إليها الخط، لذلك يجب أن يطابق ما تتوقعه آخر مراحل الإخراج.</p>
+          <p>${renderProjectReferenceChip('VkRenderPass')} يحدد شكل المرفقات التي سيكتب إليها الخط، لذلك يجب أن يطابق ما تتوقعه آخر مراحل الإخراج. إذا لم يتفق مع pipeline، فالمشكلة ليست “لونًا خاطئًا” فقط بل قد يفشل الإنشاء أصلًا.</p>
         </div>
         <div class="content-card prose-card">
           <div class="info-label">Pipeline Layout</div>
-          <p>${renderProjectReferenceChip('VkPipelineLayout')} يربط <code>Descriptor Sets</code> و<code>Push Constants</code> التي قد تقرأها مراحل الشيدر أثناء التنفيذ.</p>
+          <p>${renderProjectReferenceChip('VkPipelineLayout')} يربط <code>Descriptor Sets</code> و<code>Push Constants</code> التي قد تقرأها مراحل الشيدر أثناء التنفيذ. لا يحدد “شكل الرسم” نفسه، بل يحدد ما الموارد التي سيُسمح للشيدر بقراءتها.</p>
         </div>
         <div class="content-card prose-card">
-          <div class="info-label">ما الذي يتغير عند التعديل؟</div>
-          <p>تغيير أي بطاقة هنا يغيّر تفسير Vulkan لمسار الرسم كله: شكل الـ <code>Primitive</code>، مساحة الرسم، الشيدر النشط، أو طريقة كتابة اللون النهائي.</p>
+          <div class="info-label">لماذا يُنشأ مسبقًا؟</div>
+          <p>لأن Vulkan يريد أن يعرف مبكرًا كيف سيجري التنفيذ، فيستطيع تهيئة الحالة وتجهيز التحسينات الداخلية بدل تبديلها عشوائيًا قبل كل <code>vkCmdDraw</code>.</p>
         </div>
+        <div class="content-card prose-card">
+          <div class="info-label">متى تغيّر Pipeline؟</div>
+          <p>إذا تغيّر الشيدر، أو <code>topology</code>، أو <code>blend state</code>، أو طريقة قراءة الرؤوس، فغالبًا أنت لا تعدل “سطرًا صغيرًا” فقط، بل تبني pipeline آخر لأن معنى المسار كله تغير.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-recall-board content-card prose-card">
+        <h3>طريقة حفظ سريعة للمراحل الست</h3>
+        <ol class="pipeline-recall-list">
+          <li><strong>Vertex Input:</strong> افهم البايتات كحقول.</li>
+          <li><strong>Input Assembly:</strong> اجمع الرؤوس إلى بدائية.</li>
+          <li><strong>Vertex Shader:</strong> احسب موضع كل رأس.</li>
+          <li><strong>Viewport + Rasterizer:</strong> حوّل الشكل إلى fragments داخل مساحة الرسم.</li>
+          <li><strong>Fragment Shader:</strong> احسب لون كل جزء.</li>
+          <li><strong>Color Output:</strong> ادمج اللون واكتبه إلى الهدف النهائي.</li>
+        </ol>
+        <p class="pipeline-recall-note">إذا حفظت هذا الترتيب كرحلة متتابعة من المدخل إلى المخرج، ستصبح قراءة حقول <code>VkGraphicsPipelineCreateInfo</code> أقرب إلى قراءة قصة تنفيذ كاملة لا قائمة إعدادات متفرقة.</p>
       </div>
     </div>
   `;

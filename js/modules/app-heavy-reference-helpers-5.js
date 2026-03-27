@@ -3593,6 +3593,14 @@ function getCppHomeSections() {
   return cppHomeRuntime?.getCppHomeSections?.() || [];
 }
 
+function getCppHomeSectionByKey(sectionKey = '') {
+  const normalizedSectionKey = String(sectionKey || '').trim();
+  if (!normalizedSectionKey) {
+    return null;
+  }
+  return getCppHomeSections().find((section) => String(section?.key || '').trim() === normalizedSectionKey) || null;
+}
+
 function buildCppSectionSidebarTooltip(section = {}) {
   return cppHomeRuntime?.buildCppSectionSidebarTooltip?.(section) || section.description || 'قسم من مرجع C++ المحلي.';
 }
@@ -3661,6 +3669,41 @@ function renderCppSidebarSubsections(section = {}) {
   `).join('');
 }
 
+function renderCppSidebarSectionContent(section = {}) {
+  if (!section?.key) {
+    return '';
+  }
+
+  return `
+    <div class="nav-item" data-nav-type="cpp-index" data-nav-name="${escapeAttribute(section.key)}" data-tooltip="${escapeAttribute(buildCppSectionSidebarTooltip(section))}" tabindex="0" role="button">
+      <span>${renderEntityIcon(section.iconType || 'cpp', 'ui-codicon nav-icon', section.title)}</span>
+      <span>فهرس ${escapeHtml(section.title)}</span>
+    </div>
+    ${renderCppSidebarSubsections(section)}
+  `;
+}
+
+function populateCppSidebarSection(sectionKey = '') {
+  const normalizedSectionKey = String(sectionKey || '').trim();
+  if (!normalizedSectionKey) {
+    return;
+  }
+
+  const container = document.getElementById(`cpp-${normalizedSectionKey}-list`);
+  if (!container || container.dataset.cppHydrated === 'true') {
+    return;
+  }
+
+  const section = getCppHomeSectionByKey(normalizedSectionKey);
+  if (!section) {
+    return;
+  }
+
+  container.innerHTML = renderCppSidebarSectionContent(section);
+  container.dataset.cppHydrated = 'true';
+  window.__ARABIC_VULKAN_SIDEBAR_NAVIGATION__?.syncSidebarInteractionSemantics?.(container);
+}
+
 function populateCppList() {
   const container = document.getElementById('cpp-list');
   if (!container) {
@@ -3673,6 +3716,10 @@ function populateCppList() {
   const countEl = document.getElementById('cpp-cluster-count');
   if (countEl) {
     countEl.textContent = String(totalCount || 0);
+  }
+
+  if (container.dataset.cppRootHydrated === 'true' && container.childElementCount > 0) {
+    return;
   }
 
   container.innerHTML = `
@@ -3690,16 +3737,12 @@ function populateCppList() {
           <h3>${renderEntityIcon(section.iconType || 'cpp', 'ui-codicon nav-icon', section.title)} ${escapeHtml(section.title)} <span class="nav-section-inline-count">${Number(section.count) || 0}</span></h3>
           <span class="icon">▼</span>
         </div>
-        <div id="cpp-${escapeAttribute(section.key)}-list" class="nav-items">
-          <div class="nav-item" data-nav-type="cpp-index" data-nav-name="${escapeAttribute(section.key)}" data-tooltip="${escapeAttribute(buildCppSectionSidebarTooltip(section))}" tabindex="0" role="button">
-            <span>${renderEntityIcon(section.iconType || 'cpp', 'ui-codicon nav-icon', section.title)}</span>
-            <span>فهرس ${escapeHtml(section.title)}</span>
-          </div>
-          ${renderCppSidebarSubsections(section)}
-        </div>
+        <div id="cpp-${escapeAttribute(section.key)}-list" class="nav-items" data-cpp-section-key="${escapeAttribute(section.key)}" data-cpp-hydrated="false"></div>
       </div>
     `).join('')}
   `;
+  container.dataset.cppRootHydrated = 'true';
+  window.__ARABIC_VULKAN_SIDEBAR_NAVIGATION__?.syncSidebarInteractionSemantics?.(container);
 }
 
 async function showCppIndex(sectionKey = '', options = {}) {
@@ -3709,8 +3752,10 @@ async function showCppIndex(sectionKey = '', options = {}) {
   }
 
   if (typeof ensureUiSegment === 'function') {
-    await ensureUiSegment('cppReferenceData');
-    await ensureUiSegment('cppHome');
+    await Promise.all([
+      ensureUiSegment('cppReferenceData'),
+      ensureUiSegment('cppHome')
+    ]);
   }
 
   populateCppList();
@@ -3718,6 +3763,9 @@ async function showCppIndex(sectionKey = '', options = {}) {
   const config = getCppHomeConfig();
   const allSections = getCppHomeSections();
   const activeSectionKey = String(sectionKey || '').trim();
+  if (activeSectionKey) {
+    populateCppSidebarSection(activeSectionKey);
+  }
   const sections = activeSectionKey
     ? allSections.filter((section) => section.key === activeSectionKey)
     : allSections;

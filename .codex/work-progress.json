@@ -1,6 +1,6 @@
 {
-  "last_stable_checkpoint": "add-google-analytics-gtag",
-  "phase": "add-google-analytics-gtag",
+  "last_stable_checkpoint": "surface-sdl3-specialized-packages-home-hero",
+  "phase": "surface-sdl3-specialized-packages-home-hero",
   "done": [
     "إصلاح خطأ JSON في reference-guides-stdlib-string.json",
     "إضافة 1035 عنصر جديد إلى home.json (1166→2201)",
@@ -150,7 +150,12 @@
     "إعادة توزيع دليل القنوات الصوتية بصريًا إلى Hero وبطاقات ملخص وشبكة اختصارات وشبكة تخطيطات بدل عرضه داخل صفحة الأمثلة",
     "تنظيف دفعة أولى آمنة من الملفات غير المستخدمة بوضوح: حذف الملف الغريب = وملف cpp_elements_extracted.json وملف نتيجة الاختبار المحلي test-results/.last-run.json مع إزالة مجلد test-results بعد فراغه",
     "تنظيف دفعة ثانية من الملفات الجانبية غير المرتبطة بالموقع أو البناء الحالي: حذف README.txt وpenAI Compatible.agent.md وz.ai.agent.md",
-    "إضافة Google Analytics GA4 عبر gtag.js في index.html مع تتبع page_view أولي وتنقلات hash داخل الواجهة الأحادية الصفحة"
+    "إضافة Google Analytics GA4 عبر gtag.js في index.html مع تتبع page_view أولي وتنقلات hash داخل الواجهة الأحادية الصفحة",
+    "إضافة محتوى محلي كامل لصفحة cpp-language-guide داخل data/ui/cpp/reference-guides-deep.json مع deep guide فعلي وبطاقة مختصرة للبحث والروابط",
+    "تخفيف بطء أول ضغطة على قائمة C++ الجانبية عبر الاكتفاء بتحميل cppHome عند فتح cpp-cluster، وتأجيل بناء محتوى كل قسم فرعي حتى لحظة فتحه بدل رسم آلاف العناصر دفعة واحدة",
+    "إضافة زري دخول سريعين لـ SDL3_mixer وSDL3_ttf داخل هيرو الصفحة الرئيسية مع توضيح أن فروع SDL3 المتخصصة تظهر ضمن المسار الرئيسي نفسه",
+    "إعادة تصميم كتلة #tutorial/pipeline بصريًا إلى بطاقات داكنة منسجمة مع هوية الموقع بدل الخلفيات البيضاء واللوحة الوسطى المشتتة",
+    "استبدال pipeline_line.gif وstage_vertex_input.gif برسوم متحركة جديدة أعمق بصريًا بأسلوب إيزومتري شبه ثلاثي الأبعاد مع ضغطهما بعد التوليد لتقليل الحمل"
   ],
   "tested": [
     "home.json تم التحقق من صحته عبر python3 json.load",
@@ -289,11 +294,14 @@
     "رفع نسخة reference-runtime.js المحمّلة عند الطلب داخل app-segment-registry.js إلى 0.0.2 لضمان تجاوز الكاش عند فتح صفحات المرجع",
     "إصلاح ضياع الروابط المباشرة عند التحميل الأول: app-load-runtime.js لم يعد يفرض showHomePage() بعد اكتمال loadData إذا كان هناك location.hash، بل يعيد تطبيق handleHashChange() حتى تبقى مسارات ref وvulkan-example المباشرة فعالة",
     "رفع نسخ app-segment-registry.js وapp-load-runtime.js في index.html إلى 0.1.1 لتجاوز الكاش في طبقة الإقلاع",
-    "إضافة 6 ملفات alias حديثة داخل content/reference/ffmpeg/enums بأسماء slugs المعروضة في الفهرس والبحث مثل av-media-type.json وav-pixel-format.json حتى لا يعود التحميل المباشر يضرب 404 قبل أي fallback"
+    "إضافة 6 ملفات alias حديثة داخل content/reference/ffmpeg/enums بأسماء slugs المعروضة في الفهرس والبحث مثل av-media-type.json وav-pixel-format.json حتى لا يعود التحميل المباشر يضرب 404 قبل أي fallback",
+    "إظهار فروع SDL3 المتخصصة داخل هيرو الصفحة الرئيسية ضمن صف مستقل بعنوان واضح، بحيث تظهر SDL3Audio وSDL3_image وSDL3_mixer وSDL3_ttf مباشرة بدل أن تعتمد على التفاف الأزرار أو تبقى داخل الشريط الجانبي فقط"
   ],
-  "next": "الخطوة التالية المنطقية هي فتح الموقع محليًا أو بعد النشر مع Google Analytics DebugView للتأكد من وصول page_view للتحميل الأول والتنقلات عبر hash، ثم تقرير ما إذا كانت هناك حاجة إلى طبقة موافقة قبل التفعيل العام.",
+  "next": "الخطوة التالية المنطقية بعد هذه المرحلة هي تحقق بصري محلي من الصفحة الرئيسية على localhost مع Hard Refresh للتأكد من أن صف \"فروع SDL3 السريعة\" ظهر فعلًا تحت الأزرار الرئيسية وأن SDL3_mixer وSDL3_ttf لم يعودا يختبئان بسبب الكاش أو التفاف التخطيط؛ وإذا بقي التوزيع مزدحمًا على بعض المقاسات، فالدفعة التالية المنطقية هي ضبط عرض الأزرار والمسافات في الهيرو فقط دون تغيير بنية الصفحة.",
   "read_next": [
     ".codex/work-progress.json",
+    "js/modules/home-page.js",
+    "css/main.css",
     "index.html"
   ],
   "changed": [
@@ -355,7 +363,23 @@
     "content/reference/ffmpeg/enums/av-codec-id.json",
     "content/reference/ffmpeg/enums/av-discard.json",
     "content/reference/ffmpeg/enums/av-app-to-dev-message-type.json",
-    "content/reference/ffmpeg/enums/av-dev-to-app-message-type.json"
+    "content/reference/ffmpeg/enums/av-dev-to-app-message-type.json",
+    "data/ui/cpp/reference-guides-deep.json",
+    "js/modules/app-heavy-reference-helpers-5.js",
+    "js/modules/sidebar-navigation.js",
+    "index.html",
+    ".codex/work-progress.json",
+    "js/modules/home-page.js",
+    "index.html (رفع version لـ home-page.js إلى 0.0.4)",
+    "js/modules/app-heavy-reference-helpers.js (إعادة ضبط عرض pipeline وربط نسخ GIF الجديدة)",
+    "css/main.css (تحويل pipeline إلى طابع داكن أوضح وتقليل الخلفية المشتتة)",
+    "assets/pipeline_gifs/stage_vertex_input.gif (نسخة إيزومترية أعمق مضغوطة)",
+    "assets/pipeline_gifs/pipeline_line.gif (نسخة رئيسية داكنة مضغوطة)",
+    "index.html (رفع versions لـ main.css وapp-heavy-reference-helpers.js إلى 0.1.0 و0.0.2)",
+    "js/modules/home-page.js (فصل فروع SDL3 المتخصصة في صف Hero فرعي واضح وإضافة زر SDL3_image بجانب SDL3Audio وSDL3_mixer وSDL3_ttf)",
+    "css/main.css (تنسيق صف فرعي بعنوان واضح لفروع SDL3 داخل الهيرو)",
+    "index.html (رفع versions لـ main.css وhome-page.js إلى 0.1.1 و0.0.5 لتجاوز الكاش)",
+    ".codex/work-progress.json"
   ],
   "tested": [
     "python3 scripts/generate_ffmpeg_examples.py (generated examples 25)",
@@ -486,7 +510,25 @@
     "التحقق من وجود ملفات av-media-type.json وav-pixel-format.json وav-codec-id.json وav-discard.json وav-app-to-dev-message-type.json وav-dev-to-app-message-type.json داخل content/reference/ffmpeg/enums",
     "التحقق النصي من وجود gtag.js بالمعرف G-BY7519Q96Q داخل head في index.html",
     "التحقق النصي من تعطيل send_page_view الافتراضي وإرسال page_view يدويًا عند load وhashchange داخل index.html",
-    "node -e JSON.parse(...) نجح لملف .codex/work-progress.json بعد تحديث مرحلة Google Analytics"
+    "node -e JSON.parse(...) نجح لملف .codex/work-progress.json بعد تحديث مرحلة Google Analytics",
+    "python3 json.load نجح لملف data/ui/cpp/reference-guides-deep.json مع وجود cpp-language-guide داخل referenceGuides وdeepGuides",
+    "node --check js/modules/app-heavy-reference-helpers-5.js بعد إضافة lazy hydration لأقسام C++ الجانبية",
+    "node --check js/modules/sidebar-navigation.js بعد إزالة تحميل cppReferenceData من أول فتح للـ cluster وربط فتح الأقسام بـ populateCppSidebarSection",
+    "التحقق النصي من أن cpp-cluster في sidebar-navigation.js يحمّل cppHome فقط عند أول فتح",
+    "التحقق النصي من وجود data-cpp-hydrated و populateCppSidebarSection و Promise.all داخل js/modules/app-heavy-reference-helpers-5.js",
+    "التحقق النصي من رفع نسخ sidebar-navigation.js وapp-heavy-reference-helpers-5.js في index.html إلى ?v=0.0.2",
+    "node --check js/modules/home-page.js بعد إضافة أزرار SDL3_mixer وSDL3_ttf إلى هيرو الصفحة الرئيسية",
+    "python3 json.load نجح لملف .codex/work-progress.json بعد تحديث مرحلة SDL3_mixer وSDL3_ttf في الصفحة الرئيسية",
+    "التحقق النصي من وجود showSdl3PackageIndex('mixer') و showSdl3PackageIndex('ttf') داخل js/modules/home-page.js ومن رفع js/modules/home-page.js في index.html إلى ?v=0.0.4",
+    "node --check js/modules/app-heavy-reference-helpers.js بعد إعادة تنظيم renderPipelineStagesDiagram",
+    "التحقق من أن stage_vertex_input.gif أصبح 360x180 بعدد 41 frame وأن pipeline_line.gif أصبح 960x220 بعدد 69 frame بعد الضغط",
+    "التحقق من تقلص أحجام GIF الجديدة إلى stage_vertex_input.gif=126KB وpipeline_line.gif=187KB بعد ضغط ffmpeg",
+    "التحقق النصي من رفع css/main.css في index.html إلى ?v=0.1.0 وjs/modules/app-heavy-reference-helpers.js إلى ?v=0.0.2",
+    "python3 json.load نجح لملف .codex/work-progress.json بعد تحديث مرحلة pipeline الجديدة",
+    "node --check js/modules/home-page.js بعد إعادة تنظيم hero لفروع SDL3 المتخصصة",
+    "التحقق النصي من وجود home-hero-subactions وhome-hero-actions-packages وروابط showSdl3PackageIndex('image') وshowSdl3PackageIndex('mixer') وshowSdl3PackageIndex('ttf') داخل js/modules/home-page.js",
+    "التحقق النصي من رفع css/main.css وjs/modules/home-page.js في index.html إلى ?v=0.1.1 و?v=0.0.5",
+    "python3 json.load نجح لملف .codex/work-progress.json بعد تحديث مرحلة إظهار فروع SDL3 في الهيرو"
   ],
   "issues": [
     "1078 دالة حرة std::X بدون محتوى — أكبر فجوة حاليًا (std::memmove, std::strcpy, std::strlen, إلخ)",
@@ -498,6 +540,9 @@
     "لم تُضف فئة variables مستقلة لـ FFmpeg بعد، لأن صفحات lavc المستهدفة هنا قدّمت عمليًا دوالًا وبنى وتعدادات وثوابت عامة أكثر من متغيرات عامة مستقلة قابلة للتوثيق بنفس المستوى",
     "لم يُنفذ اختبار بصري داخل المتصفح لهذه المرحلة بعد؛ التحقق الحالي كان برمجيًا ونصيًا فقط",
     "فشل حذف .codex/.DS_Store بسبب Operation not permitted داخل هذا المسار رغم نجاح حذف بقية آثار النظام المحلية",
-    "لم يُتحقق بعد من استقبال أحداث Google Analytics فعليًا داخل DebugView أو لوحة GA4؛ الإضافة الحالية مؤكدة نصيًا فقط"
+    "لم يُتحقق بعد من استقبال أحداث Google Analytics فعليًا داخل DebugView أو لوحة GA4؛ الإضافة الحالية مؤكدة نصيًا فقط",
+    "تخفيف C++ الحالي يزيل الحمل الكبير من أول فتح للـ cluster، لكنه لا يعني بالضرورة أن فتح standard-library نفسه أصبح خفيفًا تمامًا لأن hydration ما زال يجري على مستوى القسم كاملًا لا على مستوى كل مجموعة داخله",
+    "بقية GIFs الخاصة بمراحل pipeline ما زالت على الأسلوب البصري الأقدم؛ النسخة الجديدة الموحدة طُبقت الآن على hero وstage_vertex_input فقط",
+    "لم يُنفذ تحقق بصري من طرفي بعد على الصفحة الرئيسية بعد فصل صف فروع SDL3؛ الصورة المرفقة توحي بقوة أن المتصفح كان يعرض نسخة cached أقدم قبل رفع home-page.js وmain.css"
   ]
 }
